@@ -92,7 +92,10 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GlobalAutoTypeModifiers,{QS("GlobalAutoTypeModifiers"), Roaming, 0}},
     {Config::GlobalAutoTypeRetypeTime,{QS("GlobalAutoTypeRetypeTime"), Roaming, 15}},
     {Config::FaviconDownloadTimeout,{QS("FaviconDownloadTimeout"), Roaming, 10}},
-    {Config::UpdateCheckMessageShown,{QS("UpdateCheckMessageShown"), Roaming, false}},
+    // Treated as already answered, with the answer being yes: updates are always checked for.
+    // Asking on first launch only invites the user to turn off something they should have, and a
+    // dialog in front of an empty window is a poor introduction.
+    {Config::UpdateCheckMessageShown,{QS("UpdateCheckMessageShown"), Roaming, true}},
     {Config::DefaultDatabaseFileName,{QS("DefaultDatabaseFileName"), Roaming, {}}},
 
     {Config::LastDatabases, {QS("LastDatabases"), Local, {}}},

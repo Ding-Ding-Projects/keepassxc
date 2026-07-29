@@ -24,9 +24,11 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QList>
+#include <QLocale>
 #include <QMimeData>
 #include <QShortcut>
 #include <QStatusBar>
+#include <QSysInfo>
 #include <QTimer>
 #include <QToolButton>
 #include <QWindow>
@@ -38,7 +40,12 @@
 #include "Application.h"
 #include "Clipboard.h"
 #include "autotype/AutoType.h"
+#include "core/Database.h"
+#include "core/Entry.h"
+#include "core/EntryAttachments.h"
+#include "core/Group.h"
 #include "core/InactivityTimer.h"
+#include "core/Metadata.h"
 #include "core/Resources.h"
 #include "core/Tools.h"
 #include "gui/AboutDialog.h"
@@ -48,6 +55,22 @@
 #include "gui/SearchWidget.h"
 #include "gui/ShortcutSettingsPage.h"
 #include "gui/entry/EntryView.h"
+#include "gui/material/MaterialChangelogFeed.h"
+#include "gui/material/MaterialChangelogScreen.h"
+#include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialHistoryFeed.h"
+#include "gui/material/MaterialHistoryScreen.h"
+#include "gui/material/MaterialHistoryStore.h"
+#include "gui/material/MaterialNavigationRail.h"
+#include "gui/material/MaterialNotificationCentre.h"
+#include "gui/material/MaterialNotifier.h"
+#include "gui/material/MaterialRegexBuilder.h"
+#include "gui/material/MaterialReportsFeed.h"
+#include "gui/material/MaterialReportsScreen.h"
+#include "gui/material/MaterialShell.h"
+#include "gui/material/MaterialTabStrip.h"
+#include "gui/material/MaterialTheme.h"
+#include "gui/material/MaterialTopAppBar.h"
 #include "gui/material/MaterialVoice.h"
 #include "gui/osutils/OSUtils.h"
 #include "gui/remote/RemoteSettings.h"
@@ -85,6 +108,30 @@ MainWindow* getMainWindow()
     return g_MainWindow;
 }
 
+namespace
+{
+    /** The Material shell that owns the window interior, or nullptr before it exists. */
+    Material::Shell* shell()
+    {
+        return Material::Shell::instance();
+    }
+
+    /** Stable tab strip id for a database widget. Tabs are keyed by identity, not index. */
+    QString tabIdFor(const DatabaseWidget* dbWidget)
+    {
+        return QStringLiteral("db-%1").arg(reinterpret_cast<quintptr>(dbWidget));
+    }
+
+    /** The database behind a widget, or a null pointer when it is locked or absent. */
+    QSharedPointer<Database> unlockedDatabase(DatabaseWidget* dbWidget)
+    {
+        if (!dbWidget || dbWidget->isLocked() || !dbWidget->database() || !dbWidget->database()->rootGroup()) {
+            return {};
+        }
+        return dbWidget->database();
+    }
+} // namespace
+
 MainWindow::MainWindow()
     : m_ui(new Ui::MainWindow())
 {
@@ -117,13 +164,15 @@ MainWindow::MainWindow()
 
     new QShortcut(QKeySequence::Find, this, SLOT(focusSearchWidget()));
 
+    // The tool bar is only ever raised to carry the search field, so it goes
+    // straight back down when the search is done with it.
     connect(m_searchWidget, &SearchWidget::searchCanceled, this, [this] {
         m_ui->toolBar->setExpanded(false);
-        m_ui->toolBar->setVisible(!config()->get(Config::GUI_HideToolbar).toBool());
+        m_ui->toolBar->setVisible(false);
     });
     connect(m_searchWidget, &SearchWidget::lostFocus, this, [this] {
         m_ui->toolBar->setExpanded(false);
-        m_ui->toolBar->setVisible(!config()->get(Config::GUI_HideToolbar).toBool());
+        m_ui->toolBar->setVisible(false);
     });
 
     m_countDefaultAttributes = m_ui->menuEntryCopyAttribute->actions().size();
@@ -264,8 +313,9 @@ MainWindow::MainWindow()
         autoType()->registerGlobalShortcut(globalAutoTypeKey, globalAutoTypeModifiers);
     }
 
+    // The shell draws its own dividers, so the tool bar separator stays down.
     m_ui->toolbarSeparator->setVisible(false);
-    m_showToolbarSeparator = true;
+    m_showToolbarSeparator = false;
 
     m_ui->actionEntryAutoType->setVisible(autoType()->isAvailable());
     m_ui->actionAllowScreenCapture->setVisible(osUtils->canPreventScreenCapture());
@@ -656,8 +706,243 @@ MainWindow::MainWindow()
     m_statusBarLabel->setObjectName("statusBarLabel");
     statusBar()->addPermanentWidget(m_statusBarLabel);
 
+    // ------------------------------------------------------------------
+    // The Material shell takes over the window interior.
+    //
+    // The stock menu bar and tool bar are hidden rather than destroyed: every
+    // QAction wired above keeps its shortcut, its enable/disable rule and its
+    // place in the entry and group context menus. The command palette below
+    // lists all of them by name so nothing became unreachable.
+    // ------------------------------------------------------------------
+    auto* materialShell = new Material::Shell;
+
+    // The pages are moved out of their .ui layouts into the destinations. The
+    // stacked widget stays whole - its indices still drive updateMenuActionState()
+    // and updateWindowTitle() - and travels into the vault destination with the
+    // welcome screen, the database tabs and the password generator inside it.
+    m_ui->verticalLayout->removeWidget(m_ui->stackedWidget);
+    m_ui->verticalLayout_3->removeWidget(m_ui->settingsWidget);
+
+    auto* reportsScreen = new Material::ReportsScreen;
+    auto* historyScreen = new Material::HistoryScreen;
+    auto* changelogScreen = new Material::ChangelogScreen;
+
+    materialShell->addDestination(
+        QStringLiteral("vault"), m_ui->stackedWidget, QStringLiteral("key"), tr("Vault"), QString());
+    materialShell->addDestination(
+        QStringLiteral("reports"), reportsScreen, QStringLiteral("health_and_safety"), tr("Reports"), QString());
+    materialShell->addDestination(
+        QStringLiteral("history"), historyScreen, QStringLiteral("history"), tr("History"), QString());
+    materialShell->addDestination(QStringLiteral("changelog"),
+                                  changelogScreen,
+                                  QStringLiteral("article"),
+                                  tr("Changelog"),
+                                  QString::fromLatin1(KEEPASSXC_VERSION));
+    materialShell->addDestination(
+        QStringLiteral("settings"), m_ui->settingsWidget, QStringLiteral("tune"), tr("Settings"), QString());
+    m_ui->verticalLayout->addWidget(materialShell, 1);
+
+    // The three data-driven destinations. Each feed owns the reading, the
+    // filtering and the Markdown export of its own screen; the window only
+    // tells them which database is in front and acts on what they ask for.
+    auto* reportsFeed = new Material::ReportsFeed(reportsScreen, this);
+    auto* historyFeed = new Material::HistoryFeed(historyScreen, this);
+    new Material::ChangelogFeed(changelogScreen, this);
+
+    // The stock tab bar is replaced by the Material tab strip. toggleTabbar()
+    // shows it again whenever a database opens, so it is put back down here.
+    m_ui->tabWidget->tabBar()->hide();
+    connect(
+        m_ui->tabWidget, &DatabaseTabWidget::tabVisibilityChanged, this, [this] { m_ui->tabWidget->tabBar()->hide(); });
+
+    auto syncTabStrip = [this] {
+        auto* strip = shell() ? shell()->tabs() : nullptr;
+        if (!strip) {
+            return;
+        }
+        strip->clear();
+        QString currentId;
+        for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
+            auto* dbWidget = m_ui->tabWidget->databaseWidgetFromIndex(i);
+            if (!dbWidget) {
+                continue;
+            }
+            const QString id = tabIdFor(dbWidget);
+            strip->addTab(id,
+                          dbWidget->isLocked() ? QStringLiteral("lock") : QStringLiteral("database"),
+                          m_ui->tabWidget->tabName(i));
+            if (i == m_ui->tabWidget->currentIndex()) {
+                currentId = id;
+            }
+        }
+        if (!currentId.isEmpty()) {
+            strip->setCurrentTab(currentId);
+        }
+    };
+    connect(m_ui->tabWidget, &DatabaseTabWidget::currentChanged, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::tabNameChanged, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseClosed, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseLocked, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, syncTabStrip);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::tabVisibilityChanged, this, syncTabStrip);
+
+    auto* tabStrip = materialShell->tabs();
+    connect(tabStrip, &Material::TabStrip::tabSelected, this, [this](const QString& id) {
+        for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
+            if (tabIdFor(m_ui->tabWidget->databaseWidgetFromIndex(i)) == id) {
+                m_ui->tabWidget->setCurrentIndex(i);
+                if (shell()) {
+                    shell()->setCurrentDestination(QStringLiteral("vault"));
+                }
+                break;
+            }
+        }
+    });
+    connect(tabStrip, &Material::TabStrip::tabCloseRequested, this, [this](const QString& id) {
+        for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
+            if (tabIdFor(m_ui->tabWidget->databaseWidgetFromIndex(i)) == id) {
+                m_ui->tabWidget->closeDatabaseTab(i);
+                break;
+            }
+        }
+    });
+    connect(tabStrip, &Material::TabStrip::newTabRequested, m_ui->actionDatabaseOpen, &QAction::trigger);
+    connect(tabStrip, &Material::TabStrip::searchRequested, this, &MainWindow::focusSearchWidget);
+
+    auto* appBar = materialShell->appBar();
+    connect(appBar, &Material::TopAppBar::saveRequested, m_ui->actionDatabaseSave, &QAction::trigger);
+    connect(appBar, &Material::TopAppBar::generatorRequested, m_ui->actionPasswordGenerator, &QAction::trigger);
+
+    // The bolt button and Ctrl+Shift+P are what the hidden menu bar became.
+    auto* commandPalette = new Material::CommandPalette(this);
+    connect(appBar, &Material::TopAppBar::paletteRequested, commandPalette, &Material::Overlay::openOverlay);
+    new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
+
+    auto* regexBuilder = new Material::RegexBuilder(this);
+    connect(appBar, &Material::TopAppBar::regexRequested, regexBuilder, &Material::Overlay::openOverlay);
+    connect(regexBuilder, &Material::RegexBuilder::patternApplied, this, [this](const QString& pattern) {
+        if (auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget()) {
+            if (shell()) {
+                shell()->setCurrentDestination(QStringLiteral("vault"));
+            }
+            dbWidget->search(pattern);
+        }
+    });
+    connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
+        clipboard()->setText(pattern);
+    });
+
+    if (auto* notifications = Material::NotificationCentre::centreFor(this)) {
+        notifications->attachAppBar(appBar);
+    }
+    Material::Notify::setHost(this);
+
+    connect(materialShell->rail(), &Material::NavigationRail::themeToggleRequested, this, [this] {
+        const bool wasDark = theme()->isDark();
+        theme()->setMode(wasDark ? Material::Mode::Light : Material::Mode::Dark);
+        // Keep the View ▸ Theme radio group honest about what just happened.
+        (wasDark ? m_ui->actionThemeLight : m_ui->actionThemeDark)->setChecked(true);
+    });
+    connect(materialShell->rail(),
+            &Material::NavigationRail::lockRequested,
+            m_ui->actionLockAllDatabases,
+            &QAction::trigger);
+
+    // A finding names an entry by UUID; the Fix button opens it for editing.
+    connect(reportsFeed, &Material::ReportsFeed::entryEditRequested, this, [this](const QString& uuidHex) {
+        auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+        const auto db = unlockedDatabase(dbWidget);
+        if (!db) {
+            return;
+        }
+        for (Entry* entry : db->rootGroup()->entriesRecursive()) {
+            if (entry->uuidToHex() == uuidHex) {
+                if (shell()) {
+                    shell()->setCurrentDestination(QStringLiteral("vault"));
+                }
+                // Reveal it rather than opening the editor: switchToEntryEdit(Entry*) is private,
+                // and a report row saying "look at this entry" should show it in context, not
+                // drop the user straight into an edit form they did not ask for.
+                if (auto* view = dbWidget->entryView()) {
+                    view->setCurrentEntry(entry);
+                    view->setFocus();
+                }
+                break;
+            }
+        }
+    });
+
+    // Nothing the Material reports screen shows replaces the full report tabs -
+    // the HIBP check, the passkey list and the browser statistics still live
+    // there, so the header button takes the user straight to them.
+    connect(reportsFeed, &Material::ReportsFeed::detailedReportsRequested, this, [this] {
+        if (shell()) {
+            shell()->setCurrentDestination(QStringLiteral("vault"));
+        }
+        m_ui->actionReports->setChecked(true);
+    });
+
+    // Every save is a revision. The signal lives on the database widget, so it
+    // is picked up as each one appears.
+    auto watchSaves = [this](DatabaseWidget* dbWidget) {
+        if (!dbWidget) {
+            return;
+        }
+        connect(
+            dbWidget,
+            &DatabaseWidget::databaseSaved,
+            this,
+            [dbWidget] { Material::HistoryStore::instance()->recordSave(dbWidget->database()); },
+            Qt::UniqueConnection);
+    };
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, watchSaves);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, watchSaves);
+
+    auto pointFeedsAtCurrentDatabase = [this, reportsFeed, historyFeed] {
+        const auto db = unlockedDatabase(m_ui->tabWidget->currentDatabaseWidget());
+        reportsFeed->setDatabase(db);
+        historyFeed->setDatabase(db);
+    };
+
+    connect(materialShell, &Material::Shell::destinationChanged, this, [this, reportsFeed, historyFeed](const QString& id) {
+        const bool vault = (id == QLatin1String("vault"));
+        const bool settings = (id == QLatin1String("settings"));
+
+        if (m_ui->actionSettings->isChecked() != settings) {
+            m_ui->actionSettings->setChecked(settings);
+        }
+        if (!vault && m_ui->actionPasswordGenerator->isChecked()) {
+            m_ui->actionPasswordGenerator->setChecked(false);
+        }
+        if (vault && !m_ui->actionPasswordGenerator->isChecked() && !m_ui->actionSettings->isChecked()) {
+            switchToDatabases();
+        }
+
+        // The health check is the expensive part, so a destination only pays
+        // for its own data when it is the one being looked at.
+        const auto db = unlockedDatabase(m_ui->tabWidget->currentDatabaseWidget());
+        if (id == QLatin1String("reports")) {
+            reportsFeed->setDatabase(db);
+        } else if (id == QLatin1String("history")) {
+            historyFeed->setDatabase(db);
+        }
+        updateWindowTitle();
+    });
+
+    connect(m_ui->tabWidget, &DatabaseTabWidget::activeDatabaseChanged, this, [pointFeedsAtCurrentDatabase] {
+        if (shell()
+            && (shell()->currentDestination() == QLatin1String("reports")
+                || shell()->currentDestination() == QLatin1String("history"))) {
+            pointFeedsAtCurrentDatabase();
+        }
+    });
+
+    syncTabStrip();
+
     restoreConfigState();
     updateMenuActionState();
+    updateWindowTitle();
 }
 
 MainWindow::~MainWindow()
@@ -1008,6 +1293,11 @@ void MainWindow::updateMenuActionState()
 #endif
 
     m_searchWidgetAction->setEnabled(inDatabase);
+
+    // The Save pill mirrors the Save action it triggers.
+    if (auto* materialShell = shell()) {
+        materialShell->appBar()->setSaveEnabled(m_ui->actionDatabaseSave->isEnabled());
+    }
 }
 
 void MainWindow::updateToolbarSeparatorVisibility()
@@ -1058,6 +1348,45 @@ void MainWindow::updateWindowTitle()
 
     setWindowTitle(windowTitle);
     setWindowModified(isModified);
+
+    // The app bar says what the window title says, split into the name of the
+    // thing on screen and the path or context underneath it.
+    if (auto* materialShell = shell()) {
+        const QString destination = materialShell->currentDestination();
+        auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+        const QString databaseName = (tabWidgetIndex != -1)
+                                         ? m_ui->tabWidget->tabName(tabWidgetIndex).remove(QLatin1Char('*')).trimmed()
+                                         : QString();
+
+        QString barTitle;
+        QString barSubtitle;
+        if (destination == QLatin1String("settings")) {
+            barTitle = tr("Settings");
+            barSubtitle = tr("Application settings");
+        } else if (destination == QLatin1String("reports")) {
+            barTitle = tr("Reports");
+            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
+        } else if (destination == QLatin1String("history")) {
+            barTitle = tr("History");
+            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
+        } else if (destination == QLatin1String("changelog")) {
+            barTitle = tr("Changelog");
+            barSubtitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
+        } else if (stackedWidgetIndex == StackedWidgetIndex::PasswordGeneratorScreen) {
+            barTitle = tr("Password Generator");
+            barSubtitle = tr("Standalone generator");
+        } else if (dbWidget) {
+            barTitle = databaseName.isEmpty() ? BaseWindowTitle : databaseName;
+            barSubtitle = QDir::toNativeSeparators(dbWidget->database()->filePath());
+        } else {
+            barTitle = BaseWindowTitle;
+            barSubtitle = tr("No database open");
+        }
+
+        materialShell->appBar()->setTitle(barTitle);
+        materialShell->appBar()->setSubtitle(barSubtitle);
+        materialShell->appBar()->setSaveEnabled(m_ui->actionDatabaseSave->isEnabled());
+    }
 
     updateTrayIcon();
 }
@@ -1170,6 +1499,12 @@ void MainWindow::switchToDatabases()
         m_ui->stackedWidget->setCurrentIndex(DatabaseTabScreen);
         statusBar()->setAutoFillBackground(true);
     }
+
+    // Leaving the settings widget means leaving the settings destination. Any
+    // other destination was chosen deliberately and is left where it is.
+    if (shell() && shell()->currentDestination() == QLatin1String("settings")) {
+        shell()->setCurrentDestination(QStringLiteral("vault"));
+    }
 }
 
 void MainWindow::switchToSettings(bool enabled)
@@ -1178,6 +1513,9 @@ void MainWindow::switchToSettings(bool enabled)
         m_ui->settingsWidget->loadSettings();
         m_ui->stackedWidget->setCurrentIndex(SettingsScreen);
         statusBar()->setAutoFillBackground(true);
+        if (shell()) {
+            shell()->setCurrentDestination(QStringLiteral("settings"));
+        }
     } else {
         switchToDatabases();
     }
@@ -1190,6 +1528,10 @@ void MainWindow::togglePasswordGenerator(bool enabled)
         m_ui->passwordGeneratorWidget->regeneratePassword();
         m_ui->stackedWidget->setCurrentIndex(PasswordGeneratorScreen);
         statusBar()->setAutoFillBackground(false);
+        // The generator page lives inside the vault destination's stack.
+        if (shell()) {
+            shell()->setCurrentDestination(QStringLiteral("vault"));
+        }
     } else {
         m_ui->passwordGeneratorWidget->saveSettings();
         switchToDatabases();
@@ -1461,6 +1803,10 @@ bool MainWindow::focusNextPrevChild(bool next)
 void MainWindow::focusSearchWidget()
 {
     if (m_searchWidgetAction->isEnabled()) {
+        // The search field is still a tool bar widget, so the tool bar is
+        // raised for exactly as long as the search needs it and drops again on
+        // cancel or focus loss. It is the one piece of stock chrome that can
+        // still appear, and only on demand.
         m_ui->toolBar->setVisible(true);
         m_ui->toolBar->setExpanded(true);
         m_searchWidget->focusSearch();
@@ -1471,12 +1817,22 @@ void MainWindow::enableMenuAndToolbar()
 {
     m_ui->toolBar->setDisabled(false);
     m_ui->menubar->setDisabled(false);
+    if (auto* materialShell = shell()) {
+        materialShell->rail()->setDisabled(false);
+        materialShell->appBar()->setDisabled(false);
+        materialShell->tabs()->setDisabled(false);
+    }
 }
 
 void MainWindow::disableMenuAndToolbar()
 {
     m_ui->toolBar->setDisabled(true);
     m_ui->menubar->setDisabled(true);
+    if (auto* materialShell = shell()) {
+        materialShell->rail()->setDisabled(true);
+        materialShell->appBar()->setDisabled(true);
+        materialShell->tabs()->setDisabled(true);
+    }
 }
 
 void MainWindow::clearSSHAgent()
@@ -1500,6 +1856,8 @@ void MainWindow::restoreWindowInformation()
 {
     restoreGeometry(config()->get(Config::GUI_MainWindowGeometry).toByteArray());
     restoreState(config()->get(Config::GUI_MainWindowState).toByteArray());
+    // A state saved before the shell existed can bring the tool bar back up.
+    m_ui->toolBar->setHidden(true);
 }
 
 bool MainWindow::saveLastDatabases()
@@ -1597,11 +1955,18 @@ void MainWindow::updateProgressBar(int percentage, QString message)
 void MainWindow::updateEntryCountLabel()
 {
     auto dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+    QString vaultSublabel;
     if (dbWidget && dbWidget->currentMode() == DatabaseWidget::Mode::ViewMode) {
         int numEntries = dbWidget->entryView()->model()->rowCount();
         m_statusBarLabel->setText(tr("%1 Entry(s)", "", numEntries).arg(numEntries));
+        vaultSublabel = QString::number(numEntries);
     } else {
         m_statusBarLabel->setText("");
+    }
+
+    // The rail's Vault tile carries the same count under its label.
+    if (auto* materialShell = shell()) {
+        materialShell->rail()->setSublabel(QStringLiteral("vault"), vaultSublabel);
     }
 }
 
@@ -1652,25 +2017,26 @@ void MainWindow::applySettingsChanges()
         m_inactivityTimer->deactivate();
     }
 
-    auto hideToolbar = config()->get(Config::GUI_HideToolbar).toBool();
-    auto hideMenubar = config()->get(Config::GUI_HideMenubar).toBool();
-
-    m_ui->actionShowToolbar->setChecked(!hideToolbar);
-    m_ui->actionShowMenubar->setChecked(!hideMenubar);
+    // The Material shell is the chrome now, so neither the menu bar nor the
+    // tool bar is ever shown. The menu bar is squashed to zero height rather
+    // than hidden because setHidden() disables the menu keyboard shortcuts on
+    // Wayland, and those shortcuts are the whole reason the menus still exist.
+    {
+        // Syncing the two view toggles must not write the user's configuration
+        // back, nor re-enter this function.
+        const QSignalBlocker toolbarBlocker(m_ui->actionShowToolbar);
+        const QSignalBlocker menubarBlocker(m_ui->actionShowMenubar);
+        m_ui->actionShowToolbar->setChecked(false);
+        m_ui->actionShowMenubar->setChecked(false);
+    }
 
 #ifndef Q_OS_MACOS
-    // When menubar is hidden with setHidden() the menu keyboard shortcuts are disabled on Wayland,
-    // so force height of 0 instead and use maximumHeight() > 0 instead of isVisible() elsewhere
-    m_ui->menubar->setMaximumHeight(hideMenubar ? 0 : QWIDGETSIZE_MAX);
+    m_ui->menubar->setMaximumHeight(0);
 #endif
 
-    m_ui->toolBar->setHidden(config()->get(Config::GUI_HideToolbar).toBool());
-    auto movable = config()->get(Config::GUI_MovableToolbar).toBool();
-    m_ui->toolBar->setMovable(movable);
-    if (!movable) {
-        // Move the toolbar back to the top of the main window
-        addToolBar(Qt::TopToolBarArea, m_ui->toolBar);
-    }
+    m_ui->toolBar->setHidden(true);
+    m_ui->toolBar->setMovable(false);
+    addToolBar(Qt::TopToolBarArea, m_ui->toolBar);
 
     bool isOk = false;
     const auto toolButtonStyle =

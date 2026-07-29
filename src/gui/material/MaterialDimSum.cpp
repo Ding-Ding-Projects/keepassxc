@@ -298,14 +298,18 @@ namespace Material
 
     bool DimSum::shouldShow()
     {
-        if (!canShow()) {
-            return false;
-        }
-        // One draw per launch, remembered, so that asking twice can never make
-        // the surprise more likely than the one percent it advertises.
+        // One decision per launch, remembered, so that asking twice can never make the surprise
+        // more likely than the one percent it advertises.
+        //
+        // The whole decision latches, not just the random draw. canShow() asks the shell for the
+        // user's notification state, which is an out-of-process call costing on the order of a
+        // hundred milliseconds, and stats the config file. Running that ahead of the cache made
+        // every caller pay for it: a test asking 20,000 times took 42 minutes. It is a startup
+        // decision, so evaluating the environment once at the moment of the draw is also the
+        // behaviour the one-per-launch rule actually describes.
         if (!s_drawn) {
             s_drawn = true;
-            s_draw = QRandomGenerator::system()->bounded(OddsDenominator) == 0;
+            s_draw = canShow() && QRandomGenerator::system()->bounded(OddsDenominator) == 0;
         }
         return s_draw;
     }

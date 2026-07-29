@@ -26,6 +26,7 @@
 #include <QString>
 #include <QWidget>
 
+class QLabel;
 class QStackedWidget;
 class QVBoxLayout;
 
@@ -33,6 +34,7 @@ namespace Material
 {
     class ButtonBase;
     class Card;
+    class SearchBar;
 
     /**
      * One 56px spec sheet row: a leading glyph, the label over its sub line,
@@ -109,21 +111,45 @@ namespace Material
         /** The row with @p key, or nullptr. Use it to update a pill in place. */
         SpecSheetRow* row(const QString& key) const;
 
+        /** Every row on this page, in the order they were added. */
+        QList<SpecSheetRow*> rows() const;
+
         /** The card for @p title, or nullptr when no row has created it yet. */
         Card* sectionCard(const QString& title) const;
 
+        /** The search bar this surface carries; never null. */
+        SearchBar* searchBar() const;
+
+        QString searchText() const;
+        /** Drive the search field from outside, e.g. to mirror a sibling page. */
+        void setSearchText(const QString& text);
+
+        /** Rows whose haystack contains @p needle, which must be lower-cased. */
+        int matchCount(const QString& needle) const;
+
+        /** The line under the page note reporting matches on the other pages. */
+        void setCrossPageNotice(const QString& text);
+
     signals:
         void rowActivated(const QString& rowKey);
+        void searchTextChanged(const QString& text);
+        /** The search bar's builder button was pressed. */
+        void builderRequested();
 
     private:
         Card* ensureSection(const QString& title);
+        void applyFilter(const QString& text);
 
         QString m_id;
         QString m_title;
         QWidget* m_content = nullptr;
         QVBoxLayout* m_contentLayout = nullptr;
+        SearchBar* m_search = nullptr;
+        QLabel* m_noteLabel = nullptr;
+        QLabel* m_crossNoteLabel = nullptr;
         QHash<QString, Card*> m_sections;
         QHash<QString, SpecSheetRow*> m_rows;
+        QList<SpecSheetRow*> m_rowOrder;
     };
 
     /**
@@ -143,6 +169,19 @@ namespace Material
         SpecSheetPage* addPage(const QString& id, const QString& symbol, const QString& title);
         SpecSheetPage* page(const QString& id) const;
 
+        /**
+         * Append a page backed by an arbitrary widget rather than by spec sheet
+         * rows, so a hand-built surface can share the same 266px sidebar. The
+         * widget is reparented into the page stack.
+         */
+        void addWidgetPage(const QString& id, const QString& symbol, const QString& title, QWidget* page);
+
+        /** The widget behind @p id, whether a spec sheet page or a plain one. */
+        QWidget* pageWidget(const QString& id) const;
+
+        /** An overline that groups every sidebar row added after it. */
+        void addSidebarSection(const QString& title);
+
         /** Add a row to @p pageId, which must already exist. */
         void addRow(const QString& pageId,
                     const QString& section,
@@ -158,17 +197,26 @@ namespace Material
     signals:
         void rowActivated(const QString& pageId, const QString& rowKey);
         void currentPageChanged(const QString& pageId);
+        /** A page's search bar asked for the regex builder. */
+        void builderRequested(const QString& pageId);
 
     private:
         void applyTheme();
+        /** Mirror @p text onto every other page and refresh the cross-page notices. */
+        void syncSearch(const QString& sourceId, const QString& text);
+        void registerPage(const QString& id, const QString& symbol, const QString& title, QWidget* widget);
 
         QWidget* m_sidebar = nullptr;
         QVBoxLayout* m_sidebarLayout = nullptr;
         QStackedWidget* m_stack = nullptr;
         QHash<QString, SpecSheetPage*> m_pages;
+        QHash<QString, QWidget*> m_pageWidgets;
         QHash<QString, ButtonBase*> m_pageButtons;
         QList<QString> m_pageOrder;
+        QList<QLabel*> m_sidebarSections;
         QString m_currentPage;
+        /** Set while a search is being mirrored, to stop the pages echoing. */
+        bool m_mirroring = false;
     };
 
 } // namespace Material

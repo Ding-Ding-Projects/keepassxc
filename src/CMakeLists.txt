@@ -100,8 +100,10 @@ set(gui_SOURCES
         gui/styles/StateColorPalette.cpp
         gui/material/MaterialButtons.cpp
         gui/material/MaterialCard.cpp
+        gui/material/MaterialChangelogFeed.cpp
         gui/material/MaterialChangelogScreen.cpp
         gui/material/MaterialChip.cpp
+        gui/material/MaterialCommandPalette.cpp
         gui/material/MaterialDialog.cpp
         gui/material/MaterialDimSum.cpp
         gui/material/MaterialElevation.cpp
@@ -109,18 +111,23 @@ set(gui_SOURCES
         gui/material/MaterialEntryDetail.cpp
         gui/material/MaterialGeneratorSheet.cpp
         gui/material/MaterialGroupDelegate.cpp
+        gui/material/MaterialHistoryFeed.cpp
         gui/material/MaterialHistoryScreen.cpp
+        gui/material/MaterialHistoryStore.cpp
         gui/material/MaterialIcons.cpp
         gui/material/MaterialNavigationRail.cpp
         gui/material/MaterialNotificationCentre.cpp
         gui/material/MaterialNotifier.cpp
         gui/material/MaterialOverlay.cpp
         gui/material/MaterialRegexBuilder.cpp
+        gui/material/MaterialReportsFeed.cpp
         gui/material/MaterialReportsScreen.cpp
         gui/material/MaterialScreen.cpp
         gui/material/MaterialSearchBar.cpp
         gui/material/MaterialSegmentedButton.cpp
+        gui/material/MaterialSettingsHub.cpp
         gui/material/MaterialSettingsScreen.cpp
+        gui/material/MaterialShell.cpp
         gui/material/MaterialSnackbar.cpp
         gui/material/MaterialSpecSheet.cpp
         gui/material/MaterialStyle.cpp
@@ -238,6 +245,7 @@ set(gui_SOURCES
         gui/wizard/NewDatabaseWizardPageEncryption.cpp
         gui/wizard/NewDatabaseWizardPageDatabaseKey.cpp
         quickunlock/QuickUnlockInterface.cpp
+        ../share/changelog/changelog.qrc
         ../share/dimsum/dimsum.qrc
         ../share/icons/icons.qrc
         ../share/icons/material/material_icons.qrc
