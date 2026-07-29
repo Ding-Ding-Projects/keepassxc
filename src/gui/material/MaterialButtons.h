@@ -84,6 +84,9 @@ namespace Material
 
         bool isHovered() const;
 
+        /** Pins the minimum width to what the label needs, so no action can elide. */
+        void enforceLabelWidth();
+
     private:
         QString m_symbol;
         int m_radius = Shape::Full;

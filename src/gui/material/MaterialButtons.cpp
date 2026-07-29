@@ -66,11 +66,25 @@ namespace Material
         setCursor(Qt::PointingHandCursor);
         setFocusPolicy(Qt::StrongFocus);
         setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+        enforceLabelWidth();
 
         connect(theme(), &Theme::changed, this, [this] {
+            enforceLabelWidth();
             updateGeometry();
             update();
         });
+    }
+
+    /**
+     * Pins the widget's minimum width to the width its label actually needs.
+     *
+     * A size hint is only a request: a layout that has already sized a row, or one working to a
+     * fixed-width sheet, will hand back less and the label silently elides. An action the user
+     * cannot read is a broken action, so the minimum is made explicit rather than advisory.
+     */
+    void ButtonBase::enforceLabelWidth()
+    {
+        setMinimumWidth(sizeHint().width());
     }
 
     ButtonBase::~ButtonBase() = default;
@@ -230,13 +244,11 @@ namespace Material
 
     QSize ButtonBase::minimumSizeHint() const
     {
-        const QFontMetrics metrics(theme()->font(TypeRole::LabelLarge));
-        const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
-        const int label = text().isEmpty() ? 0 : metrics.horizontalAdvance(QStringLiteral("..."));
-        const int gap = (glyph > 0 && label > 0) ? ContentGap : 0;
-        const int height = qMax(Layout::ButtonHeight, metrics.height() + 12);
-        const int width = 2 * horizontalPadding() + glyph + gap + label;
-        return {qMax(width, height), height};
+        // Deliberately the full label, not an ellipsis width. Allowing a layout to squeeze a
+        // button until paintEvent elides it turns "Keep it professional" into
+        // "Keep it profession..." and leaves the user guessing what the button does. A crowded
+        // row should make its dialog wider; it should never make an action unreadable.
+        return sizeHint();
     }
 
     void ButtonBase::paintEvent(QPaintEvent* event)
@@ -252,7 +264,16 @@ namespace Material
         const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
         const int gap = (glyph > 0 && !text().isEmpty()) ? ContentGap : 0;
         const int available = qMax(0, width() - 2 * horizontalPadding() - glyph - gap);
-        const QString label = text().isEmpty() ? QString() : metrics.elidedText(text(), Qt::ElideRight, available);
+        // Only elide when the text genuinely does not fit. sizeHint() makes `available` exactly
+        // the text width, and asking elidedText() to fit a string into precisely its own advance
+        // costs it the last word to rounding - which is how "Keep it professional" arrives on
+        // screen as "Keep it profession...".
+        QString label;
+        if (!text().isEmpty()) {
+            label = metrics.horizontalAdvance(text()) <= available
+                        ? text()
+                        : metrics.elidedText(text(), Qt::ElideRight, available);
+        }
         const int labelWidth = label.isEmpty() ? 0 : metrics.horizontalAdvance(label);
 
         // The glyph is tinted opaque and dimmed with the painter instead, so a
@@ -303,6 +324,8 @@ namespace Material
             update();
             break;
         case QEvent::FontChange:
+        case QEvent::StyleChange:
+            enforceLabelWidth();
             updateGeometry();
             update();
             break;

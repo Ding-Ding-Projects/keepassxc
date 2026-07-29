@@ -444,14 +444,37 @@ QToolButton:disabled {
     color: %disabledText%;
 }
 
-/* MenuButtonPopup keeps room for the arrow; the arrow sub-control stays
-   undeclared so the style keeps drawing the glyph. */
+/* MenuButtonPopup keeps room for the arrow. Declaring a sub-control makes Qt stop
+   drawing it natively and paint whatever the rule says instead - so the fill, the
+   border and the glyph all have to be spelled out here. Leaving them out is what
+   turns these buttons into solid black rectangles. */
 QToolButton[popupMode="1"] {
     padding-right: 20px;
 }
 
 QToolButton::menu-button {
     width: 16px;
+    background-color: transparent;
+    border: none;
+    border-radius: 0;
+}
+
+QToolButton::menu-button:hover,
+QToolButton::menu-button:pressed {
+    background-color: transparent;
+}
+
+QToolButton::menu-arrow,
+QToolButton::menu-indicator {
+    image: url(:/material/expand_more.svg);
+    width: 12px;
+    height: 12px;
+    subcontrol-origin: padding;
+    subcontrol-position: center center;
+}
+
+QToolButton::menu-arrow:open {
+    image: url(:/material/expand_less.svg);
 }
 )CSS");
         }
