@@ -59,7 +59,7 @@ Kill any running `KeePassXC.exe` / `test*.exe` first or the link fails with `LNK
 | Notifications | Snackbars + notification centre |
 | Dim sum | 1% at startup, disable-able |
 | Docs | README, wiki (4 pages), Pages site at https://ding-ding-projects.github.io/keepassxc/ |
-| CI | `.github/workflows/material-release.yml` — untested, Actions never run |
+| CI | `.github/workflows/material-release.yml` — **works**: builds Windows + Linux, runs 45 tests, gates the release. Currently **red for a real reason**, see below |
 
 ---
 
@@ -102,7 +102,36 @@ existing Reports action still opens the real health check.
 | — | `MaterialCard` unusable from `.ui` | Its constructor creates its own `QVBoxLayout`, so `uic`'s `new QVBoxLayout(card)` is rejected and children end up unparented. Make `m_rootLayout` lazy and every group box can be promoted mechanically. |
 | — | 8 checkboxes left as `QCheckBox` | `tests/gui/TestGui.cpp` does `findChild<QCheckBox*>` on them; `Material::Switch` derives from `QAbstractButton`. Converting needs a two-line test change. `WITH_GUI_TESTS` is OFF so this is latent. |
 
-### 4. Test status
+### 4. CI status — the workflow works, the code does not
+
+`Material CI and Release` runs on every push. Both platforms configure, build and test; the release
+job is correctly gated behind them. The workflow itself needs no fixing — it is doing its job by
+staying red.
+
+| Job | Result |
+| --- | --- |
+| Test (Windows x64) | ✅ passes (~44 min) |
+| Test (Linux x86_64) | ❌ fails at Test |
+| Release | correctly skipped while tests fail |
+
+Linux, run [30473945861](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/30473945861):
+**43 of 45 pass**, two fail:
+
+- **`testdimsum` — `Received signal 11 (SIGSEGV), code 1, for address 0xe0` in
+  `testFiresOnlyOncePerLaunch`.** A genuine null dereference in our own code, crashing 0.22 s in,
+  right after `DimSum::showNow()` puts a `DimSumCard` on screen. The same test hangs for **2539 s**
+  on Windows. Not root-caused. Suspects, in order: the `m_animation` `finished` lambda captures
+  `m_holdTimer` and is connected *before* `m_holdTimer` is assigned
+  (`MaterialDimSum.cpp` ~419 vs ~428) — benign only as long as the animation never completes
+  synchronously; `renderDish()` touching `QGuiApplication::primaryScreen()`; and `funnyCaption()`
+  reaching into `Material::Voice` before its catalogue exists under a bare `QTest` harness.
+  **Do not "fix" this by disabling the test** — it is reporting a real crash in a shipped code path.
+- `testcli` — also fails on Linux (8 s). Not investigated; passes standalone on Windows at 83/0.
+
+Useful cross-platform datum: **`testmerge` passes on Linux** (0.23 s). The two `testmerge`
+failures are Windows-only, which is worth knowing before anyone chases them as logic bugs.
+
+### 5. Test status (local, Windows)
 
 **41 of 43 pass.** Qt must be on `PATH` (`C:\Qt\6.8.3\msvc2022_64\bin`) or tests pop modal dialogs.
 
