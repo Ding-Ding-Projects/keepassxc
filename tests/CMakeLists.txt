@@ -31,6 +31,21 @@ function(add_unit_test)
     target_link_libraries(${TEST_NAME} ${TEST_LIBS})
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_LAUNCHER} ${TEST_NAME})
     set_tests_properties(${TEST_NAME} PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8")
+    if(WIN32)
+        # vcpkg's applocal deployment copies the vcpkg DLLs next to the test
+        # executables and nothing else, so Qt6Cored.dll and friends are only
+        # found if the developer happens to have Qt on PATH. When they are not
+        # found, the Windows loader raises a *system-modal* error dialog with
+        # nobody in front of it, and the test does not fail - it hangs until
+        # ctest's timeout. Put Qt's bin directory on PATH for the test process
+        # rather than copying 40-odd megabytes of DLLs next to every target.
+        #
+        # ENVIRONMENT_MODIFICATION needs CMake 3.22. On anything older ctest
+        # ignores the property and you are back to needing Qt on PATH yourself -
+        # no worse than before, but no better either.
+        set_tests_properties(${TEST_NAME} PROPERTIES
+                ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${QT_BIN_DIR}")
+    endif()
 endfunction()
 
 set(TEST_LIBRARIES keepassxc_gui Qt6::Test)

@@ -440,6 +440,9 @@ elseif(WIN32)
         message(FATAL_ERROR "windeployqt is required to build on Windows")
     endif()
     message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+    # Where Qt's own runtime DLLs live. The test targets put this on PATH so a
+    # ctest run does not depend on the developer having Qt on PATH already.
+    get_filename_component(QT_BIN_DIR "${WINDEPLOYQT_EXE}" DIRECTORY)
 endif()
 
 # Find Botan

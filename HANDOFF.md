@@ -1,6 +1,7 @@
 # Handoff — Material Design 3 interface rewrite
 
 Branch `material-ui-rewrite`, pushed to `origin`.
+**Builds green — 535/535 targets, 0 errors. Tests: 42 of 43 pass, the one failure pre-existing.**
 
 Tracked in [issue #1](https://github.com/Ding-Ding-Projects/keepassxc/issues/1),
 progress thread [discussion #2](https://github.com/Ding-Ding-Projects/keepassxc/discussions/2).
@@ -114,8 +115,8 @@ existing Reports action still opens the real health check.
 
 | # | Defect | Notes |
 | --- | --- | --- |
-| 21 | `testdimsum` fails, runs **2539s** | Four separate causes, all now addressed — **verify before closing**. (1) `DimSum::shouldShow()` called `canShow()→isQuiet()` on every invocation, an out-of-process `SHQueryUserNotificationState` round trip, 20 000 times; the whole decision is latched now. (2) The `m_animation` `finished` lambda was connected *before* `m_holdTimer` existed — this is the Linux `SIGSEGV ... address 0xe0`; the timer is now built first. (3) `dismiss()` called `m_animation->stop()` while the animation sat exactly on its end value, which re-emits `finished()` and re-enters the handler that deletes the card; wrapped in a `QSignalBlocker`. (4) All five test functions shared process-wide latch state, so each read the previous one's leftovers; `DimSum::resetLaunchState()` now runs in `init()`. |
-| 20 | `build/tests` missing Qt DLLs | `Qt6Testd.dll`, `Qt6Concurrentd.dll`. Any test run without Qt on `PATH` pops a **system-modal** error dialog that steals focus. Patched locally with `windeployqt`; needs a CMake post-build deploy step for the test targets. |
+| ~~21~~ | `testdimsum` fails, ran **2539 s** | **Fixed — now passes in 0.37–1.92 s.** Five causes. In `278f7bb4`: (1) `shouldShow()` called `canShow()→isQuiet()` every time, an out-of-process `SHQueryUserNotificationState` round trip, 20 000 times — the whole decision is latched now; (2) the `m_animation` `finished` lambda was connected *before* `m_holdTimer` existed, which is the Linux `SIGSEGV ... address 0xe0` — the timer is built first now; (3) `dismiss()` called `m_animation->stop()` while the animation sat exactly on its end value, and Qt re-emits `finished()` in that case, re-entering the handler that deletes the card — wrapped in a `QSignalBlocker`; (4) all five test functions shared process-wide latch state, so each read the previous one's leftovers — `DimSum::resetLaunchState()` runs in `init()`. In `c5ca89e6` (`tests/CMakeLists.txt`): (5) the test sets `QT_QPA_PLATFORM=offscreen`, but vcpkg's applocal deployment puts only `platforms/qwindows.dll` next to the exe, so a locally-deployed Qt could not load the offscreen plugin, `qFatal()`'d, and sat in a modal box until ctest's timeout. A `POST_BUILD` step now copies `Qt6::QOffscreenIntegrationPlugin` into `platforms/`. **Caveat on the timing above: it was measured with `C:\Qt\6.8.3\msvc2022_64\bin` on `PATH`, so Qt resolved the plugin from its own install and cause (5) was never exercised. The `POST_BUILD` step is verified to generate, not to be load-bearing.** |
+| ~~20~~ | `build/tests` missing Qt DLLs | **Fixed.** vcpkg's applocal deployment copies the vcpkg DLLs and nothing else, so `Qt6Cored.dll` and friends were only found if the developer had Qt on `PATH`; when they were not, the Windows loader raised a **system-modal** dialog and the test *hung* rather than failed. `add_unit_test()` now sets `ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${QT_BIN_DIR}"` on every test, `QT_BIN_DIR` being derived from the already-required `windeployqt`. Verified by running ctest in a shell with no Qt on `PATH` at all: 4/4 pass. Needs CMake 3.22; older ctest ignores the property and you are back to the old behaviour. |
 | — | Rail footer clipped | With the pre-release banner on a 900px window, the theme toggle and lock are pushed below the fold. `MaterialNavigationRail.cpp` lays the footer out at a fixed offset and does not compress. |
 | — | `MaterialCard` unusable from `.ui` | Its constructor creates its own `QVBoxLayout`, so `uic`'s `new QVBoxLayout(card)` is rejected and children end up unparented. Make `m_rootLayout` lazy and every group box can be promoted mechanically. |
 | — | 8 checkboxes left as `QCheckBox` | `tests/gui/TestGui.cpp` does `findChild<QCheckBox*>` on them; `Material::Switch` derives from `QAbstractButton`. Converting needs a two-line test change. `WITH_GUI_TESTS` is OFF so this is latent. |
@@ -140,14 +141,20 @@ knowing before anyone chases them as logic bugs.
 
 ### 5. Test status (local, Windows)
 
-**41 of 43 pass.** Qt must be on `PATH` (`C:\Qt\6.8.3\msvc2022_64\bin`) or tests pop modal dialogs.
+**42 of 43 pass**, in a clean build tree configured from scratch after the Linux removal, run
+serially. Total 348 s. Qt no longer has to be on `PATH` — see defect 20.
+
+The one failure:
 
 - `testmerge` — `testResolveConflictEntry_Synchronize` / `_KeepNewer`. **Pre-existing**, proven by
-  building clean `develop` in a worktree and reproducing identically. Not a regression.
-- `testdimsum` — ours, see above.
-- `testcli` — flakes under parallel `ctest` (clipboard timing), passes standalone at 83/0.
+  building clean `develop` in a worktree and reproducing identically. Not a regression, and it
+  passed on Linux before that job was removed, so it is a Windows-specific problem in upstream
+  code rather than a logic bug.
 
-`testpasskeys`: **35 passed, 0 failed.**
+Previously-failing, now passing: `testdimsum` (0.37 s, was 2539 s), `testcli` (97 s — it flakes
+only under parallel `ctest`, from clipboard timing).
+
+`testpasskeys`: **35 passed, 0 failed** — the save path is intact after the Linux removal.
 
 ---
 
