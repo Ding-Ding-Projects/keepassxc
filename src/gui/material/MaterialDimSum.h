@@ -85,6 +85,18 @@ namespace Material
          */
         static void suppress();
 
+        /**
+         * Forget everything this launch has decided: the latched draw, whether
+         * the card has already been shown, whether one is pending and whether
+         * anything suppressed it.
+         *
+         * The application never calls this - "once per launch" is the whole
+         * contract. It exists for the tests, which run every rule inside one
+         * process and would otherwise be reading the previous test function's
+         * leftovers instead of the rule they mean to exercise.
+         */
+        static void resetLaunchState();
+
     private:
         DimSum() = delete;
     };

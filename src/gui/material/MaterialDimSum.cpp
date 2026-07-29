@@ -40,6 +40,7 @@
 #include <QPropertyAnimation>
 #include <QRandomGenerator>
 #include <QScreen>
+#include <QSignalBlocker>
 #include <QSvgRenderer>
 #include <QTimer>
 #include <QVBoxLayout>
@@ -355,6 +356,15 @@ namespace Material
         s_suppressed = true;
     }
 
+    void DimSum::resetLaunchState()
+    {
+        s_shown = false;
+        s_suppressed = false;
+        s_pending = false;
+        s_drawn = false;
+        s_draw = false;
+    }
+
     // ---------------------------------------------------------------- DimSumCard
 
     DimSumCard::DimSumCard(const DimSum::Dish& dish, QWidget* parent)
@@ -416,6 +426,15 @@ namespace Material
         m_card->setAccessibleName(tr("Dim sum: %1").arg(m_dish.displayName()));
         m_card->setAccessibleDescription(m_captionLabel->text());
 
+        // The hold timer is built first, and deliberately so: the animation's
+        // `finished` handler arms it, so connecting that handler while
+        // m_holdTimer is still null leaves a window in which a finished
+        // animation dereferences a null timer.
+        m_holdTimer = new QTimer(this);
+        m_holdTimer->setSingleShot(true);
+        m_holdTimer->setInterval(Hold);
+        connect(m_holdTimer, &QTimer::timeout, this, &DimSumCard::dismiss);
+
         m_animation = new QPropertyAnimation(this, "transition", this);
         connect(m_animation, &QPropertyAnimation::finished, this, [this] {
             if (m_dismissing) {
@@ -424,11 +443,6 @@ namespace Material
                 m_holdTimer->start();
             }
         });
-
-        m_holdTimer = new QTimer(this);
-        m_holdTimer->setSingleShot(true);
-        m_holdTimer->setInterval(Hold);
-        connect(m_holdTimer, &QTimer::timeout, this, &DimSumCard::dismiss);
 
         auto* fade = new QGraphicsOpacityEffect(this);
         fade->setOpacity(0.0);
@@ -442,7 +456,17 @@ namespace Material
         applyTheme();
     }
 
-    DimSumCard::~DimSumCard() = default;
+    DimSumCard::~DimSumCard()
+    {
+        // The card is normally deleted by deleteLater() six seconds in, while
+        // the window whose resizes it watches carries on for the rest of the
+        // session. Take the filter back out rather than leave the host holding a
+        // reference to an object that no longer exists. m_host is a QPointer, so
+        // it is already null in the other case, where the window went first.
+        if (m_host) {
+            m_host->removeEventFilter(this);
+        }
+    }
 
     qreal DimSumCard::transition() const
     {
@@ -491,7 +515,17 @@ namespace Material
         }
         m_dismissing = true;
         m_holdTimer->stop();
-        m_animation->stop();
+
+        // QAbstractAnimation::stop() re-emits finished() when the animation is
+        // already sitting exactly on its end value, which is precisely the state
+        // the card is in when the hold expires. That would re-enter the handler
+        // above with m_dismissing already set and delete the card out from under
+        // the fade this function is about to start. Silence the animation while
+        // it is being wound back.
+        {
+            const QSignalBlocker blocker(m_animation);
+            m_animation->stop();
+        }
 
         if (m_reducedMotion) {
             hide();

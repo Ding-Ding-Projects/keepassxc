@@ -49,6 +49,15 @@ void TestDimSum::initTestCase()
 
 void TestDimSum::init()
 {
+    // Every rule under test latches for the launch: the draw, the card that was
+    // shown, the pending timer, the suppression. All five test functions run in
+    // one process, so without this each of them would be reading whatever the
+    // previous one left behind instead of the rule it means to exercise -
+    // testFiresOnlyOncePerLaunch in particular used to pass on a draw that
+    // testDisabledSuppressesAbsolutely had already latched to false.
+    DimSum::resetLaunchState();
+    QVERIFY(!DimSum::hasShown());
+
     config()->set(Config::GUI_DimSumSurprise, true);
 
     m_window.reset(new QWidget);
@@ -116,7 +125,11 @@ void TestDimSum::testDisabledSuppressesAbsolutely()
 {
     config()->set(Config::GUI_DimSumSurprise, false);
 
-    // Far more launches than the one percent needs to show itself.
+    // Far more launches than the one percent needs to show itself. This loop is
+    // also the regression guard for the cost of shouldShow(): it used to consult
+    // the shell's notification state on every call, an out-of-process round trip
+    // that turned these 20,000 iterations into 42 minutes on Windows. The whole
+    // decision latches now, so all but the first are a bool read.
     for (int i = 0; i < 20000; ++i) {
         QVERIFY(!DimSum::shouldShow());
     }
@@ -144,6 +157,9 @@ void TestDimSum::testFiresOnlyOncePerLaunch()
     QVERIFY(DimSum::hasShown());
     QCOMPARE(m_window->findChildren<DimSumCard*>().size(), 1);
 
+    // init() cleared the launch state, so the card above is this launch's one
+    // surprise and every refusal below is the once-per-launch rule refusing,
+    // not a stale latch left over from an earlier test function.
     for (int i = 0; i < 200; ++i) {
         QVERIFY(!DimSum::shouldShow());
         QVERIFY(!DimSum::showNow(m_window.data()));
