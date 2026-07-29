@@ -97,12 +97,36 @@ set(core_SOURCES
         streams/SymmetricCipherStream.cpp)
 
 set(gui_SOURCES
-        gui/styles/styles.qrc
         gui/styles/StateColorPalette.cpp
-        gui/styles/base/phantomcolor.cpp
-        gui/styles/base/BaseStyle.cpp
-        gui/styles/dark/DarkStyle.cpp
-        gui/styles/light/LightStyle.cpp
+        gui/material/MaterialButtons.cpp
+        gui/material/MaterialCard.cpp
+        gui/material/MaterialChangelogScreen.cpp
+        gui/material/MaterialChip.cpp
+        gui/material/MaterialDialog.cpp
+        gui/material/MaterialElevation.cpp
+        gui/material/MaterialEntryDelegate.cpp
+        gui/material/MaterialEntryDetail.cpp
+        gui/material/MaterialGeneratorSheet.cpp
+        gui/material/MaterialGroupDelegate.cpp
+        gui/material/MaterialHistoryScreen.cpp
+        gui/material/MaterialIcons.cpp
+        gui/material/MaterialNavigationRail.cpp
+        gui/material/MaterialOverlay.cpp
+        gui/material/MaterialRegexBuilder.cpp
+        gui/material/MaterialReportsScreen.cpp
+        gui/material/MaterialScreen.cpp
+        gui/material/MaterialSearchBar.cpp
+        gui/material/MaterialSegmentedButton.cpp
+        gui/material/MaterialSettingsScreen.cpp
+        gui/material/MaterialSnackbar.cpp
+        gui/material/MaterialSpecSheet.cpp
+        gui/material/MaterialStyle.cpp
+        gui/material/MaterialStyleSheet.cpp
+        gui/material/MaterialSwitch.cpp
+        gui/material/MaterialTabStrip.cpp
+        gui/material/MaterialTheme.cpp
+        gui/material/MaterialTopAppBar.cpp
+        gui/material/MaterialVaultSidebar.cpp
         gui/AboutDialog.cpp
         gui/ActionCollection.cpp
         gui/Application.cpp
@@ -211,6 +235,7 @@ set(gui_SOURCES
         gui/wizard/NewDatabaseWizardPageDatabaseKey.cpp
         quickunlock/QuickUnlockInterface.cpp
         ../share/icons/icons.qrc
+        ../share/icons/material/material_icons.qrc
         ../share/wizard/wizard.qrc)
 
 if(APPLE)
@@ -302,6 +327,7 @@ if(KPXC_FEATURE_BROWSER)
             gui/reports/ReportsPagePasskeys.cpp
             gui/reports/ReportsWidgetBrowserStatistics.cpp
             gui/reports/ReportsWidgetPasskeys.cpp
+            gui/passkeys/PasskeyClipboardImportDialog.cpp
             gui/passkeys/PasskeyExporter.cpp
             gui/passkeys/PasskeyExportDialog.cpp
             gui/passkeys/PasskeyImporter.cpp

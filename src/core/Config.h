@@ -102,6 +102,8 @@ public:
         GUI_ColorPasswords,
         GUI_MonospaceNotes,
         GUI_ApplicationTheme,
+        GUI_MaterialSeed,
+        GUI_MaterialDensity,
         GUI_CompactMode,
         GUI_CheckForUpdates,
         GUI_CheckForUpdatesIncludeBetas,
@@ -165,6 +167,7 @@ public:
         Browser_CustomBrowserType,
         Browser_CustomBrowserLocation,
         Browser_AllowLocalhostWithPasskeys,
+        Browser_AutoInstallExtension,
 #ifdef QT_DEBUG
         Browser_CustomExtensionId,
 #endif

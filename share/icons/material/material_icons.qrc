@@ -1,0 +1,29 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/material">
+        <file>bolt.svg</file>
+        <file>calendar_month.svg</file>
+        <file>check.svg</file>
+        <file>chevron_right.svg</file>
+        <file>credit_card.svg</file>
+        <file>dark_mode.svg</file>
+        <file>description.svg</file>
+        <file>expand_less.svg</file>
+        <file>expand_more.svg</file>
+        <file>extension.svg</file>
+        <file>filter_list.svg</file>
+        <file>folder.svg</file>
+        <file>group.svg</file>
+        <file>light_mode.svg</file>
+        <file>looks_one.svg</file>
+        <file>mail.svg</file>
+        <file>minimize.svg</file>
+        <file>more_horiz.svg</file>
+        <file>more_vert.svg</file>
+        <file>notifications.svg</file>
+        <file>person.svg</file>
+        <file>regular_expression.svg</file>
+        <file>search_off.svg</file>
+        <file>star.svg</file>
+    </qresource>
+</RCC>

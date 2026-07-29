@@ -264,7 +264,7 @@ MainWindow::MainWindow()
     }
 
     m_ui->toolbarSeparator->setVisible(false);
-    m_showToolbarSeparator = config()->get(Config::GUI_ApplicationTheme).toString() != "classic";
+    m_showToolbarSeparator = true;
 
     m_ui->actionEntryAutoType->setVisible(autoType()->isAvailable());
     m_ui->actionAllowScreenCapture->setVisible(osUtils->canPreventScreenCapture());
@@ -1958,29 +1958,23 @@ void MainWindow::initViewMenu()
     m_ui->actionThemeAuto->setData("auto");
     m_ui->actionThemeLight->setData("light");
     m_ui->actionThemeDark->setData("dark");
-    m_ui->actionThemeClassic->setData("classic");
 
     auto themeActions = new QActionGroup(this);
     themeActions->addAction(m_ui->actionThemeAuto);
     themeActions->addAction(m_ui->actionThemeLight);
     themeActions->addAction(m_ui->actionThemeDark);
-    themeActions->addAction(m_ui->actionThemeClassic);
 
-    auto theme = config()->get(Config::GUI_ApplicationTheme).toString();
+    auto appTheme = config()->get(Config::GUI_ApplicationTheme).toString();
     for (auto action : themeActions->actions()) {
-        if (action->data() == theme) {
+        if (action->data() == appTheme) {
             action->setChecked(true);
             break;
         }
     }
 
-    connect(themeActions, &QActionGroup::triggered, this, [this, theme](QAction* action) {
+    connect(themeActions, &QActionGroup::triggered, this, [](QAction* action) {
         config()->set(Config::GUI_ApplicationTheme, action->data());
-        if ((action->data() == "classic" || theme == "classic") && action->data() != theme) {
-            restartApp(tr("You must restart the application to apply this setting. Would you like to restart now?"));
-        } else {
-            kpxcApp->applyTheme();
-        }
+        kpxcApp->applyTheme();
     });
 
     bool compact = config()->get(Config::GUI_CompactMode).toBool();
@@ -2111,7 +2105,6 @@ void MainWindow::initActionCollection()
                     m_ui->actionThemeAuto,
                     m_ui->actionThemeLight,
                     m_ui->actionThemeDark,
-                    m_ui->actionThemeClassic,
                     m_ui->actionCompactMode,
 #ifndef Q_OS_MACOS
                     m_ui->actionShowMenubar,

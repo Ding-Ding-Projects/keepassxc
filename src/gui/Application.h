@@ -78,8 +78,13 @@ private:
     static void handleUnixSignal(int sig);
     static int unixSignalSocket[2];
 #endif
+    // Re-apply the palette and stylesheet without rebuilding the style.
+    void applyThemeColors();
+
     bool m_alreadyRunning;
     bool m_darkTheme = false;
+    // Set while applyTheme() runs so the theme's changed() signal does not repeat its work.
+    bool m_applyingTheme = false;
     QLockFile* m_lockFile;
     QLocalServer m_lockServer;
     QString m_socketName;
