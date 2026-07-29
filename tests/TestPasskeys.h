@@ -45,6 +45,8 @@ private slots:
     void testSetFlags();
 
     void testEntry();
+    void testPasskeyAttributesAreStoredAndProtected();
+    void testPasskeySurvivesDatabaseRoundTrip();
     void testIsDomain();
     void testRegistrableDomainSuffix();
     void testRpIdValidation();

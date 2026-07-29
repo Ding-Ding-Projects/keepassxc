@@ -23,9 +23,15 @@
 #include "browser/PasskeyUtils.h"
 #include "core/Database.h"
 #include "core/Entry.h"
+#include "core/EntryAttributes.h"
 #include "core/Group.h"
+#include "core/Metadata.h"
 #include "crypto/Crypto.h"
+#include "format/KeePass2Reader.h"
+#include "format/KeePass2Writer.h"
+#include "keys/PasswordKey.h"
 
+#include <QBuffer>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTest>
@@ -539,6 +545,104 @@ void TestPasskeys::testEntry()
                                         QString("privateKey"));
 
     QVERIFY(entry->hasPasskey());
+}
+
+/**
+ * Saving a passkey must write every attribute the authenticator needs, and must
+ * mark the three secret ones protected. An unprotected private key would sit in
+ * the KDBX in plaintext and defeat the point of storing it here at all.
+ */
+void TestPasskeys::testPasskeyAttributesAreStoredAndProtected()
+{
+    Database db;
+    auto* entry = new Entry();
+    entry->setGroup(db.rootGroup());
+
+    browserService()->addPasskeyToEntry(entry,
+                                        QStringLiteral("example.com"),
+                                        QStringLiteral("Example"),
+                                        QStringLiteral("username"),
+                                        QStringLiteral("credentialId"),
+                                        QStringLiteral("userHandle"),
+                                        QStringLiteral("privateKeyPem"));
+
+    const auto* attributes = entry->attributes();
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USERNAME), QStringLiteral("username"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID), QStringLiteral("credentialId"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM), QStringLiteral("privateKeyPem"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY), QStringLiteral("example.com"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USER_HANDLE), QStringLiteral("userHandle"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_FLAG_BE), QStringLiteral("1"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_FLAG_BS), QStringLiteral("1"));
+
+    // The credential id, private key and user handle identify or authenticate the
+    // user, so they must never be written unprotected.
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_USER_HANDLE));
+
+    QVERIFY(entry->tagList().contains(QStringLiteral("Passkey")));
+}
+
+/**
+ * The registration flow is only useful if the credential is still there after the
+ * database has been written and reopened. Round-trip a registered passkey through
+ * a real KDBX write and read.
+ */
+void TestPasskeys::testPasskeySurvivesDatabaseRoundTrip()
+{
+    auto sourceDb = QSharedPointer<Database>::create();
+    auto key = QSharedPointer<CompositeKey>::create();
+    key->addKey(QSharedPointer<PasswordKey>::create("passkey-round-trip"));
+    sourceDb->setKey(key);
+
+    browserService()->addPasskeyToGroup(sourceDb,
+                                        sourceDb->rootGroup(),
+                                        QStringLiteral("https://example.com"),
+                                        QStringLiteral("example.com"),
+                                        QStringLiteral("Example"),
+                                        QStringLiteral("username"),
+                                        QStringLiteral("credentialId"),
+                                        QStringLiteral("userHandle"),
+                                        QStringLiteral("privateKeyPem"));
+
+    const auto sourceEntries = sourceDb->rootGroup()->entries();
+    QCOMPARE(sourceEntries.count(), 1);
+    QVERIFY(sourceEntries.first()->hasPasskey());
+
+    QBuffer buffer;
+    QVERIFY(buffer.open(QIODevice::ReadWrite));
+
+    KeePass2Writer writer;
+    writer.writeDatabase(&buffer, sourceDb.data());
+    if (writer.hasError()) {
+        QFAIL(qPrintable(QStringLiteral("Error while writing database: %1").arg(writer.errorString())));
+    }
+
+    buffer.seek(0);
+    KeePass2Reader reader;
+    auto targetDb = QSharedPointer<Database>::create();
+    reader.readDatabase(&buffer, key, targetDb.data());
+    if (reader.hasError()) {
+        QFAIL(qPrintable(QStringLiteral("Error while reading database: %1").arg(reader.errorString())));
+    }
+
+    const auto targetEntries = targetDb->rootGroup()->entries();
+    QCOMPARE(targetEntries.count(), 1);
+
+    auto* restored = targetEntries.first();
+    QVERIFY(restored->hasPasskey());
+
+    const auto* attributes = restored->attributes();
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM), QStringLiteral("privateKeyPem"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID), QStringLiteral("credentialId"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USER_HANDLE), QStringLiteral("userHandle"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY), QStringLiteral("example.com"));
+
+    // Protection must survive the round trip, not just the initial write.
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_USER_HANDLE));
 }
 
 void TestPasskeys::testIsDomain()
