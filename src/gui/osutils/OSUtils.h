@@ -28,11 +28,6 @@
 #include "macutils/MacUtils.h"
 #define osUtils static_cast<OSUtilsBase*>(macUtils())
 
-#elif defined(Q_OS_UNIX)
-
-#include "nixutils/NixUtils.h"
-#define osUtils static_cast<OSUtilsBase*>(nixUtils())
-
 #endif
 
 #endif // KEEPASSXC_OSUTILS_H

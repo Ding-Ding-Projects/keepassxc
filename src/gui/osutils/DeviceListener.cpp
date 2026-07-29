@@ -21,10 +21,6 @@
 DeviceListener::DeviceListener(QWidget* parent)
     : QWidget(parent)
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-    m_listeners[0] = new DEVICELISTENER_IMPL(this);
-    connectSignals(m_listeners[0]);
-#endif
 }
 
 DeviceListener::~DeviceListener()
@@ -42,37 +38,25 @@ void DeviceListener::connectSignals(DEVICELISTENER_IMPL* listener)
 DeviceListener::Handle
 DeviceListener::registerHotplugCallback(bool arrived, bool left, int vendorId, int productId, const QUuid* deviceClass)
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-    const Handle handle = m_listeners[0]->registerHotplugCallback(arrived, left, vendorId, productId, deviceClass);
-#else
     auto* listener = new DEVICELISTENER_IMPL(this);
     const auto handle = reinterpret_cast<Handle>(listener);
     m_listeners[handle] = listener;
     m_listeners[handle]->registerHotplugCallback(arrived, left, vendorId, productId, deviceClass);
     connectSignals(m_listeners[handle]);
-#endif
     return handle;
 }
 
 void DeviceListener::deregisterHotplugCallback(Handle handle)
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-    m_listeners[0]->deregisterHotplugCallback(handle);
-#else
     if (m_listeners.contains(handle)) {
         m_listeners[handle]->deregisterHotplugCallback();
         m_listeners.remove(handle);
     }
-#endif
 }
 
 void DeviceListener::deregisterAllHotplugCallbacks()
 {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-    m_listeners[0]->deregisterAllHotplugCallbacks();
-#else
     while (!m_listeners.isEmpty()) {
         deregisterHotplugCallback(m_listeners.constBegin().key());
     }
-#endif
 }

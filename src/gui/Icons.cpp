@@ -53,11 +53,7 @@ Icons::Icons() = default;
 
 QString Icons::applicationIconName()
 {
-#ifdef KEEPASSXC_DIST_FLATPAK
-    return "org.keepassxc.KeePassXC";
-#else
     return "keepassxc";
-#endif
 }
 
 QIcon Icons::applicationIcon()
@@ -164,17 +160,6 @@ QIconEngine* AdaptiveIconEngine::clone() const
 
 QIcon Icons::icon(const QString& name, bool recolor, const QColor& overrideColor)
 {
-#ifdef Q_OS_LINUX
-    // Resetting the application theme name before calling QIcon::fromTheme() is required for hacky
-    // QPA platform themes such as qt5ct, which randomly mess with the configured icon theme.
-    // If we do not reset the theme name here, it will become empty at some point, causing
-    // Qt to look for icons at the user-level and global default locations.
-    //
-    // See issue #4963: https://github.com/keepassxreboot/keepassxc/issues/4963
-    // and qt5ct issue #80: https://sourceforge.net/p/qt5ct/tickets/80/
-    QIcon::setThemeName("application");
-#endif
-
     QString cacheName =
         QString("%1:%2:%3").arg(recolor ? "1" : "0", overrideColor.isValid() ? overrideColor.name() : "#", name);
     QIcon icon = m_iconCache.value(cacheName);

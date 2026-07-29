@@ -1,10 +1,28 @@
 # Handoff — Material Design 3 interface rewrite
 
-Branch `material-ui-rewrite`, last commit `e56a29e1`, pushed to `origin`.
-Working tree clean. **Builds green: 0 compile errors, 0 link errors.**
+Branch `material-ui-rewrite`, pushed to `origin`.
 
 Tracked in [issue #1](https://github.com/Ding-Ding-Projects/keepassxc/issues/1),
 progress thread [discussion #2](https://github.com/Ding-Ding-Projects/keepassxc/discussions/2).
+
+## This fork is Windows only
+
+Linux is not supported and the code that supported it is gone, not disabled:
+
+| Removed | What it was |
+| --- | --- |
+| `src/fdosecrets/` | freedesktop.org Secret Service server (376 K) |
+| `src/gui/osutils/nixutils/` | `NixUtils`, XDG portals, D-Bus screen lock, libusb listener (160 K) |
+| `src/autotype/xcb/`, `src/autotype/wayland/` | X11 and portal auto-type backends |
+| `src/quickunlock/Polkit*`, `src/quickunlock/dbus/` | PolKit quick unlock |
+| `src/gui/org.keepassxc.KeePassXC.MainWindow.xml` | the D-Bus adaptor interface |
+| `snap/`, `share/linux/` | Snapcraft, AppImage runner, `.desktop`, polkit policy, appstream |
+| Snap / Flatpak / AppImage code paths | `KEEPASSXC_DIST_*` and every branch behind it |
+| `WITH_X11`, `KPXC_FEATURE_FDOSECRETS`, `Qt6::DBus`, libusb, keyutils | build options and link dependencies |
+| `release-tool.py` `build_linux` / `_build_linux_appimage` / appstream check | Linux release plumbing |
+| The Linux CI job | only Windows gates the release now |
+
+macOS sources are still in the tree but are neither built nor tested here.
 
 ---
 
@@ -96,40 +114,29 @@ existing Reports action still opens the real health check.
 
 | # | Defect | Notes |
 | --- | --- | --- |
-| 21 | `testdimsum` fails, runs **2539s** | `DimSum::shouldShow()` ran `canShow()` before its cache; `canShow()→isQuiet()` makes an out-of-process `SHQueryUserNotificationState` call. Latched the whole decision — **but that is not confirmed as the whole cause**, since `canShow()` short-circuits on `GUI_DimSumSurprise` so the disabled-path test was already cheap. Run `testdimsum -o report,txt` alone to see which case actually fails. Tests also share process-wide latch state with no reset hook — add `DimSum::resetLaunchState()`. |
+| 21 | `testdimsum` fails, runs **2539s** | Four separate causes, all now addressed — **verify before closing**. (1) `DimSum::shouldShow()` called `canShow()→isQuiet()` on every invocation, an out-of-process `SHQueryUserNotificationState` round trip, 20 000 times; the whole decision is latched now. (2) The `m_animation` `finished` lambda was connected *before* `m_holdTimer` existed — this is the Linux `SIGSEGV ... address 0xe0`; the timer is now built first. (3) `dismiss()` called `m_animation->stop()` while the animation sat exactly on its end value, which re-emits `finished()` and re-enters the handler that deletes the card; wrapped in a `QSignalBlocker`. (4) All five test functions shared process-wide latch state, so each read the previous one's leftovers; `DimSum::resetLaunchState()` now runs in `init()`. |
 | 20 | `build/tests` missing Qt DLLs | `Qt6Testd.dll`, `Qt6Concurrentd.dll`. Any test run without Qt on `PATH` pops a **system-modal** error dialog that steals focus. Patched locally with `windeployqt`; needs a CMake post-build deploy step for the test targets. |
 | — | Rail footer clipped | With the pre-release banner on a 900px window, the theme toggle and lock are pushed below the fold. `MaterialNavigationRail.cpp` lays the footer out at a fixed offset and does not compress. |
 | — | `MaterialCard` unusable from `.ui` | Its constructor creates its own `QVBoxLayout`, so `uic`'s `new QVBoxLayout(card)` is rejected and children end up unparented. Make `m_rootLayout` lazy and every group box can be promoted mechanically. |
 | — | 8 checkboxes left as `QCheckBox` | `tests/gui/TestGui.cpp` does `findChild<QCheckBox*>` on them; `Material::Switch` derives from `QAbstractButton`. Converting needs a two-line test change. `WITH_GUI_TESTS` is OFF so this is latent. |
 
-### 4. CI status — the workflow works, the code does not
+### 4. CI status
 
-`Material CI and Release` runs on every push. Both platforms configure, build and test; the release
-job is correctly gated behind them. The workflow itself needs no fixing — it is doing its job by
-staying red.
+`Material CI and Release` runs on every push. There is one test job — **Test (Windows x64)** — and
+the release job is gated behind it with an explicit `success()`, so a failed or cancelled test job
+cannot produce a release. The release job itself runs on an Ubuntu runner, but only to download the
+Windows artifact and call the GitHub API; nothing Linux is built.
 
-| Job | Result |
-| --- | --- |
-| Test (Windows x64) | ✅ passes (~44 min) |
-| Test (Linux x86_64) | ❌ fails at Test |
-| Release | correctly skipped while tests fail |
+The Linux test job is **gone**, not skipped. Its two failures went with it:
 
-Linux, run [30473945861](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/30473945861):
-**43 of 45 pass**, two fail:
+- `testdimsum` segfaulted on Linux (`SIGSEGV ... for address 0xe0` in `testFiresOnlyOncePerLaunch`).
+  The null dereference it was reporting was real and has since been fixed in shared code — see the
+  defect table above — so removing the job did not bury it.
+- `testcli` also failed on Linux. Never investigated; passes standalone on Windows at 83/0.
 
-- **`testdimsum` — `Received signal 11 (SIGSEGV), code 1, for address 0xe0` in
-  `testFiresOnlyOncePerLaunch`.** A genuine null dereference in our own code, crashing 0.22 s in,
-  right after `DimSum::showNow()` puts a `DimSumCard` on screen. The same test hangs for **2539 s**
-  on Windows. Not root-caused. Suspects, in order: the `m_animation` `finished` lambda captures
-  `m_holdTimer` and is connected *before* `m_holdTimer` is assigned
-  (`MaterialDimSum.cpp` ~419 vs ~428) — benign only as long as the animation never completes
-  synchronously; `renderDish()` touching `QGuiApplication::primaryScreen()`; and `funnyCaption()`
-  reaching into `Material::Voice` before its catalogue exists under a bare `QTest` harness.
-  **Do not "fix" this by disabling the test** — it is reporting a real crash in a shipped code path.
-- `testcli` — also fails on Linux (8 s). Not investigated; passes standalone on Windows at 83/0.
-
-Useful cross-platform datum: **`testmerge` passes on Linux** (0.23 s). The two `testmerge`
-failures are Windows-only, which is worth knowing before anyone chases them as logic bugs.
+One cross-platform datum worth keeping now that it can no longer be re-measured: **`testmerge`
+passed on Linux** (0.23 s). The two `testmerge` failures below are Windows-only, which is worth
+knowing before anyone chases them as logic bugs.
 
 ### 5. Test status (local, Windows)
 

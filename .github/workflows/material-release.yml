@@ -15,9 +15,11 @@
 
 # Material fork CI and release pipeline.
 #
-# Build and test on Windows and Linux, then publish exactly one non-draft, non-prerelease
-# GitHub Release per run carrying the artifacts those builds actually produced. A failing
-# test job skips the release job, so a red run never publishes anything.
+# This fork is Windows-only: the Material interface targets Windows and nothing else, so
+# there is exactly one build-and-test job. It builds and tests on Windows, then publishes
+# exactly one non-draft, non-prerelease GitHub Release per run carrying the package that
+# build actually produced. A failing test job skips the release job, so a red run never
+# publishes anything.
 
 name: Material CI and Release
 
@@ -50,6 +52,7 @@ env:
 jobs:
   # =================================================================================
   # Windows: MSVC + Ninja, native dependencies from vcpkg (as documented in README.md).
+  # The only build in this workflow; the fork does not support any other platform.
   # =================================================================================
   test-windows:
     name: Test (Windows x64)
@@ -69,7 +72,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up CMake and Ninja
         uses: lukka/get-cmake@latest
@@ -114,7 +117,7 @@ jobs:
 
       - name: Restore the vcpkg cache
         id: vcpkg_cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           # The vcpkg checkout itself plus the binary cache of already-compiled ports.
           path: |
@@ -224,7 +227,7 @@ jobs:
             -DestinationPath '${{ github.workspace }}\artifacts\KeePassXC-Material-windows-x64.zip'
 
       - name: Upload the Windows package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: package-windows-x64
           path: artifacts/KeePassXC-Material-windows-x64.zip
@@ -232,87 +235,12 @@ jobs:
           retention-days: 7
 
   # =================================================================================
-  # Linux: GCC + Ninja. Native dependencies come from the distribution rather than from
-  # vcpkg, because two libraries CMakeLists.txt requires on Linux -- pcsclite and
-  # keyutils -- are not declared in vcpkg.json at all, and compiling the whole X11 stack
-  # from source on every runner costs far more than it buys.
-  # =================================================================================
-  test-linux:
-    name: Test (Linux x86_64)
-    runs-on: ubuntu-24.04
-    timeout-minutes: 120
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Install build dependencies
-        run: |
-          set -euo pipefail
-          sudo apt-get update
-          sudo apt-get install --no-install-recommends -y \
-            build-essential pkg-config locales xvfb \
-            libbotan-2-dev libminizip-dev libqrencode-dev zlib1g-dev libreadline-dev \
-            libpcsclite-dev libusb-1.0-0-dev libkeyutils-dev \
-            libx11-dev libxi-dev libxtst-dev libxkbcommon-dev libxkbcommon-x11-dev \
-            libgl1-mesa-dev libglu1-mesa-dev libegl-dev libdbus-1-dev \
-            libxcb1 libxcb-cursor0 libxcb-icccm4 libxcb-image0 libxcb-keysyms1 \
-            libxcb-randr0 libxcb-render-util0 libxcb-shape0 libxcb-sync1 \
-            libxcb-xfixes0 libxcb-xinerama0 libxcb-xkb1 libxcb-util1
-          # Several unit tests are registered with ENVIRONMENT "LANG=en_US.UTF-8".
-          sudo locale-gen en_US.UTF-8
-
-      - name: Set up CMake and Ninja
-        uses: lukka/get-cmake@latest
-
-      - name: Set up Qt ${{ env.QT_VERSION }}
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ env.QT_VERSION }}
-          host: linux
-          target: desktop
-          arch: linux_gcc_64
-          cache: true
-
-      - name: Configure
-        run: |
-          cmake -B build -S . -G Ninja \
-            ${{ env.CMAKE_COMMON_OPTIONS }} \
-            -DCMAKE_INSTALL_PREFIX=/usr \
-            -DCMAKE_PREFIX_PATH="$QT_ROOT_DIR"
-
-      - name: Build
-        run: cmake --build build --parallel
-
-      - name: Test
-        run: |
-          # TestCli and TestKdbx4 use QTEST_MAIN, which constructs a QApplication and so
-          # needs a display. Run the whole suite under a virtual X server.
-          xvfb-run -a ctest --test-dir build --output-on-failure --no-tests=error --timeout 900
-
-      - name: Package
-        run: |
-          set -euo pipefail
-          mkdir -p "$GITHUB_WORKSPACE/artifacts"
-          cmake --install build --prefix "$GITHUB_WORKSPACE/stage/usr"
-          tar -czf "$GITHUB_WORKSPACE/artifacts/KeePassXC-Material-linux-x86_64.tar.gz" \
-            -C "$GITHUB_WORKSPACE/stage" usr
-
-      - name: Upload the Linux package
-        uses: actions/upload-artifact@v4
-        with:
-          name: package-linux-x86_64
-          path: artifacts/KeePassXC-Material-linux-x86_64.tar.gz
-          if-no-files-found: error
-          retention-days: 7
-
-  # =================================================================================
-  # Release. Runs only when both test jobs succeeded, and only for the default branch or
-  # a manual dispatch. Publishes the artifacts the test jobs genuinely built.
+  # Release. Runs only when the Windows job succeeded, and only for the default branch
+  # or a manual dispatch. Publishes the package that job genuinely built.
   # =================================================================================
   release:
     name: Release
-    needs: [test-windows, test-linux]
+    needs: [test-windows]
     # success() is explicit rather than implied: a failed or cancelled test job must not
     # produce a release under any circumstances.
     if: >-
@@ -330,21 +258,19 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
-      - name: Download the built packages
-        uses: actions/download-artifact@v4
+      - name: Download the built package
+        uses: actions/download-artifact@v8
         with:
+          name: package-windows-x64
           path: artifacts
-          pattern: package-*
-          merge-multiple: true
 
-      - name: Verify that both packages are present
+      - name: Verify that the package is present
         run: |
           set -euo pipefail
           ls -l artifacts
           test -s artifacts/KeePassXC-Material-windows-x64.zip
-          test -s artifacts/KeePassXC-Material-linux-x86_64.tar.gz
 
       - name: Compose the release notes
         env:
@@ -358,12 +284,13 @@ jobs:
           {
             echo "Automated build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`."
             echo
+            echo "This fork is Windows-only."
+            echo
             echo "| Platform | Artifact | Notes |"
             echo "| --- | --- | --- |"
             echo "| Windows x64 | \`KeePassXC-Material-windows-x64.zip\` | Self-contained; the Qt runtime is deployed by windeployqt. |"
-            echo "| Linux x86_64 | \`KeePassXC-Material-linux-x86_64.tar.gz\` | Unpack over a prefix; needs a Qt ${QT_VERSION} runtime on the host. |"
             echo
-            echo "Configured with \`-DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON\`; the full ctest suite passed on both platforms."
+            echo "Configured with \`-DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
             echo
             echo "Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } > release-notes.md
@@ -382,6 +309,5 @@ jobs:
             --notes-file release-notes.md \
             --draft=false \
             --prerelease=false \
-            artifacts/KeePassXC-Material-windows-x64.zip \
-            artifacts/KeePassXC-Material-linux-x86_64.tar.gz
+            artifacts/KeePassXC-Material-windows-x64.zip
           echo "Published **${RELEASE_TAG}** for \`${GITHUB_SHA}\`." >> "$GITHUB_STEP_SUMMARY"

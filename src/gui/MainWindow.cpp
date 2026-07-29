@@ -88,16 +88,8 @@
 #include "sshagent/SSHAgent.h"
 #endif
 
-#ifdef KPXC_FEATURE_FDOSECRETS
-#include "fdosecrets/FdoSecretsPlugin.h"
-#endif
-
 #ifdef KPXC_FEATURE_BROWSER
 #include "browser/BrowserService.h"
-#endif
-
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS) && !defined(QT_NO_DBUS)
-#include "mainwindowadaptor.h"
 #endif
 
 const QString MainWindow::BaseWindowTitle = "KeePassXC";
@@ -141,13 +133,6 @@ MainWindow::MainWindow()
 
 #ifdef Q_OS_MACOS
     macUtils()->configureWindowAndHelpMenus(this, m_ui->menuHelp);
-#endif
-
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS) && !defined(QT_NO_DBUS)
-    new MainWindowAdaptor(this);
-    QDBusConnection dbus = QDBusConnection::sessionBus();
-    dbus.registerObject("/keepassxc", this);
-    dbus.registerService("org.keepassxc.KeePassXC.MainWindow");
 #endif
 
     setAcceptDrops(true);
@@ -274,15 +259,6 @@ MainWindow::MainWindow()
             SIGNAL(sharingMessage(QString, MessageWidget::MessageType)),
             SLOT(displayGlobalMessage(QString, MessageWidget::MessageType)));
 
-#ifdef KPXC_FEATURE_FDOSECRETS
-    auto fdoSS = new FdoSecretsPlugin(m_ui->tabWidget);
-    connect(fdoSS, &FdoSecretsPlugin::error, this, &MainWindow::showErrorMessage);
-    connect(fdoSS, &FdoSecretsPlugin::requestSwitchToDatabases, this, &MainWindow::switchToDatabases);
-    connect(fdoSS, &FdoSecretsPlugin::requestShowNotification, this, &MainWindow::displayDesktopNotification);
-    fdoSS->updateServiceState();
-    m_ui->settingsWidget->addSettingsPage(fdoSS);
-#endif
-
     connect(YubiKey::instance(), SIGNAL(userInteractionRequest()), SLOT(showYubiKeyPopup()), Qt::QueuedConnection);
     connect(YubiKey::instance(), SIGNAL(challengeCompleted()), SLOT(hideYubiKeyPopup()), Qt::QueuedConnection);
 
@@ -347,12 +323,8 @@ MainWindow::MainWindow()
     new QShortcut(dbTabModifier2 | Qt::SHIFT | Qt::Key_Tab, this, SLOT(selectPreviousDatabaseTab()));
     new QShortcut(Qt::CTRL | Qt::Key_PageUp, this, SLOT(selectPreviousDatabaseTab()));
 
-    // Tab selection by number, Windows uses Ctrl, macOS uses Command,
-    // and Linux uses Alt to emulate a browser-like experience
+    // Tab selection by number: Windows uses Ctrl, macOS uses Command
     auto dbTabModifier = Qt::CTRL;
-#ifdef Q_OS_LINUX
-    dbTabModifier = Qt::ALT;
-#endif
     auto shortcut = new QShortcut(dbTabModifier | Qt::Key_1, this);
     connect(shortcut, &QShortcut::activated, [this]() { selectDatabaseTab(0); });
     shortcut = new QShortcut(dbTabModifier | Qt::Key_2, this);
@@ -1453,11 +1425,7 @@ void MainWindow::showUpdateCheckDialog()
 
 void MainWindow::customOpenUrl(QString url)
 {
-#ifdef KEEPASSXC_DIST_APPIMAGE
-    QProcess::execute("xdg-open", {url});
-#else
     QDesktopServices::openUrl(QUrl(url));
-#endif
 }
 
 void MainWindow::openDonateUrl()

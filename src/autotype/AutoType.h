@@ -56,7 +56,6 @@ public:
     {
         return m_platform && m_platform->hasWindowAccess();
     }
-    bool usesDesktopPortal() const;
 
     static AutoType* instance();
     static void createTestInstance();

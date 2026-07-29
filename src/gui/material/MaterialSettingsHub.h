@@ -120,7 +120,6 @@ namespace Material
         void buildSecurityPage();
         void buildBrowserPage();
         void buildSshAgentPage();
-        void buildSecretServicePage();
         void buildKeeSharePage();
         void buildPasskeysPage();
 

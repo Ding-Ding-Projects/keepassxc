@@ -127,10 +127,6 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget* parent)
     m_ui->messageWidget->setWordWrap(true);
     m_ui->messageWidget->setAutoHideTimeout(MessageWidget::DisableAutoHide);
 
-#ifndef Q_OS_LINUX
-    m_ui->snapWarningLabel->setVisible(false);
-#endif
-
 #ifdef Q_OS_WIN
     // Brave uses Chrome's registry settings
     m_ui->braveSupport->setHidden(true);
@@ -190,32 +186,6 @@ void BrowserSettingsWidget::loadSettings()
     m_ui->vivaldiSupport->setChecked(settings->browserSupport(BrowserShared::VIVALDI));
     m_ui->torBrowserSupport->setChecked(settings->browserSupport(BrowserShared::TOR_BROWSER));
 #endif
-#ifndef Q_OS_LINUX
-    m_ui->snapWarningLabel->setVisible(false);
-#endif
-
-#ifdef KEEPASSXC_DIST_SNAP
-    // Disable settings that will not work
-    m_ui->useCustomProxy->setChecked(false);
-    m_ui->useCustomProxyRowContainer->setVisible(false);
-    m_ui->customProxyLocation->setVisible(false);
-    m_ui->customProxyLocationBrowseButton->setVisible(false);
-    m_ui->updateBinaryPath->setChecked(false);
-    m_ui->updateBinaryPathRowContainer->setVisible(false);
-    // No custom browser for snaps
-    m_ui->customBrowserSupportRowContainer->setVisible(false);
-    m_ui->customBrowserGroupBox->setVisible(false);
-#endif
-#ifdef KEEPASSXC_DIST_FLATPAK
-    // The sandbox makes custom proxy locations very unintuitive
-    m_ui->useCustomProxy->setChecked(false);
-    m_ui->useCustomProxy->setEnabled(false);
-    m_ui->useCustomProxyRowContainer->setVisible(false);
-    m_ui->customProxyLocation->setVisible(false);
-    // Won't work with xdg portals and executables that must be browser accessible
-    m_ui->customProxyLocationBrowseButton->setVisible(false);
-#endif
-
     const auto customBrowserSet = settings->customBrowserSupport();
     m_ui->customBrowserSupport->setChecked(customBrowserSet);
     m_ui->customBrowserGroupBox->setEnabled(customBrowserSet);
@@ -246,7 +216,6 @@ QString BrowserSettingsWidget::resolveCustomProxyLocation()
 
 void BrowserSettingsWidget::validateProxyLocation()
 {
-#if !defined(KEEPASSXC_DIST_SNAP) && !defined(KEEPASSXC_DIST_FLATPAK)
     // Reset the UI
     m_ui->messageWidget->setVisible(false);
     Material::setSeverity(m_ui->customProxyLocation, Material::Severity::None);
@@ -275,7 +244,6 @@ void BrowserSettingsWidget::validateProxyLocation()
             }
         }
     }
-#endif
 }
 
 void BrowserSettingsWidget::saveSettings()

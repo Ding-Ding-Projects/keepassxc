@@ -83,11 +83,6 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::AutoTypeHideExpiredEntry,{QS("AutoTypeHideExpiredEntry"), Roaming, false}},
     {Config::AutoTypeDialogSortColumn,{QS("AutoTypeDialogSortColumn"), Roaming, 0}},
     {Config::AutoTypeDialogSortOrder,{QS("AutoTypeDialogSortOrder"), Roaming, Qt::AscendingOrder}},
-    {Config::AutoTypeDesktopPortalPersistConnection,{QS("AutoTypeDesktopPortalPersistConnection"), Roaming, false}},
-    {Config::AutoTypeDesktopPortalUseClipboard,{QS("AutoTypeDesktopPortalUseClipboard"), Roaming, false}},
-    {Config::AutoTypeDesktopPortalPersistMode,{QS("AutoTypeDesktopPortalPersistMode"), Roaming, 1}},
-    {Config::AutoTypeDesktopPortalRestoreToken,{QS("AutoTypeDesktopPortalRestoreToken"), Local, ""}},
-    {Config::AutoTypePreferDesktopPortals,{QS("AutoTypePreferDesktopPortals"), Roaming, false}},
     {Config::GlobalAutoTypeKey,{QS("GlobalAutoTypeKey"), Roaming, 0}},
     {Config::GlobalAutoTypeModifiers,{QS("GlobalAutoTypeModifiers"), Roaming, 0}},
     {Config::GlobalAutoTypeRetypeTime,{QS("GlobalAutoTypeRetypeTime"), Roaming, 15}},
@@ -135,7 +130,6 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_ShowExpiredEntriesOnDatabaseUnlock, {QS("GUI/ShowExpiredEntriesOnDatabaseUnlock"), Roaming, true}},
     {Config::GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays, {QS("GUI/ShowExpiredEntriesOnDatabaseUnlockOffsetDays"), Roaming, 3}},
     {Config::GUI_FontSizeOffset, {QS("GUI/FontSizeOffset"), Local, 0}},
-    {Config::GUI_XDPGlobalShortcutsConfigured, {QS("GUI/XDPGlobalShortcutsConfigured"), Local, false}},
     {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},
     {Config::GUI_VoiceLanguage, {QS("GUI/VoiceLanguage"), Roaming, QS("English")}},
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},
@@ -208,13 +202,6 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::SSHAgent_UsePageant, {QS("SSHAgent/UsePageant"), Roaming, true} },
     {Config::SSHAgent_AuthSockOverride, {QS("SSHAgent/AuthSockOverride"), Local, {}}},
     {Config::SSHAgent_SecurityKeyProviderOverride, {QS("SSHAgent/SecurityKeyProviderOverride"), Local, {}}},
-
-    // FdoSecrets
-    {Config::FdoSecrets_Enabled, {QS("FdoSecrets/Enabled"), Roaming, false}},
-    {Config::FdoSecrets_ShowNotification, {QS("FdoSecrets/ShowNotification"), Roaming, true}},
-    {Config::FdoSecrets_ConfirmDeleteItem, {QS("FdoSecrets/ConfirmDeleteItem"), Roaming, true}},
-    {Config::FdoSecrets_ConfirmAccessItem, {QS("FdoSecrets/ConfirmAccessItem"), Roaming, true}},
-    {Config::FdoSecrets_UnlockBeforeSearch, {QS("FdoSecrets/UnlockBeforeSearch"), Roaming, true}},
 
     // KeeShare
     {Config::KeeShare_QuietSuccess, {QS("KeeShare/QuietSuccess"), Roaming, false}},

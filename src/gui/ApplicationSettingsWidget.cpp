@@ -87,19 +87,10 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
     addSettingsPage(new BrowserSettingsPage());
 #endif
 
-    const bool showDesktopPortalsPreference =
-#if defined(WITH_X11) && defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-        !nixUtils()->isWayland();
-#else
-        false;
-#endif
-    m_generalUi->autoTypePreferDesktopPortalsCheckBoxRowContainer->setVisible(showDesktopPortalsPreference);
-
     if (!autoType()->isAvailable()) {
         m_generalUi->generalSettingsTabWidget->removeTab(1);
     } else {
         const auto hasWindowAccess = autoType()->hasWindowAccess();
-        const auto usesDesktopPortal = autoType()->usesDesktopPortal();
         if (hasWindowAccess) {
             m_generalUi->autoTypeEntryTitleMatchCheckBoxRowContainer->setVisible(true);
             m_generalUi->autoTypeEntryURLMatchCheckBoxRowContainer->setVisible(true);
@@ -110,12 +101,6 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
             m_generalUi->autoTypeAskCheckBox->setChecked(true);
             m_generalUi->autoTypeAskCheckBox->setDisabled(true);
         }
-
-        m_generalUi->autoTypeDesktopPortalPersistConnectionCheckBoxRowContainer->setVisible(usesDesktopPortal);
-        m_generalUi->autoTypeDesktopPortalUseClipboardCheckBoxRowContainer->setVisible(usesDesktopPortal
-                                                                           && osUtils->isClipboardAvailable());
-        m_generalUi->autoTypeDesktopPortalPersistModeLabel->setVisible(usesDesktopPortal);
-        m_generalUi->autoTypeDesktopPortalPersistModeComboBox->setVisible(usesDesktopPortal);
 
         if (osUtils->externalGlobalShortcutsConfigurator()) {
             m_generalUi->autoTypeShortcutWidget->setVisible(false);
@@ -275,14 +260,6 @@ void ApplicationSettingsWidget::loadSettings()
     m_generalUi->autoTypeEntryTitleMatchCheckBox->setChecked(config()->get(Config::AutoTypeEntryTitleMatch).toBool());
     m_generalUi->autoTypeEntryURLMatchCheckBox->setChecked(config()->get(Config::AutoTypeEntryURLMatch).toBool());
     m_generalUi->autoTypeHideExpiredEntryCheckBox->setChecked(config()->get(Config::AutoTypeHideExpiredEntry).toBool());
-    m_generalUi->autoTypePreferDesktopPortalsCheckBox->setChecked(
-        config()->get(Config::AutoTypePreferDesktopPortals).toBool());
-    m_generalUi->autoTypeDesktopPortalPersistConnectionCheckBox->setChecked(
-        config()->get(Config::AutoTypeDesktopPortalPersistConnection).toBool());
-    m_generalUi->autoTypeDesktopPortalUseClipboardCheckBox->setChecked(
-        config()->get(Config::AutoTypeDesktopPortalUseClipboard).toBool());
-    m_generalUi->autoTypeDesktopPortalPersistModeComboBox->setCurrentIndex(
-        config()->get(Config::AutoTypeDesktopPortalPersistMode).toUInt());
     m_generalUi->faviconTimeoutSpinBox->setValue(config()->get(Config::FaviconDownloadTimeout).toInt());
     m_generalUi->ConfirmMoveEntryToRecycleBinCheckBox->setChecked(
         !config()->get(Config::Security_NoConfirmMoveEntryToRecycleBin).toBool());
@@ -460,20 +437,6 @@ void ApplicationSettingsWidget::saveSettings()
     config()->set(Config::AutoTypeEntryTitleMatch, m_generalUi->autoTypeEntryTitleMatchCheckBox->isChecked());
     config()->set(Config::AutoTypeEntryURLMatch, m_generalUi->autoTypeEntryURLMatchCheckBox->isChecked());
     config()->set(Config::AutoTypeHideExpiredEntry, m_generalUi->autoTypeHideExpiredEntryCheckBox->isChecked());
-    const auto preferDesktopPortals = m_generalUi->autoTypePreferDesktopPortalsCheckBox->isChecked();
-    const auto preferDesktopPortalsChanged =
-        config()->get(Config::AutoTypePreferDesktopPortals).toBool() != preferDesktopPortals;
-    if (preferDesktopPortalsChanged) {
-        getMainWindow()->displayGlobalMessage(
-            tr("Restart KeePassXC to apply the Auto-Type desktop portals preference."), MessageWidget::Information);
-    }
-    config()->set(Config::AutoTypePreferDesktopPortals, preferDesktopPortals);
-    config()->set(Config::AutoTypeDesktopPortalPersistConnection,
-                  m_generalUi->autoTypeDesktopPortalPersistConnectionCheckBox->isChecked());
-    config()->set(Config::AutoTypeDesktopPortalUseClipboard,
-                  m_generalUi->autoTypeDesktopPortalUseClipboardCheckBox->isChecked());
-    config()->set(Config::AutoTypeDesktopPortalPersistMode,
-                  m_generalUi->autoTypeDesktopPortalPersistModeComboBox->currentIndex());
     config()->set(Config::FaviconDownloadTimeout, m_generalUi->faviconTimeoutSpinBox->value());
     config()->set(Config::Security_NoConfirmMoveEntryToRecycleBin,
                   !m_generalUi->ConfirmMoveEntryToRecycleBinCheckBox->isChecked());

@@ -13,13 +13,11 @@
 #define KEEPASSX_DATA_DIR "@DATA_INSTALL_DIR@"
 
 /* Build Scope */
-#cmakedefine WITH_X11
 #cmakedefine WITH_BOTAN3
 
 /* Advanced Features */
 #cmakedefine KPXC_FEATURE_BROWSER
 #cmakedefine KPXC_FEATURE_SSHAGENT
-#cmakedefine KPXC_FEATURE_FDOSECRETS
 
 /* Minor Features */
 #cmakedefine KPXC_FEATURE_NETWORK
@@ -32,9 +30,6 @@
 #cmakedefine KEEPASSXC_BUILD_TYPE_SNAPSHOT
 
 #cmakedefine KEEPASSXC_DIST_TYPE "@KEEPASSXC_DIST_TYPE@"
-#cmakedefine KEEPASSXC_DIST_SNAP
-#cmakedefine KEEPASSXC_DIST_APPIMAGE
-#cmakedefine KEEPASSXC_DIST_FLATPAK
 
 /* Security Test Results */
 #cmakedefine HAVE_PR_SET_DUMPABLE 1

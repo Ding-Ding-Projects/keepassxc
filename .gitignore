@@ -38,3 +38,4 @@ vcpkg_installed*/
 /stage/
 /artifacts/
 
+__pycache__/

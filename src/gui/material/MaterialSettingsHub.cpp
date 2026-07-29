@@ -265,7 +265,6 @@ namespace Material
         buildSecurityPage();
         buildBrowserPage();
         buildSshAgentPage();
-        buildSecretServicePage();
         buildKeeSharePage();
         buildPasskeysPage();
 
@@ -1060,39 +1059,6 @@ namespace Material
                    tr("Global Auto-Type modifiers"),
                    tr("Recorded together with the shortcut key."),
                    Config::GlobalAutoTypeModifiers);
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("dns"),
-                  tr("Prefer desktop portals"),
-                  tr("Use the desktop portal for Auto-Type where one is offered."),
-                  Config::AutoTypePreferDesktopPortals);
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("link"),
-                  tr("Keep the portal session open"),
-                  tr("Reuse one portal connection instead of asking every time."),
-                  Config::AutoTypeDesktopPortalPersistConnection);
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("content_paste"),
-                  tr("Type through the clipboard"),
-                  tr("Paste rather than synthesise keystrokes under the portal."),
-                  Config::AutoTypeDesktopPortalUseClipboard);
-        addChoice(page,
-                  autoType,
-                  QStringLiteral("history"),
-                  tr("Portal session lifetime"),
-                  tr("How long the desktop remembers the granted portal session."),
-                  Config::AutoTypeDesktopPortalPersistMode,
-                  {{0, tr("Never remember the session")},
-                   {1, tr("Remember until exit")},
-                   {2, tr("Remember until the desktop revokes it")}});
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("check"),
-                  tr("Global shortcuts configured"),
-                  tr("Records that the desktop's own shortcut editor has been visited."),
-                  Config::GUI_XDPGlobalShortcutsConfigured);
 
         const QString generator = tr("Password generator");
         addChoice(page,
@@ -1649,46 +1615,6 @@ namespace Material
                 tr("Library used for FIDO backed keys."),
                 Config::SSHAgent_SecurityKeyProviderOverride,
                 Control::Path);
-    }
-
-    void SettingsHub::buildSecretServicePage()
-    {
-        const QString page = QStringLiteral("secretservice");
-        m_sheet->addPage(page, QStringLiteral("dns"), tr("Secret Service"));
-
-        const QString service = tr("Service");
-        addToggle(page,
-                  service,
-                  QStringLiteral("dns"),
-                  tr("Enable the Secret Service integration"),
-                  tr("Answer org.freedesktop.secrets on the session bus."),
-                  Config::FdoSecrets_Enabled);
-        addToggle(page,
-                  service,
-                  QStringLiteral("notifications"),
-                  tr("Show a notification on access"),
-                  tr("Say so when another application reads a secret."),
-                  Config::FdoSecrets_ShowNotification);
-        addToggle(page,
-                  service,
-                  QStringLiteral("lock_open"),
-                  tr("Unlock before searching"),
-                  tr("Open a locked database rather than reporting no match."),
-                  Config::FdoSecrets_UnlockBeforeSearch);
-
-        const QString confirmations = tr("Confirmations");
-        addToggle(page,
-                  confirmations,
-                  QStringLiteral("delete"),
-                  tr("Confirm before deleting an item"),
-                  tr("Ask before another application removes an entry."),
-                  Config::FdoSecrets_ConfirmDeleteItem);
-        addToggle(page,
-                  confirmations,
-                  QStringLiteral("help"),
-                  tr("Confirm before revealing an item"),
-                  tr("Ask before another application reads an entry."),
-                  Config::FdoSecrets_ConfirmAccessItem);
     }
 
     void SettingsHub::buildKeeSharePage()

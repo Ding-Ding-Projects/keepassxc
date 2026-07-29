@@ -95,16 +95,6 @@
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
-        <widget class="QLabel" name="snapWarningLabel">
-         <property name="materialSeverity" stdset="0">
-          <string notr="true">warning</string>
-         </property>
-         <property name="text">
-          <string>Browsers installed using Snap or Flatpak are not supported with exception to Firefox installed using Snap.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
         <widget class="QLabel" name="extensionLabel"/>
        </item>
        <item>

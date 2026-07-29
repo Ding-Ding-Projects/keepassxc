@@ -278,15 +278,7 @@ QString BrowserExtensionInstaller::externalExtensionDirectory(SupportedBrowsers 
     }
 
     QString basePath;
-#if defined(KEEPASSXC_DIST_FLATPAK)
-    // Flatpak sandboxes do not have access to the XDG_CONFIG_HOME variable defined in the host
-    basePath = QDir::homePath() + QStringLiteral("/.config");
-#elif defined(KEEPASSXC_DIST_SNAP)
-    // Snap also redefines $HOME, so $SNAP_REAL_HOME must be referenced explicitly
-    basePath = qEnvironmentVariable("SNAP_REAL_HOME") + QStringLiteral("/.config");
-#else
     basePath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-#endif
     if (basePath.isEmpty()) {
         return {};
     }

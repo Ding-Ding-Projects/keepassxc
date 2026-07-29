@@ -41,8 +41,6 @@
 
 #if defined(Q_OS_WIN)
 Q_IMPORT_PLUGIN(QWindowsIntegrationPlugin)
-#elif defined(Q_OS_UNIX) && !defined(Q_OS_MACOS)
-Q_IMPORT_PLUGIN(QXcbIntegrationPlugin)
 #endif
 #endif
 

@@ -266,60 +266,6 @@ if(APPLE)
     set_source_files_properties(quickunlock/TouchID.mm PROPERTY COMPILE_FLAGS "-Wno-old-style-cast")
 endif()
 
-if(UNIX AND NOT APPLE)
-    list(APPEND gui_SOURCES
-            gui/osutils/nixutils/DesktopPortal.cpp
-            gui/osutils/nixutils/DeviceListenerLibUsb.cpp
-            gui/osutils/nixutils/GlobalShortcutsPortal.cpp
-            gui/osutils/nixutils/NixUtils.cpp
-            gui/osutils/nixutils/RemoteDesktopPortal.cpp
-            gui/osutils/nixutils/ScreenLockListenerDBus.cpp
-    )
-    if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        list(APPEND core_SOURCES
-                quickunlock/Polkit.cpp
-                quickunlock/PolkitDbusTypes.cpp)
-    endif()
-    if(WITH_X11)
-        list(APPEND gui_SOURCES
-            gui/osutils/nixutils/X11Funcs.cpp)
-    endif()
-    qt6_add_dbus_adaptor(gui_SOURCES
-            gui/org.keepassxc.KeePassXC.MainWindow.xml
-            gui/MainWindow.h
-            MainWindow)
-
-    set_source_files_properties(
-        quickunlock/dbus/org.freedesktop.PolicyKit1.Authority.xml
-        PROPERTIES
-        INCLUDE "quickunlock/PolkitDbusTypes.h"
-        )
-    qt6_add_dbus_interface(core_SOURCES
-        quickunlock/dbus/org.freedesktop.PolicyKit1.Authority.xml
-        polkit_dbus
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Request.xml
-        xdp_request
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Session.xml
-        xdp_session
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.GlobalShortcuts.xml
-        xdp_globalshortcuts
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.RemoteDesktop.xml
-        xdp_remotedesktop
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Clipboard.xml
-        xdp_clipboard
-    )
-endif()
-
 if(WIN32)
     list(APPEND gui_SOURCES
             gui/osutils/winutils/DeviceListenerWin.cpp
@@ -377,11 +323,6 @@ if(KPXC_FEATURE_SSHAGENT)
     set(sshagent_LIB sshagent)
 endif()
 
-add_subdirectory(fdosecrets)
-if(KPXC_FEATURE_FDOSECRETS)
-    set(fdosecrets_LIB fdosecrets)
-endif()
-
 configure_file(config-keepassx.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-keepassx.h)
 configure_file(git-info.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/git-info.h)
 
@@ -412,7 +353,6 @@ target_link_libraries(keepassxc_gui
         Qt6::Widgets
         ${autotype_LIB}
         ${browser_LIB}
-        ${fdosecrets_LIB}
         ${keeshare_LIB}
         ${sshagent_LIB})
 
@@ -424,15 +364,6 @@ if(APPLE)
 endif()
 if(HAIKU)
     target_link_libraries(keepassxc_gui network)
-endif()
-if(UNIX AND NOT APPLE)
-    target_link_libraries(keepassxc_core Qt6::DBus ${LIBUSB_LIBRARIES})
-    if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        target_link_libraries(keepassxc_core ${KEYUTILS_LIBRARIES})
-    endif()
-    if(WITH_X11)
-        target_link_libraries(keepassxc_gui X11)
-    endif()
 endif()
 if(WIN32)
     target_link_libraries(keepassxc_gui Wtsapi32.lib Ws2_32.lib)
