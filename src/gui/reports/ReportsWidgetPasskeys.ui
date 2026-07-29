@@ -74,9 +74,29 @@
       </widget>
      </item>
      <item>
+      <widget class="QPushButton" name="importClipboardButton">
+       <property name="accessibleName">
+        <string>Import passkey from clipboard</string>
+       </property>
+       <property name="text">
+        <string>Import from Clipboard</string>
+       </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QPushButton" name="exportButton">
        <property name="text">
         <string>Export</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QPushButton" name="exportClipboardButton">
+       <property name="accessibleName">
+        <string>Copy passkey to clipboard</string>
+       </property>
+       <property name="text">
+        <string>Copy to Clipboard</string>
        </property>
       </widget>
      </item>

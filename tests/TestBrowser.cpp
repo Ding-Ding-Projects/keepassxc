@@ -17,6 +17,7 @@
 
 #include "TestBrowser.h"
 
+#include "browser/BrowserExtensionInstaller.h"
 #include "browser/BrowserMessageBuilder.h"
 #include "browser/BrowserSettings.h"
 #include "core/Group.h"
@@ -907,4 +908,77 @@ void TestBrowser::testHideEntry()
     root->setCustomDataTriState(BrowserService::OPTION_HIDE_ENTRY, Group::Disable);
     result = m_browserService->searchEntries(db, "https://github.com", "https://github.com/session");
     QCOMPARE(result.length(), 1);
+}
+
+/**
+ * Tests for BrowserExtensionInstaller
+ *
+ * These only cover the static browser metadata and the Firefox behavior. Nothing here writes to the
+ * registry or to any browser configuration directory.
+ */
+
+void TestBrowser::testExtensionId()
+{
+    const auto chromeId = QStringLiteral("oboonakemofpalcgghocfoadofidjkkk");
+    const auto edgeId = QStringLiteral("pdffhmdngciaglkoonimfcmckehcpafo");
+    const auto firefoxId = QStringLiteral("keepassxc-browser@keepassxc.org");
+
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::CHROME), chromeId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::CHROMIUM), chromeId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::VIVALDI), chromeId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::BRAVE), chromeId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::EDGE), edgeId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::FIREFOX), firefoxId);
+    QCOMPARE(BrowserExtensionInstaller::extensionId(BrowserShared::TOR_BROWSER), firefoxId);
+
+    // The custom browser follows the configured browser type
+    const auto customId = BrowserExtensionInstaller::extensionId(BrowserShared::CUSTOM);
+    QVERIFY(customId == chromeId || customId == firefoxId);
+
+    // MAX_SUPPORTED is the end marker of the enum and not a browser
+    QVERIFY(BrowserExtensionInstaller::extensionId(BrowserShared::MAX_SUPPORTED).isEmpty());
+}
+
+void TestBrowser::testWebStoreUrl()
+{
+    const auto chromeUrl = QStringLiteral(
+        "https://chromewebstore.google.com/detail/keepassxc-browser/oboonakemofpalcgghocfoadofidjkkk");
+    const auto edgeUrl =
+        QStringLiteral("https://microsoftedge.microsoft.com/addons/detail/pdffhmdngciaglkoonimfcmckehcpafo");
+    const auto firefoxUrl = QStringLiteral("https://addons.mozilla.org/firefox/addon/keepassxc-browser/");
+
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::CHROME), chromeUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::CHROMIUM), chromeUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::VIVALDI), chromeUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::BRAVE), chromeUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::EDGE), edgeUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::FIREFOX), firefoxUrl);
+    QCOMPARE(BrowserExtensionInstaller::webStoreUrl(BrowserShared::TOR_BROWSER), firefoxUrl);
+
+    // The custom browser follows the configured browser type
+    const auto customUrl = BrowserExtensionInstaller::webStoreUrl(BrowserShared::CUSTOM);
+    QVERIFY(customUrl == chromeUrl || customUrl == firefoxUrl);
+
+    // MAX_SUPPORTED is the end marker of the enum and not a browser
+    QVERIFY(BrowserExtensionInstaller::webStoreUrl(BrowserShared::MAX_SUPPORTED).isEmpty());
+}
+
+void TestBrowser::testFirefoxRequiresManualInstall()
+{
+    BrowserExtensionInstaller installer;
+
+    // Firefox-based browsers can only install signed add-ons through the browser itself. Everything
+    // else needs an enterprise policy in the installation directory, which requires elevation.
+    QVERIFY(!BrowserExtensionInstaller::supportsAutomaticRegistration(BrowserShared::FIREFOX));
+    QVERIFY(!BrowserExtensionInstaller::supportsAutomaticRegistration(BrowserShared::TOR_BROWSER));
+    QVERIFY(BrowserExtensionInstaller::updateUrl(BrowserShared::FIREFOX).isEmpty());
+    QVERIFY(BrowserExtensionInstaller::updateUrl(BrowserShared::TOR_BROWSER).isEmpty());
+
+    // Nothing is ever registered for them, so no registry key or file is touched here
+    QVERIFY(!installer.isExtensionRegistered(BrowserShared::FIREFOX));
+    QVERIFY(!installer.isExtensionRegistered(BrowserShared::TOR_BROWSER));
+    QCOMPARE(installer.installExtension(BrowserShared::FIREFOX),
+             BrowserExtensionInstaller::Result::RequiresManualInstall);
+    QCOMPARE(installer.installExtension(BrowserShared::TOR_BROWSER),
+             BrowserExtensionInstaller::Result::RequiresManualInstall);
 }

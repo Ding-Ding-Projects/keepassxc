@@ -58,7 +58,9 @@ public slots:
 private slots:
     void selectionChanged();
     void importPasskey();
+    void importPasskeyFromClipboard();
     void exportPasskey();
+    void exportPasskeyToClipboard();
 
 private:
     void addPasskeyRow(Group*, Entry*);

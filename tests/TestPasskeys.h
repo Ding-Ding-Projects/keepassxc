@@ -56,5 +56,16 @@ private slots:
     void testIsResidentKeyRequired();
     void testIsUserVerificationRequired();
     void testAllowLocalhostWithPasskeys();
+
+    void testClipboardPayloadRoundTrip();
+    void testClipboardPayloadWithMultipleEntries();
+    void testClipboardPayloadRejectsEmptyText();
+    void testClipboardPayloadRejectsOversizedPayload();
+    void testClipboardPayloadRejectsUnknownPrefix();
+    void testClipboardPayloadRejectsUnsupportedVersion();
+    void testClipboardPayloadRejectsInvalidBase64();
+    void testClipboardPayloadRejectsInvalidJson();
+    void testClipboardPayloadRejectsMissingKeys();
+    void testClipboardPayloadRejectsNonPemPrivateKey();
 };
 #endif // KEEPASSXC_TESTPASSKEYS_H
