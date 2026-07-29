@@ -112,6 +112,11 @@ public:
         GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays,
         GUI_FontSizeOffset,
         GUI_XDPGlobalShortcutsConfigured,
+        GUI_DimSumSurprise,
+        GUI_VoiceLanguage,
+        GUI_FunnyLevelEnglish,
+        GUI_FunnyLevelCantonese,
+        GUI_VoiceDisclosureShown,
 
         GUI_MainWindowGeometry,
         GUI_MainWindowState,

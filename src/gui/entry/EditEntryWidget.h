@@ -169,7 +169,7 @@ private:
     void setForms(Entry* entry, bool restore = false);
     QMenu* createPresetsMenu();
     void updateEntryData(Entry* entry) const;
-    void updateBrowserIntegrationCheckbox(QCheckBox* checkBox, bool enabled, bool value, const QString& option);
+    void updateBrowserIntegrationToggle(QAbstractButton* toggle, bool enabled, bool value, const QString& option);
 #ifdef KPXC_FEATURE_SSHAGENT
     bool getOpenSSHKey(OpenSSHKey& key, bool decrypt = false);
 #endif

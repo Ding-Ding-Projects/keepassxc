@@ -23,12 +23,12 @@
 #include "config-keepassx.h"
 #include "core/Global.h"
 #include "gui/Icons.h"
-#include "gui/styles/StateColorPalette.h"
+#include "gui/material/MaterialNotifier.h"
+#include "gui/material/MaterialSeverity.h"
 
 #include <QCheckBox>
 #include <QDesktopServices>
 #include <QFileDialog>
-#include <QMessageBox>
 #include <QToolButton>
 #include <QUrl>
 
@@ -105,7 +105,7 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget* parent)
     // Custom Browser option
 #ifdef Q_OS_WIN
     // TODO: Custom browser is disabled on Windows
-    m_ui->customBrowserSupport->setVisible(false);
+    m_ui->customBrowserSupportRowContainer->setVisible(false);
     m_ui->customBrowserGroupBox->setVisible(false);
 #else
     connect(m_ui->customBrowserLocationBrowseButton, SIGNAL(clicked()), SLOT(showCustomBrowserLocationFileDialog()));
@@ -197,20 +197,20 @@ void BrowserSettingsWidget::loadSettings()
 #ifdef KEEPASSXC_DIST_SNAP
     // Disable settings that will not work
     m_ui->useCustomProxy->setChecked(false);
-    m_ui->useCustomProxy->setVisible(false);
+    m_ui->useCustomProxyRowContainer->setVisible(false);
     m_ui->customProxyLocation->setVisible(false);
     m_ui->customProxyLocationBrowseButton->setVisible(false);
     m_ui->updateBinaryPath->setChecked(false);
-    m_ui->updateBinaryPath->setVisible(false);
+    m_ui->updateBinaryPathRowContainer->setVisible(false);
     // No custom browser for snaps
-    m_ui->customBrowserSupport->setVisible(false);
+    m_ui->customBrowserSupportRowContainer->setVisible(false);
     m_ui->customBrowserGroupBox->setVisible(false);
 #endif
 #ifdef KEEPASSXC_DIST_FLATPAK
     // The sandbox makes custom proxy locations very unintuitive
     m_ui->useCustomProxy->setChecked(false);
     m_ui->useCustomProxy->setEnabled(false);
-    m_ui->useCustomProxy->setVisible(false);
+    m_ui->useCustomProxyRowContainer->setVisible(false);
     m_ui->customProxyLocation->setVisible(false);
     // Won't work with xdg portals and executables that must be browser accessible
     m_ui->customProxyLocationBrowseButton->setVisible(false);
@@ -249,16 +249,14 @@ void BrowserSettingsWidget::validateProxyLocation()
 #if !defined(KEEPASSXC_DIST_SNAP) && !defined(KEEPASSXC_DIST_FLATPAK)
     // Reset the UI
     m_ui->messageWidget->setVisible(false);
-    m_ui->customProxyLocation->setStyleSheet("");
+    Material::setSeverity(m_ui->customProxyLocation, Material::Severity::None);
     m_ui->customProxyLocation->setToolTip("");
 
     if (m_ui->enableBrowserSupport->isChecked()) {
         // If we are using a custom proxy location, check if it exists and display warning if not
         if (m_ui->useCustomProxy->isChecked()) {
             if (!QFile::exists(resolveCustomProxyLocation())) {
-                StateColorPalette statePalette;
-                auto color = statePalette.color(StateColorPalette::ColorRole::Error);
-                m_ui->customProxyLocation->setStyleSheet(QString("QLineEdit { background: %1; }").arg(color.name()));
+                Material::setSeverity(m_ui->customProxyLocation, Material::Severity::Error);
                 m_ui->customProxyLocation->setToolTip(tr("The custom proxy location does not exist."));
 
                 m_ui->messageWidget->showMessage(tr("<b>Error:</b> The custom proxy location does not exist. Correct "
@@ -374,41 +372,33 @@ void BrowserSettingsWidget::installExtension(SupportedBrowsers browser)
     const auto name = BrowserExtensionInstaller::browserName(browser);
     switch (registerExtension(browser)) {
     case Result::Registered:
-        QMessageBox::information(this,
-                                 tr("Browser Extension"),
-                                 tr("KeePassXC-Browser has been registered for %1.\n\n"
-                                    "%1 will ask you to enable the extension the next time it is started. "
-                                    "The extension is not enabled until you accept that request.")
-                                     .arg(name),
-                                 QMessageBox::Ok);
+        Material::Notify::success(tr("Browser Extension"),
+                                  tr("KeePassXC-Browser has been registered for %1.\n\n"
+                                     "%1 will ask you to enable the extension the next time it is started. "
+                                     "The extension is not enabled until you accept that request.")
+                                      .arg(name));
         break;
     case Result::AlreadyPresent:
-        QMessageBox::information(this,
-                                 tr("Browser Extension"),
-                                 tr("KeePassXC-Browser is already registered for %1.\n\n"
-                                    "If the extension is still missing, %1 will ask you to enable it the next "
-                                    "time it is started.")
-                                     .arg(name),
-                                 QMessageBox::Ok);
+        Material::Notify::info(tr("Browser Extension"),
+                               tr("KeePassXC-Browser is already registered for %1.\n\n"
+                                  "If the extension is still missing, %1 will ask you to enable it the next "
+                                  "time it is started.")
+                                   .arg(name));
         break;
     case Result::RequiresManualInstall: {
         // The browser does not support external extension registrations, open the web store instead
         const auto storeUrl = BrowserExtensionInstaller::webStoreUrl(browser);
         if (!QDesktopServices::openUrl(QUrl(storeUrl))) {
-            QMessageBox::warning(this,
-                                 tr("Browser Extension"),
-                                 tr("%1 does not allow other applications to install extensions. "
-                                    "Please install KeePassXC-Browser from %2.")
-                                     .arg(name, storeUrl),
-                                 QMessageBox::Ok);
+            Material::Notify::warning(tr("Browser Extension"),
+                                      tr("%1 does not allow other applications to install extensions. "
+                                         "Please install KeePassXC-Browser from %2.")
+                                          .arg(name, storeUrl));
         }
         break;
     }
     case Result::Failed:
-        QMessageBox::warning(this,
-                             tr("Browser Extension"),
-                             tr("Could not register KeePassXC-Browser for %1.").arg(name),
-                             QMessageBox::Ok);
+        Material::Notify::error(tr("Browser Extension"),
+                                tr("Could not register KeePassXC-Browser for %1.").arg(name));
         break;
     }
 }
@@ -454,8 +444,7 @@ void BrowserSettingsWidget::installExtensionsForEnabledBrowsers()
     }
 
     if (registered.isEmpty() && alreadyPresent.isEmpty() && manualInstall.isEmpty() && failed.isEmpty()) {
-        QMessageBox::information(
-            this, tr("Browser Extension"), tr("Enable at least one browser first."), QMessageBox::Ok);
+        Material::Notify::warning(tr("Browser Extension"), tr("Enable at least one browser first."));
         return;
     }
 
@@ -485,9 +474,9 @@ void BrowserSettingsWidget::installExtensionsForEnabledBrowsers()
     }
 
     if (failed.isEmpty()) {
-        QMessageBox::information(this, tr("Browser Extension"), message.join("\n\n"), QMessageBox::Ok);
+        Material::Notify::success(tr("Browser Extension"), message.join("\n\n"));
     } else {
-        QMessageBox::warning(this, tr("Browser Extension"), message.join("\n\n"), QMessageBox::Ok);
+        Material::Notify::warning(tr("Browser Extension"), message.join("\n\n"));
     }
 }
 

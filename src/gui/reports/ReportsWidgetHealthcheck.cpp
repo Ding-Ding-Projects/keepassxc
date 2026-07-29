@@ -293,7 +293,7 @@ void ReportsWidgetHealthcheck::calculateHealth()
     m_ui->healthcheckTableView->horizontalHeader()->setSectionResizeMode(0, QHeaderView::Fixed);
 
     // Only show the "show excluded" checkbox if there are any excluded entries in the database
-    m_ui->showExcluded->setVisible(health->anyExcludedEntries());
+    m_ui->showExcludedRowContainer->setVisible(health->anyExcludedEntries());
 }
 
 void ReportsWidgetHealthcheck::emitEntryActivated(const QModelIndex& index)

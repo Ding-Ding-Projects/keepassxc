@@ -154,7 +154,10 @@
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="clearButton">
+        <widget class="Material::TextButton" name="clearButton">
+         <property name="symbol">
+          <string notr="true">close</string>
+         </property>
          <property name="sizePolicy">
           <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
            <horstretch>0</horstretch>
@@ -185,17 +188,50 @@
       </spacer>
      </item>
      <item row="3" column="1">
-      <widget class="QCheckBox" name="keepGroupsCheckbox">
-       <property name="toolTip">
-        <string>Maintain group structure with shared database</string>
+      <layout class="QHBoxLayout" name="keepGroupsCheckboxRow">
+       <property name="spacing">
+        <number>12</number>
        </property>
-       <property name="text">
-        <string>Keep Group Structure</string>
-       </property>
-       <property name="checked">
-        <bool>true</bool>
-       </property>
-      </widget>
+       <item>
+        <widget class="QLabel" name="keepGroupsCheckboxLabel">
+         <property name="text">
+          <string>Keep Group Structure</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+         <property name="toolTip">
+          <string>Maintain group structure with shared database</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="keepGroupsCheckboxSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>24</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="Material::Switch" name="keepGroupsCheckbox">
+         <property name="toolTip">
+          <string>Maintain group structure with shared database</string>
+         </property>
+         <property name="checked">
+          <bool>true</bool>
+         </property>
+         <property name="accessibleName">
+          <string>Keep Group Structure</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
     </layout>
    </item>
@@ -213,6 +249,16 @@
    <extends>QWidget</extends>
    <header>gui/MessageWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

@@ -134,6 +134,7 @@ namespace Material
 
         Card* createAppearanceCard();
         Card* createLanguageCard();
+        Card* createVoiceCard();
         Card* createBehaviourCard();
         Card* createIntegrationsCard();
 
@@ -143,6 +144,12 @@ namespace Material
         /** Persist the font size slider and restyle the application with it. */
         void commitFontSize();
         void updateLanguagePreview();
+        /** Re-render the sample messages from the pending slider positions. */
+        void updateVoicePreview();
+        /** Write the two humour sliders back into the configuration. */
+        void commitVoiceLevels();
+        /** Pull the voice controls back in line with the stored settings. */
+        void refreshFromVoice();
         /** The point size the font size slider currently asks for. */
         int previewPointSize() const;
 
@@ -157,6 +164,14 @@ namespace Material
         QSlider* m_recentSlider = nullptr;
         QLabel* m_recentValue = nullptr;
         QLabel* m_previewLabel = nullptr;
+        SegmentedButton* m_voiceSegment = nullptr;
+        QSlider* m_englishFunnySlider = nullptr;
+        QLabel* m_englishFunnyValue = nullptr;
+        QSlider* m_cantoneseFunnySlider = nullptr;
+        QLabel* m_cantoneseFunnyValue = nullptr;
+        /** Two samples - a routine one and an error - each with both languages. */
+        QList<QLabel*> m_voicePrimaryLabels;
+        QList<QLabel*> m_voiceSecondaryLabels;
         /** Set while the screen writes into its own controls, to stop feedback. */
         bool m_updating = false;
     };

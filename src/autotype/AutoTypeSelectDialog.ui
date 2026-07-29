@@ -14,11 +14,20 @@
    <string>Auto-Type - KeePassXC</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
    <property name="topMargin">
-    <number>6</number>
+    <number>24</number>
    </property>
    <property name="bottomMargin">
-    <number>6</number>
+    <number>24</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -63,12 +72,6 @@ Ctrl+Shift+2 - Copy password&lt;br/&gt;
 Ctrl+Shift+3 - Copy TOTP&lt;br/&gt;
 Ctrl+Shift+4 - Copy URL&lt;br/&gt;
 &lt;/p&gt;</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">QToolButton {
-	border: none;
-	background: none;
-}</string>
        </property>
        <property name="text">
         <string notr="true">?</string>
@@ -215,7 +218,10 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="Material::TextButton" name="cancelButton">
+       <property name="symbol">
+        <string notr="true">close</string>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -233,6 +239,11 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
    <class>AutoTypeMatchView</class>
    <extends>QTableView</extends>
    <header>autotype/AutoTypeMatchView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

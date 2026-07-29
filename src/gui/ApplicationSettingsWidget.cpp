@@ -34,7 +34,7 @@
 #include "gui/Icons.h"
 #include "gui/MainWindow.h"
 #include "gui/osutils/OSUtils.h"
-#include "gui/styles/StateColorPalette.h"
+#include "gui/material/MaterialSeverity.h"
 #include "quickunlock/QuickUnlockInterface.h"
 
 #include "FileDialog.h"
@@ -93,7 +93,7 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 #else
         false;
 #endif
-    m_generalUi->autoTypePreferDesktopPortalsCheckBox->setVisible(showDesktopPortalsPreference);
+    m_generalUi->autoTypePreferDesktopPortalsCheckBoxRowContainer->setVisible(showDesktopPortalsPreference);
 
     if (!autoType()->isAvailable()) {
         m_generalUi->generalSettingsTabWidget->removeTab(1);
@@ -101,18 +101,18 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
         const auto hasWindowAccess = autoType()->hasWindowAccess();
         const auto usesDesktopPortal = autoType()->usesDesktopPortal();
         if (hasWindowAccess) {
-            m_generalUi->autoTypeEntryTitleMatchCheckBox->setVisible(true);
-            m_generalUi->autoTypeEntryURLMatchCheckBox->setVisible(true);
+            m_generalUi->autoTypeEntryTitleMatchCheckBoxRowContainer->setVisible(true);
+            m_generalUi->autoTypeEntryURLMatchCheckBoxRowContainer->setVisible(true);
             m_generalUi->autoTypeAskCheckBox->setDisabled(false);
         } else {
-            m_generalUi->autoTypeEntryTitleMatchCheckBox->setVisible(false);
-            m_generalUi->autoTypeEntryURLMatchCheckBox->setVisible(false);
+            m_generalUi->autoTypeEntryTitleMatchCheckBoxRowContainer->setVisible(false);
+            m_generalUi->autoTypeEntryURLMatchCheckBoxRowContainer->setVisible(false);
             m_generalUi->autoTypeAskCheckBox->setChecked(true);
             m_generalUi->autoTypeAskCheckBox->setDisabled(true);
         }
 
-        m_generalUi->autoTypeDesktopPortalPersistConnectionCheckBox->setVisible(usesDesktopPortal);
-        m_generalUi->autoTypeDesktopPortalUseClipboardCheckBox->setVisible(usesDesktopPortal
+        m_generalUi->autoTypeDesktopPortalPersistConnectionCheckBoxRowContainer->setVisible(usesDesktopPortal);
+        m_generalUi->autoTypeDesktopPortalUseClipboardCheckBoxRowContainer->setVisible(usesDesktopPortal
                                                                            && osUtils->isClipboardAvailable());
         m_generalUi->autoTypeDesktopPortalPersistModeLabel->setVisible(usesDesktopPortal);
         m_generalUi->autoTypeDesktopPortalPersistModeComboBox->setVisible(usesDesktopPortal);
@@ -172,7 +172,7 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
             m_secUi->lockDatabaseIdleSpinBox, SLOT(setEnabled(bool)));
     // clang-format on
 
-    connect(m_generalUi->minimizeAfterUnlockCheckBox, &QCheckBox::toggled, this, [this](bool state) {
+    connect(m_generalUi->minimizeAfterUnlockCheckBox, &QAbstractButton::toggled, this, [this](bool state) {
         if (state) {
             m_secUi->lockDatabaseMinimizeCheckBox->setChecked(false);
         }
@@ -186,18 +186,15 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
         m_generalUi->autoTypeShortcutWidget, &ShortcutWidget::shortcutChanged, this, [this](auto key, auto modifiers) {
             QString error;
             if (autoType()->registerGlobalShortcut(key, modifiers, &error)) {
-                m_generalUi->autoTypeShortcutWidget->setStyleSheet("");
+                Material::setSeverity(m_generalUi->autoTypeShortcutWidget, Material::Severity::None);
             } else {
                 QToolTip::showText(mapToGlobal(rect().bottomLeft()), error);
-                StateColorPalette statePalette;
-                auto color = statePalette.color(StateColorPalette::ColorRole::Error);
-                m_generalUi->autoTypeShortcutWidget->setStyleSheet(
-                    QString("QLineEdit { background: %1; }").arg(color.name()));
+                Material::setSeverity(m_generalUi->autoTypeShortcutWidget, Material::Severity::Error);
             }
         });
     connect(m_generalUi->autoTypeShortcutWidget, &ShortcutWidget::shortcutReset, this, [this] {
         autoType()->unregisterGlobalShortcut();
-        m_generalUi->autoTypeShortcutWidget->setStyleSheet("");
+        Material::setSeverity(m_generalUi->autoTypeShortcutWidget, Material::Severity::None);
     });
 
     // Disable mouse wheel grab when scrolling
@@ -211,14 +208,14 @@ ApplicationSettingsWidget::ApplicationSettingsWidget(QWidget* parent)
 
 #ifdef Q_OS_MACOS
     // The menubar is always shown on macOS, so hide the option to avoid confusion
-    m_generalUi->menubarShowCheckBox->setVisible(false);
+    m_generalUi->menubarShowCheckBoxRowContainer->setVisible(false);
 #endif
 
 #ifdef KPXC_FEATURE_UPDATES
     connect(m_generalUi->checkForUpdatesOnStartupCheckBox, SIGNAL(toggled(bool)), SLOT(checkUpdatesToggled(bool)));
 #else
-    m_generalUi->checkForUpdatesOnStartupCheckBox->setVisible(false);
-    m_generalUi->checkForUpdatesIncludeBetasCheckBox->setVisible(false);
+    m_generalUi->checkForUpdatesOnStartupCheckBoxRowContainer->setVisible(false);
+    m_generalUi->checkForUpdatesIncludeBetasCheckBoxRowContainer->setVisible(false);
     m_generalUi->checkUpdatesSpacer->changeSize(0, 0, QSizePolicy::Fixed, QSizePolicy::Fixed);
 #endif
 
@@ -399,9 +396,9 @@ void ApplicationSettingsWidget::loadSettings()
     m_secUi->lockDatabaseOnScreenLockCheckBox->setChecked(
         config()->get(Config::Security_LockDatabaseScreenLock).toBool());
 #if defined(Q_OS_MACOS)
-    m_secUi->lockDatabasesOnUserSwitchCheckBox->setVisible(true);
+    m_secUi->lockDatabasesOnUserSwitchCheckBoxRowContainer->setVisible(true);
 #else
-    m_secUi->lockDatabasesOnUserSwitchCheckBox->setVisible(false);
+    m_secUi->lockDatabasesOnUserSwitchCheckBoxRowContainer->setVisible(false);
 #endif
     m_secUi->lockDatabasesOnUserSwitchCheckBox->setChecked(
         config()->get(Config::Security_LockDatabaseOnUserSwitch).toBool());

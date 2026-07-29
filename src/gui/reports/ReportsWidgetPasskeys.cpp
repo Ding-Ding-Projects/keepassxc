@@ -112,10 +112,6 @@ ReportsWidgetPasskeys::ReportsWidgetPasskeys(QWidget* parent)
     connect(m_ui->exportClipboardButton, SIGNAL(clicked(bool)), this, SLOT(exportPasskeyToClipboard()));
     connect(m_ui->importClipboardButton, SIGNAL(clicked(bool)), this, SLOT(importPasskeyFromClipboard()));
 
-    m_ui->importButton->setIcon(icons()->icon("document-import"));
-    m_ui->importClipboardButton->setIcon(icons()->icon("clipboard-text"));
-    m_ui->exportButton->setIcon(icons()->icon("document-export"));
-    m_ui->exportClipboardButton->setIcon(icons()->icon("clipboard-text"));
 
     m_ui->exportButton->setEnabled(false);
     m_ui->exportClipboardButton->setEnabled(false);

@@ -21,6 +21,7 @@
 #include "core/Base32.h"
 #include "core/Totp.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
 
 TotpSetupDialog::TotpSetupDialog(QWidget* parent, Entry* entry)
     : QDialog(parent)
@@ -49,9 +50,8 @@ void TotpSetupDialog::saveSettings()
     auto sanitizedKey = Base32::sanitizeInput(key);
     // Use startsWith to ignore added '=' for padding at the end
     if (!sanitizedKey.startsWith(key)) {
-        MessageBox::information(this,
-                                tr("Invalid TOTP Secret"),
-                                tr("You have entered an invalid secret key. The key must be in Base32 format.\n"
+        Material::Notify::error(tr("Invalid TOTP Secret"),
+                                tr("You have entered an invalid secret key. The key must be in Base32 format. "
                                    "Example: JBSWY3DPEHPK3PXP"));
         return;
     }

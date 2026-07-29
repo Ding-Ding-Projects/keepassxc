@@ -27,11 +27,41 @@
     <number>0</number>
    </property>
    <item row="1" column="1" colspan="4">
-    <widget class="QCheckBox" name="removeKeyFromAgentCheckBox">
-     <property name="text">
-      <string>Remove key from agent when database is closed/locked</string>
+    <layout class="QHBoxLayout" name="removeKeyFromAgentCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="removeKeyFromAgentCheckBoxLabel">
+       <property name="text">
+        <string>Remove key from agent when database is closed/locked</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="removeKeyFromAgentCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="removeKeyFromAgentCheckBox">
+       <property name="accessibleName">
+        <string>Remove key from agent when database is closed/locked</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="14" column="1">
     <widget class="QLabel" name="commentLabel">
@@ -44,11 +74,41 @@
     </widget>
    </item>
    <item row="0" column="1" colspan="4">
-    <widget class="QCheckBox" name="addKeyToAgentCheckBox">
-     <property name="text">
-      <string>Add key to agent when database is opened/unlocked</string>
+    <layout class="QHBoxLayout" name="addKeyToAgentCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="addKeyToAgentCheckBoxLabel">
+       <property name="text">
+        <string>Add key to agent when database is opened/unlocked</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="addKeyToAgentCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="addKeyToAgentCheckBox">
+       <property name="accessibleName">
+        <string>Add key to agent when database is opened/unlocked</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="15" column="3" colspan="2">
     <widget class="QPlainTextEdit" name="publicKeyEdit">
@@ -63,7 +123,10 @@
     </widget>
    </item>
    <item row="14" column="4">
-    <widget class="QPushButton" name="decryptButton">
+    <widget class="Material::OutlinedButton" name="decryptButton">
+     <property name="symbol">
+      <string notr="true">lock_open</string>
+     </property>
      <property name="text">
       <string>Decrypt</string>
      </property>
@@ -96,7 +159,10 @@
     </widget>
    </item>
    <item row="16" column="3" colspan="2">
-    <widget class="QPushButton" name="copyToClipboardButton">
+    <widget class="Material::OutlinedButton" name="copyToClipboardButton">
+     <property name="symbol">
+      <string notr="true">content_copy</string>
+     </property>
      <property name="text">
       <string>Copy to clipboard</string>
      </property>
@@ -141,21 +207,30 @@
       <item row="4" column="3">
        <layout class="QHBoxLayout" name="agentActionsLayout" stretch="0,0,0">
         <item>
-         <widget class="QPushButton" name="addToAgentButton">
+         <widget class="Material::TonalButton" name="addToAgentButton">
+          <property name="symbol">
+           <string notr="true">add</string>
+          </property>
           <property name="text">
            <string>Add to agent</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="removeFromAgentButton">
+         <widget class="Material::OutlinedButton" name="removeFromAgentButton">
+          <property name="symbol">
+           <string notr="true">remove</string>
+          </property>
           <property name="text">
            <string>Remove from agent</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="clearAgentButton">
+         <widget class="Material::OutlinedButton" name="clearAgentButton">
+          <property name="symbol">
+           <string notr="true">delete</string>
+          </property>
           <property name="text">
            <string>Clear agent</string>
           </property>
@@ -171,7 +246,10 @@
        </widget>
       </item>
       <item row="3" column="4">
-       <widget class="QPushButton" name="browseButton">
+       <widget class="Material::OutlinedButton" name="browseButton">
+        <property name="symbol">
+         <string notr="true">folder_open</string>
+        </property>
         <property name="accessibleName">
          <string>Browser for key file</string>
         </property>
@@ -181,7 +259,10 @@
        </widget>
       </item>
       <item row="0" column="4">
-       <widget class="QPushButton" name="generateButton">
+       <widget class="Material::TonalButton" name="generateButton">
+        <property name="symbol">
+         <string notr="true">casino</string>
+        </property>
         <property name="text">
          <string>Generate</string>
         </property>
@@ -207,11 +288,41 @@
     </widget>
    </item>
    <item row="2" column="1" colspan="4">
-    <widget class="QCheckBox" name="requireUserConfirmationCheckBox">
-     <property name="text">
-      <string>Require user confirmation when this key is used</string>
+    <layout class="QHBoxLayout" name="requireUserConfirmationCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="requireUserConfirmationCheckBoxLabel">
+       <property name="text">
+        <string>Require user confirmation when this key is used</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="requireUserConfirmationCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="requireUserConfirmationCheckBox">
+       <property name="accessibleName">
+        <string>Require user confirmation when this key is used</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item row="14" column="3">
     <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -248,11 +359,41 @@
    <item row="3" column="1" colspan="4">
     <layout class="QHBoxLayout" name="removeKeyLayout">
      <item>
-      <widget class="QCheckBox" name="lifetimeCheckBox">
-       <property name="text">
-        <string>Remove key from agent after</string>
+      <layout class="QHBoxLayout" name="lifetimeCheckBoxRow">
+       <property name="spacing">
+        <number>12</number>
        </property>
-      </widget>
+       <item>
+        <widget class="QLabel" name="lifetimeCheckBoxLabel">
+         <property name="text">
+          <string>Remove key from agent after</string>
+         </property>
+         <property name="wordWrap">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <spacer name="lifetimeCheckBoxSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>24</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="Material::Switch" name="lifetimeCheckBox">
+         <property name="accessibleName">
+          <string>Remove key from agent after</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
      </item>
      <item>
       <widget class="QSpinBox" name="lifetimeSpinBox">
@@ -347,6 +488,23 @@
   <tabstop>publicKeyEdit</tabstop>
   <tabstop>copyToClipboardButton</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

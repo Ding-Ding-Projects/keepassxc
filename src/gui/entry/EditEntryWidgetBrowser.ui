@@ -47,38 +47,164 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="hideEntryCheckbox">
-        <property name="text">
-         <string>Hide this entry from the browser extension</string>
+       <layout class="QHBoxLayout" name="hideEntryCheckboxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="hideEntryCheckboxLabel">
+          <property name="text">
+           <string>Hide this entry from the browser extension</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hideEntryCheckboxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="hideEntryCheckbox">
+          <property name="accessibleName">
+           <string>Hide this entry from the browser extension</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="skipAutoSubmitCheckbox">
-        <property name="text">
-         <string>Skip Auto-Submit for this entry</string>
+       <layout class="QHBoxLayout" name="skipAutoSubmitCheckboxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="skipAutoSubmitCheckboxLabel">
+          <property name="text">
+           <string>Skip Auto-Submit for this entry</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="skipAutoSubmitCheckboxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="skipAutoSubmitCheckbox">
+          <property name="accessibleName">
+           <string>Skip Auto-Submit for this entry</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="onlyHttpAuthCheckbox">
-        <property name="toolTip">
-         <string>Only send this entry to the browser for HTTP Auth dialogs. If enabled, normal login forms will not show this entry for selection.</string>
+       <layout class="QHBoxLayout" name="onlyHttpAuthCheckboxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="text">
-         <string>Use this entry only with HTTP Basic Auth</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="onlyHttpAuthCheckboxLabel">
+          <property name="text">
+           <string>Use this entry only with HTTP Basic Auth</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Only send this entry to the browser for HTTP Auth dialogs. If enabled, normal login forms will not show this entry for selection.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="onlyHttpAuthCheckboxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="onlyHttpAuthCheckbox">
+          <property name="toolTip">
+           <string>Only send this entry to the browser for HTTP Auth dialogs. If enabled, normal login forms will not show this entry for selection.</string>
+          </property>
+          <property name="accessibleName">
+           <string>Use this entry only with HTTP Basic Auth</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="notHttpAuthCheckbox">
-        <property name="toolTip">
-         <string>Do not send this entry to the browser for HTTP Auth dialogs. If enabled, HTTP Auth dialogs will not show this entry for selection.</string>
+       <layout class="QHBoxLayout" name="notHttpAuthCheckboxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="text">
-         <string>Do not use this entry with HTTP Basic Auth</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="notHttpAuthCheckboxLabel">
+          <property name="text">
+           <string>Do not use this entry with HTTP Basic Auth</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Do not send this entry to the browser for HTTP Auth dialogs. If enabled, HTTP Auth dialogs will not show this entry for selection.</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="notHttpAuthCheckboxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="notHttpAuthCheckbox">
+          <property name="toolTip">
+           <string>Do not send this entry to the browser for HTTP Auth dialogs. If enabled, HTTP Auth dialogs will not show this entry for selection.</string>
+          </property>
+          <property name="accessibleName">
+           <string>Do not use this entry with HTTP Basic Auth</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -108,14 +234,20 @@
       <item>
        <layout class="QVBoxLayout" name="additionalURLsButtonLayout">
         <item>
-         <widget class="QPushButton" name="addURLButton">
+         <widget class="Material::TonalButton" name="addURLButton">
+          <property name="symbol">
+           <string notr="true">add</string>
+          </property>
           <property name="text">
            <string>Add</string>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="removeURLButton">
+         <widget class="Material::OutlinedButton" name="removeURLButton">
+          <property name="symbol">
+           <string notr="true">remove</string>
+          </property>
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -125,7 +257,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="editURLButton">
+         <widget class="Material::OutlinedButton" name="editURLButton">
+          <property name="symbol">
+           <string notr="true">edit</string>
+          </property>
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -162,6 +297,21 @@
    <class>MessageWidget</class>
    <extends>QWidget</extends>
    <header>gui/MessageWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

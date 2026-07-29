@@ -79,7 +79,10 @@
       <item>
        <layout class="QVBoxLayout" name="attributesButtonLayout">
         <item>
-         <widget class="QPushButton" name="addAttributeButton">
+         <widget class="Material::TonalButton" name="addAttributeButton">
+          <property name="symbol">
+           <string notr="true">add</string>
+          </property>
           <property name="accessibleName">
            <string>Add a new attribute</string>
           </property>
@@ -89,7 +92,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="removeAttributeButton">
+         <widget class="Material::OutlinedButton" name="removeAttributeButton">
+          <property name="symbol">
+           <string notr="true">remove</string>
+          </property>
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -102,7 +108,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="editAttributeButton">
+         <widget class="Material::OutlinedButton" name="editAttributeButton">
+          <property name="symbol">
+           <string notr="true">edit</string>
+          </property>
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -135,9 +144,6 @@
           <property name="accessibleName">
            <string>Toggle attribute protection</string>
           </property>
-          <property name="styleSheet">
-           <string notr="true">margin-left:50%;margin-right:50%</string>
-          </property>
           <property name="text">
            <string>Protect</string>
           </property>
@@ -147,7 +153,10 @@
          </widget>
         </item>
         <item>
-         <widget class="QPushButton" name="revealAttributeButton">
+         <widget class="Material::OutlinedButton" name="revealAttributeButton">
+          <property name="symbol">
+           <string notr="true">visibility</string>
+          </property>
           <property name="enabled">
            <bool>false</bool>
           </property>
@@ -219,10 +228,16 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>32</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>40</width>
+          <height>32</height>
          </size>
         </property>
         <property name="accessibleName">
@@ -230,6 +245,12 @@
         </property>
         <property name="text">
          <string/>
+        </property>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -264,10 +285,16 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="minimumSize">
+         <size>
+          <width>40</width>
+          <height>32</height>
+         </size>
+        </property>
         <property name="maximumSize">
          <size>
-          <width>25</width>
-          <height>25</height>
+          <width>40</width>
+          <height>32</height>
          </size>
         </property>
         <property name="accessibleName">
@@ -276,8 +303,11 @@
         <property name="text">
          <string/>
         </property>
-        <property name="flat">
-         <bool>false</bool>
+        <property name="iconSize">
+         <size>
+          <width>22</width>
+          <height>22</height>
+         </size>
         </property>
        </widget>
       </item>
@@ -310,6 +340,16 @@
    <class>AttributesListView</class>
    <extends>QListView</extends>
    <header>gui/entry/EditEntryWidget_p.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

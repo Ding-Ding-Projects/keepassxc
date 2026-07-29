@@ -133,6 +133,11 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays, {QS("GUI/ShowExpiredEntriesOnDatabaseUnlockOffsetDays"), Roaming, 3}},
     {Config::GUI_FontSizeOffset, {QS("GUI/FontSizeOffset"), Local, 0}},
     {Config::GUI_XDPGlobalShortcutsConfigured, {QS("GUI/XDPGlobalShortcutsConfigured"), Local, false}},
+    {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},
+    {Config::GUI_VoiceLanguage, {QS("GUI/VoiceLanguage"), Roaming, QS("English")}},
+    {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},
+    {Config::GUI_FunnyLevelCantonese, {QS("GUI/FunnyLevelCantonese"), Roaming, 3}},
+    {Config::GUI_VoiceDisclosureShown, {QS("GUI/VoiceDisclosureShown"), Roaming, false}},
 
     {Config::GUI_MainWindowGeometry, {QS("GUI/MainWindowGeometry"), Local, {}}},
     {Config::GUI_MainWindowState, {QS("GUI/MainWindowState"), Local, {}}},

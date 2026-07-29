@@ -28,12 +28,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string>Search terms are as follows: [modifiers][field:][&quot;]term[&quot;]</string>
      </property>
@@ -50,12 +44,6 @@
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string>Every search term must match (ie, logical AND)</string>
      </property>
@@ -68,12 +56,6 @@
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
      <item>
       <widget class="QGroupBox" name="groupBox_2">
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
        <property name="title">
         <string>Modifiers</string>
        </property>
@@ -85,12 +67,6 @@
             <width>10</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
           </property>
           <property name="text">
            <string notr="true">!</string>
@@ -125,12 +101,6 @@
             <height>0</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
           <property name="text">
            <string notr="true">*</string>
           </property>
@@ -154,12 +124,6 @@
             <height>0</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
           <property name="text">
            <string notr="true">+</string>
           </property>
@@ -173,12 +137,6 @@
      </item>
      <item>
       <widget class="QGroupBox" name="groupBox">
-       <property name="font">
-        <font>
-         <weight>50</weight>
-         <bold>false</bold>
-        </font>
-       </property>
        <property name="title">
         <string>Fields</string>
        </property>
@@ -277,12 +235,6 @@
             <height>0</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
           <property name="text">
            <string notr="true">*</string>
           </property>
@@ -302,12 +254,6 @@
             <height>0</height>
            </size>
           </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
-          </property>
           <property name="text">
            <string notr="true">?</string>
           </property>
@@ -323,12 +269,6 @@
             <width>10</width>
             <height>0</height>
            </size>
-          </property>
-          <property name="font">
-           <font>
-            <weight>75</weight>
-            <bold>true</bold>
-           </font>
           </property>
           <property name="text">
            <string notr="true">|</string>

@@ -254,7 +254,7 @@ SettingsWidgetFdoSecrets::SettingsWidgetFdoSecrets(FdoSecretsPlugin* plugin, QWi
     // prompt the user to save settings before the sections are enabled
     connect(m_plugin, &FdoSecretsPlugin::secretServiceStarted, this, &SettingsWidgetFdoSecrets::updateServiceState);
     connect(m_plugin, &FdoSecretsPlugin::secretServiceStopped, this, &SettingsWidgetFdoSecrets::updateServiceState);
-    connect(m_ui->enableFdoSecretService, &QCheckBox::toggled, this, &SettingsWidgetFdoSecrets::updateServiceState);
+    connect(m_ui->enableFdoSecretService, &QAbstractButton::toggled, this, &SettingsWidgetFdoSecrets::updateServiceState);
     updateServiceState();
 
     // background checking

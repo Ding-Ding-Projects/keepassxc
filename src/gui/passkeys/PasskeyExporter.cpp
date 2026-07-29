@@ -26,6 +26,7 @@
 #include "core/Tools.h"
 #include "gui/Clipboard.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
 #include <QFile>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -184,8 +185,7 @@ bool PasskeyExporter::confirmClipboardExport(int entryCount)
 void PasskeyExporter::exportEntryToClipboard(const Entry* entry)
 {
     if (!entry || !entry->hasPasskey()) {
-        MessageBox::information(m_parent,
-                                tr("Passkey Export Failed"),
+        Material::Notify::error(tr("Passkey Export Failed"),
                                 tr("The selected entry does not contain a passkey that can be exported."));
         return;
     }
@@ -208,8 +208,7 @@ void PasskeyExporter::exportEntriesToClipboard(const QList<Entry*>& entries)
     }
 
     if (passkeyEntries.isEmpty()) {
-        MessageBox::information(m_parent,
-                                tr("Passkey Export Failed"),
+        Material::Notify::error(tr("Passkey Export Failed"),
                                 tr("None of the selected entries contain a passkey that can be exported."));
         return;
     }
@@ -248,15 +247,13 @@ void PasskeyExporter::exportSelectedEntry(const Entry* entry, const QString& fol
 
     QFile passkeyFile(fullPath);
     if (!passkeyFile.open(QIODevice::WriteOnly)) {
-        MessageBox::information(
-            m_parent, tr("Cannot open file"), tr("Cannot open file \"%1\" for writing.").arg(fullPath));
+        Material::Notify::error(tr("Cannot open file"), tr("Cannot open file \"%1\" for writing.").arg(fullPath));
         return;
     }
 
     QJsonDocument document(buildPasskeyObject(entry));
     if (passkeyFile.write(document.toJson()) < 0) {
-        MessageBox::information(
-            nullptr, tr("Cannot write to file"), tr("Cannot open file \"%1\" for writing.").arg(fullPath));
+        Material::Notify::error(tr("Cannot write to file"), tr("Cannot open file \"%1\" for writing.").arg(fullPath));
     }
 
     passkeyFile.close();

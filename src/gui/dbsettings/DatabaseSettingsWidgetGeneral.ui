@@ -24,7 +24,7 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <property name="spacing">
-    <number>20</number>
+    <number>16</number>
    </property>
    <property name="leftMargin">
     <number>0</number>
@@ -44,6 +44,12 @@
       <string>Database Metadata</string>
      </property>
      <layout class="QFormLayout" name="formLayout">
+      <property name="horizontalSpacing">
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>12</number>
+      </property>
       <item row="0" column="0">
        <widget class="QLabel" name="dbNameLabel">
         <property name="text">
@@ -98,20 +104,30 @@
       <string>Public Database Metadata</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>12</number>
+      </property>
       <item>
        <widget class="QLabel" name="warningLabel">
-        <property name="font">
-         <font>
-          <italic>true</italic>
-         </font>
-        </property>
         <property name="text">
          <string>Warning: the following settings are not encrypted.</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+        <property name="materialSeverity" stdset="0">
+         <string notr="true">warning</string>
         </property>
        </widget>
       </item>
       <item>
        <layout class="QFormLayout" name="formLayout_2">
+        <property name="horizontalSpacing">
+         <number>12</number>
+        </property>
+        <property name="verticalSpacing">
+         <number>12</number>
+        </property>
         <property name="topMargin">
          <number>0</number>
         </property>
@@ -141,12 +157,21 @@
         </item>
         <item row="1" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <property name="spacing">
+           <number>12</number>
+          </property>
           <item>
            <widget class="QPushButton" name="dbPublicColorButton">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>40</width>
+              <height>32</height>
              </size>
             </property>
             <property name="toolTip">
@@ -158,12 +183,21 @@
             <property name="text">
              <string/>
             </property>
+            <property name="iconSize">
+             <size>
+              <width>22</width>
+              <height>22</height>
+             </size>
+            </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="dbPublicColorClearButton">
+           <widget class="Material::TextButton" name="dbPublicColorClearButton">
             <property name="text">
              <string>Clear</string>
+            </property>
+            <property name="symbol">
+             <string notr="true">close</string>
             </property>
            </widget>
           </item>
@@ -191,12 +225,21 @@
         </item>
         <item row="2" column="1">
          <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <property name="spacing">
+           <number>12</number>
+          </property>
           <item>
            <widget class="QPushButton" name="dbPublicIconButton">
+            <property name="minimumSize">
+             <size>
+              <width>40</width>
+              <height>32</height>
+             </size>
+            </property>
             <property name="maximumSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>40</width>
+              <height>32</height>
              </size>
             </property>
             <property name="text">
@@ -204,16 +247,19 @@
             </property>
             <property name="iconSize">
              <size>
-              <width>30</width>
-              <height>30</height>
+              <width>22</width>
+              <height>22</height>
              </size>
             </property>
            </widget>
           </item>
           <item>
-           <widget class="QPushButton" name="dbPublicIconClearButton">
+           <widget class="Material::TextButton" name="dbPublicIconClearButton">
             <property name="text">
              <string>Clear</string>
+            </property>
+            <property name="symbol">
+             <string notr="true">close</string>
             </property>
            </widget>
           </item>
@@ -242,83 +288,72 @@
      <property name="title">
       <string>History Settings</string>
      </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <layout class="QGridLayout" name="gridLayout">
-        <item row="0" column="0">
-         <widget class="QCheckBox" name="historyMaxItemsCheckBox">
-          <property name="toolTip">
-           <string>When saving this setting or editing an entry
+     <layout class="QGridLayout" name="gridLayout">
+      <property name="horizontalSpacing">
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>12</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="historyMaxItemsCheckBox">
+        <property name="toolTip">
+         <string>When saving this setting or editing an entry
 the oldest history items of an entry will be
 removed such that only the specified amount
 of entries remain at most.</string>
-          </property>
-          <property name="text">
-           <string>Limit the amount of history items per entry to:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QCheckBox" name="recycleBinEnabledCheckBox">
-          <property name="toolTip">
-           <string>Move entries to a recycle bin group
-instead of deleting them from the database.
-Entries deleted from the recycle bin are
-removed from the database.</string>
-          </property>
-          <property name="text">
-           <string>Use recycle bin</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QCheckBox" name="historyMaxSizeCheckBox">
-          <property name="toolTip">
-           <string>When saving this setting or editing an entry
+        </property>
+        <property name="text">
+         <string>Limit the amount of history items per entry to:</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="historyMaxItemsSpinBox">
+        <property name="toolTip">
+         <string>Maximum number of history items per entry</string>
+        </property>
+        <property name="accessibleName">
+         <string>Maximum number of history items per entry</string>
+        </property>
+        <property name="maximum">
+         <number>2000000000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="historyMaxSizeCheckBox">
+        <property name="toolTip">
+         <string>When saving this setting or editing an entry
 the oldest history items of an entry will be
 removed such that the remaining history items
 add up to the specified amount at most.</string>
-          </property>
-          <property name="text">
-           <string>Limit the total size of history items per entry to:</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="historyMaxSizeSpinBox">
-          <property name="toolTip">
-           <string>Maximum size of history per entry</string>
-          </property>
-          <property name="accessibleName">
-           <string>Maximum size of history per entry</string>
-          </property>
-          <property name="suffix">
-           <string> MiB</string>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>2000000000</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="historyMaxItemsSpinBox">
-          <property name="toolTip">
-           <string>Maximum number of history items per entry</string>
-          </property>
-          <property name="accessibleName">
-           <string>Maximum number of history items per entry</string>
-          </property>
-          <property name="maximum">
-           <number>2000000000</number>
-          </property>
-         </widget>
-        </item>
-       </layout>
+        </property>
+        <property name="text">
+         <string>Limit the total size of history items per entry to:</string>
+        </property>
+       </widget>
       </item>
-      <item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="historyMaxSizeSpinBox">
+        <property name="toolTip">
+         <string>Maximum size of history per entry</string>
+        </property>
+        <property name="accessibleName">
+         <string>Maximum size of history per entry</string>
+        </property>
+        <property name="suffix">
+         <string> MiB</string>
+        </property>
+        <property name="minimum">
+         <number>1</number>
+        </property>
+        <property name="maximum">
+         <number>2000000000</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2" rowspan="2">
        <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
@@ -331,6 +366,32 @@ add up to the specified amount at most.</string>
         </property>
        </spacer>
       </item>
+      <item row="2" column="0">
+       <widget class="QLabel" name="recycleBinEnabledLabel">
+        <property name="toolTip">
+         <string>Move entries to a recycle bin group
+instead of deleting them from the database.
+Entries deleted from the recycle bin are
+removed from the database.</string>
+        </property>
+        <property name="text">
+         <string>Use recycle bin</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1" colspan="2">
+       <widget class="Material::Switch" name="recycleBinEnabledCheckBox">
+        <property name="toolTip">
+         <string>Move entries to a recycle bin group
+instead of deleting them from the database.
+Entries deleted from the recycle bin are
+removed from the database.</string>
+        </property>
+        <property name="accessibleName">
+         <string>Use recycle bin</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
@@ -339,68 +400,77 @@ add up to the specified amount at most.</string>
      <property name="title">
       <string>Additional Database Settings</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
-      <item>
-       <widget class="QCheckBox" name="compressionCheckbox">
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="horizontalSpacing">
+       <number>12</number>
+      </property>
+      <property name="verticalSpacing">
+       <number>12</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QLabel" name="compressionLabel">
         <property name="text">
          <string>Enable compression (recommended)</string>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1" colspan="2">
+       <widget class="Material::Switch" name="compressionCheckbox">
+        <property name="accessibleName">
+         <string>Enable compression</string>
         </property>
         <property name="checked">
          <bool>true</bool>
         </property>
        </widget>
       </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QCheckBox" name="autosaveDelayCheckBox">
-          <property name="toolTip">
-           <string>Autosave delay since last change</string>
-          </property>
-          <property name="accessibleName">
-           <string>Autosave delay since last change checkbox</string>
-          </property>
-          <property name="text">
-           <string>Autosave delay</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QSpinBox" name="autosaveDelaySpinBox">
-          <property name="toolTip">
-           <string>Autosave delay since last change in minutes</string>
-          </property>
-          <property name="accessibleName">
-           <string>Autosave delay since last change in minutes</string>
-          </property>
-          <property name="suffix">
-           <string> min</string>
-          </property>
-          <property name="minimum">
-           <number>0</number>
-          </property>
-          <property name="maximum">
-           <number>420000000</number>
-          </property>
-          <property name="value">
-           <number>5</number>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-       </layout>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="autosaveDelayCheckBox">
+        <property name="toolTip">
+         <string>Autosave delay since last change</string>
+        </property>
+        <property name="accessibleName">
+         <string>Autosave delay since last change checkbox</string>
+        </property>
+        <property name="text">
+         <string>Autosave delay</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="autosaveDelaySpinBox">
+        <property name="toolTip">
+         <string>Autosave delay since last change in minutes</string>
+        </property>
+        <property name="accessibleName">
+         <string>Autosave delay since last change in minutes</string>
+        </property>
+        <property name="suffix">
+         <string> min</string>
+        </property>
+        <property name="minimum">
+         <number>0</number>
+        </property>
+        <property name="maximum">
+         <number>420000000</number>
+        </property>
+        <property name="value">
+         <number>5</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </widget>
@@ -420,6 +490,18 @@ add up to the specified amount at most.</string>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

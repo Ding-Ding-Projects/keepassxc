@@ -17,47 +17,35 @@
 
 #include "StateColorPalette.h"
 
-#include "gui/Application.h"
+#include "gui/material/MaterialTheme.h"
 
 StateColorPalette::StateColorPalette()
 {
-    if (kpxcApp->isDarkTheme()) {
-        initDefaultPaletteDark();
-    } else {
-        initDefaultPaletteLight();
-    }
+    resolveFromTheme();
 }
 
-void StateColorPalette::initDefaultPaletteLight()
+void StateColorPalette::resolveFromTheme()
 {
-    setColor(ColorRole::Error, QStringLiteral("#FF7D7D"));
-    setColor(ColorRole::Warning, QStringLiteral("#FFD30F"));
-    setColor(ColorRole::Info, QStringLiteral("#84D0E1"));
-    setColor(ColorRole::Incomplete, QStringLiteral("#FFD30F"));
+    using Material::Health;
+    using Material::Role;
 
-    setColor(ColorRole::HealthCritical, QStringLiteral("#C43F31"));
-    setColor(ColorRole::HealthBad, QStringLiteral("#E07F16"));
-    setColor(ColorRole::HealthWeak, QStringLiteral("#FFD30F"));
-    setColor(ColorRole::HealthOk, QStringLiteral("#5EA10E"));
-    setColor(ColorRole::HealthExcellent, QStringLiteral("#118f17"));
+    const auto& scheme = theme()->colors();
 
-    setColor(ColorRole::True, QStringLiteral("#5EA10E"));
-    setColor(ColorRole::False, QStringLiteral("#C43F31"));
-}
+    // The three status families, as used by validation and messages.
+    setColor(ColorRole::Error, scheme.color(Role::Error));
+    setColor(ColorRole::Warning, scheme.color(Role::Amber));
+    setColor(ColorRole::Info, scheme.color(Role::Primary));
+    // "Nearly right" belongs to the warning family, not the error one.
+    setColor(ColorRole::Incomplete, scheme.color(Role::Amber));
 
-void StateColorPalette::initDefaultPaletteDark()
-{
-    setColor(ColorRole::Error, QStringLiteral("#802D2D"));
-    setColor(ColorRole::Warning, QStringLiteral("#73682E"));
-    setColor(ColorRole::Info, QStringLiteral("#207183"));
-    setColor(ColorRole::Incomplete, QStringLiteral("#665124"));
+    // Password health, off the design's health scale.
+    setColor(ColorRole::HealthCritical, scheme.healthColor(Health::Breached));
+    setColor(ColorRole::HealthBad, scheme.healthColor(Health::Weak));
+    setColor(ColorRole::HealthPoor, scheme.healthColor(Health::Weak));
+    setColor(ColorRole::HealthWeak, scheme.color(Role::Amber));
+    setColor(ColorRole::HealthOk, scheme.healthColor(Health::Ok));
+    setColor(ColorRole::HealthExcellent, scheme.color(Role::Green));
 
-    setColor(ColorRole::HealthCritical, QStringLiteral("#C43F31"));
-    setColor(ColorRole::HealthBad, QStringLiteral("#DB9837"));
-    setColor(ColorRole::HealthWeak, QStringLiteral("#F0C400"));
-    setColor(ColorRole::HealthOk, QStringLiteral("#608A22"));
-    setColor(ColorRole::HealthExcellent, QStringLiteral("#1F8023"));
-
-    setColor(ColorRole::True, QStringLiteral("#608A22"));
-    setColor(ColorRole::False, QStringLiteral("#C43F31"));
+    setColor(ColorRole::True, scheme.color(Role::Green));
+    setColor(ColorRole::False, scheme.color(Role::Error));
 }

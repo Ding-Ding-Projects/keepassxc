@@ -82,47 +82,257 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_4">
               <item>
-               <widget class="QCheckBox" name="singleInstanceCheckBox">
-                <property name="text">
-                 <string>Start only a single instance of KeePassXC</string>
+               <layout class="QHBoxLayout" name="singleInstanceCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
+                <property name="topMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="singleInstanceCheckBoxLabel">
+                  <property name="text">
+                   <string>Start only a single instance of KeePassXC</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="singleInstanceCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="singleInstanceCheckBox">
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Start only a single instance of KeePassXC</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="launchAtStartup">
-                <property name="text">
-                 <string>Automatically launch KeePassXC at system startup</string>
+               <layout class="QHBoxLayout" name="launchAtStartupRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="launchAtStartupLabel">
+                  <property name="text">
+                   <string>Automatically launch KeePassXC at system startup</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="launchAtStartupSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="launchAtStartup">
+                  <property name="accessibleName">
+                   <string>Automatically launch KeePassXC at system startup</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="systrayMinimizeOnStartup">
-                <property name="text">
-                 <string>Minimize window at application startup</string>
+               <layout class="QHBoxLayout" name="systrayMinimizeOnStartupRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="systrayMinimizeOnStartupLabel">
+                  <property name="text">
+                   <string>Minimize window at application startup</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="systrayMinimizeOnStartupSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="systrayMinimizeOnStartup">
+                  <property name="accessibleName">
+                   <string>Minimize window at application startup</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="minimizeAfterUnlockCheckBox">
-                <property name="text">
-                 <string>Minimize window after unlocking database</string>
+               <layout class="QHBoxLayout" name="minimizeAfterUnlockCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="minimizeAfterUnlockCheckBoxLabel">
+                  <property name="text">
+                   <string>Minimize window after unlocking database</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimizeAfterUnlockCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="minimizeAfterUnlockCheckBox">
+                  <property name="accessibleName">
+                   <string>Minimize window after unlocking database</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_6">
                 <item>
-                 <widget class="QCheckBox" name="rememberLastDatabasesCheckBox">
-                  <property name="text">
-                   <string>Remember previously used databases</string>
+                 <layout class="QHBoxLayout" name="rememberLastDatabasesCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
-                 </widget>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="rememberLastDatabasesCheckBoxLabel">
+                    <property name="text">
+                     <string>Remember previously used databases</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="rememberLastDatabasesCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="rememberLastDatabasesCheckBox">
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                    <property name="accessibleName">
+                     <string>Remember previously used databases</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <widget class="QSpinBox" name="rememberLastDatabasesSpinbox">
@@ -180,14 +390,56 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="openPreviousDatabasesOnStartupCheckBox">
-                  <property name="text">
-                   <string>Load previously open databases on startup</string>
+                 <layout class="QHBoxLayout" name="openPreviousDatabasesOnStartupCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
-                 </widget>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="openPreviousDatabasesOnStartupCheckBoxLabel">
+                    <property name="text">
+                     <string>Load previously open databases on startup</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="openPreviousDatabasesOnStartupCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="openPreviousDatabasesOnStartupCheckBox">
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                    <property name="accessibleName">
+                     <string>Load previously open databases on startup</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
@@ -216,22 +468,108 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="rememberLastKeyFilesCheckBox">
-                  <property name="text">
-                   <string>Remember database key files and security dongles</string>
+                 <layout class="QHBoxLayout" name="rememberLastKeyFilesCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="checked">
-                   <bool>true</bool>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
-                 </widget>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="rememberLastKeyFilesCheckBoxLabel">
+                    <property name="text">
+                     <string>Remember database key files and security dongles</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="rememberLastKeyFilesCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="rememberLastKeyFilesCheckBox">
+                    <property name="checked">
+                     <bool>true</bool>
+                    </property>
+                    <property name="accessibleName">
+                     <string>Remember database key files and security dongles</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="checkForUpdatesOnStartupCheckBox">
-                <property name="text">
-                 <string>Check for updates at application startup once per week</string>
+               <widget class="QWidget" name="checkForUpdatesOnStartupCheckBoxRowContainer" native="true">
+                <layout class="QHBoxLayout" name="checkForUpdatesOnStartupCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="checkForUpdatesOnStartupCheckBoxLabel">
+                  <property name="text">
+                   <string>Check for updates at application startup once per week</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="checkForUpdatesOnStartupCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="checkForUpdatesOnStartupCheckBox">
+                  <property name="accessibleName">
+                   <string>Check for updates at application startup once per week</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
                </widget>
               </item>
               <item>
@@ -256,13 +594,57 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QCheckBox" name="checkForUpdatesIncludeBetasCheckBox">
-                  <property name="enabled">
-                   <bool>false</bool>
+                 <widget class="QWidget" name="checkForUpdatesIncludeBetasCheckBoxRowContainer" native="true">
+                  <layout class="QHBoxLayout" name="checkForUpdatesIncludeBetasCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="text">
-                   <string>Include beta releases when checking for updates</string>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="checkForUpdatesIncludeBetasCheckBoxLabel">
+                    <property name="text">
+                     <string>Include beta releases when checking for updates</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="checkForUpdatesIncludeBetasCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="checkForUpdatesIncludeBetasCheckBox">
+                    <property name="enabled">
+                     <bool>false</bool>
+                    </property>
+                    <property name="accessibleName">
+                     <string>Include beta releases when checking for updates</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                  </widget>
                 </item>
                </layout>
@@ -276,11 +658,53 @@
                  <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
                 </property>
                 <item>
-                 <widget class="QCheckBox" name="showExpiredEntriesOnDatabaseUnlockCheckBox">
-                  <property name="text">
-                   <string>On database unlock, show entries that will expire within</string>
+                 <layout class="QHBoxLayout" name="showExpiredEntriesOnDatabaseUnlockCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                 </widget>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="showExpiredEntriesOnDatabaseUnlockCheckBoxLabel">
+                    <property name="text">
+                     <string>On database unlock, show entries that will expire within</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="showExpiredEntriesOnDatabaseUnlockCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="showExpiredEntriesOnDatabaseUnlockCheckBox">
+                    <property name="accessibleName">
+                     <string>On database unlock, show entries that will expire within</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item>
                  <widget class="QSpinBox" name="showExpiredEntriesOnDatabaseUnlockOffsetSpinBox">
@@ -332,39 +756,249 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_5">
               <item>
-               <widget class="QCheckBox" name="autoSaveAfterEveryChangeCheckBox">
-                <property name="text">
-                 <string>Automatically save after every change</string>
+               <layout class="QHBoxLayout" name="autoSaveAfterEveryChangeCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="autoSaveAfterEveryChangeCheckBoxLabel">
+                  <property name="text">
+                   <string>Automatically save after every change</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="autoSaveAfterEveryChangeCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="autoSaveAfterEveryChangeCheckBox">
+                  <property name="accessibleName">
+                   <string>Automatically save after every change</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="autoSaveOnExitCheckBox">
-                <property name="text">
-                 <string>Automatically save when locking database</string>
+               <layout class="QHBoxLayout" name="autoSaveOnExitCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="autoSaveOnExitCheckBoxLabel">
+                  <property name="text">
+                   <string>Automatically save when locking database</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="autoSaveOnExitCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="autoSaveOnExitCheckBox">
+                  <property name="accessibleName">
+                   <string>Automatically save when locking database</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="autoSaveNonDataChangesCheckBox">
-                <property name="text">
-                 <string>Automatically save non-data changes when locking database</string>
+               <layout class="QHBoxLayout" name="autoSaveNonDataChangesCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="autoSaveNonDataChangesCheckBoxLabel">
+                  <property name="text">
+                   <string>Automatically save non-data changes when locking database</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="autoSaveNonDataChangesCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="autoSaveNonDataChangesCheckBox">
+                  <property name="accessibleName">
+                   <string>Automatically save non-data changes when locking database</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="autoReloadOnChangeCheckBox">
-                <property name="text">
-                 <string>Automatically reload the database when modified externally</string>
+               <layout class="QHBoxLayout" name="autoReloadOnChangeCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="autoReloadOnChangeCheckBoxLabel">
+                  <property name="text">
+                   <string>Automatically reload the database when modified externally</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="autoReloadOnChangeCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="autoReloadOnChangeCheckBox">
+                  <property name="accessibleName">
+                   <string>Automatically reload the database when modified externally</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="backupBeforeSaveCheckBox">
-                <property name="text">
-                 <string>Backup database file before saving</string>
+               <layout class="QHBoxLayout" name="backupBeforeSaveCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="backupBeforeSaveCheckBoxLabel">
+                  <property name="text">
+                   <string>Backup database file before saving</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="backupBeforeSaveCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="backupBeforeSaveCheckBox">
+                  <property name="accessibleName">
+                   <string>Backup database file before saving</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_4">
@@ -449,7 +1083,10 @@
                  </spacer>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="backupFilePathPicker">
+                 <widget class="Material::OutlinedButton" name="backupFilePathPicker">
+                  <property name="symbol">
+                   <string notr="true">folder_open</string>
+                  </property>
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
@@ -461,11 +1098,53 @@
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="useAlternativeSaveCheckBox">
-                <property name="text">
-                 <string>Use alternative saving method (may solve problems with Dropbox, Google Drive, GVFS, etc.)</string>
+               <layout class="QHBoxLayout" name="useAlternativeSaveCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="useAlternativeSaveCheckBoxLabel">
+                  <property name="text">
+                   <string>Use alternative saving method (may solve problems with Dropbox, Google Drive, GVFS, etc.)</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="useAlternativeSaveCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="useAlternativeSaveCheckBox">
+                  <property name="accessibleName">
+                   <string>Use alternative saving method (may solve problems with Dropbox, Google Drive, GVFS, etc.)</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="horizontalLayout_3">
@@ -533,25 +1212,151 @@
              </property>
              <layout class="QVBoxLayout" name="verticalLayout_6">
               <item>
-               <widget class="QCheckBox" name="ConfirmMoveEntryToRecycleBinCheckBox">
-                <property name="text">
-                 <string>Show confirmation before moving entries to recycle bin</string>
+               <layout class="QHBoxLayout" name="ConfirmMoveEntryToRecycleBinCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="ConfirmMoveEntryToRecycleBinCheckBoxLabel">
+                  <property name="text">
+                   <string>Show confirmation before moving entries to recycle bin</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="ConfirmMoveEntryToRecycleBinCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="ConfirmMoveEntryToRecycleBinCheckBox">
+                  <property name="accessibleName">
+                   <string>Show confirmation before moving entries to recycle bin</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="autoGeneratePasswordForNewEntriesCheckBox">
-                <property name="text">
-                 <string>Auto-generate password for new entries</string>
+               <layout class="QHBoxLayout" name="autoGeneratePasswordForNewEntriesCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="autoGeneratePasswordForNewEntriesCheckBoxLabel">
+                  <property name="text">
+                   <string>Auto-generate password for new entries</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="autoGeneratePasswordForNewEntriesCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="autoGeneratePasswordForNewEntriesCheckBox">
+                  <property name="accessibleName">
+                   <string>Auto-generate password for new entries</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="EnableCopyOnDoubleClickCheckBox">
-                <property name="text">
-                 <string>Copy data on double clicking field in entry view</string>
+               <layout class="QHBoxLayout" name="EnableCopyOnDoubleClickCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="EnableCopyOnDoubleClickCheckBoxLabel">
+                  <property name="text">
+                   <string>Copy data on double clicking field in entry view</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="EnableCopyOnDoubleClickCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="EnableCopyOnDoubleClickCheckBox">
+                  <property name="accessibleName">
+                   <string>Copy data on double clicking field in entry view</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="urlDoubleClickLayout">
@@ -609,28 +1414,154 @@
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="useGroupIconOnEntryCreationCheckBox">
-                <property name="text">
-                 <string>Use group icon on entry creation</string>
+               <layout class="QHBoxLayout" name="useGroupIconOnEntryCreationCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-                <property name="checked">
-                 <bool>true</bool>
+                <property name="topMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="useGroupIconOnEntryCreationCheckBoxLabel">
+                  <property name="text">
+                   <string>Use group icon on entry creation</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="useGroupIconOnEntryCreationCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="useGroupIconOnEntryCreationCheckBox">
+                  <property name="checked">
+                   <bool>true</bool>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Use group icon on entry creation</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="minimizeOnOpenUrlCheckBox">
-                <property name="text">
-                 <string>Minimize when opening a URL</string>
+               <layout class="QHBoxLayout" name="minimizeOnOpenUrlCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="minimizeOnOpenUrlCheckBoxLabel">
+                  <property name="text">
+                   <string>Minimize when opening a URL</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimizeOnOpenUrlCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="minimizeOnOpenUrlCheckBox">
+                  <property name="accessibleName">
+                   <string>Minimize when opening a URL</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="hideWindowOnCopyCheckBox">
-                <property name="text">
-                 <string>Hide window when copying to clipboard</string>
+               <layout class="QHBoxLayout" name="hideWindowOnCopyCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="hideWindowOnCopyCheckBoxLabel">
+                  <property name="text">
+                   <string>Hide window when copying to clipboard</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="hideWindowOnCopyCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="hideWindowOnCopyCheckBox">
+                  <property name="accessibleName">
+                   <string>Hide window when copying to clipboard</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QHBoxLayout" name="hideWindowLayout_1">
@@ -797,20 +1728,56 @@
                  </widget>
                 </item>
                 <item row="1" column="2">
-                 <widget class="QCheckBox" name="toolbarMovableCheckBox">
-                  <property name="enabled">
-                   <bool>true</bool>
+                 <layout class="QHBoxLayout" name="toolbarMovableCheckBoxRow">
+                  <property name="leftMargin">
+                   <number>0</number>
                   </property>
-                  <property name="sizePolicy">
-                   <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                    <horstretch>0</horstretch>
-                    <verstretch>0</verstretch>
-                   </sizepolicy>
+                  <property name="topMargin">
+                   <number>0</number>
                   </property>
-                  <property name="text">
-                   <string>Movable toolbar</string>
+                  <property name="rightMargin">
+                   <number>0</number>
                   </property>
-                 </widget>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="spacing">
+                   <number>12</number>
+                  </property>
+                  <item>
+                   <widget class="QLabel" name="toolbarMovableCheckBoxLabel">
+                    <property name="text">
+                     <string>Movable toolbar</string>
+                    </property>
+                    <property name="wordWrap">
+                     <bool>true</bool>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="toolbarMovableCheckBoxSpacer">
+                    <property name="orientation">
+                     <enum>Qt::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>24</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="Material::Switch" name="toolbarMovableCheckBox">
+                    <property name="enabled">
+                     <bool>true</bool>
+                    </property>
+                    <property name="accessibleName">
+                     <string>Movable toolbar</string>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
                 </item>
                 <item row="1" column="1">
                  <widget class="QComboBox" name="toolButtonStyleComboBox">
@@ -908,49 +1875,306 @@
                </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="toolbarShowCheckBox">
-                <property name="text">
-                 <string>Show toolbar</string>
+               <layout class="QHBoxLayout" name="toolbarShowCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="toolbarShowCheckBoxLabel">
+                  <property name="text">
+                   <string>Show toolbar</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="toolbarShowCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="toolbarShowCheckBox">
+                  <property name="accessibleName">
+                   <string>Show toolbar</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </item>
+              <item>
+               <widget class="QWidget" name="menubarShowCheckBoxRowContainer" native="true">
+                <layout class="QHBoxLayout" name="menubarShowCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="menubarShowCheckBoxLabel">
+                  <property name="text">
+                   <string>Show menubar</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                  <property name="toolTip">
+                   <string>Show the menu bar by pressing the Alt key</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="menubarShowCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="menubarShowCheckBox">
+                  <property name="toolTip">
+                   <string>Show the menu bar by pressing the Alt key</string>
+                  </property>
+                  <property name="accessibleName">
+                   <string>Show menubar</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
                </widget>
               </item>
               <item>
-               <widget class="QCheckBox" name="menubarShowCheckBox">
-                <property name="toolTip">
-                 <string>Show the menu bar by pressing the Alt key</string>
+               <layout class="QHBoxLayout" name="colorPasswordsCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-                <property name="text">
-                 <string>Show menubar</string>
+                <property name="topMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="colorPasswordsCheckBoxLabel">
+                  <property name="text">
+                   <string>Show passwords in color</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="colorPasswordsCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="colorPasswordsCheckBox">
+                  <property name="accessibleName">
+                   <string>Show passwords in color</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="colorPasswordsCheckBox">
-                <property name="text">
-                 <string>Show passwords in color</string>
+               <layout class="QHBoxLayout" name="monospaceNotesCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="monospaceNotesCheckBoxLabel">
+                  <property name="text">
+                   <string>Use monospaced font for notes</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="monospaceNotesCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="monospaceNotesCheckBox">
+                  <property name="accessibleName">
+                   <string>Use monospaced font for notes</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="monospaceNotesCheckBox">
-                <property name="text">
-                 <string>Use monospaced font for notes</string>
+               <layout class="QHBoxLayout" name="minimizeOnCloseCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="minimizeOnCloseCheckBoxLabel">
+                  <property name="text">
+                   <string>Minimize instead of app exit</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="minimizeOnCloseCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="minimizeOnCloseCheckBox">
+                  <property name="accessibleName">
+                   <string>Minimize instead of app exit</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
-               <widget class="QCheckBox" name="minimizeOnCloseCheckBox">
-                <property name="text">
-                 <string>Minimize instead of app exit</string>
+               <layout class="QHBoxLayout" name="systrayShowCheckBoxRow">
+                <property name="leftMargin">
+                 <number>0</number>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QCheckBox" name="systrayShowCheckBox">
-                <property name="text">
-                 <string>Show a system tray icon</string>
+                <property name="topMargin">
+                 <number>0</number>
                 </property>
-               </widget>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <property name="spacing">
+                 <number>12</number>
+                </property>
+                <item>
+                 <widget class="QLabel" name="systrayShowCheckBoxLabel">
+                  <property name="text">
+                   <string>Show a system tray icon</string>
+                  </property>
+                  <property name="wordWrap">
+                   <bool>true</bool>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <spacer name="systrayShowCheckBoxSpacer">
+                  <property name="orientation">
+                   <enum>Qt::Horizontal</enum>
+                  </property>
+                  <property name="sizeHint" stdset="0">
+                   <size>
+                    <width>24</width>
+                    <height>20</height>
+                   </size>
+                  </property>
+                 </spacer>
+                </item>
+                <item>
+                 <widget class="Material::Switch" name="systrayShowCheckBox">
+                  <property name="accessibleName">
+                   <string>Show a system tray icon</string>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </item>
               <item>
                <layout class="QGridLayout" name="gridLayout_2">
@@ -1082,20 +2306,56 @@
                     </spacer>
                    </item>
                    <item>
-                    <widget class="QCheckBox" name="systrayMinimizeToTrayCheckBox">
-                     <property name="enabled">
-                      <bool>false</bool>
+                    <layout class="QHBoxLayout" name="systrayMinimizeToTrayCheckBoxRow">
+                     <property name="leftMargin">
+                      <number>0</number>
                      </property>
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
+                     <property name="topMargin">
+                      <number>0</number>
                      </property>
-                     <property name="text">
-                      <string>Hide window to system tray when minimized</string>
+                     <property name="rightMargin">
+                      <number>0</number>
                      </property>
-                    </widget>
+                     <property name="bottomMargin">
+                      <number>0</number>
+                     </property>
+                     <property name="spacing">
+                      <number>12</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="systrayMinimizeToTrayCheckBoxLabel">
+                       <property name="text">
+                        <string>Hide window to system tray when minimized</string>
+                       </property>
+                       <property name="wordWrap">
+                        <bool>true</bool>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="systrayMinimizeToTrayCheckBoxSpacer">
+                       <property name="orientation">
+                        <enum>Qt::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>24</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="Material::Switch" name="systrayMinimizeToTrayCheckBox">
+                       <property name="enabled">
+                        <bool>false</bool>
+                       </property>
+                       <property name="accessibleName">
+                        <string>Hide window to system tray when minimized</string>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
                    </item>
                   </layout>
                  </item>
@@ -1114,7 +2374,10 @@
               <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
              </property>
              <item>
-              <widget class="QPushButton" name="resetSettingsButton">
+              <widget class="Material::OutlinedButton" name="resetSettingsButton">
+               <property name="symbol">
+                <string notr="true">restore</string>
+               </property>
                <property name="text">
                 <string>Reset settings to default…</string>
                </property>
@@ -1134,14 +2397,20 @@
               </spacer>
              </item>
              <item>
-              <widget class="QPushButton" name="importSettingsButton">
+              <widget class="Material::OutlinedButton" name="importSettingsButton">
+               <property name="symbol">
+                <string notr="true">upload</string>
+               </property>
                <property name="text">
                 <string>Import settings…</string>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QPushButton" name="exportSettingsButton">
+              <widget class="Material::OutlinedButton" name="exportSettingsButton">
+               <property name="symbol">
+                <string notr="true">download</string>
+               </property>
                <property name="text">
                 <string>Export settings…</string>
                </property>
@@ -1186,28 +2455,158 @@
         <number>10</number>
        </property>
        <item>
-        <widget class="QCheckBox" name="autoTypeEntryTitleMatchCheckBox">
-         <property name="text">
-          <string>Use entry title to match windows for global Auto-Type</string>
+        <widget class="QWidget" name="autoTypeEntryTitleMatchCheckBoxRowContainer" native="true">
+         <layout class="QHBoxLayout" name="autoTypeEntryTitleMatchCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeEntryTitleMatchCheckBoxLabel">
+           <property name="text">
+            <string>Use entry title to match windows for global Auto-Type</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeEntryTitleMatchCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeEntryTitleMatchCheckBox">
+           <property name="accessibleName">
+            <string>Use entry title to match windows for global Auto-Type</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="autoTypeEntryURLMatchCheckBox">
-         <property name="text">
-          <string>Use entry URL to match windows for global Auto-Type</string>
+        <widget class="QWidget" name="autoTypeEntryURLMatchCheckBoxRowContainer" native="true">
+         <layout class="QHBoxLayout" name="autoTypeEntryURLMatchCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeEntryURLMatchCheckBoxLabel">
+           <property name="text">
+            <string>Use entry URL to match windows for global Auto-Type</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeEntryURLMatchCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeEntryURLMatchCheckBox">
+           <property name="accessibleName">
+            <string>Use entry URL to match windows for global Auto-Type</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="autoTypeAskCheckBox">
-         <property name="text">
-          <string>Always ask before performing Auto-Type</string>
+        <layout class="QHBoxLayout" name="autoTypeAskCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeAskCheckBoxLabel">
+           <property name="text">
+            <string>Always ask before performing Auto-Type</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeAskCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeAskCheckBox">
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="accessibleName">
+            <string>Always ask before performing Auto-Type</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <layout class="QHBoxLayout" name="autoTypeSkipMainWindowLayout">
@@ -1231,53 +2630,311 @@
           </spacer>
          </item>
          <item>
-          <widget class="QCheckBox" name="autoTypeSkipMainWindowConfirmationCheckBox">
-           <property name="enabled">
-            <bool>false</bool>
+          <layout class="QHBoxLayout" name="autoTypeSkipMainWindowConfirmationCheckBoxRow">
+           <property name="leftMargin">
+            <number>0</number>
            </property>
+           <property name="topMargin">
+            <number>0</number>
+           </property>
+           <property name="rightMargin">
+            <number>0</number>
+           </property>
+           <property name="bottomMargin">
+            <number>0</number>
+           </property>
+           <property name="spacing">
+            <number>12</number>
+           </property>
+           <item>
+            <widget class="QLabel" name="autoTypeSkipMainWindowConfirmationCheckBoxLabel">
+             <property name="text">
+              <string>Skip confirmation for main window Auto-Type actions</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="autoTypeSkipMainWindowConfirmationCheckBoxSpacer">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>24</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="Material::Switch" name="autoTypeSkipMainWindowConfirmationCheckBox">
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="enabled">
+              <bool>false</bool>
+             </property>
+             <property name="accessibleName">
+              <string>Skip confirmation for main window Auto-Type actions</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="autoTypeHideExpiredEntryCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeHideExpiredEntryCheckBoxLabel">
            <property name="text">
-            <string>Skip confirmation for main window Auto-Type actions</string>
+            <string>Hide expired entries from Auto-Type</string>
            </property>
-           <property name="checked">
-            <bool>false</bool>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeHideExpiredEntryCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeHideExpiredEntryCheckBox">
+           <property name="accessibleName">
+            <string>Hide expired entries from Auto-Type</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+      </item>
+      <item>
+        <layout class="QHBoxLayout" name="autoTypeRelockDatabaseCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeRelockDatabaseCheckBoxLabel">
+           <property name="text">
+            <string>Re-lock previously locked database after performing Auto-Type</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeRelockDatabaseCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeRelockDatabaseCheckBox">
+           <property name="accessibleName">
+            <string>Re-lock previously locked database after performing Auto-Type</string>
            </property>
           </widget>
          </item>
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="autoTypeHideExpiredEntryCheckBox">
-         <property name="text">
-          <string>Hide expired entries from Auto-Type</string>
+        <widget class="QWidget" name="autoTypePreferDesktopPortalsCheckBoxRowContainer" native="true">
+         <layout class="QHBoxLayout" name="autoTypePreferDesktopPortalsCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-       </widget>
-      </item>
-      <item>
-        <widget class="QCheckBox" name="autoTypeRelockDatabaseCheckBox">
-         <property name="text">
-          <string>Re-lock previously locked database after performing Auto-Type</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypePreferDesktopPortalsCheckBoxLabel">
+           <property name="text">
+            <string>Experimental: Prefer desktop portals (Wayland implementation)</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypePreferDesktopPortalsCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypePreferDesktopPortalsCheckBox">
+           <property name="accessibleName">
+            <string>Experimental: Prefer desktop portals (Wayland implementation)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="autoTypePreferDesktopPortalsCheckBox">
-         <property name="text">
-          <string>Experimental: Prefer desktop portals (Wayland implementation)</string>
+        <widget class="QWidget" name="autoTypeDesktopPortalPersistConnectionCheckBoxRowContainer" native="true">
+         <layout class="QHBoxLayout" name="autoTypeDesktopPortalPersistConnectionCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeDesktopPortalPersistConnectionCheckBoxLabel">
+           <property name="text">
+            <string>Keep remote desktop connection open after performing Auto-Type</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeDesktopPortalPersistConnectionCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeDesktopPortalPersistConnectionCheckBox">
+           <property name="accessibleName">
+            <string>Keep remote desktop connection open after performing Auto-Type</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="autoTypeDesktopPortalPersistConnectionCheckBox">
-         <property name="text">
-          <string>Keep remote desktop connection open after performing Auto-Type</string>
+        <widget class="QWidget" name="autoTypeDesktopPortalUseClipboardCheckBoxRowContainer" native="true">
+         <layout class="QHBoxLayout" name="autoTypeDesktopPortalUseClipboardCheckBoxRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="autoTypeDesktopPortalUseClipboardCheckBox">
-         <property name="text">
-          <string>Use remote desktop for clipboard access</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="autoTypeDesktopPortalUseClipboardCheckBoxLabel">
+           <property name="text">
+            <string>Use remote desktop for clipboard access</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="autoTypeDesktopPortalUseClipboardCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="autoTypeDesktopPortalUseClipboardCheckBox">
+           <property name="accessibleName">
+            <string>Use remote desktop for clipboard access</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
@@ -1500,7 +3157,10 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="autoTypeShortcutConfigureButton">
+               <widget class="Material::OutlinedButton" name="autoTypeShortcutConfigureButton">
+                <property name="symbol">
+                 <string notr="true">settings</string>
+                </property>
                 <property name="text">
                  <string>Configure...</string>
                 </property>
@@ -1579,6 +3239,16 @@
    <class>ShortcutWidget</class>
    <extends>QLineEdit</extends>
    <header>gui/widgets/ShortcutWidget.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

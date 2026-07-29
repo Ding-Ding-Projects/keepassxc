@@ -23,6 +23,8 @@
 #include "gui/IconModels.h"
 #include "gui/Icons.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialButtons.h"
+#include "gui/material/MaterialNotifier.h"
 
 DatabaseSettingsWidgetMaintenance::DatabaseSettingsWidgetMaintenance(QWidget* parent)
     : DatabaseSettingsWidget(parent)
@@ -33,6 +35,7 @@ DatabaseSettingsWidgetMaintenance::DatabaseSettingsWidgetMaintenance(QWidget* pa
     m_ui->setupUi(this);
 
     m_ui->customIconsView->setModel(m_customIconModel);
+    m_ui->deleteButton->setRoles(Material::Role::ErrorContainer, Material::Role::OnErrorContainer);
 
     connect(m_ui->deleteButton, SIGNAL(clicked()), SLOT(removeCustomIcon()));
     connect(m_ui->purgeButton, SIGNAL(clicked()), SLOT(purgeUnusedCustomIcons()));
@@ -207,15 +210,13 @@ void DatabaseSettingsWidgetMaintenance::purgeUnusedCustomIcons()
     }
 
     if (0 == purgeCounter) {
-        MessageBox::information(this,
-                                tr("Custom Icons Are In Use"),
-                                tr("All custom icons are in use by at least one entry or group."),
-                                MessageBox::Ok);
+        Material::Notify::info(tr("Custom Icons Are In Use"),
+                               tr("All custom icons are in use by at least one entry or group."));
         return;
     }
 
     populateIcons(database);
 
-    MessageBox::information(
-        this, tr("Purged Unused Icons"), tr("Purged %n icon(s) from the database.", "", purgeCounter), MessageBox::Ok);
+    Material::Notify::success(tr("Purged Unused Icons"),
+                              tr("Purged %n icon(s) from the database.", "", purgeCounter));
 }

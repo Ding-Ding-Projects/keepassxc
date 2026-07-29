@@ -28,6 +28,7 @@
 #include "core/Tools.h"
 #include "gui/FileDialog.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
 #include <QFileInfo>
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -90,8 +91,7 @@ void PasskeyImporter::importPasskey(QSharedPointer<Database>& database, Entry* e
 
     QFile file(fileName);
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        MessageBox::information(
-            nullptr, tr("Cannot open file"), tr("Cannot open file \"%1\" for reading.").arg(fileName));
+        Material::Notify::error(tr("Cannot open file"), tr("Cannot open file \"%1\" for reading.").arg(fileName));
         return;
     }
 
@@ -244,15 +244,14 @@ bool PasskeyImporter::importFromPayload(const QString& payload, QSharedPointer<D
 {
     const auto result = parsePayload(payload);
     if (!result.isValid()) {
-        MessageBox::information(m_parent, tr("Passkey Import Failed"), result.errorMessage);
+        Material::Notify::error(tr("Passkey Import Failed"), result.errorMessage);
         return false;
     }
 
     if (entry && result.passkeys.count() > 1) {
-        MessageBox::information(m_parent,
-                                tr("Passkey Import Failed"),
-                                tr("The pasted text contains %n passkey(s), but only a single passkey can be added to "
-                                   "the selected entry. Import them without selecting an entry instead.",
+        Material::Notify::error(tr("Passkey Import Failed"),
+                                tr("The pasted text contains %n passkey(s), but only a single passkey can be added "
+                                   "to the selected entry. Import them without selecting an entry instead.",
                                    "",
                                    static_cast<int>(result.passkeys.count())));
         return false;
@@ -283,8 +282,7 @@ void PasskeyImporter::importSelectedFile(QFile& file, QSharedPointer<Database>& 
     const auto fileData = file.readAll();
     const auto passkeyObject = browserMessageBuilder()->getJsonObject(fileData);
     if (passkeyObject.isEmpty()) {
-        MessageBox::information(m_parent,
-                                tr("Passkey Import Failed"),
+        Material::Notify::error(tr("Passkey Import Failed"),
                                 tr("Cannot import passkey file \"%1\". Data is missing.").arg(file.fileName()));
         return;
     }
@@ -292,13 +290,11 @@ void PasskeyImporter::importSelectedFile(QFile& file, QSharedPointer<Database>& 
     const auto privateKey = passkeyObject["privateKey"].toString();
     const auto missingKeys = Tools::getMissingValuesFromList<QString>(passkeyObject.keys(), requiredPasskeyKeys());
     if (!missingKeys.isEmpty()) {
-        MessageBox::information(m_parent,
-                                tr("Passkey Import Failed"),
-                                tr("Cannot import passkey file \"%1\".\nThe following data is missing:\n%2")
+        Material::Notify::error(tr("Passkey Import Failed"),
+                                tr("Cannot import passkey file \"%1\". The following data is missing: %2")
                                     .arg(file.fileName(), missingKeys.join(", ")));
     } else if (!isPemPrivateKey(privateKey)) {
-        MessageBox::information(
-            m_parent,
+        Material::Notify::error(
             tr("Passkey Import Failed"),
             tr("Cannot import passkey file \"%1\". Private key is missing or malformed.").arg(file.fileName()));
     } else {

@@ -41,8 +41,30 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <property name="topMargin">
+      <number>12</number>
+     </property>
      <item>
-      <widget class="QPushButton" name="showButton">
+      <spacer name="historyActionsSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::OutlinedButton" name="showButton">
+       <property name="symbol">
+        <string notr="true">visibility</string>
+       </property>
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -58,23 +80,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="restoreButton">
-       <property name="enabled">
-        <bool>false</bool>
+      <widget class="Material::TonalButton" name="deleteButton">
+       <property name="symbol">
+        <string notr="true">delete</string>
        </property>
-       <property name="toolTip">
-        <string>Restore entry to selected history state</string>
-       </property>
-       <property name="accessibleName">
-        <string>Restore entry to selected history state</string>
-       </property>
-       <property name="text">
-        <string>Restore</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="deleteButton">
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -90,7 +99,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="deleteAllButton">
+      <widget class="Material::TonalButton" name="deleteAllButton">
+       <property name="symbol">
+        <string notr="true">delete</string>
+       </property>
        <property name="enabled">
         <bool>false</bool>
        </property>
@@ -105,6 +117,25 @@
        </property>
       </widget>
      </item>
+     <item>
+      <widget class="Material::FilledButton" name="restoreButton">
+       <property name="symbol">
+        <string notr="true">restore</string>
+       </property>
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Restore entry to selected history state</string>
+       </property>
+       <property name="accessibleName">
+        <string>Restore entry to selected history state</string>
+       </property>
+       <property name="text">
+        <string>Restore</string>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
   </layout>
@@ -116,6 +147,23 @@
   <tabstop>deleteButton</tabstop>
   <tabstop>deleteAllButton</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

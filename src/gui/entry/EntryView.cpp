@@ -32,6 +32,7 @@
 
 #include "gui/Icons.h"
 #include "gui/SortFilterHideProxyModel.h"
+#include "gui/material/MaterialTheme.h"
 
 #define ICON_ONLY_SECTION_SIZE 26
 
@@ -567,8 +568,14 @@ void EntryView::startDrag(Qt::DropActions supportedActions)
 
     listWidget.setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     listWidget.setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    listWidget.setStyleSheet("QListWidget { background-color: palette(highlight); border: 1px solid palette(dark); "
-                             "padding: 4px; color: palette(highlighted-text); }");
+    // Rendered to a pixmap for the drag cursor, so this one sheet is unavoidable;
+    // every colour in it still comes from the theme.
+    listWidget.setStyleSheet(QStringLiteral("QListWidget{background-color:%1;color:%2;"
+                                            "border:1px solid %3;border-radius:%4px;padding:6px;}")
+                                 .arg(theme()->hex(Material::Role::SecondaryContainer),
+                                      theme()->hex(Material::Role::OnSecondaryContainer),
+                                      theme()->hex(Material::Role::Outline))
+                                 .arg(Material::Shape::Medium));
     auto width = listWidget.sizeHintForColumn(0) + 2 * listWidget.frameWidth();
     auto height = listWidget.sizeHintForRow(0) * listWidget.count() + 2 * listWidget.frameWidth();
     listWidget.setFixedWidth(width);

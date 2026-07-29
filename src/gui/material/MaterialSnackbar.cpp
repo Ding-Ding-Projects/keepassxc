@@ -18,15 +18,20 @@
 #include "MaterialSnackbar.h"
 
 #include "MaterialElevation.h"
+#include "MaterialIcons.h"
 
+#include <QAccessible>
 #include <QEasingCurve>
 #include <QFontMetrics>
-#include <QGraphicsDropShadowEffect>
+#include <QGraphicsEffect>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPropertyAnimation>
 #include <QRegion>
 #include <QTimer>
+
+#include <utility>
 
 namespace Material
 {
@@ -38,17 +43,32 @@ namespace Material
 
         constexpr int StackGap = 8;
         constexpr int EdgeMargin = 16;
-        constexpr int MaxVisible = 4;
+        constexpr int MaxVisible = 5;
 
         /** Room the el3 shadow needs outside the toast geometry. */
         constexpr int ShadowMargin = 24;
 
         constexpr int PanelPadding = 20;
         constexpr int PanelVerticalPadding = 14;
-        constexpr int ActionSpacing = 24;
-        constexpr int MinPanelWidth = 300;
-        constexpr int MaxPanelWidth = 440;
-        constexpr int MinPanelHeight = 48;
+        constexpr int GlyphSize = 20;
+        constexpr int GlyphGap = 14;
+        constexpr int ActionSpacing = 18;
+        /** Dismiss hit target. Kept well above the 24px accessibility floor. */
+        constexpr int CloseSize = 32;
+        constexpr int CloseGlyph = 18;
+        constexpr int CloseGap = 6;
+        constexpr int TitleGap = 3;
+        constexpr int ProgressGap = 8;
+        constexpr int ProgressHeight = 4;
+        constexpr int MinPanelWidth = 320;
+        constexpr int MaxPanelWidth = 520;
+        /** Text column a toast keeps even when its actions are wide. */
+        constexpr int MinTextWidth = 140;
+        constexpr int MinPanelHeight = 52;
+        constexpr int MaxBodyLines = 4;
+
+        constexpr qreal HoverAlpha = 0.12;
+        constexpr qreal TrackAlpha = 0.24;
 
         /** The design's emphasised curve, cubic-bezier(.2, 0, 0, 1). */
         QEasingCurve emphasizedCurve()
@@ -59,29 +79,143 @@ namespace Material
         }
 
         /**
-         * Primary resolved against the inverse surface. A toast turns the
-         * background inside out, so its action has to take the accent of the
-         * opposite surface family to stay legible.
+         * Primary resolved against the inverse surface. An information toast
+         * turns the background inside out, so its action has to take the accent
+         * of the opposite surface family to stay legible.
          */
         QColor inversePrimary()
         {
             const Mode inverse = theme()->isDark() ? Mode::Light : Mode::Dark;
             return ColorScheme(theme()->seed(), inverse).color(Role::Primary);
         }
+
+        QString upper(const QString& label)
+        {
+            return label.toUpper();
+        }
     } // namespace
+
+    // ------------------------------------------------------------------ severity
+
+    QString severitySymbol(SeverityLevel severity)
+    {
+        switch (severity) {
+        case SeverityLevel::Success:
+            return QStringLiteral("check");
+        case SeverityLevel::Warning:
+            return QStringLiteral("warning");
+        case SeverityLevel::Error:
+            return QStringLiteral("error");
+        case SeverityLevel::Info:
+            break;
+        }
+        return QStringLiteral("info");
+    }
+
+    QString severityName(SeverityLevel severity)
+    {
+        switch (severity) {
+        case SeverityLevel::Success:
+            return QObject::tr("Success");
+        case SeverityLevel::Warning:
+            return QObject::tr("Warning");
+        case SeverityLevel::Error:
+            return QObject::tr("Error");
+        case SeverityLevel::Info:
+            break;
+        }
+        return QObject::tr("Information");
+    }
+
+    bool severityPersists(SeverityLevel severity)
+    {
+        return severity == SeverityLevel::Warning || severity == SeverityLevel::Error;
+    }
+
+    QColor severityContainer(SeverityLevel severity)
+    {
+        switch (severity) {
+        case SeverityLevel::Success:
+            return theme()->color(Role::GreenContainer);
+        case SeverityLevel::Warning:
+            return theme()->color(Role::AmberContainer);
+        case SeverityLevel::Error:
+            return theme()->color(Role::ErrorContainer);
+        case SeverityLevel::Info:
+            break;
+        }
+        return theme()->color(Role::InverseSurface);
+    }
+
+    QColor severityOnContainer(SeverityLevel severity)
+    {
+        switch (severity) {
+        case SeverityLevel::Success:
+            return theme()->color(Role::OnGreenContainer);
+        case SeverityLevel::Warning:
+            return theme()->color(Role::OnAmberContainer);
+        case SeverityLevel::Error:
+            return theme()->color(Role::OnErrorContainer);
+        case SeverityLevel::Info:
+            break;
+        }
+        return theme()->color(Role::InverseOnSurface);
+    }
+
+    QColor severityAccent(SeverityLevel severity)
+    {
+        switch (severity) {
+        case SeverityLevel::Success:
+            return theme()->color(Role::Green);
+        case SeverityLevel::Warning:
+            return theme()->color(Role::Amber);
+        case SeverityLevel::Error:
+            return theme()->color(Role::Error);
+        case SeverityLevel::Info:
+            break;
+        }
+        return inversePrimary();
+    }
+
+    // -------------------------------------------------------- NotificationAction
+
+    NotificationAction::NotificationAction(QString actionLabel, std::function<void()> actionHandler, QObject* guard)
+        : label(std::move(actionLabel))
+        , handler(std::move(actionHandler))
+        , context(guard)
+        , guarded(guard != nullptr)
+    {
+    }
+
+    bool NotificationAction::isValid() const
+    {
+        return !label.isEmpty() && (!guarded || !context.isNull());
+    }
 
     // ------------------------------------------------------------------ Snackbar
 
-    Snackbar::Snackbar(const QString& message, const QString& actionLabel, int msec, QWidget* parent)
+    Snackbar::Snackbar(SeverityLevel severity,
+                       const QString& title,
+                       const QString& message,
+                       const QList<NotificationAction>& actions,
+                       int msec,
+                       QWidget* parent)
         : QWidget(parent)
+        , m_severity(severity)
+        , m_title(title)
         , m_message(message)
-        , m_actionLabel(actionLabel.toUpper())
-        , m_duration(msec > 0 ? msec : Duration::Toast)
+        , m_actions(actions)
+        , m_duration(msec)
     {
         setAttribute(Qt::WA_TranslucentBackground);
         setMouseTracking(true);
-        setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::StrongFocus);
         setGraphicsEffect(elevation(3, this));
+        updateAccessibleText();
+
+        m_lifetime = new QTimer(this);
+        m_lifetime->setSingleShot(true);
+        connect(m_lifetime, &QTimer::timeout, this, &Snackbar::dismiss);
 
         m_animation = new QPropertyAnimation(this, "transition", this);
         connect(m_animation, &QPropertyAnimation::finished, this, [this] {
@@ -89,16 +223,72 @@ namespace Material
                 emit dismissed();
                 deleteLater();
             } else {
-                QTimer::singleShot(m_duration, this, &Snackbar::dismiss);
+                resumeTimer();
             }
         });
     }
 
+    Snackbar::Snackbar(const QString& message, const QString& actionLabel, int msec, QWidget* parent)
+        : Snackbar(SeverityLevel::Info,
+                   QString(),
+                   message,
+                   actionLabel.isEmpty() ? QList<NotificationAction>{}
+                                         : QList<NotificationAction>{NotificationAction(actionLabel, {})},
+                   msec > 0 ? msec : Duration::Toast,
+                   parent)
+    {
+    }
+
     Snackbar::~Snackbar() = default;
+
+    SeverityLevel Snackbar::severity() const
+    {
+        return m_severity;
+    }
+
+    QString Snackbar::title() const
+    {
+        return m_title;
+    }
 
     QString Snackbar::message() const
     {
         return m_message;
+    }
+
+    void Snackbar::setMessage(const QString& message)
+    {
+        if (message == m_message) {
+            return;
+        }
+        m_message = message;
+        updateAccessibleText();
+        updateGeometry();
+        update();
+    }
+
+    int Snackbar::progress() const
+    {
+        return m_progress;
+    }
+
+    void Snackbar::setProgress(int percent)
+    {
+        const int value = percent < 0 ? NoProgress : qMin(percent, 100);
+        if (value == m_progress) {
+            return;
+        }
+        const bool wasVisible = m_progress != NoProgress;
+        m_progress = value;
+        if (wasVisible != (m_progress != NoProgress)) {
+            updateGeometry();
+        }
+        update();
+    }
+
+    bool Snackbar::autoDismisses() const
+    {
+        return m_duration > 0;
     }
 
     qreal Snackbar::transition() const
@@ -118,17 +308,40 @@ namespace Material
 
     QSize Snackbar::sizeHint() const
     {
-        const QFontMetrics messageMetrics(theme()->font(TypeRole::BodyMedium));
-        const QFontMetrics actionMetrics(theme()->font(TypeRole::LabelLarge));
+        const QFontMetrics titleMetrics(theme()->font(TypeRole::LabelLarge));
+        const QFontMetrics bodyMetrics(theme()->font(TypeRole::BodyMedium));
 
-        int width = 2 * PanelPadding + messageMetrics.horizontalAdvance(m_message);
-        if (!m_actionLabel.isEmpty()) {
-            width += ActionSpacing + actionMetrics.horizontalAdvance(m_actionLabel);
+        int chrome = 2 * PanelPadding + GlyphSize + GlyphGap + CloseGap + CloseSize;
+        for (const auto& action : m_actions) {
+            chrome += ActionSpacing + titleMetrics.horizontalAdvance(upper(action.label));
         }
-        width = qBound(MinPanelWidth, width, MaxPanelWidth);
 
-        const int textHeight = qMax(messageMetrics.height(), actionMetrics.height());
-        const int panel = qMax(MinPanelHeight, textHeight + 2 * PanelVerticalPadding);
+        int natural = bodyMetrics.horizontalAdvance(m_message);
+        if (!m_title.isEmpty()) {
+            natural = qMax(natural, titleMetrics.horizontalAdvance(m_title));
+        }
+
+        // Wide actions push the panel past its usual ceiling rather than
+        // squeezing the message down to nothing.
+        const int ceiling = qMax(MaxPanelWidth, chrome + MinTextWidth);
+        const int width = qBound(MinPanelWidth, chrome + natural, ceiling);
+        const int textWidth = qMax(MinTextWidth, width - chrome);
+
+        int text = 0;
+        if (!m_title.isEmpty()) {
+            text += titleMetrics.height() + TitleGap;
+        }
+        const QRect wrapped =
+            bodyMetrics.boundingRect(QRect(0, 0, textWidth, MaxBodyLines * bodyMetrics.lineSpacing()),
+                                     Qt::TextWordWrap | Qt::AlignLeft | Qt::AlignTop,
+                                     m_message);
+        text += qBound(bodyMetrics.height(), wrapped.height(), MaxBodyLines * bodyMetrics.lineSpacing());
+
+        int panel = qMax(MinPanelHeight, text + 2 * PanelVerticalPadding);
+        if (m_progress != NoProgress) {
+            panel += ProgressGap + ProgressHeight;
+        }
+
         // The rise is drawn inside the widget, so it is reserved here.
         return {width, panel + Rise};
     }
@@ -147,6 +360,13 @@ namespace Material
         m_animation->setStartValue(m_transition);
         m_animation->setEndValue(1.0);
         m_animation->start();
+
+#ifndef QT_NO_ACCESSIBILITY
+        // Announced as an alert so a screen reader reads it without the user
+        // having to chase the focus onto the toast.
+        QAccessibleEvent alert(this, QAccessible::Alert);
+        QAccessible::updateAccessibility(&alert);
+#endif
     }
 
     void Snackbar::dismiss()
@@ -155,6 +375,7 @@ namespace Material
             return;
         }
         m_dismissing = true;
+        m_lifetime->stop();
         m_animation->stop();
         m_animation->setDuration(Duration::Short);
         m_animation->setEasingCurve(QEasingCurve::Linear);
@@ -169,6 +390,11 @@ namespace Material
 
         const qreal progress = qBound(0.0, m_transition, 1.0);
         const QRect panel(0, qRound(Rise * (1.0 - progress)), width(), height() - Rise);
+        layoutPanel(panel);
+
+        const QColor container = severityContainer(m_severity);
+        const QColor content = severityOnContainer(m_severity);
+        const QColor accent = m_severity == SeverityLevel::Info ? severityAccent(m_severity) : content;
 
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
@@ -179,65 +405,229 @@ namespace Material
         painter.scale(scale, scale);
         painter.translate(-panel.center());
 
-        paintSurface(&painter, panel, Shape::ExtraLarge, theme()->color(Role::InverseSurface));
-
-        int right = panel.right() - PanelPadding;
-        m_actionRect = QRect();
-        if (!m_actionLabel.isEmpty()) {
-            const QFont font = theme()->font(TypeRole::LabelLarge);
-            const int width = QFontMetrics(font).horizontalAdvance(m_actionLabel);
-            m_actionRect = QRect(right - width, panel.top(), width, panel.height());
-
-            QColor color = inversePrimary();
-            if (m_actionHovered) {
-                color = color.lighter(115);
-            }
-            painter.setFont(font);
-            painter.setPen(color);
-            painter.drawText(m_actionRect, Qt::AlignRight | Qt::AlignVCenter, m_actionLabel);
-            right = m_actionRect.left() - ActionSpacing;
+        paintSurface(&painter, panel, Shape::ExtraLarge, container);
+        if (hasFocus()) {
+            painter.setBrush(Qt::NoBrush);
+            painter.setPen(QPen(accent, 2));
+            painter.drawPath(roundedPath(QRectF(panel).adjusted(1.5, 1.5, -1.5, -1.5), Shape::ExtraLarge));
         }
 
-        const QFont font = theme()->font(TypeRole::BodyMedium);
-        const QRect textRect(
-            panel.left() + PanelPadding, panel.top(), right - panel.left() - PanelPadding, panel.height());
-        painter.setFont(font);
-        painter.setPen(theme()->color(Role::InverseOnSurface));
+        painter.drawPixmap(m_glyphRect, Icons::pixmap(severitySymbol(m_severity), GlyphSize, content));
+
+        const QFont titleFont = theme()->font(TypeRole::LabelLarge);
+        const QFont bodyFont = theme()->font(TypeRole::BodyMedium);
+
+        QRect textRect = m_textRect;
+        painter.setClipRect(textRect);
+        painter.setPen(content);
+        if (!m_title.isEmpty()) {
+            const int lineHeight = QFontMetrics(titleFont).height();
+            painter.setFont(titleFont);
+            painter.drawText(QRect(textRect.left(), textRect.top(), textRect.width(), lineHeight),
+                             Qt::AlignLeft | Qt::AlignVCenter,
+                             QFontMetrics(titleFont).elidedText(m_title, Qt::ElideRight, textRect.width()));
+            textRect.setTop(textRect.top() + lineHeight + TitleGap);
+        }
+        painter.setFont(bodyFont);
         painter.drawText(textRect,
-                         Qt::AlignLeft | Qt::AlignVCenter,
-                         QFontMetrics(font).elidedText(m_message, Qt::ElideRight, textRect.width()));
+                         Qt::TextWordWrap | Qt::AlignLeft | (m_title.isEmpty() ? Qt::AlignVCenter : Qt::AlignTop),
+                         m_message);
+        painter.setClipping(false);
+
+        painter.setFont(titleFont);
+        for (int i = 0; i < m_actionRects.size(); ++i) {
+            const QRect rect = m_actionRects.at(i);
+            if (i == m_hoveredAction) {
+                paintStateLayer(&painter, rect.adjusted(-8, 0, 8, 0), Shape::Small, accent, HoverAlpha);
+            }
+            painter.setPen(accent);
+            painter.drawText(rect, Qt::AlignCenter, upper(m_actions.at(i).label));
+        }
+
+        if (m_closeHovered) {
+            paintStateLayer(&painter, m_closeRect, Shape::Full, content, HoverAlpha);
+        }
+        const QPixmap close = Icons::pixmap(QStringLiteral("close"), CloseGlyph, content);
+        painter.drawPixmap(QRect(m_closeRect.center().x() - CloseGlyph / 2,
+                                 m_closeRect.center().y() - CloseGlyph / 2,
+                                 CloseGlyph,
+                                 CloseGlyph),
+                           close);
+
+        if (m_progress != NoProgress) {
+            QColor track = content;
+            track.setAlphaF(TrackAlpha);
+            paintSurface(&painter, m_progressRect, ProgressHeight / 2, track);
+            QRect fill = m_progressRect;
+            fill.setWidth(m_progressRect.width() * m_progress / 100);
+            if (fill.width() > 0) {
+                paintSurface(&painter, fill, ProgressHeight / 2, severityAccent(m_severity));
+            }
+        }
     }
 
     void Snackbar::mousePressEvent(QMouseEvent* event)
     {
-        if (!m_actionLabel.isEmpty() && m_actionRect.contains(event->pos())) {
-            emit actionTriggered();
+        const QPoint pos = event->pos();
+        if (m_closeRect.contains(pos)) {
             dismiss();
             event->accept();
             return;
         }
+        for (int i = 0; i < m_actionRects.size(); ++i) {
+            if (m_actionRects.at(i).adjusted(-8, 0, 8, 0).contains(pos)) {
+                invoke(i);
+                event->accept();
+                return;
+            }
+        }
+        setFocus(Qt::MouseFocusReason);
         QWidget::mousePressEvent(event);
     }
 
     void Snackbar::mouseMoveEvent(QMouseEvent* event)
     {
-        const bool hovered = !m_actionLabel.isEmpty() && m_actionRect.contains(event->pos());
-        if (hovered != m_actionHovered) {
-            m_actionHovered = hovered;
-            setCursor(hovered ? Qt::PointingHandCursor : Qt::ArrowCursor);
+        const QPoint pos = event->pos();
+        int hovered = -1;
+        for (int i = 0; i < m_actionRects.size(); ++i) {
+            if (m_actionRects.at(i).adjusted(-8, 0, 8, 0).contains(pos)) {
+                hovered = i;
+                break;
+            }
+        }
+        const bool onClose = m_closeRect.contains(pos);
+
+        if (hovered != m_hoveredAction || onClose != m_closeHovered) {
+            m_hoveredAction = hovered;
+            m_closeHovered = onClose;
+            setCursor(hovered >= 0 || onClose ? Qt::PointingHandCursor : Qt::ArrowCursor);
             update();
         }
         QWidget::mouseMoveEvent(event);
     }
 
+    void Snackbar::keyPressEvent(QKeyEvent* event)
+    {
+        switch (event->key()) {
+        case Qt::Key_Escape:
+        case Qt::Key_Delete:
+        case Qt::Key_Backspace:
+            dismiss();
+            event->accept();
+            return;
+        case Qt::Key_Return:
+        case Qt::Key_Enter:
+        case Qt::Key_Space:
+            if (!m_actions.isEmpty()) {
+                invoke(0);
+            } else {
+                dismiss();
+            }
+            event->accept();
+            return;
+        default:
+            break;
+        }
+        QWidget::keyPressEvent(event);
+    }
+
+    void Snackbar::enterEvent(QEnterEvent* event)
+    {
+        holdTimer();
+        QWidget::enterEvent(event);
+    }
+
     void Snackbar::leaveEvent(QEvent* event)
     {
-        if (m_actionHovered) {
-            m_actionHovered = false;
+        if (m_hoveredAction >= 0 || m_closeHovered) {
+            m_hoveredAction = -1;
+            m_closeHovered = false;
             unsetCursor();
             update();
         }
+        if (!hasFocus()) {
+            resumeTimer();
+        }
         QWidget::leaveEvent(event);
+    }
+
+    void Snackbar::focusInEvent(QFocusEvent* event)
+    {
+        holdTimer();
+        update();
+        QWidget::focusInEvent(event);
+    }
+
+    void Snackbar::focusOutEvent(QFocusEvent* event)
+    {
+        resumeTimer();
+        update();
+        QWidget::focusOutEvent(event);
+    }
+
+    void Snackbar::layoutPanel(const QRect& panel) const
+    {
+        QRect content = panel.adjusted(PanelPadding, PanelVerticalPadding, -PanelPadding, -PanelVerticalPadding);
+        if (m_progress != NoProgress) {
+            content.setBottom(content.bottom() - ProgressGap - ProgressHeight);
+            m_progressRect =
+                QRect(panel.left() + PanelPadding, content.bottom() + ProgressGap, content.width(), ProgressHeight);
+        } else {
+            m_progressRect = QRect();
+        }
+
+        m_glyphRect = QRect(content.left(), content.center().y() - GlyphSize / 2, GlyphSize, GlyphSize);
+        m_closeRect = QRect(content.right() - CloseSize + 1, content.center().y() - CloseSize / 2, CloseSize, CloseSize);
+
+        const int actionHeight = qMax(content.height(), Layout::ChipHeight);
+        const int actionTop = content.center().y() - actionHeight / 2;
+        const QFontMetrics actionMetrics(theme()->font(TypeRole::LabelLarge));
+
+        m_actionRects.clear();
+        int right = m_closeRect.left() - CloseGap;
+        for (int i = m_actions.size() - 1; i >= 0; --i) {
+            const int labelWidth = actionMetrics.horizontalAdvance(upper(m_actions.at(i).label));
+            m_actionRects.prepend(QRect(right - labelWidth, actionTop, labelWidth, actionHeight));
+            right -= labelWidth + ActionSpacing;
+        }
+
+        const int textLeft = m_glyphRect.right() + GlyphGap;
+        const int textRight = m_actionRects.isEmpty() ? m_closeRect.left() - CloseGap
+                                                      : m_actionRects.first().left() - ActionSpacing;
+        m_textRect = QRect(textLeft, content.top(), qMax(1, textRight - textLeft), content.height());
+    }
+
+    void Snackbar::invoke(int index)
+    {
+        if (index < 0 || index >= m_actions.size()) {
+            return;
+        }
+        const NotificationAction action = m_actions.at(index);
+        if (action.isValid() && action.handler) {
+            action.handler();
+        }
+        emit actionTriggered(index);
+        dismiss();
+    }
+
+    void Snackbar::holdTimer()
+    {
+        m_lifetime->stop();
+    }
+
+    void Snackbar::resumeTimer()
+    {
+        if (m_dismissing || m_duration <= 0 || underMouse() || hasFocus()) {
+            return;
+        }
+        m_lifetime->start(m_duration);
+    }
+
+    void Snackbar::updateAccessibleText()
+    {
+        const QString headline = m_title.isEmpty() ? m_message : m_title;
+        setAccessibleName(QStringLiteral("%1: %2").arg(severityName(m_severity), headline));
+        setAccessibleDescription(m_message);
     }
 
     // -------------------------------------------------------------- SnackbarHost
@@ -271,22 +661,34 @@ namespace Material
         return host;
     }
 
-    void SnackbarHost::show(const QString& message, const QString& actionLabel, int msec)
+    Snackbar* SnackbarHost::show(SeverityLevel severity,
+                                 const QString& title,
+                                 const QString& message,
+                                 const QList<NotificationAction>& actions,
+                                 int msec)
     {
-        auto* bar = new Snackbar(message, actionLabel, msec, this);
-        connect(bar, &Snackbar::actionTriggered, this, [this, message] { emit actionTriggered(message); });
+        if (msec < 0) {
+            msec = severityPersists(severity) ? 0 : Duration::Toast;
+        }
+
+        auto* bar = new Snackbar(severity, title, message, actions, msec, this);
+        connect(bar, &Snackbar::actionTriggered, this, [this, message](int) { emit actionTriggered(message); });
         connect(bar, &Snackbar::dismissed, this, [this, bar] { remove(bar); });
         m_bars.append(bar);
 
-        // The stack is capped; the oldest toast leaves at once to make room.
-        while (m_bars.size() > MaxVisible) {
-            Snackbar* oldest = m_bars.takeFirst();
-            oldest->hide();
-            oldest->deleteLater();
-        }
-
+        enforceCap();
         relayout();
         bar->animateIn();
+        return bar;
+    }
+
+    void SnackbarHost::show(const QString& message, const QString& actionLabel, int msec)
+    {
+        QList<NotificationAction> actions;
+        if (!actionLabel.isEmpty()) {
+            actions.append(NotificationAction(actionLabel, {}));
+        }
+        show(SeverityLevel::Info, QString(), message, actions, msec);
     }
 
     void SnackbarHost::clear()
@@ -348,6 +750,25 @@ namespace Material
     {
         m_bars.removeOne(bar);
         relayout();
+    }
+
+    void SnackbarHost::enforceCap()
+    {
+        while (m_bars.size() > MaxVisible) {
+            // A warning or an error is the user's to close, so the oldest toast
+            // that would have left on its own goes first. The newest is never
+            // the victim - it would vanish before it was read.
+            int victim = 0;
+            for (int i = 0; i < m_bars.size() - 1; ++i) {
+                if (m_bars.at(i)->autoDismisses()) {
+                    victim = i;
+                    break;
+                }
+            }
+            Snackbar* dropped = m_bars.takeAt(victim);
+            dropped->hide();
+            dropped->deleteLater();
+        }
     }
 
 } // namespace Material

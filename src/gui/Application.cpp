@@ -28,9 +28,11 @@
 #include "gui/material/MaterialTheme.h"
 #include "gui/osutils/OSUtils.h"
 
+#include <QFile>
 #include <QFileInfo>
 #include <QFileOpenEvent>
 #include <QLocalSocket>
+#include <QProcessEnvironment>
 #include <QLockFile>
 #include <QPixmapCache>
 #include <QRegularExpression>
@@ -176,11 +178,28 @@ void Application::applyTheme()
     theme()->reload();
     m_applyingTheme = false;
 
+    const auto env = QProcessEnvironment::systemEnvironment();
+
+    // Escape hatches for diagnosing rendering faults. KPXC_MATERIAL_DUMP writes the
+    // generated sheet out so it can be inspected; KPXC_NO_MATERIAL_SHEET and
+    // KPXC_NO_MATERIAL_STYLE isolate which of the two actually breaks a surface.
+    if (env.contains(QStringLiteral("KPXC_MATERIAL_DUMP"))) {
+        QFile dump(env.value(QStringLiteral("KPXC_MATERIAL_DUMP")));
+        if (dump.open(QIODevice::WriteOnly | QIODevice::Text)) {
+            dump.write(theme()->styleSheet().toUtf8());
+            dump.close();
+        }
+    }
+
     // A fresh style instance forces Qt to re-polish every widget with the metrics
     // of the new density.
-    setStyle(new Material::Style);
+    if (!env.contains(QStringLiteral("KPXC_NO_MATERIAL_STYLE"))) {
+        setStyle(new Material::Style);
+    }
     setPalette(theme()->palette());
-    setStyleSheet(theme()->styleSheet());
+    if (!env.contains(QStringLiteral("KPXC_NO_MATERIAL_SHEET"))) {
+        setStyleSheet(theme()->styleSheet());
+    }
     m_darkTheme = theme()->isDark();
 
     applyFontSize();

@@ -61,18 +61,102 @@
        </widget>
       </item>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="clearClipboardCheckBox">
-        <property name="text">
-         <string>Clear clipboard after</string>
+       <layout class="QHBoxLayout" name="clearClipboardCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="clearClipboardCheckBoxLabel">
+          <property name="text">
+           <string>Clear clipboard after</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="clearClipboardCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="clearClipboardCheckBox">
+          <property name="accessibleName">
+           <string>Clear clipboard after</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="2" column="0">
-       <widget class="QCheckBox" name="clearSearchCheckBox">
-        <property name="text">
-         <string>Clear search query after</string>
+       <layout class="QHBoxLayout" name="clearSearchCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="clearSearchCheckBoxLabel">
+          <property name="text">
+           <string>Clear search query after</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="clearSearchCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="clearSearchCheckBox">
+          <property name="accessibleName">
+           <string>Clear search query after</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="2" column="1">
        <widget class="QSpinBox" name="clearSearchSpinBox">
@@ -144,17 +228,53 @@
        </spacer>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="lockDatabaseIdleCheckBox">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
+       <layout class="QHBoxLayout" name="lockDatabaseIdleCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-        <property name="text">
-         <string>Lock databases after inactivity of</string>
+        <property name="topMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lockDatabaseIdleCheckBoxLabel">
+          <property name="text">
+           <string>Lock databases after inactivity of</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="lockDatabaseIdleCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="lockDatabaseIdleCheckBox">
+          <property name="accessibleName">
+           <string>Lock databases after inactivity of</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -166,32 +286,202 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <widget class="QCheckBox" name="quickUnlockCheckBox">
-        <property name="text">
-         <string>Enable database quick unlock (Touch ID / Windows Hello)</string>
+       <layout class="QHBoxLayout" name="quickUnlockCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="quickUnlockCheckBoxLabel">
+          <property name="text">
+           <string>Enable database quick unlock (Touch ID / Windows Hello)</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="quickUnlockCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="quickUnlockCheckBox">
+          <property name="accessibleName">
+           <string>Enable database quick unlock (Touch ID / Windows Hello)</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <layout class="QHBoxLayout" name="lockDatabaseOnScreenLockCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lockDatabaseOnScreenLockCheckBoxLabel">
+          <property name="text">
+           <string>Lock databases when session is locked or lid is closed</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="lockDatabaseOnScreenLockCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="lockDatabaseOnScreenLockCheckBox">
+          <property name="accessibleName">
+           <string>Lock databases when session is locked or lid is closed</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QWidget" name="lockDatabasesOnUserSwitchCheckBoxRowContainer" native="true">
+        <layout class="QHBoxLayout" name="lockDatabasesOnUserSwitchCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lockDatabasesOnUserSwitchCheckBoxLabel">
+          <property name="text">
+           <string>Lock databases when switching user</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="lockDatabasesOnUserSwitchCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="lockDatabasesOnUserSwitchCheckBox">
+          <property name="accessibleName">
+           <string>Lock databases when switching user</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
        </widget>
       </item>
       <item>
-       <widget class="QCheckBox" name="lockDatabaseOnScreenLockCheckBox">
-        <property name="text">
-         <string>Lock databases when session is locked or lid is closed</string>
+       <layout class="QHBoxLayout" name="lockDatabaseMinimizeCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="lockDatabasesOnUserSwitchCheckBox">
-        <property name="text">
-         <string>Lock databases when switching user</string>
+        <property name="topMargin">
+         <number>0</number>
         </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QCheckBox" name="lockDatabaseMinimizeCheckBox">
-        <property name="text">
-         <string>Lock databases after minimizing the window</string>
+        <property name="rightMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="lockDatabaseMinimizeCheckBoxLabel">
+          <property name="text">
+           <string>Lock databases after minimizing the window</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="lockDatabaseMinimizeCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="lockDatabaseMinimizeCheckBox">
+          <property name="accessibleName">
+           <string>Lock databases after minimizing the window</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -203,39 +493,249 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
-       <widget class="QCheckBox" name="passwordShowDotsCheckBox">
-        <property name="text">
-         <string>Use placeholder for empty password fields</string>
+       <layout class="QHBoxLayout" name="passwordShowDotsCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="passwordShowDotsCheckBoxLabel">
+          <property name="text">
+           <string>Use placeholder for empty password fields</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="passwordShowDotsCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="passwordShowDotsCheckBox">
+          <property name="accessibleName">
+           <string>Use placeholder for empty password fields</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="passwordsHiddenCheckBox">
-        <property name="text">
-         <string>Hide passwords when editing them</string>
+       <layout class="QHBoxLayout" name="passwordsHiddenCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="passwordsHiddenCheckBoxLabel">
+          <property name="text">
+           <string>Hide passwords when editing them</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="passwordsHiddenCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="passwordsHiddenCheckBox">
+          <property name="accessibleName">
+           <string>Hide passwords when editing them</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="passwordPreviewCleartextCheckBox">
-        <property name="text">
-         <string>Hide passwords in the entry preview panel</string>
+       <layout class="QHBoxLayout" name="passwordPreviewCleartextCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="passwordPreviewCleartextCheckBoxLabel">
+          <property name="text">
+           <string>Hide passwords in the entry preview panel</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="passwordPreviewCleartextCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="passwordPreviewCleartextCheckBox">
+          <property name="accessibleName">
+           <string>Hide passwords in the entry preview panel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="hideTotpCheckBox">
-        <property name="text">
-         <string>Hide TOTP in the entry preview panel</string>
+       <layout class="QHBoxLayout" name="hideTotpCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="hideTotpCheckBoxLabel">
+          <property name="text">
+           <string>Hide TOTP in the entry preview panel</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hideTotpCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="hideTotpCheckBox">
+          <property name="accessibleName">
+           <string>Hide TOTP in the entry preview panel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item>
-       <widget class="QCheckBox" name="hideNotesCheckBox">
-        <property name="text">
-         <string>Hide notes in the entry preview panel</string>
+       <layout class="QHBoxLayout" name="hideNotesCheckBoxRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="hideNotesCheckBoxLabel">
+          <property name="text">
+           <string>Hide notes in the entry preview panel</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="hideNotesCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="hideNotesCheckBox">
+          <property name="accessibleName">
+           <string>Hide notes in the entry preview panel</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -247,11 +747,53 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QCheckBox" name="fallbackToSearch">
-        <property name="text">
-         <string>Use DuckDuckGo service to download website icons</string>
+       <layout class="QHBoxLayout" name="fallbackToSearchRow">
+        <property name="leftMargin">
+         <number>0</number>
         </property>
-       </widget>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <property name="rightMargin">
+         <number>0</number>
+        </property>
+        <property name="bottomMargin">
+         <number>0</number>
+        </property>
+        <property name="spacing">
+         <number>12</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="fallbackToSearchLabel">
+          <property name="text">
+           <string>Use DuckDuckGo service to download website icons</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="fallbackToSearchSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="fallbackToSearch">
+          <property name="accessibleName">
+           <string>Use DuckDuckGo service to download website icons</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -292,6 +834,13 @@
   <tabstop>hideNotesCheckBox</tabstop>
   <tabstop>fallbackToSearch</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

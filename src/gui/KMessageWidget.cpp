@@ -22,6 +22,7 @@
 
 #include "core/Global.h"
 #include "gui/Icons.h"
+#include "gui/material/MaterialTheme.h"
 
 #include <QAction>
 #include <QBoxLayout>
@@ -253,71 +254,40 @@ KMessageWidget::MessageType KMessageWidget::messageType() const
 void KMessageWidget::setMessageType(KMessageWidget::MessageType type)
 {
     d->messageType = type;
-    QColor bg0, bg1, bg2, border;
-    QColor fg = QColor(238, 238, 238);
+
+    // The container fill, border and text colour all come from the
+    // `KMessageWidget[messageType=...]` rules in the generated Material sheet.
+    // Only the close glyph has to be tinted by hand, because it is a pixmap.
+    Material::Role contentRole = Material::Role::OnPrimaryContainer;
     switch (type) {
     case Positive:
-        bg1.setRgb(37, 163, 83);
+        contentRole = Material::Role::OnGreenContainer;
         break;
     case Information:
-        bg1.setRgb(24, 187, 242);
+        contentRole = Material::Role::OnPrimaryContainer;
         break;
     case Warning:
-        bg1.setRgb(252, 193, 57);
-        fg = QColor(48, 48, 48);
+        contentRole = Material::Role::OnAmberContainer;
         break;
     case Error:
-        bg1.setRgb(198, 69, 21);
+        contentRole = Material::Role::OnErrorContainer;
         break;
     }
 
-    // Colors
-    bg0 = bg1.lighter(105);
-    bg2 = bg1.darker(105);
-    border = bg1.darker(115);
-
-    // Tint close icon
     auto closeButtonPixmap = d->closeButtonPixmap;
     QPainter painter;
     painter.begin(&closeButtonPixmap);
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
     painter.setRenderHints(QPainter::Antialiasing);
-#else
-    painter.setRenderHints(QPainter::HighQualityAntialiasing);
-#endif
     painter.setCompositionMode(QPainter::CompositionMode_SourceIn);
-    painter.fillRect(QRect(0, 0, 16, 16), fg);
+    painter.fillRect(closeButtonPixmap.rect(), theme()->color(contentRole));
     painter.end();
     d->closeButton->setIcon(closeButtonPixmap);
-    d->closeButton->setStyleSheet(QStringLiteral("QToolButton {"
-                                  "  background: transparent;"
-                                  "  border-radius: 2px;"
-                                  "  border: none; }"
-                                  "QToolButton:hover, QToolButton:focus {"
-                                  "  border: 1px solid %1; }").arg(fg.name()));
 
-    d->content->setStyleSheet(
-        QStringLiteral(".QFrame {"
-        "background-color: qlineargradient(x1: 0, y1: 0, x2: 0, y2: 1,"
-        "    stop: 0 %1,"
-        "    stop: 0.1 %2,"
-        "    stop: 1.0 %3);"
-        "    border-radius: 2px;"
-        "    border: 1px solid %4;"
-        "    margin: %5px;"
-        "    padding: 5px;"
-        "}"
-        ".QLabel { color: %6; }"
-        )
-        .arg(bg0.name(),
-             bg1.name(),
-             bg2.name(),
-             border.name())
-        // DefaultFrameWidth returns the size of the external margin + border width. We know our border is 1px,
-        // so we subtract this from the frame normal QStyle FrameWidth to get our margin
-        .arg(style()->pixelMetric(QStyle::PM_DefaultFrameWidth, nullptr, this) - 1)
-        .arg(fg.name())
-    );
+    // Property selectors are resolved at polish time, so the new type only
+    // takes effect once the style has looked at the widget again.
+    style()->unpolish(this);
+    style()->polish(this);
+    update();
 }
 
 QSize KMessageWidget::sizeHint() const

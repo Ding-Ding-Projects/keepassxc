@@ -16,12 +16,6 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
-  <property name="font">
-   <font>
-    <weight>50</weight>
-    <bold>false</bold>
-   </font>
-  </property>
   <property name="windowTitle">
    <string>Checking for updates</string>
   </property>
@@ -29,17 +23,20 @@
    <bool>false</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
    <property name="leftMargin">
-    <number>16</number>
+    <number>24</number>
    </property>
    <property name="topMargin">
-    <number>16</number>
+    <number>24</number>
    </property>
    <property name="rightMargin">
-    <number>16</number>
+    <number>24</number>
    </property>
    <property name="bottomMargin">
-    <number>16</number>
+    <number>24</number>
    </property>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
@@ -69,12 +66,6 @@
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
         <widget class="QLabel" name="statusLabel">
-         <property name="font">
-          <font>
-           <weight>50</weight>
-           <bold>false</bold>
-          </font>
-         </property>
          <property name="text">
           <string>Checking for updates…</string>
          </property>

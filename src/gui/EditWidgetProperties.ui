@@ -152,7 +152,10 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="removeCustomDataButton">
+         <widget class="Material::TonalButton" name="removeCustomDataButton">
+          <property name="symbol">
+           <string notr="true">delete</string>
+          </property>
           <property name="accessibleName">
            <string>Remove selected plugin data</string>
           </property>
@@ -186,6 +189,13 @@
   <tabstop>modifiedEdit</tabstop>
   <tabstop>uuidEdit</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

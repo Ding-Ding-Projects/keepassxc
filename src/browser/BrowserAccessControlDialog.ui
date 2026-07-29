@@ -14,14 +14,23 @@
    <string>KeePassXC - Browser Access Request</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
    <item>
     <widget class="QLabel" name="siteLabel">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string>%1 is requesting access to the following entries:</string>
      </property>
@@ -57,6 +66,9 @@
    </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
      <item>
       <spacer name="horizontalSpacer">
        <property name="orientation">
@@ -84,7 +96,23 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="allowButton">
+      <widget class="Material::OutlinedButton" name="denyButton">
+       <property name="symbol">
+        <string notr="true">close</string>
+       </property>
+       <property name="text">
+        <string>Deny All</string>
+       </property>
+       <property name="autoDefault">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="Material::FilledButton" name="allowButton">
+       <property name="symbol">
+        <string notr="true">check</string>
+       </property>
        <property name="accessibleName">
         <string>Allow access to entries</string>
        </property>
@@ -95,16 +123,6 @@
         <bool>true</bool>
        </property>
        <property name="default">
-        <bool>true</bool>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="denyButton">
-       <property name="text">
-        <string>Deny All</string>
-       </property>
-       <property name="autoDefault">
         <bool>true</bool>
        </property>
       </widget>
@@ -124,6 +142,16 @@
    <extends>QTableWidget</extends>
    <header>browser/CustomTableWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

@@ -112,7 +112,6 @@ void YubiKeyEditWidget::initComponentEditWidget(QWidget* widget)
     Q_UNUSED(widget);
     Q_ASSERT(m_compEditWidget);
     m_compUi->comboChallengeResponse->setFocus();
-    m_compUi->refreshHardwareKeys->setIcon(icons()->icon("yubikey-refresh", true));
     connect(m_compUi->refreshHardwareKeys, &QPushButton::clicked, this, &YubiKeyEditWidget::pollYubikey);
     pollYubikey();
 }

@@ -30,40 +30,130 @@
      </property>
      <layout class="QGridLayout" name="gridLayout">
       <item row="2" column="0">
-       <widget class="QCheckBox" name="enableImportCheckBox">
-        <property name="toolTip">
-         <string>Allow KeeShare imports</string>
+       <layout class="QHBoxLayout" name="enableImportCheckBoxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="accessibleName">
-         <string>Allow KeeShare imports</string>
-        </property>
-        <property name="text">
-         <string>Allow import</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="enableImportCheckBoxLabel">
+          <property name="text">
+           <string>Allow import</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Allow KeeShare imports</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="enableImportCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="enableImportCheckBox">
+          <property name="toolTip">
+           <string>Allow KeeShare imports</string>
+          </property>
+          <property name="accessibleName">
+           <string>Allow KeeShare imports</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="3" column="0">
-       <widget class="QCheckBox" name="enableExportCheckBox">
-        <property name="toolTip">
-         <string>Allow KeeShare exports</string>
+       <layout class="QHBoxLayout" name="enableExportCheckBoxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="accessibleName">
-         <string>Allow KeeShare exports</string>
-        </property>
-        <property name="text">
-         <string>Allow export</string>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="enableExportCheckBoxLabel">
+          <property name="text">
+           <string>Allow export</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+          <property name="toolTip">
+           <string>Allow KeeShare exports</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="enableExportCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="enableExportCheckBox">
+          <property name="toolTip">
+           <string>Allow KeeShare exports</string>
+          </property>
+          <property name="accessibleName">
+           <string>Allow KeeShare exports</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
       <item row="2" column="1">
-       <widget class="QCheckBox" name="quietSuccessCheckBox">
-        <property name="text">
-         <string>Only show warnings and errors</string>
+       <layout class="QHBoxLayout" name="quietSuccessCheckBoxRow">
+        <property name="spacing">
+         <number>12</number>
         </property>
-        <property name="checked">
-         <bool>true</bool>
-        </property>
-       </widget>
+        <item>
+         <widget class="QLabel" name="quietSuccessCheckBoxLabel">
+          <property name="text">
+           <string>Only show warnings and errors</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <spacer name="quietSuccessCheckBoxSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>24</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item>
+         <widget class="Material::Switch" name="quietSuccessCheckBox">
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+          <property name="accessibleName">
+           <string>Only show warnings and errors</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </item>
      </layout>
     </widget>
@@ -82,7 +172,10 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QPushButton" name="generateOwnCertificateButton">
+       <widget class="Material::TonalButton" name="generateOwnCertificateButton">
+        <property name="symbol">
+         <string notr="true">key</string>
+        </property>
         <property name="accessibleName">
          <string>Generate new certificate</string>
         </property>
@@ -153,6 +246,18 @@
   <tabstop>ownCertificateSignerEdit</tabstop>
   <tabstop>ownCertificateFingerprintEdit</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -103,6 +103,7 @@ set(gui_SOURCES
         gui/material/MaterialChangelogScreen.cpp
         gui/material/MaterialChip.cpp
         gui/material/MaterialDialog.cpp
+        gui/material/MaterialDimSum.cpp
         gui/material/MaterialElevation.cpp
         gui/material/MaterialEntryDelegate.cpp
         gui/material/MaterialEntryDetail.cpp
@@ -111,6 +112,8 @@ set(gui_SOURCES
         gui/material/MaterialHistoryScreen.cpp
         gui/material/MaterialIcons.cpp
         gui/material/MaterialNavigationRail.cpp
+        gui/material/MaterialNotificationCentre.cpp
+        gui/material/MaterialNotifier.cpp
         gui/material/MaterialOverlay.cpp
         gui/material/MaterialRegexBuilder.cpp
         gui/material/MaterialReportsScreen.cpp
@@ -127,6 +130,7 @@ set(gui_SOURCES
         gui/material/MaterialTheme.cpp
         gui/material/MaterialTopAppBar.cpp
         gui/material/MaterialVaultSidebar.cpp
+        gui/material/MaterialVoice.cpp
         gui/AboutDialog.cpp
         gui/ActionCollection.cpp
         gui/Application.cpp
@@ -234,8 +238,10 @@ set(gui_SOURCES
         gui/wizard/NewDatabaseWizardPageEncryption.cpp
         gui/wizard/NewDatabaseWizardPageDatabaseKey.cpp
         quickunlock/QuickUnlockInterface.cpp
+        ../share/dimsum/dimsum.qrc
         ../share/icons/icons.qrc
         ../share/icons/material/material_icons.qrc
+        ../share/voice/voice.qrc
         ../share/wizard/wizard.qrc)
 
 if(APPLE)

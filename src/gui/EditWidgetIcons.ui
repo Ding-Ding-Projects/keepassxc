@@ -106,7 +106,10 @@
    <item>
     <layout class="QHBoxLayout" name="customIconButtonsHorizontalLayout" stretch="0,0,0,0">
      <item>
-      <widget class="QPushButton" name="addButton">
+      <widget class="Material::TonalButton" name="addButton">
+       <property name="symbol">
+        <string notr="true">add</string>
+       </property>
        <property name="text">
         <string>Choose icon…</string>
        </property>
@@ -142,7 +145,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="faviconButton">
+      <widget class="Material::OutlinedButton" name="faviconButton">
+       <property name="symbol">
+        <string notr="true">download</string>
+       </property>
        <property name="toolTip">
         <string>Download favicon for URL</string>
        </property>
@@ -172,7 +178,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="applyIconToPushButton">
+      <widget class="Material::OutlinedButton" name="applyIconToPushButton">
+       <property name="symbol">
+        <string notr="true">keyboard_double_arrow_right</string>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
          <horstretch>0</horstretch>
@@ -184,9 +193,6 @@
        </property>
        <property name="accessibleName">
         <string>Apply selected icon to subgroups and entries</string>
-       </property>
-       <property name="styleSheet">
-        <string notr="true">padding: 4px 10px</string>
        </property>
        <property name="text">
         <string>Apply icon to…</string>
@@ -207,6 +213,18 @@
   <tabstop>faviconButton</tabstop>
   <tabstop>applyIconToPushButton</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

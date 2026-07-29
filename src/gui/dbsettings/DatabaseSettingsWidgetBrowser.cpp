@@ -26,6 +26,8 @@
 #include "core/Group.h"
 #include "core/Metadata.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
+#include "gui/material/MaterialButtons.h"
 
 DatabaseSettingsWidgetBrowser::DatabaseSettingsWidgetBrowser(QWidget* parent)
     : DatabaseSettingsWidget(parent)
@@ -36,6 +38,13 @@ DatabaseSettingsWidgetBrowser::DatabaseSettingsWidgetBrowser(QWidget* parent)
     m_ui->setupUi(this);
     m_ui->removeCustomDataButton->setEnabled(false);
     m_ui->customDataTable->setModel(m_customDataModel);
+
+    // The three actions below discard stored browser state; tint them destructive.
+    for (auto* button : {static_cast<Material::ButtonBase*>(m_ui->removeCustomDataButton),
+                         static_cast<Material::ButtonBase*>(m_ui->removeSharedEncryptionKeys),
+                         static_cast<Material::ButtonBase*>(m_ui->removeStoredPermissions)}) {
+        button->setRoles(Material::Role::ErrorContainer, Material::Role::OnErrorContainer);
+    }
 
     settingsWarning();
 
@@ -175,8 +184,7 @@ void DatabaseSettingsWidgetBrowser::removeSharedEncryptionKeys()
     }
 
     if (keysToRemove.isEmpty()) {
-        MessageBox::information(
-            this, tr("No keys found"), tr("No shared encryption keys found in KeePassXC settings."), MessageBox::Ok);
+        Material::Notify::info(tr("No keys found"), tr("No shared encryption keys found in KeePassXC settings."));
         return;
     }
 
@@ -185,10 +193,8 @@ void DatabaseSettingsWidgetBrowser::removeSharedEncryptionKeys()
     }
 
     const int count = keysToRemove.count();
-    MessageBox::information(this,
-                            tr("Removed keys from database"),
-                            tr("Successfully removed %n encryption key(s) from KeePassXC settings.", "", count),
-                            MessageBox::Ok);
+    Material::Notify::success(tr("Removed keys from database"),
+                              tr("Successfully removed %n encryption key(s) from KeePassXC settings.", "", count));
 }
 
 void DatabaseSettingsWidgetBrowser::removeStoredPermissions()
@@ -223,15 +229,11 @@ void DatabaseSettingsWidgetBrowser::removeStoredPermissions()
     progress.reset();
 
     if (counter > 0) {
-        MessageBox::information(this,
-                                tr("Removed permissions"),
-                                tr("Successfully removed permissions from %n entry(s).", "", counter),
-                                MessageBox::Ok);
+        Material::Notify::success(tr("Removed permissions"),
+                                  tr("Successfully removed permissions from %n entry(s).", "", counter));
     } else {
-        MessageBox::information(this,
-                                tr("No entry with permissions found!"),
-                                tr("The active database does not contain an entry with permissions."),
-                                MessageBox::Ok);
+        Material::Notify::info(tr("No entry with permissions found!"),
+                               tr("The active database does not contain an entry with permissions."));
     }
 }
 

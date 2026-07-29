@@ -29,6 +29,7 @@
 #include "gui/Application.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialDimSum.h"
 #include "gui/osutils/OSUtils.h"
 
 #if defined(WITH_ASAN) && defined(WITH_LSAN)
@@ -223,6 +224,7 @@ int main(int argc, char** argv)
     } else {
         mainWindow.bringToFront();
         Application::processEvents();
+        Material::DimSum::showIfDue(&mainWindow);
     }
 
     int exitCode = Application::exec();

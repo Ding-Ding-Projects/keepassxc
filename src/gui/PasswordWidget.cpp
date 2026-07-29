@@ -24,13 +24,16 @@
 #include "gui/Font.h"
 #include "gui/Icons.h"
 #include "gui/PasswordGeneratorWidget.h"
+#include "gui/material/MaterialSeverity.h"
+#include "gui/material/MaterialTheme.h"
 #include "gui/osutils/OSUtils.h"
-#include "gui/styles/StateColorPalette.h"
 
 #include <QEvent>
 #include <QLineEdit>
 #include <QTimer>
 #include <QToolTip>
+
+using Material::setSeverity;
 
 PasswordWidget::PasswordWidget(QWidget* parent)
     : QWidget(parent)
@@ -83,10 +86,9 @@ PasswordWidget::PasswordWidget(QWidget* parent)
     m_ui->passwordEdit->addAction(m_passwordGeneratorAction, QLineEdit::TrailingPosition);
     m_passwordGeneratorAction->setVisible(false);
 
-    m_capslockAction =
-        new QAction(icons()->icon("dialog-warning", true, StateColorPalette().color(StateColorPalette::Error)),
-                    tr("Warning: Caps Lock enabled!"),
-                    this);
+    m_capslockAction = new QAction(icons()->icon("dialog-warning", true, theme()->color(Material::Role::Error)),
+                                   tr("Warning: Caps Lock enabled!"),
+                                   this);
     m_ui->passwordEdit->addAction(m_capslockAction, QLineEdit::LeadingPosition);
     m_capslockAction->setVisible(false);
 
@@ -204,7 +206,6 @@ void PasswordWidget::popupPasswordGenerator()
 
 void PasswordWidget::updateRepeatStatus()
 {
-    static const auto stylesheetTemplate = QStringLiteral("QLineEdit { background: %1; }");
     if (!m_parentPasswordWidget) {
         return;
     }
@@ -212,20 +213,15 @@ void PasswordWidget::updateRepeatStatus()
     const auto otherPassword = m_parentPasswordWidget->text();
     const auto password = text();
     if (otherPassword != password) {
-        bool isCorrect = false;
-        StateColorPalette statePalette;
-        QColor color = statePalette.color(StateColorPalette::ColorRole::Error);
-        if (!password.isEmpty() && otherPassword.startsWith(password)) {
-            color = statePalette.color(StateColorPalette::ColorRole::Incomplete);
-            isCorrect = true;
-        }
-        setStyleSheet(stylesheetTemplate.arg(color.name()));
-        m_correctAction->setVisible(isCorrect);
-        m_errorAction->setVisible(!isCorrect);
+        // Still a prefix of the other field: on the way there, not yet wrong.
+        const bool isPrefix = !password.isEmpty() && otherPassword.startsWith(password);
+        setSeverity(m_ui->passwordEdit, isPrefix ? "warning" : "error");
+        m_correctAction->setVisible(isPrefix);
+        m_errorAction->setVisible(!isPrefix);
     } else {
         m_correctAction->setVisible(false);
         m_errorAction->setVisible(false);
-        setStyleSheet("");
+        setSeverity(m_ui->passwordEdit, nullptr);
     }
 }
 
@@ -279,42 +275,23 @@ void PasswordWidget::updatePasswordStrength(const QString& password)
 
     m_ui->qualityProgressBar->setValue(std::min(int(health.entropy()), m_ui->qualityProgressBar->maximum()));
 
-    QString style = m_ui->qualityProgressBar->styleSheet();
-    QRegularExpression re("(QProgressBar::chunk\\s*\\{.*?background-color:)[^;]+;",
-                          QRegularExpression::CaseInsensitiveOption | QRegularExpression::DotMatchesEverythingOption);
-    style.replace(re, "\\1 %1;");
-
-    StateColorPalette qualityPalette;
-
     switch (health.quality()) {
     case PasswordHealth::Quality::Bad:
     case PasswordHealth::Quality::Poor:
-        m_ui->qualityProgressBar->setStyleSheet(
-            style.arg(qualityPalette.color(StateColorPalette::HealthCritical).name()));
-
+        setSeverity(m_ui->qualityProgressBar, "error");
         m_ui->qualityProgressBar->setToolTip(tr("Quality: %1").arg(tr("Poor", "Password quality")));
-
         break;
-
     case PasswordHealth::Quality::Weak:
-        m_ui->qualityProgressBar->setStyleSheet(style.arg(qualityPalette.color(StateColorPalette::HealthBad).name()));
-
+        setSeverity(m_ui->qualityProgressBar, "warning");
         m_ui->qualityProgressBar->setToolTip(tr("Quality: %1").arg(tr("Weak", "Password quality")));
-
         break;
     case PasswordHealth::Quality::Good:
-        m_ui->qualityProgressBar->setStyleSheet(style.arg(qualityPalette.color(StateColorPalette::HealthOk).name()));
-
+        setSeverity(m_ui->qualityProgressBar, "success");
         m_ui->qualityProgressBar->setToolTip(tr("Quality: %1").arg(tr("Good", "Password quality")));
-
         break;
     case PasswordHealth::Quality::Excellent:
-
-        m_ui->qualityProgressBar->setStyleSheet(
-            style.arg(qualityPalette.color(StateColorPalette::HealthExcellent).name()));
-
+        setSeverity(m_ui->qualityProgressBar, "success");
         m_ui->qualityProgressBar->setToolTip(tr("Quality: %1").arg(tr("Excellent", "Password quality")));
-
         break;
     }
 }

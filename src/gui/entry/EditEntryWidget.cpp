@@ -26,6 +26,7 @@
 
 #include <QColorDialog>
 #include <QDesktopServices>
+#include <QPainter>
 #include <QSortFilterProxyModel>
 #include <QStringListModel>
 
@@ -62,6 +63,27 @@
 #include "gui/entry/AutoTypeAssociationsModel.h"
 #include "gui/entry/EntryAttributesModel.h"
 #include "gui/entry/EntryHistoryModel.h"
+#include "gui/material/MaterialButtons.h"
+#include "gui/material/MaterialNotifier.h"
+
+namespace
+{
+    /** A user-chosen colour as a Material swatch, outlined with the theme. */
+    QIcon colorSwatch(const QColor& color, int size)
+    {
+        QPixmap pixmap(qMax(1, size), qMax(1, size));
+        pixmap.fill(Qt::transparent);
+
+        QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setBrush(color);
+        painter.setPen(QPen(theme()->color(Material::Role::Outline), 1));
+        painter.drawRoundedRect(QRectF(pixmap.rect()).adjusted(0.5, 0.5, -0.5, -0.5),
+                                Material::Shape::ExtraSmall,
+                                Material::Shape::ExtraSmall);
+        return QIcon(pixmap);
+    }
+} // namespace
 
 EditEntryWidget::EditEntryWidget(QWidget* parent)
     : EditWidget(parent)
@@ -223,7 +245,7 @@ void EditEntryWidget::setupMain()
 #ifdef KPXC_FEATURE_BROWSER
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), this, SLOT(entryURLEdited(const QString&)));
 #endif
-    connect(m_mainUi->expireCheck, &QCheckBox::toggled, [&](bool enabled) {
+    connect(m_mainUi->expireCheck, &QAbstractButton::toggled, [&](bool enabled) {
         m_mainUi->expireDatePicker->setEnabled(enabled);
         if (enabled) {
             m_mainUi->expireDatePicker->setDateTime(Clock::currentDateTime());
@@ -516,7 +538,7 @@ void EditEntryWidget::setupEntryUpdate()
     connect(m_mainUi->urlEdit, SIGNAL(textChanged(QString)), this, SLOT(updateFaviconButtonEnable(QString)));
 #endif
     connect(m_mainUi->tagsList, SIGNAL(tagsEdited()), this, SLOT(setModified()));
-    connect(m_mainUi->expireCheck, SIGNAL(stateChanged(int)), this, SLOT(setModified()));
+    connect(m_mainUi->expireCheck, SIGNAL(toggled(bool)), this, SLOT(setModified()));
     connect(m_mainUi->expireDatePicker, SIGNAL(dateTimeChanged(QDateTime)), this, SLOT(setModified()));
     connect(m_mainUi->notesEdit, SIGNAL(textChanged()), this, SLOT(setModified()));
 
@@ -1114,7 +1136,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
             tr("Some Browser Integration settings are overridden by group settings."), MessageWidget::Information);
         m_browserUi->messageWidget->setVisible(false);
 
-        auto updateCheckBoxValue = [&](QCheckBox* checkBox, const QString& option) {
+        auto updateToggleValue = [&](QAbstractButton* toggle, const QString& option) {
             const auto optionEnabledInGroup = group ? group->resolveBrowserOptionEnabled(option) : false;
             const auto optionInherited = group ? group->resolveCustomDataTriState(option) == Group::Inherit : true;
 
@@ -1122,13 +1144,13 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
                 m_browserUi->messageWidget->setVisible(true);
             }
 
-            updateBrowserIntegrationCheckbox(checkBox, optionInherited, optionEnabledInGroup, option);
+            updateBrowserIntegrationToggle(toggle, optionInherited, optionEnabledInGroup, option);
         };
 
-        updateCheckBoxValue(m_browserUi->hideEntryCheckbox, BrowserService::OPTION_HIDE_ENTRY);
-        updateCheckBoxValue(m_browserUi->skipAutoSubmitCheckbox, BrowserService::OPTION_SKIP_AUTO_SUBMIT);
-        updateCheckBoxValue(m_browserUi->onlyHttpAuthCheckbox, BrowserService::OPTION_ONLY_HTTP_AUTH);
-        updateCheckBoxValue(m_browserUi->notHttpAuthCheckbox, BrowserService::OPTION_NOT_HTTP_AUTH);
+        updateToggleValue(m_browserUi->hideEntryCheckbox, BrowserService::OPTION_HIDE_ENTRY);
+        updateToggleValue(m_browserUi->skipAutoSubmitCheckbox, BrowserService::OPTION_SKIP_AUTO_SUBMIT);
+        updateToggleValue(m_browserUi->onlyHttpAuthCheckbox, BrowserService::OPTION_ONLY_HTTP_AUTH);
+        updateToggleValue(m_browserUi->notHttpAuthCheckbox, BrowserService::OPTION_NOT_HTTP_AUTH);
 
         m_browserUi->addURLButton->setEnabled(!m_history);
         m_browserUi->removeURLButton->setEnabled(false);
@@ -1176,10 +1198,9 @@ bool EditEntryWidget::commitEntry()
 
     // HACK: Check that entry pointer is still valid, see https://github.com/keepassxreboot/keepassxc/issues/5722
     if (!m_entry) {
-        QMessageBox::information(this,
-                                 tr("Invalid Entry"),
-                                 tr("An external merge operation has invalidated this entry.\n"
-                                    "Unfortunately, any changes made have been lost."));
+        Material::Notify::warning(tr("Invalid Entry"),
+                                  tr("An external merge operation has invalidated this entry. "
+                                     "Unfortunately, any changes made have been lost."));
         return true;
     }
 
@@ -1334,26 +1355,26 @@ void EditEntryWidget::updateEntryData(Entry* entry) const
 #endif
 }
 
-void EditEntryWidget::updateBrowserIntegrationCheckbox(QCheckBox* checkBox,
-                                                       bool enabled,
-                                                       bool value,
-                                                       const QString& option)
+void EditEntryWidget::updateBrowserIntegrationToggle(QAbstractButton* toggle,
+                                                     bool enabled,
+                                                     bool value,
+                                                     const QString& option)
 {
-    auto block = checkBox->signalsBlocked();
-    checkBox->blockSignals(true);
+    auto block = toggle->signalsBlocked();
+    toggle->blockSignals(true);
 
     if (enabled) {
         if (m_customData->contains(option)) {
-            checkBox->setChecked(m_customData->value(option) == TRUE_STR);
+            toggle->setChecked(m_customData->value(option) == TRUE_STR);
         } else {
-            checkBox->setChecked(false);
+            toggle->setChecked(false);
         }
     } else {
-        checkBox->setChecked(value);
+        toggle->setChecked(value);
     }
-    checkBox->setEnabled(enabled);
+    toggle->setEnabled(enabled);
 
-    checkBox->blockSignals(block);
+    toggle->blockSignals(block);
 }
 
 void EditEntryWidget::cancel()
@@ -1724,19 +1745,22 @@ QMenu* EditEntryWidget::createPresetsMenu()
 
 void EditEntryWidget::setupColorButton(bool foreground, const QColor& color)
 {
-    QWidget* button = m_advancedUi->fgColorButton;
+    QAbstractButton* button = m_advancedUi->fgColorButton;
     QCheckBox* checkBox = m_advancedUi->fgColorCheckBox;
     if (!foreground) {
         button = m_advancedUi->bgColorButton;
         checkBox = m_advancedUi->bgColorCheckBox;
     }
 
+    // The swatch is drawn rather than styled, so the button keeps its Material
+    // shape and the outline still follows the theme.
+    const int size = button->iconSize().width();
     if (color.isValid()) {
-        button->setStyleSheet(QString("background-color:%1").arg(color.name()));
+        button->setIcon(colorSwatch(color, size));
         button->setProperty("color", color.name());
         checkBox->setChecked(true);
     } else {
-        button->setStyleSheet("");
+        button->setIcon(colorSwatch(theme()->color(Material::Role::SurfaceContainerHighest), size));
         button->setProperty("color", QVariant());
         checkBox->setChecked(false);
     }

@@ -55,28 +55,118 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="showEntriesWithUrlOnlyCheckBox">
-     <property name="text">
-      <string>Only show entries that have a URL</string>
+    <layout class="QHBoxLayout" name="showEntriesWithUrlOnlyCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="showEntriesWithUrlOnlyCheckBoxLabel">
+       <property name="text">
+        <string>Only show entries that have a URL</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="showEntriesWithUrlOnlyCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="showEntriesWithUrlOnlyCheckBox">
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="accessibleName">
+        <string>Only show entries that have a URL</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="showAllowDenyCheckBox">
-     <property name="text">
-      <string>Only show entries that have been explicitly allowed or denied</string>
+    <layout class="QHBoxLayout" name="showAllowDenyCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="showAllowDenyCheckBoxLabel">
+       <property name="text">
+        <string>Only show entries that have been explicitly allowed or denied</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="showAllowDenyCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="showAllowDenyCheckBox">
+       <property name="accessibleName">
+        <string>Only show entries that have been explicitly allowed or denied</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="showExpired">
-     <property name="text">
-      <string>Show expired entries</string>
+    <layout class="QHBoxLayout" name="showExpiredRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="showExpiredLabel">
+       <property name="text">
+        <string>Show expired entries</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="showExpiredSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="showExpired">
+       <property name="accessibleName">
+        <string>Show expired entries</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QLabel" name="tipLabel">
@@ -97,6 +187,13 @@
   <tabstop>showEntriesWithUrlOnlyCheckBox</tabstop>
   <tabstop>showAllowDenyCheckBox</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

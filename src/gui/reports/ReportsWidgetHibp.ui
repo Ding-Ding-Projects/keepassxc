@@ -84,7 +84,10 @@
           <number>0</number>
          </property>
          <item>
-          <widget class="QPushButton" name="validationButton">
+          <widget class="Material::FilledButton" name="validationButton">
+           <property name="symbol">
+            <string notr="true">health_and_safety</string>
+           </property>
            <property name="maximumSize">
             <size>
              <width>275</width>
@@ -169,11 +172,41 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="showKnownBadCheckBox">
-         <property name="text">
-          <string>Also show entries that have been excluded from reports</string>
+        <layout class="QHBoxLayout" name="showKnownBadCheckBoxRow">
+         <property name="spacing">
+          <number>12</number>
          </property>
-        </widget>
+         <item>
+          <widget class="QLabel" name="showKnownBadCheckBoxLabel">
+           <property name="text">
+            <string>Also show entries that have been excluded from reports</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="showKnownBadCheckBoxSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="showKnownBadCheckBox">
+           <property name="accessibleName">
+            <string>Also show entries that have been excluded from reports</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -232,6 +265,18 @@
   <tabstop>showKnownBadCheckBox</tabstop>
   <tabstop>validationButton</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

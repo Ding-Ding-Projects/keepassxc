@@ -31,7 +31,9 @@
 #include "gui/FileDialog.h"
 #include "gui/Icons.h"
 #include "gui/MessageBox.h"
-#include "gui/styles/StateColorPalette.h"
+#include "gui/material/MaterialSeverity.h"
+
+using Material::setSeverity;
 
 PasswordGeneratorWidget::PasswordGeneratorWidget(QWidget* parent)
     : QWidget(parent)
@@ -41,12 +43,8 @@ PasswordGeneratorWidget::PasswordGeneratorWidget(QWidget* parent)
 {
     m_ui->setupUi(this);
 
-    m_ui->buttonGenerate->setIcon(icons()->icon("refresh"));
     m_ui->buttonGenerate->setToolTip(
         tr("Regenerate password (%1)").arg(m_ui->buttonGenerate->shortcut().toString(QKeySequence::NativeText)));
-    m_ui->buttonCopy->setIcon(icons()->icon("clipboard-text"));
-    m_ui->buttonDeleteWordList->setIcon(icons()->icon("trash"));
-    m_ui->buttonAddWordList->setIcon(icons()->icon("document-new"));
     m_ui->buttonClose->setShortcut(Qt::Key_Escape);
 
     // Add two shortcuts to save the form CTRL+Enter and CTRL+S
@@ -115,10 +113,7 @@ PasswordGeneratorWidget::PasswordGeneratorWidget(QWidget* parent)
         m_ui->comboBoxWordList->addItem(fileName, path.absolutePath() + QDir::separator() + fileName);
     }
 
-    // Set color of wordlist warning
-    StateColorPalette statePalette;
-    auto color = statePalette.color(StateColorPalette::ColorRole::False);
-    m_ui->labelWordListWarning->setStyleSheet(QString("QLabel { color: %1; }").arg(color.name()));
+    setSeverity(m_ui->labelWordListWarning, "error");
 
     loadSettings();
 }
@@ -289,33 +284,22 @@ void PasswordGeneratorWidget::updatePasswordStrength()
     m_ui->entropyProgressBar->setValue(std::min(int(passwordHealth.entropy()), m_ui->entropyProgressBar->maximum()));
 
     // Update the visual strength meter
-    QString style = m_ui->entropyProgressBar->styleSheet();
-    QRegularExpression re("(QProgressBar::chunk\\s*\\{.*?background-color:)[^;]+;",
-                          QRegularExpression::CaseInsensitiveOption | QRegularExpression::DotMatchesEverythingOption);
-    style.replace(re, "\\1 %1;");
-
-    StateColorPalette statePalette;
     switch (passwordHealth.quality()) {
     case PasswordHealth::Quality::Bad:
     case PasswordHealth::Quality::Poor:
-        m_ui->entropyProgressBar->setStyleSheet(
-            style.arg(statePalette.color(StateColorPalette::HealthCritical).name()));
+        setSeverity(m_ui->entropyProgressBar, "error");
         m_ui->strengthLabel->setText(tr("Password Quality: %1").arg(tr("Poor", "Password quality")));
         break;
-
     case PasswordHealth::Quality::Weak:
-        m_ui->entropyProgressBar->setStyleSheet(style.arg(statePalette.color(StateColorPalette::HealthBad).name()));
+        setSeverity(m_ui->entropyProgressBar, "warning");
         m_ui->strengthLabel->setText(tr("Password Quality: %1").arg(tr("Weak", "Password quality")));
         break;
-
     case PasswordHealth::Quality::Good:
-        m_ui->entropyProgressBar->setStyleSheet(style.arg(statePalette.color(StateColorPalette::HealthOk).name()));
+        setSeverity(m_ui->entropyProgressBar, "success");
         m_ui->strengthLabel->setText(tr("Password Quality: %1").arg(tr("Good", "Password quality")));
         break;
-
     case PasswordHealth::Quality::Excellent:
-        m_ui->entropyProgressBar->setStyleSheet(
-            style.arg(statePalette.color(StateColorPalette::HealthExcellent).name()));
+        setSeverity(m_ui->entropyProgressBar, "success");
         m_ui->strengthLabel->setText(tr("Password Quality: %1").arg(tr("Excellent", "Password quality")));
         break;
     }

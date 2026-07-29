@@ -146,6 +146,15 @@ add_unit_test(NAME testtools SOURCES TestTools.cpp
 add_unit_test(NAME testconfig SOURCES TestConfig.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 
+add_unit_test(NAME testmaterialvoice SOURCES TestMaterialVoice.cpp
+        LIBS testsupport ${TEST_LIBRARIES})
+
+add_unit_test(NAME testdimsum SOURCES TestDimSum.cpp
+        LIBS testsupport ${TEST_LIBRARIES})
+# The card is a widget, so the test needs a QApplication; offscreen keeps it
+# runnable on a machine with no session.
+set_tests_properties(testdimsum PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+
 add_unit_test(NAME testcli SOURCES TestCli.cpp
         LIBS testsupport cli ${ZXCVBN_LIBRARIES} ${TEST_LIBRARIES})
 target_compile_definitions(testcli PRIVATE KEEPASSX_CLI_PATH="$<TARGET_FILE:keepassxc-cli>")

@@ -48,6 +48,7 @@
 #include "gui/SearchWidget.h"
 #include "gui/ShortcutSettingsPage.h"
 #include "gui/entry/EntryView.h"
+#include "gui/material/MaterialVoice.h"
 #include "gui/osutils/OSUtils.h"
 #include "gui/remote/RemoteSettings.h"
 #include "keeshare/KeeShare.h"
@@ -1332,6 +1333,11 @@ void MainWindow::showEvent(QShowEvent* event)
     if (!m_windowInformationRestored) {
         restoreWindowInformation();
         m_windowInformationRestored = true;
+    }
+
+    // State plainly, once, that the humour level styles warnings and errors too.
+    if (Material::Voice::disclosurePending()) {
+        QTimer::singleShot(0, this, [this] { Material::Voice::presentDisclosure(this); });
     }
 }
 

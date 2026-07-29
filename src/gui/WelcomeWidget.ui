@@ -122,21 +122,30 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>
-      <widget class="QPushButton" name="buttonNewDatabase">
+      <widget class="Material::FilledButton" name="buttonNewDatabase">
+       <property name="symbol">
+        <string notr="true">add</string>
+       </property>
        <property name="text">
         <string>Create Database</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonOpenDatabase">
+      <widget class="Material::TonalButton" name="buttonOpenDatabase">
+       <property name="symbol">
+        <string notr="true">folder_open</string>
+       </property>
        <property name="text">
         <string>Open Database</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="buttonImport">
+      <widget class="Material::OutlinedButton" name="buttonImport">
+       <property name="symbol">
+        <string notr="true">upload</string>
+       </property>
        <property name="text">
         <string>Import File</string>
        </property>
@@ -198,6 +207,23 @@
   <tabstop>buttonImport</tabstop>
   <tabstop>recentListWidget</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

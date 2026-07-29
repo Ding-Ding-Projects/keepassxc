@@ -19,7 +19,7 @@
 #include "ui_PasskeyClipboardImportDialog.h"
 
 #include "PasskeyImporter.h"
-#include "gui/styles/StateColorPalette.h"
+#include "gui/material/MaterialSeverity.h"
 
 #include <QClipboard>
 #include <QGuiApplication>
@@ -64,14 +64,13 @@ void PasskeyClipboardImportDialog::pasteFromClipboard()
  */
 void PasskeyClipboardImportDialog::validatePayload()
 {
-    const StateColorPalette statePalette;
     const auto text = m_ui->payloadEdit->toPlainText();
 
     m_ui->detailsLabel->clear();
 
     if (text.trimmed().isEmpty()) {
         m_valid = false;
-        m_ui->validationLabel->setStyleSheet({});
+        Material::setSeverity(m_ui->validationLabel, Material::Severity::None);
         m_ui->validationLabel->setText(tr("Paste the passkey text copied from KeePassXC to continue."));
         m_ui->importButton->setEnabled(false);
         return;
@@ -81,15 +80,13 @@ void PasskeyClipboardImportDialog::validatePayload()
     m_valid = result.isValid();
 
     if (!m_valid) {
-        m_ui->validationLabel->setStyleSheet(
-            QString("color: %1;").arg(statePalette.color(StateColorPalette::ColorRole::Error).name()));
+        Material::setSeverity(m_ui->validationLabel, Material::Severity::Error);
         m_ui->validationLabel->setText(result.errorMessage);
         m_ui->importButton->setEnabled(false);
         return;
     }
 
-    m_ui->validationLabel->setStyleSheet(
-        QString("color: %1;").arg(statePalette.color(StateColorPalette::ColorRole::True).name()));
+    Material::setSeverity(m_ui->validationLabel, Material::Severity::Success);
     m_ui->validationLabel->setText(
         tr("Valid passkey text containing %n passkey(s).", "", static_cast<int>(result.passkeys.count())));
 
