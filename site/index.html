@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KeePassXC — Material</title>
+<meta name="description" content="A fork of KeePassXC whose interface is rebuilt from the ground up in Material Design 3.">
+<style>
+  :root {
+    --primary:#006493; --on-primary:#ffffff;
+    --primary-container:#c9e6ff; --on-primary-container:#001e30;
+    --secondary-container:#d3e5f5; --on-secondary-container:#0c1d29;
+    --error:#ba1a1a; --error-container:#ffdad6; --on-error-container:#410002;
+    --surface:#f8f9ff; --surface-lowest:#ffffff; --surface-low:#f2f3f9;
+    --surface-c:#eceef4; --surface-high:#e6e8ee; --surface-highest:#e0e2e8;
+    --on-surface:#191c20; --on-surface-variant:#41474d;
+    --outline:#71787e; --outline-variant:#c1c7ce;
+    --green:#1b7f37; --green-container:#d2f2d8; --on-green-container:#0b3d1c;
+    --amber:#9a6700; --amber-container:#ffe9b8; --on-amber-container:#5c4400;
+    --el1:0 1px 2px rgba(0,0,0,.3),0 1px 3px 1px rgba(0,0,0,.15);
+    --el3:0 1px 3px rgba(0,0,0,.3),0 4px 8px 3px rgba(0,0,0,.15);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --primary:#8dcdff; --on-primary:#00344f;
+      --primary-container:#004b70; --on-primary-container:#c9e6ff;
+      --secondary-container:#394956; --on-secondary-container:#d3e5f5;
+      --error:#ffb4ab; --error-container:#93000a; --on-error-container:#ffdad6;
+      --surface:#111417; --surface-lowest:#0c0f12; --surface-low:#191c20;
+      --surface-c:#1d2024; --surface-high:#282a2e; --surface-highest:#333539;
+      --on-surface:#e1e2e7; --on-surface-variant:#c1c7ce;
+      --outline:#8b9198; --outline-variant:#41474d;
+      --green:#57ab5a; --green-container:#113a1b; --on-green-container:#b9f0c0;
+      --amber:#d8a739; --amber-container:#3d2e00; --on-amber-container:#ffe08a;
+    }
+  }
+  * { box-sizing:border-box; }
+  body {
+    margin:0; background:var(--surface); color:var(--on-surface);
+    font-family:Roboto,'Segoe UI',system-ui,-apple-system,sans-serif;
+    font-size:16px; line-height:1.6; -webkit-font-smoothing:antialiased;
+  }
+  a { color:var(--primary); text-decoration:none; }
+  a:hover { text-decoration:underline; }
+  .wrap { max-width:960px; margin:0 auto; padding:0 24px; }
+  header {
+    background:var(--surface-c); border-bottom:1px solid var(--outline-variant);
+    padding:72px 0 56px; text-align:center;
+  }
+  .badge {
+    display:inline-flex; align-items:center; gap:8px; height:32px; padding:0 16px;
+    border-radius:999px; background:var(--secondary-container);
+    color:var(--on-secondary-container); font-size:13px; font-weight:500;
+    letter-spacing:.3px; margin-bottom:20px;
+  }
+  h1 { font-size:clamp(34px,6vw,52px); font-weight:300; letter-spacing:-.5px; margin:0 0 14px; }
+  .lede { font-size:18px; color:var(--on-surface-variant); max-width:640px; margin:0 auto 28px; }
+  .cta { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; }
+  .btn {
+    display:inline-flex; align-items:center; height:44px; padding:0 26px;
+    border-radius:999px; font-size:15px; font-weight:500; transition:box-shadow 180ms cubic-bezier(.2,0,0,1);
+  }
+  .btn:hover { text-decoration:none; box-shadow:var(--el1); }
+  .btn-filled { background:var(--primary); color:var(--on-primary); }
+  .btn-outlined { border:1px solid var(--outline); color:var(--primary); }
+  section { padding:56px 0; }
+  h2 { font-size:28px; font-weight:400; margin:0 0 8px; }
+  .sub { color:var(--on-surface-variant); margin:0 0 28px; }
+  .grid { display:grid; gap:16px; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); }
+  .card {
+    padding:24px; border-radius:28px; background:var(--surface-low);
+    border:1px solid var(--outline-variant);
+  }
+  .card h3 { font-size:18px; font-weight:500; margin:0 0 6px; }
+  .card p { margin:0; font-size:14px; color:var(--on-surface-variant); }
+  .swatches { display:flex; gap:14px; flex-wrap:wrap; margin-top:8px; }
+  .sw { text-align:center; font-size:12px; color:var(--on-surface-variant); }
+  .dot {
+    width:56px; height:56px; border-radius:999px; margin-bottom:8px;
+    box-shadow:var(--el1);
+  }
+  table { width:100%; border-collapse:collapse; font-size:14px; }
+  th, td { text-align:left; padding:11px 12px; border-bottom:1px solid var(--outline-variant); }
+  th { font-size:12px; text-transform:uppercase; letter-spacing:.8px; color:var(--on-surface-variant); font-weight:500; }
+  code {
+    font-family:'Roboto Mono',ui-monospace,Consolas,monospace; font-size:13px;
+    background:var(--surface-c); padding:2px 7px; border-radius:6px;
+  }
+  pre {
+    background:var(--surface-lowest); border:1px solid var(--outline-variant);
+    border-radius:14px; padding:18px 20px; overflow-x:auto;
+  }
+  pre code { background:none; padding:0; font-size:13px; line-height:1.7; }
+  .pill {
+    display:inline-block; height:26px; line-height:26px; padding:0 12px;
+    border-radius:8px; font-size:12px; font-weight:500;
+  }
+  .ok { background:var(--green-container); color:var(--on-green-container); }
+  .wip { background:var(--amber-container); color:var(--on-amber-container); }
+  .note {
+    border-left:4px solid var(--primary); background:var(--surface-c);
+    padding:14px 18px; border-radius:0 14px 14px 0; font-size:14px;
+  }
+  footer {
+    border-top:1px solid var(--outline-variant); background:var(--surface-c);
+    padding:32px 0; font-size:13px; color:var(--on-surface-variant); text-align:center;
+  }
+  .rows { overflow-x:auto; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="badge">🔐 Fork · Material Design 3</div>
+    <h1>KeePassXC — Material</h1>
+    <p class="lede">A fork of KeePassXC whose interface is rebuilt from the ground up. Not a theme layered over the stock widgets — the old styling is gone.</p>
+    <div class="cta">
+      <a class="btn btn-filled" href="https://github.com/Ding-Ding-Projects/keepassxc">View on GitHub</a>
+      <a class="btn btn-outlined" href="https://github.com/Ding-Ding-Projects/keepassxc/wiki">Read the wiki</a>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+
+<section>
+  <h2>What changed</h2>
+  <p class="sub">The cryptography, KDBX handling, browser and SSH integrations, and <code>keepassxc-cli</code> are upstream code and untouched. Presentation is the whole scope.</p>
+  <div class="grid">
+    <div class="card">
+      <h3>One design system</h3>
+      <p>Every colour, radius, duration and row height resolves through a token engine. No widget hard-codes a value.</p>
+    </div>
+    <div class="card">
+      <h3>Live appearance</h3>
+      <p>Theme, seed colour, density and font change the running application. No restart.</p>
+    </div>
+    <div class="card">
+      <h3>Nothing left behind</h3>
+      <p><code>BaseStyle</code> (4 860 lines), <code>LightStyle</code>, <code>DarkStyle</code>, four <code>.qss</code> files and the scattered per-widget stylesheets were deleted.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <h2>Seeds</h2>
+  <p class="sub">The seed supplies the primary and container roles. Surfaces, outlines and status colours come from the light or dark family.</p>
+  <div class="swatches">
+    <div class="sw"><div class="dot" style="background:#006493"></div>KeePassXC blue</div>
+    <div class="sw"><div class="dot" style="background:#6750a4"></div>Baseline purple</div>
+    <div class="sw"><div class="dot" style="background:#1b7f37"></div>Vault green</div>
+    <div class="sw"><div class="dot" style="background:#9a6700"></div>Signal amber</div>
+  </div>
+</section>
+
+<section>
+  <h2>Destinations</h2>
+  <p class="sub">An 88 px navigation rail, a 64 px app bar, a database tab strip, and five places to be.</p>
+  <div class="rows">
+  <table>
+    <tr><th>Destination</th><th>Contents</th></tr>
+    <tr><td><b>Vault</b></td><td>Group sidebar with tag chips, pill search bar, entry list, and a 392 px detail pane with a strength meter and live TOTP ring</td></tr>
+    <tr><td><b>Reports</b></td><td>Password health, breach and reuse findings, database statistics</td></tr>
+    <tr><td><b>History</b></td><td>Local, Git-backed revision history with diff and restore</td></tr>
+    <tr><td><b>Changelog</b></td><td>Every released version, searchable and date-filterable, Markdown export</td></tr>
+    <tr><td><b>Settings</b></td><td>Appearance, language, behaviour, integrations, plus spec sheets for every application setting</td></tr>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Density</h2>
+  <p class="sub">One setting, every list, tree and table in the application.</p>
+  <div class="rows">
+  <table>
+    <tr><th>Density</th><th>Row height</th></tr>
+    <tr><td>Compact</td><td><code>40 px</code></td></tr>
+    <tr><td>Comfortable</td><td><code>52 px</code></td></tr>
+    <tr><td>Spacious</td><td><code>64 px</code></td></tr>
+  </table>
+  </div>
+</section>
+
+<section>
+  <h2>Passkeys</h2>
+  <p class="sub">Saving a passkey is the part that must not break, so it is the part with real tests.</p>
+  <div class="note">
+    The credential id, private key and user handle are written <b>protected</b>. An unprotected private key sits in the KDBX in plaintext and defeats the point of storing it there.
+  </div>
+  <div class="rows" style="margin-top:20px">
+  <table>
+    <tr><th>Test</th><th>Asserts</th><th>State</th></tr>
+    <tr><td><code>testEntry</code></td><td><code>hasPasskey()</code> after registration</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td><code>testPasskeyAttributesAreStoredAndProtected</code></td><td>Every attribute value, and that the three secrets are protected</td><td><span class="pill ok">pass</span></td></tr>
+    <tr><td><code>testPasskeySurvivesDatabaseRoundTrip</code></td><td>A registered passkey written through a real KDBX and read back keeps its values and protection flags</td><td><span class="pill ok">pass</span></td></tr>
+  </table>
+  </div>
+  <p class="sub" style="margin-top:16px">Suite total: <b>25 passed, 0 failed</b>.</p>
+</section>
+
+<section>
+  <h2>Build it</h2>
+  <pre><code>git clone --depth 1 https://github.com/microsoft/vcpkg.git "$HOME/vcpkg"
+"$HOME/vcpkg/bootstrap-vcpkg.sh" -disableMetrics
+
+cmake -B build -S . -G Ninja \
+  -DCMAKE_BUILD_TYPE=Release \
+  -DCMAKE_TOOLCHAIN_FILE="$HOME/vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake --build build --parallel</code></pre>
+  <p class="sub" style="margin-top:16px">Full instructions, including the vcpkg baseline gotcha, are in the <a href="https://github.com/Ding-Ding-Projects/keepassxc/wiki/Building">Building</a> page.</p>
+</section>
+
+<section>
+  <h2>Status</h2>
+  <div class="rows">
+  <table>
+    <tr><th>Item</th><th>State</th></tr>
+    <tr><td>Design tokens and theme engine</td><td><span class="pill ok">done</span></td></tr>
+    <tr><td>Component contracts</td><td><span class="pill ok">done</span></td></tr>
+    <tr><td>Passkey save verification</td><td><span class="pill ok">done</span></td></tr>
+    <tr><td>Component implementations</td><td><span class="pill wip">in progress</span></td></tr>
+    <tr><td>Shell and screen integration</td><td><span class="pill wip">in progress</span></td></tr>
+  </table>
+  </div>
+  <p class="sub" style="margin-top:16px">Tracked in <a href="https://github.com/Ding-Ding-Projects/keepassxc/issues/1">issue #1</a>, with a rolling thread in <a href="https://github.com/Ding-Ding-Projects/keepassxc/discussions/2">discussion #2</a>.</p>
+</section>
+
+</div>
+
+<footer>
+  <div class="wrap">
+    GPL-2 or GPL-3, like upstream KeePassXC.<br>
+    For the official, supported password manager, use <a href="https://keepassxc.org">keepassxc.org</a>.
+  </div>
+</footer>
+
+</body>
+</html>
