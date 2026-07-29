@@ -18,8 +18,14 @@
 #ifndef BROWSERSETTINGSWIDGET_H
 #define BROWSERSETTINGSWIDGET_H
 
+#include "BrowserExtensionInstaller.h"
+
+#include <QList>
 #include <QPointer>
 #include <QWidget>
+
+class QCheckBox;
+class QToolButton;
 
 namespace Ui
 {
@@ -42,11 +48,24 @@ private slots:
     void showProxyLocationFileDialog();
     void validateProxyLocation();
     void showCustomBrowserLocationFileDialog();
+    void installExtension(BrowserShared::SupportedBrowsers browser);
+    void installExtensionsForEnabledBrowsers();
 
 private:
+    struct BrowserRow
+    {
+        BrowserShared::SupportedBrowsers browser;
+        QCheckBox* checkbox;
+        QToolButton* installButton;
+    };
+
     QString resolveCustomProxyLocation();
+    BrowserExtensionInstaller::Result registerExtension(BrowserShared::SupportedBrowsers browser);
+    void autoRegisterExtensions();
 
     QScopedPointer<Ui::BrowserSettingsWidget> m_ui;
+    BrowserExtensionInstaller m_extensionInstaller;
+    QList<BrowserRow> m_browserRows;
 };
 
 #endif // BROWSERSETTINGSWIDGET_H

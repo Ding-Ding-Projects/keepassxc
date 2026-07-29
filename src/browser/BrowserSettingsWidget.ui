@@ -82,77 +82,259 @@
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <property name="horizontalSpacing">
-           <number>40</number>
+           <number>20</number>
           </property>
           <item row="1" column="1">
-           <widget class="QCheckBox" name="vivaldiSupport">
-            <property name="text">
-             <string>Vivaldi</string>
+           <layout class="QHBoxLayout" name="vivaldiLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="vivaldiSupport">
+              <property name="text">
+               <string>Vivaldi</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="vivaldiInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Vivaldi</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="3">
-           <widget class="QCheckBox" name="edgeSupport">
-            <property name="text">
-             <string>&amp;Edge</string>
+           <layout class="QHBoxLayout" name="edgeLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="edgeSupport">
+              <property name="text">
+               <string>&amp;Edge</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="edgeInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Microsoft Edge</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="1">
-           <widget class="QCheckBox" name="firefoxSupport">
-            <property name="text">
-             <string>Firefox</string>
+           <layout class="QHBoxLayout" name="firefoxLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="firefoxSupport">
+              <property name="text">
+               <string>Firefox</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="firefoxInstallButton">
+              <property name="toolTip">
+               <string>Open the add-on page of the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Firefox</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="2">
-           <widget class="QCheckBox" name="torBrowserSupport">
-            <property name="text">
-             <string>Tor Browser</string>
+           <layout class="QHBoxLayout" name="torBrowserLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="torBrowserSupport">
+              <property name="text">
+               <string>Tor Browser</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="torBrowserInstallButton">
+              <property name="toolTip">
+               <string>Open the add-on page of the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Tor Browser</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="2">
-           <widget class="QCheckBox" name="braveSupport">
-            <property name="text">
-             <string>Brave</string>
+           <layout class="QHBoxLayout" name="braveLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="braveSupport">
+              <property name="text">
+               <string>Brave</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="braveInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Brave</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="0">
-           <widget class="QCheckBox" name="chromeSupport">
-            <property name="text">
-             <string>Google Chrome</string>
+           <layout class="QHBoxLayout" name="chromeLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="chromeSupport">
+              <property name="text">
+               <string>Google Chrome</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="chromeInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Google Chrome</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="chromiumSupport">
-            <property name="text">
-             <string>Chromium</string>
+           <layout class="QHBoxLayout" name="chromiumLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="chromiumSupport">
+              <property name="text">
+               <string>Chromium</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="chromiumInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Chromium</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="4">
            <spacer name="horizontalSpacer">
@@ -169,6 +351,36 @@
           </item>
          </layout>
         </widget>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="installExtensionsLayout">
+         <item>
+          <widget class="QPushButton" name="installAllExtensionsButton">
+           <property name="toolTip">
+            <string>Register the KeePassXC-Browser extension with all enabled browsers. Each browser asks you to enable the extension the next time it is started.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Install extensions for all enabled browsers</string>
+           </property>
+           <property name="text">
+            <string>Install extensions for all enabled browsers</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer">

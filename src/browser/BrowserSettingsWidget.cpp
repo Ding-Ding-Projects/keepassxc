@@ -18,11 +18,47 @@
 #include "BrowserSettingsWidget.h"
 #include "ui_BrowserSettingsWidget.h"
 
+#include "BrowserExtensionInstaller.h"
 #include "BrowserSettings.h"
 #include "config-keepassx.h"
+#include "core/Global.h"
+#include "gui/Icons.h"
 #include "gui/styles/StateColorPalette.h"
 
+#include <QCheckBox>
+#include <QDesktopServices>
 #include <QFileDialog>
+#include <QMessageBox>
+#include <QToolButton>
+#include <QUrl>
+
+using namespace BrowserShared;
+
+namespace
+{
+    /**
+     * Returns the browsers covered by the enable checkbox of the given browser
+     *
+     * @param browser Browser the checkbox belongs to
+     * @return QList Browsers to register the extension for
+     */
+    QList<SupportedBrowsers> relatedBrowsers(SupportedBrowsers browser)
+    {
+#ifdef Q_OS_WIN
+        // Vivaldi, Brave and Tor Browser have no checkbox of their own on Windows because they share
+        // the native messaging registry keys of Chrome and Firefox. Their external extension
+        // registrations are separate, so they are written along with the browser they are grouped with.
+        if (browser == SupportedBrowsers::CHROME) {
+            return {SupportedBrowsers::CHROME, SupportedBrowsers::VIVALDI, SupportedBrowsers::BRAVE};
+        }
+
+        if (browser == SupportedBrowsers::FIREFOX) {
+            return {SupportedBrowsers::FIREFOX, SupportedBrowsers::TOR_BROWSER};
+        }
+#endif
+        return {browser};
+    }
+} // namespace
 
 BrowserSettingsWidget::BrowserSettingsWidget(QWidget* parent)
     : QWidget(parent)
@@ -43,6 +79,28 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget* parent)
     m_ui->tabWidget->setEnabled(m_ui->enableBrowserSupport->isChecked());
     connect(m_ui->enableBrowserSupport, SIGNAL(toggled(bool)), m_ui->tabWidget, SLOT(setEnabled(bool)));
     connect(m_ui->enableBrowserSupport, SIGNAL(toggled(bool)), SLOT(validateProxyLocation()));
+
+    // Browser extension installation
+    m_browserRows = {{SupportedBrowsers::CHROME, m_ui->chromeSupport, m_ui->chromeInstallButton},
+                     {SupportedBrowsers::CHROMIUM, m_ui->chromiumSupport, m_ui->chromiumInstallButton},
+                     {SupportedBrowsers::FIREFOX, m_ui->firefoxSupport, m_ui->firefoxInstallButton},
+                     {SupportedBrowsers::VIVALDI, m_ui->vivaldiSupport, m_ui->vivaldiInstallButton},
+                     {SupportedBrowsers::TOR_BROWSER, m_ui->torBrowserSupport, m_ui->torBrowserInstallButton},
+                     {SupportedBrowsers::BRAVE, m_ui->braveSupport, m_ui->braveInstallButton},
+                     {SupportedBrowsers::EDGE, m_ui->edgeSupport, m_ui->edgeInstallButton}};
+
+    for (const auto& row : asConst(m_browserRows)) {
+        const auto browser = row.browser;
+        row.installButton->setIcon(icons()->icon("system-software-update"));
+        row.installButton->setEnabled(row.checkbox->isChecked());
+        connect(row.checkbox, &QCheckBox::toggled, row.installButton, &QToolButton::setEnabled);
+        connect(row.installButton, &QToolButton::clicked, this, [this, browser] { installExtension(browser); });
+    }
+
+    connect(m_ui->installAllExtensionsButton,
+            &QPushButton::clicked,
+            this,
+            &BrowserSettingsWidget::installExtensionsForEnabledBrowsers);
 
     // Custom Browser option
 #ifdef Q_OS_WIN
@@ -76,11 +134,14 @@ BrowserSettingsWidget::BrowserSettingsWidget(QWidget* parent)
 #ifdef Q_OS_WIN
     // Brave uses Chrome's registry settings
     m_ui->braveSupport->setHidden(true);
+    m_ui->braveInstallButton->setHidden(true);
     // Vivaldi uses Chrome's registry settings
     m_ui->vivaldiSupport->setHidden(true);
+    m_ui->vivaldiInstallButton->setHidden(true);
     m_ui->chromeSupport->setText("Chrome, Vivaldi, and Brave");
     // Tor Browser uses Firefox's registry settings
     m_ui->torBrowserSupport->setHidden(true);
+    m_ui->torBrowserInstallButton->setHidden(true);
     m_ui->firefoxSupport->setText("Firefox and Tor Browser");
 #endif
 
@@ -263,6 +324,193 @@ void BrowserSettingsWidget::saveSettings()
     settings->setCustomBrowserSupport(customBrowserEnabled);
     settings->setBrowserSupport(BrowserShared::CUSTOM, customBrowserEnabled);
 #endif
+
+    // Register the browser extension with the enabled browsers if the user has opted in to it
+    if (settings->autoInstallExtension()) {
+        autoRegisterExtensions();
+    }
+}
+
+/**
+ * Registers the browser extension for the browsers covered by a single enable checkbox
+ *
+ * @param browser Selected browser
+ * @return Result Combined result of the registrations
+ */
+BrowserExtensionInstaller::Result BrowserSettingsWidget::registerExtension(SupportedBrowsers browser)
+{
+    using Result = BrowserExtensionInstaller::Result;
+
+    auto registered = false;
+    auto manualInstall = false;
+
+    const auto browsers = relatedBrowsers(browser);
+    for (auto related : browsers) {
+        const auto result = m_extensionInstaller.installExtension(related);
+        if (result == Result::Failed) {
+            return Result::Failed;
+        }
+
+        registered = registered || (result == Result::Registered);
+        manualInstall = manualInstall || (result == Result::RequiresManualInstall);
+    }
+
+    if (registered) {
+        return Result::Registered;
+    }
+
+    return manualInstall ? Result::RequiresManualInstall : Result::AlreadyPresent;
+}
+
+/**
+ * Registers the browser extension for a single browser and reports the outcome to the user
+ *
+ * @param browser Selected browser
+ */
+void BrowserSettingsWidget::installExtension(SupportedBrowsers browser)
+{
+    using Result = BrowserExtensionInstaller::Result;
+
+    const auto name = BrowserExtensionInstaller::browserName(browser);
+    switch (registerExtension(browser)) {
+    case Result::Registered:
+        QMessageBox::information(this,
+                                 tr("Browser Extension"),
+                                 tr("KeePassXC-Browser has been registered for %1.\n\n"
+                                    "%1 will ask you to enable the extension the next time it is started. "
+                                    "The extension is not enabled until you accept that request.")
+                                     .arg(name),
+                                 QMessageBox::Ok);
+        break;
+    case Result::AlreadyPresent:
+        QMessageBox::information(this,
+                                 tr("Browser Extension"),
+                                 tr("KeePassXC-Browser is already registered for %1.\n\n"
+                                    "If the extension is still missing, %1 will ask you to enable it the next "
+                                    "time it is started.")
+                                     .arg(name),
+                                 QMessageBox::Ok);
+        break;
+    case Result::RequiresManualInstall: {
+        // The browser does not support external extension registrations, open the web store instead
+        const auto storeUrl = BrowserExtensionInstaller::webStoreUrl(browser);
+        if (!QDesktopServices::openUrl(QUrl(storeUrl))) {
+            QMessageBox::warning(this,
+                                 tr("Browser Extension"),
+                                 tr("%1 does not allow other applications to install extensions. "
+                                    "Please install KeePassXC-Browser from %2.")
+                                     .arg(name, storeUrl),
+                                 QMessageBox::Ok);
+        }
+        break;
+    }
+    case Result::Failed:
+        QMessageBox::warning(this,
+                             tr("Browser Extension"),
+                             tr("Could not register KeePassXC-Browser for %1.").arg(name),
+                             QMessageBox::Ok);
+        break;
+    }
+}
+
+/**
+ * Registers the browser extension for every browser that is currently enabled
+ */
+void BrowserSettingsWidget::installExtensionsForEnabledBrowsers()
+{
+    using Result = BrowserExtensionInstaller::Result;
+
+    QStringList registered;
+    QStringList alreadyPresent;
+    QStringList manualInstall;
+    QStringList failed;
+    QStringList storeUrls;
+
+    for (const auto& row : asConst(m_browserRows)) {
+        if (!row.checkbox->isChecked()) {
+            continue;
+        }
+
+        const auto name = BrowserExtensionInstaller::browserName(row.browser);
+        switch (registerExtension(row.browser)) {
+        case Result::Registered:
+            registered << name;
+            break;
+        case Result::AlreadyPresent:
+            alreadyPresent << name;
+            break;
+        case Result::RequiresManualInstall: {
+            const auto storeUrl = BrowserExtensionInstaller::webStoreUrl(row.browser);
+            manualInstall << name;
+            if (!storeUrl.isEmpty() && !storeUrls.contains(storeUrl)) {
+                storeUrls << storeUrl;
+            }
+            break;
+        }
+        case Result::Failed:
+            failed << name;
+            break;
+        }
+    }
+
+    if (registered.isEmpty() && alreadyPresent.isEmpty() && manualInstall.isEmpty() && failed.isEmpty()) {
+        QMessageBox::information(
+            this, tr("Browser Extension"), tr("Enable at least one browser first."), QMessageBox::Ok);
+        return;
+    }
+
+    QStringList message;
+    if (!registered.isEmpty()) {
+        message << tr("KeePassXC-Browser has been registered for: %1.\n"
+                      "These browsers will ask you to enable the extension the next time they are started.")
+                       .arg(registered.join(", "));
+    }
+
+    if (!alreadyPresent.isEmpty()) {
+        message << tr("KeePassXC-Browser was already registered for: %1.").arg(alreadyPresent.join(", "));
+    }
+
+    if (!manualInstall.isEmpty()) {
+        message << tr("These browsers do not allow other applications to install extensions: %1.\n"
+                      "Their extension pages have been opened for a manual installation.")
+                       .arg(manualInstall.join(", "));
+    }
+
+    if (!failed.isEmpty()) {
+        message << tr("Registering KeePassXC-Browser failed for: %1.").arg(failed.join(", "));
+    }
+
+    for (const auto& storeUrl : asConst(storeUrls)) {
+        QDesktopServices::openUrl(QUrl(storeUrl));
+    }
+
+    if (failed.isEmpty()) {
+        QMessageBox::information(this, tr("Browser Extension"), message.join("\n\n"), QMessageBox::Ok);
+    } else {
+        QMessageBox::warning(this, tr("Browser Extension"), message.join("\n\n"), QMessageBox::Ok);
+    }
+}
+
+/**
+ * Registers the browser extension for the enabled browsers without any user interaction.
+ *
+ * Only used when the user has opted in with Browser_AutoInstallExtension. Browsers that cannot be
+ * registered automatically are skipped, their web store pages are never opened unattended.
+ */
+void BrowserSettingsWidget::autoRegisterExtensions()
+{
+    for (const auto& row : asConst(m_browserRows)) {
+        if (!row.checkbox->isChecked()) {
+            continue;
+        }
+
+        const auto browsers = relatedBrowsers(row.browser);
+        for (auto browser : browsers) {
+            if (BrowserExtensionInstaller::supportsAutomaticRegistration(browser)) {
+                m_extensionInstaller.installExtension(browser);
+            }
+        }
+    }
 }
 
 void BrowserSettingsWidget::showProxyLocationFileDialog()
