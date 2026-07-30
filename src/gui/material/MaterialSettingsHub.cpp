@@ -249,6 +249,11 @@ namespace Material
     } // namespace
 
     SettingsHub::SettingsHub(QWidget* parent)
+        : SettingsHub(Overview::Embedded, parent)
+    {
+    }
+
+    SettingsHub::SettingsHub(Overview overview, QWidget* parent)
         : QWidget(parent)
     {
         auto* root = new QVBoxLayout(this);
@@ -258,7 +263,9 @@ namespace Material
         m_sheet = new SpecSheet(this);
         root->addWidget(m_sheet, 1);
 
-        buildOverview();
+        if (overview == Overview::Embedded) {
+            buildOverview();
+        }
 
         m_sheet->addSidebarSection(tr("SPEC SHEETS"));
         buildGeneralPage();

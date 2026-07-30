@@ -23,6 +23,8 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
+#include <QFontDialog>
+#include <QFontInfo>
 #include <QList>
 #include <QLocale>
 #include <QMimeData>
@@ -67,7 +69,12 @@
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialReportsFeed.h"
 #include "gui/material/MaterialReportsScreen.h"
+#include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSettingsHub.h"
+#include "gui/material/MaterialSettingsScreen.h"
+#include "gui/material/MaterialSheetCatalogue.h"
 #include "gui/material/MaterialShell.h"
+#include "gui/material/MaterialSpecSheet.h"
 #include "gui/material/MaterialTabStrip.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/material/MaterialTopAppBar.h"
@@ -711,19 +718,53 @@ MainWindow::MainWindow()
     auto* vaultScreen = new Material::VaultScreen;
     vaultScreen->setHostWidget(m_ui->stackedWidget, m_ui->tabWidget);
 
+    // The settings destination is the Material hub: the spec sheets whose rows
+    // are bound to the real Config keys, plus the stock
+    // ApplicationSettingsWidget adopted as the classic editor so no option
+    // becomes unreachable. The Appearance overview is hoisted out of the hub
+    // because the design's rail gives it a destination of its own.
+    auto* settingsHub = new Material::SettingsHub(Material::SettingsHub::Overview::Hosted, nullptr);
+    settingsHub->setClassicEditor(m_ui->settingsWidget);
+    auto* appearanceScreen = new Material::SettingsScreen;
+
+    // The four reference sheets. Database settings, the entry editor, the
+    // tools and the help pages all live in dialogs and menus elsewhere; these
+    // describe them in the design's own words so the rail is complete.
+    auto* editorSheet = Material::SheetCatalogue::create(QStringLiteral("editor"));
+    auto* databaseSheet = Material::SheetCatalogue::create(QStringLiteral("database"));
+    auto* toolsSheet = Material::SheetCatalogue::create(QStringLiteral("tools"));
+    auto* helpSheet = Material::SheetCatalogue::create(QStringLiteral("help"));
+
+    // The rail's ten destinations, in the design's order. Sublabels that count
+    // something in the open database are refreshed by updateRailSublabels();
+    // a sheet just reports how many pages it ended up with.
+    const auto pages = [](Material::SpecSheet* sheet) {
+        return sheet ? tr("%n page(s)", "", sheet->pageCount()) : QString();
+    };
+
     materialShell->addDestination(
-        QStringLiteral("vault"), vaultScreen, QStringLiteral("key"), tr("Vault"), QString());
+        QStringLiteral("vault"), vaultScreen, QStringLiteral("key_vertical"), tr("Vault"), QString());
     materialShell->addDestination(
-        QStringLiteral("reports"), reportsScreen, QStringLiteral("health_and_safety"), tr("Reports"), QString());
+        QStringLiteral("reports"), reportsScreen, QStringLiteral("health_metrics"), tr("Reports"), QString());
+    materialShell->addDestination(
+        QStringLiteral("editor"), editorSheet, QStringLiteral("edit_note"), tr("Entry"), pages(editorSheet));
+    materialShell->addDestination(
+        QStringLiteral("database"), databaseSheet, QStringLiteral("database"), tr("Database"), pages(databaseSheet));
+    materialShell->addDestination(
+        QStringLiteral("tools"), toolsSheet, QStringLiteral("construction"), tr("Tools"), pages(toolsSheet));
     materialShell->addDestination(
         QStringLiteral("history"), historyScreen, QStringLiteral("history"), tr("History"), QString());
     materialShell->addDestination(QStringLiteral("changelog"),
                                   changelogScreen,
-                                  QStringLiteral("article"),
+                                  QStringLiteral("receipt_long"),
                                   tr("Changelog"),
                                   QString::fromLatin1(KEEPASSXC_VERSION));
     materialShell->addDestination(
-        QStringLiteral("settings"), m_ui->settingsWidget, QStringLiteral("tune"), tr("Settings"), QString());
+        QStringLiteral("settings"), settingsHub, QStringLiteral("tune"), tr("Settings"), pages(settingsHub->specSheet()));
+    materialShell->addDestination(
+        QStringLiteral("appearance"), appearanceScreen, QStringLiteral("palette"), tr("Appearance"), QString());
+    materialShell->addDestination(
+        QStringLiteral("help"), helpSheet, QStringLiteral("help"), tr("Help"), pages(helpSheet));
     m_ui->verticalLayout->addWidget(materialShell, 1);
 
     // The three data-driven destinations. Each feed owns the reading, the
@@ -763,6 +804,21 @@ MainWindow::MainWindow()
             strip->setCurrentTab(currentId);
         }
     };
+    // The rail's counts follow the same events as the tab strip, plus the two
+    // that produce the numbers themselves.
+    connect(reportsFeed, &Material::ReportsFeed::findingCountChanged, this, [this](int count) {
+        m_reportFindings = count;
+        updateRailSublabels();
+    });
+    if (auto* store = Material::HistoryStore::instance()) {
+        connect(store, &Material::HistoryStore::revisionsChanged, this, &MainWindow::updateRailSublabels);
+    }
+    connect(m_ui->tabWidget, &DatabaseTabWidget::currentChanged, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseClosed, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseLocked, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, &MainWindow::updateRailSublabels);
+
     connect(m_ui->tabWidget, &DatabaseTabWidget::currentChanged, this, syncTabStrip);
     connect(m_ui->tabWidget, &DatabaseTabWidget::tabNameChanged, this, syncTabStrip);
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, syncTabStrip);
@@ -816,6 +872,42 @@ MainWindow::MainWindow()
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);
     });
+
+    // The settings hub asks the window for the three things it cannot do
+    // itself: the font chooser, the real integration pages and the builder.
+    connect(settingsHub, &Material::SettingsHub::builderRequested, this, [regexBuilder](Material::SearchBar*) {
+        regexBuilder->openOverlay();
+    });
+    // The Appearance destination is the same screen the hub used to embed, so
+    // it asks the window for the same three things.
+    if (auto* search = appearanceScreen->searchBar()) {
+        connect(search, &Material::SearchBar::builderRequested, this, [regexBuilder] { regexBuilder->openOverlay(); });
+    }
+    connect(appearanceScreen, &Material::SettingsScreen::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
+    connect(settingsHub, &Material::SettingsHub::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
+
+    auto showIntegration = [this, settingsHub](const QString& id) {
+        // Each integration row in the overview lands on the spec sheet that
+        // owns it; anything without one falls back to the classic editor.
+        static const QHash<QString, QString> pages{{QStringLiteral("browser"), QStringLiteral("browser")},
+                                                   {QStringLiteral("ssh-agent"), QStringLiteral("sshagent")},
+                                                   {QStringLiteral("yubikey"), QStringLiteral("security")},
+                                                   {QStringLiteral("keeshare"), QStringLiteral("keeshare")},
+                                                   {QStringLiteral("passkeys"), QStringLiteral("passkeys")}};
+        const QString page = pages.value(id);
+        if (page.isEmpty()) {
+            settingsHub->showClassicEditor();
+        } else {
+            settingsHub->setCurrentPage(page);
+        }
+        // Whichever page it landed on, it is the settings destination that
+        // shows it.
+        if (shell()) {
+            shell()->setCurrentDestination(QStringLiteral("settings"));
+        }
+    };
+    connect(appearanceScreen, &Material::SettingsScreen::integrationActivated, this, showIntegration);
+    connect(settingsHub, &Material::SettingsHub::integrationActivated, this, showIntegration);
 
     if (auto* notifications = Material::NotificationCentre::centreFor(this)) {
         notifications->attachAppBar(appBar);
@@ -1487,6 +1579,53 @@ void MainWindow::switchToDatabases()
     if (shell() && shell()->currentDestination() == QLatin1String("settings")) {
         shell()->setCurrentDestination(QStringLiteral("vault"));
     }
+}
+
+void MainWindow::updateRailSublabels()
+{
+    auto* rail = shell() ? shell()->rail() : nullptr;
+    if (!rail) {
+        return;
+    }
+
+    auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+    const auto db = (dbWidget && !dbWidget->isLocked()) ? dbWidget->database() : QSharedPointer<Database>();
+
+    // Vault counts what is actually browsable: a locked or absent database
+    // has nothing to report, and the sublabel disappears rather than lying.
+    QString vault;
+    if (db && db->rootGroup()) {
+        vault = QString::number(db->rootGroup()->entriesRecursive(false).size());
+    }
+    rail->setSublabel(QStringLiteral("vault"), vault);
+
+    // The design puts a warning glyph next to the finding count.
+    rail->setSublabel(QStringLiteral("reports"),
+                      m_reportFindings > 0 ? tr("%1 ⚠").arg(m_reportFindings) : QString());
+
+    const auto* store = Material::HistoryStore::instance();
+    int revisions = 0;
+    if (store) {
+        revisions = db ? store->revisionsFor(db->filePath()).size() : store->revisions().size();
+    }
+    rail->setSublabel(QStringLiteral("history"), revisions > 0 ? QString::number(revisions) : QString());
+}
+
+void MainWindow::chooseInterfaceFont()
+{
+    bool accepted = false;
+    const QFont chosen = QFontDialog::getFont(&accepted, QApplication::font(), this, tr("Interface font"));
+    if (!accepted) {
+        return;
+    }
+
+    // The size is kept as the offset the rest of the application already
+    // understands, so the slider in settings and this dialog agree.
+    config()->set(Config::GUI_FontFamily, chosen.family());
+    const int original = QFontInfo(QApplication::font()).pointSize();
+    config()->set(Config::GUI_FontSizeOffset,
+                  qBound(-2, chosen.pointSize() - original + config()->get(Config::GUI_FontSizeOffset).toInt(), 4));
+    Application::applyFontSize();
 }
 
 void MainWindow::switchToSettings(bool enabled)

@@ -108,6 +108,18 @@ namespace Material
                     PillKind kind,
                     const QString& controlText);
 
+        /**
+         * The design's line under the page title. Empty restores the default,
+         * which explains what the search bar covers.
+         */
+        void setNote(const QString& note);
+
+        /**
+         * The design's line under a section title. May be set before or after
+         * the section's first row creates its card.
+         */
+        void setSectionNote(const QString& section, const QString& note);
+
         /** The row with @p key, or nullptr. Use it to update a pill in place. */
         SpecSheetRow* row(const QString& key) const;
 
@@ -142,11 +154,13 @@ namespace Material
 
         QString m_id;
         QString m_title;
+        QString m_note;
         QWidget* m_content = nullptr;
         QVBoxLayout* m_contentLayout = nullptr;
         SearchBar* m_search = nullptr;
         QLabel* m_noteLabel = nullptr;
         QLabel* m_crossNoteLabel = nullptr;
+        QHash<QString, QString> m_sectionNotes;
         QHash<QString, Card*> m_sections;
         QHash<QString, SpecSheetRow*> m_rows;
         QList<SpecSheetRow*> m_rowOrder;
@@ -190,6 +204,9 @@ namespace Material
                     const QString& sub,
                     PillKind kind,
                     const QString& controlText);
+
+        /** How many pages the sidebar carries, of either kind. */
+        int pageCount() const;
 
         QString currentPage() const;
         void setCurrentPage(const QString& id);

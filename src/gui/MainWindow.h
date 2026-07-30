@@ -119,6 +119,13 @@ private slots:
     void openKeyboardShortcuts();
     void switchToDatabases();
     void switchToSettings(bool enabled);
+    /** The settings overview's interface font row: pick a family and a size. */
+    void chooseInterfaceFont();
+    /**
+     * Refresh the counts under the rail's destination labels: entries in the
+     * open database, outstanding health findings, recorded revisions.
+     */
+    void updateRailSublabels();
     void togglePasswordGenerator(bool enabled);
     void switchToNewDatabase();
     void switchToOpenDatabase();
@@ -170,6 +177,8 @@ private:
 
     const QScopedPointer<Ui::MainWindow> m_ui;
     SignalMultiplexer m_actionMultiplexer;
+    /** Health findings from the last Reports pass, for the rail's sublabel. */
+    int m_reportFindings = 0;
     QPointer<QAction> m_clearHistoryAction;
     QPointer<QAction> m_searchWidgetAction;
     QPointer<QMenu> m_entryContextMenu;

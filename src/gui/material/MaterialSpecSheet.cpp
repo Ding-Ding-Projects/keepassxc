@@ -46,13 +46,23 @@ namespace Material
         /** Dynamic property carrying how many rows a section card holds. */
         const char* const RowCountProperty = "materialRowCount";
 
-        /** The 12px line under a section title, which doubles as the match count. */
-        QString sectionNote(int visible, int total)
+        /** The design's own one-line description of a section. */
+        const char* const SectionNoteProperty = "materialSectionNote";
+
+        /**
+         * The 12px line under a section title. It carries the design's own
+         * description of the section; the match count is appended so filtering
+         * still says what it hid, rather than replacing what the section is.
+         */
+        QString sectionNote(const QString& description, int visible, int total)
         {
-            if (visible >= total) {
-                return SpecSheetPage::tr("%1 options").arg(total);
+            const QString count = visible >= total
+                                      ? SpecSheetPage::tr("%1 options").arg(total)
+                                      : SpecSheetPage::tr("%1 of %2 options match").arg(visible).arg(total);
+            if (description.isEmpty()) {
+                return count;
             }
-            return SpecSheetPage::tr("%1 of %2 options match").arg(visible).arg(total);
+            return QStringLiteral("%1 · %2").arg(description, count);
         }
 
         /** A 12px regular line; the type scale only offers 12px in medium weight. */
@@ -232,7 +242,8 @@ namespace Material
         m_noteLabel = new QLabel(m_content);
         m_noteLabel->setWordWrap(true);
         m_noteLabel->setMaximumWidth(NoteMaxWidth);
-        m_noteLabel->setText(tr("Search every option label, description and current value on this surface."));
+        m_note = tr("Search every option label, description and current value on this surface.");
+        m_noteLabel->setText(m_note);
 
         // The cross-page line only appears once a search matches somewhere else,
         // so a hit on another surface is never silently swallowed.
@@ -296,12 +307,13 @@ namespace Material
                 row->setVisible(match);
                 visible += match ? 1 : 0;
             }
-            card->setNoteText(sectionNote(visible, card->property(RowCountProperty).toInt()));
+            card->setNoteText(sectionNote(card->property(SectionNoteProperty).toString(),
+                                         visible,
+                                         card->property(RowCountProperty).toInt()));
             card->setVisible(visible > 0);
         }
-        m_noteLabel->setText(needle.isEmpty()
-                                 ? tr("Search every option label, description and current value on this surface.")
-                                 : tr("Matching “%1” across every section on this page.").arg(text.trimmed()));
+        m_noteLabel->setText(needle.isEmpty() ? m_note
+                                              : tr("Matching “%1” across every section on this page.").arg(text.trimmed()));
     }
 
     SpecSheetPage::~SpecSheetPage() = default;
@@ -325,7 +337,8 @@ namespace Material
 
         auto* card = new Card(Card::Variant::Outlined, Material::Shape::ExtraLarge, m_content);
         card->setTitleText(title);
-        card->setNoteText(sectionNote(0, 0));
+        card->setProperty(SectionNoteProperty, m_sectionNotes.value(title));
+        card->setNoteText(sectionNote(m_sectionNotes.value(title), 0, 0));
         card->setProperty(RowCountProperty, 0);
         card->contentLayout()->setSpacing(0);
         m_contentLayout->addWidget(card);
@@ -350,11 +363,33 @@ namespace Material
 
         const int total = card->property(RowCountProperty).toInt() + 1;
         card->setProperty(RowCountProperty, total);
-        card->setNoteText(sectionNote(total, total));
+        card->setNoteText(sectionNote(card->property(SectionNoteProperty).toString(), total, total));
 
         m_rows.insert(key, row);
         m_rowOrder.append(row);
         connect(row, &SpecSheetRow::activated, this, &SpecSheetPage::rowActivated);
+    }
+
+    void SpecSheetPage::setNote(const QString& note)
+    {
+        m_note = note.isEmpty()
+                     ? tr("Search every option label, description and current value on this surface.")
+                     : note;
+        // Only refresh when nothing is being searched; a live filter owns the line.
+        if (m_search->text().trimmed().isEmpty()) {
+            m_noteLabel->setText(m_note);
+        }
+    }
+
+    void SpecSheetPage::setSectionNote(const QString& section, const QString& note)
+    {
+        m_sectionNotes.insert(section, note);
+        // A section built before its note arrived is corrected in place.
+        if (auto* card = m_sections.value(section)) {
+            card->setProperty(SectionNoteProperty, note);
+            const int total = card->property(RowCountProperty).toInt();
+            card->setNoteText(sectionNote(note, total, total));
+        }
     }
 
     SpecSheetRow* SpecSheetPage::row(const QString& key) const
@@ -584,6 +619,11 @@ namespace Material
         if (auto* target = page(pageId)) {
             target->addRow(section, symbol, label, sub, kind, controlText);
         }
+    }
+
+    int SpecSheet::pageCount() const
+    {
+        return m_pageOrder.size();
     }
 
     QString SpecSheet::currentPage() const

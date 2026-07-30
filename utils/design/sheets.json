@@ -1,0 +1,3559 @@
+{
+ "settings": {
+  "label": "Application settings",
+  "pages": [
+   {
+    "id": "basic",
+    "icon": "settings",
+    "label": "General — Basic Settings",
+    "title": "General · Basic Settings",
+    "note": "Every option on the Basic Settings tab of Application Settings, in Material form.",
+    "sections": [
+     {
+      "title": "Startup",
+      "note": "Config keys SingleInstance … GUI_ShowExpiredEntriesOnDatabaseUnlock.",
+      "rows": [
+       {
+        "icon": "looks_one",
+        "label": "Start only a single instance of KeePassXC",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "rocket_launch",
+        "label": "Automatically launch KeePassXC at system startup",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "minimize",
+        "label": "Minimize window at application startup",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "lock_open",
+        "label": "Minimize window after unlocking database",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Remember previously used databases",
+        "sub": "Keeps a recent-files list",
+        "kind": "val",
+        "control": "5 recent files"
+       },
+       {
+        "icon": "restore_page",
+        "label": "Load previously open databases on startup",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "key",
+        "label": "Remember database key files and security dongles",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "update",
+        "label": "Check for updates at application startup once per week",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "science",
+        "label": "Include beta releases when checking for updates",
+        "sub": "Requires update checks",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "event_busy",
+        "label": "On database unlock, show entries that will expire within",
+        "sub": "",
+        "kind": "val",
+        "control": "3 days"
+       }
+      ]
+     },
+     {
+      "title": "File Management",
+      "note": "Saving, reloading and backup behaviour.",
+      "rows": [
+       {
+        "icon": "save",
+        "label": "Automatically save after every change",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "lock",
+        "label": "Automatically save when locking database",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "tune",
+        "label": "Automatically save non-data changes when locking database",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "sync",
+        "label": "Automatically reload the database when modified externally",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "backup",
+        "label": "Backup database file before saving",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "folder_zip",
+        "label": "Backup destination format",
+        "sub": "{DB_FILENAME} and {TIME:<format>} placeholders",
+        "kind": "mono",
+        "control": "{DB_FILENAME}.old.kdbx"
+       },
+       {
+        "icon": "drive_file_move",
+        "label": "Use alternative saving method",
+        "sub": "Solves problems with Dropbox, Google Drive, GVFS",
+        "kind": "val",
+        "control": "Temporary file moved into place"
+       },
+       {
+        "icon": "warning",
+        "label": "Directly write to database file",
+        "sub": "Dangerous — no atomic replace",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Entry Management",
+      "note": "",
+      "rows": [
+       {
+        "icon": "delete",
+        "label": "Show confirmation before moving entries to recycle bin",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "casino",
+        "label": "Auto-generate password for new entries",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "content_copy",
+        "label": "Copy data on double clicking field in entry view",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "link",
+        "label": "Double-click action for URL",
+        "sub": "Open in browser · Copy to clipboard · Edit entry",
+        "kind": "val",
+        "control": "Open entry URL in browser"
+       },
+       {
+        "icon": "folder",
+        "label": "Use group icon on entry creation",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "minimize",
+        "label": "Minimize when opening a URL",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "visibility_off",
+        "label": "Hide window when copying to clipboard",
+        "sub": "Minimize or drop to background",
+        "kind": "val",
+        "control": "Drop to background"
+       },
+       {
+        "icon": "image",
+        "label": "Favicon download timeout",
+        "sub": "",
+        "kind": "val",
+        "control": "10 sec"
+       }
+      ]
+     },
+     {
+      "title": "User Interface",
+      "note": "GUI_* configuration keys.",
+      "rows": [
+       {
+        "icon": "translate",
+        "label": "Language",
+        "sub": "Restart program to activate",
+        "kind": "val",
+        "control": "System default"
+       },
+       {
+        "icon": "smart_button",
+        "label": "Toolbar button style",
+        "sub": "Icon only · Text beside icon · Text under icon",
+        "kind": "val",
+        "control": "Text beside icon"
+       },
+       {
+        "icon": "open_with",
+        "label": "Movable toolbar",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "format_size",
+        "label": "Font size",
+        "sub": "GUI_FontSizeOffset",
+        "kind": "val",
+        "control": "Default"
+       },
+       {
+        "icon": "view_agenda",
+        "label": "Show toolbar",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "menu",
+        "label": "Show menubar",
+        "sub": "Alt reveals it when hidden",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "palette",
+        "label": "Show passwords in color",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "code",
+        "label": "Use monospaced font for notes",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "close",
+        "label": "Minimize instead of app exit",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "dock_to_right",
+        "label": "Show a system tray icon",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "style",
+        "label": "Tray icon type",
+        "sub": "Monochrome light · Monochrome dark · Colorful",
+        "kind": "val",
+        "control": "Monochrome light"
+       },
+       {
+        "icon": "south_west",
+        "label": "Hide window to system tray when minimized",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "compress",
+        "label": "Compact mode",
+        "sub": "View menu · reduces row height and padding",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "vertical_align_top",
+        "label": "Always on top",
+        "sub": "Ctrl+Shift+A",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "screenshot_monitor",
+        "label": "Allow screen capture",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "keyboard_return",
+        "label": "Search waits for Enter",
+        "sub": "GUI_SearchWaitForEnter",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Settings file",
+      "note": "Config is a plain INI file; these three actions own it.",
+      "rows": [
+       {
+        "icon": "restart_alt",
+        "label": "Reset settings to default…",
+        "sub": "",
+        "kind": "act",
+        "control": "Reset"
+       },
+       {
+        "icon": "file_download",
+        "label": "Import settings…",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "file_upload",
+        "label": "Export settings…",
+        "sub": "",
+        "kind": "act",
+        "control": "Export"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "autotype",
+    "icon": "keyboard",
+    "label": "General — Auto-Type",
+    "title": "General · Auto-Type",
+    "note": "Window matching, confirmation and platform behaviour for Auto-Type.",
+    "sections": [
+     {
+      "title": "Window matching",
+      "note": "",
+      "rows": [
+       {
+        "icon": "title",
+        "label": "Use entry title to match windows for global Auto-Type",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "link",
+        "label": "Use entry URL to match windows for global Auto-Type",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "filter_alt",
+        "label": "Hide expired entries from Auto-Type",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       }
+      ]
+     },
+     {
+      "title": "Confirmation and locking",
+      "note": "",
+      "rows": [
+       {
+        "icon": "help",
+        "label": "Always ask before performing Auto-Type",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "fast_forward",
+        "label": "Skip confirmation for main window Auto-Type actions",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "lock_clock",
+        "label": "Re-lock previously locked database after performing Auto-Type",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       }
+      ]
+     },
+     {
+      "title": "Typing and platform",
+      "note": "AutoTypeDelay, AutoTypeStartDelay, desktop-portal keys.",
+      "rows": [
+       {
+        "icon": "timer",
+        "label": "Auto-Type delay between keystrokes",
+        "sub": "",
+        "kind": "val",
+        "control": "25 ms"
+       },
+       {
+        "icon": "hourglass_top",
+        "label": "Auto-Type start delay",
+        "sub": "",
+        "kind": "val",
+        "control": "500 ms"
+       },
+       {
+        "icon": "keyboard_alt",
+        "label": "Global Auto-Type shortcut",
+        "sub": "GlobalAutoTypeKey + modifiers",
+        "kind": "mono",
+        "control": "Ctrl+Alt+A"
+       },
+       {
+        "icon": "replay",
+        "label": "Global Auto-Type retype time",
+        "sub": "",
+        "kind": "val",
+        "control": "15 sec"
+       },
+       {
+        "icon": "desktop_windows",
+        "label": "Experimental: prefer desktop portals (Wayland)",
+        "sub": "Persist connection, clipboard mode and restore token",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "security",
+    "icon": "security",
+    "label": "Security",
+    "title": "Security",
+    "note": "Timeouts, lock options, convenience and privacy — the Security tab of Application Settings.",
+    "sections": [
+     {
+      "title": "Timeouts",
+      "note": "",
+      "rows": [
+       {
+        "icon": "content_paste_off",
+        "label": "Clear clipboard after",
+        "sub": "1–999 sec",
+        "kind": "val",
+        "control": "10 sec"
+       },
+       {
+        "icon": "lock_clock",
+        "label": "Lock databases after inactivity of",
+        "sub": "10–43200 sec",
+        "kind": "val",
+        "control": "240 sec"
+       },
+       {
+        "icon": "search_off",
+        "label": "Clear search query after",
+        "sub": "1–1440 min",
+        "kind": "val",
+        "control": "5 min"
+       }
+      ]
+     },
+     {
+      "title": "Lock Options",
+      "note": "",
+      "rows": [
+       {
+        "icon": "fingerprint",
+        "label": "Enable database quick unlock",
+        "sub": "Touch ID / Windows Hello",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "screen_lock_portrait",
+        "label": "Lock databases when session is locked or lid is closed",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "switch_account",
+        "label": "Lock databases when switching user",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "minimize",
+        "label": "Lock databases after minimizing the window",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Convenience",
+      "note": "",
+      "rows": [
+       {
+        "icon": "password",
+        "label": "Use placeholder for empty password fields",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "visibility_off",
+        "label": "Hide passwords when editing them",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "preview",
+        "label": "Hide passwords in the entry preview panel",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "timer",
+        "label": "Hide TOTP in the entry preview panel",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "sticky_note_2",
+        "label": "Hide notes in the entry preview panel",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "rule",
+        "label": "Minimum database password quality",
+        "sub": "Security_DatabasePasswordMinimumQuality",
+        "kind": "val",
+        "control": "Good (75 bits)"
+       }
+      ]
+     },
+     {
+      "title": "Privacy",
+      "note": "",
+      "rows": [
+       {
+        "icon": "public",
+        "label": "Use DuckDuckGo service to download website icons",
+        "sub": "Falls back when a site serves no favicon",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "browser",
+    "icon": "extension",
+    "label": "Browser Integration",
+    "title": "Browser Integration",
+    "note": "Every Browser_* configuration key, as exposed by BrowserSettingsWidget.",
+    "sections": [
+     {
+      "title": "Connection",
+      "note": "",
+      "rows": [
+       {
+        "icon": "power",
+        "label": "Enable browser integration",
+        "sub": "Native messaging host",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "checklist",
+        "label": "Browsers",
+        "sub": "Chrome, Chromium, Firefox, Edge, Brave, Vivaldi, Tor Browser",
+        "kind": "val",
+        "control": "4 installed"
+       },
+       {
+        "icon": "notifications",
+        "label": "Show notification when credentials are requested",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "lan",
+        "label": "Support KeePassXC-Browser proxy application",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Use a custom proxy location",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "terminal",
+        "label": "Custom proxy location",
+        "sub": "Browser_CustomProxyLocation",
+        "kind": "mono",
+        "control": "/usr/bin/keepassxc-proxy"
+       },
+       {
+        "icon": "update",
+        "label": "Update native messaging manifest on version change",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "web",
+        "label": "Use a custom browser configuration location",
+        "sub": "Snap/Flatpak sandboxes",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Credential handling",
+      "note": "",
+      "rows": [
+       {
+        "icon": "star",
+        "label": "Return only best-matching credentials",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "lock_open",
+        "label": "Unlock the database when a request arrives",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "http",
+        "label": "Match URL schemes",
+        "sub": "https:// must equal https://",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "event_busy",
+        "label": "Allow expired credentials to be returned",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "database",
+        "label": "Search in all open databases",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "label",
+        "label": "Support KeePassHTTP KPH: attributes",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "cloud_download",
+        "label": "Allow the browser to request all database entries",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "check_circle",
+        "label": "Always allow access without asking",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "edit",
+        "label": "Always allow updating existing credentials",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "vpn_key",
+        "label": "HTTP Basic Auth permission",
+        "sub": "Browser_HttpAuthPermission",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "passkey",
+        "label": "Allow passkeys on localhost",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "sshagent",
+    "icon": "terminal",
+    "label": "SSH Agent",
+    "title": "SSH Agent",
+    "note": "SSHAgent_* keys. Keys are published to the agent only while the database is unlocked.",
+    "sections": [
+     {
+      "title": "Agent",
+      "note": "",
+      "rows": [
+       {
+        "icon": "power",
+        "label": "Enable SSH Agent integration",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "memory",
+        "label": "Use OpenSSH for Windows instead of Pageant",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "window",
+        "label": "Use Pageant",
+        "sub": "PuTTY-compatible agent",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "cable",
+        "label": "SSH_AUTH_SOCK override",
+        "sub": "",
+        "kind": "mono",
+        "control": "$XDG_RUNTIME_DIR/ssh-agent.socket"
+       },
+       {
+        "icon": "usb",
+        "label": "Security key provider override",
+        "sub": "FIDO/PIV middleware",
+        "kind": "mono",
+        "control": "/usr/lib/libsk-libfido2.so"
+       },
+       {
+        "icon": "cleaning_services",
+        "label": "Clear SSH Agent",
+        "sub": "Removes every identity KeePassXC added",
+        "kind": "act",
+        "control": "Clear now"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "fdo",
+    "icon": "lan",
+    "label": "Secret Service Integration",
+    "title": "Secret Service Integration",
+    "note": "FreeDesktop.org Secret Service — replaces gnome-keyring for other applications.",
+    "sections": [
+     {
+      "title": "Service",
+      "note": "",
+      "rows": [
+       {
+        "icon": "power",
+        "label": "Enable the Secret Service Integration",
+        "sub": "org.freedesktop.secrets on D-Bus",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "notifications",
+        "label": "Show notification when passwords are retrieved",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "delete",
+        "label": "Confirm before deleting an item",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "visibility",
+        "label": "Confirm before an application accesses an item",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "lock_open",
+        "label": "Unlock the database before searching",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "checklist",
+        "label": "Exposed database groups",
+        "sub": "Chosen per database in Database Settings",
+        "kind": "val",
+        "control": "None exposed"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "keeshare",
+    "icon": "share",
+    "label": "KeeShare",
+    "title": "KeeShare",
+    "note": "Share groups between databases as signed containers.",
+    "sections": [
+     {
+      "title": "Sharing",
+      "note": "",
+      "rows": [
+       {
+        "icon": "login",
+        "label": "Allow import (foreign shares)",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "logout",
+        "label": "Allow export (own shares)",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "notifications_off",
+        "label": "Quiet success notifications",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "badge",
+        "label": "Signer name",
+        "sub": "Written into every exported container",
+        "kind": "val",
+        "control": "codingmachineedge"
+       },
+       {
+        "icon": "key",
+        "label": "Signing certificate",
+        "sub": "Own certificate and private key",
+        "kind": "act",
+        "control": "Regenerate"
+       },
+       {
+        "icon": "verified_user",
+        "label": "Trusted foreign certificates",
+        "sub": "",
+        "kind": "val",
+        "control": "2 trusted"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "shortcuts",
+    "icon": "keyboard_command_key",
+    "label": "Shortcuts",
+    "title": "Shortcuts",
+    "note": "Every action in the application, with its editable key binding (ShortcutSettingsPage).",
+    "sections": [
+     {
+      "title": "Database",
+      "note": "",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "New Database",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+N"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Open Database",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+O"
+       },
+       {
+        "icon": "save",
+        "label": "Save Database",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+S"
+       },
+       {
+        "icon": "save_as",
+        "label": "Save Database As",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+S"
+       },
+       {
+        "icon": "close",
+        "label": "Close Database",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+W"
+       },
+       {
+        "icon": "lock",
+        "label": "Lock Database",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+L"
+       },
+       {
+        "icon": "lock",
+        "label": "Lock All Databases",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+L"
+       },
+       {
+        "icon": "tune",
+        "label": "Database Settings",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+,"
+       },
+       {
+        "icon": "health_metrics",
+        "label": "Database Reports",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+R"
+       },
+       {
+        "icon": "logout",
+        "label": "Quit",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Q"
+       }
+      ]
+     },
+     {
+      "title": "Entries",
+      "note": "",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "New Entry",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+N"
+       },
+       {
+        "icon": "edit",
+        "label": "Edit Entry",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+E"
+       },
+       {
+        "icon": "content_copy",
+        "label": "Clone Entry",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+D"
+       },
+       {
+        "icon": "delete",
+        "label": "Delete Entry",
+        "sub": "",
+        "kind": "mono",
+        "control": "Del"
+       },
+       {
+        "icon": "restore",
+        "label": "Restore Entry",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+R"
+       },
+       {
+        "icon": "arrow_upward",
+        "label": "Move Entry Up",
+        "sub": "",
+        "kind": "mono",
+        "control": "Alt+Up"
+       },
+       {
+        "icon": "arrow_downward",
+        "label": "Move Entry Down",
+        "sub": "",
+        "kind": "mono",
+        "control": "Alt+Down"
+       },
+       {
+        "icon": "person",
+        "label": "Copy Username",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+B"
+       },
+       {
+        "icon": "password",
+        "label": "Copy Password",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+C"
+       },
+       {
+        "icon": "link",
+        "label": "Copy URL",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+U"
+       },
+       {
+        "icon": "title",
+        "label": "Copy Title",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+I"
+       },
+       {
+        "icon": "timer",
+        "label": "Copy TOTP",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+T"
+       },
+       {
+        "icon": "key",
+        "label": "Copy Password and TOTP",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Y"
+       },
+       {
+        "icon": "visibility",
+        "label": "Show TOTP",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+T"
+       },
+       {
+        "icon": "open_in_new",
+        "label": "Open URL",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+U"
+       },
+       {
+        "icon": "image",
+        "label": "Download Favicon",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+D"
+       },
+       {
+        "icon": "keyboard",
+        "label": "Perform Auto-Type (entry default)",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+V"
+       },
+       {
+        "icon": "terminal",
+        "label": "SSH Agent: add key",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+H"
+       },
+       {
+        "icon": "terminal",
+        "label": "SSH Agent: remove key",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+H"
+       }
+      ]
+     },
+     {
+      "title": "View and help",
+      "note": "",
+      "rows": [
+       {
+        "icon": "vertical_align_top",
+        "label": "Always on Top",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+A"
+       },
+       {
+        "icon": "person_off",
+        "label": "Hide Usernames",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+B"
+       },
+       {
+        "icon": "visibility_off",
+        "label": "Hide Passwords",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+C"
+       },
+       {
+        "icon": "settings",
+        "label": "Application Settings",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+,"
+       },
+       {
+        "icon": "help",
+        "label": "Keyboard Shortcuts guide",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+/"
+       },
+       {
+        "icon": "search",
+        "label": "Focus search",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+F"
+       },
+       {
+        "icon": "bolt",
+        "label": "All actions (this build)",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+P"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "gendefaults",
+    "icon": "casino",
+    "label": "Password Generator defaults",
+    "title": "Password Generator defaults",
+    "note": "PasswordGenerator_* keys — the state the generator opens with.",
+    "sections": [
+     {
+      "title": "Password mode",
+      "note": "",
+      "rows": [
+       {
+        "icon": "straighten",
+        "label": "Length",
+        "sub": "1–999",
+        "kind": "val",
+        "control": "20"
+       },
+       {
+        "icon": "text_fields",
+        "label": "Lower-case letters a-z",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "text_fields",
+        "label": "Upper-case letters A-Z",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "pin",
+        "label": "Numbers 0-9",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "emoji_symbols",
+        "label": "Special characters / * + &",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "data_object",
+        "label": "Braces { [ ( ) ] }",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "more_horiz",
+        "label": "Punctuation . , : ;",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "format_quote",
+        "label": "Quotes \" '",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "remove",
+        "label": "Dashes and slashes \\ / | _ -",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "functions",
+        "label": "Math symbols < > * + ! ? =",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "language",
+        "label": "Logograms # $ % && @ ^ ` ~",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "translate",
+        "label": "Extended ASCII",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "add",
+        "label": "Also choose from (additional characters)",
+        "sub": "",
+        "kind": "mono",
+        "control": "(empty)"
+       },
+       {
+        "icon": "block",
+        "label": "Do not include (excluded characters)",
+        "sub": "Hex button adds every non-hex letter",
+        "kind": "mono",
+        "control": "(empty)"
+       },
+       {
+        "icon": "blur_on",
+        "label": "Exclude look-alike characters",
+        "sub": "0 1 l I O | B 8 G 6",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "checklist",
+        "label": "Pick characters from every group",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "tune",
+        "label": "Advanced mode",
+        "sub": "Reveals additional/excluded fields",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Passphrase mode",
+      "note": "",
+      "rows": [
+       {
+        "icon": "numbers",
+        "label": "Word count",
+        "sub": "1–40",
+        "kind": "val",
+        "control": "6"
+       },
+       {
+        "icon": "space_bar",
+        "label": "Word separator",
+        "sub": "",
+        "kind": "mono",
+        "control": "(space)"
+       },
+       {
+        "icon": "menu_book",
+        "label": "Wordlist",
+        "sub": "Bundled EFF long list, or a custom file",
+        "kind": "val",
+        "control": "eff_large.wordlist"
+       },
+       {
+        "icon": "text_format",
+        "label": "Word case",
+        "sub": "lower · UPPER · Title Case",
+        "kind": "val",
+        "control": "lower case"
+       },
+       {
+        "icon": "category",
+        "label": "Generator type",
+        "sub": "Password or Passphrase",
+        "kind": "val",
+        "control": "Password"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "database": {
+  "label": "Database settings",
+  "pages": [
+   {
+    "id": "general",
+    "icon": "settings",
+    "label": "General",
+    "title": "Database · General",
+    "note": "Metadata, history and the recycle bin — DatabaseSettingsWidgetGeneral.",
+    "sections": [
+     {
+      "title": "Database meta data",
+      "note": "",
+      "rows": [
+       {
+        "icon": "badge",
+        "label": "Database name",
+        "sub": "",
+        "kind": "val",
+        "control": "Personal"
+       },
+       {
+        "icon": "notes",
+        "label": "Description",
+        "sub": "",
+        "kind": "val",
+        "control": "Everyday accounts"
+       },
+       {
+        "icon": "person",
+        "label": "Default username",
+        "sub": "Pre-filled on every new entry",
+        "kind": "val",
+        "control": "codingmachine.edge"
+       },
+       {
+        "icon": "palette",
+        "label": "Custom database color",
+        "sub": "Shown on the tab and tray icon",
+        "kind": "val",
+        "control": "KeePassXC blue"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Database file",
+        "sub": "",
+        "kind": "mono",
+        "control": "~/Vaults/Personal.kdbx"
+       }
+      ]
+     },
+     {
+      "title": "History settings",
+      "note": "Per-entry history retention.",
+      "rows": [
+       {
+        "icon": "history",
+        "label": "Maximum number of history items per entry",
+        "sub": "",
+        "kind": "val",
+        "control": "10"
+       },
+       {
+        "icon": "sd_card",
+        "label": "Maximum amount of history size per entry",
+        "sub": "",
+        "kind": "val",
+        "control": "6 MiB"
+       },
+       {
+        "icon": "rule",
+        "label": "Use recycle bin",
+        "sub": "Deleted entries go to a group instead of vanishing",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "delete_sweep",
+        "label": "Empty recycle bin",
+        "sub": "",
+        "kind": "act",
+        "control": "Empty now"
+       }
+      ]
+     },
+     {
+      "title": "Additional database settings",
+      "note": "",
+      "rows": [
+       {
+        "icon": "search",
+        "label": "Enable compression",
+        "sub": "Recommended; KDBX gzip",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "key",
+        "label": "Auto-Type default sequence for this database",
+        "sub": "",
+        "kind": "mono",
+        "control": "{USERNAME}{TAB}{PASSWORD}{ENTER}"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "credentials",
+    "icon": "vpn_key",
+    "label": "Security — Database Credentials",
+    "title": "Security · Database Credentials",
+    "note": "The three key components: password, key file and hardware key (KeyComponentWidget).",
+    "sections": [
+     {
+      "title": "Password",
+      "note": "",
+      "rows": [
+       {
+        "icon": "password",
+        "label": "Database password",
+        "sub": "Entered twice, quality-checked",
+        "kind": "good",
+        "control": "Set · 128 bits"
+       },
+       {
+        "icon": "rule",
+        "label": "Minimum quality gate",
+        "sub": "Refuses weak database passwords",
+        "kind": "val",
+        "control": "Good"
+       },
+       {
+        "icon": "casino",
+        "label": "Generate a passphrase for this database",
+        "sub": "",
+        "kind": "act",
+        "control": "Open generator"
+       }
+      ]
+     },
+     {
+      "title": "Key file",
+      "note": "",
+      "rows": [
+       {
+        "icon": "description",
+        "label": "Key file",
+        "sub": "A second factor stored on disk or removable media",
+        "kind": "val",
+        "control": "Not set"
+       },
+       {
+        "icon": "add",
+        "label": "Generate a new 32-byte key file",
+        "sub": "",
+        "kind": "act",
+        "control": "Generate"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Browse for an existing key file",
+        "sub": "Legacy XML key files are still accepted",
+        "kind": "act",
+        "control": "Browse…"
+       }
+      ]
+     },
+     {
+      "title": "Hardware key",
+      "note": "",
+      "rows": [
+       {
+        "icon": "usb",
+        "label": "YubiKey / OnlyKey challenge-response",
+        "sub": "HMAC-SHA1 slot, optionally touch-required",
+        "kind": "good",
+        "control": "Slot 2 · touch"
+       },
+       {
+        "icon": "refresh",
+        "label": "Refresh hardware tokens",
+        "sub": "",
+        "kind": "act",
+        "control": "Refresh"
+       },
+       {
+        "icon": "help",
+        "label": "Add a second hardware key",
+        "sub": "Keep a backup key enrolled",
+        "kind": "act",
+        "control": "Add"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "encryption",
+    "icon": "enhanced_encryption",
+    "label": "Security — Encryption",
+    "title": "Security · Encryption",
+    "note": "DatabaseSettingsWidgetEncryption — format, KDF and cipher.",
+    "sections": [
+     {
+      "title": "Database format",
+      "note": "",
+      "rows": [
+       {
+        "icon": "description",
+        "label": "Format",
+        "sub": "KDBX 4.1 · 4.0 · 3.1 (KeePass 2 compatible)",
+        "kind": "val",
+        "control": "KDBX 4.1"
+       },
+       {
+        "icon": "warning",
+        "label": "Downgrading loses KDBX4 features",
+        "sub": "Custom data, Argon2, per-entry attributes",
+        "kind": "off",
+        "control": "Not downgraded"
+       }
+      ]
+     },
+     {
+      "title": "Key derivation",
+      "note": "Tune until unlocking takes about one second on this machine.",
+      "rows": [
+       {
+        "icon": "memory",
+        "label": "Key derivation function",
+        "sub": "Argon2id · Argon2d · AES-KDF",
+        "kind": "val",
+        "control": "Argon2id"
+       },
+       {
+        "icon": "speed",
+        "label": "Transform rounds",
+        "sub": "",
+        "kind": "val",
+        "control": "29"
+       },
+       {
+        "icon": "sd_card",
+        "label": "Memory usage",
+        "sub": "",
+        "kind": "val",
+        "control": "64 MiB"
+       },
+       {
+        "icon": "account_tree",
+        "label": "Parallelism",
+        "sub": "",
+        "kind": "val",
+        "control": "4 threads"
+       },
+       {
+        "icon": "timer",
+        "label": "Benchmark 1-second delay",
+        "sub": "",
+        "kind": "act",
+        "control": "Benchmark"
+       }
+      ]
+     },
+     {
+      "title": "Encryption algorithm",
+      "note": "",
+      "rows": [
+       {
+        "icon": "lock",
+        "label": "Cipher",
+        "sub": "AES-256 · Twofish-256 · ChaCha20",
+        "kind": "val",
+        "control": "AES-256"
+       },
+       {
+        "icon": "shield",
+        "label": "Inner stream cipher",
+        "sub": "ChaCha20 protects in-memory values",
+        "kind": "val",
+        "control": "ChaCha20"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "remote",
+    "icon": "cloud_sync",
+    "label": "Remote Sync",
+    "title": "Remote Sync",
+    "note": "DatabaseSettingsWidgetRemote — sync through an arbitrary download/upload command.",
+    "sections": [
+     {
+      "title": "Sync targets",
+      "note": "",
+      "rows": [
+       {
+        "icon": "label",
+        "label": "Target name",
+        "sub": "",
+        "kind": "val",
+        "control": "nas-webdav"
+       },
+       {
+        "icon": "download",
+        "label": "Download command",
+        "sub": "",
+        "kind": "mono",
+        "control": "curl -u $USER -o {TEMP_DATABASE} https://…"
+       },
+       {
+        "icon": "upload",
+        "label": "Upload command",
+        "sub": "",
+        "kind": "mono",
+        "control": "curl -T {TEMP_DATABASE} -u $USER https://…"
+       },
+       {
+        "icon": "input",
+        "label": "Input for command",
+        "sub": "Password piped to stdin",
+        "kind": "val",
+        "control": "From credential prompt"
+       },
+       {
+        "icon": "sync",
+        "label": "Sync on database save",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "play_arrow",
+        "label": "Test this target now",
+        "sub": "",
+        "kind": "act",
+        "control": "Test"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "dbbrowser",
+    "icon": "extension",
+    "label": "Browser Integration",
+    "title": "Database · Browser Integration",
+    "note": "Per-database browser rules — DatabaseSettingsWidgetBrowser.",
+    "sections": [
+     {
+      "title": "Rules",
+      "note": "",
+      "rows": [
+       {
+        "icon": "link",
+        "label": "Stored browser connections",
+        "sub": "Key name, shared secret, created date",
+        "kind": "val",
+        "control": "3 connections"
+       },
+       {
+        "icon": "delete",
+        "label": "Remove selected connection",
+        "sub": "",
+        "kind": "act",
+        "control": "Remove"
+       },
+       {
+        "icon": "cleaning_services",
+        "label": "Remove all stored permissions from entries",
+        "sub": "",
+        "kind": "act",
+        "control": "Clear all"
+       },
+       {
+        "icon": "block",
+        "label": "Never ask before accessing credentials",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "folder_off",
+        "label": "Exclude a group from browser search",
+        "sub": "Set on the group, shown here",
+        "kind": "val",
+        "control": "Servers & SSH excluded"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "dbkeeshare",
+    "icon": "share",
+    "label": "KeeShare",
+    "title": "Database · KeeShare",
+    "note": "Which groups of this database are shared, and how.",
+    "sections": [
+     {
+      "title": "Shared groups",
+      "note": "",
+      "rows": [
+       {
+        "icon": "folder_shared",
+        "label": "Share group",
+        "sub": "Inactive · Import from · Export to · Synchronize with",
+        "kind": "val",
+        "control": "Synchronize with"
+       },
+       {
+        "icon": "description",
+        "label": "Container path",
+        "sub": "",
+        "kind": "mono",
+        "control": "~/Share/team.kdbx"
+       },
+       {
+        "icon": "password",
+        "label": "Container password",
+        "sub": "",
+        "kind": "val",
+        "control": "Set"
+       },
+       {
+        "icon": "verified",
+        "label": "Signature status",
+        "sub": "Signed by a trusted certificate",
+        "kind": "good",
+        "control": "Trusted"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "dbfdo",
+    "icon": "lan",
+    "label": "Secret Service Integration",
+    "title": "Database · Secret Service",
+    "note": "Which groups this database exposes on the Secret Service bus.",
+    "sections": [
+     {
+      "title": "Exposed groups",
+      "note": "",
+      "rows": [
+       {
+        "icon": "checklist",
+        "label": "Expose entries under group",
+        "sub": "",
+        "kind": "val",
+        "control": "None"
+       },
+       {
+        "icon": "warning",
+        "label": "Everything exposed is readable by any local app the user allows",
+        "sub": "",
+        "kind": "off",
+        "control": "Understood"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "maintenance",
+    "icon": "construction",
+    "label": "Maintenance",
+    "title": "Maintenance",
+    "note": "DatabaseSettingsWidgetMaintenance — custom icons and unused data.",
+    "sections": [
+     {
+      "title": "Custom icons",
+      "note": "",
+      "rows": [
+       {
+        "icon": "image",
+        "label": "Custom icons in this database",
+        "sub": "",
+        "kind": "val",
+        "control": "12 icons"
+       },
+       {
+        "icon": "delete_sweep",
+        "label": "Delete unused icons",
+        "sub": "",
+        "kind": "act",
+        "control": "Purge"
+       },
+       {
+        "icon": "cloud_download",
+        "label": "Download all favicons for this group",
+        "sub": "",
+        "kind": "act",
+        "control": "Download"
+       }
+      ]
+     },
+     {
+      "title": "Cleanup",
+      "note": "",
+      "rows": [
+       {
+        "icon": "cleaning_services",
+        "label": "Purge deleted-object records",
+        "sub": "Reduces merge metadata",
+        "kind": "act",
+        "control": "Purge"
+       },
+       {
+        "icon": "compress",
+        "label": "Rebuild database file",
+        "sub": "Rewrites with the current KDF settings",
+        "kind": "act",
+        "control": "Rebuild"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "editor": {
+  "label": "Entry editor",
+  "pages": [
+   {
+    "id": "entry",
+    "icon": "edit_note",
+    "label": "Entry",
+    "title": "Edit entry · Entry",
+    "note": "EditEntryWidgetMain — the fields every entry carries.",
+    "sections": [
+     {
+      "title": "Fields",
+      "note": "",
+      "rows": [
+       {
+        "icon": "title",
+        "label": "Title",
+        "sub": "",
+        "kind": "val",
+        "control": "GitHub"
+       },
+       {
+        "icon": "person",
+        "label": "Username",
+        "sub": "Inherits the database default username",
+        "kind": "val",
+        "control": "codingmachineedge"
+       },
+       {
+        "icon": "password",
+        "label": "Password",
+        "sub": "Repeat field must match; quality meter below",
+        "kind": "mono",
+        "control": "••••••••••••••••"
+       },
+       {
+        "icon": "casino",
+        "label": "Generate / choose a preset",
+        "sub": "Password, passphrase or an advanced recipe",
+        "kind": "act",
+        "control": "Generate"
+       },
+       {
+        "icon": "link",
+        "label": "URL",
+        "sub": "Extra URLs live as KP2A_URL attributes",
+        "kind": "val",
+        "control": "https://github.com"
+       },
+       {
+        "icon": "label",
+        "label": "Tags",
+        "sub": "Comma separated, autocompleted from the database",
+        "kind": "val",
+        "control": "work, 2fa"
+       },
+       {
+        "icon": "event_busy",
+        "label": "Expires",
+        "sub": "Preset offsets: 1 day … 1 year",
+        "kind": "off",
+        "control": "Never"
+       },
+       {
+        "icon": "sticky_note_2",
+        "label": "Notes",
+        "sub": "Monospaced when that option is on",
+        "kind": "val",
+        "control": "3 lines"
+       }
+      ]
+     },
+     {
+      "title": "One-time passwords",
+      "note": "TotpSetupDialog / TotpDialog / TotpExportSettingsDialog.",
+      "rows": [
+       {
+        "icon": "timer",
+        "label": "TOTP secret",
+        "sub": "Base32, or scanned from an otpauth:// URI",
+        "kind": "good",
+        "control": "Configured"
+       },
+       {
+        "icon": "tune",
+        "label": "Algorithm, digits and step",
+        "sub": "SHA-1 / SHA-256 / SHA-512, 6–8 digits, 30 s",
+        "kind": "val",
+        "control": "SHA-1 · 6 · 30 s"
+       },
+       {
+        "icon": "qr_code_2",
+        "label": "Show QR code",
+        "sub": "Export the secret to a phone",
+        "kind": "act",
+        "control": "Show"
+       },
+       {
+        "icon": "delete",
+        "label": "Remove TOTP from this entry",
+        "sub": "",
+        "kind": "act",
+        "control": "Remove"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "advanced",
+    "icon": "tune",
+    "label": "Advanced",
+    "title": "Edit entry · Advanced",
+    "note": "EditEntryWidgetAdvanced — custom attributes, attachments and colours.",
+    "sections": [
+     {
+      "title": "Additional attributes",
+      "note": "EntryAttributesModel. Values can be protected and referenced.",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "Add attribute",
+        "sub": "",
+        "kind": "act",
+        "control": "Add"
+       },
+       {
+        "icon": "key",
+        "label": "api-token",
+        "sub": "Protected value",
+        "kind": "good",
+        "control": "Protected"
+       },
+       {
+        "icon": "label",
+        "label": "recovery-email",
+        "sub": "",
+        "kind": "val",
+        "control": "me@proton.me"
+       },
+       {
+        "icon": "visibility",
+        "label": "Reveal / protect selected attribute",
+        "sub": "",
+        "kind": "act",
+        "control": "Toggle"
+       },
+       {
+        "icon": "functions",
+        "label": "Field references",
+        "sub": "{REF:P@I:UUID} between entries",
+        "kind": "val",
+        "control": "1 reference"
+       }
+      ]
+     },
+     {
+      "title": "Attachments",
+      "note": "EntryAttachmentsWidget — preview, open, save, remove.",
+      "rows": [
+       {
+        "icon": "attach_file",
+        "label": "recovery-codes.txt",
+        "sub": "1.2 KB",
+        "kind": "val",
+        "control": "Preview"
+       },
+       {
+        "icon": "add",
+        "label": "Add files",
+        "sub": "",
+        "kind": "act",
+        "control": "Add"
+       },
+       {
+        "icon": "save_alt",
+        "label": "Save selected to disk",
+        "sub": "",
+        "kind": "act",
+        "control": "Save"
+       },
+       {
+        "icon": "open_in_new",
+        "label": "Open with the system handler",
+        "sub": "Temporary file, removed on close",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     },
+     {
+      "title": "Foreground and background",
+      "note": "",
+      "rows": [
+       {
+        "icon": "format_color_text",
+        "label": "Foreground colour",
+        "sub": "",
+        "kind": "val",
+        "control": "Default"
+       },
+       {
+        "icon": "format_color_fill",
+        "label": "Background colour",
+        "sub": "",
+        "kind": "val",
+        "control": "Default"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "icon",
+    "icon": "photo",
+    "label": "Icon",
+    "title": "Edit entry · Icon",
+    "note": "EditWidgetIcons — the 68 bundled KeePass icons plus custom icons.",
+    "sections": [
+     {
+      "title": "Icon source",
+      "note": "",
+      "rows": [
+       {
+        "icon": "grid_view",
+        "label": "Bundled icon",
+        "sub": "68 standard KeePass icons",
+        "kind": "val",
+        "control": "Icon 12"
+       },
+       {
+        "icon": "image",
+        "label": "Custom icon",
+        "sub": "Stored in the database, shared by entries",
+        "kind": "val",
+        "control": "2 in use"
+       },
+       {
+        "icon": "cloud_download",
+        "label": "Download favicon from the URL",
+        "sub": "Uses the favicon timeout and optional DuckDuckGo fallback",
+        "kind": "act",
+        "control": "Download"
+       },
+       {
+        "icon": "add_photo_alternate",
+        "label": "Add a custom icon from file",
+        "sub": "",
+        "kind": "act",
+        "control": "Add"
+       },
+       {
+        "icon": "delete",
+        "label": "Delete unused custom icons",
+        "sub": "",
+        "kind": "act",
+        "control": "Purge"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "eautotype",
+    "icon": "keyboard",
+    "label": "Auto-Type",
+    "title": "Edit entry · Auto-Type",
+    "note": "EditEntryWidgetAutoType — per-entry sequences and window associations.",
+    "sections": [
+     {
+      "title": "Sequence",
+      "note": "",
+      "rows": [
+       {
+        "icon": "power",
+        "label": "Enable Auto-Type for this entry",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "keyboard",
+        "label": "Inherit the default sequence",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "code",
+        "label": "Custom sequence",
+        "sub": "",
+        "kind": "mono",
+        "control": "{USERNAME}{TAB}{PASSWORD}{ENTER}"
+       },
+       {
+        "icon": "functions",
+        "label": "Placeholders",
+        "sub": "{TOTP} {URL} {CLEARFIELD} {DELAY 500} {PICKCHARS}",
+        "kind": "val",
+        "control": "Documented"
+       }
+      ]
+     },
+     {
+      "title": "Window associations",
+      "note": "AutoTypeAssociationsModel.",
+      "rows": [
+       {
+        "icon": "window",
+        "label": "Window title pattern",
+        "sub": "Wildcards and //regex// accepted",
+        "kind": "mono",
+        "control": "*GitHub*"
+       },
+       {
+        "icon": "code",
+        "label": "Sequence for this window",
+        "sub": "",
+        "kind": "mono",
+        "control": "{USERNAME}{TAB}{PASSWORD}"
+       },
+       {
+        "icon": "add",
+        "label": "Add association",
+        "sub": "",
+        "kind": "act",
+        "control": "Add"
+       },
+       {
+        "icon": "remove",
+        "label": "Remove association",
+        "sub": "",
+        "kind": "act",
+        "control": "Remove"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "ebrowser",
+    "icon": "extension",
+    "label": "Browser Integration",
+    "title": "Edit entry · Browser Integration",
+    "note": "BrowserEntryConfig — per-entry browser behaviour and passkeys.",
+    "sections": [
+     {
+      "title": "Behaviour",
+      "note": "",
+      "rows": [
+       {
+        "icon": "block",
+        "label": "Skip Auto-Submit for this entry",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "visibility_off",
+        "label": "Hide this entry from the browser extension",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "rule",
+        "label": "Only return this entry for exact URL matches",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "add_link",
+        "label": "Additional URLs",
+        "sub": "Matched alongside the main URL",
+        "kind": "val",
+        "control": "2 URLs"
+       }
+      ]
+     },
+     {
+      "title": "Passkey",
+      "note": "BrowserPasskeys / PasskeyExporter.",
+      "rows": [
+       {
+        "icon": "passkey",
+        "label": "Stored passkey",
+        "sub": "Relying party, user handle, credential ID",
+        "kind": "good",
+        "control": "github.com"
+       },
+       {
+        "icon": "file_upload",
+        "label": "Export passkey",
+        "sub": "",
+        "kind": "act",
+        "control": "Export"
+       },
+       {
+        "icon": "file_download",
+        "label": "Import passkey into this entry",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "delete",
+        "label": "Remove passkey from entry",
+        "sub": "",
+        "kind": "act",
+        "control": "Remove"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "essh",
+    "icon": "terminal",
+    "label": "SSH Agent",
+    "title": "Edit entry · SSH Agent",
+    "note": "EditEntryWidgetSSHAgent — publish a private key from this entry.",
+    "sections": [
+     {
+      "title": "Key",
+      "note": "",
+      "rows": [
+       {
+        "icon": "power",
+        "label": "Add key to agent when database is opened",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "logout",
+        "label": "Remove key from agent when database is closed",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "timer",
+        "label": "Require user confirmation / lifetime limit",
+        "sub": "",
+        "kind": "val",
+        "control": "300 sec"
+       },
+       {
+        "icon": "attach_file",
+        "label": "Private key source",
+        "sub": "Attachment or external file",
+        "kind": "val",
+        "control": "id_ed25519 (attachment)"
+       },
+       {
+        "icon": "fingerprint",
+        "label": "Fingerprint",
+        "sub": "",
+        "kind": "mono",
+        "control": "SHA256:9r4…Kt8"
+       },
+       {
+        "icon": "content_copy",
+        "label": "Copy public key",
+        "sub": "",
+        "kind": "act",
+        "control": "Copy"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "properties",
+    "icon": "info",
+    "label": "Properties",
+    "title": "Edit entry · Properties",
+    "note": "EditWidgetProperties — the UUID and timestamps KDBX keeps.",
+    "sections": [
+     {
+      "title": "Identity and times",
+      "note": "",
+      "rows": [
+       {
+        "icon": "fingerprint",
+        "label": "UUID",
+        "sub": "",
+        "kind": "mono",
+        "control": "a91f04c7-2b8e-4f10-9d6a-77c3e1b0f5aa"
+       },
+       {
+        "icon": "schedule",
+        "label": "Created",
+        "sub": "",
+        "kind": "val",
+        "control": "2019-04-02 11:09"
+       },
+       {
+        "icon": "edit",
+        "label": "Last modified",
+        "sub": "",
+        "kind": "val",
+        "control": "2026-07-28 07:41"
+       },
+       {
+        "icon": "visibility",
+        "label": "Last accessed",
+        "sub": "",
+        "kind": "val",
+        "control": "2026-07-28 09:12"
+       },
+       {
+        "icon": "event_busy",
+        "label": "Expires",
+        "sub": "",
+        "kind": "off",
+        "control": "Never"
+       },
+       {
+        "icon": "numbers",
+        "label": "Usage count",
+        "sub": "",
+        "kind": "val",
+        "control": "412"
+       },
+       {
+        "icon": "folder",
+        "label": "Location",
+        "sub": "",
+        "kind": "val",
+        "control": "Personal / Work"
+       }
+      ]
+     },
+     {
+      "title": "Custom data",
+      "note": "",
+      "rows": [
+       {
+        "icon": "data_object",
+        "label": "Plugin data",
+        "sub": "KDBX4 custom data attached to this entry",
+        "kind": "val",
+        "control": "2 keys"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "ehistory",
+    "icon": "history",
+    "label": "History",
+    "title": "Edit entry · History",
+    "note": "EntryHistoryModel — every previous version of this entry.",
+    "sections": [
+     {
+      "title": "Revisions",
+      "note": "",
+      "rows": [
+       {
+        "icon": "history",
+        "label": "10 history items",
+        "sub": "Oldest 2019-04-02, newest 2026-07-28",
+        "kind": "val",
+        "control": "10 items"
+       },
+       {
+        "icon": "difference",
+        "label": "Show a revision",
+        "sub": "Opens it read-only",
+        "kind": "act",
+        "control": "Show"
+       },
+       {
+        "icon": "restore",
+        "label": "Restore a revision",
+        "sub": "Recorded as a new revision",
+        "kind": "act",
+        "control": "Restore"
+       },
+       {
+        "icon": "delete",
+        "label": "Delete a revision",
+        "sub": "",
+        "kind": "act",
+        "control": "Delete"
+       },
+       {
+        "icon": "delete_sweep",
+        "label": "Delete all history for this entry",
+        "sub": "",
+        "kind": "act",
+        "control": "Delete all"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "help": {
+  "label": "Help",
+  "pages": [
+   {
+    "id": "guides",
+    "icon": "menu_book",
+    "label": "Guides and support",
+    "title": "Guides and support",
+    "note": "Every item on the Help menu.",
+    "sections": [
+     {
+      "title": "Documentation",
+      "note": "",
+      "rows": [
+       {
+        "icon": "rocket_launch",
+        "label": "Getting Started guide",
+        "sub": "",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "menu_book",
+        "label": "User Guide",
+        "sub": "",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "keyboard_command_key",
+        "label": "Keyboard shortcuts",
+        "sub": "KeyboardShortcuts.adoc",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "public",
+        "label": "Online help",
+        "sub": "keepassxc.org/docs",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     },
+     {
+      "title": "Project",
+      "note": "",
+      "rows": [
+       {
+        "icon": "update",
+        "label": "Check for updates",
+        "sub": "Weekly check, betas optional",
+        "kind": "act",
+        "control": "Check now"
+       },
+       {
+        "icon": "volunteer_activism",
+        "label": "Donate",
+        "sub": "",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "bug_report",
+        "label": "Report a bug",
+        "sub": "Pre-fills version and platform",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "info",
+        "label": "About KeePassXC",
+        "sub": "Version, Qt build, enabled extensions, contributors",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "cli",
+    "icon": "terminal",
+    "label": "Command line (keepassxc-cli)",
+    "title": "keepassxc-cli",
+    "note": "Every command shipped by the CLI, from src/cli.",
+    "sections": [
+     {
+      "title": "Database",
+      "note": "",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "db-create",
+        "sub": "Create a database with password/key-file/YubiKey",
+        "kind": "mono",
+        "control": "db-create"
+       },
+       {
+        "icon": "edit",
+        "label": "db-edit",
+        "sub": "Change credentials or KDF settings",
+        "kind": "mono",
+        "control": "db-edit"
+       },
+       {
+        "icon": "info",
+        "label": "db-info",
+        "sub": "Cipher, KDF, transform rounds, entry count",
+        "kind": "mono",
+        "control": "db-info"
+       },
+       {
+        "icon": "folder_open",
+        "label": "open / close / exit",
+        "sub": "Interactive shell session",
+        "kind": "mono",
+        "control": "open"
+       },
+       {
+        "icon": "merge",
+        "label": "merge",
+        "sub": "Merge another database in",
+        "kind": "mono",
+        "control": "merge"
+       },
+       {
+        "icon": "file_upload",
+        "label": "export",
+        "sub": "XML or CSV to stdout",
+        "kind": "mono",
+        "control": "export"
+       },
+       {
+        "icon": "file_download",
+        "label": "import",
+        "sub": "Build a database from XML",
+        "kind": "mono",
+        "control": "import"
+       },
+       {
+        "icon": "analytics",
+        "label": "analyze",
+        "sub": "Check against an offline HIBP list",
+        "kind": "mono",
+        "control": "analyze"
+       }
+      ]
+     },
+     {
+      "title": "Entries and groups",
+      "note": "",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "add / edit / rm",
+        "sub": "Create, change, remove an entry",
+        "kind": "mono",
+        "control": "add"
+       },
+       {
+        "icon": "folder",
+        "label": "mkdir / rmdir",
+        "sub": "Create or remove a group",
+        "kind": "mono",
+        "control": "mkdir"
+       },
+       {
+        "icon": "drive_file_move",
+        "label": "mv",
+        "sub": "Move an entry",
+        "kind": "mono",
+        "control": "mv"
+       },
+       {
+        "icon": "list",
+        "label": "ls",
+        "sub": "List a group recursively",
+        "kind": "mono",
+        "control": "ls"
+       },
+       {
+        "icon": "visibility",
+        "label": "show",
+        "sub": "Print attributes, TOTP and protected values",
+        "kind": "mono",
+        "control": "show"
+       },
+       {
+        "icon": "content_paste",
+        "label": "clip",
+        "sub": "Copy a field to the clipboard for N seconds",
+        "kind": "mono",
+        "control": "clip"
+       },
+       {
+        "icon": "search",
+        "label": "search",
+        "sub": "Same search syntax as the GUI",
+        "kind": "mono",
+        "control": "search"
+       },
+       {
+        "icon": "attach_file",
+        "label": "attachment-import / -export / -rm",
+        "sub": "",
+        "kind": "mono",
+        "control": "attachment-*"
+       }
+      ]
+     },
+     {
+      "title": "Generators and helpers",
+      "note": "",
+      "rows": [
+       {
+        "icon": "casino",
+        "label": "generate",
+        "sub": "Character-class password generator",
+        "kind": "mono",
+        "control": "generate"
+       },
+       {
+        "icon": "casino",
+        "label": "diceware",
+        "sub": "Passphrase from a wordlist",
+        "kind": "mono",
+        "control": "diceware"
+       },
+       {
+        "icon": "rule",
+        "label": "estimate",
+        "sub": "zxcvbn-style entropy estimate",
+        "kind": "mono",
+        "control": "estimate"
+       },
+       {
+        "icon": "help",
+        "label": "help",
+        "sub": "Per-command usage",
+        "kind": "mono",
+        "control": "help"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "search-syntax",
+    "icon": "manage_search",
+    "label": "Search syntax",
+    "title": "Search syntax",
+    "note": "SearchHelpWidget — the modifiers the search bar accepts, all also usable through the regex builder.",
+    "sections": [
+     {
+      "title": "Field modifiers",
+      "note": "",
+      "rows": [
+       {
+        "icon": "title",
+        "label": "title:",
+        "sub": "",
+        "kind": "mono",
+        "control": "title:github"
+       },
+       {
+        "icon": "person",
+        "label": "user: / u:",
+        "sub": "",
+        "kind": "mono",
+        "control": "user:ops@"
+       },
+       {
+        "icon": "link",
+        "label": "url:",
+        "sub": "",
+        "kind": "mono",
+        "control": "url:*.hk"
+       },
+       {
+        "icon": "sticky_note_2",
+        "label": "notes:",
+        "sub": "",
+        "kind": "mono",
+        "control": "notes:recovery"
+       },
+       {
+        "icon": "label",
+        "label": "tag:",
+        "sub": "",
+        "kind": "mono",
+        "control": "tag:2fa"
+       },
+       {
+        "icon": "data_object",
+        "label": "attr: / attachment:",
+        "sub": "",
+        "kind": "mono",
+        "control": "attr:api-token"
+       },
+       {
+        "icon": "folder",
+        "label": "group: / g:",
+        "sub": "",
+        "kind": "mono",
+        "control": "group:Servers"
+       }
+      ]
+     },
+     {
+      "title": "Operators",
+      "note": "",
+      "rows": [
+       {
+        "icon": "rule",
+        "label": "Exact and negated terms",
+        "sub": "Quote to require, minus to exclude",
+        "kind": "mono",
+        "control": "\"root@\" -archive"
+       },
+       {
+        "icon": "regular_expression",
+        "label": "Regular expressions",
+        "sub": "Wrapped in slashes, or built in the builder",
+        "kind": "mono",
+        "control": "/^(admin|root)@/"
+       },
+       {
+        "icon": "text_fields",
+        "label": "Case sensitivity",
+        "sub": "Off unless the term contains capitals",
+        "kind": "val",
+        "control": "Smart case"
+       },
+       {
+        "icon": "event_busy",
+        "label": "Special filters",
+        "sub": "is:expired, is:weak, is:reused",
+        "kind": "mono",
+        "control": "is:expired"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ },
+ "tools": {
+  "label": "Tools and flows",
+  "pages": [
+   {
+    "id": "dbflows",
+    "icon": "database",
+    "label": "Database flows",
+    "title": "Database flows",
+    "note": "NewDatabaseWizard, DatabaseOpenWidget, WelcomeWidget, DatabaseTabWidget.",
+    "sections": [
+     {
+      "title": "Create a database",
+      "note": "NewDatabaseWizard — four pages.",
+      "rows": [
+       {
+        "icon": "badge",
+        "label": "Name and description",
+        "sub": "Page 1: metadata",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "enhanced_encryption",
+        "label": "Encryption settings",
+        "sub": "Page 2: KDF, cipher, benchmark",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "vpn_key",
+        "label": "Database credentials",
+        "sub": "Page 3: password, key file, hardware key",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "save",
+        "label": "Choose a file location",
+        "sub": "Page 4: where the .kdbx lands",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     },
+     {
+      "title": "Open and unlock",
+      "note": "DatabaseOpenWidget + QuickUnlock.",
+      "rows": [
+       {
+        "icon": "password",
+        "label": "Password prompt",
+        "sub": "With caps-lock warning and quality-free entry",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "description",
+        "label": "Key file selector",
+        "sub": "Remembers the last key file per database",
+        "kind": "val",
+        "control": "Remembered"
+       },
+       {
+        "icon": "usb",
+        "label": "Hardware key",
+        "sub": "Refresh, slot pick, touch prompt",
+        "kind": "val",
+        "control": "Slot 2"
+       },
+       {
+        "icon": "fingerprint",
+        "label": "Quick unlock",
+        "sub": "Windows Hello, Touch ID, polkit",
+        "kind": "good",
+        "control": "Available"
+       },
+       {
+        "icon": "folder_open",
+        "label": "Welcome screen",
+        "sub": "Recent databases, Open, New, Import",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     },
+     {
+      "title": "Merging and syncing",
+      "note": "Merger, MergeDialog, RemoteHandler.",
+      "rows": [
+       {
+        "icon": "merge",
+        "label": "Merge from database…",
+        "sub": "Reports what changed per entry",
+        "kind": "act",
+        "control": "Merge"
+       },
+       {
+        "icon": "cloud_sync",
+        "label": "Remote sync…",
+        "sub": "Runs the configured download/upload commands",
+        "kind": "act",
+        "control": "Sync"
+       },
+       {
+        "icon": "backup",
+        "label": "Save database backup…",
+        "sub": "",
+        "kind": "act",
+        "control": "Save"
+       },
+       {
+        "icon": "save_as",
+        "label": "Save database as…",
+        "sub": "",
+        "kind": "act",
+        "control": "Save as"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "generator",
+    "icon": "casino",
+    "label": "Password generator",
+    "title": "Password generator",
+    "note": "PasswordGeneratorWidget — both modes and the advanced panel. The interactive dialog is on the toolbar.",
+    "sections": [
+     {
+      "title": "Password mode",
+      "note": "Character-type buttons toggle whole classes.",
+      "rows": [
+       {
+        "icon": "straighten",
+        "label": "Length slider",
+        "sub": "1–128 on the slider, up to 999 typed",
+        "kind": "val",
+        "control": "20"
+       },
+       {
+        "icon": "text_fields",
+        "label": "A-Z · a-z · 0-9",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "emoji_symbols",
+        "label": "/ * + & · . , : ; · \" ' · \\ / | _ - · < > * + ! ? = · { [ ( ) ] }",
+        "sub": "Special, punctuation, quotes, dashes, math, braces",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "translate",
+        "label": "Extended ASCII",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "tune",
+        "label": "Advanced",
+        "sub": "Additional and excluded characters, Hex button",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "blur_on",
+        "label": "Exclude look-alike characters",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "checklist",
+        "label": "Pick characters from every group",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "bolt",
+        "label": "Entropy readout",
+        "sub": "Live bits and strength label",
+        "kind": "good",
+        "control": "124 bits"
+       }
+      ]
+     },
+     {
+      "title": "Passphrase mode",
+      "note": "PassphraseGenerator + bundled wordlists.",
+      "rows": [
+       {
+        "icon": "numbers",
+        "label": "Word count",
+        "sub": "1–40",
+        "kind": "val",
+        "control": "6"
+       },
+       {
+        "icon": "space_bar",
+        "label": "Word separator",
+        "sub": "",
+        "kind": "mono",
+        "control": "-"
+       },
+       {
+        "icon": "menu_book",
+        "label": "Wordlist",
+        "sub": "Add or delete custom wordlists",
+        "kind": "val",
+        "control": "eff_large.wordlist"
+       },
+       {
+        "icon": "text_format",
+        "label": "Word case",
+        "sub": "",
+        "kind": "val",
+        "control": "Title Case"
+       }
+      ]
+     },
+     {
+      "title": "Related helpers",
+      "note": "",
+      "rows": [
+       {
+        "icon": "keyboard",
+        "label": "Pick characters dialog",
+        "sub": "{PICKCHARS} during Auto-Type",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "rule",
+        "label": "Estimate an existing password",
+        "sub": "keepassxc-cli estimate",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "autotypeflow",
+    "icon": "keyboard",
+    "label": "Auto-Type flows",
+    "title": "Auto-Type flows",
+    "note": "AutoTypeSelectDialog, AutoTypeMatchView, PickcharsDialog.",
+    "sections": [
+     {
+      "title": "Global Auto-Type",
+      "note": "",
+      "rows": [
+       {
+        "icon": "keyboard_alt",
+        "label": "Global shortcut match list",
+        "sub": "Matches by window title and URL",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "search",
+        "label": "Filter matches",
+        "sub": "Search field inside the dialog",
+        "kind": "val",
+        "control": "Wired to regex builder"
+       },
+       {
+        "icon": "sort",
+        "label": "Remembered sort column and order",
+        "sub": "AutoTypeDialogSortColumn/Order",
+        "kind": "val",
+        "control": "Title, ascending"
+       },
+       {
+        "icon": "window",
+        "label": "Window title of the target",
+        "sub": "Shown so you can confirm before typing",
+        "kind": "val",
+        "control": "Live"
+       }
+      ]
+     },
+     {
+      "title": "Sequences",
+      "note": "",
+      "rows": [
+       {
+        "icon": "code",
+        "label": "Entry default sequence",
+        "sub": "",
+        "kind": "mono",
+        "control": "{USERNAME}{TAB}{PASSWORD}{ENTER}"
+       },
+       {
+        "icon": "person",
+        "label": "{USERNAME} / {USERNAME}{ENTER}",
+        "sub": "",
+        "kind": "mono",
+        "control": "Ctrl+Shift+V"
+       },
+       {
+        "icon": "password",
+        "label": "{PASSWORD} / {PASSWORD}{ENTER}",
+        "sub": "",
+        "kind": "mono",
+        "control": "—"
+       },
+       {
+        "icon": "timer",
+        "label": "{TOTP}",
+        "sub": "",
+        "kind": "mono",
+        "control": "—"
+       },
+       {
+        "icon": "link",
+        "label": "{URL} / {URL}{ENTER}",
+        "sub": "",
+        "kind": "mono",
+        "control": "—"
+       },
+       {
+        "icon": "touch_app",
+        "label": "{PICKCHARS}",
+        "sub": "Prompts for individual characters",
+        "kind": "act",
+        "control": "Demo"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "importexport",
+    "icon": "import_export",
+    "label": "Import and export",
+    "title": "Import and export",
+    "note": "ImportWizard (Select → Review) and the Export menu.",
+    "sections": [
+     {
+      "title": "Import",
+      "note": "",
+      "rows": [
+       {
+        "icon": "table_view",
+        "label": "CSV file",
+        "sub": "Column mapping preview, CsvImportWidget",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "lock",
+        "label": "KeePass 1 database",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "inventory_2",
+        "label": "1Password 1PUX",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "inventory",
+        "label": "1Password OpVault",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "shield",
+        "label": "Bitwarden JSON",
+        "sub": "Encrypted or plain export",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "mail_lock",
+        "label": "Proton Pass",
+        "sub": "",
+        "kind": "act",
+        "control": "Import"
+       },
+       {
+        "icon": "passkey",
+        "label": "Import passkey",
+        "sub": "Standalone passkey file",
+        "kind": "act",
+        "control": "Import"
+       }
+      ]
+     },
+     {
+      "title": "Export",
+      "note": "",
+      "rows": [
+       {
+        "icon": "table_view",
+        "label": "CSV file",
+        "sub": "",
+        "kind": "act",
+        "control": "Export"
+       },
+       {
+        "icon": "html",
+        "label": "HTML file",
+        "sub": "HtmlGuiExporter — printable",
+        "kind": "act",
+        "control": "Export"
+       },
+       {
+        "icon": "code",
+        "label": "XML file",
+        "sub": "Unencrypted KDBX XML",
+        "kind": "act",
+        "control": "Export"
+       },
+       {
+        "icon": "warning",
+        "label": "Exports are plaintext",
+        "sub": "Every export leaves encryption behind",
+        "kind": "bad",
+        "control": "Confirm required"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "reportstools",
+    "icon": "health_metrics",
+    "label": "Reports",
+    "title": "Reports",
+    "note": "ReportsDialog pages — the interactive versions live on the Reports destination.",
+    "sections": [
+     {
+      "title": "Pages",
+      "note": "",
+      "rows": [
+       {
+        "icon": "query_stats",
+        "label": "Statistics",
+        "sub": "Size, unique passwords, average entropy, KDF",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "health_and_safety",
+        "label": "Health check",
+        "sub": "Weak, short, reused, expired, aged",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "passkey",
+        "label": "Passkeys",
+        "sub": "Relying parties and user handles",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "extension",
+        "label": "Browser statistics",
+        "sub": "Entries with browser rules and permissions",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "gpp_bad",
+        "label": "HIBP",
+        "sub": "Offline breach list check, never network",
+        "kind": "act",
+        "control": "Open"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "viewtools",
+    "icon": "visibility",
+    "label": "View toggles",
+    "title": "View toggles",
+    "note": "Everything on the View menu, applied live.",
+    "sections": [
+     {
+      "title": "Layout",
+      "note": "",
+      "rows": [
+       {
+        "icon": "view_agenda",
+        "label": "Show preview panel",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "account_tree",
+        "label": "Show group panel",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "menu",
+        "label": "Show menubar",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "smart_button",
+        "label": "Show toolbar",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "compress",
+        "label": "Compact mode",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "vertical_align_top",
+        "label": "Always on top",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       }
+      ]
+     },
+     {
+      "title": "Privacy",
+      "note": "",
+      "rows": [
+       {
+        "icon": "person_off",
+        "label": "Hide usernames",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "visibility_off",
+        "label": "Hide passwords",
+        "sub": "",
+        "kind": "on",
+        "control": "On"
+       },
+       {
+        "icon": "screenshot_monitor",
+        "label": "Allow screen capture",
+        "sub": "",
+        "kind": "off",
+        "control": "Off"
+       },
+       {
+        "icon": "palette",
+        "label": "Theme",
+        "sub": "Automatic · Light · Dark · Classic (platform-native)",
+        "kind": "val",
+        "control": "Automatic"
+       }
+      ]
+     }
+    ]
+   },
+   {
+    "id": "grouptools",
+    "icon": "account_tree",
+    "label": "Group and entry actions",
+    "title": "Group and entry actions",
+    "note": "The Groups and Entries menus in full.",
+    "sections": [
+     {
+      "title": "Groups",
+      "note": "",
+      "rows": [
+       {
+        "icon": "create_new_folder",
+        "label": "New group",
+        "sub": "",
+        "kind": "act",
+        "control": "Create"
+       },
+       {
+        "icon": "edit",
+        "label": "Edit group",
+        "sub": "Name, icon, notes, Auto-Type sequence, search flag",
+        "kind": "act",
+        "control": "Edit"
+       },
+       {
+        "icon": "content_copy",
+        "label": "Clone group",
+        "sub": "",
+        "kind": "act",
+        "control": "Clone"
+       },
+       {
+        "icon": "delete",
+        "label": "Delete group",
+        "sub": "",
+        "kind": "act",
+        "control": "Delete"
+       },
+       {
+        "icon": "sort_by_alpha",
+        "label": "Sort A-Z / Z-A",
+        "sub": "",
+        "kind": "act",
+        "control": "Sort"
+       },
+       {
+        "icon": "cloud_download",
+        "label": "Download all favicons",
+        "sub": "",
+        "kind": "act",
+        "control": "Download"
+       },
+       {
+        "icon": "delete_sweep",
+        "label": "Empty recycle bin",
+        "sub": "",
+        "kind": "act",
+        "control": "Empty"
+       }
+      ]
+     },
+     {
+      "title": "Entries",
+      "note": "",
+      "rows": [
+       {
+        "icon": "add",
+        "label": "New · Edit · Clone · Delete · Restore",
+        "sub": "CloneDialog offers title suffix, history and reference options",
+        "kind": "act",
+        "control": "Run"
+       },
+       {
+        "icon": "event_busy",
+        "label": "Expire entry",
+        "sub": "Sets the expiry to now",
+        "kind": "act",
+        "control": "Expire"
+       },
+       {
+        "icon": "swap_vert",
+        "label": "Move up / move down",
+        "sub": "",
+        "kind": "act",
+        "control": "Move"
+       },
+       {
+        "icon": "content_copy",
+        "label": "Copy username, password, URL, title, notes, TOTP",
+        "sub": "",
+        "kind": "act",
+        "control": "Copy"
+       },
+       {
+        "icon": "label",
+        "label": "Tags submenu",
+        "sub": "Assign or remove tags in bulk",
+        "kind": "act",
+        "control": "Tag"
+       },
+       {
+        "icon": "open_in_new",
+        "label": "Open URL",
+        "sub": "",
+        "kind": "act",
+        "control": "Open"
+       },
+       {
+        "icon": "image",
+        "label": "Download favicon",
+        "sub": "IconDownloaderDialog for a whole selection",
+        "kind": "act",
+        "control": "Download"
+       },
+       {
+        "icon": "terminal",
+        "label": "Add to / remove from SSH agent",
+        "sub": "",
+        "kind": "act",
+        "control": "Run"
+       },
+       {
+        "icon": "passkey",
+        "label": "Import or remove passkey",
+        "sub": "",
+        "kind": "act",
+        "control": "Run"
+       }
+      ]
+     }
+    ]
+   }
+  ]
+ }
+}

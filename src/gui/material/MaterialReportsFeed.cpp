@@ -260,8 +260,15 @@ namespace Material
         return matching;
     }
 
+    int ReportsFeed::findingCount() const
+    {
+        return m_snapshot.valid ? m_snapshot.findings.size() : 0;
+    }
+
     void ReportsFeed::apply()
     {
+        emit findingCountChanged(findingCount());
+
         QVector<StatCard> cards;
         if (m_snapshot.valid) {
             cards.append({tr("Entries"),

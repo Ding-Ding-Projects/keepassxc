@@ -60,7 +60,16 @@ namespace Material
         /** Recompute from the current database and repaint the screen. */
         void refresh();
 
+        /**
+         * How many health findings the last pass produced. The rail reports
+         * this as the Reports destination's sublabel.
+         */
+        int findingCount() const;
+
     signals:
+        /** Emitted after every pass, with the new findingCount(). */
+        void findingCountChanged(int count);
+
         /** A Fix button asked for the entry with @p uuidHex to be opened for editing. */
         void entryEditRequested(const QString& uuidHex);
         /** The header button asked for the full report widgets. */

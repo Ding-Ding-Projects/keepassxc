@@ -57,7 +57,21 @@ namespace Material
         Q_OBJECT
 
     public:
+        /** Where the Appearance overview lives. */
+        enum class Overview
+        {
+            /** As the hub's first page, under an OVERVIEW heading. */
+            Embedded,
+            /**
+             * Nowhere in the hub, because the shell shows it as its own
+             * Appearance destination - which is what the design's rail does.
+             * overview() is null in this mode.
+             */
+            Hosted
+        };
+
         explicit SettingsHub(QWidget* parent = nullptr);
+        SettingsHub(Overview overview, QWidget* parent);
         ~SettingsHub() override;
 
         SettingsScreen* overview() const;
