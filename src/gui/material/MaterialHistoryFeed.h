@@ -65,7 +65,14 @@ namespace Material
          */
         void setDatabase(const QSharedPointer<Database>& db);
 
-        /** Re-read both sources and repaint the screen. */
+        /**
+         * Re-read both sources and repaint the screen. Comparing revisions
+         * touches every attachment of every entry, so this is driven by the
+         * events that can actually change them, not by every keystroke.
+         */
+        void rebuild();
+
+        /** Re-apply the search box and the filter chips to what was collected. */
         void refresh();
 
     private:
@@ -137,8 +144,12 @@ namespace Material
 
         HistoryScreen* m_screen = nullptr;
         QSharedPointer<Database> m_database;
+        /** Live while a database is in front, so its edits reach the list. */
+        QMetaObject::Connection m_databaseWatch;
         QString m_databasePath;
         QString m_query;
+        /** Everything both sources hold, newest first, before any filtering. */
+        QVector<Change> m_changes;
         QHash<QString, Origin> m_origins;
         QVector<Restored> m_restores;
     };

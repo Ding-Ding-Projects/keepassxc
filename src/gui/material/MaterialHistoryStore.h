@@ -128,7 +128,11 @@ namespace Material
         HistoryRevision predecessor(const QString& id) const;
 
     signals:
-        /** A revision was appended. */
+        /**
+         * A revision was appended. The navigation rail counts revisions from
+         * this, and HistoryFeed rebuilds its list, so it has to keep firing on
+         * every successful recordSave().
+         */
         void revisionsChanged();
 
     private:

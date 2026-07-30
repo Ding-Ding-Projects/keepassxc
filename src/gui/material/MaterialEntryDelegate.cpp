@@ -153,11 +153,21 @@ namespace Material
                 glyph);
         }
 
-        /** The row glyph: the symbol name if the model has one, else its decoration. */
-        QPixmap rowGlyph(const QModelIndex& index, int role, const QString& fallback, int size, const QColor& tint)
+        /**
+         * The row glyph: the symbol name the model gives, else its decoration,
+         * else the neutral entry glyph.
+         *
+         * The name has to be checked rather than just tested for emptiness,
+         * because Icons::pixmap answers a null pixmap for a name it does not
+         * carry, and a row would then be drawn with an empty avatar. The
+         * fallback is Icons::defaultEntrySymbol() so that a row the model has
+         * nothing to say about lands on the same glyph Icons::entrySymbol()
+         * ends at.
+         */
+        QPixmap rowGlyph(const QModelIndex& index, int role, int size, const QColor& tint)
         {
             const QString symbol = index.data(role).toString();
-            if (!symbol.isEmpty()) {
+            if (Icons::hasSymbol(symbol)) {
                 return Icons::pixmap(symbol, size, tint);
             }
             const QVariant decoration = index.data(Qt::DecorationRole);
@@ -167,7 +177,7 @@ namespace Material
                     return icon.pixmap(size, size);
                 }
             }
-            return Icons::pixmap(fallback, size, tint);
+            return Icons::pixmap(Icons::defaultEntrySymbol(), size, tint);
         }
     } // namespace
 
@@ -209,11 +219,9 @@ namespace Material
         painter->setPen(Qt::NoPen);
         painter->setBrush(theme()->color(selected ? Role::SurfaceContainerLowest : Role::SurfaceContainerHigh));
         painter->drawEllipse(layout.avatar);
-        paintGlyph(
-            painter,
-            layout.avatar,
-            rowGlyph(
-                index, SymbolRole, QStringLiteral("key"), AvatarGlyphSize, theme()->color(Role::OnSurfaceVariant)));
+        paintGlyph(painter,
+                   layout.avatar,
+                   rowGlyph(index, SymbolRole, AvatarGlyphSize, theme()->color(Role::OnSurfaceVariant)));
 
         QString title = index.data(TitleRole).toString();
         if (title.isEmpty()) {

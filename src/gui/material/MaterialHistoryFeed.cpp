@@ -139,6 +139,18 @@ namespace Material
             return QString::fromLatin1(QCryptographicHash::hash(seed, QCryptographicHash::Sha256).toHex());
         }
 
+        /**
+         * The identifier of a restore this feed performed. Seeded differently
+         * from entryRevisionId() so a restore row and a revision row can never
+         * be handed the same id.
+         */
+        QString sessionRestoreId(const Entry* entry, const QDateTime& timestamp)
+        {
+            const QByteArray seed =
+                QStringLiteral("restore:%1:%2").arg(entry->uuidToHex(), timestamp.toString(Qt::ISODateWithMs)).toUtf8();
+            return QString::fromLatin1(QCryptographicHash::hash(seed, QCryptographicHash::Sha256).toHex());
+        }
+
         QString entryName(const Entry* entry)
         {
             return entry->title().isEmpty() ? HistoryFeed::tr("Untitled entry") : entry->title();
@@ -339,15 +351,34 @@ namespace Material
 
         connect(m_screen, &HistoryScreen::diffRequested, this, &HistoryFeed::showDiff);
         connect(m_screen, &HistoryScreen::restoreRequested, this, &HistoryFeed::restoreRevision);
-        connect(HistoryStore::instance(), &HistoryStore::revisionsChanged, this, &HistoryFeed::refresh);
+        connect(HistoryStore::instance(), &HistoryStore::revisionsChanged, this, &HistoryFeed::rebuild);
     }
 
     HistoryFeed::~HistoryFeed() = default;
 
     void HistoryFeed::setDatabase(const QSharedPointer<Database>& db)
     {
+        disconnect(m_databaseWatch);
         m_database = db;
         m_databasePath = db ? QDir::fromNativeSeparators(db->filePath()) : QString();
+        if (db) {
+            // An entry gains a revision from the entry editor, from Auto-Type,
+            // from a merge - none of which pass through here. Database's own
+            // modified() signal is already debounced, so following it costs one
+            // rebuild per burst of edits.
+            m_databaseWatch = connect(db.data(), &Database::modified, this, &HistoryFeed::rebuild);
+        }
+        rebuild();
+    }
+
+    void HistoryFeed::rebuild()
+    {
+        m_changes = entryRevisions();
+        m_changes.append(savedRevisions());
+        m_changes.append(sessionRestores());
+        std::sort(m_changes.begin(), m_changes.end(), [](const Change& first, const Change& second) {
+            return first.when > second.when;
+        });
         refresh();
     }
 
@@ -457,13 +488,6 @@ namespace Material
 
     void HistoryFeed::refresh()
     {
-        QVector<Change> changes = entryRevisions();
-        changes.append(savedRevisions());
-        changes.append(sessionRestores());
-        std::sort(changes.begin(), changes.end(), [](const Change& first, const Change& second) {
-            return first.when > second.when;
-        });
-
         const RevisionFilter kind = m_screen->kindFilter();
         const QDateTime since = QDateTime::currentDateTime().addDays(-HistoryScreen::recentDays());
         const bool recentOnly = m_screen->isRecentOnly();
@@ -472,7 +496,7 @@ namespace Material
         m_origins.clear();
         QVector<Revision> rows;
         int matched = 0;
-        for (const Change& change : changes) {
+        for (const Change& change : m_changes) {
             if (kind == RevisionFilter::Entries && !change.entryScoped) {
                 continue;
             }
@@ -514,7 +538,7 @@ namespace Material
             row.tint = RevisionTint::Muted;
             if (narrowed) {
                 row.label = tr("No change matches these filters");
-                row.meta = tr("%n change(s) in this history", "", changes.size());
+                row.meta = tr("%n change(s) in this history", "", m_changes.size());
             } else if (!m_database) {
                 row.label = tr("No database is open");
                 row.meta = tr("Entry revisions are read from the open database; unlock one to see them");
@@ -745,8 +769,8 @@ namespace Material
         entry->truncateHistory();
 
         Restored record;
-        record.id = entryRevisionId(entry, entry->historyItems().size());
         record.when = Clock::currentDateTimeUtc();
+        record.id = sessionRestoreId(entry, record.when);
         record.databasePath = m_databasePath;
         record.entryTitle = name;
         record.revisionTime = revisionTime;
@@ -756,7 +780,7 @@ namespace Material
                         tr("\"%1\" is back as it was on %2. Changed back: %3. The state it was in has been kept as a "
                            "new revision. Save the database to make this permanent.")
                             .arg(name, stamp(revisionTime), fields.join(tr(", "))));
-        refresh();
+        rebuild();
     }
 
 } // namespace Material

@@ -49,7 +49,7 @@ namespace Material
             HealthRole, // Material::Health, via QVariant::fromValue()
             TotpRole, // bool, draws the TOTP glyph
             ModifiedRole, // QString, already formatted for display
-            SymbolRole // Material Symbols name for the avatar
+            SymbolRole // Material Symbols name for the avatar; Icons::entrySymbol() derives one
         };
 
         static constexpr int AvatarSize = 36;
