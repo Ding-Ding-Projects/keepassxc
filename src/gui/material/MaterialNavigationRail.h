@@ -35,7 +35,7 @@ namespace Material
      * A 56x56 rounded brand tile at the top, then one 66px wide tile per
      * destination - glyph over a 12px label over a 10px sublabel - and a footer
      * with the theme toggle and the lock button. The active tile is filled with
-     * secondaryContainer; hover paints a state layer.
+     * primaryContainer; hover paints a state layer.
      *
      * The tiles are painted rather than built from child widgets so the whole
      * rail restyles in one update() when the theme changes.

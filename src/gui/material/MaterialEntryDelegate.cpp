@@ -191,26 +191,29 @@ namespace Material
         // An invalid fill leaves the row transparent, which is the resting state.
         QColor fill;
         if (selected) {
-            fill = theme()->color(Role::SecondaryContainer);
+            fill = theme()->color(Role::PrimaryContainer);
         } else if (hovered) {
             fill = theme()->color(Role::SurfaceContainerHigh);
         }
         paintSurface(painter, row, Shape::Row, fill);
 
-        const QColor content = theme()->color(selected ? Role::OnSecondaryContainer : Role::OnSurface);
+        const QColor content = theme()->color(selected ? Role::OnPrimaryContainer : Role::OnSurface);
         QColor secondary = content;
         secondary.setAlphaF(SecondaryOpacity);
 
         const RowLayout layout = layoutRow(row, m_compactColumns);
 
+        // The avatar reads as a hole in the row, so it takes the surface family
+        // rather than the accent: the lowest surface once the row itself is
+        // filled, the high surface while the row is transparent.
         painter->setPen(Qt::NoPen);
-        painter->setBrush(theme()->color(Role::PrimaryContainer));
+        painter->setBrush(theme()->color(selected ? Role::SurfaceContainerLowest : Role::SurfaceContainerHigh));
         painter->drawEllipse(layout.avatar);
         paintGlyph(
             painter,
             layout.avatar,
             rowGlyph(
-                index, SymbolRole, QStringLiteral("key"), AvatarGlyphSize, theme()->color(Role::OnPrimaryContainer)));
+                index, SymbolRole, QStringLiteral("key"), AvatarGlyphSize, theme()->color(Role::OnSurfaceVariant)));
 
         QString title = index.data(TitleRole).toString();
         if (title.isEmpty()) {

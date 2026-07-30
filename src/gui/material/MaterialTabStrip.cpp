@@ -47,15 +47,32 @@ namespace Material
         constexpr int ControlSize = 34;
         constexpr int ControlBottomMargin = 2;
         constexpr int OverflowGap = 6;
-        // Room for the count badge painted next to the overflow chip.
-        constexpr int OverflowBadgeReserve = 30;
+        constexpr int OverflowPadding = 12;
+        constexpr int OverflowGlyphSize = 18;
         constexpr int BadgeHeight = 18;
+        constexpr int BadgeMinWidth = 18;
+        constexpr int BadgePadding = 5;
 
         QFont tabFont(bool active)
         {
             QFont font = theme()->font(TypeRole::BodySmall);
             font.setWeight(active ? QFont::Medium : QFont::Normal);
             return font;
+        }
+
+        /** The overflow affordance carries the tabs' 13px label at medium weight. */
+        QFont overflowFont()
+        {
+            QFont font = theme()->font(TypeRole::BodySmall);
+            font.setWeight(QFont::Medium);
+            return font;
+        }
+
+        /** Width of the count badge for @p hidden tabs, padding included. */
+        int badgeWidthFor(int hidden)
+        {
+            const QFontMetrics metrics(theme()->font(TypeRole::LabelSmall));
+            return qMax(BadgeMinWidth, metrics.horizontalAdvance(QString::number(hidden)) + 2 * BadgePadding);
         }
 
         /**
@@ -82,13 +99,12 @@ namespace Material
         setFixedHeight(Layout::TabStripHeight);
         setMouseTracking(true);
 
-        m_overflowChip = new Chip(QStringLiteral("more_horiz"), tr("More"), Chip::Kind::Assist, this);
-        m_overflowChip->setToolTip(tr("Show the remaining databases"));
-        m_overflowChip->hide();
-        connect(m_overflowChip, &QAbstractButton::clicked, this, &TabStrip::showOverflowMenu);
-
+        // The trailing controls are pinned as well as sized: ButtonBase fixes a
+        // minimum width from its label metrics on construction, which otherwise
+        // outvotes the diameter and pushes the add button past the strip's edge.
         m_searchButton = new IconButton(QStringLiteral("search"), this);
         m_searchButton->setDiameter(ControlSize);
+        m_searchButton->setFixedSize(ControlSize, ControlSize);
         m_searchButton->setSymbolSize(19);
         m_searchButton->setToolTip(tr("Search open databases"));
         m_searchButton->setAccessibleName(m_searchButton->toolTip());
@@ -96,6 +112,7 @@ namespace Material
 
         m_addButton = new IconButton(QStringLiteral("add"), this);
         m_addButton->setDiameter(ControlSize);
+        m_addButton->setFixedSize(ControlSize, ControlSize);
         m_addButton->setSymbolSize(20);
         m_addButton->setToolTip(tr("Open a database in a new tab"));
         m_addButton->setAccessibleName(m_addButton->toolTip());
@@ -256,10 +273,11 @@ namespace Material
             tab.rect = QRect();
             tab.closeRect = QRect();
         }
+        m_overflowRect = QRect();
+        m_hiddenCount = 0;
 
         const int count = m_tabs.size();
         if (count == 0) {
-            m_overflowChip->hide();
             return;
         }
 

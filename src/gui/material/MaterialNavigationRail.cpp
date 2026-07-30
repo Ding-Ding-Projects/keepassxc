@@ -37,7 +37,8 @@ namespace Material
         constexpr int BottomMargin = 12;
         constexpr int BrandSize = 56;
         constexpr int BrandGlyphSize = 30;
-        constexpr int BrandGap = 10;
+        // The 10px margin under the brand tile plus the rail's own 4px item gap.
+        constexpr int BrandGap = 14;
         constexpr int TileSpacing = 4;
         constexpr int TilePadTop = 6;
         constexpr int TilePadBottom = 8;
@@ -112,13 +113,22 @@ namespace Material
         setFocusPolicy(Qt::StrongFocus);
         setAccessibleName(tr("Navigation"));
 
+        // The footer buttons are rounded squares rather than pills, and their
+        // size is pinned as well as requested: ButtonBase fixes a minimum width
+        // from its label metrics on construction, which otherwise outvotes the
+        // diameter and stretches them past the rail's centre column.
         m_themeButton = new IconButton(this);
         m_themeButton->setDiameter(FooterSize);
+        m_themeButton->setFixedSize(FooterSize, FooterSize);
+        m_themeButton->setRadius(Shape::Row);
         m_themeButton->setSymbolSize(FooterGlyphSize);
+        m_themeButton->setToolTip(tr("Toggle light / dark"));
         connect(m_themeButton, &QAbstractButton::clicked, this, &NavigationRail::themeToggleRequested);
 
         m_lockButton = new IconButton(QStringLiteral("lock"), this);
         m_lockButton->setDiameter(FooterSize);
+        m_lockButton->setFixedSize(FooterSize, FooterSize);
+        m_lockButton->setRadius(Shape::Row);
         m_lockButton->setSymbolSize(FooterGlyphSize);
         m_lockButton->setToolTip(tr("Lock databases"));
         m_lockButton->setAccessibleName(m_lockButton->toolTip());
@@ -148,11 +158,12 @@ namespace Material
 
         // The toggle offers the mode the user is not in, so its glyph flips with
         // the theme; the tile metrics follow the type scale and have to be redone.
+        // The tooltip stays the design's static label - only the accessible name,
+        // which has to announce the outcome, names the mode being switched to.
         auto syncTheme = [this] {
             const bool dark = theme()->isDark();
             m_themeButton->setSymbol(dark ? QStringLiteral("light_mode") : QStringLiteral("dark_mode"));
-            m_themeButton->setToolTip(dark ? tr("Switch to the light theme") : tr("Switch to the dark theme"));
-            m_themeButton->setAccessibleName(m_themeButton->toolTip());
+            m_themeButton->setAccessibleName(dark ? tr("Switch to the light theme") : tr("Switch to the dark theme"));
             relayout();
             updateGeometry();
             update();
@@ -266,8 +277,10 @@ namespace Material
 
     QSize NavigationRail::minimumSizeHint() const
     {
-        const int height = TopMargin + BrandSize + BrandGap + 2 * FooterSize + FooterSpacing + BottomMargin;
-        return {Layout::RailWidth, height};
+        // The flexible spacer between the tiles and the footer is the only part
+        // of the rail that may collapse, so the preferred height is also the
+        // smallest one: anything less and the tiles run into the footer buttons.
+        return sizeHint();
     }
 
     int NavigationRail::indexOf(const QString& id) const
@@ -386,8 +399,8 @@ namespace Material
             return 0.0;
         };
 
-        const QColor idle = theme()->color(Role::OnSurfaceVariant);
-        const QColor selected = theme()->color(Role::OnSecondaryContainer);
+        const QColor idle = theme()->color(Role::OnSurface);
+        const QColor selected = theme()->color(Role::OnPrimaryContainer);
         const QFont labelFont = tileLabelFont();
         const QFont sublabelFont = tileSublabelFont();
         const QFontMetrics labelMetrics(labelFont);
@@ -411,7 +424,7 @@ namespace Material
                 paintSurface(&painter,
                              destination.rect,
                              Shape::Row,
-                             withAlpha(theme()->color(Role::SecondaryContainer), active));
+                             withAlpha(theme()->color(Role::PrimaryContainer), active));
             }
             if (hasFocus() && i == m_currentIndex) {
                 painter.setPen(QPen(theme()->color(Role::Primary), 2));

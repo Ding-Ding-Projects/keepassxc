@@ -87,6 +87,10 @@ namespace Material
         };
         for (const auto& action : actions) {
             auto* button = new IconButton(QString::fromLatin1(action.symbol), this);
+            // ButtonBase fixes a minimum width from its label metrics on
+            // construction, which the layout would otherwise honour over the
+            // icon button's square size hint.
+            button->setFixedSize(Layout::IconButtonSize, Layout::IconButtonSize);
             button->setSymbolSize(ActionGlyphSize);
             button->setToolTip(action.tip);
             button->setAccessibleName(action.tip);
