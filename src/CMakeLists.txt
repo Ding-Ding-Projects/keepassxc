@@ -496,7 +496,56 @@ if(WIN32)
     set(CPACK_WIX_UI_BANNER "${CMAKE_SOURCE_DIR}/share/windows/installer-banner.png")
     set(CPACK_WIX_UI_DIALOG "${CMAKE_SOURCE_DIR}/share/windows/installer-wizard.png")
     set(CPACK_WIX_UI_REF "KPXC_InstallDir")
-    set(CPACK_WIX_TEMPLATE "${CMAKE_SOURCE_DIR}/share/windows/wix-template.xml")
+    # -----------------------------------------------------------------------
+    # The Start Menu documentation shortcuts, and why the template is generated
+    #
+    # wix-template.xml declares two Start Menu shortcuts that target installed
+    # files:
+    #
+    #     Target="[#CM_FP_share.docs.KeePassXC_GettingStarted.html]"
+    #     Target="[#CM_FP_share.docs.KeePassXC_UserGuide.html]"
+    #
+    # Those ids exist only because docs/CMakeLists.txt installs the pages into
+    # ${DATA_INSTALL_DIR}/docs, and that whole directory is added only when
+    # KPXC_FEATURE_DOCS is on. With it off the pages are never built, never
+    # installed, and CPack never emits a File row for them - but the shortcuts
+    # named them anyway. light.exe does not treat that as a missing icon, it
+    # refuses to link:
+    #
+    #   main.wxs(75) : error LGHT0204 : ICE67: The shortcut
+    #       'GettingStartedShortcut' is a non-advertised shortcut with a file
+    #       target, but the target file does not exist.
+    #   main.wxs(75) : error LGHT0204 : ICE69:
+    #       'CM_FP_share.docs.KeePassXC_GettingStarted.html' references
+    #       invalid file.
+    #
+    # and the build ends at "CPack Error: Fatal WiX Generator Error". That is
+    # the whole of the long-standing MSI failure: the package step is coupled
+    # to a feature flag nothing connected it to.
+    #
+    # So the shortcut block is substituted in rather than hard-coded, and the
+    # template is generated into the build tree. The MSI now builds either way:
+    # with the shortcuts when the documentation ships, without them when it
+    # does not. @ONLY matters - the template is full of WiX's own
+    # $(var.CPACK_...) syntax, which CMake must not touch.
+    # -----------------------------------------------------------------------
+    if(KPXC_FEATURE_DOCS)
+        set(KPXC_WIX_DOC_SHORTCUTS
+"                        <Shortcut Id=\"GettingStartedShortcut\"
+                            Name=\"KeePassXC - Getting Started\"
+                            Target=\"[#CM_FP_share.docs.KeePassXC_GettingStarted.html]\"
+                            WorkingDirectory=\"INSTALL_ROOT\" />
+                        <Shortcut Id=\"UserGuideShortcut\"
+                            Name=\"KeePassXC - User Guide\"
+                            Target=\"[#CM_FP_share.docs.KeePassXC_UserGuide.html]\"
+                            WorkingDirectory=\"INSTALL_ROOT\" />")
+    else()
+        set(KPXC_WIX_DOC_SHORTCUTS
+            "                        <!-- KPXC_FEATURE_DOCS is off; the pages these pointed at are not installed. -->")
+    endif()
+    configure_file("${CMAKE_SOURCE_DIR}/share/windows/wix-template.xml"
+                   "${CMAKE_BINARY_DIR}/wix-template.xml" @ONLY)
+    set(CPACK_WIX_TEMPLATE "${CMAKE_BINARY_DIR}/wix-template.xml")
     set(CPACK_WIX_PATCH_FILE "${CMAKE_SOURCE_DIR}/share/windows/wix-patch.xml")
     set(CPACK_WIX_EXTRA_SOURCES
             "${CMAKE_SOURCE_DIR}/share/windows/KPXC_InstallDir.wxs"

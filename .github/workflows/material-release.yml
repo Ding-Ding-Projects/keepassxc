@@ -46,9 +46,10 @@ concurrency:
 
 env:
   QT_VERSION: '6.8.3'
-  # Offline documentation is rendered with asciidoctor, a Ruby toolchain not worth
-  # installing on every runner just to produce the bundled help pages.
-  CMAKE_COMMON_OPTIONS: -DCMAKE_BUILD_TYPE=Release -DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON
+  # KPXC_FEATURE_DOCS is NOT set here. It is decided by the "Render the offline
+  # documentation" step below, which turns it on when asciidoctor is available
+  # and off when it is not, and appends the choice to this list. See that step.
+  CMAKE_COMMON_OPTIONS: -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
 
 jobs:
   # =================================================================================
@@ -192,6 +193,75 @@ jobs:
 
           & "$vcpkgRoot\bootstrap-vcpkg.bat" -disableMetrics
           if ($LASTEXITCODE -ne 0) { throw "bootstrap-vcpkg.bat failed" }
+
+      - name: Decide whether the offline documentation can be rendered
+        shell: pwsh
+        run: |
+          # -------------------------------------------------------------------------
+          # The MSI's Start Menu group offers "Getting Started" and "User Guide".
+          # Both are asciidoctor-rendered pages that docs/CMakeLists.txt installs,
+          # and that directory is only added when KPXC_FEATURE_DOCS is on. This job
+          # used to hard-code it OFF, which silently dropped both pages from the
+          # installer - and, until the template was fixed, broke the MSI outright.
+          #
+          # asciidoctor is a Ruby gem and Ruby is preinstalled on windows-2022, so
+          # rendering the documentation costs a few seconds. But a release must not
+          # hinge on a gem install: if anything here fails, the documentation is
+          # dropped and the build carries on, because a shipped installer without
+          # the help pages beats no installer at all. Either way the choice is
+          # printed and the WiX template follows it, so the packaged shortcuts and
+          # the packaged files always agree.
+          #
+          # ASCIIDOCTOR_EXE is passed to CMake as a full path rather than left to
+          # find_program: the gem installs a .bat shim on Windows, and which
+          # extensions find_program will try is not worth betting a 45-minute run on.
+          # -------------------------------------------------------------------------
+          $ErrorActionPreference = 'Continue'
+          $PSNativeCommandUseErrorActionPreference = $false
+
+          $docs = 'OFF'
+          $exe = ''
+
+          $gem = Get-Command gem -ErrorAction SilentlyContinue
+          if (-not $gem) {
+              Write-Host "::warning::No Ruby/gem on this runner; the offline documentation will not be built."
+          } else {
+              gem install asciidoctor --no-document
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Host "::warning::gem install asciidoctor failed; the offline documentation will not be built."
+              } else {
+                  $cmd = Get-Command asciidoctor -ErrorAction SilentlyContinue
+                  if (-not $cmd) {
+                      Write-Host "::warning::asciidoctor installed but is not on PATH; the offline documentation will not be built."
+                  } else {
+                      $exe = $cmd.Source
+                      # Prove it runs before committing the build to it. A gem that
+                      # installs but cannot execute would otherwise fail the whole
+                      # run much later, during Configure.
+                      & $exe --version | Select-Object -First 1
+                      if ($LASTEXITCODE -ne 0) {
+                          Write-Host "::warning::asciidoctor at $exe does not run; the offline documentation will not be built."
+                          $exe = ''
+                      } else {
+                          $docs = 'ON'
+                      }
+                  }
+              }
+          }
+
+          if ($docs -eq 'ON') {
+              Write-Host "Offline documentation: ON (asciidoctor at $exe)"
+              # CMake wants forward slashes; a backslash path becomes an escape.
+              $cmakePath = $exe -replace '\\', '/'
+              $extra = "-DKPXC_FEATURE_DOCS=ON `"-DASCIIDOCTOR_EXE=$cmakePath`""
+          } else {
+              Write-Host "Offline documentation: OFF - the installer will ship without the help pages."
+              $extra = "-DKPXC_FEATURE_DOCS=OFF"
+          }
+
+          # GITHUB_ENV wins over the workflow-level `env:` for every later step.
+          "CMAKE_COMMON_OPTIONS=${{ env.CMAKE_COMMON_OPTIONS }} $extra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          "KPXC_FEATURE_DOCS=$docs" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
 
       - name: Configure
         shell: pwsh
@@ -598,7 +668,7 @@ jobs:
             echo "| Windows x64 | \`${MSI_NAME}\` | The installer. Self-contained; the Qt runtime is deployed by windeployqt. |"
             echo "| Windows x64 | \`${ZIP_NAME}\` | The same tree, unpacked by hand instead. |"
             echo
-            echo "Configured with \`-DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
+            echo "Configured with \`-DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
             echo
             echo "Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
           } > release-notes.md

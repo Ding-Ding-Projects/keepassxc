@@ -3,8 +3,9 @@
 Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6), 29 commits,
 192 files, +10 928 / −1 813.
 
-**Builds and links on MSVC. 43 of 43 tests pass. The MSI still does not build**, for a reason that
-predates this branch and has not yet been read. That is the only open item, and §4 is about it.
+**Builds and links on MSVC. 43 of 43 tests pass.** The MSI failure that predates this branch has been
+read and fixed — WiX Start Menu shortcuts pointing at documentation the build was configured not to
+produce. §4. The fix has not completed a run yet.
 
 This supersedes the previous handoff, which described the Material shell landing. Its §1 ("the vault
 destination is still the stock three-pane widget") is done; several of its other claims were wrong and
@@ -127,17 +128,45 @@ A green syntax check is not a build. It was wrong about this branch twice.
 
 ---
 
-## 4. The MSI: six dead theories and a working diagnostic
+## 4. The MSI: read, and fixed
 
-`Test (Windows x64)` compiles, links, tests, produces a 63.4 MiB ZIP, and then fails:
+`Test (Windows x64)` compiled, linked, tested, produced a 63.4 MiB ZIP, and then failed with
+`CPack Error: Fatal WiX Generator Error`. **It was never from the Material work** — `develop` at
+`0dd3d702` failed identically.
+
+Six rounds guessed at it from the *configuration*. The seventh read the error:
 
 ```
-CPack Error: Problem running WiX. Please check '.../wix.log' for errors.
-CPack Error: Fatal WiX Generator Error
+main.wxs(75) : error LGHT0204 : ICE67: The shortcut 'GettingStartedShortcut' is a
+    non-advertised shortcut with a file target, but the target file does not exist.
+main.wxs(79) : error LGHT0204 : ICE67: The shortcut 'UserGuideShortcut' ...
+main.wxs(75) : error LGHT0204 : ICE69: 'CM_FP_share.docs.KeePassXC_GettingStarted.html'
+    references invalid file.
+main.wxs(79) : error LGHT0204 : ICE69: 'CM_FP_share.docs.KeePassXC_UserGuide.html' ...
 ```
 
-**This is not from the Material work.** `develop` at `0dd3d702` fails identically, with the same error
-and the same ZIP size.
+**The cause.** `share/windows/wix-template.xml` declared two Start Menu shortcuts targeting
+`[#CM_FP_share.docs.KeePassXC_GettingStarted.html]` and `…_UserGuide.html`. Those file ids exist only
+because `docs/CMakeLists.txt` installs the pages into `${DATA_INSTALL_DIR}/docs` — and that directory
+is added only `if(KPXC_FEATURE_DOCS)`. The workflow configured `-DKPXC_FEATURE_DOCS=OFF`, so the pages
+were never built, never installed, and CPack never emitted their `File` rows. The shortcuts named them
+regardless. `light.exe` does not treat that as a missing icon; it refuses to link.
+
+The package step was coupled to a feature flag that nothing connected it to. Note that theory #3 below
+had the right *variable* and the wrong *mechanism* — it checked for dangling install rules, found none,
+and closed the question. The shortcuts are not install rules.
+
+**The fix, in two halves.**
+
+1. `src/CMakeLists.txt` now generates the template with `configure_file(… @ONLY)`, substituting
+   `@KPXC_WIX_DOC_SHORTCUTS@` with the two shortcuts when `KPXC_FEATURE_DOCS` is on and a comment when
+   it is off. The MSI builds either way, and the packaged shortcuts and the packaged files can no
+   longer disagree. `@ONLY` matters: the template is full of WiX's own `$(var.CPACK_…)` syntax.
+2. The workflow no longer hard-codes the flag. A step decides it: `gem install asciidoctor`, then
+   `--version` to prove it runs, then `KPXC_FEATURE_DOCS=ON` with an explicit `ASCIIDOCTOR_EXE` full
+   path. Every failure path downgrades to `OFF` with a `::warning::` rather than failing — a shipped
+   installer without help pages beats no installer. `ASCIIDOCTOR_EXE` is passed explicitly because the
+   gem installs a `.bat` shim and which extensions `find_program` tries is not worth a 45-minute bet.
 
 ### Do not re-try these
 
@@ -145,46 +174,40 @@ and the same ZIP size.
 | --- | --- | --- |
 | 1 | the `-snapshot` version string | `CPACK_PACKAGE_VERSION` uses `KEEPASSXC_VERSION_CLEAN`, which strips it |
 | 2 | `qt.conf` installed twice | it is not |
-| 3 | `KPXC_FEATURE_DOCS=OFF` | that skips `add_subdirectory(docs)` entirely; no dangling rules |
+| 3 | `KPXC_FEATURE_DOCS=OFF` breaks install rules | it does not — but see above, the flag *was* the cause, through the WiX shortcuts |
 | 4 | `cpack --config … -B artifacts` | changed to `cd build && cpack`; no effect. Kept, as it matches the workflow that last shipped an MSI |
 | 5 | missing `WixUIExtension.dll` | adding it **caused** `LGHT0091 Duplicate symbol`: CPack already passes it whenever `CPACK_WIX_UI_REF` is set |
 | 6 | the duplicate from #5 | reverted in `f6f9d8c4` |
 
-### Why five rounds were wasted
+### Why six rounds were wasted, and the diagnostic that ended it
 
 `wix.log` could never be read. `actions/upload-artifact` dumps several hundred lines of runner
-environment after every upload, and the job log is reachable only by tail, so the real error was always
-out of reach — and every round reasoned from the *configuration* instead of the *error*. That is
-guessing with extra steps. The visibility should have been fixed after the second attempt, not the
-fifth.
+environment after every upload and the job log is reachable only by tail, so the real error was always
+out of reach — and every round reasoned from the configuration instead of the error. That is guessing
+with extra steps. The visibility should have been fixed after the second attempt, not the sixth.
 
-### What to do now
-
-The final step of the job is **"Print why this job failed, last"**. It prints two blocks in the last
-~30 lines:
+The last step of the job is now **"Print why this job failed, last"**, which prints two blocks in the
+final ~30 lines:
 
 ```
 ===== FAILED TESTS ... END FAILED TESTS =====   LastTestsFailed.log + FAIL!/QFATAL/ASSERT
 ===== WIX ERRORS  ... END WIX ERRORS  =====     LGHT####/CNDL#### codes, then 40 lines of wix.log
 ```
 
-Fetch the log with a **small** tail (45–70 lines). Then fix exactly what the code names:
+Fetch it with a **small** tail (45–70 lines). It paid for itself twice: it caught theory #5 as
+self-inflicted within one run, and it produced the ICE67/ICE69 text above. If the MSI ever breaks
+again, read that block first and fix exactly what the code names — `LGHT0091` duplicate symbol,
+`LGHT0094` unresolved symbol, `LGHT0103` file not found, `LGHT0204`/`LGHT0217` ICE validation,
+`CNDL####` a candle compile error. `no wix.log found` means packaging never ran; read the FAILED TESTS
+block instead.
 
-- `LGHT0091` duplicate symbol → something defined or loaded twice
-- `LGHT0094` unresolved symbol → a missing extension or source
-- `LGHT0103` file not found → a `.wxs` references a path not on disk
-- `LGHT0204` / `LGHT0217` ICE validation → may need that ICE suppressed
-- `CNDL####` → a compile problem, which would be new; candle currently succeeds
-
-`no wix.log found` means packaging never ran — read the FAILED TESTS block instead.
-
-The diagnostic has already earned its keep: it caught theory #5 as self-inflicted within one run.
+**Unverified:** the fix has not completed a run yet.
 
 ---
 
 ## 5. Still open
 
-- **The MSI.** §4.
+- **The MSI fix is unverified.** §4 explains it; no run has completed against it yet.
 - **`testdatabase` is flaky.** It failed and then passed on *identical binaries* (`ef8f3707..3d17b7e1`
   differ by workflow text alone). `ctest --repeat until-pass:2` bounds it: retries are printed, and a
   test failing twice still fails the job. Note `testmerge`, which the previous handoff recorded as a
