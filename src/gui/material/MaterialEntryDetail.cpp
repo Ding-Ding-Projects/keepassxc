@@ -68,6 +68,28 @@ namespace Material
             return QStringLiteral("—");
         }
 
+        /**
+         * The 11px caption lines. The design leaves them at regular weight and
+         * keeps medium for the overlines and the strength label, while the
+         * 11px type role is medium throughout.
+         */
+        QFont captionFont()
+        {
+            QFont font = theme()->font(TypeRole::LabelSmall);
+            font.setWeight(QFont::Normal);
+            return font;
+        }
+
+        /** The mockup renders a six digit code as two groups of three: 418 302. */
+        QString groupedCode(const QString& code)
+        {
+            if (code.length() < 4 || code.length() % 2 != 0) {
+                return code;
+            }
+            const int half = code.length() / 2;
+            return code.left(half) + QLatin1Char(' ') + code.mid(half);
+        }
+
         /** The mono role is specified at 14px; scale it to another design size. */
         QFont monoFont(int designPx)
         {
@@ -272,7 +294,7 @@ namespace Material
                 trailing.moveTo(width() - 14 - trailing.width(), (height() - trailing.height()) / 2);
                 Icons::symbol(QStringLiteral("open_in_new"), meta).paint(&painter, trailing);
 
-                const QFont sizeFont = theme()->font(TypeRole::LabelSmall);
+                const QFont sizeFont = captionFont();
                 const int sizeWidth = m_size.isEmpty() ? 0 : QFontMetrics(sizeFont).horizontalAdvance(m_size);
                 const int nameLeft = leading.right() + 1 + 12;
                 const int nameRight = trailing.left() - 12 - (sizeWidth > 0 ? sizeWidth + 12 : 0);
@@ -721,9 +743,11 @@ namespace Material
         totpColumn->addWidget(m_totpLabel);
         totpLayout->addWidget(totpText, 1);
 
-        auto* copyTotp = createRowButton(QStringLiteral("content_copy"), tr("Copy one-time password"));
-        connect(copyTotp, &QAbstractButton::clicked, this, [this] { emit copyRequested(QStringLiteral("totp")); });
-        totpLayout->addWidget(copyTotp, 0, Qt::AlignVCenter);
+        m_copyTotpButton = createRowButton(QStringLiteral("content_copy"), tr("Copy one-time password"));
+        connect(m_copyTotpButton, &QAbstractButton::clicked, this, [this] {
+            emit copyRequested(QStringLiteral("totp"));
+        });
+        totpLayout->addWidget(m_copyTotpButton, 0, Qt::AlignVCenter);
         cardLayout->addWidget(m_totpRow);
 
         return card;
@@ -882,9 +906,11 @@ namespace Material
         m_strengthLabel->setVisible(!m_data.strengthLabel.isEmpty());
         styleLabel(m_strengthLabel, theme()->font(TypeRole::LabelSmall), theme()->colors().healthColor(m_data.health));
 
-        const bool hasTotp = !m_data.totpCode.isEmpty();
-        m_totpDivider->setVisible(hasTotp);
-        m_totpRow->setVisible(hasTotp);
+        // The credentials card always has three rows. An entry without a
+        // one-time password keeps the row and shows the placeholder state
+        // rather than collapsing the card; only an empty pane drops it.
+        m_totpDivider->setVisible(m_hasEntry);
+        m_totpRow->setVisible(m_hasEntry);
         updateTotp();
 
         m_notesLabel->setText(m_data.notes);
@@ -955,7 +981,8 @@ namespace Material
 
         m_totpRing->setActive(active);
         m_totpRing->setRemaining(remaining, period);
-        m_totpLabel->setFullText(active ? m_data.totpCode : QStringLiteral("— — —"));
+        m_totpLabel->setFullText(active ? groupedCode(m_data.totpCode) : QStringLiteral("— — —"));
+        m_copyTotpButton->setEnabled(active);
 
         syncTotpTimer();
     }
@@ -988,7 +1015,7 @@ namespace Material
         styleLabel(m_urlLabel, theme()->font(TypeRole::BodySmall), onSurfaceVariant);
 
         for (auto* caption : std::as_const(m_captions)) {
-            styleLabel(caption, theme()->font(TypeRole::LabelSmall), onSurfaceVariant);
+            styleLabel(caption, captionFont(), onSurfaceVariant);
         }
 
         QFont overline = theme()->font(TypeRole::LabelSmall);

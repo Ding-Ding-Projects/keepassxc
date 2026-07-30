@@ -40,8 +40,8 @@ namespace Material
      *
      * Every number here comes out of the database. Breach exposure is the one
      * figure the design asks for that cannot be answered offline - it needs a
-     * Have I Been Pwned lookup - so that tile is left out rather than filled
-     * with a guess, and the screen's supporting line says why.
+     * Have I Been Pwned lookup - so that tile keeps its place in the grid but
+     * says it has not been checked rather than showing a guess.
      *
      * The screen's search box filters the findings and the statistics; the
      * export button writes exactly what is on screen, filter included.
@@ -85,9 +85,12 @@ namespace Material
             QString reason;
             QString quality;
             int score = 0;
+            int entropy = 0; // raw password entropy in bits, what the chip reports
             bool bad = false;
             bool excluded = false;
             bool expired = false;
+            bool reused = false; // the password is on more than one entry
+            bool tooShort = false;
         };
 
         /** Everything one pass over the database answers. */
@@ -100,7 +103,9 @@ namespace Material
             int groups = 0;
             int healthy = 0;
             int shortPasswords = 0;
+            int weakOrShort = 0; // passwords below the design's entropy bar
             int passkeys = 0;
+            int relyingParties = 0; // distinct relying parties across the passkeys
             QVector<Finding> findings;
             QVector<QPair<QString, QString>> statistics;
         };

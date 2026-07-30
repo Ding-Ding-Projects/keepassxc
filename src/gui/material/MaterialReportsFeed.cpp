@@ -31,14 +31,19 @@
 #include "core/Group.h"
 #include "core/Metadata.h"
 #include "core/PasswordHealth.h"
+#include "format/KeePass2.h"
 #include "gui/FileDialog.h"
 
+#include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
+#include <QHash>
 #include <QLocale>
 #include <QScopedPointer>
+#include <QSet>
 #include <QTextStream>
+#include <QUrl>
 
 #include <algorithm>
 
@@ -47,6 +52,9 @@ namespace Material
     namespace
     {
         const QString ExportDirectoryRole = QStringLiteral("reports");
+
+        /** The bar the design's "Weak or short" tile counts against. */
+        constexpr int WeakEntropyBits = 60;
 
         QString qualityName(PasswordHealth::Quality quality)
         {
@@ -65,9 +73,53 @@ namespace Material
             return {};
         }
 
-        Health healthOf(bool bad)
+        Health healthOf(bool bad, bool reused)
         {
-            return bad ? Health::Breached : Health::Weak;
+            if (bad) {
+                return Health::Breached;
+            }
+            return reused ? Health::Reused : Health::Weak;
+        }
+
+        /**
+         * The glyph names the fault rather than the severity, which is what
+         * the design's five icons do: expiry before quality, then reuse, then
+         * length, and a plain warning for everything else.
+         */
+        QString faultSymbol(bool expired, bool bad, bool reused, bool tooShort)
+        {
+            if (expired) {
+                return QStringLiteral("schedule");
+            }
+            if (bad) {
+                return QStringLiteral("gpp_bad");
+            }
+            if (reused) {
+                return QStringLiteral("content_copy");
+            }
+            if (tooShort) {
+                return QStringLiteral("short_text");
+            }
+            return QStringLiteral("warning");
+        }
+
+        /**
+         * How many entries share each password, counted the way HealthChecker
+         * counts it. The checker keeps its own map private and only reports
+         * reuse as a line of translated prose, which is not something to match
+         * a string against.
+         */
+        QHash<QString, int> passwordUses(const QSharedPointer<Database>& db)
+        {
+            QHash<QString, int> uses;
+            for (const Entry* entry : db->rootGroup()->entriesRecursive()) {
+                if (entry->isRecycled() || entry->isAttributeReference(QStringLiteral("Password"))
+                    || entry->password().isEmpty()) {
+                    continue;
+                }
+                ++uses[entry->password()];
+            }
+            return uses;
         }
 
         /** Escape the pipes that would otherwise break a Markdown table cell. */
@@ -86,16 +138,12 @@ namespace Material
     {
         Q_ASSERT(m_screen);
 
-        m_screen->setSupportingText(
-            tr("Password health and statistics for the database in front, computed the same way the detailed reports "
-               "compute them. Breach exposure is not shown here because it can only be answered by an online Have I "
-               "Been Pwned lookup; open the detailed reports to run one."));
-
-        auto detailed = new OutlinedButton(QStringLiteral("lab_profile"), tr("Detailed reports"));
+        // The design's title row is the headline and the search pill, with no
+        // supporting line: the breach caveat rides on the breach tile instead.
+        auto detailed = new OutlinedButton(QStringLiteral("analytics"), tr("Detailed reports"));
         connect(detailed, &QAbstractButton::clicked, this, &ReportsFeed::detailedReportsRequested);
         m_screen->addHeaderWidget(detailed);
 
-        m_screen->searchBar()->setPlaceholder(tr("Filter findings and statistics"));
         m_screen->searchBar()->setShowRegexControls(false);
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
@@ -153,6 +201,11 @@ namespace Material
         snapshot->valid = true;
 
         const HealthChecker checker(db);
+        const QHash<QString, int> uses = passwordUses(db);
+        QSet<QString> relyingParties;
+        double entropyTotal = 0.0;
+        int scored = 0;
+
         for (const Group* group : db->rootGroup()->groupsRecursive(true)) {
             if (group->isRecycled()) {
                 continue;
@@ -165,6 +218,10 @@ namespace Material
                 }
                 if (entry->attributes()->hasKey(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM)) {
                     ++snapshot->passkeys;
+                    const QString party = entry->attributes()->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY);
+                    if (!party.isEmpty()) {
+                        relyingParties.insert(party);
+                    }
                 }
                 // The health check skips entries without a password, exactly as
                 // the healthcheck report does, so an empty entry is neither a
@@ -174,6 +231,12 @@ namespace Material
                 }
 
                 const auto health = checker.evaluate(entry);
+                entropyTotal += health->entropy();
+                ++scored;
+                if (health->entropy() < WeakEntropyBits) {
+                    ++snapshot->weakOrShort;
+                }
+
                 if (health->quality() >= PasswordHealth::Quality::Good) {
                     ++snapshot->healthy;
                     continue;
@@ -186,9 +249,12 @@ namespace Material
                 finding.reason = health->scoreReason().split(QLatin1Char('\n'), Qt::SkipEmptyParts).join(QStringLiteral(" · "));
                 finding.quality = qualityName(health->quality());
                 finding.score = health->score();
+                finding.entropy = qRound(health->entropy());
                 finding.bad = health->quality() == PasswordHealth::Quality::Bad;
                 finding.excluded = entry->excludeFromReports();
                 finding.expired = entry->isExpired();
+                finding.reused = uses.value(entry->password()) > 1;
+                finding.tooShort = entry->password().length() <= PasswordHealth::Length::Short;
                 snapshot->findings.append(finding);
             }
         }
@@ -205,11 +271,18 @@ namespace Material
         snapshot->entries = stats.entryCount;
         snapshot->groups = stats.groupCount;
         snapshot->shortPasswords = stats.shortPasswords;
+        snapshot->relyingParties = relyingParties.size();
+
+        const QFileInfo file(db->filePath());
+        const QString kdf = db->kdf() ? KeePass2::kdfToString(db->kdf()->uuid()) : tr("no key derivation");
 
         auto& rows = snapshot->statistics;
         rows.append({tr("Database name"), db->metadata()->name()});
         rows.append({tr("Description"), db->metadata()->description()});
         rows.append({tr("Location"), db->filePath()});
+        rows.append({tr("Database size"),
+                     file.exists() ? QLocale().formattedDataSize(file.size()) : tr("not written yet")});
+        rows.append({tr("Encryption"), tr("%1 · %2").arg(KeePass2::cipherToString(db->cipher()), kdf)});
         rows.append({tr("Database created"), Clock::toString(db->rootGroup()->timeInfo().creationTime())});
         rows.append({tr("Last saved"), Clock::toString(stats.modified)});
         rows.append({tr("Unsaved changes"), db->isModified() ? tr("yes") : tr("no")});
@@ -223,6 +296,7 @@ namespace Material
         rows.append({tr("Number of weak passwords"), QString::number(stats.weakPasswords)});
         rows.append({tr("Entries excluded from reports"), QString::number(stats.excludedEntries)});
         rows.append({tr("Average password length"), tr("%n character(s)", "", stats.averagePwdLength())});
+        rows.append({tr("Average entropy"), tr("%n bit(s)", "", scored > 0 ? qRound(entropyTotal / scored) : 0)});
 
         return snapshot;
     }
@@ -271,21 +345,26 @@ namespace Material
 
         QVector<StatCard> cards;
         if (m_snapshot.valid) {
-            cards.append({tr("Entries"),
-                          QString::number(m_snapshot.entries),
-                          tr("in %n group(s)", "", m_snapshot.groups),
-                          Health::Unknown});
             cards.append({tr("Healthy passwords"),
                           QString::number(m_snapshot.healthy),
-                          tr("rated good or excellent"),
+                          tr("of %n entry(s)", "", m_snapshot.entries),
                           Health::Ok});
-            cards.append({tr("Weak or poor"),
-                          QString::number(m_snapshot.findings.size()),
-                          tr("%n short password(s)", "", m_snapshot.shortPasswords),
-                          m_snapshot.findings.isEmpty() ? Health::Ok : Health::Weak});
-            cards.append({tr("Passkeys"),
+            // The weak tile is the warning tile whether or not it counts to
+            // zero, so it keeps its family instead of turning green.
+            cards.append({tr("Weak or short"),
+                          QString::number(m_snapshot.weakOrShort),
+                          tr("entropy below %n bit(s)", "", WeakEntropyBits),
+                          Health::Weak});
+            // Breach exposure needs a Have I Been Pwned lookup, which this
+            // pass cannot make. The tile keeps the design's place in the grid
+            // and says the figure is unknown rather than inventing one.
+            cards.append({tr("Found in breaches"),
+                          QStringLiteral("—"),
+                          tr("needs an online check"),
+                          Health::Unknown});
+            cards.append({tr("Passkeys stored"),
                           QString::number(m_snapshot.passkeys),
-                          tr("stored in this database"),
+                          tr("%n relying party(s)", "", m_snapshot.relyingParties),
                           Health::Unknown});
         }
 
@@ -293,7 +372,7 @@ namespace Material
         for (const Finding& finding : filteredFindings()) {
             HealthRow row;
             row.id = finding.uuid;
-            row.symbol = finding.bad ? QStringLiteral("lock_open") : QStringLiteral("lock_clock");
+            row.symbol = faultSymbol(finding.expired, finding.bad, finding.reused, finding.tooShort);
             row.title = finding.title;
             if (finding.excluded) {
                 row.title.append(tr(" (Excluded)"));
@@ -302,8 +381,10 @@ namespace Material
                 row.title.append(tr(" (Expired)"));
             }
             row.reason = finding.reason.isEmpty() ? finding.path : finding.reason;
-            row.score = tr("%1 · %2").arg(finding.quality, QString::number(finding.score));
-            row.status = healthOf(finding.bad);
+            // The chip carries entropy, which has a unit; the quality name
+            // stays on the reason line and in the exported table.
+            row.score = tr("%n bit(s)", "", finding.entropy);
+            row.status = healthOf(finding.bad, finding.reused);
             rows.append(row);
         }
 
@@ -414,11 +495,17 @@ namespace Material
         file.write(markdown().toUtf8());
         file.close();
 
+        // The confirmation offers the file it just wrote, rather than leaving
+        // the user to go and find it.
+        const QList<NotificationAction> actions{NotificationAction(
+            tr("Open"), [fileName] { QDesktopServices::openUrl(QUrl::fromLocalFile(fileName)); }, this)};
+
         Notify::success(tr("Report exported"),
                         m_query.isEmpty()
                             ? tr("Written to %1.").arg(QDir::toNativeSeparators(fileName))
                             : tr("Written to %1, filtered by \"%2\".")
-                                  .arg(QDir::toNativeSeparators(fileName), m_query));
+                                  .arg(QDir::toNativeSeparators(fileName), m_query),
+                        actions);
     }
 
 } // namespace Material
