@@ -1340,6 +1340,11 @@ int BrowserService::sortPriority(const QStringList& urls, const QString& siteUrl
         priorityList << getPriority(entryUrl);
     }
 
+    // An entry can have no URLs at all (e.g. matched via keepassxc://by-uuid/ with an empty URL field)
+    if (priorityList.isEmpty()) {
+        return 0;
+    }
+
     return *std::max_element(priorityList.begin(), priorityList.end());
 }
 
