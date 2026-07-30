@@ -250,34 +250,36 @@ namespace Material
             label->setStyleSheet(QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(color)));
         }
 
-        /**
-         * The menu an action lives in, e.g. "Database" or "Database ▸ Export".
-         * Empty when the action is not on a menu at all.
-         */
-        QString menuPath(const QAction* action)
-        {
-            QStringList parts;
-            const QAction* current = action;
-            // Three hops covers KeePassXC: an action, its menu, and the menu
-            // that one hangs off - "Database ▸ Export ▸ CSV File…".
-            for (int depth = 0; depth < 3 && current; ++depth) {
-                QMenu* owner = nullptr;
-                const auto associated = current->associatedObjects();
-                for (QObject* object : associated) {
-                    if (auto* menu = qobject_cast<QMenu*>(object)) {
-                        owner = menu;
-                        break;
-                    }
-                }
-                if (!owner || owner->title().isEmpty()) {
+    } // namespace
+
+    /**
+     * The menu an action lives in, e.g. "Database" or "Database ▸ Export".
+     * Empty when the action is not on a menu at all.
+     */
+    QString menuPathOf(const QAction* action)
+    {
+        QStringList parts;
+        const QAction* current = action;
+        // Three hops covers KeePassXC: an action, its menu, and the menu
+        // that one hangs off - "Database ▸ Export ▸ CSV File…".
+        for (int depth = 0; depth < 3 && current; ++depth) {
+            QMenu* owner = nullptr;
+            const auto associated = current->associatedObjects();
+            for (QObject* object : associated) {
+                if (auto* menu = qobject_cast<QMenu*>(object)) {
+                    owner = menu;
                     break;
                 }
-                parts.prepend(QString(owner->title()).remove(QLatin1Char('&')));
-                current = owner->menuAction();
             }
-            return parts.join(QStringLiteral(" ▸ "));
+            if (!owner || owner->title().isEmpty()) {
+                break;
+            }
+            parts.prepend(QString(owner->title()).remove(QLatin1Char('&')));
+            current = owner->menuAction();
         }
-    } // namespace
+        return parts.join(QStringLiteral(" ▸ "));
+    }
+
 
     CommandPalette::CommandPalette(QWidget* parent)
         : Overlay(parent)
@@ -417,7 +419,7 @@ namespace Material
             Command command;
             command.action = action;
             command.text = action->text().remove(QLatin1Char('&'));
-            command.path = menuPath(action);
+            command.path = menuPathOf(action);
             command.shortcut = action->shortcut().toString(QKeySequence::NativeText);
             command.haystack = (command.text + QLatin1Char(' ') + command.path + QLatin1Char(' ') + command.shortcut
                                 + QLatin1Char(' ') + action->toolTip())

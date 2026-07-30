@@ -131,6 +131,9 @@ namespace Material
 
         void buildOverview();
         void buildGeneralPage();
+        void buildAutoTypePage();
+        void buildGeneratorDefaultsPage();
+        void buildShortcutsPage();
         void buildSecurityPage();
         void buildBrowserPage();
         void buildSshAgentPage();

@@ -32,6 +32,13 @@ class QWidget;
 
 namespace Material
 {
+    /**
+     * The menu an action lives in, e.g. "Database" or "Database ▸ Export".
+     * Empty when the action is not on a menu at all. Shared with the settings
+     * hub, whose Shortcuts page groups by the same path.
+     */
+    QString menuPathOf(const QAction* action);
+
     class SearchBar;
 
     /**
