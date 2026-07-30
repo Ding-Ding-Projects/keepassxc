@@ -296,10 +296,15 @@ namespace Material
             };
 
             /**
-             * URL schemes. A scheme is stated rather than guessed - nobody
-             * types ssh:// at something that is not a shell - so it outranks
-             * the host below. Web schemes are deliberately absent: https says
-             * nothing about what the site is.
+             * URL schemes. A scheme states the protocol instead of guessing at
+             * the site, so it outranks the host below. Web schemes are
+             * deliberately absent: https says nothing about what the site is.
+             *
+             * Nothing in the design exercises this table - its SSH entry is
+             * stored as the bare host `jump.internal` - so it stands on
+             * KeePassXC's own terms rather than on the design: the URL field
+             * takes whatever the user types, and an entry whose URL begins
+             * `sftp://` or `rdp://` has already said what it is for.
              */
             constexpr Rule SchemeSymbols[] = {
                 {"ftp", "folder_shared"},
@@ -321,6 +326,11 @@ namespace Material
              * is not read as a code host. This is reading the URL, not knowing
              * the brand behind it: there is no list of banks or shops here, so
              * a name that states nothing keeps the neutral glyph.
+             *
+             * A label only earns a rule when the glyph it names can be told
+             * apart from the default. `vpn` had one until it turned out that
+             * vpn_key and key are a single drawing in the bundled set, which
+             * left the rule repainting the very glyph it replaced.
              */
             constexpr Rule HostLabelSymbols[] = {
                 {"bank", "account_balance"},
@@ -339,7 +349,6 @@ namespace Material
                 {"payments", "credit_card"},
                 {"smtp", "mail"},
                 {"ssh", "terminal"},
-                {"vpn", "vpn_key"},
                 {"webmail", "mail"},
             };
 
@@ -352,17 +361,27 @@ namespace Material
 
             /**
              * The KeePass icon set is named after the KDE icons it came from,
-             * so only the numbers whose name states plainly what the picture is
-             * are mapped; the rest, number 0 included, keep the default. The
-             * comment on each line is the file name in share/icons/database.
+             * so only the numbers whose picture is plain are mapped; the rest,
+             * number 0 included, keep the default. Two kinds are left out on
+             * purpose: the numbers that draw a mascot or a vendor mark (Tux,
+             * the apple, the Windows W), which say nothing about the entry, and
+             * the numbers whose only honest glyph is a key, which would merely
+             * repaint the default. The comment on each line is the file name in
+             * share/icons/database.
              */
             constexpr IconNumberRule IconNumberSymbols[] = {
+                {2, "warning"}, // C02_MessageBox_Warning
                 {3, "dns"}, // C03_Server
+                {5, "translate"}, // C05_Edu_Languages
+                {8, "cable"}, // C08_Socket
                 {9, "badge"}, // C09_Identity
+                {11, "photo"}, // C11_Camera
                 {18, "desktop_windows"}, // C18_Display
                 {19, "mail"}, // C19_Mail_Generic
                 {21, "calendar_month"}, // C21_KOrganizer, a calendar
+                {24, "lan"}, // C24_Connect_Established
                 {25, "mail"}, // C25_Folder_Mail
+                {26, "save"}, // C26_FileSave
                 {29, "terminal"}, // C29_KGPG_Term
                 {30, "terminal"}, // C30_Konsole
                 {34, "settings"}, // C34_Configure
@@ -371,14 +390,20 @@ namespace Material
                 {42, "memory"}, // C42_KCMMemory
                 {43, "delete"}, // C43_EditTrash
                 {44, "sticky_note_2"}, // C44_KNotes
+                {46, "help"}, // C46_Help
                 {48, "folder"}, // C48_Folder
                 {49, "folder_open"}, // C49_Folder_Blue_Open
-                {50, "folder_zip"}, // C50_Folder_Tar
+                // Named as the folder it is: folder_zip draws that same folder
+                // here, so the archive would be a claim the artwork cannot make.
+                {50, "folder"}, // C50_Folder_Tar
                 {51, "lock_open"}, // C51_Decrypted
                 {52, "lock"}, // C52_Encrypted
+                {53, "check_circle"}, // C53_Apply
+                {55, "image"}, // C55_Thumbnail
                 {56, "person"}, // C56_KAddressBook
                 {57, "description"}, // C57_View_Text
                 {59, "code"}, // C59_Package_Development
+                {61, "settings"}, // C61_Services
                 {66, "account_balance"}, // C66_Money
                 {67, "verified"}, // C67_Certificate
             };
@@ -693,7 +718,9 @@ namespace Material
                 return byUrl;
             }
 
-            if (entry->attributes()->hasKey(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM)) {
+            // Entry's own predicate rather than one attribute name, so a row
+            // calls an entry a passkey exactly when the rest of the app does.
+            if (entry->hasPasskey()) {
                 return QStringLiteral("passkey");
             }
             // Weak, but true: an entry with a one-time code and no URL worth

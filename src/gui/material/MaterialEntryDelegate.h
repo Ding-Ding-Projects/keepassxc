@@ -33,8 +33,9 @@ namespace Material
      * selection paint a state layer behind the whole row.
      *
      * The model supplies everything through the roles below; the delegate never
-     * touches Entry directly, which keeps it usable for the report and history
-     * lists as well.
+     * touches Entry directly, so any model answering them can be drawn with it.
+     * Only the vault list does today - the report and history screens build
+     * their rows as widgets rather than through a view.
      */
     class EntryDelegate : public QStyledItemDelegate
     {

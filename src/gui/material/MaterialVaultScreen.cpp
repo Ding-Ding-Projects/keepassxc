@@ -173,99 +173,6 @@ namespace Material
             return 4;
         }
 
-        /** A database icon number and the Material Symbols name that stands for it. */
-        struct IconSymbol
-        {
-            int icon;
-            const char* symbol;
-        };
-
-        /**
-         * The database icons that have an unambiguous counterpart in the symbol
-         * set, by their number in `share/icons/database`. The default key (0) is
-         * deliberately absent so that an entry whose icon was never chosen can
-         * still be named after what it holds; anything else missing here keeps
-         * the fallback below.
-         */
-        constexpr IconSymbol IconSymbols[] = {
-            {1, "public"},
-            {2, "warning"},
-            {3, "dns"},
-            {4, "content_paste"},
-            {5, "translate"},
-            {7, "edit_note"},
-            {8, "cable"},
-            {9, "badge"},
-            {10, "person"},
-            {11, "photo"},
-            {13, "vpn_key"},
-            {16, "language"},
-            {18, "desktop_windows"},
-            {19, "mail"},
-            {21, "calendar_month"},
-            {24, "lan"},
-            {25, "mail"},
-            {26, "save"},
-            {27, "storage"},
-            {29, "terminal"},
-            {30, "terminal"},
-            {32, "analytics"},
-            {34, "settings"},
-            {36, "folder_zip"},
-            {38, "storage"},
-            {39, "history"},
-            {40, "mail"},
-            {42, "memory"},
-            {43, "delete"},
-            {44, "notes"},
-            {46, "help"},
-            {47, "inventory"},
-            {48, "folder"},
-            {49, "folder_open"},
-            {50, "folder_zip"},
-            {51, "lock_open"},
-            {52, "lock"},
-            {53, "check_circle"},
-            {54, "verified"},
-            {55, "image"},
-            {56, "person"},
-            {57, "article"},
-            {58, "vpn_key"},
-            {59, "code"},
-            {61, "settings"},
-            {62, "desktop_windows"},
-            {64, "desktop_windows"},
-            {65, "desktop_windows"},
-            {66, "account_balance"},
-            {67, "verified_user"},
-        };
-
-        /**
-         * The Material Symbols name for one entry's tile in the detail pane.
-         *
-         * The list row can leave its symbol empty and let the delegate fall back
-         * to the entry's own icon, because a delegate paints a QIcon; the pane is
-         * handed a symbol name instead, so the same icon has to be named. A
-         * custom icon has no name to give, and neither has an icon outside the
-         * table above - both keep `key`, which is the row's fallback too.
-         */
-        QString entrySymbol(const Entry* entry)
-        {
-            if (entry->iconUuid().isNull()) {
-                for (const auto& mapping : IconSymbols) {
-                    if (mapping.icon == entry->iconNumber()) {
-                        return QString::fromLatin1(mapping.symbol);
-                    }
-                }
-            }
-            // Nothing was chosen for it, so say what it holds: the design's
-            // passkey entry carries the passkey glyph rather than a key.
-            if (entry->hasPasskey()) {
-                return QStringLiteral("passkey");
-            }
-            return QStringLiteral("key");
-        }
-
         /** The tag that marks an entry as a favourite, as the importers write it. */
         const QString& favouriteTag()
         {
@@ -508,9 +415,12 @@ namespace Material
         case EntryDelegate::HealthRole:
             return QVariant::fromValue(healthOf(model->entryFromIndex(source)));
         case EntryDelegate::SymbolRole:
-            // No Material Symbols name: the delegate falls back to the entry's
-            // own icon, which is what the decoration of the title column is.
-            return {};
+            // The same helper the detail pane asks, so the row avatar and the
+            // pane tile are one glyph. It answers a name for every entry, so
+            // the delegate's decoration fallback is never reached here - a
+            // custom icon is a picture the pane cannot name, and both surfaces
+            // would rather show the neutral glyph than disagree.
+            return Icons::entrySymbol(model->entryFromIndex(source));
         default:
             break;
         }
@@ -1168,7 +1078,7 @@ namespace Material
         EntryDetailData data;
         data.title = entry->resolveMultiplePlaceholders(entry->title());
         data.url = entry->resolveMultiplePlaceholders(entry->displayUrl());
-        data.symbol = entrySymbol(entry);
+        data.symbol = Icons::entrySymbol(entry);
         data.username = entry->resolveMultiplePlaceholders(entry->username());
         data.password = entry->resolveMultiplePlaceholders(entry->password());
         data.notes = entry->notes();

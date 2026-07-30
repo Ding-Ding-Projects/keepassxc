@@ -73,6 +73,10 @@ namespace Material
          * The tables behind those rules are deliberately short. Nothing here
          * guesses what a brand does - an unrecognised entry keeps the neutral
          * glyph, because one honest default beats a wrong glyph on every row.
+         *
+         * A custom icon is a picture with no Material Symbols name, so it too
+         * ends at the neutral glyph. This is the one answer both the row and
+         * the detail pane draw, so an entry never wears two glyphs at once.
          */
         QString entrySymbol(const Entry* entry);
 
