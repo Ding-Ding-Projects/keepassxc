@@ -1,0 +1,110 @@
+name: Release Installer
+
+on:
+  push:
+    branches: [develop]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+env:
+  QT_VERSION: "6.7.3"
+
+jobs:
+  build-windows:
+    name: Build, test and release Windows installer
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up MSVC environment
+        uses: ilammy/msvc-dev-cmd@v1
+        with:
+          arch: x64
+
+      - name: Install Qt
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          arch: win64_msvc2019_64
+          cache: true
+
+      - name: Ensure WiX Toolset 3 is available
+        shell: pwsh
+        run: |
+          $wixBin = $null
+          if ($env:WIX -and (Test-Path (Join-Path $env:WIX 'bin\candle.exe'))) {
+            $wixBin = Join-Path $env:WIX 'bin'
+          } else {
+            choco install wixtoolset --no-progress -y
+            $candle = Get-ChildItem "C:\Program Files (x86)\WiX Toolset*\bin\candle.exe" -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $candle) { throw "WiX Toolset 3 could not be found or installed." }
+            $wixBin = $candle.DirectoryName
+          }
+          Write-Host "Using WiX at $wixBin"
+          Add-Content $env:GITHUB_PATH $wixBin
+
+      - name: Enable vcpkg GitHub Actions binary cache
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
+
+      - name: Compute snapshot version
+        id: version
+        shell: pwsh
+        run: |
+          $base = (Select-String -Path vcpkg.json -Pattern '"version-string":\s*"([^"]+)"').Matches[0].Groups[1].Value
+          $version = "$base-ci.${{ github.run_number }}"
+          "version=$version" >> $env:GITHUB_OUTPUT
+          "tag=v$version" >> $env:GITHUB_OUTPUT
+
+      - name: Configure
+        shell: pwsh
+        env:
+          VCPKG_BINARY_SOURCES: "clear;x-gha,readwrite"
+        run: |
+          cmake -S . -B build -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_INSTALLATION_ROOT/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows `
+            -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON `
+            -DKEEPASSXC_BUILD_TYPE=Snapshot `
+            -DOVERRIDE_VERSION="${{ steps.version.outputs.version }}" `
+            -DWITH_TESTS=ON `
+            -DWITH_GUI_TESTS=OFF
+
+      - name: Build
+        shell: pwsh
+        run: cmake --build build --parallel
+
+      - name: Test
+        shell: pwsh
+        run: ctest --test-dir build -E "gui|cli" --output-on-failure --parallel 2
+
+      - name: Package installer
+        shell: pwsh
+        run: |
+          cd build
+          cpack -G "ZIP;WIX"
+          Get-ChildItem *.msi, *.zip | ForEach-Object { $_.FullName }
+
+      - name: Publish GitHub Release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN }}
+        run: |
+          $tag = "${{ steps.version.outputs.tag }}"
+          $assets = @(Get-ChildItem build/*.msi) + @(Get-ChildItem build/*.zip)
+          if (-not ($assets | Where-Object { $_.Extension -eq '.msi' })) {
+            throw "No MSI installer was produced; refusing to publish a release without a real installer."
+          }
+          gh release create $tag `
+            --repo "${{ github.repository }}" `
+            --target "${{ github.sha }}" `
+            --title "KeePassXC ${{ steps.version.outputs.version }}" `
+            --notes "Automated CI release for commit ${{ github.sha }} (run #${{ github.run_number }}). Tests passed before packaging. / 自動 CI 出貨，測試全過先出安裝包，唔係亂嚟㗎。" `
+            $assets.FullName
