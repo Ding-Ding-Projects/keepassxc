@@ -10,7 +10,7 @@ What lives in this directory and what each file is responsible for.
 
 | Workflow | File | Origin | Triggers | What it does |
 | --- | --- | --- | --- | --- |
-| **Material CI and Release** | [`material-release.yml`](material-release.yml) | This fork | Push to any branch, manual dispatch | Builds and tests on Windows, then publishes one uniquely tagged GitHub Release per run |
+| **Material CI and Release** | [`material-release.yml`](material-release.yml) | This fork | Push to any branch, manual dispatch | Builds and tests on Windows, then publishes one uniquely tagged GitHub Release per run carrying the MSI installer |
 | **CodeQL** | [`codeql.yml`](codeql.yml) | Upstream KeePassXC | Push to `develop` and `release/**`, every pull request, weekly cron | Static security and quality analysis of the C++ sources, reported to the repository's code scanning alerts |
 | **Copilot Setup Steps** | [`copilot-setup-steps.yml`](copilot-setup-steps.yml) | Upstream KeePassXC | Manual dispatch, and push/PR that touches the file itself | Declares the toolchain that GitHub Copilot coding agents get pre-installed in their sandbox; it only installs packages, it does not build the project |
 
@@ -36,7 +36,12 @@ release.
 
 `test-windows` installs Qt 6.8.3 with `jurplel/install-qt-action`, CMake and Ninja with
 `lukka/get-cmake`, configures with `-DCMAKE_BUILD_TYPE=Release -DKPXC_FEATURE_DOCS=OFF
--DWITH_TESTS=ON`, builds, runs the full `ctest` suite, and uploads the Windows package.
+-DWITH_TESTS=ON -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON`, builds, runs the full `ctest` suite,
+packages with CPack, and uploads the installer and the ZIP.
+
+`X_VCPKG_APPLOCAL_DEPS_INSTALL` is what puts the vcpkg DLLs — botan, argon2 and the rest —
+into the install tree. Without it the installer would ship an executable that starts on the
+runner that built it and nowhere else.
 
 `KPXC_FEATURE_DOCS` is off because the offline documentation needs asciidoctor, a Ruby toolchain
 that is not worth installing on a runner just to render help pages. Everything else, including the
@@ -82,10 +87,22 @@ Node runtime of its own, and `lukka/get-cmake@latest` tracks its own newest rele
 Each run publishes a non-draft, non-prerelease release tagged `v0.0.<run_number>.<run_attempt>`,
 targeted at the pushed commit. `run_number` increases with every run of this workflow and
 `run_attempt` with every re-run, so the tag is unique and monotonic and no earlier release is ever
-recycled or overwritten. The release carries the one package the test job actually built:
+recycled or overwritten. The release carries the two packages the test job actually built:
 
-- `KeePassXC-Material-windows-x64.zip` — the `cmake --install` tree, which the project's own
-  windeployqt install rule populates with the Qt runtime, plugins and CA bundle.
+- `KeePassXC-<version>-x64.msi` — the installer, produced by CPack's WIX generator from the
+  configuration the project already declares in `src/CMakeLists.txt`.
+- `KeePassXC-<version>-x64.zip` — the same tree for anyone who would rather unpack it by hand.
+
+Both are populated by the project's own windeployqt install rule, so the Qt runtime, the plugins
+and the CA bundle travel with them.
+
+The MSI is checked for twice: once in the build job, which knows why cpack was run, and again in
+the release job, which is the last step before a release exists. Either check failing fails the
+run. A release that says it carries an installer and does not is worse than no release.
+
+WiX 3 has shipped on the hosted Windows images for years but is not contractual, so the build job
+looks for `candle.exe` and installs the toolset with Chocolatey if it is missing rather than
+discovering the absence at packaging time.
 
 The release is created with `gh release create` using the built-in `GITHUB_TOKEN`, granted through
 a job-scoped `permissions: contents: write` block. No organization or repository secret is

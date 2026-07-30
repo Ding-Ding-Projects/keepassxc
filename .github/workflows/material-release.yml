@@ -17,9 +17,10 @@
 #
 # This fork is Windows-only: the Material interface targets Windows and nothing else, so
 # there is exactly one build-and-test job. It builds and tests on Windows, then publishes
-# exactly one non-draft, non-prerelease GitHub Release per run carrying the package that
-# build actually produced. A failing test job skips the release job, so a red run never
-# publishes anything.
+# exactly one non-draft, non-prerelease GitHub Release per run carrying the MSI installer
+# and ZIP that build actually produced. A failing test job skips the release job, so a red
+# run never publishes anything, and a run whose cpack produced no MSI fails rather than
+# publishing a release with nothing installable in it.
 
 name: Material CI and Release
 
@@ -195,10 +196,14 @@ jobs:
       - name: Configure
         shell: pwsh
         run: |
+          # X_VCPKG_APPLOCAL_DEPS_INSTALL puts the vcpkg DLLs (botan, argon2, and the
+          # rest) into the install tree. Without it the installer ships an executable
+          # that cannot start on a machine that has never seen vcpkg.
           cmake -B build -S . -G Ninja `
             ${{ env.CMAKE_COMMON_OPTIONS }} `
             -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/.ci-vcpkg/scripts/buildsystems/vcpkg.cmake" `
             -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_TARGET_TRIPLET }} `
+            -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON `
             -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
 
       - name: Build
@@ -215,22 +220,52 @@ jobs:
           $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
           ctest --test-dir build --output-on-failure --no-tests=error --timeout 900
 
+      - name: Ensure the WiX Toolset is available
+        shell: pwsh
+        run: |
+          # CPack's WIX generator shells out to candle.exe and light.exe. The hosted
+          # image has shipped WiX 3 for years, but it is not contractual, so the
+          # absence is repaired rather than discovered at packaging time.
+          if ($env:WIX -and (Test-Path (Join-Path $env:WIX 'bin\candle.exe'))) {
+            $wixBin = Join-Path $env:WIX 'bin'
+          } else {
+            choco install wixtoolset --no-progress -y
+            $candle = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset*\bin\candle.exe' `
+              -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $candle) { throw 'WiX Toolset 3 is not installed and could not be installed.' }
+            $wixBin = $candle.DirectoryName
+          }
+          Write-Host "Using WiX at $wixBin"
+          Add-Content $env:GITHUB_PATH $wixBin
+
       - name: Package
         shell: pwsh
         run: |
-          # `cmake --install` runs the project's windeployqt install rule, so the staged
-          # tree already contains the Qt runtime, the plugins and the CA bundle.
+          # The project configures CPack with ZIP and WIX generators itself, so this
+          # produces the same two artifacts the upstream Windows release does: an MSI
+          # that a user can actually install, and a ZIP of the same tree for anyone who
+          # would rather not run an installer. Both carry the Qt runtime, the plugins
+          # and the CA bundle, because the install rule runs windeployqt.
           New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\artifacts' | Out-Null
-          cmake --install build --prefix '${{ github.workspace }}\stage\KeePassXC-Material'
-          Compress-Archive -Force `
-            -Path '${{ github.workspace }}\stage\KeePassXC-Material\*' `
-            -DestinationPath '${{ github.workspace }}\artifacts\KeePassXC-Material-windows-x64.zip'
+          cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
+          Get-ChildItem '${{ github.workspace }}\artifacts\*.msi', '${{ github.workspace }}\artifacts\*.zip' |
+            ForEach-Object { '{0}  {1:N1} MiB' -f $_.Name, ($_.Length / 1MB) }
+
+      - name: Refuse a package with no installer in it
+        shell: pwsh
+        run: |
+          # A release without an installer is not a release. Fail here, in the job that
+          # knows why, rather than letting the release job publish an empty promise.
+          $msi = Get-ChildItem '${{ github.workspace }}\artifacts\*.msi' -ErrorAction SilentlyContinue
+          if (-not $msi) { throw 'cpack produced no MSI; refusing to hand a release job nothing to publish.' }
 
       - name: Upload the Windows package
         uses: actions/upload-artifact@v7
         with:
           name: package-windows-x64
-          path: artifacts/KeePassXC-Material-windows-x64.zip
+          path: |
+            artifacts/*.msi
+            artifacts/*.zip
           if-no-files-found: error
           retention-days: 7
 
@@ -266,11 +301,25 @@ jobs:
           name: package-windows-x64
           path: artifacts
 
-      - name: Verify that the package is present
+      - name: Verify that the installer is present
         run: |
           set -euo pipefail
           ls -l artifacts
-          test -s artifacts/KeePassXC-Material-windows-x64.zip
+          # Checked in the build job too. Checked again here because this is the step
+          # standing between a missing installer and a release that claims to have one.
+          shopt -s nullglob
+          msi=(artifacts/*.msi)
+          zip=(artifacts/*.zip)
+          test ${#msi[@]} -eq 1 || { echo "expected exactly one MSI, found ${#msi[@]}" >&2; exit 1; }
+          test -s "${msi[0]}"
+          test ${#zip[@]} -eq 1 || { echo "expected exactly one ZIP, found ${#zip[@]}" >&2; exit 1; }
+          test -s "${zip[0]}"
+          {
+            echo "MSI_PATH=${msi[0]}"
+            echo "MSI_NAME=$(basename "${msi[0]}")"
+            echo "ZIP_PATH=${zip[0]}"
+            echo "ZIP_NAME=$(basename "${zip[0]}")"
+          } >> "$GITHUB_ENV"
 
       - name: Compose the release notes
         env:
@@ -288,7 +337,8 @@ jobs:
             echo
             echo "| Platform | Artifact | Notes |"
             echo "| --- | --- | --- |"
-            echo "| Windows x64 | \`KeePassXC-Material-windows-x64.zip\` | Self-contained; the Qt runtime is deployed by windeployqt. |"
+            echo "| Windows x64 | \`${MSI_NAME}\` | The installer. Self-contained; the Qt runtime is deployed by windeployqt. |"
+            echo "| Windows x64 | \`${ZIP_NAME}\` | The same tree, unpacked by hand instead. |"
             echo
             echo "Configured with \`-DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
             echo
@@ -309,5 +359,5 @@ jobs:
             --notes-file release-notes.md \
             --draft=false \
             --prerelease=false \
-            artifacts/KeePassXC-Material-windows-x64.zip
+            "${MSI_PATH}" "${ZIP_PATH}"
           echo "Published **${RELEASE_TAG}** for \`${GITHUB_SHA}\`." >> "$GITHUB_STEP_SUMMARY"
