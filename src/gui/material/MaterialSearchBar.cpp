@@ -256,8 +256,8 @@ namespace Material
         const int glyphExtent = glyphSize(m_variant);
         const QPixmap glyph =
             Icons::pixmap(QStringLiteral("search"), glyphExtent, theme()->color(Role::OnSurfaceVariant));
-        painter.drawPixmap(
-            QRect(leadingPadding(m_variant), (height() - glyphExtent) / 2, glyphExtent, glyphExtent), glyph);
+        painter.drawPixmap(QRect(leadingPadding(m_variant), (height() - glyphExtent) / 2, glyphExtent, glyphExtent),
+                           glyph);
     }
 
     void SearchBar::resizeEvent(QResizeEvent* event)

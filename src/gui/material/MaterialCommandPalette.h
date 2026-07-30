@@ -54,6 +54,12 @@ namespace Material
      * open a submenu are left out, because none of them do anything when
      * triggered. Disabled actions are listed but dimmed: knowing a command
      * exists and is unavailable right now is worth more than hiding it.
+     *
+     * The shell's own affordances - switching destination, flipping the theme -
+     * are painted rather than menu commands, so Material::Shell carries an
+     * action for each and the walk picks them up like any other. Nothing is
+     * registered here: this only ever reads the tree it is pointed at, so a
+     * command that is not an action of the source window cannot be listed.
      */
     class CommandPalette : public Overlay
     {

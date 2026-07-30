@@ -17,14 +17,17 @@
 
 #include "MaterialShell.h"
 
+#include "MaterialIcons.h"
 #include "MaterialNavigationRail.h"
 #include "MaterialSnackbar.h"
 #include "MaterialTabStrip.h"
 #include "MaterialTheme.h"
 #include "MaterialTopAppBar.h"
 
+#include <QAction>
 #include <QHBoxLayout>
 #include <QLayout>
+#include <QMenu>
 #include <QPainter>
 #include <QStackedWidget>
 #include <QVBoxLayout>
@@ -71,7 +74,34 @@ namespace Material
         m_snackbars = new SnackbarHost(m_stack);
 
         connect(m_rail, &NavigationRail::destinationActivated, this, &Shell::setCurrentDestination);
-        connect(theme(), &Theme::changed, this, [this] { update(); });
+
+        // Neither menu is ever popped up. They are here so that menuPathOf()
+        // finds a title for the shell's own commands and the palette files them
+        // under a heading; the theme toggle borrows the window's View menu name
+        // so it lists beside the other theme commands rather than on its own.
+        m_goToMenu = new QMenu(tr("Go To"), this);
+        m_viewMenu = new QMenu(tr("View"), this);
+
+        m_themeAction = new QAction(tr("Toggle Light / Dark Theme"), this);
+        m_themeAction->setObjectName(QStringLiteral("materialToggleTheme"));
+        // Which mode to switch into is the window's call - it also keeps the
+        // View ▸ Theme radio group honest - and the window already listens to
+        // the rail, so this relays that request instead of flipping the theme
+        // itself and leaving the menu behind.
+        connect(m_themeAction, &QAction::triggered, m_rail, &NavigationRail::themeToggleRequested);
+        addAction(m_themeAction);
+        m_viewMenu->addAction(m_themeAction);
+
+        // The rail's other footer button gets no action: it triggers the
+        // window's Lock All Databases, which is already a command the palette
+        // lists under Database. A second one would be the same command twice.
+
+        retintCommands();
+
+        connect(theme(), &Theme::changed, this, [this] {
+            retintCommands();
+            update();
+        });
 
         s_instance = this;
     }
@@ -133,6 +163,18 @@ namespace Material
         m_stack->addWidget(page);
         m_rail->addDestination(id, symbol, label, sublabel);
 
+        // The rail tile is painted, so nothing about this destination is a
+        // QAction and the palette would never see it. The command is that
+        // action: the tile's own label and glyph, activating the same tile.
+        auto* command = new QAction(Icons::symbol(symbol), label, this);
+        command->setObjectName(QStringLiteral("materialDestination_") + id);
+        // The symbol name has to outlive the call so retintCommands() can build
+        // the icon again in the other mode.
+        command->setData(symbol);
+        connect(command, &QAction::triggered, this, [this, id] { setCurrentDestination(id); });
+        addAction(command);
+        m_goToMenu->addAction(command);
+
         if (m_current.isEmpty()) {
             m_current = id;
             m_stack->setCurrentWidget(page);
@@ -166,6 +208,17 @@ namespace Material
         m_rail->setCurrentDestination(id);
         m_stack->setCurrentWidget(m_pages.value(id));
         emit destinationChanged(id);
+    }
+
+    void Shell::retintCommands()
+    {
+        for (QAction* command : m_goToMenu->actions()) {
+            command->setIcon(Icons::symbol(command->data().toString()));
+        }
+        // Like the rail's footer button, the toggle shows the mode the user is
+        // not in - that is the one it switches to.
+        m_themeAction->setIcon(Icons::symbol(theme()->isDark() ? QStringLiteral("light_mode")
+                                                               : QStringLiteral("dark_mode")));
     }
 
     void Shell::paintEvent(QPaintEvent* event)

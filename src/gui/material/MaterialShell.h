@@ -112,6 +112,13 @@ namespace Material
         void paintEvent(QPaintEvent* event) override;
 
     private:
+        /**
+         * Rebuild the command icons for the current theme. Icons::symbol()
+         * bakes the content colour into the QIcon, so the ones already handed
+         * to the palette are stale the moment the mode flips.
+         */
+        void retintCommands();
+
         NavigationRail* m_rail = nullptr;
         TopAppBar* m_appBar = nullptr;
         TabStrip* m_tabs = nullptr;
@@ -120,6 +127,16 @@ namespace Material
         QHash<QString, QWidget*> m_pages;
         QStringList m_order;
         QString m_current;
+        /**
+         * The two menus the shell's commands hang off. They are never popped
+         * up; they exist so menuPathOf() has a title to report and the palette
+         * files the commands under a heading instead of after everything else.
+         * The theme toggle is on a menu named for the window's View menu on
+         * purpose, so it lists with the other theme commands.
+         */
+        QMenu* m_goToMenu = nullptr;
+        QMenu* m_viewMenu = nullptr;
+        QAction* m_themeAction = nullptr;
     };
 
 } // namespace Material
