@@ -937,7 +937,9 @@ MainWindow::MainWindow()
                                                    {QStringLiteral("ssh-agent"), QStringLiteral("sshagent")},
                                                    {QStringLiteral("yubikey"), QStringLiteral("security")},
                                                    {QStringLiteral("keeshare"), QStringLiteral("keeshare")},
-                                                   {QStringLiteral("passkeys"), QStringLiteral("passkeys")}};
+                                                   // Passkeys are a browser-integration setting in the
+                                                   // design, and the hub folded them onto that page.
+                                                   {QStringLiteral("passkeys"), QStringLiteral("browser")}};
         const QString page = pages.value(id);
         if (page.isEmpty()) {
             settingsHub->showClassicEditor();
