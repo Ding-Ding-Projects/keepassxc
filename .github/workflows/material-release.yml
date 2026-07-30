@@ -292,12 +292,31 @@ jobs:
           # next step: printing only helps someone who reads this run's log, and every
           # run that has carried this change so far was cancelled before anyone did.
           try {
-            cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
-            if ($LASTEXITCODE -ne 0) { throw "cpack exited $LASTEXITCODE" }
+            # Run cpack from inside the build tree, exactly as the release.yml this
+            # workflow replaced did - that one published v2.8.0-ci.2 with a real 66 MB
+            # MSI, and this one has never produced an MSI at all. Every configure flag
+            # is identical between the two; the invocation was the only difference.
+            # Redirecting -B outside the build tree also lengthens every staged path
+            # (artifacts\_CPack_Packages\win64\WIX\... rather than build\_CPack_...),
+            # and MAX_PATH is a well-known way to make light.exe fail on a Qt tree
+            # while the ZIP generator, which stages the same files, succeeds - which is
+            # exactly the asymmetry seen here.
+            Push-Location build
+            try {
+              cpack -G 'ZIP;WIX'
+              if ($LASTEXITCODE -ne 0) { throw "cpack exited $LASTEXITCODE" }
+            } finally {
+              Pop-Location
+            }
+            Move-Item -Force -Path 'build\*.msi', 'build\*.zip' `
+              -Destination '${{ github.workspace }}\artifacts' -ErrorAction SilentlyContinue
           } catch {
             Write-Host '::group::wix.log'
-            $logs = Get-ChildItem '${{ github.workspace }}\artifacts' -Recurse -Filter 'wix.log' `
-              -ErrorAction SilentlyContinue
+            # cpack now stages inside the build tree, so the log lives under
+            # build\_CPack_Packages. Both roots are searched: the staging location is
+            # the one thing this step must not get wrong.
+            $logs = Get-ChildItem '${{ github.workspace }}\build', '${{ github.workspace }}\artifacts' `
+              -Recurse -Filter 'wix.log' -ErrorAction SilentlyContinue
             if ($logs) {
               $logs | ForEach-Object { Write-Host "--- $($_.FullName)"; Get-Content $_.FullName }
             } else {
@@ -351,7 +370,7 @@ jobs:
             # CPack derives this directory from the system name and the generator name,
             # so find it instead of hardcoding "win64\WIX" and silently collecting
             # nothing the day either one changes.
-            $wixTop = Get-ChildItem '${{ github.workspace }}\artifacts\_CPack_Packages' `
+            $wixTop = Get-ChildItem '${{ github.workspace }}\build\_CPack_Packages' `
               -Recurse -Directory -Filter 'WIX' -ErrorAction SilentlyContinue | Select-Object -First 1
 
             if (-not $wixTop) {
@@ -411,7 +430,7 @@ jobs:
               $lines += 'candle.exe is not on PATH.'
             }
 
-            $glob = '${{ github.workspace }}\artifacts'
+            $glob = '${{ github.workspace }}\build'
             $produced = Get-ChildItem "$glob\*.msi", "$glob\*.zip" -ErrorAction SilentlyContinue
             $lines += "Packages produced: $((($produced | ForEach-Object { $_.Name }) -join ', '))"
             $lines | Set-Content $summary
