@@ -3,9 +3,12 @@
 Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
 33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
-**Builds and links on MSVC. 43 of 43 tests pass.** Two long-standing CI failures — the MSI and
-CodeQL — have been diagnosed from their actual error output and fixed. Neither fix has completed a
-run yet; §7 says exactly what to check.
+**Builds, links, tests green, and the MSI now ships.** Run 30566007547 on `332bf39c` completed
+successfully: `Package` succeeded, the installer guard passed, and `package-windows-x64` carries both
+the MSI and the ZIP (138.4 MiB for the two). The offline documentation shipped —
+`KPXC_FEATURE_DOCS: ON`, so `gem install asciidoctor` worked on the runner and the Getting Started and
+User Guide shortcuts have real targets. That closes the MSI, which had been failing since before this
+branch existed. The CodeQL move to Windows has not completed a run yet; §7.
 
 This supersedes the previous handoff, which described the Material shell landing. Its §1 ("the vault
 destination is still the stock three-pane widget") is done; several of its other claims were wrong and
@@ -195,10 +198,14 @@ same as getting the failure right.
 Half 2 also fixes a silent defect nobody had noticed: the MSI had been shipping *without* the Getting
 Started and User Guide entries at all.
 
-What was verified locally: the substitution run through real CMake at both settings, both outputs parse
-as XML, all twelve `$(var.CPACK_…)` references survive, and — checked rather than assumed — the `&&` in
-the docs custom command reaches a shell instead of being escaped by `VERBATIM`. What was not verified:
-the packaging run itself.
+**Verified in CI.** Run 30566007547 on `332bf39c` went green end to end: Configure, Build, Test,
+Package, and the installer guard all succeeded; "Print why this job failed, last" was *skipped*, which
+is the `if: failure()` proof that no WiX error block was produced. `KPXC_FEATURE_DOCS: ON` in the job
+environment confirms half 2 worked — the documentation rendered and its shortcuts have real targets.
+Before that it was verified locally as far as this environment allows: the substitution run through
+real CMake at both settings, both outputs parsing as XML, all twelve `$(var.CPACK_…)` references
+surviving, and the `&&` in the docs custom command reaching a shell rather than being escaped by
+`VERBATIM`.
 
 ### Do not re-try these
 
@@ -253,18 +260,18 @@ a superseded analysis is worth nothing.
 
 ## 6. Still open
 
-- **Both CI fixes are unverified.** §7.
+- **The CodeQL move to Windows is unverified.** The MSI fix is verified (§4); CodeQL is not. §7.
 - **`testdatabase` is flaky.** It failed and then passed on *identical binaries* (`ef8f3707..3d17b7e1`
   differ by workflow text alone). `ctest --repeat until-pass:2` bounds it: retries are printed, and a
   test failing twice still fails the job. Note `testmerge`, which the previous handoff recorded as a
   pre-existing Windows failure, now passes.
-- **The vcpkg cache is never hit.** "Restore the vcpkg cache" completes in ~1 second on every run and
-  Configure then spends 29+ minutes building ports from source — a restore of `.ci-vcpkg` plus the
-  archives could not finish in a second. This is most of the 45-minute round-trip time this branch has
-  been losing. Not yet diagnosed; the likely cause is that runs keep being cancelled or failing before
-  `actions/cache`'s post-step save ever commits the key. Check a run that reached
-  "Post Restore the vcpkg cache" and see whether the save ran or was skipped. **Costs time, not
-  correctness** — do not fix it while a Windows run is live.
+- **The vcpkg cache — resolved by the first green run.** It had never been hit: "Restore the vcpkg
+  cache" finished in ~1 second every time and Configure then spent 29 minutes building ports. The cause
+  was the obvious one in hindsight — no run had ever *completed*, so `actions/cache`'s post-step save
+  had never committed a key. Run 30566007547 finished and saved 873 MiB under
+  `vcpkg-Windows-f7977f7a…-66c0373d…`. Later runs should restore it and skip the 29-minute Configure.
+  If a run still takes 29 minutes to configure, check whether `vcpkg.json` or the pinned baseline moved,
+  since both are in the key.
 - **Branch archive.** `.github/workflows/archive-branches.yml` bundles all 25 branches with full
   history, verifies the archive restores every tip, and publishes it as a release. It is
   `workflow_dispatch` only and **has never been run** — an agent cannot trigger it. **A human must run
@@ -284,28 +291,24 @@ a superseded analysis is worth nothing.
 
 ## 7. Pick it up here
 
-Head is `332bf39c`. Everything is committed and pushed; the working tree is clean.
+Everything is committed and pushed; the working tree is clean.
 
-Two runs decide whether shipping is closed. Neither had finished when this was written:
+**Shipping is closed.** `material-release` run 30566007547 on `332bf39c` went green end to end and
+produced the installer. Nothing about the MSI is outstanding.
 
-| run | commit | checks |
-| --- | --- | --- |
-| `material-release` 30566007547 | `332bf39c` | the MSI fix |
-| `codeql` 30566014569 | `332bf39c` | the first Windows analysis |
+One thing is still unverified: **CodeQL on Windows.** Its run on `332bf39c` was cancelled by a
+subsequent push (`cancel-in-progress: true`), so the newest run on the current head is its first
+uninterrupted attempt. Confirm the Windows build completed and the analysis uploaded. Note it no longer
+pays for a cold vcpkg cache — the MSI run populated the shared key.
 
-**For the MSI run**, fetch the `Test (Windows x64)` job log with a tail of 45–70 lines.
+Two smaller things, neither blocking:
 
-- No `===== WIX ERRORS =====` block and an MSI artifact → **shipping is closed.** Say so on PR #6,
-  name the MSI's size, note the suite is green, and note whether the offline documentation shipped.
-- Still failing → read the LGHT/CNDL code and fix exactly what it names. Do not open a seventh
-  configuration theory; §4 lists six dead ones.
-- Also confirm whether "Decide whether the offline documentation can be rendered" chose ON or OFF. It
-  completed in 6 seconds, which is fast for `gem install asciidoctor`, so check it did not quietly fall
-  through to OFF. CMake's feature summary in the Configure output prints `Documentation`. An OFF here
-  is not a failure — the MSI is still valid — but it means the help pages did not ship.
-
-**For the CodeQL run**, confirm the Windows build completed and the analysis uploaded. Its first run
-pays for a cold vcpkg cache, so it is slow.
+- The job now prints a `===== PACKAGE =====` block listing each artifact with its size and the
+  documentation setting, in the last steps where a small tail can reach it. Before that, "how big is
+  the MSI" could only be answered by fetching a huge log, because `actions/upload-artifact`'s
+  environment dump sits between `cpack`'s output and the end of the log. The first run to exercise it
+  is the one after `5d42588a`.
+- Nothing else in §6 needs CI.
 
 ---
 

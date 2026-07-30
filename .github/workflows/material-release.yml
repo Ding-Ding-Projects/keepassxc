@@ -587,6 +587,18 @@ jobs:
           $msi = Get-ChildItem '${{ github.workspace }}\artifacts\*.msi' -ErrorAction SilentlyContinue
           if (-not $msi) { throw 'cpack produced no MSI; refusing to hand a release job nothing to publish.' }
 
+          # Say what was actually produced. cpack prints this far enough up the log that
+          # actions/upload-artifact's several-hundred-line environment dump buries it,
+          # and "how big is the MSI" then costs a huge log fetch to answer. Printing it
+          # here, in the last steps, keeps it inside a small tail.
+          Write-Host "===== PACKAGE ====="
+          Get-ChildItem '${{ github.workspace }}\artifacts\*' -File |
+              Sort-Object Name |
+              ForEach-Object { "{0,-52} {1,10:N1} MiB" -f $_.Name, ($_.Length / 1MB) } |
+              Write-Host
+          Write-Host "offline documentation: $env:KPXC_FEATURE_DOCS"
+          Write-Host "===== END PACKAGE ====="
+
       - name: Upload the Windows package
         uses: actions/upload-artifact@v7
         with:
