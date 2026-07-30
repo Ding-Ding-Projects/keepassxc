@@ -18,12 +18,12 @@
 #include "MaterialGeneratorSheet.h"
 
 #include "MaterialButtons.h"
-#include "MaterialChip.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
 
 #include <QAbstractButton>
+#include <QEvent>
 #include <QFontMetrics>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -43,15 +43,24 @@ namespace Material
     {
         constexpr int SheetWidth = 560;
         constexpr int SheetPadding = 26;
-        constexpr int MinLength = 1;
-        constexpr int MaxLength = 128;
+        constexpr int MinLength = 8;
+        constexpr int MaxLength = 64;
         constexpr int DefaultLength = 24;
         constexpr int MeterHeight = 8;
         constexpr int ValuePadding = 18;
+        constexpr int ValueRadius = 18;
         constexpr int ChipGap = 8;
+        // The charset pill: 36px tall with 14px either side of a 13px mono label.
+        constexpr int CharsetHeight = 36;
+        constexpr int CharsetPadding = 14;
+        // The two footer actions fill the sheet width as one 44px row.
+        constexpr int ActionHeight = 44;
+        constexpr int ActionGap = 10;
+        constexpr int ActionSymbolSize = 20;
+        // The 16px slider track, a full-radius pill the handle rides inside.
+        constexpr int SliderTrackHeight = 16;
         // Width of the value column before the sheet has been laid out.
-        constexpr int DefaultValueWidth =
-            SheetWidth - 2 * SheetPadding - 2 * ValuePadding - 2 * Layout::IconButtonSize - 40;
+        constexpr int DefaultValueWidth = SheetWidth - 2 * SheetPadding - 2 * ValuePadding;
         // The meter is full at the entropy of a 24 character mixed password.
         constexpr double FullEntropy = 160.0;
 
@@ -93,6 +102,14 @@ namespace Material
         {
             QFont font = theme()->font(TypeRole::Mono);
             font.setPointSize(qMax(1, qRound(font.pointSize() * 20.0 / 14.0)));
+            return font;
+        }
+
+        /** The 13px monospace face the charset pills are labelled in. */
+        QFont pillFont()
+        {
+            QFont font = theme()->font(TypeRole::Mono);
+            font.setPointSize(qMax(1, qRound(font.pointSize() * 13.0 / 14.0)));
             return font;
         }
 
@@ -168,29 +185,26 @@ namespace Material
             Role m_fill;
         };
 
+        /**
+         * The five pools the pills switch on. The look-alikes are left out on
+         * purpose - no I or O, no l or o, no 0 or 1 - so a generated password
+         * survives being read off a screen and typed on another machine.
+         */
         QString poolFor(GeneratorSheet::CharClass charClass)
         {
             switch (charClass) {
             case GeneratorSheet::CharClass::Upper:
-                return QStringLiteral("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+                return QStringLiteral("ABCDEFGHJKLMNPQRSTUVWXYZ");
             case GeneratorSheet::CharClass::Lower:
-                return QStringLiteral("abcdefghijklmnopqrstuvwxyz");
+                return QStringLiteral("abcdefghijkmnpqrstuvwxyz");
             case GeneratorSheet::CharClass::Digits:
-                return QStringLiteral("0123456789");
+                return QStringLiteral("23456789");
             case GeneratorSheet::CharClass::Special:
-                return QStringLiteral(R"(!"#$%&'()*+,-./:;<=>?@[\]^_`{|}~)");
+                return QStringLiteral("!@#$%&*_-+=?");
             case GeneratorSheet::CharClass::Extended:
                 break;
             }
-
-            // Printable Latin-1, without the invisible soft hyphen.
-            QString extended;
-            for (ushort code = 0xA1; code <= 0xFF; ++code) {
-                if (code != 0xAD) {
-                    extended.append(QChar(code));
-                }
-            }
-            return extended;
+            return QString::fromUtf8("àéîõüçñß");
         }
     } // namespace
 
@@ -229,6 +243,81 @@ namespace Material
 
     private:
         qreal m_fraction = 0.0;
+    };
+
+    /**
+     * One character class pill.
+     *
+     * Deliberately not a Material::Chip: the design's charset pill is taller
+     * than the chip scale, carries no leading check glyph, fills with primary
+     * rather than the secondary container, and labels itself in the mono face -
+     * which Chip paints in the body face whatever font it is given.
+     */
+    class CharsetPill : public QAbstractButton
+    {
+    public:
+        explicit CharsetPill(const QString& text, QWidget* parent = nullptr)
+            : QAbstractButton(parent)
+        {
+            setText(text);
+            setCheckable(true);
+            setCursor(Qt::PointingHandCursor);
+            setFont(pillFont());
+        }
+
+        QSize sizeHint() const override
+        {
+            return {fontMetrics().horizontalAdvance(text()) + 2 * CharsetPadding, CharsetHeight};
+        }
+
+        QSize minimumSizeHint() const override
+        {
+            return sizeHint();
+        }
+
+    protected:
+        void paintEvent(QPaintEvent* event) override
+        {
+            Q_UNUSED(event)
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+
+            QColor fill;
+            QColor border;
+            QColor content;
+            if (isChecked()) {
+                fill = theme()->color(Role::Primary);
+                content = theme()->color(Role::OnPrimary);
+            } else {
+                border = theme()->color(Role::Outline);
+                content = theme()->color(Role::OnSurfaceVariant);
+                if (m_hovered || isDown()) {
+                    fill = theme()->color(Role::SurfaceContainerHigh);
+                }
+            }
+
+            paintSurface(&painter, rect(), Shape::Small, fill, border);
+            painter.setPen(content);
+            painter.setFont(font());
+            painter.drawText(rect(), Qt::AlignCenter, text());
+        }
+
+        void enterEvent(QEnterEvent* event) override
+        {
+            m_hovered = true;
+            update();
+            QAbstractButton::enterEvent(event);
+        }
+
+        void leaveEvent(QEvent* event) override
+        {
+            m_hovered = false;
+            update();
+            QAbstractButton::leaveEvent(event);
+        }
+
+    private:
+        bool m_hovered = false;
     };
 
     // -------------------------------------------------------------- generator
@@ -275,14 +364,14 @@ namespace Material
 
     bool GeneratorSheet::isClassEnabled(CharClass charClass) const
     {
-        Chip* chip = m_charsetChips.value(static_cast<int>(charClass));
-        return chip && chip->isChecked();
+        CharsetPill* pill = m_charsetPills.value(static_cast<int>(charClass));
+        return pill && pill->isChecked();
     }
 
     void GeneratorSheet::setClassEnabled(CharClass charClass, bool enabled)
     {
-        if (Chip* chip = m_charsetChips.value(static_cast<int>(charClass))) {
-            chip->setChecked(enabled);
+        if (CharsetPill* pill = m_charsetPills.value(static_cast<int>(charClass))) {
+            pill->setChecked(enabled);
         }
     }
 
@@ -338,25 +427,17 @@ namespace Material
 
     QWidget* GeneratorSheet::buildValueBox()
     {
-        auto* box = new GeneratorPanel(Shape::Row, Role::SurfaceContainer);
+        // The value box holds nothing but the value; copying and regenerating
+        // are the footer's two actions.
+        auto* box = new GeneratorPanel(ValueRadius, Role::SurfaceContainer);
         auto* layout = new QHBoxLayout(box);
-        layout->setContentsMargins(ValuePadding, ValuePadding, 12, ValuePadding);
+        layout->setContentsMargins(ValuePadding, ValuePadding, ValuePadding, ValuePadding);
         layout->setSpacing(8);
 
         m_valueLabel = new QLabel;
         m_valueLabel->setWordWrap(true);
         m_valueLabel->setFont(valueFont());
         layout->addWidget(m_valueLabel, 1);
-
-        auto* copy = new IconButton(QStringLiteral("content_copy"));
-        copy->setToolTip(tr("Copy the password"));
-        connect(copy, &IconButton::clicked, this, [this] { emit passwordCopied(m_password); });
-        layout->addWidget(copy, 0, Qt::AlignTop);
-
-        auto* refresh = new IconButton(QStringLiteral("refresh"));
-        refresh->setToolTip(tr("Generate another password"));
-        connect(refresh, &IconButton::clicked, this, &GeneratorSheet::regenerate);
-        layout->addWidget(refresh, 0, Qt::AlignTop);
 
         return box;
     }
@@ -411,35 +492,35 @@ namespace Material
             bool enabled;
         };
 
-        const QList<Charset> charsets = {{CharClass::Upper, QStringLiteral("A-Z"), true},
-                                         {CharClass::Lower, QStringLiteral("a-z"), true},
-                                         {CharClass::Digits, QStringLiteral("0-9"), true},
-                                         {CharClass::Special, tr("Special"), true},
-                                         {CharClass::Extended, tr("Extended"), false}};
+        // The last two pills are samples of their pool, not words: the design
+        // labels every class in the same monospace shorthand.
+        const QList<Charset> charsets = {{CharClass::Upper, QString::fromUtf8("A–Z"), true},
+                                         {CharClass::Lower, QString::fromUtf8("a–z"), true},
+                                         {CharClass::Digits, QString::fromUtf8("0–9"), true},
+                                         {CharClass::Special, QString::fromUtf8("/*_&…"), true},
+                                         {CharClass::Extended, QString::fromUtf8("À–ÿ"), false}};
 
         auto* block = new QWidget;
         auto* layout = new QVBoxLayout(block);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(ChipGap);
 
-        QList<QWidget*> chips;
+        QList<QWidget*> pills;
         for (const Charset& charset : charsets) {
-            auto* chip = new Chip(QString(), charset.label, Chip::Kind::Filter);
-            chip->setRadius(Shape::Small);
-            chip->setCheckable(true);
-            chip->setChecked(charset.enabled);
-            connect(chip, &QAbstractButton::toggled, this, [this, chip](bool checked) {
+            auto* pill = new CharsetPill(charset.label);
+            pill->setChecked(charset.enabled);
+            connect(pill, &QAbstractButton::toggled, this, [this, pill](bool checked) {
                 // The generator always keeps at least one pool to draw from.
                 if (!checked && characterPool().isEmpty()) {
-                    chip->setChecked(true);
+                    pill->setChecked(true);
                     return;
                 }
                 regenerate();
             });
-            m_charsetChips.insert(static_cast<int>(charset.charClass), chip);
-            chips.append(chip);
+            m_charsetPills.insert(static_cast<int>(charset.charClass), pill);
+            pills.append(pill);
         }
-        wrapIntoRows(layout, chips, SheetWidth - 2 * SheetPadding, ChipGap);
+        wrapIntoRows(layout, pills, SheetWidth - 2 * SheetPadding, ChipGap);
 
         return block;
     }
@@ -449,19 +530,21 @@ namespace Material
         auto* footer = new QWidget;
         auto* layout = new QHBoxLayout(footer);
         layout->setContentsMargins(0, 6, 0, 0);
-        layout->setSpacing(8);
-        layout->addStretch(1);
+        layout->setSpacing(ActionGap);
 
-        auto* close = new TextButton(QString(), tr("Close"));
-        connect(close, &ButtonBase::clicked, this, &Overlay::closeOverlay);
-        layout->addWidget(close);
+        // Two equal pills, not a right-aligned dialog row: regenerating and
+        // copying are the only two things this sheet does.
+        auto* regenerateButton = new OutlinedButton(QStringLiteral("refresh"), tr("Regenerate"));
+        regenerateButton->setFixedHeight(ActionHeight);
+        regenerateButton->setSymbolSize(ActionSymbolSize);
+        connect(regenerateButton, &ButtonBase::clicked, this, &GeneratorSheet::regenerate);
+        layout->addWidget(regenerateButton, 1);
 
-        m_useButton = new FilledButton(QString(), tr("Use password"));
-        connect(m_useButton, &ButtonBase::clicked, this, [this] {
-            emit passwordAccepted(m_password);
-            closeOverlay();
-        });
-        layout->addWidget(m_useButton);
+        m_copyButton = new FilledButton(QStringLiteral("content_copy"), tr("Copy"));
+        m_copyButton->setFixedHeight(ActionHeight);
+        m_copyButton->setSymbolSize(ActionSymbolSize);
+        connect(m_copyButton, &ButtonBase::clicked, this, [this] { emit passwordCopied(m_password); });
+        layout->addWidget(m_copyButton, 1);
 
         return footer;
     }
@@ -469,7 +552,7 @@ namespace Material
     QString GeneratorSheet::characterPool() const
     {
         QString pool;
-        for (auto it = m_charsetChips.cbegin(); it != m_charsetChips.cend(); ++it) {
+        for (auto it = m_charsetPills.cbegin(); it != m_charsetPills.cend(); ++it) {
             if (it.value()->isChecked()) {
                 pool.append(poolFor(static_cast<CharClass>(it.key())));
             }
@@ -486,7 +569,7 @@ namespace Material
         const double bits = entropyBits();
         m_meter->setFraction(bits / FullEntropy);
         m_entropyLabel->setText(tr("%1 bits").arg(qRound(bits)));
-        m_useButton->setEnabled(!m_password.isEmpty());
+        m_copyButton->setEnabled(!m_password.isEmpty());
     }
 
     void GeneratorSheet::applyTheme()
@@ -501,15 +584,20 @@ namespace Material
         m_valueLabel->setStyleSheet(
             QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(Role::OnSurface)));
 
+        // The handle is the full height of the track, so the whole control
+        // reads as one pill the way the design's range input does.
         m_lengthSlider->setStyleSheet(
-            QStringLiteral("QSlider::groove:horizontal{height:6px;border-radius:3px;background:%1;}"
-                           "QSlider::sub-page:horizontal{height:6px;border-radius:3px;background:%2;}"
-                           "QSlider::handle:horizontal{width:16px;margin:-5px 0;border-radius:8px;background:%2;}")
+            QStringLiteral("QSlider::groove:horizontal{height:%1px;border-radius:%2px;background:%3;}"
+                           "QSlider::sub-page:horizontal{height:%1px;border-radius:%2px;background:%4;}"
+                           "QSlider::handle:horizontal{width:%1px;margin:0;border-radius:%2px;background:%4;}")
+                .arg(SliderTrackHeight)
+                .arg(SliderTrackHeight / 2)
                 .arg(theme()->hex(Role::SecondaryContainer), theme()->hex(Role::Primary)));
 
-        const QFont chipFont = theme()->font(TypeRole::Mono);
-        for (Chip* chip : std::as_const(m_charsetChips)) {
-            chip->setFont(chipFont);
+        const QFont chipFont = pillFont();
+        for (CharsetPill* pill : std::as_const(m_charsetPills)) {
+            pill->setFont(chipFont);
+            pill->updateGeometry();
         }
 
         // The value is re-wrapped: a new type scale means a new line length.

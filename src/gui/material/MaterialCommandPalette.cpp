@@ -17,9 +17,9 @@
 
 #include "MaterialCommandPalette.h"
 
+#include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
-#include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
 
 #include <QAction>
@@ -32,6 +32,7 @@
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPalette>
 #include <QScrollArea>
 #include <QScrollBar>
 #include <QTimer>
@@ -45,18 +46,42 @@ namespace Material
 {
     namespace
     {
-        constexpr int SheetWidth = 720;
-        constexpr int SheetPadding = 20;
-        constexpr int HeaderGlyphSize = 26;
+        constexpr int SheetWidth = 840;
+        constexpr int SheetMaxHeight = 720;
+        // The palette hangs below the top of the window; it is not centred.
+        constexpr int SheetTopMargin = 90;
+        constexpr int HeaderHeight = 64;
+        constexpr int HeaderPadding = 20;
+        constexpr int HeaderSpacing = 12;
+        constexpr int HeaderGlyphSize = 24;
+        constexpr int HeaderButtonSize = 36;
+        constexpr int ListMarginSide = 12;
+        constexpr int ListMarginTop = 8;
+        constexpr int ListMarginBottom = 16;
         constexpr int ListMinHeight = 220;
-        constexpr int ListMaxHeight = 340;
+        // Everything the sheet has left once the header has taken its 64px.
+        constexpr int ListMaxHeight = SheetMaxHeight - HeaderHeight;
         constexpr int RowHeight = 44;
         constexpr int RowSpacing = 2;
         constexpr int RowPadding = 12;
-        constexpr int RowGlyphSize = 22;
-        constexpr int ShortcutPadding = 10;
-        constexpr int EmptyGlyphSize = 40;
+        constexpr int RowGlyphSize = 20;
+        constexpr int RowTextGap = 14;
+        constexpr int ShortcutPadding = 8;
+        constexpr int ShortcutHeight = 24;
+        // Padding around the group heading: 14 above, 10 either side, 6 below.
+        constexpr int HeadingSide = 10;
+        constexpr int HeadingTop = 14;
+        constexpr int HeadingBottom = 6;
+        constexpr int EmptyPadding = 40;
         constexpr qreal DisabledOpacity = 0.38;
+
+        /** The 12px monospace face the shortcut pill is set in. */
+        QFont shortcutFont()
+        {
+            QFont font = theme()->font(TypeRole::Mono);
+            font.setPointSize(qMax(1, qRound(font.pointSize() * 12.0 / 14.0)));
+            return font;
+        }
 
         /** A rounded panel filled with a colour role; the sheet and the list frame. */
         class Panel : public QWidget
@@ -89,22 +114,40 @@ namespace Material
             bool m_outlined;
         };
 
+        /** The 64px header row, with the design's hairline underneath it. */
+        class HeaderRow : public QWidget
+        {
+        public:
+            explicit HeaderRow(QWidget* parent = nullptr)
+                : QWidget(parent)
+            {
+                setFixedHeight(HeaderHeight);
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.fillRect(0, height() - 1, width(), 1, theme()->color(Role::OutlineVariant));
+            }
+        };
+
         /**
-         * One command in the list: the action's icon, its text, the menu it
-         * belongs to and its shortcut. Painted rather than built from labels so
-         * that a filter pass rebuilds sixty rows without a layout storm.
+         * One command in the list: the action's icon, its text and its
+         * shortcut - the menu it belongs to is the heading above it. Painted
+         * rather than built from labels so that a filter pass rebuilds sixty
+         * rows without a layout storm.
          */
         class CommandRow : public QWidget
         {
         public:
             CommandRow(QAction* action,
-                       const QString& path,
                        const QString& shortcut,
                        std::function<void()> activate,
                        QWidget* parent = nullptr)
                 : QWidget(parent)
                 , m_action(action)
-                , m_path(path)
                 , m_shortcut(shortcut)
                 , m_activate(std::move(activate))
             {
@@ -148,11 +191,11 @@ namespace Material
                 QColor content = theme()->color(Role::OnSurface);
                 QColor secondary = theme()->color(Role::OnSurfaceVariant);
                 if (m_selected) {
-                    paintSurface(&painter, rect(), Shape::Medium, theme()->color(Role::SecondaryContainer));
+                    paintSurface(&painter, rect(), Shape::Large, theme()->color(Role::SecondaryContainer));
                     content = theme()->color(Role::OnSecondaryContainer);
                     secondary = theme()->color(Role::OnSecondaryContainer);
                 } else if (m_hovered) {
-                    paintStateLayer(&painter, rect(), Shape::Medium, theme()->color(Role::OnSurface), 0.08);
+                    paintStateLayer(&painter, rect(), Shape::Large, theme()->color(Role::OnSurface), 0.08);
                 }
 
                 if (!m_action->isEnabled()) {
@@ -169,40 +212,21 @@ namespace Material
 
                 int right = width() - RowPadding;
 
-                // The shortcut pill sits hard right, then the menu path, and the
-                // command text takes whatever is left over and elides into it.
+                // The shortcut pill sits hard right and the command text takes
+                // whatever is left over, eliding into it.
                 if (!m_shortcut.isEmpty()) {
-                    const QFont shortcutFont = theme()->font(TypeRole::LabelSmall);
-                    const QFontMetrics metrics(shortcutFont);
+                    const QFont keysFont = shortcutFont();
+                    const QFontMetrics metrics(keysFont);
                     const int pillWidth = metrics.horizontalAdvance(m_shortcut) + 2 * ShortcutPadding;
-                    const QRect pill(right - pillWidth, (height() - 24) / 2, pillWidth, 24);
-                    paintSurface(&painter,
-                                 pill,
-                                 Shape::Small,
-                                 theme()->color(Role::SurfaceContainerHighest),
-                                 theme()->color(Role::OutlineVariant));
-                    painter.setFont(shortcutFont);
+                    const QRect pill(right - pillWidth, (height() - ShortcutHeight) / 2, pillWidth, ShortcutHeight);
+                    paintSurface(&painter, pill, Shape::ExtraSmall, theme()->color(Role::SurfaceContainer));
+                    painter.setFont(keysFont);
                     painter.setPen(theme()->color(Role::OnSurfaceVariant));
                     painter.drawText(pill, Qt::AlignCenter, m_shortcut);
                     right = pill.left() - 10;
                 }
 
-                if (!m_path.isEmpty()) {
-                    const QFont pathFont = theme()->font(TypeRole::BodySmall);
-                    const QFontMetrics metrics(pathFont);
-                    // A couple of pixels of slack, so a path that exactly fits
-                    // is not elided by a rounding difference.
-                    const int pathWidth = qMin(metrics.horizontalAdvance(m_path) + 4, width() / 4);
-                    const QRect pathRect(right - pathWidth, 0, pathWidth, height());
-                    painter.setFont(pathFont);
-                    painter.setPen(secondary);
-                    painter.drawText(pathRect,
-                                     Qt::AlignRight | Qt::AlignVCenter,
-                                     metrics.elidedText(m_path, Qt::ElideRight, pathWidth));
-                    right = pathRect.left() - 12;
-                }
-
-                const int textLeft = glyph.right() + 12;
+                const int textLeft = glyph.right() + RowTextGap;
                 const QRect textRect(textLeft, 0, qMax(0, right - textLeft), height());
                 const QFont textFont = theme()->font(TypeRole::BodyMedium);
                 painter.setFont(textFont);
@@ -237,7 +261,6 @@ namespace Material
 
         private:
             QAction* m_action = nullptr;
-            QString m_path;
             QString m_shortcut;
             std::function<void()> m_activate;
             bool m_selected = false;
@@ -248,6 +271,17 @@ namespace Material
         {
             label->setFont(theme()->font(type));
             label->setStyleSheet(QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(color)));
+        }
+
+        /** The uppercase overline that opens each menu's block of commands. */
+        void styleHeading(QLabel* label)
+        {
+            QFont font = theme()->font(TypeRole::LabelSmall);
+            font.setCapitalization(QFont::AllUppercase);
+            font.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
+            label->setFont(font);
+            label->setStyleSheet(
+                QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(Role::OnSurfaceVariant)));
         }
 
     } // namespace
@@ -286,14 +320,15 @@ namespace Material
     {
         buildSheet();
         setSheetWidth(SheetWidth);
+        setSheetTopMargin(SheetTopMargin);
         setSheetWidget(m_sheet);
 
         m_source = parent ? parent->window() : nullptr;
 
         connect(theme(), &Theme::changed, this, &CommandPalette::applyTheme);
         connect(this, &Overlay::opened, this, [this] {
-            m_search->lineEdit()->setFocus(Qt::PopupFocusReason);
-            m_search->lineEdit()->selectAll();
+            m_searchEdit->setFocus(Qt::PopupFocusReason);
+            m_searchEdit->selectAll();
         });
         applyTheme();
     }
@@ -317,36 +352,50 @@ namespace Material
 
     void CommandPalette::buildSheet()
     {
-        m_sheet = new Panel(Shape::ExtraLarge, Role::SurfaceContainerHigh, true);
+        m_sheet = new Panel(Shape::ExtraLarge, Role::SurfaceContainerLowest, false);
         m_sheet->setObjectName(QStringLiteral("commandPaletteSheet"));
 
         auto* layout = new QVBoxLayout(m_sheet);
-        layout->setContentsMargins(SheetPadding, SheetPadding, SheetPadding, SheetPadding);
-        layout->setSpacing(14);
+        // The header and the list carry their own padding, and the divider
+        // between them has to run the full width of the sheet.
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(0);
 
-        auto* header = new QHBoxLayout;
-        header->setContentsMargins(0, 0, 0, 0);
-        header->setSpacing(12);
+        auto* header = new HeaderRow(m_sheet);
+        auto* headerLayout = new QHBoxLayout(header);
+        headerLayout->setContentsMargins(HeaderPadding, 0, HeaderPadding, 0);
+        headerLayout->setSpacing(HeaderSpacing);
 
-        auto* glyph = new QLabel(m_sheet);
+        auto* glyph = new QLabel(header);
         glyph->setObjectName(QStringLiteral("commandPaletteGlyph"));
         glyph->setFixedSize(HeaderGlyphSize, HeaderGlyphSize);
-        header->addWidget(glyph);
+        headerLayout->addWidget(glyph);
 
-        m_headline = new QLabel(tr("Commands"), m_sheet);
-        header->addWidget(m_headline);
-        header->addStretch();
+        // The search field is the header: there is no headline over it and no
+        // filled pill around it.
+        m_searchEdit = new QLineEdit(header);
+        m_searchEdit->setFrame(false);
+        m_searchEdit->setPlaceholderText(tr("Search every action, setting and shortcut"));
+        connect(m_searchEdit, &QLineEdit::textChanged, this, &CommandPalette::applyFilter);
+        m_searchEdit->installEventFilter(this);
+        headerLayout->addWidget(m_searchEdit, 1);
 
-        m_countLabel = new QLabel(m_sheet);
-        header->addWidget(m_countLabel);
-        layout->addLayout(header);
+        auto* builder = new IconButton(QStringLiteral("regular_expression"), header);
+        builder->setDiameter(HeaderButtonSize);
+        builder->setToolTip(tr("Regex builder"));
+        connect(builder, &IconButton::clicked, this, [this] {
+            closeOverlay();
+            emit regexRequested();
+        });
+        headerLayout->addWidget(builder);
 
-        m_search = new SearchBar(SearchBar::Variant::Surface, m_sheet);
-        m_search->setShowRegexControls(false);
-        m_search->setPlaceholder(tr("Search every command…"));
-        connect(m_search, &SearchBar::textChanged, this, &CommandPalette::applyFilter);
-        m_search->lineEdit()->installEventFilter(this);
-        layout->addWidget(m_search);
+        auto* close = new IconButton(QStringLiteral("close"), header);
+        close->setDiameter(HeaderButtonSize);
+        close->setToolTip(tr("Close"));
+        connect(close, &IconButton::clicked, this, &Overlay::closeOverlay);
+        headerLayout->addWidget(close);
+
+        layout->addWidget(header);
 
         m_scroll = new QScrollArea(m_sheet);
         m_scroll->setWidgetResizable(true);
@@ -361,38 +410,28 @@ namespace Material
         auto* list = new QWidget(m_scroll);
         list->setAutoFillBackground(false);
         m_listLayout = new QVBoxLayout(list);
-        m_listLayout->setContentsMargins(0, 0, 0, 0);
+        m_listLayout->setContentsMargins(ListMarginSide, ListMarginTop, ListMarginSide, ListMarginBottom);
         m_listLayout->setSpacing(RowSpacing);
         m_listLayout->addStretch();
         m_scroll->setWidget(list);
         layout->addWidget(m_scroll, 1);
 
-        m_emptyState = new QWidget(m_sheet);
-        auto* emptyLayout = new QVBoxLayout(m_emptyState);
-        emptyLayout->setContentsMargins(0, 24, 0, 24);
-        emptyLayout->setSpacing(10);
-        auto* emptyGlyph = new QLabel(m_emptyState);
-        emptyGlyph->setObjectName(QStringLiteral("commandPaletteEmptyGlyph"));
-        emptyGlyph->setAlignment(Qt::AlignCenter);
-        emptyLayout->addWidget(emptyGlyph);
-        auto* emptyText = new QLabel(tr("No command matches that search."), m_emptyState);
-        emptyText->setObjectName(QStringLiteral("commandPaletteEmptyText"));
-        emptyText->setAlignment(Qt::AlignCenter);
-        emptyLayout->addWidget(emptyText);
-        m_emptyState->hide();
-        layout->addWidget(m_emptyState);
-
-        auto* hint = new QLabel(tr("↑↓ to choose · Enter to run · Esc to close"), m_sheet);
-        hint->setObjectName(QStringLiteral("commandPaletteHint"));
-        layout->addWidget(hint);
+        // One centred line quoting the query, in place of the list.
+        m_emptyLabel = new QLabel(m_sheet);
+        m_emptyLabel->setObjectName(QStringLiteral("commandPaletteEmpty"));
+        m_emptyLabel->setAlignment(Qt::AlignCenter);
+        m_emptyLabel->setWordWrap(true);
+        m_emptyLabel->setContentsMargins(EmptyPadding, EmptyPadding, EmptyPadding, EmptyPadding);
+        m_emptyLabel->hide();
+        layout->addWidget(m_emptyLabel);
     }
 
     void CommandPalette::aboutToOpen()
     {
         collect();
-        m_search->lineEdit()->blockSignals(true);
-        m_search->clear();
-        m_search->lineEdit()->blockSignals(false);
+        m_searchEdit->blockSignals(true);
+        m_searchEdit->clear();
+        m_searchEdit->blockSignals(false);
         applyFilter(QString());
     }
 
@@ -420,6 +459,9 @@ namespace Material
             command.action = action;
             command.text = action->text().remove(QLatin1Char('&'));
             command.path = menuPathOf(action);
+            // The heading a command is filed under is its top level menu, so
+            // "Database ▸ Export ▸ CSV File…" lands under Database.
+            command.group = command.path.section(QStringLiteral(" ▸ "), 0, 0);
             command.shortcut = action->shortcut().toString(QKeySequence::NativeText);
             command.haystack = (command.text + QLatin1Char(' ') + command.path + QLatin1Char(' ') + command.shortcut
                                 + QLatin1Char(' ') + action->toolTip())
@@ -445,7 +487,12 @@ namespace Material
             m_listLayout->removeWidget(row);
             row->deleteLater();
         }
+        for (QWidget* heading : m_headings) {
+            m_listLayout->removeWidget(heading);
+            heading->deleteLater();
+        }
         m_rows.clear();
+        m_headings.clear();
         m_visible.clear();
         m_selected = -1;
     }
@@ -456,7 +503,7 @@ namespace Material
 
         const QStringList tokens = query.toLower().split(QLatin1Char(' '), Qt::SkipEmptyParts);
 
-        int matches = 0;
+        QString group;
         for (int i = 0; i < m_commands.size(); ++i) {
             const Command& command = m_commands.at(i);
             if (!command.action) {
@@ -472,15 +519,27 @@ namespace Material
             if (!matched) {
                 continue;
             }
-            ++matches;
             if (m_rows.size() >= MaxResults) {
-                continue;
+                break;
+            }
+
+            // A heading opens each menu's block. Commands are sorted by path,
+            // so a filter that empties a menu drops its heading with it.
+            if (command.group != group) {
+                group = command.group;
+                if (!group.isEmpty()) {
+                    auto* heading = new QLabel(group, m_scroll->widget());
+                    heading->setObjectName(QStringLiteral("commandPaletteHeading"));
+                    heading->setContentsMargins(HeadingSide, HeadingTop, HeadingSide, HeadingBottom);
+                    styleHeading(heading);
+                    m_listLayout->insertWidget(m_listLayout->count() - 1, heading);
+                    m_headings.append(heading);
+                }
             }
 
             const int rowIndex = m_rows.size();
             auto* row = new CommandRow(
                 command.action,
-                command.path,
                 command.shortcut,
                 [this, rowIndex] {
                     setSelection(rowIndex);
@@ -493,15 +552,14 @@ namespace Material
         }
 
         const bool empty = m_rows.isEmpty();
-        m_emptyState->setVisible(empty);
+        m_emptyLabel->setText(tr("No action matches “%1”.").arg(query));
+        m_emptyLabel->setVisible(empty);
         m_scroll->setVisible(!empty);
-        // Whole rows only, so the list never ends on a half-drawn command.
-        const int rowPitch = RowHeight + RowSpacing;
-        const int wanted = qBound(ListMinHeight, m_rows.size() * rowPitch, ListMaxHeight);
-        m_scroll->setFixedHeight(qMax(rowPitch, wanted - wanted % rowPitch));
-        m_countLabel->setText(matches > m_rows.size()
-                                  ? tr("%1 of %2 commands").arg(m_rows.size()).arg(m_commands.size())
-                                  : tr("%n command(s)", "", matches));
+
+        // The list flexes with its content until the sheet reaches its 720px.
+        QWidget* list = m_scroll->widget();
+        list->layout()->activate();
+        m_scroll->setFixedHeight(qBound(ListMinHeight, list->sizeHint().height(), ListMaxHeight));
 
         setSelection(empty ? -1 : 0);
 
@@ -574,7 +632,7 @@ namespace Material
 
     bool CommandPalette::eventFilter(QObject* watched, QEvent* event)
     {
-        if (m_search && watched == m_search->lineEdit() && event->type() == QEvent::KeyPress) {
+        if (m_searchEdit && watched == m_searchEdit && event->type() == QEvent::KeyPress) {
             auto* keyEvent = static_cast<QKeyEvent*>(event);
             switch (keyEvent->key()) {
             case Qt::Key_Down:
@@ -613,20 +671,26 @@ namespace Material
     void CommandPalette::applyTheme()
     {
         if (auto* glyph = m_sheet->findChild<QLabel*>(QStringLiteral("commandPaletteGlyph"))) {
-            glyph->setPixmap(Icons::pixmap(QStringLiteral("bolt"), HeaderGlyphSize, theme()->color(Role::Primary)));
-        }
-        if (auto* glyph = m_sheet->findChild<QLabel*>(QStringLiteral("commandPaletteEmptyGlyph"))) {
             glyph->setPixmap(
-                Icons::pixmap(QStringLiteral("search_off"), EmptyGlyphSize, theme()->color(Role::OnSurfaceVariant)));
+                Icons::pixmap(QStringLiteral("bolt"), HeaderGlyphSize, theme()->color(Role::OnSurfaceVariant)));
         }
-        if (auto* label = m_sheet->findChild<QLabel*>(QStringLiteral("commandPaletteEmptyText"))) {
-            styleLabel(label, TypeRole::BodyMedium, Role::OnSurfaceVariant);
+        styleLabel(m_emptyLabel, TypeRole::BodyLarge, Role::OnSurfaceVariant);
+        for (QLabel* heading : m_sheet->findChildren<QLabel*>(QStringLiteral("commandPaletteHeading"))) {
+            styleHeading(heading);
         }
-        if (auto* label = m_sheet->findChild<QLabel*>(QStringLiteral("commandPaletteHint"))) {
-            styleLabel(label, TypeRole::LabelSmall, Role::OnSurfaceVariant);
-        }
-        styleLabel(m_headline, TypeRole::TitleLarge, Role::OnSurface);
-        styleLabel(m_countLabel, TypeRole::LabelMedium, Role::OnSurfaceVariant);
+
+        // A bare input, the way the design's header row draws it.
+        m_searchEdit->setFont(theme()->font(TypeRole::TitleSmall));
+        m_searchEdit->setStyleSheet(QStringLiteral("QLineEdit{border:none;background:transparent;padding:0;"
+                                                   "color:%1;selection-background-color:%2;selection-color:%3;}")
+                                        .arg(theme()->hex(Role::OnSurface),
+                                             theme()->hex(Role::SecondaryContainer),
+                                             theme()->hex(Role::OnSecondaryContainer)));
+        QPalette editPalette = m_searchEdit->palette();
+        editPalette.setColor(QPalette::Text, theme()->color(Role::OnSurface));
+        editPalette.setColor(QPalette::PlaceholderText, theme()->color(Role::OnSurfaceVariant));
+        m_searchEdit->setPalette(editPalette);
+
         update();
     }
 

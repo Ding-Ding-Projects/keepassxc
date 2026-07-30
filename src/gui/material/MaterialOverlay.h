@@ -53,6 +53,14 @@ namespace Material
         int sheetWidth() const;
         void setSheetWidth(int width);
 
+        /**
+         * Distance from the top of the overlay to the sheet, e.g. 90 for the
+         * command palette. A negative value - the default - centres the sheet
+         * vertically the way the regex, generator and confirm scrims do.
+         */
+        int sheetTopMargin() const;
+        void setSheetTopMargin(int margin);
+
         bool closeOnClickOutside() const;
         void setCloseOnClickOutside(bool enabled);
 
@@ -89,6 +97,7 @@ namespace Material
         QPropertyAnimation* m_animation = nullptr;
         qreal m_transition = 0.0;
         int m_sheetWidth = 0;
+        int m_sheetTopMargin = -1;
         bool m_open = false;
         bool m_closeOnClickOutside = true;
     };

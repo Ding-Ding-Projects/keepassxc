@@ -45,7 +45,7 @@ namespace Material
 {
     namespace
     {
-        constexpr int SheetWidth = 900;
+        constexpr int SheetWidth = 1000;
         constexpr int SheetPadding = 26;
         constexpr int PaletteWidth = 300;
         constexpr int TokenChipHeight = 32;
@@ -317,7 +317,11 @@ namespace Material
     QString RegexBuilder::flags() const
     {
         QString active;
-        for (const QString& flag : {QStringLiteral("i"), QStringLiteral("g"), QStringLiteral("m")}) {
+        for (const QString& flag : {QStringLiteral("g"),
+                                    QStringLiteral("i"),
+                                    QStringLiteral("m"),
+                                    QStringLiteral("s"),
+                                    QStringLiteral("u")}) {
             RegexTokenChip* chip = m_flagChips.value(flag);
             if (chip && chip->isChecked()) {
                 active.append(flag);
@@ -361,8 +365,9 @@ namespace Material
         titles->setContentsMargins(0, 0, 0, 0);
         titles->setSpacing(2);
         titles->addWidget(makeLabel(tr("Regex builder"), TypeRole::TitleLarge, Role::OnSurface));
-        titles->addWidget(
-            makeLabel(tr("The same engine every search bar uses"), TypeRole::LabelMedium, Role::OnSurfaceVariant));
+        titles->addWidget(makeLabel(tr("ECMAScript (RE2-safe subset) · same engine as every search bar"),
+                                    TypeRole::LabelMedium,
+                                    Role::OnSurfaceVariant));
         layout->addLayout(titles, 1);
 
         auto* close = new IconButton(QStringLiteral("close"));
@@ -377,27 +382,27 @@ namespace Material
     {
         const QList<TokenGroup> groups = {
             {tr("Character classes"),
-             {{QStringLiteral("\\d"), QStringLiteral("\\d"), 0, tr("Any digit")},
-              {QStringLiteral("\\w"), QStringLiteral("\\w"), 0, tr("Word character")},
-              {QStringLiteral("\\s"), QStringLiteral("\\s"), 0, tr("Whitespace")},
-              {QStringLiteral("[a-z]"), QStringLiteral("[a-z]"), 0, tr("Character range")},
-              {QStringLiteral("[^ ]"), QStringLiteral("[^]"), 1, tr("Negated set")},
-              {QStringLiteral("."), QStringLiteral("."), 0, tr("Any character")}}},
+             {{QStringLiteral("\\d"), QStringLiteral("\\d"), 0, tr("digit")},
+              {QStringLiteral("\\w"), QStringLiteral("\\w"), 0, tr("word char")},
+              {QStringLiteral("\\s"), QStringLiteral("\\s"), 0, tr("whitespace")},
+              {QStringLiteral("[a-z]"), QStringLiteral("[a-z]"), 0, tr("range")},
+              {QString::fromUtf8("[^…]"), QStringLiteral("[^]"), 1, tr("negated set")},
+              {QStringLiteral("."), QStringLiteral("."), 0, tr("any char")}}},
             {tr("Anchors"),
-             {{QStringLiteral("^"), QStringLiteral("^"), 0, tr("Start of the line")},
-              {QStringLiteral("$"), QStringLiteral("$"), 0, tr("End of the line")},
-              {QStringLiteral("\\b"), QStringLiteral("\\b"), 0, tr("Word boundary")}}},
+             {{QStringLiteral("^"), QStringLiteral("^"), 0, tr("start")},
+              {QStringLiteral("$"), QStringLiteral("$"), 0, tr("end")},
+              {QStringLiteral("\\b"), QStringLiteral("\\b"), 0, tr("word boundary")}}},
             {tr("Quantifiers"),
-             {{QStringLiteral("*"), QStringLiteral("*"), 0, tr("Zero or more")},
-              {QStringLiteral("+"), QStringLiteral("+"), 0, tr("One or more")},
-              {QStringLiteral("?"), QStringLiteral("?"), 0, tr("Optional")},
-              {QStringLiteral("{2,4}"), QStringLiteral("{2,4}"), 0, tr("Between two and four")},
-              {QStringLiteral("+?"), QStringLiteral("+?"), 0, tr("As few as possible")}}},
-            {tr("Groups and alternation"),
-             {{QStringLiteral("( )"), QStringLiteral("()"), 1, tr("Capture group")},
-              {QStringLiteral("(?: )"), QStringLiteral("(?:)"), 1, tr("Non-capturing group")},
-              {QStringLiteral("(?<n> )"), QStringLiteral("(?<n>)"), 1, tr("Named group")},
-              {QStringLiteral("|"), QStringLiteral("|"), 0, tr("Either side")}}}};
+             {{QStringLiteral("*"), QStringLiteral("*"), 0, tr("0 or more")},
+              {QStringLiteral("+"), QStringLiteral("+"), 0, tr("1 or more")},
+              {QStringLiteral("?"), QStringLiteral("?"), 0, tr("optional")},
+              {QStringLiteral("{2,4}"), QStringLiteral("{2,4}"), 0, tr("range")},
+              {QStringLiteral("+?"), QStringLiteral("+?"), 0, tr("lazy")}}},
+            {tr("Groups & alternation"),
+             {{QStringLiteral("( )"), QStringLiteral("()"), 1, tr("capture")},
+              {QStringLiteral("(?: )"), QStringLiteral("(?:)"), 1, tr("non-capturing")},
+              {QStringLiteral("(?<n> )"), QStringLiteral("(?<n>)"), 1, tr("named")},
+              {QStringLiteral("|"), QStringLiteral("|"), 0, tr("alternation")}}}};
 
         auto* palette = new QWidget;
         palette->setFixedWidth(PaletteWidth);
@@ -405,7 +410,7 @@ namespace Material
         auto* layout = new QVBoxLayout(palette);
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(14);
-        layout->addWidget(makeLabel(tr("Tokens"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+        layout->addWidget(makeLabel(tr("Guided tokens"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
 
         for (const TokenGroup& group : groups) {
             auto* block = new QWidget;
@@ -462,9 +467,11 @@ namespace Material
         boxLayout->addWidget(m_patternEdit, 1);
 
         boxLayout->addWidget(makeLabel(QStringLiteral("/"), TypeRole::Mono, Role::OnSurfaceVariant));
-        addFlagChip(boxLayout, QStringLiteral("i"), tr("Ignore case"));
         addFlagChip(boxLayout, QStringLiteral("g"), tr("List every match, not just the first"));
+        addFlagChip(boxLayout, QStringLiteral("i"), tr("Ignore case"));
         addFlagChip(boxLayout, QStringLiteral("m"), tr("^ and $ match on every line"));
+        addFlagChip(boxLayout, QStringLiteral("s"), tr(". matches a newline as well"));
+        addFlagChip(boxLayout, QStringLiteral("u"), tr("Unicode character properties"));
         patternLayout->addWidget(m_patternBox);
 
         m_statusLabel = makeLabel(QString(), TypeRole::LabelMedium, Role::OnSurfaceVariant);
@@ -492,9 +499,10 @@ namespace Material
         auto* matchLayout = new QVBoxLayout(matchBlock);
         matchLayout->setContentsMargins(0, 0, 0, 0);
         matchLayout->setSpacing(8);
-        m_matchHeading =
-            makeLabel(tr("Matches and capture groups"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true);
-        matchLayout->addWidget(m_matchHeading);
+        // The match count belongs to the status line under the pattern field,
+        // so this heading is static.
+        matchLayout->addWidget(
+            makeLabel(tr("Matches & capture groups"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
 
         m_matchPanel = new RegexPanel(Shape::Large, Role::SurfaceContainer);
         m_matchPanel->setMinimumHeight(MatchMinHeight);
@@ -529,7 +537,8 @@ namespace Material
         layout->setContentsMargins(0, 0, 0, 0);
         layout->setSpacing(10);
 
-        auto* hint = makeLabel(tr("Matched locally against the sample above. Nothing is transmitted or stored."),
+        auto* hint = makeLabel(tr("Evaluated locally with a bounded step budget. Patterns and sample text are "
+                                  "never transmitted or persisted."),
                                TypeRole::LabelMedium,
                                Role::OnSurfaceVariant);
         hint->setWordWrap(true);
@@ -554,8 +563,8 @@ namespace Material
         auto* chip = new RegexTokenChip(flag, true);
         chip->setFixedSize(FlagChipSize, FlagChipSize);
         chip->setToolTip(hint);
-        // Case insensitive and global are what the search bar uses by default.
-        chip->setChecked(flag != QLatin1String("m"));
+        // The design opens with case insensitivity alone.
+        chip->setChecked(flag == QLatin1String("i"));
         connect(chip, &QAbstractButton::toggled, this, &RegexBuilder::evaluate);
         row->addWidget(chip);
         m_flagChips.insert(flag, chip);
@@ -586,6 +595,12 @@ namespace Material
         }
         if (flagOn(QStringLiteral("m"))) {
             options |= QRegularExpression::MultilineOption;
+        }
+        if (flagOn(QStringLiteral("s"))) {
+            options |= QRegularExpression::DotMatchesEverythingOption;
+        }
+        if (flagOn(QStringLiteral("u"))) {
+            options |= QRegularExpression::UseUnicodePropertiesOption;
         }
 
         const QRegularExpression regex(pattern, options);
@@ -621,27 +636,35 @@ namespace Material
             for (const QRegularExpressionMatch& match : matches) {
                 QString text = match.captured();
                 text.replace(QLatin1Char('\n'), QLatin1String("\\n"));
-                text = metrics.elidedText(text, Qt::ElideRight, textBudget);
+                // A zero-width match still takes a row, so it says so.
+                text = text.isEmpty() ? tr("(empty)") : metrics.elidedText(text, Qt::ElideRight, textBudget);
 
                 QStringList groups;
                 for (int index = 1; index <= match.lastCapturedIndex(); ++index) {
-                    groups.append(QStringLiteral("%1:%2").arg(index).arg(match.captured(index)));
+                    const QString captured = match.captured(index);
+                    if (!captured.isEmpty()) {
+                        groups.append(captured);
+                    }
                 }
+                // The captures column is always drawn, so the three columns line
+                // up down the panel; a pattern with no groups shows an em dash.
+                const QString captures =
+                    match.lastCapturedIndex() > 0 ? groups.join(QLatin1String(" | ")) : QString::fromUtf8("—");
 
                 auto* row = new QWidget;
                 auto* rowLayout = new QHBoxLayout(row);
                 rowLayout->setContentsMargins(0, 0, 0, 0);
                 rowLayout->setSpacing(12);
 
-                auto* position =
-                    makeLabel(QString::number(match.capturedStart()), TypeRole::Mono, Role::OnSurfaceVariant);
+                // Zero padded to three digits so the column stays aligned
+                // however far into the sample a match starts.
+                auto* position = makeLabel(QStringLiteral("%1").arg(match.capturedStart(), 3, 10, QLatin1Char('0')),
+                                           TypeRole::Mono,
+                                           Role::OnSurfaceVariant);
                 position->setMinimumWidth(MatchPosWidth);
                 rowLayout->addWidget(position);
                 rowLayout->addWidget(makeLabel(text, TypeRole::Mono, Role::OnSurface), 1);
-                if (!groups.isEmpty()) {
-                    rowLayout->addWidget(
-                        makeLabel(groups.join(QLatin1String("  ")), TypeRole::Mono, Role::OnSurfaceVariant));
-                }
+                rowLayout->addWidget(makeLabel(captures, TypeRole::Mono, Role::OnSurfaceVariant));
                 m_matchLayout->addWidget(row);
             }
         }
@@ -651,9 +674,6 @@ namespace Material
             m_matchLayout->addWidget(makeLabel(empty, TypeRole::Mono, Role::OnSurfaceVariant));
         }
         m_matchLayout->addStretch(1);
-
-        m_matchHeading->setText(count > 0 ? tr("Matches and capture groups (%1)").arg(count)
-                                          : tr("Matches and capture groups"));
 
         if (pattern.isEmpty()) {
             m_statusLabel->setText(tr("Enter a pattern to preview its matches."));
@@ -693,7 +713,7 @@ namespace Material
         m_sampleEdit->setFont(monoFont(-1));
         m_sampleEdit->setStyleSheet(
             QStringLiteral("QPlainTextEdit{border:1px solid %1;border-radius:%2px;"
-                           "background:%3;color:%4;padding:10px 12px;}")
+                           "background:%3;color:%4;padding:14px 16px;}")
                 .arg(theme()->hex(Role::Outline))
                 .arg(Shape::Large)
                 .arg(theme()->hex(Role::SurfaceContainerLowest), theme()->hex(Role::OnSurface)));

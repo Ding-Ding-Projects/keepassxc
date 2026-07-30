@@ -62,6 +62,7 @@
 #include "gui/material/MaterialChangelogFeed.h"
 #include "gui/material/MaterialChangelogScreen.h"
 #include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialGeneratorSheet.h"
 #include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialHistoryScreen.h"
 #include "gui/material/MaterialHistoryStore.h"
@@ -883,7 +884,15 @@ MainWindow::MainWindow()
 
     auto* appBar = materialShell->appBar();
     connect(appBar, &Material::TopAppBar::saveRequested, m_ui->actionDatabaseSave, &QAction::trigger);
-    connect(appBar, &Material::TopAppBar::generatorRequested, m_ui->actionPasswordGenerator, &QAction::trigger);
+    // The casino button raises the design's generator sheet. The stock
+    // generator page keeps its menu entry and its place in the palette, so
+    // nothing is lost - only the app bar affordance moves.
+    auto* generatorSheet = new Material::GeneratorSheet(this);
+    connect(appBar, &Material::TopAppBar::generatorRequested, generatorSheet, &Material::Overlay::openOverlay);
+    connect(generatorSheet, &Material::GeneratorSheet::passwordCopied, this, [](const QString& password) {
+        clipboard()->setText(password);
+        Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
+    });
 
     // The bolt button and Ctrl+Shift+P are what the hidden menu bar became.
     auto* commandPalette = new Material::CommandPalette(this);
@@ -902,7 +911,11 @@ MainWindow::MainWindow()
     });
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);
+        // Every copy in the design says the same thing about the clipboard.
+        Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
     });
+    // The palette's own header button hands over to the builder.
+    connect(commandPalette, &Material::CommandPalette::regexRequested, regexBuilder, &Material::Overlay::openOverlay);
 
     // The settings hub asks the window for the three things it cannot do
     // itself: the font chooser, the real integration pages and the builder.

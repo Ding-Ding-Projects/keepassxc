@@ -29,21 +29,22 @@ class QSlider;
 namespace Material
 {
     class ButtonBase;
-    class Chip;
-    /** The entropy bar, defined in MaterialGeneratorSheet.cpp. */
+    /** The entropy bar and the charset pill, defined in MaterialGeneratorSheet.cpp. */
     class EntropyMeter;
+    class CharsetPill;
 
     /**
      * The password generator overlay.
      *
-     * A 560px sheet: the generated value in monospace with copy and regenerate
-     * buttons, an entropy meter, the length slider and the character class
-     * chips. Values are drawn from QRandomGenerator::system() over the selected
+     * A 560px sheet: the generated value in monospace, an entropy meter, the
+     * length slider, the character class pills and a Regenerate / Copy action
+     * row. Values are drawn from QRandomGenerator::system() over the selected
      * pools and the meter reports length * log2(pool size).
      *
      * This is the presentation layer only - it is deliberately not KeePassXC's
-     * PasswordGenerator. The sheet hands the chosen value to the host through
-     * passwordAccepted() and lets it decide where the password goes.
+     * PasswordGenerator. The sheet never touches the clipboard itself: it
+     * reports the value through passwordCopied() and the host decides where
+     * the password goes.
      */
     class GeneratorSheet : public Overlay
     {
@@ -79,9 +80,7 @@ namespace Material
         void regenerate();
 
     signals:
-        /** "Use password" was pressed; the sheet has closed itself. */
-        void passwordAccepted(const QString& password);
-        /** The copy button was pressed. The host owns the clipboard. */
+        /** The Copy action was pressed. The host owns the clipboard. */
         void passwordCopied(const QString& password);
 
     protected:
@@ -105,8 +104,8 @@ namespace Material
         QLabel* m_entropyLabel = nullptr;
         QLabel* m_lengthValue = nullptr;
         QSlider* m_lengthSlider = nullptr;
-        ButtonBase* m_useButton = nullptr;
-        QHash<int, Chip*> m_charsetChips;
+        ButtonBase* m_copyButton = nullptr;
+        QHash<int, CharsetPill*> m_charsetPills;
         QString m_password;
     };
 

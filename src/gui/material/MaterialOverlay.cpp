@@ -119,6 +119,20 @@ namespace Material
         centreSheet();
     }
 
+    int Overlay::sheetTopMargin() const
+    {
+        return m_sheetTopMargin;
+    }
+
+    void Overlay::setSheetTopMargin(int margin)
+    {
+        if (margin == m_sheetTopMargin) {
+            return;
+        }
+        m_sheetTopMargin = margin;
+        centreSheet();
+    }
+
     bool Overlay::closeOnClickOutside() const
     {
         return m_closeOnClickOutside;
@@ -283,18 +297,20 @@ namespace Material
         int width = m_sheetWidth > 0 ? m_sheetWidth : hint.width();
         width = qMin(width, qMax(MinSheetWidth, this->width() - 2 * EdgeMargin));
 
+        // A top-anchored sheet only has the room below its anchor to grow into.
+        const int available = m_sheetTopMargin >= 0 ? this->height() - m_sheetTopMargin - EdgeMargin
+                                                   : this->height() - 2 * EdgeMargin;
+
         int height = m_sheet->hasHeightForWidth() ? m_sheet->heightForWidth(width) : hint.height();
-        height = qMin(qMax(height, hint.height()), qMax(MinSheetHeight, this->height() - 2 * EdgeMargin));
+        height = qMin(qMax(height, hint.height()), qMax(MinSheetHeight, available));
 
         const qreal scale = StartScale + (1.0 - StartScale) * m_transition;
         const int scaledWidth = qRound(width * scale);
         const int scaledHeight = qRound(height * scale);
         const int rise = qRound(RiseDistance * (1.0 - m_transition));
+        const int top = m_sheetTopMargin >= 0 ? m_sheetTopMargin : qRound((this->height() - scaledHeight) / 2.0);
 
-        m_sheet->setGeometry(qRound((this->width() - scaledWidth) / 2.0),
-                             qRound((this->height() - scaledHeight) / 2.0) + rise,
-                             scaledWidth,
-                             scaledHeight);
+        m_sheet->setGeometry(qRound((this->width() - scaledWidth) / 2.0), top + rise, scaledWidth, scaledHeight);
     }
 
 } // namespace Material

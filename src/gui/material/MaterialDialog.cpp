@@ -32,8 +32,14 @@ namespace Material
     namespace
     {
         constexpr int DialogWidth = 460;
-        constexpr int SheetPadding = 24;
-        constexpr int SymbolSize = 26;
+        constexpr int SheetPaddingSide = 26;
+        constexpr int SheetPaddingTop = 24;
+        constexpr int SheetPaddingBottom = 20;
+        constexpr int BadgeSize = 48;
+        constexpr int BadgeSymbolSize = 24;
+        // The design leaves 14px under the badge; the sheet layout's own 8px
+        // spacing supplies the rest, so the badge reserves the remainder.
+        constexpr int BadgeGap = 6;
 
         /** The rounded-28 panel the dialog content sits on. */
         class DialogPanel : public QWidget
@@ -61,18 +67,71 @@ namespace Material
         }
     } // namespace
 
+    /**
+     * The 48px round badge the symbol sits in: a container fill with the
+     * matching on-container glyph, error-tinted on a destructive sheet.
+     */
+    class SymbolBadge : public QWidget
+    {
+    public:
+        explicit SymbolBadge(QWidget* parent = nullptr)
+            : QWidget(parent)
+        {
+        }
+
+        void setSymbol(const QString& symbol, Role container, Role content)
+        {
+            m_symbol = symbol;
+            m_container = container;
+            m_content = content;
+            update();
+        }
+
+        QSize sizeHint() const override
+        {
+            return {BadgeSize, BadgeSize + BadgeGap};
+        }
+
+        QSize minimumSizeHint() const override
+        {
+            return sizeHint();
+        }
+
+    protected:
+        void paintEvent(QPaintEvent* event) override
+        {
+            Q_UNUSED(event)
+            if (m_symbol.isEmpty()) {
+                return;
+            }
+
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            paintSurface(&painter, QRect(0, 0, BadgeSize, BadgeSize), Shape::Full, theme()->color(m_container));
+
+            const int inset = (BadgeSize - BadgeSymbolSize) / 2;
+            painter.drawPixmap(QRect(inset, inset, BadgeSymbolSize, BadgeSymbolSize),
+                               Icons::pixmap(m_symbol, BadgeSymbolSize, theme()->color(m_content)));
+        }
+
+    private:
+        QString m_symbol;
+        Role m_container = Role::PrimaryContainer;
+        Role m_content = Role::OnPrimaryContainer;
+    };
+
     Dialog::Dialog(QWidget* parent)
         : Overlay(parent)
     {
         m_sheet = new DialogPanel;
 
         m_sheetLayout = new QVBoxLayout(m_sheet);
-        m_sheetLayout->setContentsMargins(SheetPadding, SheetPadding, SheetPadding, SheetPadding);
+        m_sheetLayout->setContentsMargins(SheetPaddingSide, SheetPaddingTop, SheetPaddingSide, SheetPaddingBottom);
         m_sheetLayout->setSpacing(8);
 
-        m_symbolLabel = new QLabel(m_sheet);
-        m_symbolLabel->hide();
-        m_sheetLayout->addWidget(m_symbolLabel);
+        m_symbolBadge = new SymbolBadge(m_sheet);
+        m_symbolBadge->hide();
+        m_sheetLayout->addWidget(m_symbolBadge, 0, Qt::AlignLeft);
 
         // The text rows appear as soon as they are given something to show.
         m_headlineLabel = new QLabel(m_sheet);
@@ -125,7 +184,7 @@ namespace Material
     void Dialog::setSymbol(const QString& symbol)
     {
         m_symbol = symbol;
-        m_symbolLabel->setVisible(!symbol.isEmpty());
+        m_symbolBadge->setVisible(!symbol.isEmpty());
         applyTheme();
     }
 
@@ -193,13 +252,10 @@ namespace Material
     {
         // confirm() marks destructive sheets with a dynamic property so the
         // accent survives a theme change.
-        const Role accent = property("destructive").toBool() ? Role::Error : Role::Primary;
-
-        if (m_symbol.isEmpty()) {
-            m_symbolLabel->clear();
-        } else {
-            m_symbolLabel->setPixmap(Icons::pixmap(m_symbol, SymbolSize, theme()->color(accent)));
-        }
+        const bool destructive = property("destructive").toBool();
+        m_symbolBadge->setSymbol(m_symbol,
+                                 destructive ? Role::ErrorContainer : Role::PrimaryContainer,
+                                 destructive ? Role::OnErrorContainer : Role::OnPrimaryContainer);
 
         styleLabel(m_headlineLabel, TypeRole::TitleLarge, Role::OnSurface);
         styleLabel(m_supportingLabel, TypeRole::BodyMedium, Role::OnSurfaceVariant);

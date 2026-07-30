@@ -26,6 +26,7 @@
 
 class QAction;
 class QLabel;
+class QLineEdit;
 class QScrollArea;
 class QVBoxLayout;
 class QWidget;
@@ -39,16 +40,15 @@ namespace Material
      */
     QString menuPathOf(const QAction* action);
 
-    class SearchBar;
-
     /**
      * Every command in the application, in one searchable list.
      *
      * The Material shell hides the menu bar and the tool bar, so this is what
      * keeps their commands reachable. It walks the whole QAction tree of its
-     * source window - not a curated list - and shows each action with its icon,
-     * the menu it lives in, and its shortcut. Typing filters on all three;
-     * Up and Down move the highlight, Enter runs it, Escape closes.
+     * source window - not a curated list - and lists each action with its icon
+     * and its shortcut, under an uppercase heading naming the menu it lives in.
+     * Typing filters on all three; Up and Down move the highlight, Enter runs
+     * it, Escape closes.
      *
      * Actions that are separators, that carry no text, or that only exist to
      * open a submenu are left out, because none of them do anything when
@@ -79,6 +79,11 @@ namespace Material
     signals:
         /** @p action was chosen from the list; it has already been triggered. */
         void commandTriggered(QAction* action);
+        /**
+         * The header's regex button was pressed and the palette has closed.
+         * The host opens the regex builder - the palette does not own it.
+         */
+        void regexRequested();
 
     protected:
         /** The action tree changes with the database state, so it is re-walked. */
@@ -93,6 +98,8 @@ namespace Material
             QPointer<QAction> action;
             QString text;
             QString path;
+            /** Top level menu title; the heading this command is listed under. */
+            QString group;
             QString shortcut;
             QString haystack;
         };
@@ -107,15 +114,14 @@ namespace Material
         void applyTheme();
 
         QWidget* m_sheet = nullptr;
-        QLabel* m_headline = nullptr;
-        QLabel* m_countLabel = nullptr;
-        SearchBar* m_search = nullptr;
+        QLineEdit* m_searchEdit = nullptr;
         QScrollArea* m_scroll = nullptr;
         QVBoxLayout* m_listLayout = nullptr;
-        QWidget* m_emptyState = nullptr;
+        QLabel* m_emptyLabel = nullptr;
         QPointer<QWidget> m_source;
         QList<Command> m_commands;
         QList<QWidget*> m_rows;
+        QList<QWidget*> m_headings;
         QList<int> m_visible;
         int m_selected = -1;
     };
