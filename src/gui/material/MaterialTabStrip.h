@@ -25,7 +25,6 @@
 
 namespace Material
 {
-    class Chip;
     class IconButton;
 
     /**
@@ -91,16 +90,23 @@ namespace Material
         int indexAt(const QPoint& pos) const;
         void relayout();
         void showOverflowMenu();
+        /** Width of the overflow chip when it stands for @p hidden tabs. */
+        int overflowWidth(int hidden) const;
 
         QList<Tab> m_tabs;
-        Chip* m_overflowChip = nullptr;
+        // The overflow chip is painted with the tabs rather than being a child
+        // widget: it is tab-shaped, borderless and carries the count badge as
+        // trailing content, none of which a stock Chip offers.
+        QRect m_overflowRect;
         IconButton* m_searchButton = nullptr;
         IconButton* m_addButton = nullptr;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
         int m_pressedIndex = -1;
+        int m_hiddenCount = 0;
         bool m_pressedClose = false;
         bool m_hoverClose = false;
+        bool m_overflowHovered = false;
     };
 
 } // namespace Material

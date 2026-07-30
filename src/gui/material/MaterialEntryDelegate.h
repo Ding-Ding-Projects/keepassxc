@@ -56,7 +56,7 @@ namespace Material
         static constexpr int UrlColumnWidth = 132;
         static constexpr int HealthColumnWidth = 104;
         static constexpr int ModifiedColumnWidth = 80;
-        static constexpr int TotpColumnWidth = 32;
+        static constexpr int TotpColumnWidth = 22;
         static constexpr int MenuColumnWidth = 32;
         static constexpr int HealthDotSize = 8;
 

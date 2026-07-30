@@ -43,7 +43,8 @@ namespace Material
         constexpr int GroupsOverlineTop = 4;
         constexpr int TagsOverlineTop = 18;
         constexpr int OverlineBottom = 8;
-        constexpr int IndentStep = 16;
+        // The design starts the root at 12px and its children at 30px.
+        constexpr int IndentStep = 18;
         constexpr int TagSpacing = 8;
         constexpr int TagIndent = 4;
         constexpr int BottomSpacer = 24;

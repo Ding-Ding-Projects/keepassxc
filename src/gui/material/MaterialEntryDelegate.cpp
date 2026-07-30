@@ -259,8 +259,10 @@ namespace Material
                 metaMetrics.elidedText(index.data(UrlRole).toString(), Qt::ElideRight, layout.url.width()));
         }
 
-        if (!layout.health.isEmpty()) {
-            const Health health = healthOf(index.data(HealthRole));
+        // The design defines exactly four health states, so an entry that cannot
+        // be judged leaves the column blank instead of claiming a fifth one.
+        const Health health = healthOf(index.data(HealthRole));
+        if (!layout.health.isEmpty() && health != Health::Unknown) {
             const QColor healthTint = theme()->colors().healthColor(health);
             const QRect dot(
                 layout.health.left(), layout.health.center().y() + 1 - HealthDotSize / 2, HealthDotSize, HealthDotSize);
@@ -304,7 +306,9 @@ namespace Material
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
-        return {MinimumRowWidth, theme()->rowHeight()};
+        // The item carries the pill plus its inset, so the pill itself keeps the
+        // full density row height and the insets meet as the design's 4px gap.
+        return {MinimumRowWidth, theme()->rowHeight() + 2 * RowInset};
     }
 
     bool EntryDelegate::editorEvent(QEvent* event,

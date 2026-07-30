@@ -18,12 +18,17 @@
 #ifndef KEEPASSXC_MATERIALVAULTSCREEN_H
 #define KEEPASSXC_MATERIALVAULTSCREEN_H
 
+#include "MaterialTheme.h"
+
+#include <QHash>
 #include <QIdentityProxyModel>
 #include <QList>
 #include <QPointer>
+#include <QSharedPointer>
 #include <QSortFilterProxyModel>
 #include <QWidget>
 
+class Database;
 class DatabaseTabWidget;
 class DatabaseWidget;
 class Entry;
@@ -74,6 +79,21 @@ namespace Material
         SortKey sortKey() const;
         void setSortKey(SortKey key);
 
+        /**
+         * The database the rows belong to. Password re-use can only be seen
+         * across the whole of it, so the health verdict needs it as well as the
+         * row's own entry.
+         */
+        void setDatabase(const QSharedPointer<Database>& db);
+        /** Drop the cached re-use index; the next verdict rebuilds it. */
+        void invalidateHealth();
+        /**
+         * The design's four health states for one entry: Breached, Weak, Reused
+         * or Ok. An entry excluded from the reports or without a password cannot
+         * be judged and answers Unknown, which the row leaves blank.
+         */
+        Health healthOf(Entry* entry) const;
+
         /** The entry behind a proxy row, or nullptr when the row is stale. */
         Entry* entryFromIndex(const QModelIndex& index) const;
         QModelIndex indexFromEntry(Entry* entry) const;
@@ -88,6 +108,10 @@ namespace Material
         EntryModel* entryModel() const;
 
         SortKey m_sortKey = SortKey::Title;
+        QSharedPointer<Database> m_database;
+        // Rebuilt on demand: one pass over the database answers every row.
+        mutable QHash<QString, int> m_reuse;
+        mutable bool m_reuseDirty = true;
     };
 
     /**
@@ -168,6 +192,8 @@ namespace Material
         QWidget* buildCentreColumn();
 
         void applyTheme();
+        /** Stylesheet of the result line; error red while the pattern is broken. */
+        QString resultLineStyle() const;
         void updateFabGeometry();
         void updateVisiblePage();
         void updateResultLine();
@@ -212,6 +238,8 @@ namespace Material
         bool m_syncingSelection = false;
         bool m_syncingGroup = false;
         bool m_syncingSearch = false;
+        /** The regex chip is on and the pattern does not compile. */
+        bool m_regexInvalid = false;
     };
 
 } // namespace Material

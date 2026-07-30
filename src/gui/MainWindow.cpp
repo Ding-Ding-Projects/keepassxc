@@ -50,6 +50,8 @@
 #include "core/Metadata.h"
 #include "core/Resources.h"
 #include "core/Tools.h"
+#include "crypto/kdf/Kdf.h"
+#include "format/KeePass2.h"
 #include "gui/AboutDialog.h"
 #include "gui/ActionCollection.h"
 #include "gui/Icons.h"
@@ -123,6 +125,35 @@ namespace
     QString tabIdFor(const DatabaseWidget* dbWidget)
     {
         return QStringLiteral("db-%1").arg(reinterpret_cast<quintptr>(dbWidget));
+    }
+
+    /**
+     * The app bar's second line for a database: the design's
+     * "KDBX 4.1 · AES-256 · Argon2id · <path>".
+     *
+     * A locked database has not read its header yet, so format, cipher and KDF
+     * are unknown and the line falls back to the path alone rather than
+     * reporting defaults that may not be what is on disk.
+     */
+    QString databaseSubtitle(DatabaseWidget* dbWidget)
+    {
+        const auto db = dbWidget ? dbWidget->database() : QSharedPointer<Database>();
+        if (!db) {
+            return {};
+        }
+        const QString path = QDir::toNativeSeparators(db->filePath());
+        if (dbWidget->isLocked()) {
+            return path;
+        }
+
+        const quint32 version = db->formatVersion();
+        QStringList parts{QStringLiteral("KDBX %1.%2").arg(version >> 16).arg(version & 0xffff),
+                          KeePass2::cipherToString(db->cipher())};
+        if (const auto kdf = db->kdf()) {
+            parts << KeePass2::kdfToString(kdf->uuid());
+        }
+        parts << path;
+        return parts.join(QStringLiteral(" · "));
     }
 
     /** The database behind a widget, or a null pointer when it is locked or absent. */
@@ -1436,26 +1467,28 @@ void MainWindow::updateWindowTitle()
                                          ? m_ui->tabWidget->tabName(tabWidgetIndex).remove(QLatin1Char('*')).trimmed()
                                          : QString();
 
+        // The rail already names the destination, so the bar names the thing
+        // being looked at: a spec sheet by its own label, the changelog by the
+        // version it ends at, and everything else by the open database.
+        const QString sheetLabel = Material::SheetCatalogue::label(destination);
+
         QString barTitle;
         QString barSubtitle;
-        if (destination == QLatin1String("settings")) {
-            barTitle = tr("Settings");
-            barSubtitle = tr("Application settings");
-        } else if (destination == QLatin1String("reports")) {
-            barTitle = tr("Reports");
-            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
-        } else if (destination == QLatin1String("history")) {
-            barTitle = tr("History");
-            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
+        if (!sheetLabel.isEmpty()) {
+            barTitle = sheetLabel;
+            barSubtitle = tr("Recreated from the KeePassXC sources · every option, page and action");
         } else if (destination == QLatin1String("changelog")) {
-            barTitle = tr("Changelog");
-            barSubtitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
+            barTitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
+            barSubtitle = tr("Every released version");
+        } else if (destination == QLatin1String("appearance")) {
+            barTitle = tr("Appearance & language");
+            barSubtitle = tr("Theme, density, language and the voice of the messages");
         } else if (stackedWidgetIndex == StackedWidgetIndex::PasswordGeneratorScreen) {
             barTitle = tr("Password Generator");
             barSubtitle = tr("Standalone generator");
         } else if (dbWidget) {
             barTitle = databaseName.isEmpty() ? BaseWindowTitle : databaseName;
-            barSubtitle = QDir::toNativeSeparators(dbWidget->database()->filePath());
+            barSubtitle = databaseSubtitle(dbWidget);
         } else {
             barTitle = BaseWindowTitle;
             barSubtitle = tr("No database open");
