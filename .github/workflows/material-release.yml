@@ -220,6 +220,43 @@ jobs:
           $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
           ctest --test-dir build --output-on-failure --no-tests=error --timeout 900
 
+      - name: Say which test failed and why
+        if: failure()
+        shell: pwsh
+        run: |
+          # A failing test has so far reported only its name and a duration -
+          # --output-on-failure printed nothing at all for it, so there was no way
+          # to tell an assertion from a crash. ctest keeps the full per-test output
+          # in LastTest.log regardless of what it echoed to the console, and QTest
+          # can be asked for a report of its own. Print both, and keep the log as an
+          # artifact, so a red run names the failing function instead of just the
+          # binary.
+          $log = 'build/Testing/Temporary/LastTest.log'
+          if (Test-Path $log) {
+            Write-Host '::group::LastTest.log'
+            Get-Content $log
+            Write-Host '::endgroup::'
+          } else {
+            Write-Host "no $log; ctest did not get far enough to write one"
+          }
+
+          # Re-run just the failures with QTest reporting to a file, which does not
+          # depend on the executable's stdout reaching the console.
+          Write-Host '::group::re-run of failing tests'
+          ctest --test-dir build --rerun-failed --output-on-failure --timeout 900 `
+            --test-output-size-passed 0 --test-output-size-failed 1000000
+          Write-Host '::endgroup::'
+          exit 0
+
+      - name: Keep the test log
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-logs-windows-x64
+          path: |
+            build/Testing/Temporary/*.log
+          if-no-files-found: ignore
+
       - name: Ensure the WiX Toolset is available
         shell: pwsh
         run: |
@@ -250,19 +287,152 @@ jobs:
           # CPack reports a WiX failure by telling you to go and read wix.log, which
           # lives inside the build tree and is thrown away with the runner. That is why
           # this job has never said WHY the MSI could not be built. Print it here, so a
-          # failed run diagnoses itself instead of only announcing that it failed.
+          # failed run diagnoses itself instead of only announcing that it failed. The
+          # same evidence, plus the generated sources, is preserved as an artifact by the
+          # next step: printing only helps someone who reads this run's log, and every
+          # run that has carried this change so far was cancelled before anyone did.
           try {
             cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
             if ($LASTEXITCODE -ne 0) { throw "cpack exited $LASTEXITCODE" }
           } catch {
             Write-Host '::group::wix.log'
-            Get-ChildItem '${{ github.workspace }}\artifacts' -Recurse -Filter 'wix.log' |
-              ForEach-Object { Write-Host "--- $($_.FullName)"; Get-Content $_.FullName }
+            $logs = Get-ChildItem '${{ github.workspace }}\artifacts' -Recurse -Filter 'wix.log' `
+              -ErrorAction SilentlyContinue
+            if ($logs) {
+              $logs | ForEach-Object { Write-Host "--- $($_.FullName)"; Get-Content $_.FullName }
+            } else {
+              # An absent log is itself a finding: it means CPack failed before it ever
+              # ran candle or light. Say so, rather than printing nothing and leaving the
+              # reader to assume the log was empty or the search was broken.
+              Write-Host 'No wix.log was produced. CPack failed before invoking candle/light.'
+            }
             Write-Host '::endgroup::'
             throw
           }
           Get-ChildItem '${{ github.workspace }}\artifacts\*.msi', '${{ github.workspace }}\artifacts\*.zip' |
             ForEach-Object { '{0}  {1:N1} MiB' -f $_.Name, ($_.Length / 1MB) }
+
+      # ---------------------------------------------------------------------------
+      # Diagnostics for the WIX generator.
+      #
+      # Every WiX failure reaches the log as the same three lines - "Problem running
+      # WiX", "Fatal WiX Generator Error", "Problem compressing the directory" - which
+      # name neither the tool that failed nor the input it choked on. CPack writes the
+      # real reason to wix.log, and candle's and light's actual inputs to .wxs/.wxi
+      # files, all inside the packaging tree, all of which die with the runner.
+      #
+      # These two steps lift that evidence out. Everything captured is generated build
+      # metadata: tool command lines, file paths, and CPack's own configuration. No
+      # source, no binaries, no secrets. The staged install tree is recorded as a
+      # listing rather than copied, both because it is the same tens of MiB already
+      # published as the ZIP and because the listing - not the bytes - is what answers
+      # the "path over 260 characters" and "name WiX cannot turn into an Id" questions.
+      # ---------------------------------------------------------------------------
+      - name: Collect the WiX diagnostics
+        # always(), not failure(): a cancelled run still leaves its evidence behind, and
+        # on a green run the same files record what a working package looked like, which
+        # is the only baseline a future failure can be diffed against.
+        if: always()
+        shell: pwsh
+        run: |
+          # Pure evidence-gathering. It must never be the reason a run goes red, so it
+          # swallows its own errors; it cannot turn a red run green, because a step that
+          # succeeds after a failed one does not clear the job's failure.
+          # GitHub sets 'Stop' for pwsh steps, which would promote a missing file into a
+          # terminating error and lose the rest of the evidence.
+          $ErrorActionPreference = 'Continue'
+
+          $out = '${{ github.workspace }}\wix-diagnostics'
+          $summary = Join-Path $out 'summary.txt'
+          try {
+            New-Item -ItemType Directory -Force -Path $out | Out-Null
+            $lines = @("Collected for ${{ github.sha }} on $(Get-Date -Format o)")
+
+            # CPack derives this directory from the system name and the generator name,
+            # so find it instead of hardcoding "win64\WIX" and silently collecting
+            # nothing the day either one changes.
+            $wixTop = Get-ChildItem '${{ github.workspace }}\artifacts\_CPack_Packages' `
+              -Recurse -Directory -Filter 'WIX' -ErrorAction SilentlyContinue | Select-Object -First 1
+
+            if (-not $wixTop) {
+              $lines += 'No _CPack_Packages/**/WIX directory: cpack did not reach the WIX generator.'
+            } else {
+              $lines += "WiX packaging directory: $($wixTop.FullName)"
+
+              # wix.log carries the candle and light command lines and their output, so
+              # it names which tool failed. The .wxs and .wxi are exactly what CPack
+              # generated and handed to candle; the .wixobj are what candle produced, so
+              # their presence alone distinguishes a candle failure from a light one.
+              # license.rtf is CPack's conversion of CPACK_RESOURCE_FILE_LICENSE, kept
+              # because an empty one would explain a light failure by itself.
+              $wanted = @('.log', '.wxs', '.wxi', '.wixobj', '.rtf')
+              $copied = Get-ChildItem $wixTop.FullName -File -ErrorAction SilentlyContinue |
+                Where-Object { $wanted -contains $_.Extension }
+              $copied | Copy-Item -Destination $out -ErrorAction SilentlyContinue
+              $lines += "Captured: $((($copied | ForEach-Object { $_.Name }) -join ', '))"
+
+              # The staged tree is what CPack turned into File elements. Longest source
+              # path first, so the first data line answers the path-length question
+              # outright instead of requiring the reader to scan the whole listing.
+              $stage = Get-ChildItem $wixTop.FullName -Directory -ErrorAction SilentlyContinue |
+                Select-Object -First 1
+              if ($stage) {
+                $files = @(Get-ChildItem $stage.FullName -Recurse -File -ErrorAction SilentlyContinue)
+                $lines += "Staged install tree: $($stage.FullName) ($($files.Count) files)"
+                $header = @(
+                  "# Staged install tree for $($stage.Name)",
+                  '# Columns: full source path length, size in bytes, path relative to the install root.',
+                  '# Sorted longest first: candle and light open these paths through the',
+                  '# Win32 API, which stops at 260 characters unless long paths are enabled.',
+                  ''
+                )
+                $rows = $files | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {
+                  '{0,4}  {1,12}  {2}' -f $_.FullName.Length, $_.Length, $_.FullName.Substring($stage.FullName.Length)
+                }
+                ($header + $rows) | Set-Content (Join-Path $out 'staged-install-tree.txt')
+              } else {
+                $lines += 'No staged install tree: cpack failed before staging the install.'
+              }
+            }
+
+            # The configuration CPack actually consumed, as opposed to what the
+            # CMakeLists appears to say - the two differ whenever a variable is set
+            # after include(CPack).
+            Copy-Item '${{ github.workspace }}\build\CPackConfig.cmake' -Destination $out `
+              -ErrorAction SilentlyContinue
+
+            # Which WiX is on PATH. The template declares RequiredVersion 3.6.3303.0,
+            # and the runner image and the chocolatey fallback do not ship the same
+            # build, so the version belongs in the record next to the failure.
+            $candle = Get-Command candle.exe -ErrorAction SilentlyContinue
+            if ($candle) {
+              $lines += "candle.exe: $($candle.Source) ($($candle.Version))"
+            } else {
+              $lines += 'candle.exe is not on PATH.'
+            }
+
+            $glob = '${{ github.workspace }}\artifacts'
+            $produced = Get-ChildItem "$glob\*.msi", "$glob\*.zip" -ErrorAction SilentlyContinue
+            $lines += "Packages produced: $((($produced | ForEach-Object { $_.Name }) -join ', '))"
+            $lines | Set-Content $summary
+            Write-Host ($lines -join "`n")
+          } catch {
+            # Record the failure to collect rather than hiding it, so an empty artifact
+            # is never mistaken for an absence of evidence.
+            "Diagnostics collection failed: $_" | Set-Content $summary -ErrorAction SilentlyContinue
+            Write-Host "Diagnostics collection failed: $_"
+          }
+
+      - name: Upload the WiX diagnostics
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: wix-diagnostics-windows-x64
+          path: wix-diagnostics
+          # warn, not error: this artifact is evidence about a failure, so being unable
+          # to collect it must not become a second failure that masks the first.
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Refuse a package with no installer in it
         shell: pwsh
