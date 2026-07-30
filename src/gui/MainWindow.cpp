@@ -900,8 +900,19 @@ MainWindow::MainWindow()
     new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
 
     auto* regexBuilder = new Material::RegexBuilder(this);
-    connect(appBar, &Material::TopAppBar::regexRequested, regexBuilder, &Material::Overlay::openOverlay);
+    auto openBuilderFor = [this, regexBuilder](Material::SearchBar* bar) {
+        m_builderTarget = bar;
+        regexBuilder->openOverlay();
+    };
+    connect(appBar, &Material::TopAppBar::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
+    // A pattern belongs to whichever search bar asked for the builder. Only a
+    // request that came from nowhere in particular - the app bar, the palette,
+    // the shortcut - falls through to searching the vault.
     connect(regexBuilder, &Material::RegexBuilder::patternApplied, this, [this](const QString& pattern) {
+        if (m_builderTarget) {
+            m_builderTarget->setText(pattern);
+            return;
+        }
         if (auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget()) {
             if (shell()) {
                 shell()->setCurrentDestination(QStringLiteral("vault"));
@@ -915,17 +926,24 @@ MainWindow::MainWindow()
         Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
     });
     // The palette's own header button hands over to the builder.
-    connect(commandPalette, &Material::CommandPalette::regexRequested, regexBuilder, &Material::Overlay::openOverlay);
+    connect(commandPalette, &Material::CommandPalette::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
 
     // The settings hub asks the window for the three things it cannot do
     // itself: the font chooser, the real integration pages and the builder.
-    connect(settingsHub, &Material::SettingsHub::builderRequested, this, [regexBuilder](Material::SearchBar*) {
-        regexBuilder->openOverlay();
-    });
+    connect(settingsHub, &Material::SettingsHub::builderRequested, this, openBuilderFor);
     // The Appearance destination is the same screen the hub used to embed, so
     // it asks the window for the same three things.
-    if (auto* search = appearanceScreen->searchBar()) {
-        connect(search, &Material::SearchBar::builderRequested, this, [regexBuilder] { regexBuilder->openOverlay(); });
+    // Every surface that carries a builder button routes it the same way, so
+    // the pattern lands back in the field it was launched from.
+    for (auto* screen : {static_cast<Material::Screen*>(appearanceScreen),
+                         static_cast<Material::Screen*>(reportsScreen),
+                         static_cast<Material::Screen*>(historyScreen),
+                         static_cast<Material::Screen*>(changelogScreen)}) {
+        if (auto* search = screen->searchBar()) {
+            connect(search, &Material::SearchBar::builderRequested, this, [openBuilderFor, search] {
+                openBuilderFor(search);
+            });
+        }
     }
     connect(appearanceScreen, &Material::SettingsScreen::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
     connect(settingsHub, &Material::SettingsHub::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);

@@ -85,7 +85,6 @@ namespace Material
 
         // The design keeps the changelog header to one row: title and Export,
         // then the filter row. There is no blurb between them.
-        m_screen->searchBar()->setShowRegexControls(false);
 
         QFile file(ChangelogResource);
         if (file.open(QIODevice::ReadOnly | QIODevice::Text)) {

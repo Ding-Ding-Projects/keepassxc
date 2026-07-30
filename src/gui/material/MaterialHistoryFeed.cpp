@@ -124,7 +124,6 @@ namespace Material
                "and how many entries were added, removed or edited since the save before it. No entry contents are "
                "written here, which is also why restoring contents is not yet possible."));
 
-        m_screen->searchBar()->setShowRegexControls(false);
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
             refresh();

@@ -113,8 +113,7 @@ namespace Material
          * is written out identically at every level, in both languages.
          */
         const char* const PlainEnglishCaption = "A dim sum dish, shown once at startup.";
-        const char* const PlayfulEnglishCaption =
-            "Startup dim sum: translucent, pleated, and none of your business.";
+        const char* const PlayfulEnglishCaption = "Startup dim sum: translucent, pleated, and none of your business.";
         const char16_t* const PlainCantoneseCaption = u"開機時出現嘅一款點心。";
         const char16_t* const PlayfulCantoneseCaption = u"開機點心：透光、有摺、同你啲密碼冇關。";
 

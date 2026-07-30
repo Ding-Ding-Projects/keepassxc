@@ -236,8 +236,8 @@ namespace Material
             return;
         }
         // The bell toggles: pressing it again while the panel is up puts it away.
-        connect(bar, &TopAppBar::notificationsRequested, this, &NotificationCentre::toggleOverlay,
-                Qt::UniqueConnection);
+        connect(
+            bar, &TopAppBar::notificationsRequested, this, &NotificationCentre::toggleOverlay, Qt::UniqueConnection);
         bar->setNotificationCount(unreadCount());
     }
 
@@ -356,8 +356,7 @@ namespace Material
     {
         auto* header = new QWidget;
         auto* layout = new QHBoxLayout(header);
-        layout->setContentsMargins(
-            RowHorizontalPadding, HeaderTopPadding, RowHorizontalPadding, HeaderBottomPadding);
+        layout->setContentsMargins(RowHorizontalPadding, HeaderTopPadding, RowHorizontalPadding, HeaderBottomPadding);
         layout->setSpacing(HeaderSpacing);
 
         // Three children and no more: the title, the Clear all pill, the close.
@@ -389,8 +388,7 @@ namespace Material
         row->setAccessibleDescription(entry.body);
 
         auto* layout = new QHBoxLayout(row);
-        layout->setContentsMargins(
-            RowHorizontalPadding, RowVerticalPadding, RowHorizontalPadding, RowVerticalPadding);
+        layout->setContentsMargins(RowHorizontalPadding, RowVerticalPadding, RowHorizontalPadding, RowVerticalPadding);
         layout->setSpacing(RowGap);
 
         // Two children: the severity glyph and the text column. Removal is the

@@ -22,6 +22,7 @@
 #include <QActionGroup>
 #include <QLabel>
 #include <QMainWindow>
+#include <QPointer>
 #include <QProgressBar>
 #include <QSystemTrayIcon>
 #include <QTimer>
@@ -33,6 +34,11 @@
 namespace Ui
 {
     class MainWindow;
+}
+
+namespace Material
+{
+    class SearchBar;
 }
 
 class InactivityTimer;
@@ -179,6 +185,13 @@ private:
     SignalMultiplexer m_actionMultiplexer;
     /** Health findings from the last Reports pass, for the rail's sublabel. */
     int m_reportFindings = 0;
+    /**
+     * The search bar that asked for the regex builder, so an applied pattern
+     * lands back in the field it was launched from. Null means the request
+     * came from the app bar, the palette or the shortcut, which have no field
+     * of their own and search the vault instead.
+     */
+    QPointer<Material::SearchBar> m_builderTarget;
     QPointer<QAction> m_clearHistoryAction;
     QPointer<QAction> m_searchWidgetAction;
     QPointer<QMenu> m_entryContextMenu;

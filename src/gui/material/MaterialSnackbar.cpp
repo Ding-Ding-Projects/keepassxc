@@ -230,13 +230,13 @@ namespace Material
         // A toast always carries a trailing action. With none named it reads
         // "Dismiss" and its only effect is to take the toast away, which is what
         // an action with no handler already does.
-        : Snackbar(SeverityLevel::Info,
-                   QString(),
-                   message,
-                   QList<NotificationAction>{
-                       NotificationAction(actionLabel.isEmpty() ? tr("Dismiss") : actionLabel, {})},
-                   msec > 0 ? msec : ToastLifetime,
-                   parent)
+        : Snackbar(
+              SeverityLevel::Info,
+              QString(),
+              message,
+              QList<NotificationAction>{NotificationAction(actionLabel.isEmpty() ? tr("Dismiss") : actionLabel, {})},
+              msec > 0 ? msec : ToastLifetime,
+              parent)
     {
     }
 

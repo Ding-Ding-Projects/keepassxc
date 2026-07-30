@@ -144,7 +144,6 @@ namespace Material
         connect(detailed, &QAbstractButton::clicked, this, &ReportsFeed::detailedReportsRequested);
         m_screen->addHeaderWidget(detailed);
 
-        m_screen->searchBar()->setShowRegexControls(false);
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
             apply();
