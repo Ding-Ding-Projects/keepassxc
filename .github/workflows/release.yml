@@ -46,6 +46,14 @@ jobs:
           Write-Host "Using WiX at $wixBin"
           Add-Content $env:GITHUB_PATH $wixBin
 
+      - name: Install asciidoctor
+        shell: pwsh
+        run: |
+          gem install asciidoctor --no-document
+          $gemBin = Split-Path (Get-Command gem).Source
+          Add-Content $env:GITHUB_PATH $gemBin
+          asciidoctor --version
+
       - name: Enable vcpkg GitHub Actions binary cache
         uses: actions/github-script@v7
         with:
