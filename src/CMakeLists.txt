@@ -136,6 +136,7 @@ set(gui_SOURCES
         gui/material/MaterialTabStrip.cpp
         gui/material/MaterialTheme.cpp
         gui/material/MaterialTopAppBar.cpp
+        gui/material/MaterialVaultScreen.cpp
         gui/material/MaterialVaultSidebar.cpp
         gui/material/MaterialVoice.cpp
         gui/AboutDialog.cpp
@@ -268,6 +269,7 @@ endif()
 
 if(WIN32)
     list(APPEND gui_SOURCES
+            gui/material/MaterialWindowChrome.cpp
             gui/osutils/winutils/DeviceListenerWin.cpp
             gui/osutils/winutils/ScreenLockListenerWin.cpp
             gui/osutils/winutils/WinUtils.cpp)

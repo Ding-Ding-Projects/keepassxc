@@ -48,6 +48,8 @@ namespace Material
         constexpr int TagIndent = 4;
         constexpr int BottomSpacer = 24;
         constexpr qreal OverlineLetterSpacing = 0.8;
+        /** How many group rows the tree insists on before it starts scrolling. */
+        constexpr int MinimumVisibleGroupRows = 12;
 
         constexpr int EditorRowHeight = 44;
         constexpr int EditorRowPadding = 12;
@@ -497,7 +499,11 @@ namespace Material
         const int rowHeight = qMax(m_groupView->sizeHintForRow(0), GroupDelegate::RowHeight);
         const int rows = qMax(1, visibleRowCount(QModelIndex()));
         const int height = rows * rowHeight;
-        m_groupView->setMinimumHeight(qMin(height, 2 * rowHeight));
+        // A scroll area's size hint is a fixed 192px whatever it holds, so the
+        // layout would squeeze a short tree into a scroller with the pane half
+        // empty below it. The minimum is what the rows actually need, capped so
+        // a large group tree still leaves room for the tags and the bottom row.
+        m_groupView->setMinimumHeight(qMin(height, MinimumVisibleGroupRows * rowHeight));
         m_groupView->setMaximumHeight(height);
         m_groupView->updateGeometry();
     }

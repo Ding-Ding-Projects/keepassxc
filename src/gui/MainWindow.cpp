@@ -71,7 +71,11 @@
 #include "gui/material/MaterialTabStrip.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/material/MaterialTopAppBar.h"
+#include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVoice.h"
+#ifdef Q_OS_WIN
+#include "gui/material/MaterialWindowChrome.h"
+#endif
 #include "gui/osutils/OSUtils.h"
 #include "gui/remote/RemoteSettings.h"
 #include "keeshare/KeeShare.h"
@@ -699,8 +703,16 @@ MainWindow::MainWindow()
     auto* historyScreen = new Material::HistoryScreen;
     auto* changelogScreen = new Material::ChangelogScreen;
 
+    // The vault destination is the three panes of the design in front of the
+    // stock stack. The stack itself keeps the whole database lifecycle - the
+    // welcome screen, the unlock dialog, the entry and group editors, the
+    // reports and settings pages, the generator - and the panes take over
+    // whenever an unlocked database is being browsed.
+    auto* vaultScreen = new Material::VaultScreen;
+    vaultScreen->setHostWidget(m_ui->stackedWidget, m_ui->tabWidget);
+
     materialShell->addDestination(
-        QStringLiteral("vault"), m_ui->stackedWidget, QStringLiteral("key"), tr("Vault"), QString());
+        QStringLiteral("vault"), vaultScreen, QStringLiteral("key"), tr("Vault"), QString());
     materialShell->addDestination(
         QStringLiteral("reports"), reportsScreen, QStringLiteral("health_and_safety"), tr("Reports"), QString());
     materialShell->addDestination(
@@ -858,15 +870,17 @@ MainWindow::MainWindow()
     // Every save is a revision. The signal lives on the database widget, so it
     // is picked up as each one appears.
     auto watchSaves = [this](DatabaseWidget* dbWidget) {
-        if (!dbWidget) {
+        // Both databaseOpened() and databaseUnlocked() land here for the same
+        // widget, so the connection is made once. Qt::UniqueConnection cannot
+        // do that job - it asserts on a functor - so the widget is marked.
+        static const char* const watchedProperty = "materialSaveWatcher";
+        if (!dbWidget || dbWidget->property(watchedProperty).toBool()) {
             return;
         }
-        connect(
-            dbWidget,
-            &DatabaseWidget::databaseSaved,
-            this,
-            [dbWidget] { Material::HistoryStore::instance()->recordSave(dbWidget->database()); },
-            Qt::UniqueConnection);
+        dbWidget->setProperty(watchedProperty, true);
+        connect(dbWidget, &DatabaseWidget::databaseSaved, this, [dbWidget] {
+            Material::HistoryStore::instance()->recordSave(dbWidget->database());
+        });
     };
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, watchSaves);
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, watchSaves);
@@ -1645,6 +1659,16 @@ void MainWindow::showEvent(QShowEvent* event)
         m_windowInformationRestored = true;
     }
 
+    // Dress the title bar in the application's own colours. The native handle
+    // exists by the time a show event arrives, and install() is idempotent, so
+    // a return from the tray only refreshes the attributes. Only Windows has a
+    // caption an application is allowed to repaint, and the translation unit is
+    // only in the build there, so the call is fenced off rather than left to
+    // fail at link time on a platform that does not compile it.
+#ifdef Q_OS_WIN
+    Material::WindowChrome::install(this);
+#endif
+
     // State plainly, once, that the humour level styles warnings and errors too.
     if (Material::Voice::disclosurePending()) {
         QTimer::singleShot(0, this, [this] { Material::Voice::presentDisclosure(this); });
@@ -1770,6 +1794,19 @@ bool MainWindow::focusNextPrevChild(bool next)
 
 void MainWindow::focusSearchWidget()
 {
+    // The vault's own search pill is the search field now. It drives the same
+    // DatabaseWidget::search() the tool bar field does, so Ctrl+F lands there
+    // whenever a database is actually being browsed.
+    if (shell()) {
+        auto* vault = qobject_cast<Material::VaultScreen*>(shell()->destination(QStringLiteral("vault")));
+        auto* dbWidget = vault ? vault->databaseWidget() : nullptr;
+        if (dbWidget && !dbWidget->isLocked()) {
+            shell()->setCurrentDestination(QStringLiteral("vault"));
+            vault->focusSearch();
+            return;
+        }
+    }
+
     if (m_searchWidgetAction->isEnabled()) {
         // The search field is still a tool bar widget, so the tool bar is
         // raised for exactly as long as the search needs it and drops again on

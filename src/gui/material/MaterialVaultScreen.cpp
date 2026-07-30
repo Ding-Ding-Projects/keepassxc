@@ -20,7 +20,9 @@
 #include "MaterialButtons.h"
 #include "MaterialEntryDelegate.h"
 #include "MaterialEntryDetail.h"
+#include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
+#include "MaterialNotifier.h"
 #include "MaterialRegexBuilder.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSegmentedButton.h"
@@ -34,9 +36,12 @@
 #include "core/Group.h"
 #include "core/PasswordHealth.h"
 #include "core/Totp.h"
+#include "gui/Clipboard.h"
 #include "gui/DatabaseTabWidget.h"
 #include "gui/DatabaseWidget.h"
 #include "gui/MainWindow.h"
+#include "gui/MessageWidget.h"
+#include "gui/entry/EditEntryWidget.h"
 #include "gui/entry/EntryModel.h"
 #include "gui/entry/EntryView.h"
 #include "gui/group/GroupModel.h"
@@ -48,6 +53,7 @@
 #include <QHBoxLayout>
 #include <QItemSelectionModel>
 #include <QLabel>
+#include <QLineEdit>
 #include <QListView>
 #include <QPainter>
 #include <QResizeEvent>
@@ -135,10 +141,10 @@ namespace Material
             return {};
         }
 
-        QString formatSize(int bytes)
+        QString formatSize(qint64 bytes)
         {
             static const char* units[] = {"B", "KiB", "MiB", "GiB"};
-            double value = bytes;
+            double value = static_cast<double>(bytes);
             int unit = 0;
             while (value >= 1024.0 && unit < 3) {
                 value /= 1024.0;
@@ -161,6 +167,65 @@ namespace Material
             escaped.replace(QLatin1String("\""), QLatin1String("\\\""));
             return QStringLiteral("*\"%1\"").arg(escaped);
         }
+
+        /** Say what a message banner would have said, as a toast. */
+        void announce(const QString& text, KMessageWidget::MessageType type)
+        {
+            switch (type) {
+            case KMessageWidget::Positive:
+                Notify::success(text);
+                return;
+            case KMessageWidget::Warning:
+                Notify::warning(text);
+                return;
+            case KMessageWidget::Error:
+                Notify::error(text);
+                return;
+            case KMessageWidget::Information:
+                break;
+            }
+            Notify::info(text);
+        }
+
+        /**
+         * Open the selected entry in the stock editor on a given tab.
+         *
+         * switchToEntryEdit() is the public entry point and it makes the editor
+         * the database widget's current page, so the widget it just raised is
+         * the one to tell which tab to show. Nothing private is reached into.
+         */
+        void openEntryEditor(DatabaseWidget* dbWidget, EditEntryWidget::Page page)
+        {
+            if (!dbWidget || !dbWidget->currentSelectedEntry()) {
+                return;
+            }
+            dbWidget->switchToEntryEdit();
+            if (auto* editor = qobject_cast<EditEntryWidget*>(dbWidget->currentWidget())) {
+                editor->switchToPage(page);
+            }
+        }
+
+        /**
+         * The entry list.
+         *
+         * Only exists so the design's padding can be put inside the scroll area
+         * rather than around it - QAbstractScrollArea::setViewportMargins is
+         * protected - which keeps the scroll bar on the outer edge and leaves
+         * room under the last row for the floating action button.
+         */
+        class EntryListView : public QListView
+        {
+        public:
+            explicit EntryListView(QWidget* parent = nullptr)
+                : QListView(parent)
+            {
+            }
+
+            void setPadding(int left, int top, int right, int bottom)
+            {
+                setViewportMargins(left, top, right, bottom);
+            }
+        };
     } // namespace
 
     // -------------------------------------------------------------- EntryListModel
@@ -390,6 +455,9 @@ namespace Material
 
         m_centre = buildCentreColumn();
         m_centre->setParent(panes);
+        // The FAB is placed by hand over the centre column, and the row shape
+        // sheds columns when the column narrows; both need its resizes.
+        m_centre->installEventFilter(this);
         layout->addWidget(m_centre, 1);
 
         m_detail = new EntryDetail(panes);
@@ -455,14 +523,10 @@ namespace Material
             }
         });
         connect(m_detail, &EntryDetail::historyRequested, this, [this] {
-            if (m_dbWidget) {
-                m_dbWidget->switchToEntryEdit();
-            }
+            openEntryEditor(m_dbWidget, EditEntryWidget::Page::History);
         });
         connect(m_detail, &EntryDetail::attachmentActivated, this, [this](const QString&) {
-            if (m_dbWidget) {
-                m_dbWidget->switchToEntryEdit();
-            }
+            openEntryEditor(m_dbWidget, EditEntryWidget::Page::Advanced);
         });
         connect(m_detail, &EntryDetail::favouriteToggled, this, &VaultScreen::toggleFavourite);
 
@@ -508,7 +572,8 @@ namespace Material
 
         m_entryDelegate = new EntryDelegate(this);
 
-        m_entryList = new QListView(m_listStack);
+        auto* entryList = new EntryListView(m_listStack);
+        m_entryList = entryList;
         m_entryList->setModel(m_entryModel);
         m_entryList->setItemDelegate(m_entryDelegate);
         m_entryList->setFrameShape(QFrame::NoFrame);
@@ -526,7 +591,8 @@ namespace Material
         m_entryList->setMouseTracking(true);
         m_entryList->viewport()->setAttribute(Qt::WA_Hover, true);
         m_entryList->viewport()->setAutoFillBackground(false);
-        m_entryList->setViewportMargins(ListPadding, 0, ListPadding, 0);
+        // The bottom padding is what keeps the last row clear of the FAB.
+        entryList->setPadding(ListPadding, 0, ListPadding, ListBottomPadding);
         // The delegate owns the whole row, so the application sheet's item
         // padding and its square selection fill are switched off here.
         m_entryList->setStyleSheet(
@@ -597,13 +663,19 @@ namespace Material
             }
         });
 
-        for (auto signal : {&QAbstractItemModel::modelReset, &QAbstractItemModel::layoutChanged}) {
-            Q_UNUSED(signal);
-        }
         connect(m_entryModel, &QAbstractItemModel::modelReset, this, &VaultScreen::updateResultLine);
         connect(m_entryModel, &QAbstractItemModel::rowsInserted, this, &VaultScreen::updateResultLine);
         connect(m_entryModel, &QAbstractItemModel::rowsRemoved, this, &VaultScreen::updateResultLine);
         connect(m_entryModel, &QAbstractItemModel::layoutChanged, this, &VaultScreen::updateResultLine);
+
+        // The view owns its selection model for good: the proxy above never
+        // changes, only its source does, so this is connected once.
+        connect(m_entryList->selectionModel(), &QItemSelectionModel::selectionChanged, this, [this] {
+            syncSelectionToDatabase();
+        });
+        connect(m_entryList->selectionModel(), &QItemSelectionModel::currentChanged, this, [this] {
+            syncSelectionToDatabase();
+        });
 
         return centre;
     }
@@ -776,11 +848,18 @@ namespace Material
         m_databaseConnections << connect(
             dbWidget, &DatabaseWidget::listModeActivated, this, &VaultScreen::updateResultLine);
 
-        connect(m_entryList->selectionModel(),
-                &QItemSelectionModel::selectionChanged,
-                this,
-                [this] { syncSelectionToDatabase(); },
-                Qt::UniqueConnection);
+        // A message banner inside the database widget cannot be seen while the
+        // panes are in front of it, so what it says is repeated as a toast. The
+        // test is on the banner itself: whenever the stock stack is the visible
+        // page the banner speaks for itself and nothing is said twice.
+        for (MessageWidget* banner : dbWidget->findChildren<MessageWidget*>()) {
+            m_databaseConnections << connect(banner, &MessageWidget::showAnimationStarted, this, [banner] {
+                if (banner->isVisible() || banner->text().isEmpty()) {
+                    return;
+                }
+                announce(banner->text(), banner->messageType());
+            });
+        }
 
         updateTags();
         syncGroupFromDatabase();
@@ -1032,7 +1111,7 @@ namespace Material
         const bool databaseOnScreen = m_databasePage && m_host && m_host->currentWidget() == m_databasePage;
         const bool viewMode = m_dbWidget && m_dbWidget->currentMode() == DatabaseWidget::Mode::ViewMode;
 
-        QWidget* page = (databaseOnScreen && viewMode) ? m_panes : static_cast<QWidget*>(m_host);
+        QWidget* page = (databaseOnScreen && viewMode) ? m_panes : static_cast<QWidget*>(m_host.data());
         if (page && m_stack->currentWidget() != page) {
             m_stack->setCurrentWidget(page);
         }

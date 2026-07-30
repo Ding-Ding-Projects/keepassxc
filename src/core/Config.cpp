@@ -122,6 +122,7 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_ApplicationTheme, {QS("GUI/ApplicationTheme"), Roaming, QS("auto")}},
     {Config::GUI_MaterialSeed, {QS("GUI/MaterialSeed"), Roaming, QS("keepass")}},
     {Config::GUI_MaterialDensity, {QS("GUI/MaterialDensity"), Roaming, QS("comfortable")}},
+    {Config::GUI_MaterialBackdrop, {QS("GUI/MaterialBackdrop"), Roaming, true}},
     {Config::GUI_CompactMode, {QS("GUI/CompactMode"), Roaming, false}},
     {Config::GUI_CheckForUpdates, {QS("GUI/CheckForUpdates"), Roaming, true}},
     {Config::GUI_CheckForUpdatesNextCheck, {QS("GUI/CheckForUpdatesNextCheck"), Local, 0}},

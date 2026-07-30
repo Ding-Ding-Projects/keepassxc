@@ -99,6 +99,7 @@ public:
         GUI_ApplicationTheme,
         GUI_MaterialSeed,
         GUI_MaterialDensity,
+        GUI_MaterialBackdrop,
         GUI_CompactMode,
         GUI_CheckForUpdates,
         GUI_CheckForUpdatesIncludeBetas,
