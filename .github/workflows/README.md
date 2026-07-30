@@ -18,6 +18,19 @@ Only `material-release.yml` was added by this fork. The other two are upstream f
 they are so the `pull.yml` rebase from `keepassxreboot/keepassxc` stays conflict-free. They still
 mention Linux runners; that is upstream's business and is deliberately not edited here.
 
+### There used to be a second release workflow
+
+`release.yml` — "Release Installer" — was added on `develop` while the Material rewrite was on its
+own branch, and published `v2.8.0-ci.2` with a genuine 66 MB MSI. It worked. It just could not
+coexist with this one: both triggered on a push to `develop`, both created a release, and the two
+tag schemes (`v2.8.0-ci.<run>` and `v0.0.<run>.<attempt>`) would have interleaved into a release
+list nobody could read.
+
+So it was removed, and the part of it that mattered was not: CPack packaging, the WiX availability
+check and `X_VCPKG_APPLOCAL_DEPS_INSTALL` all moved into `material-release.yml`, which keeps the
+hardened vcpkg baseline handling, Qt 6.8.3 and the Node-24 action majors that `release.yml` did not
+have. Nothing that workflow could do was lost; releases published by it keep their tags and assets.
+
 ## Material CI and Release
 
 ### Shape
