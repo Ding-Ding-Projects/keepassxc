@@ -46,6 +46,42 @@ namespace Material
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
 
+        /** The fill of the glyph circle, one container role per tint. */
+        QColor tintContainer(RevisionTint tint)
+        {
+            switch (tint) {
+            case RevisionTint::Accent:
+                return theme()->color(Role::PrimaryContainer);
+            case RevisionTint::Positive:
+                return theme()->color(Role::GreenContainer);
+            case RevisionTint::Negative:
+                return theme()->color(Role::ErrorContainer);
+            case RevisionTint::Muted:
+                return theme()->color(Role::SurfaceContainerHigh);
+            case RevisionTint::Neutral:
+                break;
+            }
+            return theme()->color(Role::SecondaryContainer);
+        }
+
+        /** The glyph colour that goes with tintContainer(). */
+        QColor tintContent(RevisionTint tint)
+        {
+            switch (tint) {
+            case RevisionTint::Accent:
+                return theme()->color(Role::OnPrimaryContainer);
+            case RevisionTint::Positive:
+                return theme()->color(Role::OnGreenContainer);
+            case RevisionTint::Negative:
+                return theme()->color(Role::OnErrorContainer);
+            case RevisionTint::Muted:
+                return theme()->color(Role::OnSurfaceVariant);
+            case RevisionTint::Neutral:
+                break;
+            }
+            return theme()->color(Role::OnSecondaryContainer);
+        }
+
         /** The metadata line is monospace at the 12px meta size. */
         QFont metaFont()
         {
@@ -98,14 +134,15 @@ namespace Material
                 layout->setSpacing(ActionGap);
                 layout->addStretch(1);
 
-                // Rows without an id are the empty state, not revisions. Giving
-                // them a Diff and a Restore would offer two actions that can
-                // only answer that there is nothing there.
-                if (!m_revision.id.isEmpty()) {
+                // Each action is drawn only where it can do its job: a save
+                // record can be compared but not put back, and the lines the
+                // screen shows when there is nothing to list can do neither.
+                if (m_revision.canDiff) {
                     m_diff = new DiffButton(diffText, this);
                     m_diff->setFixedHeight(ActionHeight);
                     layout->addWidget(m_diff);
-
+                }
+                if (m_revision.canRestore) {
                     m_restore = new TonalButton(QStringLiteral("restore"), restoreText, this);
                     m_restore->setFixedHeight(ActionHeight);
                     layout->addWidget(m_restore);
@@ -136,19 +173,18 @@ namespace Material
                              theme()->color(Role::SurfaceContainerLow),
                              theme()->color(Role::OutlineVariant));
 
-                QColor circle = pillContainerColor(m_revision.tint);
-                if (!circle.isValid()) {
-                    circle = theme()->color(Role::SurfaceContainerHigh);
-                }
                 const QRect circleRect(RowPaddingX, (height() - CircleSize) / 2, CircleSize, CircleSize);
-                paintSurface(&painter, circleRect, Shape::Full, circle);
+                paintSurface(&painter, circleRect, Shape::Full, tintContainer(m_revision.tint));
 
-                const QPixmap glyph = Icons::pixmap(m_revision.symbol, GlyphSize, pillContentColor(m_revision.tint));
+                const QPixmap glyph = Icons::pixmap(m_revision.symbol, GlyphSize, tintContent(m_revision.tint));
                 const int inset = (CircleSize - GlyphSize) / 2;
                 painter.drawPixmap(circleRect.topLeft() + QPoint(inset, inset), glyph);
 
+                // The text stops at whichever action comes first, so a row that
+                // only carries a Restore gives its label the same room.
+                const ButtonBase* leading = m_diff ? m_diff : m_restore;
                 const int left = circleRect.right() + CircleGap;
-                const int right = m_diff ? m_diff->x() - ColumnGap : width() - RowPaddingX;
+                const int right = leading ? leading->x() - ColumnGap : width() - RowPaddingX;
                 const int textWidth = qMax(0, right - left);
                 const QFont labelFont = theme()->font(TypeRole::LabelLarge);
                 const QFont metaLineFont = metaFont();
@@ -181,9 +217,9 @@ namespace Material
         : Screen(parent)
     {
         setHeadline(tr("Version history"));
-        setSupportingText(tr("Every entry, group, attachment and setting is snapshotted into a local Git repository "
-                             "beside the app data, never inside your vault folder. Ciphertext stays ciphertext, and "
-                             "restoring writes a new revision so an undo can itself be undone."));
+        // The feed replaces this with what its sources actually hold; the
+        // screen's own line has to be true on its own until then.
+        setSupportingText(tr("Changes to the open database, newest first."));
 
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search this surface"));
@@ -276,6 +312,8 @@ namespace Material
             const QString id = revision.id;
             if (row->diffButton()) {
                 connect(row->diffButton(), &QAbstractButton::clicked, this, [this, id] { emit diffRequested(id); });
+            }
+            if (row->restoreButton()) {
                 connect(
                     row->restoreButton(), &QAbstractButton::clicked, this, [this, id] { emit restoreRequested(id); });
             }

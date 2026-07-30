@@ -29,15 +29,33 @@ class QVBoxLayout;
 namespace Material
 {
     /**
-     * One entry of the version history.
+     * Which container family a revision's 40px glyph circle is drawn in.
      *
-     * @p tint picks the family the 40px glyph circle is drawn in, so a deletion
-     * can read as an error and a restore as healthy without the screen knowing
-     * anything about what a revision means.
+     * The design tints the circle by what the change was about, so a deletion
+     * reads as an error and a restore as healthy without the screen knowing
+     * anything about where a revision came from.
+     */
+    enum class RevisionTint
+    {
+        Neutral, // secondary container: the design's ordinary change
+        Accent, // primary container: a secret of an entry changed
+        Positive, // green container: something was put back
+        Negative, // error container: something was removed
+        Muted // surface container: the lines that are not changes at all
+    };
+
+    /**
+     * One row of the version history.
      *
-     * A row with an empty @p id is not a recorded revision but the line the
-     * screen shows when there is nothing to list. It is drawn without the Diff
-     * and Restore actions, because neither has anything to act on.
+     * @p id is opaque to the screen: it is minted by the feed and handed back
+     * with the two action signals, so the feed can find the row's subject again
+     * without the screen holding a pointer into the database.
+     *
+     * The two action flags are what the row can honestly offer. A row that
+     * describes a database-level save can be compared but not put back, and the
+     * lines the screen shows when there is nothing to list can do neither, so
+     * they are drawn with no buttons rather than with buttons that excuse
+     * themselves.
      */
     struct Revision
     {
@@ -45,7 +63,9 @@ namespace Material
         QString symbol;
         QString label;
         QString meta;
-        PillKind tint = PillKind::Value;
+        RevisionTint tint = RevisionTint::Neutral;
+        bool canDiff = false;
+        bool canRestore = false;
     };
 
     /** Which kind of revision the Entries / Settings chips leave showing. */
@@ -58,7 +78,7 @@ namespace Material
 
     /**
      * The version history destination: a blurb, a search bar with filter chips
-     * and a column of revision rows, each offering a diff and a restore.
+     * and a column of revision rows, each offering the actions it can keep.
      *
      * The chips only report what the user picked; the feed owns the filtering,
      * the same way the search box does.
