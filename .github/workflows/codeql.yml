@@ -1,19 +1,63 @@
 name: "CodeQL"
 
+# -----------------------------------------------------------------------------
+# WHY THIS ANALYSIS RUNS ON WINDOWS AND NOT ON UBUNTU
+#
+# Upstream KeePassXC builds on Linux, macOS and Windows, so upstream's CodeQL
+# job installs the Qt/Botan/argon2 apt packages and builds on ubuntu-latest.
+#
+# This fork is Windows-only. `src/gui/osutils/` ships `winutils/` and
+# `macutils/` and nothing else, and `OSUtils.h` reads:
+#
+#     #if defined(Q_OS_WIN)
+#     #include "winutils/WinUtils.h"
+#     #define osUtils static_cast<OSUtilsBase*>(winUtils())
+#     #elif defined(Q_OS_MACOS)
+#     ...
+#     #endif
+#
+# There is no `#else`. On Linux `osUtils` is simply not defined, so every
+# translation unit that touches it - across src/autotype/, src/browser/ and
+# src/gui/ - fails to compile. The Linux job therefore died at roughly 28% of
+# the build on every run and reported "CodeQL job status was configuration
+# error". It could never have gone green; no amount of extra apt packages
+# would have changed that.
+#
+# The choice was to drop `cpp` from the matrix - which would leave a password
+# manager with no static analysis at all - or to analyse the platform the fork
+# actually targets. This does the latter: the same MSVC + Ninja + vcpkg recipe
+# that `material-release.yml` builds and ships with, wrapped in the CodeQL
+# tracer. It shares that workflow's vcpkg cache key, so a warm cache here is
+# the same cache the release build populated.
+# -----------------------------------------------------------------------------
+
 on:
   push:
     branches:
       - 'develop'
+      - 'main'
       - 'release/**'
   pull_request:
   schedule:
     - cron: '5 16 * * 3'
 
+permissions:
+  contents: read
+
+concurrency:
+  # Unlike the release workflow, a superseded analysis is worth nothing, so a
+  # newer push may cancel an older run rather than queue behind it.
+  group: codeql-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  QT_VERSION: '6.8.3'
+
 jobs:
   analyze:
     name: Analyze
-    runs-on: ${{ (matrix.language == 'swift' && 'macos-latest') || 'ubuntu-latest' }}
-    timeout-minutes: ${{ (matrix.language == 'swift' && 120) || 360 }}
+    runs-on: windows-2022
+    timeout-minutes: 240
     permissions:
       actions: read
       contents: read
@@ -23,48 +67,153 @@ jobs:
       fail-fast: false
       matrix:
         language: [ 'cpp' ]
-        # CodeQL supports [ 'cpp', 'csharp', 'go', 'java', 'javascript', 'python', 'ruby' ]
-        # Use only 'java' to analyze code written in Java, Kotlin or both
-        # Use only 'javascript' to analyze code written in JavaScript, TypeScript or both
-        # Learn more about CodeQL language support at https://aka.ms/codeql-docs/language-support
+
+    env:
+      # Mirrors material-release.yml. The repository already tracks a `vcpkg/`
+      # directory holding the overlay triplets, so the vcpkg tool itself has to
+      # live elsewhere or that directory would be clobbered.
+      VCPKG_ROOT: ${{ github.workspace }}\.ci-vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.ci-vcpkg-archives
+      VCPKG_TARGET_TRIPLET: x64-windows
+      VCPKG_DISABLE_METRICS: '1'
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-    - if: matrix.language == 'cpp'
-      name: Install dependencies
-      run: |
-        sudo apt update
-        sudo apt install build-essential cmake g++
-        sudo apt install qt6-base-dev qt6-base-private-dev qt6-tools-dev qt6-base-dev-tools qt6-svg-dev qt6-5compat-dev libargon2-dev libkeyutils-dev libminizip-dev libbotan-2-dev libqrencode-dev zlib1g-dev asciidoctor libreadline-dev libpcsclite-dev libusb-1.0-0-dev libxi-dev libxtst-dev
+      - name: Set up CMake and Ninja
+        uses: lukka/get-cmake@latest
 
-    # Initializes the CodeQL tools for scanning.
-    - name: Initialize CodeQL
-      uses: github/codeql-action/init@v4
-      with:
-        languages: ${{ matrix.language }}
-        # If you wish to specify custom queries, you can do so here or in a config file.
-        # By default, queries listed here will override any specified in a config file.
-        # Prefix the list here with "+" to use these queries and those in the config file.
+      - name: Set up Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          cache: true
 
-        # For more details on CodeQL's query packs, refer to: https://docs.github.com/en/code-security/code-scanning/automatically-scanning-your-code-for-vulnerabilities-and-errors/configuring-code-scanning#using-queries-in-ql-packs
-        queries: security-and-quality
+      - name: Set up the MSVC x64 environment
+        shell: pwsh
+        run: |
+          # Ninja invokes cl.exe directly, so the compiler, linker and SDK
+          # include/lib paths have to be in the environment before CodeQL
+          # starts tracing the build.
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          if (-not (Test-Path $vswhere)) { throw "vswhere.exe not found; no Visual Studio installation" }
+          $vsPath = & $vswhere -latest -products * `
+            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vsPath) { throw "No Visual Studio installation with the C++ toolchain was found" }
+          $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
+          if (-not (Test-Path $vcvars)) { throw "vcvars64.bat not found at $vcvars" }
+          cmd.exe /c "call `"$vcvars`" >nul 2>&1 && set" | ForEach-Object {
+              if ($_ -match '^([A-Za-z_][A-Za-z0-9_()\[\]]*)=(.*)$') {
+                  Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
+              }
+          }
 
-    - if: matrix.language == 'cpp'
-      name: Build C++
-      run: |
-        mkdir build && cd build
-        cmake -DWITH_XC_ALL=ON -DWITH_TESTS=OFF ..
-        make -j $(nproc)
+      - name: Read the pinned vcpkg baseline from vcpkg.json
+        id: vcpkg_baseline
+        shell: pwsh
+        run: |
+          $manifest = Get-Content -Raw -Path "${{ github.workspace }}\vcpkg.json" | ConvertFrom-Json
+          $baseline = $manifest.'builtin-baseline'
+          if (-not $baseline) { throw "vcpkg.json does not declare a builtin-baseline" }
+          Write-Host "vcpkg builtin-baseline: $baseline"
+          "commit=$baseline" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
 
-    # Autobuild attempts to build any compiled languages (C/C++, C#, Go, Java, or Swift).
-    # If this step fails, then you should remove it and run the build manually (see below)
-    - if: matrix.language != 'cpp'
-      name: Autobuild
-      uses: github/codeql-action/autobuild@v4
+      - name: Restore the vcpkg cache
+        uses: actions/cache@v6
+        with:
+          path: |
+            ${{ github.workspace }}\.ci-vcpkg
+            ${{ github.workspace }}\.ci-vcpkg-archives
+          # Deliberately the same key material as material-release.yml so the
+          # two workflows share one populated cache instead of each paying for
+          # a cold build of the ports.
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg_baseline.outputs.commit }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ runner.os }}-
 
-    - name: Perform CodeQL Analysis
-      uses: github/codeql-action/analyze@v4
-      with:
-        category: "/language:${{matrix.language}}"
+      - name: Set up vcpkg
+        shell: pwsh
+        run: |
+          # vcpkg.json pins "builtin-baseline" to an exact vcpkg commit, and
+          # while resolving the manifest vcpkg runs
+          # `git show <baseline>:versions/baseline.json` inside its own
+          # checkout. A `clone --depth 1` of master does not contain that
+          # object, so fetch exactly that SHA instead.
+          $ErrorActionPreference = 'Continue'
+          $PSNativeCommandUseErrorActionPreference = $false
+
+          $baseline = '${{ steps.vcpkg_baseline.outputs.commit }}'
+          $vcpkgRoot = '${{ github.workspace }}\.ci-vcpkg'
+
+          New-Item -ItemType Directory -Force -Path $vcpkgRoot | Out-Null
+          New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\.ci-vcpkg-archives' | Out-Null
+
+          if (-not (Test-Path (Join-Path $vcpkgRoot '.git'))) {
+              git init --quiet $vcpkgRoot
+              if ($LASTEXITCODE -ne 0) { throw "git init failed in $vcpkgRoot" }
+              git -C $vcpkgRoot remote add origin https://github.com/microsoft/vcpkg.git
+              if ($LASTEXITCODE -ne 0) { throw "could not add the vcpkg remote" }
+          }
+
+          # A miss here is the normal cold-cache case, so keep its stderr quiet.
+          git -C $vcpkgRoot cat-file -e "$baseline^{commit}" 2>$null
+          if ($LASTEXITCODE -ne 0) {
+              Write-Host "Fetching pinned vcpkg baseline $baseline"
+              git -C $vcpkgRoot fetch --depth 1 origin $baseline
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Host "By-SHA fetch failed; fetching the full history instead."
+                  git -C $vcpkgRoot fetch --no-tags origin
+                  if ($LASTEXITCODE -ne 0) { throw "Unable to fetch vcpkg baseline $baseline" }
+              }
+          }
+
+          git -C $vcpkgRoot -c advice.detachedHead=false checkout --force $baseline
+          if ($LASTEXITCODE -ne 0) { throw "Unable to check out vcpkg baseline $baseline" }
+
+          git -C $vcpkgRoot show "${baseline}:versions/baseline.json" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "vcpkg baseline $baseline has no versions/baseline.json" }
+
+          & "$vcpkgRoot\bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "bootstrap-vcpkg.bat failed" }
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          # Configure BEFORE `codeql init` on purpose. Configuration compiles
+          # and runs its own probe binaries and builds the vcpkg ports, none of
+          # which are this project's source; tracing them would put third-party
+          # code in the database and cost time for nothing. Only the `Build C++`
+          # step below - which compiles src/ and nothing else - is traced.
+          #
+          # Docs are off because rendering them needs a Ruby/asciidoctor
+          # toolchain, and tests are off because what is being analysed is the
+          # program that ships.
+          cmake -B build -S . -G Ninja `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DKPXC_FEATURE_DOCS=OFF `
+            -DWITH_TESTS=OFF `
+            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/.ci-vcpkg/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_TARGET_TRIPLET }} `
+            -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
+
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@v4
+        with:
+          languages: ${{ matrix.language }}
+          # Prefix with "+" to keep any queries a config file specifies rather
+          # than overriding them.
+          queries: security-and-quality
+
+      - name: Build C++
+        shell: pwsh
+        run: cmake --build build --parallel
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@v4
+        with:
+          category: "/language:${{matrix.language}}"

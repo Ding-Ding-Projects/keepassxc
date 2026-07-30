@@ -189,10 +189,13 @@ The diagnostic has already earned its keep: it caught theory #5 as self-inflicte
   differ by workflow text alone). `ctest --repeat until-pass:2` bounds it: retries are printed, and a
   test failing twice still fails the job. Note `testmerge`, which the previous handoff recorded as a
   pre-existing Windows failure, now passes.
-- **`Analyze (cpp)` is red and unrelated.** CodeQL builds on `ubuntu-latest`, and this fork cannot
-  compile on Linux — it dies at ~28% on `osUtils` in `src/autotype/` and `src/browser/`, files this
-  branch does not touch. Fixing it means moving CodeQL to Windows, dropping the `cpp` language, or
-  ungating it. Maintainer's call.
+- **`Analyze (cpp)` — fixed, pending its first Windows run.** CodeQL built on `ubuntu-latest` and died
+  at ~28% every time, because `src/gui/osutils/OSUtils.h` defines `osUtils` under `Q_OS_WIN` and
+  `Q_OS_MACOS` and has **no `#else`** — on Linux the macro does not exist, so every unit that touches
+  it fails. No apt package would have fixed that. `codeql.yml` now runs the same MSVC + Ninja + vcpkg
+  recipe `material-release.yml` ships with, sharing its vcpkg cache key. Configure runs *before*
+  `codeql init` so the tracer sees `src/` and not the vcpkg ports. Unverified: it has not completed a
+  run yet, and the first one pays for a cold cache.
 - **Branch archive.** `.github/workflows/archive-branches.yml` bundles all 25 branches with full
   history, verifies the archive restores every tip, and publishes it as a release. It is
   `workflow_dispatch` only and **has never been run**. Nothing may be deleted until it has.
