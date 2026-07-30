@@ -138,11 +138,13 @@ namespace Material
     {
         Q_ASSERT(m_screen);
 
-        // The design's title row is the headline and the search pill, with no
-        // supporting line: the breach caveat rides on the breach tile instead.
+        // The design's title row ends with the search pill and its regex action,
+        // and carries no supporting line: the breach caveat rides on the breach
+        // tile instead. This button is the one thing the design's reports screen
+        // has no room for, so it goes ahead of the pill rather than past it.
         auto detailed = new OutlinedButton(QStringLiteral("analytics"), tr("Detailed reports"));
         connect(detailed, &QAbstractButton::clicked, this, &ReportsFeed::detailedReportsRequested);
-        m_screen->addHeaderWidget(detailed);
+        m_screen->insertHeaderWidget(0, detailed);
 
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();

@@ -17,6 +17,9 @@
 
 #include "MaterialIcons.h"
 
+#include "core/Entry.h"
+#include "core/EntryAttributes.h"
+
 #include <QGuiApplication>
 #include <QHash>
 #include <QPainter>
@@ -285,6 +288,108 @@ namespace Material
                 {"window",               "window"},
             };
 
+            /** One entrySymbol() rule: a key read off the entry, and the glyph it names. */
+            struct Rule
+            {
+                const char* key;
+                const char* symbol;
+            };
+
+            /**
+             * URL schemes. A scheme is stated rather than guessed - nobody
+             * types ssh:// at something that is not a shell - so it outranks
+             * the host below. Web schemes are deliberately absent: https says
+             * nothing about what the site is.
+             */
+            constexpr Rule SchemeSymbols[] = {
+                {"ftp", "folder_shared"},
+                {"ftps", "folder_shared"},
+                {"mailto", "mail"},
+                {"nfs", "folder_shared"},
+                {"rdp", "desktop_windows"},
+                {"scp", "terminal"},
+                {"sftp", "terminal"},
+                {"smb", "folder_shared"},
+                {"ssh", "terminal"},
+                {"telnet", "terminal"},
+                {"vnc", "desktop_windows"},
+            };
+
+            /**
+             * Host labels that say in plain words what the site is, matched
+             * against a whole dot-separated label so that "digital.example.com"
+             * is not read as a code host. This is reading the URL, not knowing
+             * the brand behind it: there is no list of banks or shops here, so
+             * a name that states nothing keeps the neutral glyph.
+             */
+            constexpr Rule HostLabelSymbols[] = {
+                {"bank", "account_balance"},
+                {"banking", "account_balance"},
+                {"billing", "credit_card"},
+                {"bitbucket", "code"},
+                {"cloud", "cloud"},
+                {"git", "code"},
+                {"gitea", "code"},
+                {"github", "code"},
+                {"gitlab", "code"},
+                {"imap", "mail"},
+                {"jira", "task"},
+                {"mail", "mail"},
+                {"pay", "credit_card"},
+                {"payments", "credit_card"},
+                {"smtp", "mail"},
+                {"ssh", "terminal"},
+                {"vpn", "vpn_key"},
+                {"webmail", "mail"},
+            };
+
+            /** A KeePass icon number and the glyph standing for the same idea. */
+            struct IconNumberRule
+            {
+                int number;
+                const char* symbol;
+            };
+
+            /**
+             * The KeePass icon set is named after the KDE icons it came from,
+             * so only the numbers whose name states plainly what the picture is
+             * are mapped; the rest, number 0 included, keep the default. The
+             * comment on each line is the file name in share/icons/database.
+             */
+            constexpr IconNumberRule IconNumberSymbols[] = {
+                {3, "dns"}, // C03_Server
+                {9, "badge"}, // C09_Identity
+                {18, "desktop_windows"}, // C18_Display
+                {19, "mail"}, // C19_Mail_Generic
+                {21, "calendar_month"}, // C21_KOrganizer, a calendar
+                {25, "mail"}, // C25_Folder_Mail
+                {29, "terminal"}, // C29_KGPG_Term
+                {30, "terminal"}, // C30_Konsole
+                {34, "settings"}, // C34_Configure
+                {39, "history"}, // C39_History
+                {40, "mail"}, // C40_Mail_Find
+                {42, "memory"}, // C42_KCMMemory
+                {43, "delete"}, // C43_EditTrash
+                {44, "sticky_note_2"}, // C44_KNotes
+                {48, "folder"}, // C48_Folder
+                {49, "folder_open"}, // C49_Folder_Blue_Open
+                {50, "folder_zip"}, // C50_Folder_Tar
+                {51, "lock_open"}, // C51_Decrypted
+                {52, "lock"}, // C52_Encrypted
+                {56, "person"}, // C56_KAddressBook
+                {57, "description"}, // C57_View_Text
+                {59, "code"}, // C59_Package_Development
+                {66, "account_balance"}, // C66_Money
+                {67, "verified"}, // C67_Certificate
+            };
+
+            /**
+             * The custom attribute an entry may carry to name its own glyph.
+             * Honoured only when the name resolves, so a typo falls through to
+             * the rules instead of drawing nothing.
+             */
+            const QString SymbolAttribute = QStringLiteral("KPXC_SYMBOL");
+
             /** Sizes baked into every QIcon, covering the design's glyph sizes. */
             constexpr int IconSizes[] = {16, 18, 20, 24, 32, 48};
 
@@ -415,6 +520,112 @@ namespace Material
             {
                 return symbolTable().value(name).path;
             }
+
+            /** The glyph @p key names in @p rules, empty when it names none. */
+            template <typename Rules> QString ruleSymbol(const Rules& rules, const QString& key)
+            {
+                if (key.isEmpty()) {
+                    return {};
+                }
+                for (const auto& rule : rules) {
+                    if (key == QLatin1String(rule.key)) {
+                        return QString::fromLatin1(rule.symbol);
+                    }
+                }
+                return {};
+            }
+
+            /**
+             * Whether @p host is an address rather than a name. No top-level
+             * domain is numeric, so an all-digits-and-dots host is an IPv4
+             * literal; an IPv6 literal is bracketed. A machine addressed
+             * directly is a server, which is what the design's `dns` row is.
+             */
+            bool isAddressLiteral(const QString& host)
+            {
+                if (host.startsWith(QLatin1Char('[')) && host.endsWith(QLatin1Char(']'))) {
+                    return true;
+                }
+                if (!host.contains(QLatin1Char('.'))) {
+                    return false;
+                }
+                for (const QChar character : host) {
+                    if (!character.isDigit() && character != QLatin1Char('.')) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+
+            /**
+             * The glyph @p url names, empty when it names none.
+             *
+             * The URL field holds whatever the user typed, so the scheme is
+             * taken as the part before "://" and everything after it is treated
+             * as the authority; QUrl would read a bare "host:port" as a scheme.
+             */
+            QString urlSymbol(const QString& url)
+            {
+                QString rest = url.trimmed();
+                if (rest.isEmpty()) {
+                    return {};
+                }
+
+                QString scheme;
+                const int mark = rest.indexOf(QLatin1String("://"));
+                if (mark > 0) {
+                    scheme = rest.left(mark).toLower();
+                    rest = rest.mid(mark + 3);
+                } else if (rest.startsWith(QLatin1String("mailto:"), Qt::CaseInsensitive)) {
+                    scheme = QStringLiteral("mailto");
+                    rest = rest.section(QLatin1Char(':'), 1);
+                }
+                const QString byScheme = ruleSymbol(SchemeSymbols, scheme);
+                if (!byScheme.isEmpty()) {
+                    return byScheme;
+                }
+
+                // Authority down to the bare host: drop the path, the user info
+                // and the port, in that order.
+                rest = rest.section(QLatin1Char('/'), 0, 0).section(QLatin1Char('@'), -1).toLower();
+                if (rest.startsWith(QLatin1Char('['))) {
+                    const int close = rest.indexOf(QLatin1Char(']'));
+                    rest = close > 0 ? rest.left(close + 1) : rest;
+                } else {
+                    rest = rest.section(QLatin1Char(':'), 0, 0);
+                }
+                if (rest.isEmpty()) {
+                    return {};
+                }
+                if (isAddressLiteral(rest)) {
+                    return QStringLiteral("dns");
+                }
+
+                for (const QString& label : rest.split(QLatin1Char('.'), Qt::SkipEmptyParts)) {
+                    const QString byLabel = ruleSymbol(HostLabelSymbols, label);
+                    if (!byLabel.isEmpty()) {
+                        return byLabel;
+                    }
+                }
+                return {};
+            }
+
+            /** The glyph @p entry's KeePass icon number names, empty when it names none. */
+            QString iconNumberSymbol(const ::Entry* entry)
+            {
+                // A custom icon is a picture only its owner can read, and it
+                // leaves the number at whatever it happened to be, so there is
+                // nothing honest to derive from the number in that case.
+                if (!entry->iconUuid().isNull()) {
+                    return {};
+                }
+                for (const auto& rule : IconNumberSymbols) {
+                    if (entry->iconNumber() == rule.number) {
+                        return QString::fromLatin1(rule.symbol);
+                    }
+                }
+                return {};
+            }
         } // namespace
 
         QIcon symbol(const QString& name)
@@ -462,6 +673,46 @@ namespace Material
         bool hasSymbol(const QString& name)
         {
             return symbolTable().contains(name);
+        }
+
+        // ::Entry is the KeePassXC entry; the Entry above is this file's own
+        // symbol table row.
+        QString entrySymbol(const ::Entry* entry)
+        {
+            if (!entry) {
+                return defaultEntrySymbol();
+            }
+
+            const QString stated = entry->attributes()->value(SymbolAttribute).trimmed();
+            if (hasSymbol(stated)) {
+                return stated;
+            }
+
+            const QString byUrl = urlSymbol(entry->url());
+            if (!byUrl.isEmpty()) {
+                return byUrl;
+            }
+
+            if (entry->attributes()->hasKey(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM)) {
+                return QStringLiteral("passkey");
+            }
+            // Weak, but true: an entry with a one-time code and no URL worth
+            // reading is at least known to be a second-factor account.
+            if (entry->hasTotp()) {
+                return QStringLiteral("lock_clock");
+            }
+
+            const QString byNumber = iconNumberSymbol(entry);
+            if (!byNumber.isEmpty()) {
+                return byNumber;
+            }
+
+            return defaultEntrySymbol();
+        }
+
+        QString defaultEntrySymbol()
+        {
+            return QStringLiteral("key");
         }
 
         void clearCache()

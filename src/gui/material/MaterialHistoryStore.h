@@ -72,7 +72,7 @@ namespace Material
     };
 
     /**
-     * The application's own version history of the databases it saves.
+     * The application's own record of the databases it saves.
      *
      * An append-only log of one JSON object per line, kept under
      * QStandardPaths::AppDataLocation - never inside the folder the user keeps
@@ -86,9 +86,20 @@ namespace Material
      * work out those three numbers live in a side cache of truncated hashes
      * that is rewritten on every save and is not part of the log.
      *
-     * The store keeps no copy of the database contents, so it can describe a
-     * revision but cannot put one back; callers must say so rather than
-     * pretending otherwise.
+     * That thinness is the point rather than a gap to be closed later. This
+     * file sits in the clear on disk while the database it describes is
+     * encrypted, so nothing that is worth encrypting may be written into it -
+     * not an entry's contents, not a password, not a byte of an attachment.
+     *
+     * It follows that the store can describe a save but cannot put one back.
+     * Restoring is the job of the database's own per-entry revisions,
+     * Entry::historyItems(), which hold the previous values in full and only
+     * ever exist in memory; HistoryFeed merges both records into the version
+     * history destination and lets each offer only what it can keep. What the
+     * log is uniquely good for is what those revisions cannot describe: that a
+     * save happened at all, that entries appeared or were deleted outright,
+     * that a group came or went, that a save changed nothing an entry knows
+     * about.
      */
     class HistoryStore : public QObject
     {
