@@ -552,12 +552,59 @@ jobs:
           $summary = Get-ChildItem 'build/Testing/Temporary' -Filter 'LastTestsFailed*.log' `
             -ErrorAction SilentlyContinue | Select-Object -First 1
           if ($summary) {
-            Write-Host "failed tests: $((Get-Content $summary.FullName) -join ', ')"
+            $failed = @(Get-Content $summary.FullName)
+            Write-Host "failed tests: $($failed -join ', ')"
             if (Test-Path $ctest) {
               # QTest prints FAIL! with the function and the comparison that broke.
               $fails = Select-String -Path $ctest -Pattern '^(FAIL!|QFATAL|ASSERT)' -CaseSensitive:$false
               if ($fails) { $fails | ForEach-Object { Write-Host $_.Line } }
-              else { Write-Host '(no FAIL! lines in LastTest.log; the test process probably died)' }
+            }
+
+            # -----------------------------------------------------------------------
+            # Why LastTest.log is not enough, and what this does instead.
+            #
+            # The test executables are GUI-subsystem binaries on Windows (see the Test
+            # step), so their stdout is detached and QTest's report never reaches
+            # ctest. LastTest.log therefore holds nothing from the test whether it
+            # asserted, hung or crashed - so "no FAIL! lines" says nothing at all
+            # about which of those happened. An earlier version of this step read that
+            # silence as "the test process probably died", which was an inference with
+            # no evidence behind it.
+            #
+            # QTest can write its report straight to a file with -o, which does not go
+            # through stdout and so survives the GUI subsystem. Re-run each failing
+            # test that way and print the report here, in the last step, where a small
+            # tail can reach it.
+            #
+            # A re-run that PASSES is itself the answer: the test is timing-dependent,
+            # not broken. testExternallyModified is the one to suspect - it waits on a
+            # QFileSystemWatcher signal through QTRY_COMPARE, which is a filesystem
+            # race on a loaded runner.
+            # -----------------------------------------------------------------------
+            $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
+            foreach ($entry in $failed) {
+              # LastTestsFailed.log lines look like "32:testdatabase".
+              $name = ($entry -split ':', 2)[-1].Trim()
+              if (-not $name) { continue }
+              $exe = Get-ChildItem '${{ github.workspace }}\build' -Recurse -Filter "$name.exe" `
+                -ErrorAction SilentlyContinue | Select-Object -First 1
+              if (-not $exe) { Write-Host "  ($name.exe not found; cannot re-run it)"; continue }
+
+              $report = Join-Path $env:RUNNER_TEMP "$name-qtest.txt"
+              Write-Host "---------------- $name, re-run with QTest reporting to a file ----------------"
+              & $exe.FullName -o "$report,txt" -maxwarnings 0 2>&1 | Out-Null
+              $code = $LASTEXITCODE
+              if (Test-Path $report) {
+                # The report ends with the totals and every failure above them.
+                Get-Content $report | Select-Object -Last 40 | ForEach-Object { Write-Host $_ }
+              } else {
+                Write-Host "  (no report written; $name.exe exited $code before QTest could)"
+              }
+              if ($code -eq 0) {
+                Write-Host "  NOTE: $name PASSED on this re-run - it is timing-dependent, not broken."
+              } else {
+                Write-Host "  $name exited $code on the re-run too."
+              }
             }
           } else {
             Write-Host 'none - the tests passed, so the failure is later in the job'

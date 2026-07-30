@@ -261,17 +261,44 @@ a superseded analysis is worth nothing.
 ## 6. Still open
 
 - **The CodeQL move to Windows is unverified.** The MSI fix is verified (§4); CodeQL is not. §7.
-- **`testdatabase` is flaky.** It failed and then passed on *identical binaries* (`ef8f3707..3d17b7e1`
-  differ by workflow text alone). `ctest --repeat until-pass:2` bounds it: retries are printed, and a
-  test failing twice still fails the job. Note `testmerge`, which the previous handoff recorded as a
-  pre-existing Windows failure, now passes.
+- **`testdatabase` fails intermittently, and it is NOT settled.** Four observations, none of them
+  separated by a single line of C++: failed at `ef8f3707`, passed at `3d17b7e1`, passed at `332bf39c`,
+  **failed twice** at `4387b8c6` (which differs from `332bf39c` by `HANDOFF.md` and workflow text
+  only). So it is nondeterministic rather than caused by any code change — but at roughly a 50% rate,
+  and `--repeat until-pass:2` did not save it, so calling it "flaky" and moving on is not good enough
+  for a password manager's database test.
+
+  **What was believed and was wrong:** the diagnostic reported "no FAIL! lines in LastTest.log; the
+  test process probably died". That inference had no evidence behind it. The test executables are
+  GUI-subsystem binaries on Windows, so their stdout is detached and QTest's report never reaches
+  ctest — LastTest.log is empty for *any* outcome, assertion or crash alike. The silence was the
+  expected state, not a symptom.
+
+  **What to do:** the final step now re-runs each failing test directly with `-o <file>,txt`, which
+  writes QTest's report to a file instead of stdout and so survives the GUI subsystem, and prints it in
+  the last lines where a small tail reaches it. The next failure will name the function. Two outcomes
+  are worth reading carefully — a re-run that *passes* means timing-dependence, and a re-run that
+  exits non-zero with no report means it really did die early.
+
+  **The one to suspect first** is `testExternallyModified` (`tests/TestDatabase.cpp:273`). It waits on
+  a `QFileSystemWatcher` signal through `QTRY_COMPARE(spyFileChanged.count(), 1)` — a filesystem race
+  with a bounded timeout, on a loaded CI runner. That is the shape of this failure. It is a hypothesis,
+  not a finding; the re-run report will confirm or kill it.
+
+  Note `testmerge`, which an earlier handoff recorded as a pre-existing Windows failure, now passes.
 - **The vcpkg cache — resolved by the first green run.** It had never been hit: "Restore the vcpkg
   cache" finished in ~1 second every time and Configure then spent 29 minutes building ports. The cause
   was the obvious one in hindsight — no run had ever *completed*, so `actions/cache`'s post-step save
   had never committed a key. Run 30566007547 finished and saved 873 MiB under
-  `vcpkg-Windows-f7977f7a…-66c0373d…`. Later runs should restore it and skip the 29-minute Configure.
-  If a run still takes 29 minutes to configure, check whether `vcpkg.json` or the pinned baseline moved,
-  since both are in the key.
+  `vcpkg-Windows-f7977f7a…-66c0373d…`, and `material-release` now restores it in 26 s and configures in
+  **45 seconds instead of 29 minutes**.
+
+  **Open question: CodeQL does not seem to get the same cache.** `codeql.yml` was given the same key
+  material deliberately, but run 30574045644 restored in 0 s and then spent 22 minutes in Configure,
+  while `material-release` run 30574043349 — same branch, sixteen minutes later — restored in 26 s and
+  configured in 45 s. So the two workflows are not sharing the entry despite intending to. Cause
+  unknown; do not guess, read the `Restore the vcpkg cache` step's own log, which says whether it
+  matched a key. Costs time, not correctness.
 - **Branch archive.** `.github/workflows/archive-branches.yml` bundles all 25 branches with full
   history, verifies the archive restores every tip, and publishes it as a release. It is
   `workflow_dispatch` only and **has never been run** — an agent cannot trigger it. **A human must run
@@ -293,8 +320,12 @@ a superseded analysis is worth nothing.
 
 Everything is committed and pushed; the working tree is clean.
 
-**Shipping is closed.** `material-release` run 30566007547 on `332bf39c` went green end to end and
-produced the installer. Nothing about the MSI is outstanding.
+**The MSI is fixed and proven.** `material-release` run 30566007547 on `332bf39c` went green end to
+end and produced the installer. Nothing about WiX or packaging is outstanding.
+
+**But the branch is not reliably green**, because `testdatabase` fails intermittently and stops the job
+before packaging — that is what happened on `4387b8c6`. §6 has the four observations and the
+hypothesis. Read the new re-run report on the next failure before concluding anything about it.
 
 One thing is still unverified: **CodeQL on Windows.** Its run on `332bf39c` was cancelled by a
 subsequent push (`cancel-in-progress: true`), so the newest run on the current head is its first
