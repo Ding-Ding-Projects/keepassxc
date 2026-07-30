@@ -34,9 +34,12 @@ namespace Material
      * What fills the reports destination.
      *
      * Runs the same password health check and the same DatabaseStats pass the
-     * existing report widgets run, off the interface thread, and pushes the
-     * result into a ReportsScreen: four summary tiles, the health findings and
-     * the statistics table.
+     * existing report widgets run, and pushes the result into a ReportsScreen:
+     * four summary tiles, the health findings and the statistics table.
+     *
+     * The pass reads the live group and entry tree, which belongs to the
+     * interface thread, so it runs on the interface thread. refresh() says why
+     * a worker is the wrong shape for this particular walk.
      *
      * Every number here comes out of the database. Breach exposure is the one
      * figure the design asks for that cannot be answered offline - it needs a
@@ -57,7 +60,13 @@ namespace Material
         /** Point the feed at a database. A null pointer empties the screen. */
         void setDatabase(const QSharedPointer<Database>& db);
 
-        /** Recompute from the current database and repaint the screen. */
+        /**
+         * Recompute from the current database and repaint the screen.
+         *
+         * A request that arrives while a pass is running is coalesced onto the
+         * end of that pass rather than dropped, so the screen never settles on
+         * counts the database has already moved past.
+         */
         void refresh();
 
         /**
@@ -110,7 +119,12 @@ namespace Material
             QVector<QPair<QString, QString>> statistics;
         };
 
-        static Snapshot* compute(QSharedPointer<Database> db);
+        /**
+         * One pass over @p db, on the interface thread and never off it.
+         * A null or emptied database answers an invalid snapshot, which is
+         * what empties the screen.
+         */
+        static Snapshot compute(const QSharedPointer<Database>& db);
 
         QVector<Finding> filteredFindings() const;
         QVector<QPair<QString, QString>> filteredStatistics() const;
@@ -123,6 +137,7 @@ namespace Material
         Snapshot m_snapshot;
         QString m_query;
         bool m_busy = false;
+        bool m_refreshPending = false; // a refresh asked for while m_busy, owed once the pass lands
     };
 
 } // namespace Material

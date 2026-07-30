@@ -22,7 +22,6 @@
 #include "MaterialReportsScreen.h"
 #include "MaterialSearchBar.h"
 
-#include "core/AsyncTask.h"
 #include "core/Clock.h"
 #include "core/Database.h"
 #include "core/DatabaseStats.h"
@@ -34,13 +33,14 @@
 #include "format/KeePass2.h"
 #include "gui/FileDialog.h"
 
+#include <QApplication>
+#include <QCursor>
 #include <QDesktopServices>
 #include <QDir>
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
 #include <QLocale>
-#include <QScopedPointer>
 #include <QSet>
 #include <QTextStream>
 #include <QUrl>
@@ -174,32 +174,49 @@ namespace Material
 
     void ReportsFeed::refresh()
     {
-        // The health check runs in a worker thread and is waited on with a
-        // nested event loop, so a second refresh can arrive mid-flight.
+        // A pass is already under way and the database has moved under it. Owe
+        // one more pass rather than dropping the request: a dropped request
+        // leaves the screen on counts the database has already left behind,
+        // with nothing scheduled that would ever correct them.
         if (m_busy) {
-            return;
-        }
-
-        if (!m_db || !m_db->rootGroup()) {
-            m_snapshot = Snapshot();
-            apply();
+            m_refreshPending = true;
             return;
         }
 
         m_busy = true;
-        auto db = m_db;
-        const QScopedPointer<Snapshot> computed(
-            AsyncTask::runAndWaitForFuture([db] { return ReportsFeed::compute(db); }));
-        m_snapshot = *computed;
-        m_busy = false;
 
-        apply();
+        // The pass walks the live group and entry tree, and that tree belongs
+        // to the interface thread. Handing it to a worker and waiting with
+        // AsyncTask::runAndWaitForFuture - what the older report widgets do -
+        // spins a nested event loop, which keeps delivering events for the
+        // whole walk: an entry deleted, a group moved, the database locked or
+        // closed in that window frees the very objects the worker is reading.
+        // Database::save() answers the same problem by holding m_saveMutex
+        // across its worker, but that mutex is private, and a detached copy of
+        // the tree would duplicate every password in memory for the length of
+        // the report. So the walk runs here, where nothing can mutate the tree
+        // underneath it, and the wait cursor is what it costs.
+        QApplication::setOverrideCursor(Qt::WaitCursor);
+        do {
+            m_refreshPending = false;
+            m_snapshot = compute(m_db);
+            // apply() runs inside the guard so that a refresh provoked by the
+            // repaint is coalesced too, instead of falling through the crack
+            // between the last compute and clearing m_busy.
+            apply();
+        } while (m_refreshPending);
+        QApplication::restoreOverrideCursor();
+
+        m_busy = false;
     }
 
-    ReportsFeed::Snapshot* ReportsFeed::compute(QSharedPointer<Database> db)
+    ReportsFeed::Snapshot ReportsFeed::compute(const QSharedPointer<Database>& db)
     {
-        auto snapshot = new Snapshot();
-        snapshot->valid = true;
+        Snapshot snapshot;
+        if (!db || !db->rootGroup()) {
+            return snapshot;
+        }
+        snapshot.valid = true;
 
         const HealthChecker checker(db);
         const QHash<QString, int> uses = passwordUses(db);
@@ -218,7 +235,7 @@ namespace Material
                     continue;
                 }
                 if (entry->attributes()->hasKey(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM)) {
-                    ++snapshot->passkeys;
+                    ++snapshot.passkeys;
                     const QString party = entry->attributes()->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY);
                     if (!party.isEmpty()) {
                         relyingParties.insert(party);
@@ -235,11 +252,11 @@ namespace Material
                 entropyTotal += health->entropy();
                 ++scored;
                 if (health->entropy() < WeakEntropyBits) {
-                    ++snapshot->weakOrShort;
+                    ++snapshot.weakOrShort;
                 }
 
                 if (health->quality() >= PasswordHealth::Quality::Good) {
-                    ++snapshot->healthy;
+                    ++snapshot.healthy;
                     continue;
                 }
 
@@ -256,28 +273,28 @@ namespace Material
                 finding.expired = entry->isExpired();
                 finding.reused = uses.value(entry->password()) > 1;
                 finding.tooShort = entry->password().length() <= PasswordHealth::Length::Short;
-                snapshot->findings.append(finding);
+                snapshot.findings.append(finding);
             }
         }
 
         // Worst score first, which is the order the healthcheck report uses.
-        std::sort(snapshot->findings.begin(), snapshot->findings.end(), [](const Finding& left, const Finding& right) {
+        std::sort(snapshot.findings.begin(), snapshot.findings.end(), [](const Finding& left, const Finding& right) {
             return left.score < right.score;
         });
 
         const DatabaseStats stats(db);
-        snapshot->databaseName = db->metadata()->name().isEmpty() ? QFileInfo(db->filePath()).completeBaseName()
-                                                                 : db->metadata()->name();
-        snapshot->databasePath = db->filePath();
-        snapshot->entries = stats.entryCount;
-        snapshot->groups = stats.groupCount;
-        snapshot->shortPasswords = stats.shortPasswords;
-        snapshot->relyingParties = relyingParties.size();
+        snapshot.databaseName = db->metadata()->name().isEmpty() ? QFileInfo(db->filePath()).completeBaseName()
+                                                                : db->metadata()->name();
+        snapshot.databasePath = db->filePath();
+        snapshot.entries = stats.entryCount;
+        snapshot.groups = stats.groupCount;
+        snapshot.shortPasswords = stats.shortPasswords;
+        snapshot.relyingParties = relyingParties.size();
 
         const QFileInfo file(db->filePath());
         const QString kdf = db->kdf() ? KeePass2::kdfToString(db->kdf()->uuid()) : tr("no key derivation");
 
-        auto& rows = snapshot->statistics;
+        auto& rows = snapshot.statistics;
         rows.append({tr("Database name"), db->metadata()->name()});
         rows.append({tr("Description"), db->metadata()->description()});
         rows.append({tr("Location"), db->filePath()});
