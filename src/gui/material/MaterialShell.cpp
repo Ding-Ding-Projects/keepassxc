@@ -25,6 +25,7 @@
 #include "MaterialTopAppBar.h"
 
 #include <QAction>
+#include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QLayout>
 #include <QMenu>
@@ -77,10 +78,16 @@ namespace Material
 
         // Neither menu is ever popped up. They are here so that menuPathOf()
         // finds a title for the shell's own commands and the palette files them
-        // under a heading; the theme toggle borrows the window's View menu name
-        // so it lists beside the other theme commands rather than on its own.
+        // under a heading. Why the shell has a Go To heading at all when the
+        // design's palette has no such group, and why the toggle joins the
+        // window's theme actions rather than replacing them, is on the class.
         m_goToMenu = new QMenu(tr("Go To"), this);
-        m_viewMenu = new QMenu(tr("View"), this);
+        // The heading has to read as the same word as the window's View menu,
+        // whose title comes from MainWindow.ui and so is translated under the
+        // "MainWindow" context. tr() here would file a second, independently
+        // translated "View", and a translated build could then list the toggle
+        // under a heading worded differently from the menu it belongs to.
+        m_viewMenu = new QMenu(QCoreApplication::translate("MainWindow", "View"), this);
 
         m_themeAction = new QAction(tr("Toggle Light / Dark Theme"), this);
         m_themeAction->setObjectName(QStringLiteral("materialToggleTheme"));
@@ -171,7 +178,19 @@ namespace Material
         // The symbol name has to outlive the call so retintCommands() can build
         // the icon again in the other mode.
         command->setData(symbol);
-        connect(command, &QAction::triggered, this, [this, id] { setCurrentDestination(id); });
+        connect(command, &QAction::triggered, this, [this, id, label] {
+            if (id == m_current) {
+                // The row for the destination already on screen is the one a
+                // user reaches for first, and setCurrentDestination() has
+                // nothing to do for it - the palette would close on a command
+                // that did nothing at all. Say where they already are instead.
+                if (m_snackbars) {
+                    m_snackbars->show(tr("Already showing %1.").arg(label));
+                }
+                return;
+            }
+            setCurrentDestination(id);
+        });
         addAction(command);
         m_goToMenu->addAction(command);
 
@@ -208,6 +227,14 @@ namespace Material
         m_rail->setCurrentDestination(id);
         m_stack->setCurrentWidget(m_pages.value(id));
         emit destinationChanged(id);
+    }
+
+    void Shell::setCommandsEnabled(bool enabled)
+    {
+        for (QAction* command : m_goToMenu->actions()) {
+            command->setEnabled(enabled);
+        }
+        m_themeAction->setEnabled(enabled);
     }
 
     void Shell::retintCommands()

@@ -186,7 +186,11 @@ namespace Material
         HistoryScreen* m_screen = nullptr;
         /** Weak, so a closed or locked database is released on the spot. */
         QWeakPointer<Database> m_database;
-        /** Live while a database is in front, so its life reaches the list. */
+        /**
+         * Live while a database is in front: its edits, its renames and the
+         * teardown that follows a lock all have to reach the list, and they are
+         * dropped together when another database takes its place.
+         */
         QVector<QMetaObject::Connection> m_databaseWatch;
         QString m_databasePath;
         QString m_query;

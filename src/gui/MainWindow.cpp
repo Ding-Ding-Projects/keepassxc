@@ -980,8 +980,15 @@ MainWindow::MainWindow()
 
     connect(materialShell->rail(), &Material::NavigationRail::themeToggleRequested, this, [this] {
         const bool wasDark = theme()->isDark();
+        // Theme::setMode() writes Config::GUI_ApplicationTheme itself, so the
+        // choice outlives the session without going through the View ▸ Theme
+        // action group. Triggering that group instead would persist the same
+        // value and then re-apply the whole theme - style, palette, sheet and
+        // font - for what is only a change of mode.
         theme()->setMode(wasDark ? Material::Mode::Light : Material::Mode::Dark);
-        // Keep the View ▸ Theme radio group honest about what just happened.
+        // setChecked() does not emit QActionGroup::triggered, which is what
+        // makes it the right call here: it moves the radio to the mode that is
+        // now stored without writing it a second time.
         (wasDark ? m_ui->actionThemeLight : m_ui->actionThemeDark)->setChecked(true);
     });
     connect(materialShell->rail(),
@@ -2031,6 +2038,10 @@ void MainWindow::enableMenuAndToolbar()
         materialShell->rail()->setDisabled(false);
         materialShell->appBar()->setDisabled(false);
         materialShell->tabs()->setDisabled(false);
+        // The shell's Go To commands and theme toggle are actions, not part of
+        // the rail widget, so the palette keeps offering them unless they are
+        // turned off by name.
+        materialShell->setCommandsEnabled(true);
     }
 }
 
@@ -2042,6 +2053,7 @@ void MainWindow::disableMenuAndToolbar()
         materialShell->rail()->setDisabled(true);
         materialShell->appBar()->setDisabled(true);
         materialShell->tabs()->setDisabled(true);
+        materialShell->setCommandsEnabled(false);
     }
 }
 
