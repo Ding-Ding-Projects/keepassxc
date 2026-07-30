@@ -69,6 +69,7 @@
 #endif
 
 #ifdef KPXC_FEATURE_BROWSER
+#include "gui/passkeys/PasskeyExporter.h"
 #include "gui/passkeys/PasskeyImporter.h"
 #endif
 
@@ -750,10 +751,25 @@ void DatabaseWidget::copyNotes()
 void DatabaseWidget::copyAttribute(QAction* action)
 {
     auto currentEntry = currentSelectedEntry();
-    if (currentEntry) {
-        setClipboardTextAndMinimize(
-            currentEntry->resolveMultiplePlaceholders(currentEntry->attributes()->value(action->data().toString())));
+    if (!currentEntry) {
+        return;
     }
+
+    // The passkey private key is a custom attribute, so it shows up in this menu like any other.
+    // Copying it hands over the whole credential, so it gets the same confirmation as an explicit
+    // passkey export rather than going out silently.
+    const auto attributeKey = action->data().toString();
+#ifdef KPXC_FEATURE_BROWSER
+    if (attributeKey == EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM) {
+        PasskeyExporter exporter(this);
+        if (!exporter.confirmClipboardExport(1)) {
+            return;
+        }
+    }
+#endif
+
+    setClipboardTextAndMinimize(
+        currentEntry->resolveMultiplePlaceholders(currentEntry->attributes()->value(attributeKey)));
 }
 
 bool DatabaseWidget::copyFocusedTextSelection()
@@ -1055,11 +1071,7 @@ void DatabaseWidget::openUrlForEntry(Entry* entry)
     } else {
         QUrl url = QUrl::fromUserInput(entry->resolveMultiplePlaceholders(entry->url()));
         if (!url.isEmpty()) {
-#ifdef KEEPASSXC_DIST_APPIMAGE
-            QProcess::execute("xdg-open", {url.toString(QUrl::FullyEncoded)});
-#else
             QDesktopServices::openUrl(url);
-#endif
 
             if (config()->get(Config::MinimizeOnOpenUrl).toBool()) {
                 getMainWindow()->minimizeOrHide();

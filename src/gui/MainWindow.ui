@@ -386,7 +386,6 @@
      <addaction name="actionThemeAuto"/>
      <addaction name="actionThemeLight"/>
      <addaction name="actionThemeDark"/>
-     <addaction name="actionThemeClassic"/>
     </widget>
     <addaction name="menuTheme"/>
     <addaction name="actionCompactMode"/>
@@ -1175,17 +1174,6 @@
    </property>
    <property name="toolTip">
     <string>Set Theme: Dark</string>
-   </property>
-  </action>
-  <action name="actionThemeClassic">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Classic (Platform-native)</string>
-   </property>
-   <property name="toolTip">
-    <string>Set Theme: Classic</string>
    </property>
   </action>
   <action name="actionShowMenubar">

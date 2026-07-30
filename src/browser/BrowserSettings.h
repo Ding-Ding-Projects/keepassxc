@@ -53,6 +53,8 @@ public:
     void setNoMigrationPrompt(bool prompt);
     bool allowLocalhostWithPasskeys();
     void setAllowLocalhostWithPasskeys(bool enabled);
+    bool autoInstallExtension();
+    void setAutoInstallExtension(bool enabled);
 
     bool useCustomProxy();
     void setUseCustomProxy(bool enabled);

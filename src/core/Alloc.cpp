@@ -20,8 +20,6 @@
 #include <cstdlib>
 #if defined(Q_OS_MACOS)
 #include <malloc/malloc.h>
-#elif defined(Q_OS_FREEBSD)
-#include <malloc_np.h>
 #elif defined(HAVE_MALLOC_H)
 #include <malloc.h>
 #else

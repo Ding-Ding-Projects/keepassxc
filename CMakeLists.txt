@@ -44,23 +44,20 @@ include(CheckCXXSourceCompiles)
 option(WITH_TESTS "Enable building of unit tests" ON)
 option(WITH_GUI_TESTS "Enable building of GUI tests" OFF)
 option(WITH_WARN_DEPRECATED "Development only: warn about deprecated methods, including Qt." OFF)
-option(WITH_ASAN "Enable address sanitizer checks (Linux / macOS only)" OFF)
+option(WITH_ASAN "Enable address sanitizer checks" OFF)
 option(WITH_COVERAGE "Use to build with coverage tests (GCC only)." OFF)
 option(WITH_APP_BUNDLE "Enable Application Bundle for macOS" ON)
 option(WITH_CCACHE "Use ccache for build" OFF)
-option(WITH_X11 "Enable building with X11 dependencies" ON)
 
 # Advanced Features Control
 option(KPXC_MINIMAL "Build KeePassXC with the minimal feature set required for basic usage" OFF)
 option(KPXC_FEATURE_BROWSER "Browser integration and passkeys support" ON)
 option(KPXC_FEATURE_SSHAGENT "SSH Agent integration" ON)
-option(KPXC_FEATURE_FDOSECRETS "freedesktop.org Secret Service integration; replace system keyring" ON)
 
 if(KPXC_MINIMAL)
     # Disable advanced features in minimal mode
     set(KPXC_FEATURE_BROWSER OFF)
     set(KPXC_FEATURE_SSHAGENT OFF)
-    set(KPXC_FEATURE_FDOSECRETS OFF)
 endif()
 
 # Minor Feature Flags
@@ -74,17 +71,9 @@ if(NOT KPXC_FEATURE_NETWORK AND KPXC_FEATURE_UPDATES)
     set(KPXC_FEATURE_UPDATES OFF)
 endif()
 
-# FDO Secrets is only available on Linux
-if(NOT UNIX OR APPLE OR HAIKU)
-	set(KPXC_FEATURE_FDOSECRETS OFF)
-endif()
-
 # Define feature summaries
 add_feature_info("Browser" KPXC_FEATURE_BROWSER "Browser integration and passkeys support")
 add_feature_info("SSH Agent" KPXC_FEATURE_SSHAGENT "SSH Agent integration")
-if(UNIX AND NOT APPLE)
-    add_feature_info("Secret Service" KPXC_FEATURE_FDOSECRETS "Replace system keyring with freedesktop.org Secret Service integration")
-endif()
 add_feature_info("Networking" KPXC_FEATURE_NETWORK "Code that can reach out to external networks is included (e.g. downloading icons)")
 add_feature_info("Update Checks" KPXC_FEATURE_UPDATES "Periodic update checks can be performed")
 add_feature_info("Documentation" KPXC_FEATURE_DOCS "Offline documentation")
@@ -142,14 +131,7 @@ message(STATUS "Setting up build for KeePassXC v${KEEPASSXC_VERSION}\n")
 
 # Distribution info
 set(KEEPASSXC_DIST_TYPE "Native" CACHE STRING "KeePassXC Distribution Type")
-set_property(CACHE KEEPASSXC_DIST_TYPE PROPERTY STRINGS Snap AppImage Flatpak Native)
-if(KEEPASSXC_DIST_TYPE STREQUAL "Snap")
-    set(KEEPASSXC_DIST_SNAP ON)
-elseif(KEEPASSXC_DIST_TYPE STREQUAL "AppImage")
-    set(KEEPASSXC_DIST_APPIMAGE ON)
-elseif(KEEPASSXC_DIST_TYPE STREQUAL "Flatpak")
-    set(KEEPASSXC_DIST_FLATPAK ON)
-endif()
+set_property(CACHE KEEPASSXC_DIST_TYPE PROPERTY STRINGS Native)
 
 # Standards
 set(CMAKE_C_STANDARD 99)
@@ -278,10 +260,6 @@ if(WITH_ASAN)
         endif()
     else()
         add_gcc_compiler_flags("-fsanitize=address -DWITH_ASAN")
-
-        if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-            add_gcc_compiler_flags("-fsanitize=leak -DWITH_LSAN")
-        endif()
     endif()
 endif()
 
@@ -292,14 +270,6 @@ endif()
 check_add_gcc_compiler_flag("-Werror=format-security")
 check_add_gcc_compiler_flag("-Werror=implicit-function-declaration" C)
 check_add_gcc_compiler_flag("-Wcast-align")
-
-if(UNIX AND NOT APPLE)
-    check_add_gcc_compiler_flag("-Qunused-arguments")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--as-needed -Wl,--no-undefined")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,-z,relro,-z,now -pie")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,--as-needed")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_MODULE_LINKER_FLAGS} -Wl,-z,relro,-z,now")
-endif()
 
 check_cxx_compiler_flag("-fsized-deallocation" CXX_HAS_fsized_deallocation)
 if(CXX_HAS_fsized_deallocation)
@@ -427,9 +397,7 @@ endif()
 
 # Find Qt
 set(QT_COMPONENTS Core Network Concurrent Gui Svg Widgets Test LinguistTools)
-if(UNIX AND NOT APPLE)
-    find_package(Qt6 COMPONENTS ${QT_COMPONENTS} DBus REQUIRED)
-elseif(APPLE)
+if(APPLE)
     find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED HINTS
             /usr/local/opt/qt/lib/cmake
             /usr/local/Cellar/qt/*/lib/cmake
@@ -472,6 +440,9 @@ elseif(WIN32)
         message(FATAL_ERROR "windeployqt is required to build on Windows")
     endif()
     message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+    # Where Qt's own runtime DLLs live. The test targets put this on PATH so a
+    # ctest run does not depend on the developer having Qt on PATH already.
+    get_filename_component(QT_BIN_DIR "${WINDEPLOYQT_EXE}" DIRECTORY)
 endif()
 
 # Find Botan
@@ -498,17 +469,6 @@ include_directories(SYSTEM ${MINIZIP_INCLUDE_DIR})
 # Find PCSC and LibUSB for hardware key support
 find_package(PCSC REQUIRED)
 include_directories(SYSTEM ${PCSC_INCLUDE_DIRS})
-
-if(UNIX AND NOT APPLE)
-    find_library(LIBUSB_LIBRARIES NAMES usb-1.0 usb REQUIRED)
-    find_path(LIBUSB_INCLUDE_DIR NAMES libusb.h PATH_SUFFIXES "libusb-1.0" "libusb" REQUIRED)
-    include_directories(SYSTEM ${LIBUSB_INCLUDE_DIR})
-
-    # For PolKit QuickUnlock
-    if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        find_library(KEYUTILS_LIBRARIES NAMES keyutils REQUIRED)
-    endif()
-endif()
 
 # Find zxcvbn or use the bundled version
 find_library(ZXCVBN_LIBRARIES zxcvbn)

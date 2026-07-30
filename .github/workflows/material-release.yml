@@ -1,0 +1,363 @@
+#  Copyright (C) 2026 KeePassXC Team <team@keepassxc.org>
+#
+#  This program is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 2 or (at your option)
+#  version 3 of the License.
+#
+#  This program is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+# Material fork CI and release pipeline.
+#
+# This fork is Windows-only: the Material interface targets Windows and nothing else, so
+# there is exactly one build-and-test job. It builds and tests on Windows, then publishes
+# exactly one non-draft, non-prerelease GitHub Release per run carrying the MSI installer
+# and ZIP that build actually produced. A failing test job skips the release job, so a red
+# run never publishes anything, and a run whose cpack produced no MSI fails rather than
+# publishing a release with nothing installable in it.
+
+name: Material CI and Release
+
+on:
+  push:
+    # Every branch. Tag pushes deliberately do NOT match a `branches` filter, so the tag
+    # this workflow creates for its own release cannot re-trigger the workflow. That is
+    # the only feedback path that could exist here: no job pushes a commit, a branch, a
+    # wiki update, or anything else back to the repository.
+    branches:
+      - '**'
+  workflow_dispatch:
+
+# Least privilege by default; only the release job widens this to contents: write.
+permissions:
+  contents: read
+
+concurrency:
+  # Serialize runs per ref so two runs cannot race on tag creation. Never cancel an
+  # in-flight run: a cancelled run is a lost release.
+  group: material-release-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  QT_VERSION: '6.8.3'
+  # Offline documentation is rendered with asciidoctor, a Ruby toolchain not worth
+  # installing on every runner just to produce the bundled help pages.
+  CMAKE_COMMON_OPTIONS: -DCMAKE_BUILD_TYPE=Release -DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON
+
+jobs:
+  # =================================================================================
+  # Windows: MSVC + Ninja, native dependencies from vcpkg (as documented in README.md).
+  # The only build in this workflow; the fork does not support any other platform.
+  # =================================================================================
+  test-windows:
+    name: Test (Windows x64)
+    runs-on: windows-2022
+    timeout-minutes: 150
+
+    env:
+      # NOTE: the repository already tracks a `vcpkg/` directory holding the overlay
+      # triplets referenced by vcpkg-configuration.json. The vcpkg tool itself must
+      # therefore live somewhere else or that directory would be clobbered. The `runner`
+      # context is not available in a job-level `env:` block, so these are expressed
+      # against `github.workspace`.
+      VCPKG_ROOT: ${{ github.workspace }}\.ci-vcpkg
+      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.ci-vcpkg-archives
+      VCPKG_TARGET_TRIPLET: x64-windows
+      VCPKG_DISABLE_METRICS: '1'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Set up CMake and Ninja
+        uses: lukka/get-cmake@latest
+
+      - name: Set up Qt ${{ env.QT_VERSION }}
+        uses: jurplel/install-qt-action@v4
+        with:
+          version: ${{ env.QT_VERSION }}
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          cache: true
+
+      - name: Set up the MSVC x64 environment
+        shell: pwsh
+        run: |
+          # Ninja invokes cl.exe directly, so the compiler, linker and SDK include/lib
+          # paths have to be in the environment. Locate the toolchain with vswhere and
+          # export the vcvars environment to the rest of the job.
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          if (-not (Test-Path $vswhere)) { throw "vswhere.exe not found; no Visual Studio installation" }
+          $vsPath = & $vswhere -latest -products * `
+            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vsPath) { throw "No Visual Studio installation with the C++ toolchain was found" }
+          $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
+          if (-not (Test-Path $vcvars)) { throw "vcvars64.bat not found at $vcvars" }
+          cmd.exe /c "call `"$vcvars`" >nul 2>&1 && set" | ForEach-Object {
+              if ($_ -match '^([A-Za-z_][A-Za-z0-9_()\[\]]*)=(.*)$') {
+                  Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
+              }
+          }
+
+      - name: Read the pinned vcpkg baseline from vcpkg.json
+        id: vcpkg_baseline
+        shell: pwsh
+        run: |
+          $manifest = Get-Content -Raw -Path "${{ github.workspace }}\vcpkg.json" | ConvertFrom-Json
+          $baseline = $manifest.'builtin-baseline'
+          if (-not $baseline) { throw "vcpkg.json does not declare a builtin-baseline" }
+          Write-Host "vcpkg builtin-baseline: $baseline"
+          "commit=$baseline" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Restore the vcpkg cache
+        id: vcpkg_cache
+        uses: actions/cache@v6
+        with:
+          # The vcpkg checkout itself plus the binary cache of already-compiled ports.
+          path: |
+            ${{ github.workspace }}\.ci-vcpkg
+            ${{ github.workspace }}\.ci-vcpkg-archives
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg_baseline.outputs.commit }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-
+            vcpkg-${{ runner.os }}-
+
+      - name: Set up vcpkg
+        shell: pwsh
+        run: |
+          # -------------------------------------------------------------------------
+          # WHY THIS IS NOT `git clone --depth 1`
+          #
+          # vcpkg.json pins "builtin-baseline" to an exact vcpkg commit. While resolving
+          # the manifest, vcpkg runs inside its own checkout:
+          #
+          #     git show <builtin-baseline>:versions/baseline.json
+          #
+          # A `git clone --depth 1` fetches only the tip of master, so that commit object
+          # is not present locally and the run dies with:
+          #
+          #     error: failed to git show versions/baseline.json
+          #
+          # The fix is to make the pinned commit exist locally. We fetch exactly that SHA
+          # at depth 1 (GitHub permits fetching an arbitrary SHA), which is correct and
+          # far cheaper than unshallowing the entire vcpkg history. If the server ever
+          # refuses a by-SHA fetch we fall back to a full, unshallowed fetch, which also
+          # satisfies the `git show`.
+          # -------------------------------------------------------------------------
+
+          # PowerShell 7.4 turns a non-zero native exit code into a terminating error
+          # because GitHub sets $ErrorActionPreference = 'Stop' for pwsh steps. This
+          # script inspects $LASTEXITCODE itself, so opt out of that behaviour.
+          $ErrorActionPreference = 'Continue'
+          $PSNativeCommandUseErrorActionPreference = $false
+
+          $baseline = '${{ steps.vcpkg_baseline.outputs.commit }}'
+          $vcpkgRoot = '${{ github.workspace }}\.ci-vcpkg'
+
+          New-Item -ItemType Directory -Force -Path $vcpkgRoot | Out-Null
+          New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\.ci-vcpkg-archives' | Out-Null
+
+          if (-not (Test-Path (Join-Path $vcpkgRoot '.git'))) {
+              git init --quiet $vcpkgRoot
+              if ($LASTEXITCODE -ne 0) { throw "git init failed in $vcpkgRoot" }
+              git -C $vcpkgRoot remote add origin https://github.com/microsoft/vcpkg.git
+              if ($LASTEXITCODE -ne 0) { throw "could not add the vcpkg remote" }
+          }
+
+          # A miss here is the normal cold-cache case, so keep its stderr out of the log.
+          git -C $vcpkgRoot cat-file -e "$baseline^{commit}" 2>$null
+          if ($LASTEXITCODE -ne 0) {
+              Write-Host "Fetching pinned vcpkg baseline $baseline"
+              git -C $vcpkgRoot fetch --depth 1 origin $baseline
+              if ($LASTEXITCODE -ne 0) {
+                  Write-Host "By-SHA fetch failed; fetching the full history instead."
+                  git -C $vcpkgRoot fetch --no-tags origin
+                  if ($LASTEXITCODE -ne 0) { throw "Unable to fetch vcpkg baseline $baseline" }
+              }
+          }
+
+          git -C $vcpkgRoot -c advice.detachedHead=false checkout --force $baseline
+          if ($LASTEXITCODE -ne 0) { throw "Unable to check out vcpkg baseline $baseline" }
+
+          # Prove the object manifest resolution needs is really there before we build.
+          git -C $vcpkgRoot show "${baseline}:versions/baseline.json" | Out-Null
+          if ($LASTEXITCODE -ne 0) { throw "vcpkg baseline $baseline has no versions/baseline.json" }
+
+          & "$vcpkgRoot\bootstrap-vcpkg.bat" -disableMetrics
+          if ($LASTEXITCODE -ne 0) { throw "bootstrap-vcpkg.bat failed" }
+
+      - name: Configure
+        shell: pwsh
+        run: |
+          # X_VCPKG_APPLOCAL_DEPS_INSTALL puts the vcpkg DLLs (botan, argon2, and the
+          # rest) into the install tree. Without it the installer ships an executable
+          # that cannot start on a machine that has never seen vcpkg.
+          cmake -B build -S . -G Ninja `
+            ${{ env.CMAKE_COMMON_OPTIONS }} `
+            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/.ci-vcpkg/scripts/buildsystems/vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_TARGET_TRIPLET }} `
+            -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON `
+            -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
+
+      - name: Build
+        shell: pwsh
+        run: cmake --build build --parallel
+
+      - name: Test
+        shell: pwsh
+        run: |
+          # The test executables end up as GUI-subsystem binaries on Windows, so their
+          # stdout is detached from the console and QTest chatter never reaches the log.
+          # Exit codes are the reliable signal; --output-on-failure surfaces whatever
+          # ctest did manage to capture for a failing test.
+          $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
+          ctest --test-dir build --output-on-failure --no-tests=error --timeout 900
+
+      - name: Ensure the WiX Toolset is available
+        shell: pwsh
+        run: |
+          # CPack's WIX generator shells out to candle.exe and light.exe. The hosted
+          # image has shipped WiX 3 for years, but it is not contractual, so the
+          # absence is repaired rather than discovered at packaging time.
+          if ($env:WIX -and (Test-Path (Join-Path $env:WIX 'bin\candle.exe'))) {
+            $wixBin = Join-Path $env:WIX 'bin'
+          } else {
+            choco install wixtoolset --no-progress -y
+            $candle = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset*\bin\candle.exe' `
+              -ErrorAction SilentlyContinue | Select-Object -First 1
+            if (-not $candle) { throw 'WiX Toolset 3 is not installed and could not be installed.' }
+            $wixBin = $candle.DirectoryName
+          }
+          Write-Host "Using WiX at $wixBin"
+          Add-Content $env:GITHUB_PATH $wixBin
+
+      - name: Package
+        shell: pwsh
+        run: |
+          # The project configures CPack with ZIP and WIX generators itself, so this
+          # produces the same two artifacts the upstream Windows release does: an MSI
+          # that a user can actually install, and a ZIP of the same tree for anyone who
+          # would rather not run an installer. Both carry the Qt runtime, the plugins
+          # and the CA bundle, because the install rule runs windeployqt.
+          New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\artifacts' | Out-Null
+          cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
+          Get-ChildItem '${{ github.workspace }}\artifacts\*.msi', '${{ github.workspace }}\artifacts\*.zip' |
+            ForEach-Object { '{0}  {1:N1} MiB' -f $_.Name, ($_.Length / 1MB) }
+
+      - name: Refuse a package with no installer in it
+        shell: pwsh
+        run: |
+          # A release without an installer is not a release. Fail here, in the job that
+          # knows why, rather than letting the release job publish an empty promise.
+          $msi = Get-ChildItem '${{ github.workspace }}\artifacts\*.msi' -ErrorAction SilentlyContinue
+          if (-not $msi) { throw 'cpack produced no MSI; refusing to hand a release job nothing to publish.' }
+
+      - name: Upload the Windows package
+        uses: actions/upload-artifact@v7
+        with:
+          name: package-windows-x64
+          path: |
+            artifacts/*.msi
+            artifacts/*.zip
+          if-no-files-found: error
+          retention-days: 7
+
+  # =================================================================================
+  # Release. Runs only when the Windows job succeeded, and only for the default branch
+  # or a manual dispatch. Publishes the package that job genuinely built.
+  # =================================================================================
+  release:
+    name: Release
+    needs: [test-windows]
+    # success() is explicit rather than implied: a failed or cancelled test job must not
+    # produce a release under any circumstances.
+    if: >-
+      success()
+      && (github.event_name == 'workflow_dispatch'
+      || github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+
+    # The only place in this workflow that needs write access. The release is created
+    # with the automatically provided GITHUB_TOKEN; no organization or repository secret
+    # is referenced, and the token is never printed.
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Download the built package
+        uses: actions/download-artifact@v8
+        with:
+          name: package-windows-x64
+          path: artifacts
+
+      - name: Verify that the installer is present
+        run: |
+          set -euo pipefail
+          ls -l artifacts
+          # Checked in the build job too. Checked again here because this is the step
+          # standing between a missing installer and a release that claims to have one.
+          shopt -s nullglob
+          msi=(artifacts/*.msi)
+          zip=(artifacts/*.zip)
+          test ${#msi[@]} -eq 1 || { echo "expected exactly one MSI, found ${#msi[@]}" >&2; exit 1; }
+          test -s "${msi[0]}"
+          test ${#zip[@]} -eq 1 || { echo "expected exactly one ZIP, found ${#zip[@]}" >&2; exit 1; }
+          test -s "${zip[0]}"
+          {
+            echo "MSI_PATH=${msi[0]}"
+            echo "MSI_NAME=$(basename "${msi[0]}")"
+            echo "ZIP_PATH=${zip[0]}"
+            echo "ZIP_NAME=$(basename "${zip[0]}")"
+          } >> "$GITHUB_ENV"
+
+      - name: Compose the release notes
+        env:
+          # A unique, monotonic tag per run: run_number increases with every run of this
+          # workflow on the repository and run_attempt with every re-run, so no earlier
+          # release can be recycled or overwritten.
+          RELEASE_TAG: v0.0.${{ github.run_number }}.${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
+          {
+            echo "Automated build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`."
+            echo
+            echo "This fork is Windows-only."
+            echo
+            echo "| Platform | Artifact | Notes |"
+            echo "| --- | --- | --- |"
+            echo "| Windows x64 | \`${MSI_NAME}\` | The installer. Self-contained; the Qt runtime is deployed by windeployqt. |"
+            echo "| Windows x64 | \`${ZIP_NAME}\` | The same tree, unpacked by hand instead. |"
+            echo
+            echo "Configured with \`-DKPXC_FEATURE_DOCS=OFF -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
+            echo
+            echo "Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
+          } > release-notes.md
+          cat release-notes.md
+
+      - name: Create the GitHub Release
+        env:
+          # Built-in token granted by the permissions block above.
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          gh release create "${RELEASE_TAG}" \
+            --target "${GITHUB_SHA}" \
+            --title "KeePassXC Material ${RELEASE_TAG}" \
+            --notes-file release-notes.md \
+            --draft=false \
+            --prerelease=false \
+            "${MSI_PATH}" "${ZIP_PATH}"
+          echo "Published **${RELEASE_TAG}** for \`${GITHUB_SHA}\`." >> "$GITHUB_STEP_SUMMARY"

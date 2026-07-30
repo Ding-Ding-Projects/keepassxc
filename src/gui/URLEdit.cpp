@@ -20,7 +20,7 @@
 
 #include "gui/Icons.h"
 #include "gui/UrlTools.h"
-#include "gui/styles/StateColorPalette.h"
+#include "gui/material/MaterialSeverity.h"
 
 URLEdit::URLEdit(QWidget* parent)
     : QLineEdit(parent)
@@ -47,16 +47,9 @@ void URLEdit::setEntry(Entry* entry)
 
 void URLEdit::updateStylesheet(const QString& url)
 {
-    const QString stylesheetTemplate("QLineEdit { background: %1; }");
     const auto resolvedUrl = m_entry ? m_entry->resolveMultiplePlaceholders(url) : url;
+    const bool invalid = !UrlTools::isUrlValid(resolvedUrl);
 
-    if (!UrlTools::isUrlValid(resolvedUrl)) {
-        const StateColorPalette statePalette;
-        const auto color = statePalette.color(StateColorPalette::ColorRole::Error);
-        setStyleSheet(stylesheetTemplate.arg(color.name()));
-        m_errorAction->setVisible(true);
-    } else {
-        m_errorAction->setVisible(false);
-        setStyleSheet("");
-    }
+    Material::setSeverity(this, invalid ? Material::Severity::Error : Material::Severity::None);
+    m_errorAction->setVisible(invalid);
 }

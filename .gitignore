@@ -32,3 +32,10 @@ out/
 # vcpkg
 vcpkg_installed*/
 
+# Scratch directories used by .github/workflows/material-release.yml
+/.ci-vcpkg/
+/.ci-vcpkg-archives/
+/stage/
+/artifacts/
+
+__pycache__/

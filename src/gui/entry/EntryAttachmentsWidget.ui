@@ -61,7 +61,10 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="addAttachmentButton">
+       <widget class="Material::FilledButton" name="addAttachmentButton">
+        <property name="symbol">
+         <string notr="true">add</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -74,7 +77,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="editAttachmentButton">
+       <widget class="Material::OutlinedButton" name="editAttachmentButton">
+        <property name="symbol">
+         <string notr="true">edit</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -91,7 +97,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="previewAttachmentButton">
+       <widget class="Material::OutlinedButton" name="previewAttachmentButton">
+        <property name="symbol">
+         <string notr="true">visibility</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -101,7 +110,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="openAttachmentButton">
+       <widget class="Material::OutlinedButton" name="openAttachmentButton">
+        <property name="symbol">
+         <string notr="true">open_in_new</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -114,7 +126,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="saveAttachmentButton">
+       <widget class="Material::OutlinedButton" name="saveAttachmentButton">
+        <property name="symbol">
+         <string notr="true">download</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -137,7 +152,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="removeAttachmentButton">
+       <widget class="Material::TonalButton" name="removeAttachmentButton">
+        <property name="symbol">
+         <string notr="true">delete</string>
+        </property>
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -170,6 +188,23 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

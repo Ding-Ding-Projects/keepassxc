@@ -215,34 +215,6 @@ QString NativeMessageInstaller::getNativeMessagePath(SupportedBrowsers browser) 
         basePath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation);
     }
     return QStringLiteral("%1/%2_%3.json").arg(basePath, HOST_NAME, getBrowserName(browser));
-#elif defined(KEEPASSXC_DIST_FLATPAK)
-    // Flatpak sandboxes do not have access to the XDG_DATA_HOME and XDG_CONFIG_HOME variables
-    // defined in the host, so we must hardcode them here.
-    if (browser == SupportedBrowsers::TOR_BROWSER) {
-        basePath = QDir::homePath() + "/.local/share";
-    } else if (browser == SupportedBrowsers::FIREFOX) {
-        basePath = QDir::homePath();
-    } else {
-        basePath = QDir::homePath() + "/.config";
-    }
-#elif defined(KEEPASSXC_DIST_SNAP)
-    // Same as Flatpak above, with the exception that Snap also redefines $HOME
-    // Therefore we must explicitly reference $SNAP_REAL_HOME
-    if (browser == SupportedBrowsers::TOR_BROWSER) {
-        basePath = qEnvironmentVariable("SNAP_REAL_HOME") + "/.local/share";
-    } else if (browser == SupportedBrowsers::FIREFOX) {
-        basePath = qEnvironmentVariable("SNAP_REAL_HOME");
-    } else {
-        basePath = qEnvironmentVariable("SNAP_REAL_HOME") + "/.config";
-    }
-#elif defined(Q_OS_LINUX) || (defined(Q_OS_UNIX) && !defined(Q_OS_MACOS))
-    if (browser == SupportedBrowsers::TOR_BROWSER) {
-        basePath = QStandardPaths::writableLocation(QStandardPaths::GenericDataLocation);
-    } else if (browser == SupportedBrowsers::FIREFOX) {
-        basePath = QDir::homePath();
-    } else {
-        basePath = QStandardPaths::writableLocation(QStandardPaths::ConfigLocation);
-    }
 #else
     basePath = QDir::homePath();
 #endif
@@ -252,34 +224,6 @@ QString NativeMessageInstaller::getNativeMessagePath(SupportedBrowsers browser) 
 
     return QStringLiteral("%1%2/%3.json").arg(basePath, getTargetPath(browser), HOST_NAME);
 }
-
-#ifdef KEEPASSXC_DIST_FLATPAK
-/** Constructs a host accessible proxy path for use with flatpak
- *
- * @return path Path to host accessible wrapper script (org.keepassxc.KeePassXC)
- */
-QString constructFlatpakPath()
-{
-    // Find and extract the host flatpak data directory (in /var)
-    QString path;
-    QSettings settings("/.flatpak-info", QSettings::IniFormat);
-    settings.beginGroup("Instance");
-    QString appPath = settings.value("app-path").toString();
-
-    QRegularExpression re("^((?:/[\\.\\w-]*)+)+/app");
-    QRegularExpressionMatch match = re.match(appPath);
-    if (match.hasMatch()) {
-        // Construct a proxy path that should work with all flatpak installations
-        path = match.captured(1) + "/exports/bin/" + "org.keepassxc.KeePassXC";
-    } else {
-        // Fallback to the most common and default flatpak installation path
-        path = "/var/lib/flatpak/exports/bin/org.keepassxc.KeePassXC";
-    }
-    settings.endGroup();
-
-    return path;
-}
-#endif
 
 /**
  * Returns the effective proxy path used to build the native messaging JSON script
@@ -301,19 +245,7 @@ QString NativeMessageInstaller::getProxyPath() const
 QString NativeMessageInstaller::getInstalledProxyPath() const
 {
     QString path;
-#if defined(KEEPASSXC_DIST_APPIMAGE)
-    path = QProcessEnvironment::systemEnvironment().value("APPIMAGE");
-#elif defined(KEEPASSXC_DIST_FLATPAK)
-    path = constructFlatpakPath();
-#elif defined(KEEPASSXC_DIST_SNAP)
-    path = "/snap/bin/keepassxc.proxy";
-#else
-    path = QCoreApplication::applicationDirPath() + QStringLiteral("/keepassxc-proxy");
-#ifdef Q_OS_WIN
-    path.append(QStringLiteral(".exe"));
-#endif // #ifdef Q_OS_WIN
-
-#endif // #ifdef KEEPASSXC_DIST_APPIMAGE
+    path = QCoreApplication::applicationDirPath() + QStringLiteral("/keepassxc-proxy.exe");
     return QDir::toNativeSeparators(path);
 }
 

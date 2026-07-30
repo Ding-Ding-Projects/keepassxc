@@ -27,8 +27,6 @@
 #include "winutils/DeviceListenerWin.h"
 #elif defined(Q_OS_MACOS)
 #include "macutils/DeviceListenerMac.h"
-#elif defined(Q_OS_UNIX)
-#include "nixutils/DeviceListenerLibUsb.h"
 #endif
 
 class QUuid;

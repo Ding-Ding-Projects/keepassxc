@@ -23,6 +23,7 @@
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
 #include "gui/dbsettings/DatabaseSettingsWidget.h"
+#include "gui/material/MaterialNotifier.h"
 #include "keys/FileKey.h"
 
 KeyFileEditWidget::KeyFileEditWidget(DatabaseSettingsWidget* parent)
@@ -44,12 +45,10 @@ bool KeyFileEditWidget::addToCompositeKey(QSharedPointer<CompositeKey> key)
     }
 
     if (fileKey->type() != FileKey::KeePass2XMLv2 && fileKey->type() != FileKey::Hashed) {
-        QMessageBox::warning(getMainWindow(),
-                             tr("Old key file format"),
-                             tr("You selected a key file in an old format which KeePassXC<br>"
-                                "may stop supporting in the future.<br><br>"
-                                "Please consider generating a new key file instead."),
-                             QMessageBox::Ok);
+        Material::Notify::warning(tr("Old key file format"),
+                                  tr("You selected a key file in an old format which KeePassXC may stop "
+                                     "supporting in the future. Please consider generating a new key file "
+                                     "instead."));
     }
 
     key->addKey(fileKey);

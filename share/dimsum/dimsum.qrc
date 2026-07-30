@@ -1,0 +1,19 @@
+<!DOCTYPE RCC>
+<RCC version="1.0">
+    <qresource prefix="/dimsum">
+        <file>dimsum.json</file>
+        <file>char_siu_bao.svg</file>
+        <file>cheung_fun.svg</file>
+        <file>chun_gyun.svg</file>
+        <file>daan_tat.svg</file>
+        <file>fung_zaau.svg</file>
+        <file>har_gow.svg</file>
+        <file>jin_deui.svg</file>
+        <file>lo_bak_go.svg</file>
+        <file>ma_lai_go.svg</file>
+        <file>nai_wong_bao.svg</file>
+        <file>no_mai_gai.svg</file>
+        <file>paai_gwat.svg</file>
+        <file>siu_mai.svg</file>
+    </qresource>
+</RCC>

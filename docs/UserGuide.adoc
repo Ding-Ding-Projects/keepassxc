@@ -37,7 +37,6 @@ include::topics/Passkeys.adoc[tags=*]
 
 include::topics/AutoType.adoc[tags=*]
 
-include::topics/SecretService.adoc[tags=*]
 
 include::topics/SSHAgent.adoc[tags=*]
 

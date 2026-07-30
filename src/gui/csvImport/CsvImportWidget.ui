@@ -28,14 +28,11 @@
    </property>
    <item>
     <layout class="QHBoxLayout" name="parserOptionsLayout">
+     <property name="spacing">
+      <number>12</number>
+     </property>
      <item>
       <widget class="QGroupBox" name="ColumnAssociation">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
        <property name="title">
         <string>Column Association</string>
        </property>
@@ -68,12 +65,6 @@
         </item>
         <item row="0" column="0">
          <widget class="QLabel" name="groupLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Group</string>
           </property>
@@ -87,12 +78,6 @@
         </item>
         <item row="0" column="3">
          <widget class="QLabel" name="notesLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Notes</string>
           </property>
@@ -106,12 +91,6 @@
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="usernameLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Username</string>
           </property>
@@ -164,12 +143,6 @@
         </item>
         <item row="3" column="3">
          <widget class="QLabel" name="lastModifiedLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Last Modified</string>
           </property>
@@ -209,12 +182,6 @@
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="passwordLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Password</string>
           </property>
@@ -244,12 +211,6 @@
         </item>
         <item row="4" column="3">
          <widget class="QLabel" name="createdLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Created</string>
           </property>
@@ -276,12 +237,6 @@
         </item>
         <item row="4" column="0">
          <widget class="QLabel" name="urlLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>URL</string>
           </property>
@@ -295,12 +250,6 @@
         </item>
         <item row="1" column="3">
          <widget class="QLabel" name="totpLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>TOTP</string>
           </property>
@@ -327,12 +276,6 @@
         </item>
         <item row="2" column="3">
          <widget class="QLabel" name="iconLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Icon</string>
           </property>
@@ -346,12 +289,6 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="titleLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Title</string>
           </property>
@@ -378,12 +315,6 @@
         </item>
         <item row="5" column="0">
          <widget class="QLabel" name="tagsLabel">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Tags</string>
           </property>
@@ -410,24 +341,12 @@
      </item>
      <item>
       <widget class="QGroupBox" name="Encoding">
-       <property name="font">
-        <font>
-         <weight>75</weight>
-         <bold>true</bold>
-        </font>
-       </property>
        <property name="title">
         <string>Encoding</string>
        </property>
        <layout class="QFormLayout" name="formLayout">
         <item row="0" column="0">
          <widget class="QLabel" name="labelCodec">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Codec</string>
           </property>
@@ -438,12 +357,6 @@
         </item>
         <item row="0" column="1">
          <widget class="QComboBox" name="comboBoxCodec">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="accessibleName">
            <string>Codec</string>
           </property>
@@ -477,12 +390,6 @@
         </item>
         <item row="1" column="0">
          <widget class="QLabel" name="labelTextQualifier">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Text is qualified by</string>
           </property>
@@ -493,12 +400,6 @@
         </item>
         <item row="1" column="1">
          <widget class="QComboBox" name="comboBoxTextQualifier">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="accessibleName">
            <string>Text qualification</string>
           </property>
@@ -537,12 +438,6 @@
         </item>
         <item row="2" column="0">
          <widget class="QLabel" name="labelFieldSeparator">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Fields are separated by</string>
           </property>
@@ -553,12 +448,6 @@
         </item>
         <item row="2" column="1">
          <widget class="QComboBox" name="comboBoxFieldSeparator">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="accessibleName">
            <string>Field separation</string>
           </property>
@@ -602,12 +491,6 @@
         </item>
         <item row="3" column="0">
          <widget class="QLabel" name="labelComments">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Comments start with</string>
           </property>
@@ -618,12 +501,6 @@
         </item>
         <item row="3" column="1">
          <widget class="QComboBox" name="comboBoxComment">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="accessibleName">
            <string>Comments start with</string>
           </property>
@@ -657,12 +534,6 @@
         </item>
         <item row="4" column="0">
          <widget class="QLabel" name="labelSkipRows">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="text">
            <string>Header lines skipped</string>
           </property>
@@ -673,39 +544,41 @@
         </item>
         <item row="4" column="1">
          <widget class="QSpinBox" name="spinBoxSkip">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
           <property name="accessibleName">
            <string>Number of header lines to discard</string>
           </property>
          </widget>
         </item>
-        <item row="5" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBoxBackslash">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
+        <item row="5" column="0">
+         <widget class="QLabel" name="labelBackslash">
           <property name="text">
+           <string>Consider '\' an escape character</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="5" column="1">
+         <widget class="Material::Switch" name="checkBoxBackslash">
+          <property name="accessibleName">
            <string>Consider '\' an escape character</string>
           </property>
          </widget>
         </item>
-        <item row="6" column="0" colspan="2">
-         <widget class="QCheckBox" name="checkBoxFieldNames">
-          <property name="font">
-           <font>
-            <weight>50</weight>
-            <bold>false</bold>
-           </font>
-          </property>
+        <item row="6" column="0">
+         <widget class="QLabel" name="labelFieldNames">
           <property name="text">
+           <string>First line has field names</string>
+          </property>
+          <property name="wordWrap">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="Material::Switch" name="checkBoxFieldNames">
+          <property name="accessibleName">
            <string>First line has field names</string>
           </property>
           <property name="checked">
@@ -733,12 +606,6 @@
    </item>
    <item>
     <widget class="QGroupBox" name="previewLayout">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="title">
       <string>Preview</string>
      </property>
@@ -754,12 +621,6 @@
       </property>
       <item>
        <widget class="QLabel" name="labelSizeRowsCols">
-        <property name="font">
-         <font>
-          <weight>50</weight>
-          <bold>false</bold>
-         </font>
-        </property>
         <property name="text">
          <string>size, rows, columns</string>
         </property>
@@ -778,12 +639,6 @@
           <width>800</width>
           <height>300</height>
          </size>
-        </property>
-        <property name="font">
-         <font>
-          <weight>50</weight>
-          <bold>false</bold>
-         </font>
         </property>
         <property name="accessibleName">
          <string>CSV import preview</string>
@@ -808,6 +663,13 @@
   <tabstop>comboBoxComment</tabstop>
   <tabstop>tableViewFields</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

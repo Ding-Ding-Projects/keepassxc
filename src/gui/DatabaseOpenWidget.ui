@@ -287,7 +287,10 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QPushButton" name="buttonBrowseFile">
+                  <widget class="Material::OutlinedButton" name="buttonBrowseFile">
+                   <property name="symbol">
+                    <string notr="true">folder_open</string>
+                   </property>
                    <property name="toolTip">
                     <string>Browse for key file</string>
                    </property>
@@ -344,11 +347,41 @@
                    <number>0</number>
                   </property>
                   <item>
-                   <widget class="QCheckBox" name="useHardwareKeyCheckBox">
-                    <property name="text">
-                     <string notr="true">Use Hardware Security Key [Serial: 11111111]</string>
+                   <layout class="QHBoxLayout" name="useHardwareKeyCheckBoxRow">
+                    <property name="spacing">
+                     <number>12</number>
                     </property>
-                   </widget>
+                    <item>
+                     <widget class="QLabel" name="useHardwareKeyCheckBoxLabel">
+                      <property name="text">
+                       <string notr="true">Use Hardware Security Key [Serial: 11111111]</string>
+                      </property>
+                      <property name="wordWrap">
+                       <bool>true</bool>
+                      </property>
+                     </widget>
+                    </item>
+                    <item>
+                     <spacer name="useHardwareKeyCheckBoxSpacer">
+                      <property name="orientation">
+                       <enum>Qt::Horizontal</enum>
+                      </property>
+                      <property name="sizeHint" stdset="0">
+                       <size>
+                        <width>24</width>
+                        <height>20</height>
+                       </size>
+                      </property>
+                     </spacer>
+                    </item>
+                    <item>
+                     <widget class="Material::Switch" name="useHardwareKeyCheckBox">
+                      <property name="accessibleName">
+                       <string notr="true">Use Hardware Security Key [Serial: 11111111]</string>
+                      </property>
+                     </widget>
+                    </item>
+                   </layout>
                   </item>
                   <item>
                    <widget class="QComboBox" name="hardwareKeyCombo">
@@ -380,6 +413,9 @@
                </item>
                <item>
                 <widget class="QLabel" name="noHardwareKeysFoundLabel">
+                 <property name="materialSeverity" stdset="0">
+                  <string notr="true">warning</string>
+                 </property>
                  <property name="sizePolicy">
                   <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                    <horstretch>0</horstretch>
@@ -408,7 +444,10 @@
                 </spacer>
                </item>
                <item>
-                <widget class="QPushButton" name="refreshHardwareKeys">
+                <widget class="Material::IconButton" name="refreshHardwareKeys">
+                 <property name="symbol">
+                  <string notr="true">refresh</string>
+                 </property>
                  <property name="cursor">
                   <cursorShape>PointingHandCursor</cursorShape>
                  </property>
@@ -417,9 +456,6 @@
                  </property>
                  <property name="accessibleName">
                   <string>Refresh Hardware Keys</string>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QPushButton { background-color: transparent; border: none; } </string>
                  </property>
                  <property name="text">
                   <string notr="true"/>
@@ -528,19 +564,15 @@
                </spacer>
               </item>
               <item>
-               <widget class="QPushButton" name="quickUnlockButton">
+               <widget class="Material::FilledButton" name="quickUnlockButton">
+                <property name="symbol">
+                 <string notr="true">fingerprint</string>
+                </property>
                 <property name="minimumSize">
                  <size>
                   <width>200</width>
-                  <height>60</height>
+                  <height>56</height>
                  </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                  <weight>75</weight>
-                  <bold>true</bold>
-                 </font>
                 </property>
                 <property name="text">
                  <string>Unlock Database</string>
@@ -551,7 +583,10 @@
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="resetQuickUnlockButton">
+               <widget class="Material::TextButton" name="resetQuickUnlockButton">
+                <property name="symbol">
+                 <string notr="true">close</string>
+                </property>
                 <property name="text">
                  <string>Cancel</string>
                 </property>
@@ -645,6 +680,31 @@
    <class>ElidedLabel</class>
    <extends>QLabel</extends>
    <header>gui/widgets/ElidedLabel.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::IconButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

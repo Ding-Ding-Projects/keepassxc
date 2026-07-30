@@ -42,7 +42,6 @@ KeePassXC has numerous features for novice and power users alike. This guide wil
  ** Auto-Open databases
  ** KeeShare shared databases (import, export, and synchronize)
  ** SSH Agent
- ** FreeDesktop.org Secret Service (replace Gnome keyring, etc.)
  ** Additional encryption choices: Twofish and ChaCha20
 
 == Contact Us

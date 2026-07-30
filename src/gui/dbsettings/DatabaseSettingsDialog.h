@@ -32,9 +32,6 @@ class DatabaseSettingsWidgetDatabaseKey;
 class DatabaseSettingsWidgetBrowser;
 #endif
 class DatabaseSettingsWidgetKeeShare;
-#ifdef KPXC_FEATURE_FDOSECRETS
-class DatabaseSettingsWidgetFdoSecrets;
-#endif
 class DatabaseSettingsWidgetMaintenance;
 class DatabaseSettingsWidgetRemote;
 class QTabWidget;
@@ -69,9 +66,6 @@ private:
     QPointer<DatabaseSettingsWidgetBrowser> m_browserWidget;
 #endif
     QPointer<DatabaseSettingsWidgetKeeShare> m_keeShareWidget;
-#ifdef KPXC_FEATURE_FDOSECRETS
-    QPointer<DatabaseSettingsWidgetFdoSecrets> m_fdoSecretsWidget;
-#endif
     QPointer<DatabaseSettingsWidgetMaintenance> m_maintenanceWidget;
     QPointer<DatabaseSettingsWidgetRemote> m_remoteWidget;
 };

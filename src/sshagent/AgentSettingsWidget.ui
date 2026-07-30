@@ -45,11 +45,41 @@
     <widget class="MessageWidget" name="sshAuthSockMessageWidget" native="true"/>
    </item>
    <item>
-    <widget class="QCheckBox" name="enableSSHAgentCheckBox">
-     <property name="text">
-      <string>Enable SSH Agent integration</string>
+    <layout class="QHBoxLayout" name="enableSSHAgentCheckBoxRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="enableSSHAgentCheckBoxLabel">
+       <property name="text">
+        <string>Enable SSH Agent integration</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="enableSSHAgentCheckBoxSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="enableSSHAgentCheckBox">
+       <property name="accessibleName">
+        <string>Enable SSH Agent integration</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QFrame" name="agentConfigPageBody">
@@ -209,6 +239,11 @@
    <extends>QWidget</extends>
    <header>gui/MessageWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

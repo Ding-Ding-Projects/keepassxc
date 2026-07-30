@@ -97,12 +97,48 @@ set(core_SOURCES
         streams/SymmetricCipherStream.cpp)
 
 set(gui_SOURCES
-        gui/styles/styles.qrc
         gui/styles/StateColorPalette.cpp
-        gui/styles/base/phantomcolor.cpp
-        gui/styles/base/BaseStyle.cpp
-        gui/styles/dark/DarkStyle.cpp
-        gui/styles/light/LightStyle.cpp
+        gui/material/MaterialButtons.cpp
+        gui/material/MaterialCard.cpp
+        gui/material/MaterialChangelogFeed.cpp
+        gui/material/MaterialChangelogScreen.cpp
+        gui/material/MaterialChip.cpp
+        gui/material/MaterialCommandPalette.cpp
+        gui/material/MaterialDialog.cpp
+        gui/material/MaterialDimSum.cpp
+        gui/material/MaterialElevation.cpp
+        gui/material/MaterialEntryDelegate.cpp
+        gui/material/MaterialEntryDetail.cpp
+        gui/material/MaterialGeneratorSheet.cpp
+        gui/material/MaterialGroupDelegate.cpp
+        gui/material/MaterialHistoryFeed.cpp
+        gui/material/MaterialHistoryScreen.cpp
+        gui/material/MaterialHistoryStore.cpp
+        gui/material/MaterialIcons.cpp
+        gui/material/MaterialNavigationRail.cpp
+        gui/material/MaterialNotificationCentre.cpp
+        gui/material/MaterialNotifier.cpp
+        gui/material/MaterialOverlay.cpp
+        gui/material/MaterialRegexBuilder.cpp
+        gui/material/MaterialReportsFeed.cpp
+        gui/material/MaterialReportsScreen.cpp
+        gui/material/MaterialScreen.cpp
+        gui/material/MaterialSearchBar.cpp
+        gui/material/MaterialSegmentedButton.cpp
+        gui/material/MaterialSettingsHub.cpp
+        gui/material/MaterialSettingsScreen.cpp
+        gui/material/MaterialShell.cpp
+        gui/material/MaterialSnackbar.cpp
+        gui/material/MaterialSpecSheet.cpp
+        gui/material/MaterialStyle.cpp
+        gui/material/MaterialStyleSheet.cpp
+        gui/material/MaterialSwitch.cpp
+        gui/material/MaterialTabStrip.cpp
+        gui/material/MaterialTheme.cpp
+        gui/material/MaterialTopAppBar.cpp
+        gui/material/MaterialVaultScreen.cpp
+        gui/material/MaterialVaultSidebar.cpp
+        gui/material/MaterialVoice.cpp
         gui/AboutDialog.cpp
         gui/ActionCollection.cpp
         gui/Application.cpp
@@ -210,7 +246,11 @@ set(gui_SOURCES
         gui/wizard/NewDatabaseWizardPageEncryption.cpp
         gui/wizard/NewDatabaseWizardPageDatabaseKey.cpp
         quickunlock/QuickUnlockInterface.cpp
+        ../share/changelog/changelog.qrc
+        ../share/dimsum/dimsum.qrc
         ../share/icons/icons.qrc
+        ../share/icons/material/material_icons.qrc
+        ../share/voice/voice.qrc
         ../share/wizard/wizard.qrc)
 
 if(APPLE)
@@ -227,62 +267,9 @@ if(APPLE)
     set_source_files_properties(quickunlock/TouchID.mm PROPERTY COMPILE_FLAGS "-Wno-old-style-cast")
 endif()
 
-if(UNIX AND NOT APPLE)
-    list(APPEND gui_SOURCES
-            gui/osutils/nixutils/DesktopPortal.cpp
-            gui/osutils/nixutils/DeviceListenerLibUsb.cpp
-            gui/osutils/nixutils/GlobalShortcutsPortal.cpp
-            gui/osutils/nixutils/NixUtils.cpp
-            gui/osutils/nixutils/RemoteDesktopPortal.cpp
-            gui/osutils/nixutils/ScreenLockListenerDBus.cpp
-    )
-    if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        list(APPEND core_SOURCES
-                quickunlock/Polkit.cpp
-                quickunlock/PolkitDbusTypes.cpp)
-    endif()
-    if(WITH_X11)
-        list(APPEND gui_SOURCES
-            gui/osutils/nixutils/X11Funcs.cpp)
-    endif()
-    qt6_add_dbus_adaptor(gui_SOURCES
-            gui/org.keepassxc.KeePassXC.MainWindow.xml
-            gui/MainWindow.h
-            MainWindow)
-
-    set_source_files_properties(
-        quickunlock/dbus/org.freedesktop.PolicyKit1.Authority.xml
-        PROPERTIES
-        INCLUDE "quickunlock/PolkitDbusTypes.h"
-        )
-    qt6_add_dbus_interface(core_SOURCES
-        quickunlock/dbus/org.freedesktop.PolicyKit1.Authority.xml
-        polkit_dbus
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Request.xml
-        xdp_request
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Session.xml
-        xdp_session
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.GlobalShortcuts.xml
-        xdp_globalshortcuts
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.RemoteDesktop.xml
-        xdp_remotedesktop
-    )
-    qt6_add_dbus_interface(core_SOURCES
-        gui/osutils/nixutils/dbus/org.freedesktop.portal.Clipboard.xml
-        xdp_clipboard
-    )
-endif()
-
 if(WIN32)
     list(APPEND gui_SOURCES
+            gui/material/MaterialWindowChrome.cpp
             gui/osutils/winutils/DeviceListenerWin.cpp
             gui/osutils/winutils/ScreenLockListenerWin.cpp
             gui/osutils/winutils/WinUtils.cpp)
@@ -302,6 +289,7 @@ if(KPXC_FEATURE_BROWSER)
             gui/reports/ReportsPagePasskeys.cpp
             gui/reports/ReportsWidgetBrowserStatistics.cpp
             gui/reports/ReportsWidgetPasskeys.cpp
+            gui/passkeys/PasskeyClipboardImportDialog.cpp
             gui/passkeys/PasskeyExporter.cpp
             gui/passkeys/PasskeyExportDialog.cpp
             gui/passkeys/PasskeyImporter.cpp
@@ -337,11 +325,6 @@ if(KPXC_FEATURE_SSHAGENT)
     set(sshagent_LIB sshagent)
 endif()
 
-add_subdirectory(fdosecrets)
-if(KPXC_FEATURE_FDOSECRETS)
-    set(fdosecrets_LIB fdosecrets)
-endif()
-
 configure_file(config-keepassx.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/config-keepassx.h)
 configure_file(git-info.h.cmake ${CMAKE_CURRENT_BINARY_DIR}/git-info.h)
 
@@ -372,7 +355,6 @@ target_link_libraries(keepassxc_gui
         Qt6::Widgets
         ${autotype_LIB}
         ${browser_LIB}
-        ${fdosecrets_LIB}
         ${keeshare_LIB}
         ${sshagent_LIB})
 
@@ -384,15 +366,6 @@ if(APPLE)
 endif()
 if(HAIKU)
     target_link_libraries(keepassxc_gui network)
-endif()
-if(UNIX AND NOT APPLE)
-    target_link_libraries(keepassxc_core Qt6::DBus ${LIBUSB_LIBRARIES})
-    if("${CMAKE_SYSTEM}" MATCHES "Linux")
-        target_link_libraries(keepassxc_core ${KEYUTILS_LIBRARIES})
-    endif()
-    if(WITH_X11)
-        target_link_libraries(keepassxc_gui X11)
-    endif()
 endif()
 if(WIN32)
     target_link_libraries(keepassxc_gui Wtsapi32.lib Ws2_32.lib)

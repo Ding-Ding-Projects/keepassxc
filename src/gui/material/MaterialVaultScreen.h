@@ -1,0 +1,219 @@
+/*
+ *  Copyright (C) 2026 KeePassXC Team <team@keepassxc.org>
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 2 or (at your option)
+ *  version 3 of the License.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+#ifndef KEEPASSXC_MATERIALVAULTSCREEN_H
+#define KEEPASSXC_MATERIALVAULTSCREEN_H
+
+#include <QIdentityProxyModel>
+#include <QList>
+#include <QPointer>
+#include <QSortFilterProxyModel>
+#include <QWidget>
+
+class DatabaseTabWidget;
+class DatabaseWidget;
+class Entry;
+class EntryModel;
+class Group;
+class QLabel;
+class QListView;
+class QStackedWidget;
+
+namespace Material
+{
+    class EntryDelegate;
+    class EntryDetail;
+    class ExtendedFab;
+    class RegexBuilder;
+    class SearchBar;
+    class SegmentedButton;
+    class VaultSidebar;
+
+    /**
+     * The entry list model the Material row delegate reads.
+     *
+     * KeePassXC's EntryModel is a seventeen column table; EntryDelegate draws
+     * one row at a time out of custom roles. This proxy keeps a single column -
+     * the title - and answers the delegate's roles from the sibling columns of
+     * the same source row, so no entry loading, no search and no icon lookup is
+     * duplicated. Selection, drag data and the entries themselves all still
+     * belong to the EntryModel underneath.
+     *
+     * The sort key is the segmented control above the list rather than a header
+     * section, so lessThan() is keyed on it instead of on a column.
+     */
+    class EntryListModel : public QSortFilterProxyModel
+    {
+        Q_OBJECT
+
+    public:
+        enum class SortKey
+        {
+            Title,
+            Modified,
+            Health
+        };
+
+        explicit EntryListModel(QObject* parent = nullptr);
+        ~EntryListModel() override;
+
+        SortKey sortKey() const;
+        void setSortKey(SortKey key);
+
+        /** The entry behind a proxy row, or nullptr when the row is stale. */
+        Entry* entryFromIndex(const QModelIndex& index) const;
+        QModelIndex indexFromEntry(Entry* entry) const;
+
+        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+
+    protected:
+        bool filterAcceptsColumn(int sourceColumn, const QModelIndex& sourceParent) const override;
+        bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
+
+    private:
+        EntryModel* entryModel() const;
+
+        SortKey m_sortKey = SortKey::Title;
+    };
+
+    /**
+     * The group tree model the Material pill delegate reads.
+     *
+     * GroupModel already supplies the name and the icon; the sidebar rows also
+     * carry the number of entries in the group, which is what this adds. The
+     * tree structure, the drops and the groups themselves are untouched.
+     */
+    class GroupTreeModel : public QIdentityProxyModel
+    {
+        Q_OBJECT
+
+    public:
+        explicit GroupTreeModel(QObject* parent = nullptr);
+        ~GroupTreeModel() override;
+
+        /** The group behind a proxy index, or nullptr when it is not a group. */
+        Group* groupFromIndex(const QModelIndex& index) const;
+        QModelIndex indexFromGroup(Group* group) const;
+
+        QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
+    };
+
+    /**
+     * The vault destination: the three panes of the design, bound to the open
+     * database.
+     *
+     *     [ VaultSidebar 250 | search / list | EntryDetail 392 ]
+     *
+     * Nothing here owns database state. The sidebar draws the DatabaseWidget's
+     * own GroupModel and selecting a row drives the real GroupView; the list
+     * draws the real EntryModel and selecting a row drives the real EntryView,
+     * so search, filtering, the context menus and every entry action behave
+     * exactly as they did before. The detail pane is filled from the selected
+     * entry and its buttons call the DatabaseWidget slots that already
+     * implement them.
+     *
+     * The panes can only show an unlocked database in view mode. Everything
+     * else the stock stack still owns - the welcome screen, the unlock dialog,
+     * the entry and group editors, the reports and database settings pages, the
+     * password generator - is kept alive underneath and shown in their place,
+     * which is why the whole database lifecycle keeps working.
+     */
+    class VaultScreen : public QWidget
+    {
+        Q_OBJECT
+
+    public:
+        explicit VaultScreen(QWidget* parent = nullptr);
+        ~VaultScreen() override;
+
+        /**
+         * Adopt the stock stacked widget (welcome screen, database tabs,
+         * password generator) and the tab widget inside it. The screen follows
+         * the tab widget from here on and needs no further wiring.
+         */
+        void setHostWidget(QStackedWidget* host, DatabaseTabWidget* tabs);
+
+        VaultSidebar* sidebar() const;
+        EntryDetail* detail() const;
+        SearchBar* searchBar() const;
+
+        /** The database the panes are currently bound to; may be nullptr. */
+        DatabaseWidget* databaseWidget() const;
+
+    public slots:
+        void setDatabaseWidget(DatabaseWidget* dbWidget);
+        void focusSearch();
+
+    protected:
+        bool eventFilter(QObject* watched, QEvent* event) override;
+        void paintEvent(QPaintEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
+
+    private:
+        QWidget* buildPanes();
+        QWidget* buildCentreColumn();
+
+        void applyTheme();
+        void updateFabGeometry();
+        void updateVisiblePage();
+        void updateResultLine();
+        void updateTags();
+        void updateDetail();
+        void runSearch();
+
+        void syncSelectionToDatabase();
+        void syncSelectionFromDatabase();
+        void syncGroupFromDatabase();
+
+        void showEntryMenu(const QModelIndex& index, const QPoint& globalPos);
+        void copyField(const QString& field);
+        void toggleFavourite(bool favourite);
+
+        QWidget* m_panes = nullptr;
+        QStackedWidget* m_stack = nullptr;
+        QPointer<QStackedWidget> m_host;
+        QPointer<QWidget> m_databasePage;
+        QPointer<DatabaseTabWidget> m_tabs;
+        QPointer<DatabaseWidget> m_dbWidget;
+
+        VaultSidebar* m_sidebar = nullptr;
+        EntryDetail* m_detail = nullptr;
+        SearchBar* m_searchBar = nullptr;
+        SegmentedButton* m_sortControl = nullptr;
+        QLabel* m_resultLabel = nullptr;
+        QWidget* m_centre = nullptr;
+        QStackedWidget* m_listStack = nullptr;
+        QListView* m_entryList = nullptr;
+        QWidget* m_emptyState = nullptr;
+        QLabel* m_emptyGlyph = nullptr;
+        QLabel* m_emptyLabel = nullptr;
+        ExtendedFab* m_fab = nullptr;
+        RegexBuilder* m_regexBuilder = nullptr;
+
+        EntryListModel* m_entryModel = nullptr;
+        GroupTreeModel* m_groupModel = nullptr;
+        EntryDelegate* m_entryDelegate = nullptr;
+
+        QList<QMetaObject::Connection> m_databaseConnections;
+        bool m_syncingSelection = false;
+        bool m_syncingGroup = false;
+        bool m_syncingSearch = false;
+    };
+
+} // namespace Material
+
+#endif // KEEPASSXC_MATERIALVAULTSCREEN_H

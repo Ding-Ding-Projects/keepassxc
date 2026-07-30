@@ -18,7 +18,7 @@ Big-picture architecture (where to look)
 - src/format: KDBX readers/writers and import/export logic.  (sensitive - avoid casual edits)
 - src/crypto: cryptographic primitives and key derivation. (sensitive - avoid casual edits)
 - src/gui: Qt UI layers, widgets, main window and app lifecycle (entry: `src/main.cpp`, `src/gui/MainWindow.cpp`)
-- src/sshagent, src/browser, src/fdosecrets, src/quickunlock: integration adapters for external systems
+- src/sshagent, src/browser, src/quickunlock: integration adapters for external systems
 - tests/ and tests/gui/: QTest-based unit and GUI tests (follow existing test patterns)
 
 Project-specific conventions & patterns

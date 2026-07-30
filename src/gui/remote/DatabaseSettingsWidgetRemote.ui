@@ -57,7 +57,10 @@
       <item>
        <layout class="QVBoxLayout" name="verticalLayout_2">
         <item>
-         <widget class="QPushButton" name="removeSettingsButton">
+         <widget class="Material::TonalButton" name="removeSettingsButton">
+          <property name="symbol">
+           <string notr="true">delete</string>
+          </property>
           <property name="layoutDirection">
            <enum>Qt::LeftToRight</enum>
           </property>
@@ -114,7 +117,10 @@
            <widget class="QLineEdit" name="nameLineEdit"/>
           </item>
           <item>
-           <widget class="QPushButton" name="saveSettingsButton">
+           <widget class="Material::FilledButton" name="saveSettingsButton">
+            <property name="symbol">
+             <string notr="true">save</string>
+            </property>
             <property name="text">
              <string>Save</string>
             </property>
@@ -178,7 +184,10 @@ The command has to exit. In case of `sftp` as last command `exit` has to be sent
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="testDownloadCommandButton">
+               <widget class="Material::OutlinedButton" name="testDownloadCommandButton">
+                <property name="symbol">
+                 <string notr="true">science</string>
+                </property>
                 <property name="text">
                  <string>Test</string>
                 </property>
@@ -299,6 +308,21 @@ The command has to exit. In case of `sftp` as last command `exit` has to be sent
    <extends>QWidget</extends>
    <header>gui/MessageWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

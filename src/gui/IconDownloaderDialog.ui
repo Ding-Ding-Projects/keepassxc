@@ -20,14 +20,23 @@
    <string>Download Favicons</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
    <item>
     <widget class="QLabel" name="progressLabel">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string notr="true">Downloading favicon 0/0…</string>
      </property>
@@ -46,7 +55,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="Material::TextButton" name="cancelButton">
+       <property name="symbol">
+        <string notr="true">close</string>
+       </property>
        <property name="sizePolicy">
         <sizepolicy hsizetype="MinimumExpanding" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -137,7 +149,10 @@ You can enable the DuckDuckGo website icon service in the security section of th
     </widget>
    </item>
    <item>
-    <widget class="QPushButton" name="closeButton">
+    <widget class="Material::FilledButton" name="closeButton">
+     <property name="symbol">
+      <string notr="true">done</string>
+     </property>
      <property name="text">
       <string>Close</string>
      </property>
@@ -154,6 +169,18 @@ You can enable the DuckDuckGo website icon service in the security section of th
   <tabstop>tableView</tabstop>
   <tabstop>closeButton</tabstop>
  </tabstops>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

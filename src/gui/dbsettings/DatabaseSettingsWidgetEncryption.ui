@@ -57,12 +57,6 @@
          </property>
          <item row="0" column="0">
           <widget class="QLabel" name="compatibilityLabel">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
            <property name="text">
             <string>Database format:</string>
            </property>
@@ -119,12 +113,6 @@
        </item>
        <item>
         <widget class="QLabel" name="label">
-         <property name="font">
-          <font>
-           <weight>75</weight>
-           <bold>true</bold>
-          </font>
-         </property>
          <property name="text">
           <string>Encryption Settings:</string>
          </property>
@@ -165,12 +153,6 @@
             <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QLabel" name="decryptionTimeLabel">
-               <property name="font">
-                <font>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
                <property name="text">
                 <string>Decryption Time:</string>
                </property>
@@ -178,12 +160,6 @@
              </item>
              <item>
               <widget class="QLabel" name="decryptionTimeValueLabel">
-               <property name="font">
-                <font>
-                 <weight>50</weight>
-                 <bold>false</bold>
-                </font>
-               </property>
                <property name="text">
                 <string notr="true">?? s</string>
                </property>

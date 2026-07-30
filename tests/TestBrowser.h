@@ -52,6 +52,9 @@ private slots:
     void testBestMatchingWithAdditionalURLs();
     void testRestrictBrowserKey();
     void testHideEntry();
+    void testExtensionId();
+    void testWebStoreUrl();
+    void testFirefoxRequiresManualInstall();
 
 private:
     QList<Entry*> createEntries(QStringList& urls, Group* root, bool additionalUrl = false) const;

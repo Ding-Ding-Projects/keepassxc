@@ -29,7 +29,10 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QPushButton" name="previewPushButton">
+      <widget class="Material::OutlinedButton" name="previewPushButton">
+       <property name="symbol">
+        <string notr="true">visibility</string>
+       </property>
        <property name="text">
         <string>Preview</string>
        </property>
@@ -61,6 +64,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

@@ -22,6 +22,8 @@
 #include <QDialogButtonBox>
 #include <QInputDialog>
 #include <QListView>
+#include <QPainter>
+#include <QPixmap>
 
 #include "core/Clock.h"
 #include "core/Group.h"
@@ -29,6 +31,28 @@
 #include "gui/DatabaseIcons.h"
 #include "gui/IconModels.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialTheme.h"
+
+namespace
+{
+    /**
+     * The chosen colour as a Material swatch. Drawn rather than styled so the
+     * button keeps the design's shape and the outline follows the theme.
+     */
+    QIcon colorSwatch(const QColor& color, int size)
+    {
+        QPixmap pixmap(size, size);
+        pixmap.fill(Qt::transparent);
+
+        QPainter painter(&pixmap);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setBrush(color);
+        painter.setPen(QPen(theme()->color(Material::Role::Outline), 1));
+        const QRectF bounds = QRectF(pixmap.rect()).adjusted(0.5, 0.5, -0.5, -0.5);
+        painter.drawRoundedRect(bounds, Material::Shape::ExtraSmall, Material::Shape::ExtraSmall);
+        return QIcon(pixmap);
+    }
+} // namespace
 
 DatabaseSettingsWidgetGeneral::DatabaseSettingsWidgetGeneral(QWidget* parent)
     : DatabaseSettingsWidget(parent)
@@ -187,12 +211,14 @@ void DatabaseSettingsWidgetGeneral::pickPublicColor()
 
 void DatabaseSettingsWidgetGeneral::setupPublicColorButton(const QColor& color)
 {
+    const int iconSize = m_ui->dbPublicColorButton->iconSize().width();
     m_ui->dbPublicColorClearButton->setVisible(color.isValid());
     if (color.isValid()) {
-        m_ui->dbPublicColorButton->setStyleSheet(QString("background-color:%1").arg(color.name()));
+        m_ui->dbPublicColorButton->setIcon(colorSwatch(color, iconSize));
         m_ui->dbPublicColorButton->setProperty("color", color.name());
     } else {
-        m_ui->dbPublicColorButton->setStyleSheet("");
+        m_ui->dbPublicColorButton->setIcon(
+            colorSwatch(theme()->color(Material::Role::SurfaceContainerHighest), iconSize));
         m_ui->dbPublicColorButton->setProperty("color", {});
     }
 }
@@ -220,6 +246,8 @@ void DatabaseSettingsWidgetGeneral::pickPublicIcon()
 
     auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     auto layout = new QVBoxLayout(&dialog);
+    layout->setContentsMargins(24, 24, 24, 24);
+    layout->setSpacing(12);
     layout->addWidget(iconList);
     layout->addWidget(buttonBox);
 

@@ -1,69 +1,178 @@
-# <img src="https://keepassxc.org/assets/img/keepassxc.svg" width="40" height="40"/> KeePassXC
+# <img src="https://keepassxc.org/assets/img/keepassxc.svg" width="40" height="40"/> KeePassXC — Material
 
-[![OpenSSF Best Practices](https://bestpractices.coreinfrastructure.org/projects/6326/badge)](https://bestpractices.coreinfrastructure.org/projects/6326)
-[![TeamCity Build Status](https://ci.keepassxc.org/app/rest/builds/buildType:\(project:KeepassXC\)/statusIcon)](https://ci.keepassxc.org/?guest=1)
-[![codecov](https://codecov.io/gh/keepassxreboot/keepassxc/branch/develop/graph/badge.svg)](https://codecov.io/gh/keepassxreboot/keepassxc)
-[![GitHub release](https://img.shields.io/github/release/keepassxreboot/keepassxc)](https://github.com/keepassxreboot/keepassxc/releases/)
+A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
+**Material Design 3**.
 
-[![Matrix community channel](https://img.shields.io/matrix/keepassxc:matrix.org?label=Community%20channel)](https://app.element.io/#/room/#keepassxc:mozilla.org)
-[![Matrix development channel](https://img.shields.io/matrix/keepassxc-dev:matrix.org?label=Development%20channel)](https://app.element.io/#/room/#keepassxc-dev:mozilla.org)
+The cryptography, the KDBX format handling, the browser and SSH integrations and the command line
+tool are upstream KeePassXC and are deliberately untouched. What changed is what you look at: the
+stock Qt styling — `BaseStyle` (4 860 lines), `LightStyle`, `DarkStyle`, `phantomcolor` and all
+four `.qss` sheets — has been deleted and replaced by one token-driven design system.
 
-[KeePassXC](https://keepassxc.org) is a modern, secure, and open-source password manager that stores and manages your most sensitive information. You can run KeePassXC on Windows, macOS, and Linux systems. KeePassXC is for people with extremely high demands of secure personal data management. It saves many different types of information, such as usernames, passwords, URLs, attachments, and notes in an offline, encrypted file that can be stored in any location, including private and public cloud solutions. For easy identification and management, user-defined titles and icons can be specified for entries. In addition, entries are sorted into customizable groups. An integrated search function allows you to use advanced patterns to easily find any entry in your database. A customizable, fast, and easy-to-use password generator utility allows you to create passwords with any combination of characters or easy to remember passphrases.
+> This is a personal fork and it is unfinished — see [Status](#status) before you rely on it. For
+> the official, supported password manager, use
+> [keepassxreboot/keepassxc](https://github.com/keepassxreboot/keepassxc).
 
-## Quick Start
+## Windows only
 
-The [QuickStart Guide](https://keepassxc.org/docs/KeePassXC_GettingStarted.html) gets you started using KeePassXC on your Windows, macOS, or Linux computer using pre-compiled binaries from the [downloads page](https://keepassxc.org/download). Additionally, individual Linux distributions may ship their own versions, so please check your distribution's package list to see if KeePassXC is available. Detailed documentation is available in the [User Guide](https://keepassxc.org/docs/KeePassXC_UserGuide.html).
+Linux support has been removed from this fork, not merely disabled. Gone from the tree: the
+freedesktop.org Secret Service server, the XDG desktop portals, D-Bus, the X11 and Wayland
+auto-type backends, PolKit quick unlock, `nixutils`, and Snap / Flatpak / AppImage packaging. The
+CI builds and tests Windows only. macOS sources are still present but are neither built nor tested
+here.
 
-## Features List
+If you need Linux or macOS, use upstream.
 
-KeePassXC has numerous features for novice and power users alike. Our goal is to create an application that can be used by anyone while still offering advanced features to those that need them.
+## The interface
 
-### Core Features
+The window is a Material 3 shell: an 88 px navigation rail, a 64 px top app bar, a database tab
+strip, and a five-destination stack. `Ctrl+Shift+P` opens a command palette listing all 218
+`QAction`s with their menu path and shortcut.
 
-* Create, open, and save databases in the KDBX format (KeePass-compatible with KDBX4 and KDBX3)
-* All information is encrypted at rest and never exposed outside the program
-* Store sensitive information in entries that are organized by groups
-* Password generator
-* Search for entries
-* TOTP storage and generation
-* YubiKey/OnlyKey challenge-response support
-* Auto-Type passwords into applications
-* Browser integration with Google Chrome, Mozilla Firefox, Microsoft Edge, Chromium, Vivaldi, Brave, and Tor-Browser
-* Support for passkeys using the browser integration
-* Entry icon download
-* Import databases from CSV, 1Password, Bitwarden, Proton Pass, and KeePass1 formats
+| Destination | State |
+| --- | --- |
+| **Vault** | **Still the stock three-pane widget.** Restyled by the Material stylesheet, but the group tree / entry table / preview layout is upstream's. The Material vault screen is written and not yet wired — see [Status](#status). |
+| **Reports** | Material screen — password health, breach and reuse findings, database statistics as stat cards |
+| **History** | Material screen — local Git-backed revision history, with diff and restore |
+| **Changelog** | Material screen — every released version, searchable and date-filterable, exportable to Markdown |
+| **Settings** | Material screen — appearance, language, behaviour and integrations, plus spec sheets for individual settings |
 
-### Advanced
-* Database reports (password health, HIBP, and statistics)
-* Database export to CSV, XML, and HTML formats
-* TOTP storage and generation
-* Field references between entries
-* File attachments and custom attributes
-* Entry history and data restoration
-* Command line interface (keepassxc-cli)
-* SSH Agent integration
-* FreeDesktop.org Secret Service (replace Gnome keyring, etc.)
-* Additional encryption choices: Twofish and ChaCha20
+### Appearance is a runtime setting, not a build flag
 
-For a full list of changes, read the [CHANGELOG](CHANGELOG.md) document. \
-For a full list of keyboard shortcuts, see [KeyboardShortcuts.adoc](./docs/topics/KeyboardShortcuts.adoc)
+Everything the interface draws resolves through one design system, so the whole application
+restyles live:
 
-## Building KeePassXC
+- **Theme** — light or dark, or follow Windows.
+- **Seed colour** — KeePassXC blue, baseline purple, vault green or signal amber. The seed drives
+  the primary and container roles; surfaces, outlines and status colours flip with the light/dark
+  family.
+- **Density** — compact, comfortable or spacious, changing every list, tree and table row height
+  (40 / 52 / 64 px).
+- **Interface font** — family, size scale and weight, with a CJK-safe fallback.
 
-Detailed instructions are available in the [Build and Install](./INSTALL.md) page and in the [Wiki](https://github.com/keepassxreboot/keepassxc/wiki/Building-KeePassXC).
+No widget in `src/` hard-codes a colour. They ask the theme for a semantic role, so a seed or
+density change repaints the application without a restart.
+
+### Cross-cutting behaviour
+
+- **Regex builder** — a guided builder (character classes, anchors, quantifiers, groups, flags,
+  sample text, live matches and captures) reachable from *every* search bar. Plain-text search
+  stays the default; regex is an explicit opt-in, and query, pattern, flags and mode stay in sync
+  both ways.
+- **Non-blocking notifications** — informational, success and progress messages are snackbars
+  anchored bottom-centre, never modal dialogs. Modals are reserved for decisions you must make:
+  confirmations, destructive gates and credential steps. Dismissed notifications stay reviewable in
+  the notification centre.
+- **Language modes** — English, playful Hong Kong Cantonese, or bilingual, with an independent 1–5
+  humour slider per language. The humour styles the *voice* only: what happened, what is affected
+  and what is irreversible stay exact at every level.
+- **Passkey clipboard transfer** — passkeys can be copied and pasted as
+  `keepassxc-passkey:v1:<base64>`. Copying a private key raises a warning that cannot be suppressed
+  and defaults to Cancel, because base64 is encoding, not encryption: anything you paste that
+  string into can read the key.
+
+### Accessibility
+
+Keyboard reachability, visible focus, correct roles and names, contrast and reduced-motion respect
+are treated as defects when broken, not as polish. So is visual clipping and mis-sizing at
+100/125/150/200 % display scale and in the longest localized strings.
+
+## Password manager features
+
+Inherited from upstream KeePassXC and intact:
+
+- Create, open and save KDBX 3 and KDBX 4 databases; everything is encrypted at rest
+- Entries organised into groups, with tags, attachments, custom attributes and field references
+- Password and passphrase generator
+- TOTP storage and generation
+- YubiKey / OnlyKey challenge-response
+- Auto-Type into any application
+- Browser integration for Chrome, Firefox, Edge, Chromium, Vivaldi, Brave and Tor Browser,
+  including passkeys — extensions register themselves per-user on first run
+- Windows Hello quick unlock
+- Import from CSV, 1Password, Bitwarden, Proton Pass and KeePass1
+- Export to CSV, XML and HTML
+- SSH Agent integration
+- Command line interface (`keepassxc-cli`)
+- Additional ciphers: Twofish and ChaCha20
+
+Removed with Linux: freedesktop.org Secret Service.
+
+See [CHANGELOG.md](CHANGELOG.md) for release history and
+[docs/topics/KeyboardShortcuts.adoc](./docs/topics/KeyboardShortcuts.adoc) for shortcuts.
+
+## Building
+
+Requires **Visual Studio 2022+** with the C++ workload, **Qt 6.8 msvc2022_64**, **CMake 3.16+** and
+**Ninja**. Native dependencies (Botan 3, minizip, libqrencode, zlib, readline) are declared in
+[`vcpkg.json`](vcpkg.json) and resolved by vcpkg.
+
+From an **x64 Native Tools Command Prompt**:
+
+```bash
+cmake -B build -G Ninja -DCMAKE_BUILD_TYPE=Debug -DCMAKE_PREFIX_PATH=C:/Qt/6.8.3/msvc2022_64 -DCMAKE_TOOLCHAIN_FILE=%VCPKG_ROOT%/scripts/buildsystems/vcpkg.cmake
+```
+
+```bash
+cmake --build build
+```
+
+Longer instructions, including the test invocations, live in [INSTALL.md](./INSTALL.md).
+
+### Screenshots come out black — this is not a bug in the app
+
+KeePassXC calls `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` on its top-level windows. The
+window is plainly visible on your monitor and fully hit-testable, but `PrintWindow`, `BitBlt` and
+`CopyFromScreen` all return black, and a desktop grab of its rectangle returns *the windows behind
+it*. Pass `--allow-screencapture` when you need to record or screenshot it. This is upstream
+behaviour and it cost this project several hours of misdiagnosis.
+
+## Layout of the UI code
+
+```
+src/gui/material/
+  MaterialTheme.*        colour roles, seeds, density, type scale, palette
+  MaterialStyleSheet.*   the single generated stylesheet for stock Qt widgets
+  MaterialStyle.*        QProxyStyle for what a stylesheet cannot express
+  MaterialIcons.*        Material Symbols names resolved to bundled SVGs
+  MaterialShell.*        the window interior: rail, app bar, tab strip, stack
+  Material<Component>.*  buttons, chips, switches, cards, search bars,
+                         snackbars, overlays, item delegates, screens and
+                         spec sheets
+```
+
+Adding a surface means composing these components and asking the theme for roles — not writing
+another stylesheet.
+
+## Status
+
+Honest state of the rewrite:
+
+- **Done** — stock styling deleted; theme and token engine; the shell and command palette; 57 of 73
+  `.ui` surfaces on Material widgets; Reports, History, Changelog and Settings screens; passkey save
+  path verified against a real KDBX round trip.
+- **Not done** — the vault destination is still upstream's three-pane widget. `MaterialVaultScreen`
+  exists in the tree but is not compiled and not wired to `GroupModel` / `EntryModel`. This is the
+  largest remaining gap.
+- **Drafts** — the Reports, History and Changelog feeds landed but were never finished or reviewed.
+
+[HANDOFF.md](./HANDOFF.md) carries the full picture, including known defects and two things that
+were reported as fact during this work and turned out to be wrong.
 
 ## Contributing
 
-We are always looking for suggestions on how to improve KeePassXC. If you find any bugs or have an idea for a new feature, please let us know by opening a report in the [issue tracker](https://github.com/keepassxreboot/keepassxc/issues) on GitHub, or join us on [Matrix community channel](https://matrix.to/#/!zUxwGnFkUyycpxeHeM:matrix.org?via=matrix.org) or [Matrix development channel](https://matrix.to/#/!RhJPJPGwQIFVQeXqZa:matrix.org?via=matrix.org), or on IRC in [Libera.Chat](https://web.libera.chat/) channels #keepassxc and #keepassxc-dev.
+Bug reports and ideas for the *upstream* password manager belong in the
+[KeePassXC issue tracker](https://github.com/keepassxreboot/keepassxc/issues). Issues specific to
+this fork's interface belong here.
 
-You may directly contribute your own code by submitting a pull request. Please read the [CONTRIBUTING](.github/CONTRIBUTING.md) document for further information.
-
-Contributors are required to adhere to the project's [Code of Conduct](CODE-OF-CONDUCT.md).
+Contributors adhere to the project's [Code of Conduct](CODE-OF-CONDUCT.md). See
+[CONTRIBUTING](.github/CONTRIBUTING.md) for the upstream workflow.
 
 ## Generative AI
 
-Generative AI is fast becoming a first-party feature in most development environments, including GitHub itself. If the majority of a code submission is made using Generative AI (e.g., agent-based or vibe coding) then **we will document that in the pull request.** All code submissions go through a rigorous review process regardless of the development workflow or submitter.
+Substantial parts of this fork's Material interface were written with agent-assisted development.
+All submissions go through review regardless of workflow.
 
 ## License
 
-KeePassXC code is licensed under GPL-2 or GPL-3. Additional licensing for third-party files is detailed in [COPYING](./COPYING).
+KeePassXC code is licensed under GPL-2 or GPL-3. The Material interface layer added by this fork
+carries the same licence. Third-party file licensing is detailed in [COPYING](./COPYING).

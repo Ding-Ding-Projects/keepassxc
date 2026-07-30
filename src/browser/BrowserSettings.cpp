@@ -155,6 +155,16 @@ void BrowserSettings::setAllowLocalhostWithPasskeys(bool enabled)
     config()->set(Config::Browser_AllowLocalhostWithPasskeys, enabled);
 }
 
+bool BrowserSettings::autoInstallExtension()
+{
+    return config()->get(Config::Browser_AutoInstallExtension).toBool();
+}
+
+void BrowserSettings::setAutoInstallExtension(bool enabled)
+{
+    config()->set(Config::Browser_AutoInstallExtension, enabled);
+}
+
 bool BrowserSettings::useCustomProxy()
 {
     return config()->get(Config::Browser_UseCustomProxy).toBool();

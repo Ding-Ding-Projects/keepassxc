@@ -96,9 +96,6 @@ namespace Tools
 #ifdef KPXC_FEATURE_SSHAGENT
         extensions += "\n- " + QObject::tr("SSH Agent");
 #endif
-#ifdef KPXC_FEATURE_FDOSECRETS
-        extensions += "\n- " + QObject::tr("Secret Service Integration");
-#endif
 
         debugInfo.append(QObject::tr("Enabled extensions:").append(extensions).append("\n"));
         return debugInfo;

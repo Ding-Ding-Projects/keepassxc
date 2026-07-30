@@ -20,15 +20,25 @@
    <string>KeePassXC - Passkey credentials</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
    <item>
     <layout class="QVBoxLayout" name="verticalLayout_2">
      <item>
       <widget class="QLabel" name="firstLabel">
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
@@ -62,11 +72,6 @@
      </item>
      <item>
       <widget class="QLabel" name="secondLabel">
-       <property name="font">
-        <font>
-         <bold>true</bold>
-        </font>
-       </property>
        <property name="alignment">
         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
        </property>
@@ -131,7 +136,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="Material::TextButton" name="cancelButton">
+       <property name="symbol">
+        <string notr="true">close</string>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -141,14 +149,20 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="updateButton">
+      <widget class="Material::TonalButton" name="updateButton">
+       <property name="symbol">
+        <string notr="true">refresh</string>
+       </property>
        <property name="text">
         <string>Update</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="confirmButton">
+      <widget class="Material::FilledButton" name="confirmButton">
+       <property name="symbol">
+        <string notr="true">check</string>
+       </property>
        <property name="text">
         <string>Authenticate</string>
        </property>
@@ -158,6 +172,23 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

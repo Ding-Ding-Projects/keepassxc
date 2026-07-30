@@ -1,0 +1,69 @@
+{
+    "dishes": [
+        {
+            "english": "Shrimp dumpling",
+            "cantonese": "蝦餃",
+            "asset": ":/dimsum/har_gow.svg"
+        },
+        {
+            "english": "Pork and shrimp dumpling",
+            "cantonese": "燒賣",
+            "asset": ":/dimsum/siu_mai.svg"
+        },
+        {
+            "english": "Barbecue pork bun",
+            "cantonese": "叉燒包",
+            "asset": ":/dimsum/char_siu_bao.svg"
+        },
+        {
+            "english": "Rice noodle roll",
+            "cantonese": "腸粉",
+            "asset": ":/dimsum/cheung_fun.svg"
+        },
+        {
+            "english": "Egg tart",
+            "cantonese": "蛋撻",
+            "asset": ":/dimsum/daan_tat.svg"
+        },
+        {
+            "english": "Turnip cake",
+            "cantonese": "蘿蔔糕",
+            "asset": ":/dimsum/lo_bak_go.svg"
+        },
+        {
+            "english": "Sticky rice in lotus leaf",
+            "cantonese": "糯米雞",
+            "asset": ":/dimsum/no_mai_gai.svg"
+        },
+        {
+            "english": "Custard bun",
+            "cantonese": "奶黃包",
+            "asset": ":/dimsum/nai_wong_bao.svg"
+        },
+        {
+            "english": "Spring roll",
+            "cantonese": "春卷",
+            "asset": ":/dimsum/chun_gyun.svg"
+        },
+        {
+            "english": "Braised chicken feet",
+            "cantonese": "鳳爪",
+            "asset": ":/dimsum/fung_zaau.svg"
+        },
+        {
+            "english": "Spare ribs in black bean sauce",
+            "cantonese": "豉汁排骨",
+            "asset": ":/dimsum/paai_gwat.svg"
+        },
+        {
+            "english": "Sesame ball",
+            "cantonese": "煎堆",
+            "asset": ":/dimsum/jin_deui.svg"
+        },
+        {
+            "english": "Malay sponge cake",
+            "cantonese": "馬拉糕",
+            "asset": ":/dimsum/ma_lai_go.svg"
+        }
+    ]
+}

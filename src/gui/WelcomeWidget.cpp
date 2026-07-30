@@ -23,6 +23,7 @@
 #include "config-keepassx.h"
 #include "core/Config.h"
 #include "gui/Icons.h"
+#include "gui/material/MaterialTheme.h"
 
 WelcomeWidget::WelcomeWidget(QWidget* parent)
     : QWidget(parent)
@@ -31,18 +32,9 @@ WelcomeWidget::WelcomeWidget(QWidget* parent)
     m_ui->setupUi(this);
 
     m_ui->welcomeLabel->setText(tr("Welcome to KeePassXC %1").arg(KEEPASSXC_VERSION));
-    QFont welcomeLabelFont = m_ui->welcomeLabel->font();
-    welcomeLabelFont.setBold(true);
-    welcomeLabelFont.setPointSize(welcomeLabelFont.pointSize() + 4);
-    m_ui->welcomeLabel->setFont(welcomeLabelFont);
+    m_ui->welcomeLabel->setFont(theme()->font(Material::TypeRole::HeadlineSmall));
 
     m_ui->iconLabel->setPixmap(icons()->applicationIcon().pixmap(64));
-    m_ui->buttonNewDatabase->setIcon(icons()->icon("document-new"));
-    m_ui->buttonNewDatabase->setStyleSheet("text-align:center;");
-    m_ui->buttonOpenDatabase->setIcon(icons()->icon("document-open"));
-    m_ui->buttonOpenDatabase->setStyleSheet("text-align:center;");
-    m_ui->buttonImport->setIcon(icons()->icon("document-import"));
-    m_ui->buttonImport->setStyleSheet("text-align:center;");
 
     refreshLastDatabases();
 

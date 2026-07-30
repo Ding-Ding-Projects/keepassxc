@@ -73,7 +73,10 @@
         <number>0</number>
        </property>
        <item>
-        <widget class="QPushButton" name="refreshHardwareKeys">
+        <widget class="Material::IconButton" name="refreshHardwareKeys">
+         <property name="symbol">
+          <string notr="true">refresh</string>
+         </property>
          <property name="toolTip">
           <string>Refresh hardware keys</string>
          </property>
@@ -120,6 +123,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::IconButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

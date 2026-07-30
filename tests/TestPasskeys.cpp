@@ -23,9 +23,17 @@
 #include "browser/PasskeyUtils.h"
 #include "core/Database.h"
 #include "core/Entry.h"
+#include "core/EntryAttributes.h"
 #include "core/Group.h"
+#include "core/Metadata.h"
 #include "crypto/Crypto.h"
+#include "format/KeePass2Reader.h"
+#include "format/KeePass2Writer.h"
+#include "gui/passkeys/PasskeyExporter.h"
+#include "gui/passkeys/PasskeyImporter.h"
+#include "keys/PasswordKey.h"
 
+#include <QBuffer>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QTest>
@@ -541,6 +549,104 @@ void TestPasskeys::testEntry()
     QVERIFY(entry->hasPasskey());
 }
 
+/**
+ * Saving a passkey must write every attribute the authenticator needs, and must
+ * mark the three secret ones protected. An unprotected private key would sit in
+ * the KDBX in plaintext and defeat the point of storing it here at all.
+ */
+void TestPasskeys::testPasskeyAttributesAreStoredAndProtected()
+{
+    Database db;
+    auto* entry = new Entry();
+    entry->setGroup(db.rootGroup());
+
+    browserService()->addPasskeyToEntry(entry,
+                                        QStringLiteral("example.com"),
+                                        QStringLiteral("Example"),
+                                        QStringLiteral("username"),
+                                        QStringLiteral("credentialId"),
+                                        QStringLiteral("userHandle"),
+                                        QStringLiteral("privateKeyPem"));
+
+    const auto* attributes = entry->attributes();
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USERNAME), QStringLiteral("username"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID), QStringLiteral("credentialId"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM), QStringLiteral("privateKeyPem"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY), QStringLiteral("example.com"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USER_HANDLE), QStringLiteral("userHandle"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_FLAG_BE), QStringLiteral("1"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_FLAG_BS), QStringLiteral("1"));
+
+    // The credential id, private key and user handle identify or authenticate the
+    // user, so they must never be written unprotected.
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_USER_HANDLE));
+
+    QVERIFY(entry->tagList().contains(QStringLiteral("Passkey")));
+}
+
+/**
+ * The registration flow is only useful if the credential is still there after the
+ * database has been written and reopened. Round-trip a registered passkey through
+ * a real KDBX write and read.
+ */
+void TestPasskeys::testPasskeySurvivesDatabaseRoundTrip()
+{
+    auto sourceDb = QSharedPointer<Database>::create();
+    auto key = QSharedPointer<CompositeKey>::create();
+    key->addKey(QSharedPointer<PasswordKey>::create("passkey-round-trip"));
+    sourceDb->setKey(key);
+
+    browserService()->addPasskeyToGroup(sourceDb,
+                                        sourceDb->rootGroup(),
+                                        QStringLiteral("https://example.com"),
+                                        QStringLiteral("example.com"),
+                                        QStringLiteral("Example"),
+                                        QStringLiteral("username"),
+                                        QStringLiteral("credentialId"),
+                                        QStringLiteral("userHandle"),
+                                        QStringLiteral("privateKeyPem"));
+
+    const auto sourceEntries = sourceDb->rootGroup()->entries();
+    QCOMPARE(sourceEntries.count(), 1);
+    QVERIFY(sourceEntries.first()->hasPasskey());
+
+    QBuffer buffer;
+    QVERIFY(buffer.open(QIODevice::ReadWrite));
+
+    KeePass2Writer writer;
+    writer.writeDatabase(&buffer, sourceDb.data());
+    if (writer.hasError()) {
+        QFAIL(qPrintable(QStringLiteral("Error while writing database: %1").arg(writer.errorString())));
+    }
+
+    buffer.seek(0);
+    KeePass2Reader reader;
+    auto targetDb = QSharedPointer<Database>::create();
+    reader.readDatabase(&buffer, key, targetDb.data());
+    if (reader.hasError()) {
+        QFAIL(qPrintable(QStringLiteral("Error while reading database: %1").arg(reader.errorString())));
+    }
+
+    const auto targetEntries = targetDb->rootGroup()->entries();
+    QCOMPARE(targetEntries.count(), 1);
+
+    auto* restored = targetEntries.first();
+    QVERIFY(restored->hasPasskey());
+
+    const auto* attributes = restored->attributes();
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM), QStringLiteral("privateKeyPem"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID), QStringLiteral("credentialId"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_USER_HANDLE), QStringLiteral("userHandle"));
+    QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY), QStringLiteral("example.com"));
+
+    // Protection must survive the round trip, not just the initial write.
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_CREDENTIAL_ID));
+    QVERIFY(attributes->isProtected(EntryAttributes::KPEX_PASSKEY_USER_HANDLE));
+}
+
 void TestPasskeys::testIsDomain()
 {
     QVERIFY(passkeyUtils()->isDomain("test.example.com"));
@@ -701,4 +807,240 @@ void TestPasskeys::testAllowLocalhostWithPasskeys()
     QVERIFY(passkeyUtils()->isOriginAllowedWithLocalhost(true, "http://test.localhost"));
     QVERIFY(!passkeyUtils()->isOriginAllowedWithLocalhost(false, "http://test.localhost"));
     QVERIFY(!passkeyUtils()->isOriginAllowedWithLocalhost(true, "http://localhost.example.com"));
+}
+
+namespace
+{
+    // Never put a real private key in a fixture. The importer only checks the PEM envelope.
+    const QString DummyPrivateKey = QStringLiteral("-----BEGIN PRIVATE KEY-----\n"
+                                                   "REPLACE-WITH-NOTHING-THIS-IS-NOT-A-KEY\n"
+                                                   "-----END PRIVATE KEY-----\n");
+
+    Entry* createPasskeyEntry(Database& db,
+                              const QString& title,
+                              const QString& url,
+                              const QString& relyingParty,
+                              const QString& username,
+                              const QString& credentialId,
+                              const QString& userHandle)
+    {
+        auto* entry = new Entry();
+        entry->setGroup(db.rootGroup());
+        entry->setTitle(title);
+        entry->setUrl(url);
+
+        browserService()->addPasskeyToEntry(
+            entry, relyingParty, relyingParty, username, credentialId, userHandle, DummyPrivateKey);
+
+        return entry;
+    }
+
+    // Builds a payload straight from a JSON document, bypassing the exporter, so a test can inject
+    // a document the exporter would never produce.
+    QString wrapPayload(const QJsonDocument& document)
+    {
+        return PasskeyExporter::PayloadPrefix + QString::fromLatin1(document.toJson(QJsonDocument::Compact).toBase64());
+    }
+
+    QJsonObject validPasskeyObject()
+    {
+        return QJsonObject({{"relyingParty", "example.com"},
+                            {"url", "https://example.com"},
+                            {"username", "username"},
+                            {"credentialId", "credentialId"},
+                            {"userHandle", "userHandle"},
+                            {"privateKey", DummyPrivateKey}});
+    }
+} // namespace
+
+/**
+ * A payload built from an entry must decode back to exactly the same six field values, otherwise
+ * a clipboard import would silently produce a different credential than a file import.
+ */
+void TestPasskeys::testClipboardPayloadRoundTrip()
+{
+    Database db;
+    auto* entry = createPasskeyEntry(db,
+                                     QStringLiteral("Example"),
+                                     QStringLiteral("https://example.com"),
+                                     QStringLiteral("example.com"),
+                                     QStringLiteral("username"),
+                                     QStringLiteral("credentialId"),
+                                     QStringLiteral("userHandle"));
+
+    const auto payload = PasskeyExporter::buildPayload(entry);
+    QVERIFY(payload.startsWith(PasskeyExporter::PayloadPrefix));
+    QCOMPARE(PasskeyExporter::PayloadPrefix, QStringLiteral("keepassxc-passkey:v1:"));
+
+    const auto result = PasskeyImporter::parsePayload(payload);
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::None);
+    QVERIFY(result.isValid());
+    QCOMPARE(static_cast<int>(result.passkeys.count()), 1);
+
+    const auto decoded = result.passkeys.first();
+    const auto expected = PasskeyExporter::buildPasskeyObject(entry);
+    QCOMPARE(decoded, expected);
+
+    QCOMPARE(decoded["relyingParty"].toString(), QStringLiteral("example.com"));
+    QCOMPARE(decoded["url"].toString(), QStringLiteral("https://example.com"));
+    QCOMPARE(decoded["username"].toString(), QStringLiteral("username"));
+    QCOMPARE(decoded["credentialId"].toString(), QStringLiteral("credentialId"));
+    QCOMPARE(decoded["userHandle"].toString(), QStringLiteral("userHandle"));
+    QCOMPARE(decoded["privateKey"].toString(), DummyPrivateKey);
+}
+
+/**
+ * Several entries share a single wrapper and are carried as a JSON array.
+ */
+void TestPasskeys::testClipboardPayloadWithMultipleEntries()
+{
+    Database db;
+    auto* first = createPasskeyEntry(db,
+                                     QStringLiteral("First"),
+                                     QStringLiteral("https://first.example.com"),
+                                     QStringLiteral("first.example.com"),
+                                     QStringLiteral("first"),
+                                     QStringLiteral("firstCredentialId"),
+                                     QStringLiteral("firstUserHandle"));
+    auto* second = createPasskeyEntry(db,
+                                      QStringLiteral("Second"),
+                                      QStringLiteral("https://second.example.com"),
+                                      QStringLiteral("second.example.com"),
+                                      QStringLiteral("second"),
+                                      QStringLiteral("secondCredentialId"),
+                                      QStringLiteral("secondUserHandle"));
+
+    const auto payload = PasskeyExporter::buildPayload(QList<Entry*>() << first << second);
+    QVERIFY(payload.startsWith(PasskeyExporter::PayloadPrefix));
+
+    const auto result = PasskeyImporter::parsePayload(payload);
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::None);
+    QCOMPARE(static_cast<int>(result.passkeys.count()), 2);
+
+    QCOMPARE(result.passkeys.at(0)["relyingParty"].toString(), QStringLiteral("first.example.com"));
+    QCOMPARE(result.passkeys.at(0)["username"].toString(), QStringLiteral("first"));
+    QCOMPARE(result.passkeys.at(1)["relyingParty"].toString(), QStringLiteral("second.example.com"));
+    QCOMPARE(result.passkeys.at(1)["username"].toString(), QStringLiteral("second"));
+}
+
+void TestPasskeys::testClipboardPayloadRejectsEmptyText()
+{
+    const auto result = PasskeyImporter::parsePayload(QStringLiteral("   \n  "));
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::Empty);
+    QVERIFY(!result.isValid());
+    QVERIFY(!result.errorMessage.isEmpty());
+    QVERIFY(result.passkeys.isEmpty());
+}
+
+/**
+ * Anything above the size bound is rejected before a single byte is decoded.
+ */
+void TestPasskeys::testClipboardPayloadRejectsOversizedPayload()
+{
+    auto oversized = PasskeyExporter::PayloadPrefix;
+    oversized.append(QString(PasskeyExporter::MaxPayloadSize, QLatin1Char('A')));
+    QVERIFY(oversized.size() > PasskeyExporter::MaxPayloadSize);
+
+    const auto result = PasskeyImporter::parsePayload(oversized);
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::TooLarge);
+    QVERIFY(result.passkeys.isEmpty());
+
+    // A payload of exactly the bound is not rejected for its size
+    auto atLimit = PasskeyExporter::PayloadPrefix;
+    atLimit.append(QString(PasskeyExporter::MaxPayloadSize - PasskeyExporter::PayloadPrefix.size(), QLatin1Char('A')));
+    QCOMPARE(static_cast<int>(atLimit.size()), PasskeyExporter::MaxPayloadSize);
+    QVERIFY(PasskeyImporter::parsePayload(atLimit).error != PasskeyImporter::PayloadError::TooLarge);
+}
+
+void TestPasskeys::testClipboardPayloadRejectsUnknownPrefix()
+{
+    const auto encoded = QString::fromLatin1(QJsonDocument(validPasskeyObject()).toJson().toBase64());
+
+    // No prefix at all
+    QCOMPARE(PasskeyImporter::parsePayload(encoded).error, PasskeyImporter::PayloadError::UnknownPrefix);
+
+    // A prefix that belongs to something else
+    QCOMPARE(PasskeyImporter::parsePayload(QStringLiteral("otherapp-passkey:v1:") + encoded).error,
+             PasskeyImporter::PayloadError::UnknownPrefix);
+
+    // Plain, unwrapped JSON
+    QCOMPARE(PasskeyImporter::parsePayload(QStringLiteral("{\"relyingParty\":\"example.com\"}")).error,
+             PasskeyImporter::PayloadError::UnknownPrefix);
+}
+
+void TestPasskeys::testClipboardPayloadRejectsUnsupportedVersion()
+{
+    const auto encoded = QString::fromLatin1(QJsonDocument(validPasskeyObject()).toJson().toBase64());
+
+    const auto futureVersion = PasskeyImporter::parsePayload(QStringLiteral("keepassxc-passkey:v2:") + encoded);
+    QCOMPARE(futureVersion.error, PasskeyImporter::PayloadError::UnsupportedVersion);
+    QVERIFY(futureVersion.errorMessage.contains(QStringLiteral("v2")));
+
+    // Scheme present but no version segment at all
+    QCOMPARE(PasskeyImporter::parsePayload(QStringLiteral("keepassxc-passkey:") + encoded).error,
+             PasskeyImporter::PayloadError::UnsupportedVersion);
+}
+
+void TestPasskeys::testClipboardPayloadRejectsInvalidBase64()
+{
+    const auto result = PasskeyImporter::parsePayload(PasskeyExporter::PayloadPrefix + QStringLiteral("not*base*64!!"));
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::InvalidBase64);
+    QVERIFY(result.passkeys.isEmpty());
+}
+
+void TestPasskeys::testClipboardPayloadRejectsInvalidJson()
+{
+    const auto notJson =
+        PasskeyExporter::PayloadPrefix + QString::fromLatin1(QByteArray("this is not json at all").toBase64());
+    QCOMPARE(PasskeyImporter::parsePayload(notJson).error, PasskeyImporter::PayloadError::InvalidJson);
+
+    // Valid JSON, but not a passkey document
+    const auto notAnObject = PasskeyExporter::PayloadPrefix + QString::fromLatin1(QByteArray("[1, 2, 3]").toBase64());
+    QCOMPARE(PasskeyImporter::parsePayload(notAnObject).error, PasskeyImporter::PayloadError::InvalidJson);
+
+    // An empty array carries no passkey
+    const auto emptyArray = wrapPayload(QJsonDocument(QJsonArray()));
+    QCOMPARE(PasskeyImporter::parsePayload(emptyArray).error, PasskeyImporter::PayloadError::InvalidJson);
+}
+
+void TestPasskeys::testClipboardPayloadRejectsMissingKeys()
+{
+    const auto requiredKeys = PasskeyImporter::requiredPasskeyKeys();
+    for (const auto& missingKey : requiredKeys) {
+        auto passkeyObject = validPasskeyObject();
+        passkeyObject.remove(missingKey);
+
+        const auto result = PasskeyImporter::parsePayload(wrapPayload(QJsonDocument(passkeyObject)));
+        QCOMPARE(result.error, PasskeyImporter::PayloadError::MissingKeys);
+        QCOMPARE(result.missingKeys, QStringList() << missingKey);
+        QVERIFY(result.errorMessage.contains(missingKey));
+        QVERIFY(result.passkeys.isEmpty());
+    }
+
+    // A missing key anywhere in an array payload is reported too
+    QJsonArray passkeyArray;
+    passkeyArray.append(validPasskeyObject());
+    auto incomplete = validPasskeyObject();
+    incomplete.remove(QStringLiteral("userHandle"));
+    passkeyArray.append(incomplete);
+
+    const auto arrayResult = PasskeyImporter::parsePayload(wrapPayload(QJsonDocument(passkeyArray)));
+    QCOMPARE(arrayResult.error, PasskeyImporter::PayloadError::MissingKeys);
+    QCOMPARE(arrayResult.missingKeys, QStringList() << QStringLiteral("userHandle"));
+}
+
+void TestPasskeys::testClipboardPayloadRejectsNonPemPrivateKey()
+{
+    auto passkeyObject = validPasskeyObject();
+    passkeyObject["privateKey"] = QStringLiteral("this is not a PEM private key");
+
+    const auto result = PasskeyImporter::parsePayload(wrapPayload(QJsonDocument(passkeyObject)));
+    QCOMPARE(result.error, PasskeyImporter::PayloadError::InvalidPrivateKey);
+    QVERIFY(result.passkeys.isEmpty());
+
+    // A truncated PEM envelope is rejected as well
+    auto truncated = validPasskeyObject();
+    truncated["privateKey"] = QStringLiteral("-----BEGIN PRIVATE KEY-----\nnot-a-key\n");
+    QCOMPARE(PasskeyImporter::parsePayload(wrapPayload(QJsonDocument(truncated))).error,
+             PasskeyImporter::PayloadError::InvalidPrivateKey);
 }

@@ -23,7 +23,12 @@
 #include <QObject>
 
 /**
- * Extended color palette for indicating custom widget states.
+ * Status colours for item views and reports.
+ *
+ * Every role resolves out of the active Material scheme, so the health columns
+ * follow the seed, the light or dark mode and the accessibility contrast just
+ * like the rest of the interface. Instances are cheap and read the theme when
+ * they are constructed; build one where you need it rather than caching it.
  */
 class StateColorPalette
 {
@@ -59,8 +64,7 @@ public:
     }
 
 private:
-    void initDefaultPaletteLight();
-    void initDefaultPaletteDark();
+    void resolveFromTheme();
 
     QHash<ColorRole, QColor> m_colorMap;
 };

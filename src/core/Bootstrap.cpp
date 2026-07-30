@@ -89,9 +89,7 @@ namespace Bootstrap
         success = success && (setrlimit(RLIMIT_CORE, &limit) == 0);
 #endif
 
-// NOTE: Dumps cannot be disabled for snap builds as it prevents desktop portals from working
-//       See https://github.com/keepassxreboot/keepassxc/issues/7607#issuecomment-1109005206
-#if defined(HAVE_PR_SET_DUMPABLE) && !defined(KEEPASSXC_DIST_SNAP)
+#if defined(HAVE_PR_SET_DUMPABLE)
         success = success && (prctl(PR_SET_DUMPABLE, 0) == 0);
 #endif
 

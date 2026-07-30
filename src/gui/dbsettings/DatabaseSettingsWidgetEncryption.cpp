@@ -26,6 +26,7 @@
 #include "format/KeePass2.h"
 #include "format/KeePass2Writer.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
 
 #include <QPushButton>
 
@@ -349,10 +350,8 @@ bool DatabaseSettingsWidgetEncryption::saveSettings()
     QApplication::restoreOverrideCursor();
 
     if (!ok) {
-        MessageBox::warning(this,
-                            tr("KDF unchanged"),
-                            tr("Failed to transform key with new KDF parameters; KDF unchanged."),
-                            QMessageBox::Ok);
+        Material::Notify::error(tr("KDF unchanged"),
+                                tr("Failed to transform key with new KDF parameters; KDF unchanged."));
     }
 
     return ok;

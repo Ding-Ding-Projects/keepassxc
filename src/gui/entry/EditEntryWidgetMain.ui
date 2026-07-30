@@ -161,7 +161,7 @@
        <number>8</number>
       </property>
       <item>
-       <widget class="QCheckBox" name="expireCheck">
+       <widget class="Material::Switch" name="expireCheck">
         <property name="toolTip">
          <string>Toggle expiration</string>
         </property>
@@ -187,7 +187,10 @@
        </widget>
       </item>
       <item>
-       <widget class="QPushButton" name="expirePresets">
+       <widget class="Material::OutlinedButton" name="expirePresets">
+        <property name="symbol">
+         <string notr="true">schedule</string>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
           <horstretch>0</horstretch>
@@ -363,6 +366,16 @@
    <extends>QWidget</extends>
    <header>gui/PasswordWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>

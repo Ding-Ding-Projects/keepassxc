@@ -20,8 +20,11 @@
 
 #include "core/Database.h"
 #include <QFile>
+#include <QJsonObject>
+#include <QList>
 #include <QObject>
 #include <QPointer>
+#include <QStringList>
 #include <QUuid>
 #include <QWidget>
 
@@ -32,9 +35,41 @@ class PasskeyImporter : public QObject
     Q_OBJECT
 
 public:
+    /**
+     * Why a pasted clipboard payload was rejected. Every value maps to its own message so the
+     * user is never told just "invalid passkey".
+     */
+    enum class PayloadError
+    {
+        None = 0,
+        Empty,
+        TooLarge,
+        UnknownPrefix,
+        UnsupportedVersion,
+        InvalidBase64,
+        InvalidJson,
+        MissingKeys,
+        InvalidPrivateKey,
+    };
+
+    struct PayloadParseResult
+    {
+        PayloadError error = PayloadError::None;
+        QString errorMessage;
+        QStringList missingKeys;
+        QList<QJsonObject> passkeys;
+
+        bool isValid() const
+        {
+            return error == PayloadError::None;
+        }
+    };
+
     explicit PasskeyImporter(QWidget* parent = nullptr);
 
     void importPasskey(QSharedPointer<Database>& database, Entry* entry = nullptr);
+    void importPasskeyFromClipboard(QSharedPointer<Database>& database, Entry* entry = nullptr);
+    bool importFromPayload(const QString& payload, QSharedPointer<Database>& database, Entry* entry);
     bool showImportDialog(QSharedPointer<Database>& database,
                           Entry* entry,
                           const QString& url,
@@ -46,6 +81,19 @@ public:
                           const QString& titleText = {},
                           const QString& infoText = {},
                           const QString& importButtonText = {});
+
+    // The six keys a passkey document must carry, shared by the file and clipboard import paths.
+    static QStringList requiredPasskeyKeys();
+    static PayloadParseResult parsePayload(const QString& payload);
+
+    /**
+     * Escapes and elides a string taken from a pasted payload so it can be shown safely.
+     *
+     * Payload fields are unbounded within the overall size limit and reach both rich-text message
+     * boxes and word-wrapped labels, so every payload-derived string shown to the user goes through
+     * this first.
+     */
+    static QString sanitizeForDisplay(const QString& value, int maxLength = 64);
 
 private:
     void importSelectedFile(QFile& file, QSharedPointer<Database>& database, Entry* entry);

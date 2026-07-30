@@ -14,14 +14,23 @@
    <string>KeePassXC - Passkey Export</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
    <item>
     <widget class="QLabel" name="exportLabel">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string>Export the following passkey entries.</string>
      </property>
@@ -32,12 +41,6 @@
    </item>
    <item>
     <widget class="QLabel" name="filenameLabel">
-     <property name="font">
-      <font>
-       <weight>75</weight>
-       <bold>true</bold>
-      </font>
-     </property>
      <property name="text">
       <string>Filenames will be generated with title and .passkey file extension.</string>
      </property>
@@ -87,7 +90,10 @@
       </spacer>
      </item>
      <item>
-      <widget class="QPushButton" name="cancelButton">
+      <widget class="Material::TextButton" name="cancelButton">
+       <property name="symbol">
+        <string notr="true">close</string>
+       </property>
        <property name="text">
         <string>Cancel</string>
        </property>
@@ -97,7 +103,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="exportButton">
+      <widget class="Material::FilledButton" name="exportButton">
+       <property name="symbol">
+        <string notr="true">download</string>
+       </property>
        <property name="accessibleName">
         <string>Export entries</string>
        </property>
@@ -116,6 +125,18 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TextButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::FilledButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

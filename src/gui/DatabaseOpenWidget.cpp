@@ -23,6 +23,8 @@
 #include "gui/Icons.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialButtons.h"
+#include "gui/material/MaterialNotifier.h"
 #include "keys/ChallengeResponseKey.h"
 #include "keys/FileKey.h"
 #include "keys/drivers/YubiKeyInterfaceUSB.h"
@@ -64,15 +66,8 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
         m_ui->editPassword->setShowPassword(false);
     });
 
-    QFont font;
-    font.setPointSize(font.pointSize() + 4);
-    font.setBold(true);
-    m_ui->labelHeadline->setFont(font);
-
-    m_ui->quickUnlockButton->setFont(font);
-    m_ui->quickUnlockButton->setIcon(
-        icons()->icon("fingerprint", true, palette().color(QPalette::Active, QPalette::HighlightedText)));
-    m_ui->quickUnlockButton->setIconSize({32, 32});
+    m_ui->labelHeadline->setFont(theme()->font(Material::TypeRole::HeadlineSmall));
+    m_ui->quickUnlockButton->setSymbolSize(28);
 
     connect(m_ui->buttonBrowseFile, SIGNAL(clicked()), SLOT(browseKeyFile()));
 
@@ -88,7 +83,7 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
         m_ui->addKeyFileLinkLabel->setVisible(!state);
         m_ui->selectKeyFileComponent->setVisible(state);
     });
-    connect(m_ui->useHardwareKeyCheckBox, &QCheckBox::toggled, m_ui->hardwareKeyCombo, &QComboBox::setEnabled);
+    connect(m_ui->useHardwareKeyCheckBox, &QAbstractButton::toggled, m_ui->hardwareKeyCombo, &QComboBox::setEnabled);
 
     m_ui->selectKeyFileComponent->setVisible(false);
     toggleHardwareKeyComponent(false);
@@ -111,7 +106,6 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     connect(YubiKey::instance(), &YubiKey::challengeCompleted, this, [this] { m_ui->messageWidget->hide(); });
 
     m_ui->noHardwareKeysFoundLabel->setVisible(false);
-    m_ui->refreshHardwareKeys->setIcon(icons()->icon("yubikey-refresh", true));
     connect(m_ui->refreshHardwareKeys, &QPushButton::clicked, this, [this] { pollHardwareKey(true); });
     m_hideNoHardwareKeysFoundTimer.setInterval(2000);
     connect(&m_hideNoHardwareKeysFoundTimer, &QTimer::timeout, this, [this] {
@@ -141,13 +135,13 @@ void DatabaseOpenWidget::toggleHardwareKeyComponent(bool state)
         m_ui->useHardwareKeyCheckBox->setChecked(false);
     }
     if (m_ui->hardwareKeyCombo->count() == 1) {
-        m_ui->useHardwareKeyCheckBox->setText(
+        m_ui->useHardwareKeyCheckBoxLabel->setText(
             tr("Use hardware key [Serial: %1]")
                 .arg(m_ui->hardwareKeyCombo->itemData(m_ui->hardwareKeyCombo->currentIndex())
                          .value<YubiKeySlot>()
                          .first));
     } else {
-        m_ui->useHardwareKeyCheckBox->setText(tr("Use hardware key"));
+        m_ui->useHardwareKeyCheckBoxLabel->setText(tr("Use hardware key"));
     }
 }
 void DatabaseOpenWidget::closeDatabase()
@@ -255,12 +249,15 @@ void DatabaseOpenWidget::load(const QString& filename)
     }
     m_ui->labelHeadline->setText(label);
 
-    // Apply the public color to the central unlock stack if defined
-    auto color = m_db->publicColor();
-    if (!color.isEmpty()) {
-        m_ui->centralStack->setStyleSheet(QString("QStackedWidget {border: 4px solid %1}").arg(color));
+    // The public color is the user's own accent, so it cannot come from a role.
+    // Only its shape does: a Material outline rather than a 4px slab.
+    const QColor publicColor(m_db->publicColor());
+    if (publicColor.isValid()) {
+        m_ui->centralStack->setStyleSheet(QStringLiteral("QStackedWidget{border:2px solid %1;border-radius:%2px;}")
+                                              .arg(publicColor.name())
+                                              .arg(Material::Shape::ExtraLarge));
     } else {
-        m_ui->centralStack->setStyleSheet("");
+        m_ui->centralStack->setStyleSheet({});
     }
 
     // Show the database icon if defined
@@ -514,11 +511,9 @@ bool DatabaseOpenWidget::browseKeyFile()
     }
 
     if (QFileInfo(filename).canonicalFilePath() == QFileInfo(m_filename).canonicalFilePath()) {
-        MessageBox::warning(this,
-                            tr("Cannot use database file as key file"),
-                            tr("Your database file is NOT a key file!\nIf you don't have a key file or don't know what "
-                               "that is, you don't have to select one."),
-                            MessageBox::Button::Ok);
+        Material::Notify::warning(tr("Cannot use database file as key file"),
+                                  tr("Your database file is NOT a key file! If you don't have a key file or don't "
+                                     "know what that is, you don't have to select one."));
         return false;
     }
     if (filename.endsWith(".kdbx")

@@ -17,32 +17,137 @@
    <bool>true</bool>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="spacing">
+    <number>12</number>
+   </property>
+   <property name="leftMargin">
+    <number>24</number>
+   </property>
+   <property name="topMargin">
+    <number>24</number>
+   </property>
+   <property name="rightMargin">
+    <number>24</number>
+   </property>
+   <property name="bottomMargin">
+    <number>24</number>
+   </property>
    <item>
-    <widget class="QCheckBox" name="titleClone">
-     <property name="text">
-      <string>Append ' - Clone' to title</string>
+    <layout class="QHBoxLayout" name="titleCloneRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="titleCloneLabel">
+       <property name="text">
+        <string>Append ' - Clone' to title</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="titleCloneSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="titleClone">
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="accessibleName">
+        <string>Append ' - Clone' to title</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="referencesClone">
-     <property name="text">
-      <string>Replace username and password with references</string>
+    <layout class="QHBoxLayout" name="referencesCloneRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="referencesCloneLabel">
+       <property name="text">
+        <string>Replace username and password with references</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="referencesCloneSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="referencesClone">
+       <property name="accessibleName">
+        <string>Replace username and password with references</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
-    <widget class="QCheckBox" name="historyClone">
-     <property name="text">
-      <string>Copy history</string>
+    <layout class="QHBoxLayout" name="historyCloneRow">
+     <property name="spacing">
+      <number>12</number>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
+     <item>
+      <widget class="QLabel" name="historyCloneLabel">
+       <property name="text">
+        <string>Copy history</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="historyCloneSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="historyClone">
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="accessibleName">
+        <string>Copy history</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <spacer name="verticalSpacer">
@@ -69,6 +174,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

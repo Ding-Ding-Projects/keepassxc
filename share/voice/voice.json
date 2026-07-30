@@ -1,0 +1,240 @@
+{
+    "version": 1,
+    "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
+    "strings": {
+        "clipboard.copied": {
+            "category": "success",
+            "en": {
+                "facts": ["clipboard", "cleared in {seconds} seconds"],
+                "levels": {
+                    "1": "Copied to the clipboard. It will be cleared in {seconds} seconds.",
+                    "3": "Copied — it is on the clipboard and will be cleared in {seconds} seconds.",
+                    "5": "Snatched and stashed on the clipboard. Use it quickly: it will be cleared in {seconds} seconds."
+                }
+            },
+            "yue": {
+                "facts": ["剪貼簿", "{seconds} 秒後清除"],
+                "levels": {
+                    "1": "已複製到剪貼簿，{seconds} 秒後清除。",
+                    "3": "複製咗喇，而家喺剪貼簿度，{seconds} 秒後清除。",
+                    "5": "搞掂！嘢已經喺剪貼簿等緊你，快手啲用，{seconds} 秒後清除。"
+                }
+            }
+        },
+        "database.saved": {
+            "category": "success",
+            "en": {
+                "facts": ["{name}", "saved"],
+                "levels": {
+                    "1": "Database “{name}” saved.",
+                    "3": "“{name}” saved — every change is on disk.",
+                    "5": "“{name}” saved and safely on disk. You may now exhale."
+                }
+            },
+            "yue": {
+                "facts": ["{name}", "已儲存"],
+                "levels": {
+                    "1": "資料庫「{name}」已儲存。",
+                    "3": "「{name}」已儲存，所有改動都寫咗入磁碟。",
+                    "5": "「{name}」已儲存，穩穩陣陣寫咗入磁碟，可以唞啖氣。"
+                }
+            }
+        },
+        "database.locked": {
+            "category": "security",
+            "en": {
+                "facts": ["{name}", "locked"],
+                "levels": {
+                    "1": "Database “{name}” is locked.",
+                    "3": "“{name}” is locked. Your master key opens it again.",
+                    "5": "Bolted shut: “{name}” is locked. Nothing gets back in without your master key."
+                }
+            },
+            "yue": {
+                "facts": ["{name}", "已鎖定"],
+                "levels": {
+                    "1": "資料庫「{name}」已鎖定。",
+                    "3": "「{name}」已鎖定，要用主密碼先開得返。",
+                    "5": "「{name}」已鎖定，門閂到實一實，冇主密碼就開唔返。"
+                }
+            }
+        },
+        "entry.deleted": {
+            "category": "destructive",
+            "en": {
+                "facts": ["{title}", "recycle bin"],
+                "levels": {
+                    "1": "Entry “{title}” was moved to the recycle bin.",
+                    "3": "“{title}” is in the recycle bin now, and you can still restore it from there.",
+                    "5": "“{title}” has been escorted to the recycle bin. Nothing is lost yet — you can still restore it from there."
+                }
+            },
+            "yue": {
+                "facts": ["{title}", "回收筒"],
+                "levels": {
+                    "1": "項目「{title}」已移去回收筒。",
+                    "3": "「{title}」而家喺回收筒，想要返隨時可以還原。",
+                    "5": "「{title}」已經送咗入回收筒，未算走咗，隨時可以還原返。"
+                }
+            }
+        },
+        "entry.restored": {
+            "category": "success",
+            "en": {
+                "facts": ["{title}", "recycle bin"],
+                "levels": {
+                    "1": "Entry “{title}” was restored from the recycle bin.",
+                    "3": "“{title}” is back out of the recycle bin and in your database.",
+                    "5": "Fished “{title}” back out of the recycle bin and into your database."
+                }
+            },
+            "yue": {
+                "facts": ["{title}", "回收筒"],
+                "levels": {
+                    "1": "項目「{title}」已由回收筒還原。",
+                    "3": "「{title}」由回收筒還原咗，返咗入資料庫。",
+                    "5": "「{title}」由回收筒撈返出嚟，安全返咗入資料庫。"
+                }
+            }
+        },
+        "autotype.sent": {
+            "category": "info",
+            "en": {
+                "facts": ["Auto-Type", "{title}", "{window}"],
+                "levels": {
+                    "1": "Auto-Type sent the sequence for “{title}” to “{window}”.",
+                    "3": "Auto-Type typed “{title}” into “{window}” for you.",
+                    "5": "Fingers flying — Auto-Type fired “{title}” straight into “{window}”."
+                }
+            },
+            "yue": {
+                "facts": ["自動輸入", "{title}", "{window}"],
+                "levels": {
+                    "1": "自動輸入已將「{title}」輸入到「{window}」。",
+                    "3": "自動輸入幫你將「{title}」打咗入「{window}」。",
+                    "5": "自動輸入十指飛快，「{title}」咻一聲打晒入「{window}」。"
+                }
+            }
+        },
+        "report.exported": {
+            "category": "success",
+            "en": {
+                "facts": ["Report exported", "{path}"],
+                "levels": {
+                    "1": "Report exported to {path}.",
+                    "3": "Report exported — it is waiting at {path}.",
+                    "5": "Report exported and filed away at {path}. Go on, have a look."
+                }
+            },
+            "yue": {
+                "facts": ["報告已匯出", "{path}"],
+                "levels": {
+                    "1": "報告已匯出到 {path}。",
+                    "3": "報告已匯出，擺咗喺 {path}。",
+                    "5": "報告已匯出，安安樂樂擺咗喺 {path}，得閒睇睇。"
+                }
+            }
+        },
+        "passkey.copied.warning": {
+            "category": "security",
+            "en": {
+                "facts": [
+                    "{count}",
+                    "clipboard",
+                    "base64",
+                    "any other application on this computer",
+                    "cleared in {seconds} seconds"
+                ],
+                "levels": {
+                    "1": "You are about to copy {count} passkey(s) to the clipboard as base64 text. The clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
+                    "3": "Heads up — {count} passkey(s) are about to go onto the clipboard as base64 text, and the clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
+                    "5": "Careful now — {count} passkey(s) are hopping onto the clipboard as base64 text, out in the open, where the clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds."
+                }
+            },
+            "yue": {
+                "facts": ["{count}", "base64", "剪貼簿", "本機任何其他程式都可以讀取剪貼簿", "{seconds} 秒後清除"],
+                "levels": {
+                    "1": "你將會把 {count} 個通行密鑰以 base64 文字複製到剪貼簿。本機任何其他程式都可以讀取剪貼簿。{seconds} 秒後清除。",
+                    "3": "留意：{count} 個通行密鑰會以 base64 文字複製到剪貼簿，本機任何其他程式都可以讀取剪貼簿，{seconds} 秒後清除。",
+                    "5": "醒定啲——{count} 個通行密鑰即將以 base64 文字擺上剪貼簿，明刀明槍冇遮冇掩，本機任何其他程式都可以讀取剪貼簿，{seconds} 秒後清除。"
+                }
+            }
+        },
+        "passkey.imported": {
+            "category": "success",
+            "en": {
+                "facts": ["Passkey imported", "{title}"],
+                "levels": {
+                    "1": "Passkey imported into entry “{title}”.",
+                    "3": "Passkey imported — it lives in “{title}” now.",
+                    "5": "Passkey imported and tucked neatly into “{title}”."
+                }
+            },
+            "yue": {
+                "facts": ["通行密鑰已匯入", "{title}"],
+                "levels": {
+                    "1": "通行密鑰已匯入項目「{title}」。",
+                    "3": "通行密鑰已匯入，而家收埋喺「{title}」度。",
+                    "5": "通行密鑰已匯入，靚靚整整收埋喺「{title}」度。"
+                }
+            }
+        },
+        "database.save.failed": {
+            "category": "error",
+            "en": {
+                "facts": ["Writing the database", "{name}", "failed", "{error}", "still unsaved"],
+                "levels": {
+                    "1": "Writing the database “{name}” failed: {error}. Your changes are still unsaved.",
+                    "3": "Writing the database “{name}” failed: {error}. Nothing was lost, but your changes are still unsaved — try again or save to another location.",
+                    "5": "The disk would not take it. Writing the database “{name}” failed: {error}. Nothing is gone, but your changes are still unsaved — try again or save to another location."
+                }
+            },
+            "yue": {
+                "facts": ["寫入資料庫", "{name}", "失敗", "{error}", "仍然未儲存"],
+                "levels": {
+                    "1": "寫入資料庫「{name}」失敗：{error}。你嘅修改仍然未儲存。",
+                    "3": "寫入資料庫「{name}」失敗：{error}。冇嘢唔見咗，但你嘅修改仍然未儲存，可以再試或者揀第二個位置。",
+                    "5": "個磁碟今次唔收貨。寫入資料庫「{name}」失敗：{error}。冇嘢唔見咗，但你嘅修改仍然未儲存，再試多次或者換個位置。"
+                }
+            }
+        },
+        "database.open.failed": {
+            "category": "error",
+            "en": {
+                "facts": ["Unable to open the database", "{name}", "{error}"],
+                "levels": {
+                    "1": "Unable to open the database “{name}”: {error}",
+                    "3": "Unable to open the database “{name}”: {error}. The file was left exactly as it was.",
+                    "5": "That one would not budge. Unable to open the database “{name}”: {error}. The file was left exactly as it was."
+                }
+            },
+            "yue": {
+                "facts": ["無法開啟資料庫", "{name}", "{error}"],
+                "levels": {
+                    "1": "無法開啟資料庫「{name}」：{error}",
+                    "3": "無法開啟資料庫「{name}」：{error}。個檔案原封不動。",
+                    "5": "度門今次點推都唔郁。無法開啟資料庫「{name}」：{error}。個檔案原封不動，冇改過。"
+                }
+            }
+        },
+        "entry.delete.confirm": {
+            "category": "destructive",
+            "en": {
+                "facts": ["{title}", "permanently delete the entry", "This cannot be undone"],
+                "levels": {
+                    "1": "Do you really want to permanently delete the entry “{title}”? This cannot be undone.",
+                    "3": "Do you really want to permanently delete the entry “{title}”? This cannot be undone, and nothing goes to the recycle bin.",
+                    "5": "Deep breath. Do you really want to permanently delete the entry “{title}”? This cannot be undone — no recycle bin, no copy, no coming back."
+                }
+            },
+            "yue": {
+                "facts": ["{title}", "永久刪除項目", "此操作無法復原"],
+                "levels": {
+                    "1": "你確定要永久刪除項目「{title}」嗎？此操作無法復原。",
+                    "3": "你確定要永久刪除項目「{title}」嗎？此操作無法復原，亦唔會入回收筒。",
+                    "5": "諗清楚先。你確定要永久刪除項目「{title}」嗎？此操作無法復原，冇回收筒、冇副本、追唔返。"
+                }
+            }
+        }
+    }
+}

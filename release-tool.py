@@ -453,7 +453,6 @@ class Check(Command):
             cls.check_version_in_vcpkg_manifest(version, src_dir)
             cls.check_version_in_cmake(version, src_dir)
             cls.check_changelog(version, src_dir)
-            cls.check_app_stream_info(version, src_dir)
         return git_ref
 
     @staticmethod
@@ -523,29 +522,6 @@ class Check(Command):
         major, minor, patch = _split_version(version)
         if not re.search(rf'^## {major}\.{minor}\.{patch} \(.+?\)\n+', changelog.read_text("UTF-8"), re.MULTILINE):
             raise Error(f'{changelog} has not been updated to the "%s" release.', version)
-
-    @staticmethod
-    def check_app_stream_info(version, cwd=None):
-        appstream = Path('share/linux/org.keepassxc.KeePassXC.appdata.xml')
-        if cwd:
-            appstream = Path(cwd) / appstream
-        if not appstream.is_file():
-            raise Error('File not found: %s', appstream)
-
-        try:
-            parser = sax.make_parser()
-            parser.setContentHandler(sax.handler.ContentHandler())
-            parser.parse(appstream)
-        except sax.SAXParseException as e:
-            raise Error(f'{appstream} is not well-formed. Error: %s at line %s, column %s',
-                        e.getMessage(), e.getLineNumber(), e.getColumnNumber())
-
-        regex = re.compile(rf'^\s*<release version="{version}" date=".+?">')
-        with appstream.open('r', encoding='utf-8') as f:
-            for line in f:
-                if regex.search(line):
-                    return
-        raise Error(f'{appstream} has not been updated to the "%s" release.', version)
 
     @staticmethod
     def check_git():
@@ -658,11 +634,6 @@ class Build(Command):
             parser.add_argument('--keychain-profile', default='notarization-creds',
                                 help='Read Apple credentials for notarization from a keychain (default: %(default)s).')
             parser.set_defaults(cmake_generator='Ninja')
-        elif sys.platform == 'linux':
-            parser.add_argument('-d', '--docker-image', help='Run build in Docker image (overrides --use-system-deps).')
-            parser.add_argument('-p', '--platform-target', help='Build target platform (default: %(default)s).',
-                                choices=['x86_64', 'aarch64'], default=platform.uname().machine)
-            parser.add_argument('-a', '--appimage', help='Build an AppImage.', action='store_true')
         elif sys.platform == 'win32':
             parser.add_argument('-p', '--platform-target', help='Build target platform (default: %(default)s).',
                                 choices=['amd64', 'arm64'], default='amd64')
@@ -724,8 +695,6 @@ class Build(Command):
             return self.build_windows(version, src_dir, output_dir, **kwargs)
         if sys.platform == 'darwin':
             return self.build_macos(version, src_dir, output_dir, **kwargs)
-        if sys.platform == 'linux':
-            return self.build_linux(version, src_dir, output_dir, **kwargs)
         raise Error('Unsupported build platform: %s', sys.platform)
 
     @staticmethod
@@ -832,108 +801,6 @@ class Build(Command):
             logger.info('All done!')
         else:
             logger.info('All done! Please don\'t forget to sign the binaries before distribution.')
-
-    @staticmethod
-    def _download_tools_if_not_available(toolname, bin_dir, url, docker_args=None):
-        if _run(['which', toolname], cwd=None, check=False, **(docker_args or {})).returncode != 0:
-            logger.info(f'Downloading {toolname}...')
-            outfile = bin_dir / toolname
-            request.urlretrieve(url, outfile)
-            outfile.chmod(outfile.stat().st_mode | stat.S_IEXEC)
-
-    def build_linux(self, version, src_dir, output_dir, *, install_prefix, parallelism, cmake_opts, use_system_deps,
-                    platform_target, appimage, docker_image, with_tests, **_):
-        if use_system_deps and platform_target != platform.uname().machine and not docker_image:
-            raise Error('Need --docker-image for cross-platform compilation when not building with vcpkg!')
-
-        docker_args = dict(
-            docker_image=docker_image,
-            docker_mounts=[src_dir],
-            docker_platform=f'linux/{platform_target}',
-        )
-        if docker_image:
-            logger.info('Pulling Docker image...')
-            _run(['docker', 'pull', f'--platform=linux/{platform_target}', docker_image],
-                 cwd=None, capture_output=False)
-
-        if appimage:
-            cmake_opts.append('-DKEEPASSXC_DIST_TYPE=AppImage')
-            # Force install prefix to ensure proper AppDir structure for linuxdeploy
-            install_prefix = '/usr'
-
-        with tempfile.TemporaryDirectory() as build_dir:
-            logger.info('Configuring build...')
-            _run(['cmake', *cmake_opts, str(src_dir)], cwd=build_dir, capture_output=False, **docker_args)
-
-            logger.info('Compiling sources...')
-            _run(['cmake', '--build', '.', '--parallel', str(parallelism)],
-                 cwd=build_dir, capture_output=False, **docker_args)
-
-            if with_tests:
-                self._run_tests(cwd=build_dir, parallelism=parallelism)
-
-            logger.info('Bundling AppDir...')
-            app_dir = Path(build_dir) / f'KeePassXC-{version}-{platform_target}.AppDir'
-            _run(['cmake', '--install', '.', '--strip',
-                  '--prefix', (app_dir.absolute() / install_prefix.lstrip('/')).as_posix()],
-                 cwd=build_dir, capture_output=False, **docker_args)
-            shutil.copytree(app_dir, output_dir / app_dir.name, symlinks=True, dirs_exist_ok=True)
-
-            if appimage:
-                self._build_linux_appimage(
-                    version, src_dir, output_dir, app_dir, build_dir, install_prefix, platform_target, docker_args)
-
-    def _build_linux_appimage(self, version, src_dir, output_dir, app_dir, build_dir, install_prefix,
-                              platform_target, docker_args):
-        if (app_dir / 'AppRun').exists():
-            raise Error('AppDir has already been run through linuxdeploy! Please create a fresh AppDir and try again.')
-
-        bin_dir = Path(build_dir) / 'bin'
-        bin_dir.mkdir()
-        self._download_tools_if_not_available(
-            'linuxdeploy', bin_dir,
-            'https://github.com/linuxdeploy/linuxdeploy/releases/download/continuous/' +
-            f'linuxdeploy-{platform_target}.AppImage',
-            docker_args)
-        self._download_tools_if_not_available(
-            'linuxdeploy-plugin-qt', bin_dir,
-            'https://github.com/linuxdeploy/linuxdeploy-plugin-qt/releases/download/continuous/' +
-            f'linuxdeploy-plugin-qt-{platform_target}.AppImage',
-            docker_args)
-        self._download_tools_if_not_available(
-            'appimagetool', bin_dir,
-            'https://github.com/AppImage/AppImageKit/releases/download/continuous/' +
-            f'appimagetool-{platform_target}.AppImage',
-            docker_args)
-
-        env_path = ':'.join([bin_dir.as_posix(), _get_bin_path()])
-        install_prefix = app_dir / install_prefix.lstrip('/')
-        desktop_file = install_prefix / 'share/applications/org.keepassxc.KeePassXC.desktop'
-        icon_file = install_prefix / 'share/icons/hicolor/256x256/apps/keepassxc.png'
-        executables = (install_prefix / 'bin').glob('keepassxc*')
-        app_run = src_dir / 'share/linux/appimage-apprun.sh'
-
-        # Ensure QMAKE points to qmake6 for linuxdeploy-plugin-qt to find Qt6
-        env = {**os.environ, 'QMAKE': os.environ.get('QMAKE', 'qmake6')}
-
-        logger.info('Building AppImage...')
-        logger.debug('Running linuxdeploy...')
-        _run(['linuxdeploy', '--plugin=qt', f'--appdir={app_dir}', f'--custom-apprun={app_run}',
-              f'--desktop-file={desktop_file}', f'--icon-file={icon_file}',
-              *[f'--executable={ex}' for ex in executables]],
-             cwd=build_dir, capture_output=False, path=env_path, env=env, **docker_args, docker_privileged=True)
-
-        logger.debug('Running appimagetool...')
-        appimage_name = f'KeePassXC-{version}-{platform_target}.AppImage'
-        desktop_file.write_text(desktop_file.read_text().strip() + f'\nX-AppImage-Version={version}\n')
-        _run(['appimagetool', '--updateinformation=gh-releases-zsync|keepassxreboot|keepassxc|latest|' +
-              f'KeePassXC-*-{platform_target}.AppImage.zsync',
-              app_dir.as_posix(), (output_dir.absolute() / appimage_name).as_posix()],
-             cwd=build_dir, capture_output=False, path=env_path, env=env, **docker_args, docker_privileged=True)
-        # Move appimage zsync file to output dir
-        zsync_file = next(Path(build_dir).glob('*.AppImage.zsync'), None)
-        if zsync_file and zsync_file.is_file():
-            shutil.move(zsync_file.absolute(), output_dir.absolute() / zsync_file.name)
 
 
 class BuildSrc(Command):

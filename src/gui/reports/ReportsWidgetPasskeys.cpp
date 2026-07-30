@@ -109,8 +109,12 @@ ReportsWidgetPasskeys::ReportsWidgetPasskeys(QWidget* parent)
     connect(m_ui->showExpired, SIGNAL(stateChanged(int)), this, SLOT(updateEntries()));
     connect(m_ui->exportButton, SIGNAL(clicked(bool)), this, SLOT(exportPasskey()));
     connect(m_ui->importButton, SIGNAL(clicked(bool)), this, SLOT(importPasskey()));
+    connect(m_ui->exportClipboardButton, SIGNAL(clicked(bool)), this, SLOT(exportPasskeyToClipboard()));
+    connect(m_ui->importClipboardButton, SIGNAL(clicked(bool)), this, SLOT(importPasskeyFromClipboard()));
+
 
     m_ui->exportButton->setEnabled(false);
+    m_ui->exportClipboardButton->setEnabled(false);
 
     new QShortcut(Qt::Key_Delete, this, SLOT(deleteSelectedEntries()));
 }
@@ -237,6 +241,19 @@ void ReportsWidgetPasskeys::customMenuRequested(QPoint pos)
         });
     }
 
+    // Create the passkey clipboard menu items
+    const auto copyToClipboard =
+        new QAction(icons()->icon("clipboard-text"), tr("Copy Passkey(s) to Clipboard…", "", selected.size()), this);
+    menu->addAction(copyToClipboard);
+    connect(copyToClipboard, &QAction::triggered, this, &ReportsWidgetPasskeys::exportPasskeyToClipboard);
+
+    const auto importFromClipboard =
+        new QAction(icons()->icon("clipboard-text"), tr("Import Passkey from Clipboard…"), this);
+    menu->addAction(importFromClipboard);
+    connect(importFromClipboard, &QAction::triggered, this, &ReportsWidgetPasskeys::importPasskeyFromClipboard);
+
+    menu->addSeparator();
+
     // Create the "delete entry" menu item
     const auto delEntry = new QAction(icons()->icon("entry-delete"), tr("Delete Entry(s)…", "", selected.size()), this);
     menu->addAction(delEntry);
@@ -279,13 +296,23 @@ QList<Entry*> ReportsWidgetPasskeys::getSelectedEntries()
 
 void ReportsWidgetPasskeys::selectionChanged()
 {
-    m_ui->exportButton->setEnabled(!m_ui->passkeysTableView->selectionModel()->selectedIndexes().isEmpty());
+    const auto hasSelection = !m_ui->passkeysTableView->selectionModel()->selectedIndexes().isEmpty();
+    m_ui->exportButton->setEnabled(hasSelection);
+    m_ui->exportClipboardButton->setEnabled(hasSelection);
 }
 
 void ReportsWidgetPasskeys::importPasskey()
 {
     PasskeyImporter passkeyImporter(this);
     passkeyImporter.importPasskey(m_db);
+
+    updateEntries();
+}
+
+void ReportsWidgetPasskeys::importPasskeyFromClipboard()
+{
+    PasskeyImporter passkeyImporter(this);
+    passkeyImporter.importPasskeyFromClipboard(m_db);
 
     updateEntries();
 }
@@ -304,4 +331,11 @@ void ReportsWidgetPasskeys::exportPasskey()
 
     PasskeyExporter passkeyExporter(this);
     passkeyExporter.showExportDialog(getSelectedEntries());
+}
+
+void ReportsWidgetPasskeys::exportPasskeyToClipboard()
+{
+    // PasskeyExporter shows its own, non-suppressible confirmation before touching the clipboard.
+    PasskeyExporter passkeyExporter(this);
+    passkeyExporter.exportEntriesToClipboard(getSelectedEntries());
 }

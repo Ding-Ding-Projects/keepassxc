@@ -17,17 +17,20 @@
    <string>Import File Selection</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
+   <property name="spacing">
+    <number>12</number>
+   </property>
    <property name="leftMargin">
-    <number>0</number>
+    <number>24</number>
    </property>
    <property name="topMargin">
-    <number>0</number>
+    <number>24</number>
    </property>
    <property name="rightMargin">
-    <number>0</number>
+    <number>24</number>
    </property>
    <property name="bottomMargin">
-    <number>0</number>
+    <number>24</number>
    </property>
    <item>
     <widget class="QListWidget" name="importTypeList">
@@ -107,7 +110,10 @@
          <widget class="QLineEdit" name="importFileEdit"/>
         </item>
         <item>
-         <widget class="QPushButton" name="importFileButton">
+         <widget class="Material::OutlinedButton" name="importFileButton">
+          <property name="symbol">
+           <string notr="true">folder_open</string>
+          </property>
           <property name="text">
            <string>Browse…</string>
           </property>
@@ -138,7 +144,10 @@
          <widget class="QLineEdit" name="keyFileEdit"/>
         </item>
         <item>
-         <widget class="QPushButton" name="keyFileButton">
+         <widget class="Material::OutlinedButton" name="keyFileButton">
+          <property name="symbol">
+           <string notr="true">key</string>
+          </property>
           <property name="text">
            <string>Browse…</string>
           </property>
@@ -324,6 +333,11 @@ The command has to exit. In case of `sftp` as last commend `exit` has to be sent
    <extends>QWidget</extends>
    <header>gui/PasswordWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
   </customwidget>
  </customwidgets>
  <resources/>

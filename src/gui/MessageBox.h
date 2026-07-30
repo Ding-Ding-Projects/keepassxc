@@ -59,10 +59,11 @@ public:
         Merge = 1 << 26,
         Continue = 1 << 27,
         ContinueWithWeakPass = 1 << 28,
+        CopyAnyway = 1 << 29,
 
         // Internal loop markers. Update Last when new KeePassXC button is added
         First = Ok,
-        Last = ContinueWithWeakPass,
+        Last = CopyAnyway,
     };
 
     enum Action

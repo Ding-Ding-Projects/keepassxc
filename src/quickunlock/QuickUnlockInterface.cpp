@@ -24,9 +24,6 @@
 #elif defined(Q_CC_MSVC)
 #include "WindowsHello.h"
 #define QUICKUNLOCK_IMPLEMENTATION WindowsHello
-#elif defined(Q_OS_LINUX)
-#include "Polkit.h"
-#define QUICKUNLOCK_IMPLEMENTATION Polkit
 #else
 #define QUICKUNLOCK_IMPLEMENTATION NoQuickUnlock
 #endif

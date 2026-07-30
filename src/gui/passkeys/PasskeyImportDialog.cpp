@@ -18,6 +18,7 @@
 #include "PasskeyImportDialog.h"
 #include "ui_PasskeyImportDialog.h"
 
+#include "PasskeyImporter.h"
 #include "browser/BrowserService.h"
 #include "core/Metadata.h"
 #include "gui/MainWindow.h"
@@ -53,8 +54,10 @@ void PasskeyImportDialog::setInfo(const QString& relyingParty,
                                   const QString& infoText,
                                   const QString& importButtonText)
 {
-    m_ui->relyingPartyLabel->setText(tr("Relying Party: %1").arg(relyingParty));
-    m_ui->usernameLabel->setText(tr("Username: %1").arg(username));
+    // These come straight from an imported file or a pasted payload and land in labels that do not
+    // wrap - one inside a fixed-size layout - so bound them before they decide the dialog's width.
+    m_ui->relyingPartyLabel->setText(tr("Relying Party: %1").arg(PasskeyImporter::sanitizeForDisplay(relyingParty)));
+    m_ui->usernameLabel->setText(tr("Username: %1").arg(PasskeyImporter::sanitizeForDisplay(username)));
 
     if (isEntry) {
         m_ui->verticalLayout->setSizeConstraint(QLayout::SetFixedSize);

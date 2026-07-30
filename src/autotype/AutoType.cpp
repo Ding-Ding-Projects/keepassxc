@@ -36,12 +36,7 @@
 #include "gui/MessageBox.h"
 #include "gui/osutils/OSUtils.h"
 
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS) && !defined(Q_OS_HAIKU)
-#ifdef WITH_X11
-#include "autotype/xcb/AutoTypeXCB.h"
-#endif
-#include "autotype/wayland/AutoTypeWayland.h"
-#elif defined(Q_OS_MACOS)
+#if defined(Q_OS_MACOS)
 #include "autotype/mac/AutoTypeMac.h"
 #elif defined(Q_OS_WIN32)
 #include "autotype/windows/AutoTypeWindows.h"
@@ -150,27 +145,7 @@ AutoType::AutoType(QObject* parent, bool test)
     if (test) {
         m_platform = new AutoTypePlatformTest();
     } else {
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS) && !defined(Q_OS_HAIKU)
-        const auto platformName = QApplication::platformName();
-#ifdef WITH_X11
-        if (platformName == "xcb") {
-            if (config()->get(Config::AutoTypePreferDesktopPortals).toBool()) {
-                m_platform = new AutoTypePlatformWayland();
-                if (!m_platform->isAvailable()) {
-                    delete m_platform;
-                    m_platform = new AutoTypePlatformX11();
-                }
-            } else {
-                m_platform = new AutoTypePlatformX11();
-            }
-        } else {
-            m_platform = new AutoTypePlatformWayland();
-        }
-#else
-        Q_UNUSED(platformName);
-        m_platform = new AutoTypePlatformWayland();
-#endif
-#elif defined(Q_OS_MACOS)
+#if defined(Q_OS_MACOS)
         m_platform = new AutoTypePlatformMac();
 #elif defined(Q_OS_WIN32)
         m_platform = new AutoTypePlatformWin();
@@ -208,15 +183,6 @@ AutoType::AutoType(QObject* parent, bool test)
 AutoType::~AutoType()
 {
     unload();
-}
-
-bool AutoType::usesDesktopPortal() const
-{
-#if defined(Q_OS_UNIX) && !defined(Q_OS_MACOS) && !defined(Q_OS_HAIKU)
-    return dynamic_cast<AutoTypePlatformWayland*>(m_platform) != nullptr;
-#else
-    return false;
-#endif
 }
 
 void AutoType::unload()

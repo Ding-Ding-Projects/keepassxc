@@ -30,14 +30,59 @@
     <widget class="MessageWidget" name="messageWidget" native="true"/>
    </item>
    <item>
-    <widget class="QCheckBox" name="enableBrowserSupport">
-     <property name="toolTip">
-      <string>This is required for accessing your databases with KeePassXC-Browser</string>
+    <layout class="QHBoxLayout" name="enableBrowserSupportRow">
+     <property name="leftMargin">
+      <number>0</number>
      </property>
-     <property name="text">
-      <string>Enable browser integration</string>
+     <property name="topMargin">
+      <number>0</number>
      </property>
-    </widget>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <property name="spacing">
+      <number>12</number>
+     </property>
+     <item>
+      <widget class="QLabel" name="enableBrowserSupportLabel">
+       <property name="text">
+        <string>Enable browser integration</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="toolTip">
+        <string>This is required for accessing your databases with KeePassXC-Browser</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <spacer name="enableBrowserSupportSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>24</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item>
+      <widget class="Material::Switch" name="enableBrowserSupport">
+       <property name="toolTip">
+        <string>This is required for accessing your databases with KeePassXC-Browser</string>
+       </property>
+       <property name="accessibleName">
+        <string>Enable browser integration</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <widget class="QTabWidget" name="tabWidget">
@@ -49,13 +94,6 @@
        <string>General</string>
       </attribute>
       <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QLabel" name="snapWarningLabel">
-         <property name="text">
-          <string>Browsers installed using Snap or Flatpak are not supported with exception to Firefox installed using Snap.</string>
-         </property>
-        </widget>
-       </item>
        <item>
         <widget class="QLabel" name="extensionLabel"/>
        </item>
@@ -82,77 +120,259 @@
          </property>
          <layout class="QGridLayout" name="gridLayout">
           <property name="horizontalSpacing">
-           <number>40</number>
+           <number>20</number>
           </property>
           <item row="1" column="1">
-           <widget class="QCheckBox" name="vivaldiSupport">
-            <property name="text">
-             <string>Vivaldi</string>
+           <layout class="QHBoxLayout" name="vivaldiLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="vivaldiSupport">
+              <property name="text">
+               <string>Vivaldi</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="vivaldiInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Vivaldi</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="3">
-           <widget class="QCheckBox" name="edgeSupport">
-            <property name="text">
-             <string>&amp;Edge</string>
+           <layout class="QHBoxLayout" name="edgeLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="edgeSupport">
+              <property name="text">
+               <string>&amp;Edge</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="edgeInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Microsoft Edge</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="1">
-           <widget class="QCheckBox" name="firefoxSupport">
-            <property name="text">
-             <string>Firefox</string>
+           <layout class="QHBoxLayout" name="firefoxLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="firefoxSupport">
+              <property name="text">
+               <string>Firefox</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="firefoxInstallButton">
+              <property name="toolTip">
+               <string>Open the add-on page of the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Firefox</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="2">
-           <widget class="QCheckBox" name="torBrowserSupport">
-            <property name="text">
-             <string>Tor Browser</string>
+           <layout class="QHBoxLayout" name="torBrowserLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="torBrowserSupport">
+              <property name="text">
+               <string>Tor Browser</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="torBrowserInstallButton">
+              <property name="toolTip">
+               <string>Open the add-on page of the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Tor Browser</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="2">
-           <widget class="QCheckBox" name="braveSupport">
-            <property name="text">
-             <string>Brave</string>
+           <layout class="QHBoxLayout" name="braveLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="braveSupport">
+              <property name="text">
+               <string>Brave</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="braveInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Brave</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="0">
-           <widget class="QCheckBox" name="chromeSupport">
-            <property name="text">
-             <string>Google Chrome</string>
+           <layout class="QHBoxLayout" name="chromeLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="chromeSupport">
+              <property name="text">
+               <string>Google Chrome</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="chromeInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Google Chrome</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="1" column="0">
-           <widget class="QCheckBox" name="chromiumSupport">
-            <property name="text">
-             <string>Chromium</string>
+           <layout class="QHBoxLayout" name="chromiumLayout">
+            <property name="spacing">
+             <number>4</number>
             </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
+            <item>
+             <widget class="QCheckBox" name="chromiumSupport">
+              <property name="text">
+               <string>Chromium</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QToolButton" name="chromiumInstallButton">
+              <property name="toolTip">
+               <string>Install the KeePassXC-Browser extension</string>
+              </property>
+              <property name="accessibleName">
+               <string>Install browser extension for Chromium</string>
+              </property>
+              <property name="text">
+               <string>Install extension</string>
+              </property>
+              <property name="toolButtonStyle">
+               <enum>Qt::ToolButtonIconOnly</enum>
+              </property>
+              <property name="autoRaise">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
           <item row="0" column="4">
            <spacer name="horizontalSpacer">
@@ -171,6 +391,39 @@
         </widget>
        </item>
        <item>
+        <layout class="QHBoxLayout" name="installExtensionsLayout">
+         <item>
+          <widget class="Material::TonalButton" name="installAllExtensionsButton">
+           <property name="symbol">
+            <string notr="true">download</string>
+           </property>
+           <property name="toolTip">
+            <string>Register the KeePassXC-Browser extension with all enabled browsers. Each browser asks you to enable the extension the next time it is started.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Install extensions for all enabled browsers</string>
+           </property>
+           <property name="text">
+            <string>Install extensions for all enabled browsers</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="horizontalSpacer_6">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>40</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </item>
+       <item>
         <spacer name="verticalSpacer">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -187,64 +440,328 @@
         </spacer>
        </item>
        <item>
-        <widget class="QCheckBox" name="showNotification">
-         <property name="text">
-          <string extracomment="Credentials mean login data requested via browser extension">Show a notification when credentials are requested</string>
+        <layout class="QHBoxLayout" name="showNotificationRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="showNotificationLabel">
+           <property name="text">
+            <string extracomment="Credentials mean login data requested via browser extension">Show a notification when credentials are requested</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="showNotificationSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="showNotification">
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="accessibleName">
+            <string extracomment="Credentials mean login data requested via browser extension">Show a notification when credentials are requested</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="unlockDatabase">
-         <property name="text">
-          <string>Request to unlock the database if it is locked</string>
+        <layout class="QHBoxLayout" name="unlockDatabaseRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="checked">
-          <bool>true</bool>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="unlockDatabaseLabel">
+           <property name="text">
+            <string>Request to unlock the database if it is locked</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="unlockDatabaseSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="unlockDatabase">
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+           <property name="accessibleName">
+            <string>Request to unlock the database if it is locked</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="matchUrlScheme">
-         <property name="toolTip">
-          <string>Only entries with the same scheme (http://, https://, …) are returned.</string>
+        <layout class="QHBoxLayout" name="matchUrlSchemeRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Match URL scheme (e.g., https://example.com)</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="matchUrlSchemeLabel">
+           <property name="text">
+            <string>Match URL scheme (e.g., https://example.com)</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Only entries with the same scheme (http://, https://, …) are returned.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="matchUrlSchemeSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="matchUrlScheme">
+           <property name="toolTip">
+            <string>Only entries with the same scheme (http://, https://, …) are returned.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Match URL scheme (e.g., https://example.com)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="bestMatchOnly">
-         <property name="toolTip">
-          <string>Only returns the best matches for a specific URL instead of all entries for the whole domain.</string>
+        <layout class="QHBoxLayout" name="bestMatchOnlyRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Return only best-matching credentials</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="bestMatchOnlyLabel">
+           <property name="text">
+            <string>Return only best-matching credentials</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Only returns the best matches for a specific URL instead of all entries for the whole domain.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="bestMatchOnlySpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="bestMatchOnly">
+           <property name="toolTip">
+            <string>Only returns the best matches for a specific URL instead of all entries for the whole domain.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Return only best-matching credentials</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="allowExpiredCredentials">
-         <property name="toolTip">
-          <string>Returns expired credentials. String [expired] is added to the title.</string>
+        <layout class="QHBoxLayout" name="allowExpiredCredentialsRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Allow returning expired credentials</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="allowExpiredCredentialsLabel">
+           <property name="text">
+            <string>Allow returning expired credentials</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Returns expired credentials. String [expired] is added to the title.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="allowExpiredCredentialsSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="allowExpiredCredentials">
+           <property name="toolTip">
+            <string>Returns expired credentials. String [expired] is added to the title.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Allow returning expired credentials</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="searchInAllDatabases">
-         <property name="toolTip">
-          <string>All databases connected to the extension will return matching credentials.</string>
+        <layout class="QHBoxLayout" name="searchInAllDatabasesRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string extracomment="Credentials mean login data requested via browser extension">Search in all opened databases for matching credentials</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="searchInAllDatabasesLabel">
+           <property name="text">
+            <string extracomment="Credentials mean login data requested via browser extension">Search in all opened databases for matching credentials</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>All databases connected to the extension will return matching credentials.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="searchInAllDatabasesSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="searchInAllDatabases">
+           <property name="toolTip">
+            <string>All databases connected to the extension will return matching credentials.</string>
+           </property>
+           <property name="accessibleName">
+            <string extracomment="Credentials mean login data requested via browser extension">Search in all opened databases for matching credentials</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
         <spacer name="verticalSpacer_2">
@@ -280,84 +797,484 @@
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="alwaysAllowAccess">
-         <property name="text">
-          <string extracomment="Credentials mean login data requested via browser extension">Never ask before accessing credentials</string>
+        <layout class="QHBoxLayout" name="alwaysAllowAccessRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="alwaysAllowAccessLabel">
+           <property name="text">
+            <string extracomment="Credentials mean login data requested via browser extension">Never ask before accessing credentials</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="alwaysAllowAccessSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="alwaysAllowAccess">
+           <property name="accessibleName">
+            <string extracomment="Credentials mean login data requested via browser extension">Never ask before accessing credentials</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="alwaysAllowUpdateRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="alwaysAllowUpdateLabel">
+           <property name="text">
+            <string extracomment="Credentials mean login data requested via browser extension">Never ask before updating credentials</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="alwaysAllowUpdateSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="alwaysAllowUpdate">
+           <property name="accessibleName">
+            <string extracomment="Credentials mean login data requested via browser extension">Never ask before updating credentials</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="httpAuthPermissionRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="httpAuthPermissionLabel">
+           <property name="text">
+            <string extracomment="An extra HTTP Basic Auth setting">Do not ask permission for HTTP Basic Auth</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="httpAuthPermissionSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="httpAuthPermission">
+           <property name="accessibleName">
+            <string extracomment="An extra HTTP Basic Auth setting">Do not ask permission for HTTP Basic Auth</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="supportKphFieldsRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="supportKphFieldsLabel">
+           <property name="text">
+            <string>Return advanced string fields which start with &quot;KPH: &quot;</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Automatically creating or updating string fields is not supported.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="supportKphFieldsSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="supportKphFields">
+           <property name="toolTip">
+            <string>Automatically creating or updating string fields is not supported.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Return advanced string fields which start with &quot;KPH: &quot;</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="allowLocalhostWithPasskeysRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="allowLocalhostWithPasskeysLabel">
+           <property name="text">
+            <string>Allow using localhost with passkeys</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Allows using insecure http://localhost with passkeys for testing purposes.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="allowLocalhostWithPasskeysSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="allowLocalhostWithPasskeys">
+           <property name="toolTip">
+            <string>Allows using insecure http://localhost with passkeys for testing purposes.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Allow using localhost with passkeys</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="noMigrationPromptRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="noMigrationPromptLabel">
+           <property name="text">
+            <string>Do not prompt for KeePassHTTP settings migration.</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Don't display the popup suggesting migration of legacy KeePassHTTP settings.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="noMigrationPromptSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="noMigrationPrompt">
+           <property name="toolTip">
+            <string>Don't display the popup suggesting migration of legacy KeePassHTTP settings.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Do not prompt for KeePassHTTP settings migration.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QWidget" name="updateBinaryPathRowContainer" native="true">
+         <layout class="QHBoxLayout" name="updateBinaryPathRow">
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="updateBinaryPathLabel">
+           <property name="text">
+            <string>Update native messaging manifest files at startup</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Updates KeePassXC or keepassxc-proxy binary path automatically to native messaging scripts on startup.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="updateBinaryPathSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="updateBinaryPath">
+           <property name="toolTip">
+            <string>Updates KeePassXC or keepassxc-proxy binary path automatically to native messaging scripts on startup.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Update native messaging manifest files at startup</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
-        <widget class="QCheckBox" name="alwaysAllowUpdate">
-         <property name="text">
-          <string extracomment="Credentials mean login data requested via browser extension">Never ask before updating credentials</string>
+        <layout class="QHBoxLayout" name="allowGetDatabaseEntriesRequestRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-        </widget>
+         <property name="topMargin">
+          <number>0</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="allowGetDatabaseEntriesRequestLabel">
+           <property name="text">
+            <string>Allow limited access to all entries in connected databases (ignores site access restrictions)</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Allow keepassxc-proxy to list all entries with their title, URL and UUID in connected databases.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="allowGetDatabaseEntriesRequestSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="allowGetDatabaseEntriesRequest">
+           <property name="toolTip">
+            <string>Allow keepassxc-proxy to list all entries with their title, URL and UUID in connected databases.</string>
+           </property>
+           <property name="accessibleName">
+            <string>Allow limited access to all entries in connected databases (ignores site access restrictions)</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="httpAuthPermission">
-         <property name="text">
-          <string extracomment="An extra HTTP Basic Auth setting">Do not ask permission for HTTP Basic Auth</string>
+        <widget class="QWidget" name="useCustomProxyRowContainer" native="true">
+         <layout class="QHBoxLayout" name="useCustomProxyRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="supportKphFields">
-         <property name="toolTip">
-          <string>Automatically creating or updating string fields is not supported.</string>
+         <property name="topMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Return advanced string fields which start with &quot;KPH: &quot;</string>
+         <property name="rightMargin">
+          <number>0</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="allowLocalhostWithPasskeys">
-         <property name="toolTip">
-          <string>Allows using insecure http://localhost with passkeys for testing purposes.</string>
+         <property name="bottomMargin">
+          <number>0</number>
          </property>
-         <property name="text">
-          <string>Allow using localhost with passkeys</string>
+         <property name="spacing">
+          <number>12</number>
          </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="noMigrationPrompt">
-         <property name="toolTip">
-          <string>Don't display the popup suggesting migration of legacy KeePassHTTP settings.</string>
-         </property>
-         <property name="text">
-          <string>Do not prompt for KeePassHTTP settings migration.</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="updateBinaryPath">
-         <property name="toolTip">
-          <string>Updates KeePassXC or keepassxc-proxy binary path automatically to native messaging scripts on startup.</string>
-         </property>
-         <property name="text">
-          <string>Update native messaging manifest files at startup</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="allowGetDatabaseEntriesRequest">
-         <property name="toolTip">
-          <string>Allow keepassxc-proxy to list all entries with their title, URL and UUID in connected databases.</string>
-         </property>
-         <property name="text">
-          <string>Allow limited access to all entries in connected databases (ignores site access restrictions)</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="useCustomProxy">
-         <property name="toolTip">
-          <string>Use a custom proxy location if you installed a proxy manually.</string>
-         </property>
-         <property name="text">
-          <string comment="Meant is the proxy for KeePassXC-Browser">Use a custom proxy location:</string>
-         </property>
+         <item>
+          <widget class="QLabel" name="useCustomProxyLabel">
+           <property name="text">
+            <string comment="Meant is the proxy for KeePassXC-Browser">Use a custom proxy location:</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="toolTip">
+            <string>Use a custom proxy location if you installed a proxy manually.</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="useCustomProxySpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="useCustomProxy">
+           <property name="toolTip">
+            <string>Use a custom proxy location if you installed a proxy manually.</string>
+           </property>
+           <property name="accessibleName">
+            <string comment="Meant is the proxy for KeePassXC-Browser">Use a custom proxy location:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
@@ -404,7 +1321,10 @@
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="customProxyLocationBrowseButton">
+          <widget class="Material::OutlinedButton" name="customProxyLocationBrowseButton">
+           <property name="symbol">
+            <string notr="true">folder_open</string>
+           </property>
            <property name="accessibleName">
             <string>Browser for custom proxy file</string>
            </property>
@@ -429,13 +1349,57 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="customBrowserSupport">
-         <property name="text">
-          <string>Use a custom browser configuration location:</string>
+        <widget class="QWidget" name="customBrowserSupportRowContainer" native="true">
+         <layout class="QHBoxLayout" name="customBrowserSupportRow">
+         <property name="leftMargin">
+          <number>0</number>
          </property>
-         <property name="checked">
-          <bool>false</bool>
+         <property name="topMargin">
+          <number>0</number>
          </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <property name="bottomMargin">
+          <number>0</number>
+         </property>
+         <property name="spacing">
+          <number>12</number>
+         </property>
+         <item>
+          <widget class="QLabel" name="customBrowserSupportLabel">
+           <property name="text">
+            <string>Use a custom browser configuration location:</string>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="customBrowserSupportSpacer">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>24</width>
+             <height>20</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="customBrowserSupport">
+           <property name="checked">
+            <bool>false</bool>
+           </property>
+           <property name="accessibleName">
+            <string>Use a custom browser configuration location:</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
         </widget>
        </item>
        <item>
@@ -453,9 +1417,6 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">margin-right: 5px</string>
               </property>
               <property name="text">
                <string>Browser type:</string>
@@ -506,9 +1467,6 @@
                 <verstretch>0</verstretch>
                </sizepolicy>
               </property>
-              <property name="styleSheet">
-               <string notr="true">margin-right: 5px</string>
-              </property>
               <property name="text">
                <string>Config Location:</string>
               </property>
@@ -543,7 +1501,10 @@
              </widget>
             </item>
             <item>
-             <widget class="QPushButton" name="customBrowserLocationBrowseButton">
+             <widget class="Material::OutlinedButton" name="customBrowserLocationBrowseButton">
+              <property name="symbol">
+               <string notr="true">folder_open</string>
+              </property>
               <property name="accessibleName">
                <string>Browse for custom browser path</string>
               </property>
@@ -636,6 +1597,21 @@
    <extends>QWidget</extends>
    <header>gui/MessageWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::TonalButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Switch</class>
+   <extends>QAbstractButton</extends>
+   <header>gui/material/MaterialSwitch.h</header>
   </customwidget>
  </customwidgets>
  <resources/>
