@@ -37,7 +37,12 @@ namespace Material
         constexpr int CircleSize = 40;
         constexpr int GlyphSize = 20;
         constexpr int CircleGap = 16;
-        constexpr int ColumnGap = 12;
+        constexpr int ColumnGap = 16;
+        constexpr int ActionGap = 16;
+        constexpr int ActionHeight = 36;
+        constexpr int DiffPadding = 14;
+        constexpr int FilterChipHeight = 36;
+        constexpr int RecentDays = 30;
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
 
@@ -58,6 +63,25 @@ namespace Material
             }
         }
 
+        /** The Diff action, which the design pads tighter than a normal button. */
+        class DiffButton : public OutlinedButton
+        {
+        public:
+            DiffButton(const QString& text, QWidget* parent)
+                : OutlinedButton(QString(), text, parent)
+            {
+                // The base constructor pinned the minimum width using the base
+                // padding, before this override existed; redo it.
+                enforceLabelWidth();
+            }
+
+        protected:
+            int horizontalPadding() const override
+            {
+                return DiffPadding;
+            }
+        };
+
         /** A rounded-20 outlined revision row. */
         class RevisionRow : public QWidget
         {
@@ -71,14 +95,21 @@ namespace Material
             {
                 auto layout = new QHBoxLayout(this);
                 layout->setContentsMargins(RowPaddingX, RowPaddingY, RowPaddingX, RowPaddingY);
-                layout->setSpacing(RowSpacing);
+                layout->setSpacing(ActionGap);
                 layout->addStretch(1);
 
-                m_diff = new OutlinedButton(QString(), diffText, this);
-                layout->addWidget(m_diff);
+                // Rows without an id are the empty state, not revisions. Giving
+                // them a Diff and a Restore would offer two actions that can
+                // only answer that there is nothing there.
+                if (!m_revision.id.isEmpty()) {
+                    m_diff = new DiffButton(diffText, this);
+                    m_diff->setFixedHeight(ActionHeight);
+                    layout->addWidget(m_diff);
 
-                m_restore = new TonalButton(QStringLiteral("restore"), restoreText, this);
-                layout->addWidget(m_restore);
+                    m_restore = new TonalButton(QStringLiteral("restore"), restoreText, this);
+                    m_restore->setFixedHeight(ActionHeight);
+                    layout->addWidget(m_restore);
+                }
 
                 setMinimumHeight(CircleSize + RowPaddingY * 2);
             }
@@ -117,7 +148,8 @@ namespace Material
                 painter.drawPixmap(circleRect.topLeft() + QPoint(inset, inset), glyph);
 
                 const int left = circleRect.right() + CircleGap;
-                const int textWidth = qMax(0, m_diff->x() - ColumnGap - left);
+                const int right = m_diff ? m_diff->x() - ColumnGap : width() - RowPaddingX;
+                const int textWidth = qMax(0, right - left);
                 const QFont labelFont = theme()->font(TypeRole::LabelLarge);
                 const QFont metaLineFont = metaFont();
                 const QFontMetrics labelMetrics(labelFont);
@@ -158,13 +190,41 @@ namespace Material
         searchBar()->setMaximumWidth(SearchMaximumWidth);
         searchBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 
+        // The design draws the three chips as 36px boxes rather than pills.
+        const auto filterChip = [](const QString& symbol, const QString& text) {
+            auto chip = new Chip(symbol, text, Chip::Kind::Filter);
+            chip->setRadius(Shape::Small);
+            chip->setFixedHeight(FilterChipHeight);
+            return chip;
+        };
+
+        m_entriesChip = filterChip(QStringLiteral("filter_list"), tr("Entries"));
+        m_settingsChip = filterChip(QString(), tr("Settings"));
+        m_recentChip = filterChip(QStringLiteral("calendar_month"), tr("Last %n day(s)", "", RecentDays));
+
+        // Entries and Settings are two halves of one question, so pressing one
+        // releases the other instead of leaving an empty intersection.
+        connect(m_entriesChip, &QAbstractButton::toggled, this, [this](bool on) {
+            if (on) {
+                m_settingsChip->setChecked(false);
+            }
+            emit filterChanged();
+        });
+        connect(m_settingsChip, &QAbstractButton::toggled, this, [this](bool on) {
+            if (on) {
+                m_entriesChip->setChecked(false);
+            }
+            emit filterChanged();
+        });
+        connect(m_recentChip, &QAbstractButton::toggled, this, &HistoryScreen::filterChanged);
+
         auto filterRow = new QHBoxLayout();
         filterRow->setContentsMargins(0, 0, 0, 0);
         filterRow->setSpacing(RowSpacing);
         filterRow->addWidget(searchBar());
-        filterRow->addWidget(new Chip(QStringLiteral("filter_list"), tr("Entries"), Chip::Kind::Filter));
-        filterRow->addWidget(new Chip(QString(), tr("Settings"), Chip::Kind::Filter));
-        filterRow->addWidget(new Chip(QStringLiteral("calendar_month"), tr("Last 30 days"), Chip::Kind::Filter));
+        filterRow->addWidget(m_entriesChip);
+        filterRow->addWidget(m_settingsChip);
+        filterRow->addWidget(m_recentChip);
         filterRow->addStretch(1);
         contentLayout()->addLayout(filterRow);
 
@@ -187,14 +247,38 @@ namespace Material
         rebuild();
     }
 
+    RevisionFilter HistoryScreen::kindFilter() const
+    {
+        if (m_entriesChip->isChecked()) {
+            return RevisionFilter::Entries;
+        }
+        if (m_settingsChip->isChecked()) {
+            return RevisionFilter::Settings;
+        }
+        return RevisionFilter::All;
+    }
+
+    bool HistoryScreen::isRecentOnly() const
+    {
+        return m_recentChip->isChecked();
+    }
+
+    int HistoryScreen::recentDays()
+    {
+        return RecentDays;
+    }
+
     void HistoryScreen::rebuild()
     {
         clearLayout(m_revisionLayout);
         for (const auto& revision : m_revisions) {
             auto row = new RevisionRow(revision, tr("Diff"), tr("Restore"));
             const QString id = revision.id;
-            connect(row->diffButton(), &QAbstractButton::clicked, this, [this, id] { emit diffRequested(id); });
-            connect(row->restoreButton(), &QAbstractButton::clicked, this, [this, id] { emit restoreRequested(id); });
+            if (row->diffButton()) {
+                connect(row->diffButton(), &QAbstractButton::clicked, this, [this, id] { emit diffRequested(id); });
+                connect(
+                    row->restoreButton(), &QAbstractButton::clicked, this, [this, id] { emit restoreRequested(id); });
+            }
             m_revisionLayout->addWidget(row);
         }
     }

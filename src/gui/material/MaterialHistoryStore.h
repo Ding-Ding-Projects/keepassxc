@@ -29,6 +29,21 @@ class Database;
 namespace Material
 {
     /**
+     * What a revision turned out to be about.
+     *
+     * Derived from what the save actually changed, never guessed: a save that
+     * touched entries is an Entry revision, one that only changed the number of
+     * groups is a Group revision, and a save that changed neither is what is
+     * left - the database's own settings and metadata.
+     */
+    enum class RevisionKind
+    {
+        Entry,
+        Group,
+        Settings
+    };
+
+    /**
      * One recorded revision of a database.
      *
      * The counts are the state at the moment of the save; the three deltas are
@@ -43,6 +58,7 @@ namespace Material
         QString databaseName;
         QString databasePath;
         QString label;
+        RevisionKind kind = RevisionKind::Settings;
         int entryCount = 0;
         int groupCount = 0;
         int added = 0;

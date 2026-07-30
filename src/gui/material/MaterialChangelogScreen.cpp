@@ -36,13 +36,29 @@ namespace Material
         constexpr int ItemPaddingY = 7;
         constexpr int RowSpacing = 10;
         constexpr int CardSpacing = 14;
+        constexpr int HeadSpacing = 12;
+        constexpr int StatusPillHeight = 26;
+        constexpr int StatusPillPadding = 10;
+        constexpr int ExportSymbolSize = 20;
         constexpr int ListWidth = 980;
         constexpr int SearchMaximumWidth = 520;
 
-        QFont weighted(TypeRole role, QFont::Weight weight)
+        /** The release heading, which the type scale has no role for. */
+        constexpr int VersionSizePx = 20;
+        /** The size TypeRole::BodyMedium is defined at, the scale's reference. */
+        constexpr int BodySizePx = 14;
+
+        /**
+         * The 20px medium release heading.
+         *
+         * Derived from BodyMedium rather than written as a point size, so the
+         * accessibility font size setting still moves it with everything else.
+         */
+        QFont versionFont()
         {
-            QFont font = theme()->font(role);
-            font.setWeight(weight);
+            QFont font = theme()->font(TypeRole::BodyMedium);
+            font.setPointSize(qMax(1, qRound(font.pointSize() * double(VersionSizePx) / BodySizePx)));
+            font.setWeight(QFont::Medium);
             return font;
         }
 
@@ -148,11 +164,86 @@ namespace Material
             ChangeItem m_item;
         };
 
+        /**
+         * The release status chip.
+         *
+         * PillLabel is fixed at 32px with 14px padding, which is right for the
+         * spec sheet rows it was built for; the design draws this one at 26px
+         * with 10px, so only the geometry is restated here.
+         */
+        class StatusPill : public PillLabel
+        {
+        public:
+            StatusPill(PillKind kind, const QString& text, QWidget* parent = nullptr)
+                : PillLabel(kind, text, parent)
+            {
+            }
+
+            QSize sizeHint() const override
+            {
+                const QFontMetrics metrics(theme()->font(TypeRole::LabelMedium));
+                return {2 * StatusPillPadding + metrics.horizontalAdvance(text()), StatusPillHeight};
+            }
+
+            QSize minimumSizeHint() const override
+            {
+                return sizeHint();
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                // Qualified: QFrame, which QLabel derives from, also has a Shape enum.
+                paintSurface(&painter,
+                             rect(),
+                             Material::Shape::Small,
+                             pillContainerColor(pillKind()),
+                             pillBorderColor(pillKind()));
+
+                const QFont font = theme()->font(TypeRole::LabelMedium);
+                const QFontMetrics metrics(font);
+                const QRect textRect = rect().adjusted(StatusPillPadding, 0, -StatusPillPadding, 0);
+                painter.setFont(font);
+                painter.setPen(pillContentColor(pillKind()));
+                painter.drawText(
+                    textRect, Qt::AlignCenter, metrics.elidedText(text(), Qt::ElideRight, textRect.width()));
+            }
+        };
+
+        /**
+         * A rounded-28 release card.
+         *
+         * The design fills the card and outlines it; Card paints a border only
+         * for the Outlined variant, which is transparent, so the hairline is
+         * restated here rather than losing one of the two.
+         */
+        class ReleaseCard : public Card
+        {
+        public:
+            explicit ReleaseCard(QWidget* parent = nullptr)
+                : Card(Card::Variant::Filled, Material::Shape::ExtraLarge, parent)
+            {
+                setFillRole(Role::SurfaceContainerLow);
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                paintSurface(
+                    &painter, rect(), radius(), theme()->color(fillRole()), theme()->color(Role::OutlineVariant));
+            }
+        };
+
         /** A rounded-28 release card holding @p items, which may be a filtered subset. */
         Card* buildReleaseCard(const Release& release, const QVector<ChangeItem>& items)
         {
-            auto card = new Card(Card::Variant::Filled, Shape::ExtraLarge);
-            card->setFillRole(Role::SurfaceContainerLow);
+            auto card = new ReleaseCard();
             card->contentLayout()->setSpacing(0);
 
             auto head = new QHBoxLayout();
@@ -160,12 +251,12 @@ namespace Material
             head->setSpacing(TagGap);
 
             auto version = new QLabel(release.version);
-            version->setFont(weighted(TypeRole::TitleMedium, QFont::Medium));
+            version->setFont(versionFont());
             tint(version, Role::OnSurface);
             head->addWidget(version);
 
             if (!release.status.isEmpty()) {
-                head->addWidget(new PillLabel(release.statusTint, release.status));
+                head->addWidget(new StatusPill(release.statusTint, release.status));
             }
             head->addStretch(1);
 
@@ -176,7 +267,7 @@ namespace Material
             head->addWidget(date);
 
             card->contentLayout()->addLayout(head);
-            card->contentLayout()->addSpacing(6);
+            card->contentLayout()->addSpacing(HeadSpacing);
 
             for (const auto& item : items) {
                 card->contentLayout()->addWidget(new ChangeRow(item));
@@ -191,6 +282,7 @@ namespace Material
         setHeadline(tr("Changelog"));
 
         auto exportButton = new OutlinedButton(QStringLiteral("download"), tr("Export Markdown"));
+        exportButton->setSymbolSize(ExportSymbolSize);
         connect(exportButton, &QAbstractButton::clicked, this, &ChangelogScreen::exportRequested);
         addHeaderWidget(exportButton);
 
@@ -204,6 +296,8 @@ namespace Material
         });
 
         m_dateChip = new Chip(QStringLiteral("calendar_month"), QString(), Chip::Kind::Assist);
+        // The design lines the chip up with the search bar beside it.
+        m_dateChip->setFixedHeight(Layout::SurfaceSearchHeight);
         m_countLabel = new QLabel();
 
         auto filterRow = new QHBoxLayout();
@@ -240,6 +334,7 @@ namespace Material
         clearLayout(m_releaseLayout);
 
         int shown = 0;
+        QStringList dates;
         for (const auto& release : m_releases) {
             QVector<ChangeItem> items = release.items;
             if (!m_query.isEmpty() && !release.version.contains(m_query, Qt::CaseInsensitive)) {
@@ -254,28 +349,31 @@ namespace Material
                 }
             }
             m_releaseLayout->addWidget(buildReleaseCard(release, items));
+            dates.append(release.date);
             ++shown;
         }
 
         m_countLabel->setText(tr("%1 of %2 releases shown").arg(shown).arg(m_releases.size()));
         m_countLabel->setFont(theme()->font(TypeRole::BodySmall));
         tint(m_countLabel, Role::OnSurfaceVariant);
-        updateDateRange();
+        // The chip and the count sit in the same row and describe the same set,
+        // so the range is taken from the cards that were actually added.
+        updateDateRange(dates);
     }
 
-    void ChangelogScreen::updateDateRange()
+    void ChangelogScreen::updateDateRange(const QStringList& dates)
     {
         QString first;
         QString last;
-        for (const auto& release : m_releases) {
-            if (release.date.isEmpty()) {
+        for (const auto& date : dates) {
+            if (date.isEmpty()) {
                 continue;
             }
-            if (first.isEmpty() || release.date < first) {
-                first = release.date;
+            if (first.isEmpty() || date < first) {
+                first = date;
             }
-            if (last.isEmpty() || release.date > last) {
-                last = release.date;
+            if (last.isEmpty() || date > last) {
+                last = date;
             }
         }
 

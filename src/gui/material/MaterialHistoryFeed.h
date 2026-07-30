@@ -33,7 +33,9 @@ namespace Material
      *
      * Reads the append-only revision log kept by HistoryStore and turns it into
      * revision rows, newest first, scoped to the database in front when there
-     * is one. The screen's search box filters them.
+     * is one. The screen's search box and its filter chips narrow them; when
+     * nothing is left the screen shows one line saying so, without the Diff and
+     * Restore actions a recorded revision carries.
      *
      * Diff opens what the log actually recorded for a revision next to the one
      * before it. Restore says plainly that putting contents back is not wired,

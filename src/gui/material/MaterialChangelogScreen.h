@@ -22,6 +22,7 @@
 #include "MaterialScreen.h"
 
 #include <QString>
+#include <QStringList>
 #include <QVector>
 
 class QLabel;
@@ -72,7 +73,8 @@ namespace Material
 
     private:
         void rebuild();
-        void updateDateRange();
+        /** Span the chip across @p dates, which are the releases on screen. */
+        void updateDateRange(const QStringList& dates);
 
         QVBoxLayout* m_releaseLayout = nullptr;
         Chip* m_dateChip = nullptr;

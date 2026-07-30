@@ -55,16 +55,18 @@ namespace Material
         {
             const QString name = section.toLower();
             if (name.contains(QLatin1String("add"))) {
-                *tag = ChangelogFeed::tr("added");
-                *tint = PillKind::Value;
-            } else if (name.contains(QLatin1String("change"))) {
-                *tag = ChangelogFeed::tr("changed");
-                *tint = PillKind::Warn;
-            } else if (name.contains(QLatin1String("fix"))) {
-                *tag = ChangelogFeed::tr("fixed");
+                *tag = ChangelogFeed::tr("Added");
                 *tint = PillKind::Good;
+            } else if (name.contains(QLatin1String("change"))) {
+                *tag = ChangelogFeed::tr("Changed");
+                *tint = PillKind::Value;
+            } else if (name.contains(QLatin1String("fix"))) {
+                *tag = ChangelogFeed::tr("Fixed");
+                *tint = PillKind::Bad;
             } else {
-                *tag = section.toLower();
+                // Headings in the file are already capitalised, so they are
+                // kept as written rather than re-cased into something else.
+                *tag = section;
                 *tint = PillKind::Value;
             }
         }
@@ -81,9 +83,8 @@ namespace Material
     {
         Q_ASSERT(m_screen);
 
-        m_screen->setSupportingText(tr("Every release recorded in the CHANGELOG.md this build was made from, oldest "
-                                       "entry to newest. The search box filters versions and change text; the export "
-                                       "button writes out whatever the filter leaves."));
+        // The design keeps the changelog header to one row: title and Export,
+        // then the filter row. There is no blurb between them.
         m_screen->searchBar()->setShowRegexControls(false);
 
         QFile file(ChangelogResource);
@@ -97,7 +98,7 @@ namespace Material
             missing.version = QString::fromLatin1(KEEPASSXC_VERSION);
             missing.status = tr("No changelog");
             missing.statusTint = PillKind::Warn;
-            missing.items.append({tr("note"),
+            missing.items.append({tr("Note"),
                                   tr("This build does not carry a readable CHANGELOG.md, so there is nothing to "
                                      "list here."),
                                   PillKind::Off});
@@ -120,7 +121,7 @@ namespace Material
         QVector<Release> releases;
         Release current;
         bool inRelease = false;
-        QString tag = tr("note");
+        QString tag = tr("Note");
         PillKind tint = PillKind::Value;
         QString newestDated;
 
@@ -129,7 +130,7 @@ namespace Material
                 return;
             }
             if (current.items.isEmpty()) {
-                current.items.append({tr("none"),
+                current.items.append({tr("None"),
                                       tr("No changes are recorded for this version in the changelog."),
                                       PillKind::Off});
             }
@@ -146,7 +147,7 @@ namespace Material
 
                 current = Release();
                 inRelease = true;
-                tag = tr("note");
+                tag = tr("Note");
                 tint = PillKind::Value;
 
                 const QString heading = line.mid(3).trimmed();
@@ -169,14 +170,19 @@ namespace Material
                     marks << bracketed;
                 }
 
+                // The design gives every version block a chip, so each release
+                // is placed relative to this build rather than left blank. The
+                // wording stays factual: nothing here can tell a security
+                // release from a feature one, so nothing here claims to.
                 if (current.version == QLatin1String(KEEPASSXC_VERSION)) {
-                    marks << tr("this build");
+                    marks << tr("This build");
                     current.statusTint = PillKind::Good;
                 } else if (!newestDated.isEmpty() && current.version == newestDated) {
-                    marks << tr("latest release");
-                    current.statusTint = PillKind::Value;
+                    marks << tr("Latest release");
+                    current.statusTint = PillKind::Good;
                 } else {
-                    current.statusTint = PillKind::Warn;
+                    marks << tr("Previous release");
+                    current.statusTint = PillKind::Value;
                 }
                 current.status = marks.join(QStringLiteral(" · "));
                 continue;

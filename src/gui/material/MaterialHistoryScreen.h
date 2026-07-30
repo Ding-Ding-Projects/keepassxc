@@ -34,6 +34,10 @@ namespace Material
      * @p tint picks the family the 40px glyph circle is drawn in, so a deletion
      * can read as an error and a restore as healthy without the screen knowing
      * anything about what a revision means.
+     *
+     * A row with an empty @p id is not a recorded revision but the line the
+     * screen shows when there is nothing to list. It is drawn without the Diff
+     * and Restore actions, because neither has anything to act on.
      */
     struct Revision
     {
@@ -44,9 +48,20 @@ namespace Material
         PillKind tint = PillKind::Value;
     };
 
+    /** Which kind of revision the Entries / Settings chips leave showing. */
+    enum class RevisionFilter
+    {
+        All,
+        Entries,
+        Settings
+    };
+
     /**
      * The version history destination: a blurb, a search bar with filter chips
      * and a column of revision rows, each offering a diff and a restore.
+     *
+     * The chips only report what the user picked; the feed owns the filtering,
+     * the same way the search box does.
      */
     class HistoryScreen : public Screen
     {
@@ -58,15 +73,27 @@ namespace Material
 
         void setRevisions(const QVector<Revision>& revisions);
 
+        /** Which of the two mutually exclusive kind chips is pressed. */
+        RevisionFilter kindFilter() const;
+        /** Whether the date chip is pressed, scoping the list to its window. */
+        bool isRecentOnly() const;
+        /** How far back the date chip reaches, in days. */
+        static int recentDays();
+
     signals:
         void diffRequested(const QString& id);
         void restoreRequested(const QString& id);
+        /** A filter chip was pressed or released. */
+        void filterChanged();
 
     private:
         void rebuild();
 
         QVBoxLayout* m_revisionLayout = nullptr;
         QVector<Revision> m_revisions;
+        Chip* m_entriesChip = nullptr;
+        Chip* m_settingsChip = nullptr;
+        Chip* m_recentChip = nullptr;
     };
 
 } // namespace Material

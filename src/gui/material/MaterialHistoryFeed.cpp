@@ -32,9 +32,22 @@ namespace Material
 {
     namespace
     {
+        /** The design's ISO stamp in the meta line: `2026-07-28 09:14`. */
+        const QString MetaTimeFormat = QStringLiteral("yyyy-MM-dd HH:mm");
+        /** Length of the short revision identifier the design's meta line opens with. */
+        constexpr int ShortIdLength = 7;
+
         /** The glyph and tint of a revision follow what it recorded. */
         QString symbolFor(const HistoryRevision& revision)
         {
+            switch (revision.kind) {
+            case RevisionKind::Group:
+                return QStringLiteral("group_add");
+            case RevisionKind::Settings:
+                return QStringLiteral("tune");
+            case RevisionKind::Entry:
+                break;
+            }
             if (revision.removed > 0) {
                 return QStringLiteral("delete");
             }
@@ -49,16 +62,32 @@ namespace Material
 
         PillKind tintFor(const HistoryRevision& revision)
         {
+            // The design gives every circle a real container colour, so a
+            // revision that changed nothing countable still reads as one.
+            if (revision.kind != RevisionKind::Entry) {
+                return PillKind::Value;
+            }
             if (revision.removed > 0) {
                 return PillKind::Bad;
             }
             if (revision.added > 0) {
                 return PillKind::Good;
             }
-            if (revision.edited > 0) {
-                return PillKind::Value;
+            return PillKind::Value;
+        }
+
+        /** The kind token that closes the meta line. */
+        QString kindLabel(RevisionKind kind)
+        {
+            switch (kind) {
+            case RevisionKind::Entry:
+                return HistoryFeed::tr("entry");
+            case RevisionKind::Group:
+                return HistoryFeed::tr("group");
+            case RevisionKind::Settings:
+                break;
             }
-            return PillKind::Off;
+            return HistoryFeed::tr("settings");
         }
 
         QString when(const QDateTime& timestamp)
@@ -66,13 +95,20 @@ namespace Material
             return QLocale::system().toString(timestamp.toLocalTime(), QLocale::ShortFormat);
         }
 
-        QString describe(const HistoryRevision& revision)
+        /**
+         * `a91f04c · 2026-07-28 09:14 · entry`, the design's three tokens.
+         *
+         * The design only ever shows one vault, so it needs no fourth. When the
+         * list is not scoped to a database the name is appended, because two
+         * files' revisions would otherwise be indistinguishable.
+         */
+        QString describe(const HistoryRevision& revision, bool scoped)
         {
-            return HistoryFeed::tr("%1 · %2 · %3 entries in %4 groups")
-                .arg(when(revision.timestamp),
-                     revision.databaseName,
-                     QString::number(revision.entryCount),
-                     QString::number(revision.groupCount));
+            const QString meta = QStringLiteral("%1 · %2 · %3")
+                                     .arg(revision.id.left(ShortIdLength),
+                                          revision.timestamp.toLocalTime().toString(MetaTimeFormat),
+                                          kindLabel(revision.kind));
+            return scoped ? meta : QStringLiteral("%1 · %2").arg(meta, revision.databaseName);
         }
     } // namespace
 
@@ -88,12 +124,12 @@ namespace Material
                "and how many entries were added, removed or edited since the save before it. No entry contents are "
                "written here, which is also why restoring contents is not yet possible."));
 
-        m_screen->searchBar()->setPlaceholder(tr("Search recorded revisions"));
         m_screen->searchBar()->setShowRegexControls(false);
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
             refresh();
         });
+        connect(m_screen, &HistoryScreen::filterChanged, this, &HistoryFeed::refresh);
 
         connect(m_screen, &HistoryScreen::diffRequested, this, &HistoryFeed::showDiff);
         connect(m_screen, &HistoryScreen::restoreRequested, this, &HistoryFeed::explainRestore);
@@ -114,9 +150,25 @@ namespace Material
         const QVector<HistoryRevision> recorded =
             m_databasePath.isEmpty() ? store->revisions() : store->revisionsFor(m_databasePath);
 
+        const RevisionFilter kind = m_screen->kindFilter();
+        const QDateTime since = QDateTime::currentDateTime().addDays(-HistoryScreen::recentDays());
+        const bool recentOnly = m_screen->isRecentOnly();
+
         QVector<Revision> rows;
         for (const HistoryRevision& recordedRevision : recorded) {
-            const QString meta = describe(recordedRevision);
+            if (kind == RevisionFilter::Entries && recordedRevision.kind != RevisionKind::Entry) {
+                continue;
+            }
+            // Settings is the other half of the pair: everything the save was
+            // about that was not an entry.
+            if (kind == RevisionFilter::Settings && recordedRevision.kind == RevisionKind::Entry) {
+                continue;
+            }
+            if (recentOnly && recordedRevision.timestamp < since) {
+                continue;
+            }
+
+            const QString meta = describe(recordedRevision, !m_databasePath.isEmpty());
             if (!m_query.isEmpty() && !recordedRevision.label.contains(m_query, Qt::CaseInsensitive)
                 && !meta.contains(m_query, Qt::CaseInsensitive)) {
                 continue;
@@ -132,11 +184,13 @@ namespace Material
         }
 
         if (rows.isEmpty()) {
+            // No id: HistoryScreen draws this as a plain line, without the Diff
+            // and Restore actions a real revision carries.
             Revision row;
-            row.symbol = QStringLiteral("history_toggle_off");
+            row.symbol = QStringLiteral("history");
             row.tint = PillKind::Off;
-            if (!m_query.isEmpty()) {
-                row.label = tr("No revision matches this search");
+            if (!m_query.isEmpty() || kind != RevisionFilter::All || recentOnly) {
+                row.label = tr("No revision matches these filters");
                 row.meta = tr("%n revision(s) recorded in total", "", recorded.size());
             } else if (!recorded.isEmpty()) {
                 row.label = tr("Nothing recorded for this database yet");
@@ -160,7 +214,7 @@ namespace Material
 
         if (!revision.isValid()) {
             dialog->setHeadline(tr("Nothing to compare"));
-            dialog->setSupportingText(tr("This row is a placeholder, not a recorded revision."));
+            dialog->setSupportingText(tr("That revision is no longer in the log."));
             dialog->addAction(tr("Close"), true);
             dialog->openOverlay();
             return;
