@@ -199,7 +199,12 @@ namespace Material
         QApplication::setOverrideCursor(Qt::WaitCursor);
         do {
             m_refreshPending = false;
-            m_snapshot = compute(m_db);
+            // Own a reference for the length of the pass rather than reading
+            // m_db through the member: apply() reaches code that can point the
+            // feed at another database, and the next lap has to pick that new
+            // one up while this lap keeps the database it started on alive.
+            const QSharedPointer<Database> db = m_db;
+            m_snapshot = compute(db);
             // apply() runs inside the guard so that a refresh provoked by the
             // repaint is coalesced too, instead of falling through the crack
             // between the last compute and clearing m_busy.

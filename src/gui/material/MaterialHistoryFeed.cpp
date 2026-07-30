@@ -801,6 +801,20 @@ namespace Material
             return;
         }
 
+        // The listing leaves recycled entries out, so a row naming one was
+        // drawn before the entry was deleted: Database::modified is debounced,
+        // so the list is briefly older than the database. Deleting only moves
+        // an entry to the recycle bin, which leaves it and its history in the
+        // tree for revisionAt() to find, so without this the restore would put
+        // the old values back onto an entry the user has thrown away.
+        if (entry->isRecycled()) {
+            Notify::warning(tr("Nothing restored"),
+                            tr("\"%1\" is in the recycle bin. Restore the entry itself first, then put this revision "
+                               "back.")
+                                .arg(entryName(entry)));
+            return;
+        }
+
         const QStringList fields = entry->calculateDifference(revision);
         if (fields.isEmpty()) {
             Notify::info(tr("Nothing to restore"), tr("\"%1\" already matches that revision.").arg(entryName(entry)));
@@ -828,6 +842,17 @@ namespace Material
         Entry* revision = revisionAt(origin, &entry);
         if (!revision || !entry) {
             Notify::warning(tr("Nothing restored"), tr("That revision is no longer in the database."));
+            return;
+        }
+
+        // Asked again for the same reason the check above is: the confirmation
+        // stays on screen for as long as the user takes, and a merge or another
+        // window can delete the entry while it is up.
+        if (entry->isRecycled()) {
+            Notify::warning(tr("Nothing restored"),
+                            tr("\"%1\" is in the recycle bin. Restore the entry itself first, then put this revision "
+                               "back.")
+                                .arg(entryName(entry)));
             return;
         }
 
