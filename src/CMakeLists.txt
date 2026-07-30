@@ -503,20 +503,19 @@ if(WIN32)
             "${CMAKE_SOURCE_DIR}/share/windows/KPXC_InstallDirDlg.wxs"
             "${CMAKE_SOURCE_DIR}/share/windows/KPXC_ExitDlg.wxs")
     set(CPACK_WIX_PROPERTY_ARPURLINFOABOUT  "https://keepassxc.org")
-    # WixUIExtension is not optional here, despite the similar name: CPACK_WIX_UI_REF
-    # points at KPXC_InstallDir, and the three KPXC_*.wxs dialog sets reference the
-    # standard WixUI library by symbol - WelcomeDlg, BrowseDlg, DiskCostDlg,
-    # LicenseAgreementDlg, VerifyReadyDlg, MaintenanceTypeDlg, ErrorDlg, FilesInUse,
-    # WixUI_Common, WixUI_Font_Normal and more. Those symbols live in
-    # WixUIExtension.dll; WixUtilExtension.dll is a different library that supplies
-    # utility custom actions and none of them.
+    # Do NOT add WixUIExtension here. The KPXC_*.wxs dialog sets reference WixUI
+    # symbols, which makes it look necessary, but CPack's WIX generator already
+    # passes WixUIExtension to candle and light whenever CPACK_WIX_UI_REF is set -
+    # and it is set, to KPXC_InstallDir, eleven lines above. Naming it again loads
+    # the same extension twice and every symbol in it is then defined twice:
     #
-    # Leaving it out does not fail the compile: candle resolves nothing across source
-    # files, so every .wxs still produces a .wixobj and the build looks healthy. It is
-    # light.exe, linking them, that cannot find the symbols - so the only visible
-    # result is "Fatal WiX Generator Error" with no MSI, which is what this workflow
-    # has produced on every run since the WIX generator was introduced.
-    set(CPACK_WIX_EXTENSIONS "WixUIExtension.dll" "WixUtilExtension.dll")
+    #   WixUIExtension.dll : error LGHT0091 : Duplicate symbol 'Dialog:MaintenanceTypeDlg'
+    #   WixUIExtension.dll : error LGHT0091 : Duplicate symbol 'Dialog:MaintenanceWelcomeDlg'
+    #   WixUIExtension.dll : error LGHT0091 : Duplicate symbol 'WixUI:WixUI_Common'
+    #
+    # Those three are what this list produced when it read
+    # "WixUIExtension.dll" "WixUtilExtension.dll".
+    set(CPACK_WIX_EXTENSIONS "WixUtilExtension.dll")
     include(CPack)
 
     
