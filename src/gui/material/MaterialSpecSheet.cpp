@@ -43,17 +43,6 @@ namespace Material
 
         /** Dynamic property carrying the lower-cased text a row is searched by. */
         const char* const HaystackProperty = "materialHaystack";
-        /** Dynamic property carrying how many rows a section card holds. */
-        const char* const RowCountProperty = "materialRowCount";
-
-        /** The 12px line under a section title, which doubles as the match count. */
-        QString sectionNote(int visible, int total)
-        {
-            if (visible >= total) {
-                return SpecSheetPage::tr("%1 options").arg(total);
-            }
-            return SpecSheetPage::tr("%1 of %2 options match").arg(visible).arg(total);
-        }
 
         /** A 12px regular line; the type scale only offers 12px in medium weight. */
         QFont subFont()
@@ -62,6 +51,37 @@ namespace Material
             font.setWeight(QFont::Normal);
             return font;
         }
+
+        /**
+         * A section card.
+         *
+         * The design fills every section card with surfaceContainerLow, one
+         * step above the page surface, and still draws the outlineVariant
+         * hairline. Card paints a fill for its Filled variant and a border for
+         * its Outlined one but never both, so the card paints itself.
+         */
+        class SectionCard : public Card
+        {
+        public:
+            explicit SectionCard(QWidget* parent = nullptr)
+                // Qualified: QFrame::Shape shadows Material::Shape in here.
+                : Card(Card::Variant::Outlined, Material::Shape::ExtraLarge, parent)
+            {
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                paintSurface(&painter,
+                             rect(),
+                             radius(),
+                             theme()->color(Role::SurfaceContainerLow),
+                             theme()->color(Role::OutlineVariant));
+            }
+        };
     } // namespace
 
     // -------------------------------------------------------------- SpecSheetRow
@@ -232,18 +252,11 @@ namespace Material
         m_noteLabel = new QLabel(m_content);
         m_noteLabel->setWordWrap(true);
         m_noteLabel->setMaximumWidth(NoteMaxWidth);
-        m_noteLabel->setText(tr("Search every option label, description and current value on this surface."));
-
-        // The cross-page line only appears once a search matches somewhere else,
-        // so a hit on another surface is never silently swallowed.
-        m_crossNoteLabel = new QLabel(m_content);
-        m_crossNoteLabel->setWordWrap(true);
-        m_crossNoteLabel->setMaximumWidth(NoteMaxWidth);
-        m_crossNoteLabel->hide();
+        m_note = tr("Search every option label, description and current value on this surface.");
+        m_noteLabel->setText(m_note);
 
         QLabel* noteLabel = m_noteLabel;
-        QLabel* crossLabel = m_crossNoteLabel;
-        auto restyle = [titleLabel, noteLabel, crossLabel] {
+        auto restyle = [titleLabel, noteLabel] {
             QFont title = theme()->font(TypeRole::HeadlineSmall);
             // The page title sits between the 28px screen headline and a card title.
             title.setPointSizeF(title.pointSizeF() * 26.0 / 28.0);
@@ -253,11 +266,6 @@ namespace Material
             QPalette palette = noteLabel->palette();
             palette.setColor(QPalette::WindowText, theme()->color(Role::OnSurfaceVariant));
             noteLabel->setPalette(palette);
-
-            crossLabel->setFont(theme()->font(TypeRole::BodySmall));
-            QPalette cross = crossLabel->palette();
-            cross.setColor(QPalette::WindowText, theme()->color(Role::Primary));
-            crossLabel->setPalette(cross);
         };
         restyle();
         connect(theme(), &Theme::changed, noteLabel, restyle);
@@ -269,7 +277,6 @@ namespace Material
         root->addLayout(header);
         root->addSpacing(6);
         root->addWidget(m_noteLabel);
-        root->addWidget(m_crossNoteLabel);
         root->addSpacing(18);
         root->addLayout(m_contentLayout);
         root->addStretch(1);
@@ -287,6 +294,7 @@ namespace Material
     void SpecSheetPage::applyFilter(const QString& text)
     {
         const QString needle = text.trimmed().toLower();
+        int shown = 0;
         for (auto it = m_sections.constBegin(); it != m_sections.constEnd(); ++it) {
             Card* card = it.value();
             const auto rows = card->findChildren<SpecSheetRow*>();
@@ -296,12 +304,18 @@ namespace Material
                 row->setVisible(match);
                 visible += match ? 1 : 0;
             }
-            card->setNoteText(sectionNote(visible, card->property(RowCountProperty).toInt()));
             card->setVisible(visible > 0);
+            shown += visible;
         }
+        // The design keeps the section line as the section's own description and
+        // reports what a search hid here, under the page title, instead.
         m_noteLabel->setText(needle.isEmpty()
-                                 ? tr("Search every option label, description and current value on this surface.")
-                                 : tr("Matching “%1” across every section on this page.").arg(text.trimmed()));
+                                 ? m_note
+                                 : tr("%1 of %2 options match “%3” on this page. "
+                                      "Other pages are searched from the same field.")
+                                       .arg(shown)
+                                       .arg(m_rowOrder.size())
+                                       .arg(text.trimmed()));
     }
 
     SpecSheetPage::~SpecSheetPage() = default;
@@ -323,10 +337,11 @@ namespace Material
             return it.value();
         }
 
-        auto* card = new Card(Card::Variant::Outlined, Material::Shape::ExtraLarge, m_content);
+        auto* card = new SectionCard(m_content);
         card->setTitleText(title);
-        card->setNoteText(sectionNote(0, 0));
-        card->setProperty(RowCountProperty, 0);
+        // The design's note is the section's own description and nothing else;
+        // a section it gives no description to shows no note line.
+        card->setNoteText(m_sectionNotes.value(title));
         card->contentLayout()->setSpacing(0);
         m_contentLayout->addWidget(card);
         m_sections.insert(title, card);
@@ -348,13 +363,29 @@ namespace Material
                          QStringLiteral("%1 %2 %3 %4").arg(section, label, sub, controlText).toLower());
         card->contentLayout()->addWidget(row);
 
-        const int total = card->property(RowCountProperty).toInt() + 1;
-        card->setProperty(RowCountProperty, total);
-        card->setNoteText(sectionNote(total, total));
-
         m_rows.insert(key, row);
         m_rowOrder.append(row);
         connect(row, &SpecSheetRow::activated, this, &SpecSheetPage::rowActivated);
+    }
+
+    void SpecSheetPage::setNote(const QString& note)
+    {
+        m_note = note.isEmpty()
+                     ? tr("Search every option label, description and current value on this surface.")
+                     : note;
+        // Only refresh when nothing is being searched; a live filter owns the line.
+        if (m_search->text().trimmed().isEmpty()) {
+            m_noteLabel->setText(m_note);
+        }
+    }
+
+    void SpecSheetPage::setSectionNote(const QString& section, const QString& note)
+    {
+        m_sectionNotes.insert(section, note);
+        // A section built before its note arrived is corrected in place.
+        if (auto* card = m_sections.value(section)) {
+            card->setNoteText(note);
+        }
     }
 
     SpecSheetRow* SpecSheetPage::row(const QString& key) const
@@ -388,26 +419,6 @@ namespace Material
             return;
         }
         m_search->setText(text);
-    }
-
-    int SpecSheetPage::matchCount(const QString& needle) const
-    {
-        if (needle.isEmpty()) {
-            return 0;
-        }
-        int matches = 0;
-        for (auto* row : m_rowOrder) {
-            if (row->property(HaystackProperty).toString().contains(needle)) {
-                ++matches;
-            }
-        }
-        return matches;
-    }
-
-    void SpecSheetPage::setCrossPageNotice(const QString& text)
-    {
-        m_crossNoteLabel->setText(text);
-        m_crossNoteLabel->setVisible(!text.isEmpty());
     }
 
     // ----------------------------------------------------------------- SpecSheet
@@ -542,35 +553,6 @@ namespace Material
             }
         }
         m_mirroring = false;
-
-        const QString needle = text.trimmed().toLower();
-        for (const auto& id : m_pageOrder) {
-            auto* page = m_pages.value(id);
-            if (!page) {
-                continue;
-            }
-            QStringList elsewhere;
-            int total = 0;
-            for (const auto& otherId : m_pageOrder) {
-                auto* other = m_pages.value(otherId);
-                if (!other || otherId == id) {
-                    continue;
-                }
-                const int matches = other->matchCount(needle);
-                if (matches > 0) {
-                    total += matches;
-                    elsewhere.append(other->title());
-                }
-            }
-            if (needle.isEmpty() || elsewhere.isEmpty()) {
-                page->setCrossPageNotice(QString());
-            } else {
-                page->setCrossPageNotice(tr("%1 more matching options are on another page: %2. "
-                                            "Pick it in the sidebar to see them.")
-                                             .arg(total)
-                                             .arg(elsewhere.join(QStringLiteral(", "))));
-            }
-        }
     }
 
     void SpecSheet::addRow(const QString& pageId,
@@ -584,6 +566,11 @@ namespace Material
         if (auto* target = page(pageId)) {
             target->addRow(section, symbol, label, sub, kind, controlText);
         }
+    }
+
+    int SpecSheet::pageCount() const
+    {
+        return m_pageOrder.size();
     }
 
     QString SpecSheet::currentPage() const
@@ -627,8 +614,8 @@ namespace Material
             }
             const bool active = id == m_currentPage;
             // Inactive rows take the sidebar fill so only the active pill reads.
-            button->setRoles(active ? Role::SecondaryContainer : Role::SurfaceContainerLow,
-                             active ? Role::OnSecondaryContainer : Role::OnSurfaceVariant);
+            button->setRoles(active ? Role::PrimaryContainer : Role::SurfaceContainerLow,
+                             active ? Role::OnPrimaryContainer : Role::OnSurface);
             button->update();
         }
     }

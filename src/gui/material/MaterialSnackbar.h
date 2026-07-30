@@ -34,11 +34,21 @@ class QTimer;
 namespace Material
 {
     /**
+     * How long a toast stays on screen before it removes itself.
+     *
+     * The toast timer is the design's own (a toast is dropped 4200ms after it
+     * arrives) rather than one of the shared motion steps, which describe
+     * transitions rather than reading time.
+     */
+    constexpr int ToastLifetime = 4200;
+
+    /**
      * How loud a notification is.
      *
-     * The level picks the colour pair the toast is painted in and decides
-     * whether it leaves on its own: information and success fade out, warnings
-     * and errors wait for the user.
+     * The level picks the glyph a toast leads with and its colour, and decides
+     * whether the toast leaves on its own: information and success fade out,
+     * warnings and errors wait for the user. The surface underneath does not
+     * vary - every toast is painted on the inverse surface.
      */
     enum class SeverityLevel
     {
@@ -57,11 +67,11 @@ namespace Material
     /** Whether @p severity waits for the user instead of timing out. */
     bool severityPersists(SeverityLevel severity);
 
-    /** Surface a notification of @p severity is painted on, from the status roles. */
+    /** The status-role container for @p severity, for surfaces that tint by it. */
     QColor severityContainer(SeverityLevel severity);
     /** Text and glyph colour resolved against severityContainer(). */
     QColor severityOnContainer(SeverityLevel severity);
-    /** Accent for the severity: action labels and the progress fill. */
+    /** Accent for the severity: the leading glyph and the progress fill. */
     QColor severityAccent(SeverityLevel severity);
 
     /**
@@ -86,12 +96,14 @@ namespace Material
     };
 
     /**
-     * One toast: a rounded pill carrying a severity glyph, an optional title, a
-     * message, any number of action labels and a dismiss target.
+     * One toast: a rounded-16 pill on the inverse surface carrying a severity
+     * glyph, an optional title, a message and its trailing action labels.
      *
      * Animates in with a 14px rise and a .96 scale. Info and success toasts
      * dismiss themselves when their timer runs out - hovering or focusing them
-     * holds the timer - while warnings and errors stay until dismissed.
+     * holds the timer - while warnings and errors stay until dismissed. There is
+     * no close affordance: the trailing action, which reads "Dismiss" when the
+     * caller names nothing else, is what takes a toast away by hand.
      *
      * The bar is focusable and announced as an alert; Enter runs the first
      * action, Escape dismisses.
@@ -171,18 +183,16 @@ namespace Material
         QList<NotificationAction> m_actions;
         QPropertyAnimation* m_animation = nullptr;
         QTimer* m_lifetime = nullptr;
-        int m_duration = Duration::Toast;
+        int m_duration = ToastLifetime;
         int m_progress = NoProgress;
         qreal m_transition = 0.0;
         int m_hoveredAction = -1;
-        bool m_closeHovered = false;
         bool m_dismissing = false;
 
         // Filled by layoutPanel() on every paint, read by the hit tests.
         mutable QRect m_glyphRect;
         mutable QRect m_textRect;
         mutable QRect m_progressRect;
-        mutable QRect m_closeRect;
         mutable QList<QRect> m_actionRects;
     };
 
@@ -190,8 +200,9 @@ namespace Material
      * The transparent layer that owns the toasts.
      *
      * One host covers the window, passes mouse events through everywhere except
-     * on a toast, and keeps the stack bottom-centred: the newest toast sits at
-     * the bottom and the older ones slide up above it, never overlapping.
+     * on a toast, and keeps the stack in the bottom right corner: the newest
+     * toast sits at the bottom and the older ones slide up above it, never
+     * overlapping.
      */
     class SnackbarHost : public QWidget
     {
@@ -217,7 +228,7 @@ namespace Material
                        int msec = -1);
 
         /** Push a plain information toast with a single unnamed action. */
-        void show(const QString& message, const QString& actionLabel = {}, int msec = Duration::Toast);
+        void show(const QString& message, const QString& actionLabel = {}, int msec = ToastLifetime);
 
         /** Dismiss every visible toast at once. */
         void clear();

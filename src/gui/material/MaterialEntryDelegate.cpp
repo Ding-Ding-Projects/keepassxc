@@ -153,11 +153,21 @@ namespace Material
                 glyph);
         }
 
-        /** The row glyph: the symbol name if the model has one, else its decoration. */
-        QPixmap rowGlyph(const QModelIndex& index, int role, const QString& fallback, int size, const QColor& tint)
+        /**
+         * The row glyph: the symbol name the model gives, else its decoration,
+         * else the neutral entry glyph.
+         *
+         * The name has to be checked rather than just tested for emptiness,
+         * because Icons::pixmap answers a null pixmap for a name it does not
+         * carry, and a row would then be drawn with an empty avatar. The
+         * fallback is Icons::defaultEntrySymbol() so that a row the model has
+         * nothing to say about lands on the same glyph Icons::entrySymbol()
+         * ends at.
+         */
+        QPixmap rowGlyph(const QModelIndex& index, int role, int size, const QColor& tint)
         {
             const QString symbol = index.data(role).toString();
-            if (!symbol.isEmpty()) {
+            if (Icons::hasSymbol(symbol)) {
                 return Icons::pixmap(symbol, size, tint);
             }
             const QVariant decoration = index.data(Qt::DecorationRole);
@@ -167,7 +177,7 @@ namespace Material
                     return icon.pixmap(size, size);
                 }
             }
-            return Icons::pixmap(fallback, size, tint);
+            return Icons::pixmap(Icons::defaultEntrySymbol(), size, tint);
         }
     } // namespace
 
@@ -191,26 +201,27 @@ namespace Material
         // An invalid fill leaves the row transparent, which is the resting state.
         QColor fill;
         if (selected) {
-            fill = theme()->color(Role::SecondaryContainer);
+            fill = theme()->color(Role::PrimaryContainer);
         } else if (hovered) {
             fill = theme()->color(Role::SurfaceContainerHigh);
         }
         paintSurface(painter, row, Shape::Row, fill);
 
-        const QColor content = theme()->color(selected ? Role::OnSecondaryContainer : Role::OnSurface);
+        const QColor content = theme()->color(selected ? Role::OnPrimaryContainer : Role::OnSurface);
         QColor secondary = content;
         secondary.setAlphaF(SecondaryOpacity);
 
         const RowLayout layout = layoutRow(row, m_compactColumns);
 
+        // The avatar reads as a hole in the row, so it takes the surface family
+        // rather than the accent: the lowest surface once the row itself is
+        // filled, the high surface while the row is transparent.
         painter->setPen(Qt::NoPen);
-        painter->setBrush(theme()->color(Role::PrimaryContainer));
+        painter->setBrush(theme()->color(selected ? Role::SurfaceContainerLowest : Role::SurfaceContainerHigh));
         painter->drawEllipse(layout.avatar);
-        paintGlyph(
-            painter,
-            layout.avatar,
-            rowGlyph(
-                index, SymbolRole, QStringLiteral("key"), AvatarGlyphSize, theme()->color(Role::OnPrimaryContainer)));
+        paintGlyph(painter,
+                   layout.avatar,
+                   rowGlyph(index, SymbolRole, AvatarGlyphSize, theme()->color(Role::OnSurfaceVariant)));
 
         QString title = index.data(TitleRole).toString();
         if (title.isEmpty()) {
@@ -256,8 +267,10 @@ namespace Material
                 metaMetrics.elidedText(index.data(UrlRole).toString(), Qt::ElideRight, layout.url.width()));
         }
 
-        if (!layout.health.isEmpty()) {
-            const Health health = healthOf(index.data(HealthRole));
+        // The design defines exactly four health states, so an entry that cannot
+        // be judged leaves the column blank instead of claiming a fifth one.
+        const Health health = healthOf(index.data(HealthRole));
+        if (!layout.health.isEmpty() && health != Health::Unknown) {
             const QColor healthTint = theme()->colors().healthColor(health);
             const QRect dot(
                 layout.health.left(), layout.health.center().y() + 1 - HealthDotSize / 2, HealthDotSize, HealthDotSize);
@@ -301,7 +314,9 @@ namespace Material
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
-        return {MinimumRowWidth, theme()->rowHeight()};
+        // The item carries the pill plus its inset, so the pill itself keeps the
+        // full density row height and the insets meet as the design's 4px gap.
+        return {MinimumRowWidth, theme()->rowHeight() + 2 * RowInset};
     }
 
     bool EntryDelegate::editorEvent(QEvent* event,

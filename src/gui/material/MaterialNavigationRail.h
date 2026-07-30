@@ -35,7 +35,7 @@ namespace Material
      * A 56x56 rounded brand tile at the top, then one 66px wide tile per
      * destination - glyph over a 12px label over a 10px sublabel - and a footer
      * with the theme toggle and the lock button. The active tile is filled with
-     * secondaryContainer; hover paints a state layer.
+     * primaryContainer; hover paints a state layer.
      *
      * The tiles are painted rather than built from child widgets so the whole
      * rail restyles in one update() when the theme changes.
@@ -78,6 +78,7 @@ namespace Material
         void mouseMoveEvent(QMouseEvent* event) override;
         void leaveEvent(QEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
+        void wheelEvent(QWheelEvent* event) override;
 
     private:
         struct Destination
@@ -93,6 +94,18 @@ namespace Material
         int indexOf(const QString& id) const;
         int indexAt(const QPoint& pos) const;
         void relayout();
+
+        /** The band between the brand tile and the footer that tiles live in. */
+        QRect tileViewport() const;
+        /** Height the whole run of tiles wants, ignoring what is available. */
+        int tileRunHeight() const;
+        /** Largest scroll offset that still leaves the last tile in view. */
+        int maximumScroll() const;
+        /** Clamp m_scrollOffset and relayout if it moved. Answers whether it did. */
+        bool clampScroll();
+        /** Scroll the least amount that brings @p index fully into view. */
+        void ensureVisible(int index);
+
         /** Select @p index and announce it, as a click or an arrow key would. */
         void activate(int index);
         void setHovered(int index);
@@ -110,6 +123,14 @@ namespace Material
         int m_previousHoverIndex = -1;
         qreal m_selectProgress = 1.0;
         qreal m_hoverProgress = 1.0;
+        /**
+         * How far the run of tiles is scrolled up, in pixels. The design is
+         * drawn at 920px, where ten destinations fit with room to spare; the
+         * window's own minimum is 500px, where they do not. Scrolling is what
+         * keeps every destination reachable at that size instead of dropping
+         * the ones that overflow.
+         */
+        int m_scrollOffset = 0;
     };
 
 } // namespace Material

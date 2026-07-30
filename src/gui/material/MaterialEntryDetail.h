@@ -57,7 +57,7 @@ namespace Material
         QString symbol; // Material Symbols name for the header tile
         QString username;
         QString password;
-        QString totpCode; // empty hides the TOTP row
+        QString totpCode; // empty leaves the TOTP row in its placeholder state
         int totpPeriod = 30; // seconds per step, drives the countdown ring
         QString notes; // empty hides the notes section
         Health health = Health::Unknown;
@@ -161,6 +161,7 @@ namespace Material
         IconButton* m_revealButton = nullptr;
         IconButton* m_copyPasswordButton = nullptr;
         IconButton* m_copyUsernameButton = nullptr;
+        IconButton* m_copyTotpButton = nullptr;
         QWidget* m_totpDivider = nullptr;
         QWidget* m_totpRow = nullptr;
         CountdownRing* m_totpRing = nullptr;

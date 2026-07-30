@@ -58,6 +58,10 @@ namespace Material
      *
      * Chips are pills by default; the tag chips in the group pane use
      * setRadius(Shape::Small) for the 8px corners in the design.
+     *
+     * Colour comes from the PillKind table rather than from fixed roles, so a
+     * chip can wear any of the eight pill styles - including the six borderless
+     * ones - in either of its two states.
      */
     class Chip : public QAbstractButton
     {
@@ -88,6 +92,31 @@ namespace Material
         QString trailingSymbol() const;
         void setTrailingSymbol(const QString& symbol);
 
+        /**
+         * The pill styles the chip paints in its resting and selected states.
+         *
+         * The defaults - Off resting, Value selected - are the Material filter
+         * chip and what nearly every chip in the design uses. The exception is
+         * the search bar's regex toggle, which turns solid primary when it is
+         * armed: setPills(PillKind::Off, PillKind::On). Routing through the
+         * PILL table this way is what lets a chip drop its border, since six of
+         * the eight pill styles have none.
+         */
+        PillKind restingPill() const;
+        PillKind selectedPill() const;
+        void setPills(PillKind resting, PillKind selected);
+
+        /**
+         * Whether a selected chip grows a leading check glyph and reserves the
+         * width for it.
+         *
+         * True by default, which is the Material filter chip. The design's tag
+         * chips in the group pane and its regex toggle signal selection with
+         * the container colour alone, so those opt out.
+         */
+        bool showsCheckWhenSelected() const;
+        void setShowsCheckWhenSelected(bool shows);
+
         int radius() const;
         void setRadius(int radius);
 
@@ -108,11 +137,19 @@ namespace Material
         QRect trailingRect() const;
 
     private:
+        /** Whether the chip is currently painting its selected state. */
+        bool isSelected() const;
+
         Kind m_kind = Kind::Assist;
         QString m_symbol;
         QString m_trailingSymbol;
         int m_radius = Shape::Full;
         bool m_hovered = false;
+        // Off / Value reproduce the Material filter chip exactly, so a chip that
+        // says nothing about its pills looks the way it always has.
+        PillKind m_restingPill = PillKind::Off;
+        PillKind m_selectedPill = PillKind::Value;
+        bool m_showsCheck = true;
     };
 
     /**

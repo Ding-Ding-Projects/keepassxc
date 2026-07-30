@@ -56,9 +56,11 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QPainter>
+#include <QRegularExpression>
 #include <QResizeEvent>
 #include <QScopedValueRollback>
 #include <QStackedWidget>
+#include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -76,34 +78,81 @@ namespace Material
         constexpr int EmptyGlyphSize = 44;
         constexpr int EmptyGlyphGap = 10;
         constexpr int EmptyTopPadding = 56;
+        /** Design size of the empty-state message; the type scale has no 16px role. */
+        constexpr int EmptyLineSize = 16;
         constexpr float EmptyGlyphOpacity = 0.5f;
         /** Below this the row sheds its url, health and modified columns. */
         constexpr int CompactListWidth = 620;
+        /** How often the detail pane's one-time password is checked for a roll-over. */
+        constexpr int TotpWatchInterval = 1000;
+
+        /** A type role rescaled to another design size; the scale is anchored at 14px. */
+        QFont scaledFont(TypeRole role, int designPx)
+        {
+            QFont font = theme()->font(role);
+            if (font.pointSizeF() > 0.0) {
+                font.setPointSizeF(font.pointSizeF() * designPx / 14.0);
+            } else {
+                font.setPixelSize(qMax(1, qRound(font.pixelSize() * designPx / 14.0)));
+            }
+            return font;
+        }
 
         /**
-         * The health of one entry, straight out of the password health the rest
-         * of the application already uses.
+         * How many entries of a database share each password.
          *
-         * Re-use and breach detection need a whole-database pass that is not
-         * reachable from a single entry, so those two states are never claimed
-         * here: an entry that cannot be judged answers Unknown rather than a
-         * made up verdict.
+         * Re-use is a property of the whole database, so it cannot be answered
+         * from one entry. This is the pass HealthChecker makes for the reports,
+         * kept here because the list needs a verdict for every row it paints;
+         * recycled entries and references are left out, exactly as there.
          */
-        Health healthOfEntry(Entry* entry)
+        QHash<QString, int> buildReuseIndex(const QSharedPointer<Database>& db)
         {
-            if (!entry || entry->excludeFromReports() || entry->password().isEmpty()) {
-                return Health::Unknown;
+            QHash<QString, int> reuse;
+            if (!db || !db->rootGroup()) {
+                return reuse;
             }
-            switch (entry->passwordHealth()->quality()) {
-            case PasswordHealth::Quality::Bad:
-            case PasswordHealth::Quality::Poor:
-            case PasswordHealth::Quality::Weak:
-                return Health::Weak;
-            case PasswordHealth::Quality::Good:
-            case PasswordHealth::Quality::Excellent:
-                return Health::Ok;
+            for (const Entry* entry : db->rootGroup()->entriesRecursive()) {
+                if (entry->isRecycled() || entry->isAttributeReference(QStringLiteral("Password"))) {
+                    continue;
+                }
+                ++reuse[entry->password()];
             }
-            return Health::Unknown;
+            return reuse;
+        }
+
+        /**
+         * A short relative age: the design's "2 h ago" / "6 d ago" / "3 mo ago"
+         * rather than an absolute timestamp, which never fits the 80px column.
+         */
+        QString relativeAge(const QDateTime& when)
+        {
+            if (!when.isValid()) {
+                return {};
+            }
+            const qint64 seconds = when.secsTo(QDateTime::currentDateTimeUtc());
+            if (seconds < 60) {
+                return VaultScreen::tr("now", "age of an entry that was just modified");
+            }
+            const qint64 minutes = seconds / 60;
+            if (minutes < 60) {
+                return VaultScreen::tr("%1 min ago").arg(minutes);
+            }
+            const qint64 hours = minutes / 60;
+            if (hours < 24) {
+                return VaultScreen::tr("%1 h ago").arg(hours);
+            }
+            const qint64 days = hours / 24;
+            if (days < 7) {
+                return VaultScreen::tr("%1 d ago").arg(days);
+            }
+            if (days < 30) {
+                return VaultScreen::tr("%1 w ago").arg(days / 7);
+            }
+            if (days < 365) {
+                return VaultScreen::tr("%1 mo ago").arg(days / 30);
+            }
+            return VaultScreen::tr("%1 y ago").arg(days / 365);
         }
 
         /** Worst first, so the health sort puts what needs attention on top. */
@@ -124,21 +173,24 @@ namespace Material
             return 4;
         }
 
-        QString qualityLabel(PasswordHealth::Quality quality)
+        /** The tag that marks an entry as a favourite, as the importers write it. */
+        const QString& favouriteTag()
         {
-            switch (quality) {
-            case PasswordHealth::Quality::Bad:
-                return VaultScreen::tr("Bad");
-            case PasswordHealth::Quality::Poor:
-                return VaultScreen::tr("Poor");
-            case PasswordHealth::Quality::Weak:
-                return VaultScreen::tr("Weak");
-            case PasswordHealth::Quality::Good:
-                return VaultScreen::tr("Good");
-            case PasswordHealth::Quality::Excellent:
-                return VaultScreen::tr("Excellent");
-            }
-            return {};
+            static const QString tag = QStringLiteral("Favorite");
+            return tag;
+        }
+
+        /**
+         * The one-time password step the current moment falls in.
+         *
+         * Steps are aligned to the epoch, so the code changes exactly when this
+         * number does. It is what the pane draws its countdown ring from, and
+         * what keeps the digits beside the ring in step with it here.
+         */
+        qint64 totpStep(int period)
+        {
+            const int step = period > 0 ? period : static_cast<int>(Totp::DEFAULT_STEP);
+            return QDateTime::currentSecsSinceEpoch() / step;
         }
 
         QString formatSize(qint64 bytes)
@@ -254,6 +306,45 @@ namespace Material
         sort(0, Qt::AscendingOrder);
     }
 
+    void EntryListModel::setDatabase(const QSharedPointer<Database>& db)
+    {
+        m_database = db;
+        invalidateHealth();
+    }
+
+    void EntryListModel::invalidateHealth()
+    {
+        m_reuseDirty = true;
+    }
+
+    Health EntryListModel::healthOf(Entry* entry) const
+    {
+        if (!entry || entry->excludeFromReports() || entry->password().isEmpty()) {
+            return Health::Unknown;
+        }
+
+        // Worst verdict wins, in the order the design's health sort ranks them:
+        // a critically bad password is reported as Breached the way the reports
+        // feed already reports it, and re-use only surfaces once the password is
+        // otherwise strong enough not to be called Weak.
+        switch (entry->passwordHealth()->quality()) {
+        case PasswordHealth::Quality::Bad:
+            return Health::Breached;
+        case PasswordHealth::Quality::Poor:
+        case PasswordHealth::Quality::Weak:
+            return Health::Weak;
+        case PasswordHealth::Quality::Good:
+        case PasswordHealth::Quality::Excellent:
+            break;
+        }
+
+        if (m_reuseDirty) {
+            m_reuse = buildReuseIndex(m_database);
+            m_reuseDirty = false;
+        }
+        return m_reuse.value(entry->password()) > 1 ? Health::Reused : Health::Ok;
+    }
+
     EntryModel* EntryListModel::entryModel() const
     {
         return qobject_cast<EntryModel*>(sourceModel());
@@ -311,16 +402,25 @@ namespace Material
             return column(EntryModel::Username, Qt::DisplayRole);
         case EntryDelegate::UrlRole:
             return column(EntryModel::Url, Qt::DisplayRole);
-        case EntryDelegate::ModifiedRole:
-            return column(EntryModel::Modified, Qt::DisplayRole);
+        case EntryDelegate::ModifiedRole: {
+            // The design's column is 80px of relative age; the absolute time the
+            // Modified column carries is kept as the row's tooltip below.
+            Entry* entry = model->entryFromIndex(source);
+            return entry ? relativeAge(entry->timeInfo().lastModificationTime().toLocalTime()) : QString();
+        }
+        case Qt::ToolTipRole:
+            return tr("Modified %1").arg(column(EntryModel::Modified, Qt::DisplayRole).toString());
         case EntryDelegate::TotpRole:
             return column(EntryModel::Totp, Qt::UserRole);
         case EntryDelegate::HealthRole:
-            return QVariant::fromValue(healthOfEntry(model->entryFromIndex(source)));
+            return QVariant::fromValue(healthOf(model->entryFromIndex(source)));
         case EntryDelegate::SymbolRole:
-            // No Material Symbols name: the delegate falls back to the entry's
-            // own icon, which is what the decoration of the title column is.
-            return {};
+            // The same helper the detail pane asks, so the row avatar and the
+            // pane tile are one glyph. It answers a name for every entry, so
+            // the delegate's decoration fallback is never reached here - a
+            // custom icon is a picture the pane cannot name, and both surfaces
+            // would rather show the neutral glyph than disagree.
+            return Icons::entrySymbol(model->entryFromIndex(source));
         default:
             break;
         }
@@ -355,8 +455,8 @@ namespace Material
             break;
         }
         case SortKey::Health: {
-            const int leftRank = healthRank(healthOfEntry(leftEntry));
-            const int rightRank = healthRank(healthOfEntry(rightEntry));
+            const int leftRank = healthRank(healthOf(leftEntry));
+            const int rightRank = healthRank(healthOf(rightEntry));
             if (leftRank != rightRank) {
                 return leftRank < rightRank;
             }
@@ -414,6 +514,14 @@ namespace Material
 
         m_entryModel = new EntryListModel(this);
         m_groupModel = new GroupTreeModel(this);
+
+        // The pane counts its ring down from the wall clock but is only ever
+        // handed one code, so the step boundary is watched from here and a fresh
+        // code pushed across it. A second is enough: the check is a division.
+        m_totpTimer = new QTimer(this);
+        m_totpTimer->setInterval(TotpWatchInterval);
+        m_totpTimer->setTimerType(Qt::CoarseTimer);
+        connect(m_totpTimer, &QTimer::timeout, this, &VaultScreen::refreshTotp);
 
         auto* root = new QVBoxLayout(this);
         root->setContentsMargins(0, 0, 0, 0);
@@ -547,7 +655,7 @@ namespace Material
         headerLayout->setSpacing(HeaderSpacing);
 
         m_searchBar = new SearchBar(SearchBar::Variant::Prominent, header);
-        m_searchBar->setPlaceholder(tr("Search entries"));
+        m_searchBar->setPlaceholder(tr("Search entries — title, username, URL, notes"));
         headerLayout->addWidget(m_searchBar);
 
         auto* summaryRow = new QWidget(header);
@@ -559,6 +667,8 @@ namespace Material
         summaryLayout->addWidget(m_resultLabel, 1);
 
         m_sortControl = new SegmentedButton(summaryRow);
+        // The result row's sort strip is a chip-height control, not a button.
+        m_sortControl->setFixedHeight(Layout::ChipHeight);
         m_sortControl->addSegment(QStringLiteral("title"), tr("Title"));
         m_sortControl->addSegment(QStringLiteral("modified"), tr("Modified"));
         m_sortControl->addSegment(QStringLiteral("health"), tr("Health"));
@@ -605,7 +715,7 @@ namespace Material
         auto* emptyLayout = new QVBoxLayout(m_emptyState);
         emptyLayout->setContentsMargins(20, EmptyTopPadding, 20, 20);
         emptyLayout->setSpacing(EmptyGlyphGap);
-        emptyLayout->addStretch(1);
+        // The block is anchored by its 56px top padding, not centred in the pane.
         m_emptyGlyph = new QLabel(m_emptyState);
         m_emptyGlyph->setAlignment(Qt::AlignCenter);
         emptyLayout->addWidget(m_emptyGlyph, 0);
@@ -613,12 +723,12 @@ namespace Material
         m_emptyLabel->setAlignment(Qt::AlignCenter);
         m_emptyLabel->setWordWrap(true);
         emptyLayout->addWidget(m_emptyLabel, 0);
-        emptyLayout->addStretch(2);
+        emptyLayout->addStretch(1);
         m_listStack->addWidget(m_emptyState);
 
         layout->addWidget(m_listStack, 1);
 
-        m_fab = new ExtendedFab(QStringLiteral("add"), tr("New Entry"), centre);
+        m_fab = new ExtendedFab(QStringLiteral("add"), tr("New entry"), centre);
         m_fab->raise();
 
         connect(m_searchBar, &SearchBar::textChanged, this, [this] { runSearch(); });
@@ -773,6 +883,7 @@ namespace Material
 
         if (!dbWidget) {
             m_entryModel->setSourceModel(nullptr);
+            m_entryModel->setDatabase(nullptr);
             m_groupModel->setSourceModel(nullptr);
             m_sidebar->setTags({});
             m_detail->clear();
@@ -789,6 +900,7 @@ namespace Material
             entrySource = proxy->sourceModel();
         }
         m_entryModel->setSourceModel(entrySource);
+        m_entryModel->setDatabase(dbWidget->database());
         m_groupModel->setSourceModel(groupView ? groupView->model() : nullptr);
 
         if (entryView) {
@@ -805,6 +917,8 @@ namespace Material
             updateDetail();
         });
         m_databaseConnections << connect(dbWidget, &DatabaseWidget::databaseUnlocked, this, [this] {
+            // Unlocking swaps in a new Database, so the re-use pass needs it.
+            m_entryModel->setDatabase(m_dbWidget ? m_dbWidget->database() : nullptr);
             updateTags();
             syncGroupFromDatabase();
             syncSelectionFromDatabase();
@@ -815,6 +929,8 @@ namespace Material
             updateVisiblePage();
         });
         m_databaseConnections << connect(dbWidget, &DatabaseWidget::databaseModified, this, [this] {
+            // Any edit can create or resolve a re-used password.
+            m_entryModel->invalidateHealth();
             updateTags();
             updateDetail();
             updateResultLine();
@@ -830,6 +946,8 @@ namespace Material
             }
             QScopedValueRollback<bool> guard(m_syncingSearch, true);
             m_searchBar->clear();
+            // There is no pattern left to be broken.
+            m_regexInvalid = false;
             updateResultLine();
         });
         // The tool bar search field is still reachable; keep the pill honest
@@ -882,8 +1000,19 @@ namespace Material
 
         QStringList terms;
         const QString text = m_searchBar->text().trimmed();
+        const bool regex = m_searchBar->isRegexEnabled();
+
+        // A pattern that does not compile shows nothing until it parses: the
+        // search is not run at all, so the rows behind it are not left standing
+        // as if they still matched.
+        m_regexInvalid = regex && !text.isEmpty() && !QRegularExpression(text).isValid();
+        if (m_regexInvalid) {
+            updateResultLine();
+            return;
+        }
+
         if (!text.isEmpty()) {
-            terms << (m_searchBar->isRegexEnabled() ? regexTerm(text) : text);
+            terms << (regex ? regexTerm(text) : text);
         }
         for (const QString& tag : m_sidebar->selectedTags()) {
             QString escaped = tag;
@@ -911,6 +1040,15 @@ namespace Material
         const int rows = m_entryModel->rowCount();
         const bool searching = m_dbWidget && m_dbWidget->isSearchActive();
 
+        m_resultLabel->setStyleSheet(resultLineStyle());
+
+        if (m_regexInvalid) {
+            m_resultLabel->setText(tr("Invalid regular expression — showing nothing until it parses."));
+            m_emptyLabel->setText(tr("No entry matches this search."));
+            m_listStack->setCurrentWidget(m_emptyState);
+            return;
+        }
+
         QString line = tr("%n entry(s)", "number of entries in the list", rows);
         if (searching && m_searchBar->isRegexEnabled() && !m_searchBar->text().trimmed().isEmpty()) {
             line = tr("%1 · regex /%2/i").arg(line, m_searchBar->text().trimmed());
@@ -921,29 +1059,46 @@ namespace Material
         m_listStack->setCurrentWidget(rows > 0 ? static_cast<QWidget*>(m_entryList) : m_emptyState);
     }
 
+    QString VaultScreen::resultLineStyle() const
+    {
+        return QStringLiteral("color: %1; background: transparent;")
+            .arg(theme()->hex(m_regexInvalid ? Role::Error : Role::OnSurfaceVariant));
+    }
+
     void VaultScreen::updateDetail()
     {
         Entry* entry = m_dbWidget && !m_dbWidget->isLocked() ? m_dbWidget->currentSelectedEntry() : nullptr;
         if (!entry) {
             m_detail->clear();
+            m_totpStep = -1;
+            updateTotpTimer();
             return;
         }
 
         EntryDetailData data;
         data.title = entry->resolveMultiplePlaceholders(entry->title());
         data.url = entry->resolveMultiplePlaceholders(entry->displayUrl());
+        data.symbol = Icons::entrySymbol(entry);
         data.username = entry->resolveMultiplePlaceholders(entry->username());
         data.password = entry->resolveMultiplePlaceholders(entry->password());
         data.notes = entry->notes();
-        data.health = healthOfEntry(entry);
-        data.favourite = entry->tags().split(QLatin1Char(','), Qt::SkipEmptyParts).contains(QStringLiteral("Favorite"));
+        data.health = m_entryModel->healthOf(entry);
+        // tagList() is the stored list: already trimmed, so a tag written with
+        // spaces around it still registers.
+        data.favourite = entry->tagList().contains(favouriteTag());
 
         if (!entry->password().isEmpty()) {
-            const auto health = entry->passwordHealth();
-            data.strengthPercent = qBound(0, health->score(), 100);
-            data.strengthLabel = qualityLabel(health->quality());
+            data.strengthPercent = qBound(0, entry->passwordHealth()->score(), 100);
+        }
+        // The meter is labelled with the health state, not with the password
+        // quality: Healthy / Weak / Reused / Breached, the one vocabulary the
+        // row's health column and the meter's own tint already share. An entry
+        // that cannot be judged is left unlabelled rather than read "Unknown".
+        if (data.health != Health::Unknown) {
+            data.strengthLabel = Theme::healthLabel(data.health);
         }
 
+        m_totpStep = -1;
         if (entry->hasTotp()) {
             bool valid = false;
             const QString code = entry->totp(&valid);
@@ -953,6 +1108,9 @@ namespace Material
             const auto settings = entry->totpSettings();
             if (settings && settings->step > 0) {
                 data.totpPeriod = static_cast<int>(settings->step);
+            }
+            if (!data.totpCode.isEmpty()) {
+                m_totpStep = totpStep(data.totpPeriod);
             }
         }
 
@@ -968,6 +1126,35 @@ namespace Material
                                   : tr("No previous versions");
 
         m_detail->setEntryData(data);
+        updateTotpTimer();
+    }
+
+    void VaultScreen::refreshTotp()
+    {
+        if (m_totpStep < 0 || totpStep(m_detail->entryData().totpPeriod) == m_totpStep) {
+            return;
+        }
+        // Same entry, only a newer code. The pane rebuilds itself from whatever
+        // it is handed, so the reveal is put back the way the user left it -
+        // this is not a new selection, where hiding the password is the point.
+        const bool revealed = m_detail->isPasswordVisible();
+        updateDetail();
+        if (m_totpStep >= 0) {
+            m_detail->setPasswordVisible(revealed);
+        }
+    }
+
+    void VaultScreen::updateTotpTimer()
+    {
+        const bool run = m_totpStep >= 0;
+        if (run == m_totpTimer->isActive()) {
+            return;
+        }
+        if (run) {
+            m_totpTimer->start();
+        } else {
+            m_totpTimer->stop();
+        }
     }
 
     void VaultScreen::copyField(const QString& field)
@@ -991,19 +1178,17 @@ namespace Material
             return;
         }
 
-        static const QString favouriteTag = QStringLiteral("Favorite");
-        QStringList tags = entry->tags().split(QLatin1Char(','), Qt::SkipEmptyParts);
-        for (QString& tag : tags) {
-            tag = tag.trimmed();
-        }
-        const bool has = tags.contains(favouriteTag);
+        // The stored list, trimmed and de-duplicated by setTags() already, so the
+        // test below and the one the detail pane is given cannot disagree.
+        QStringList tags = entry->tagList();
+        const bool has = tags.contains(favouriteTag());
         if (favourite == has) {
             return;
         }
         if (favourite) {
-            tags.append(favouriteTag);
+            tags.append(favouriteTag());
         } else {
-            tags.removeAll(favouriteTag);
+            tags.removeAll(favouriteTag());
         }
         entry->setTags(tags.join(QLatin1Char(',')));
         updateTags();
@@ -1125,9 +1310,9 @@ namespace Material
         const QString metaStyle =
             QStringLiteral("color: %1; background: transparent;").arg(theme()->hex(Role::OnSurfaceVariant));
         m_resultLabel->setFont(theme()->font(TypeRole::BodySmall));
-        m_resultLabel->setStyleSheet(metaStyle);
+        m_resultLabel->setStyleSheet(resultLineStyle());
 
-        m_emptyLabel->setFont(theme()->font(TypeRole::TitleSmall));
+        m_emptyLabel->setFont(scaledFont(TypeRole::BodyMedium, EmptyLineSize));
         m_emptyLabel->setStyleSheet(metaStyle);
 
         QColor glyphTint = theme()->color(Role::OnSurfaceVariant);

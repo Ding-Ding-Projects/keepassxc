@@ -29,7 +29,7 @@ namespace Material
      *
      * A 40px pill holding the group glyph, the elided label and a right-aligned
      * entry count, indented by depth. The selected row is filled with
-     * secondaryContainer, hover paints a state layer.
+     * primaryContainer, hover paints a state layer.
      *
      * In a tree view the option rect already carries the indentation, so
      * DepthRole is only needed when the groups are flattened into a list model.

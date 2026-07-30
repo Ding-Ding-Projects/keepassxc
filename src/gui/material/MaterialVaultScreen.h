@@ -18,12 +18,17 @@
 #ifndef KEEPASSXC_MATERIALVAULTSCREEN_H
 #define KEEPASSXC_MATERIALVAULTSCREEN_H
 
+#include "MaterialTheme.h"
+
+#include <QHash>
 #include <QIdentityProxyModel>
 #include <QList>
 #include <QPointer>
+#include <QSharedPointer>
 #include <QSortFilterProxyModel>
 #include <QWidget>
 
+class Database;
 class DatabaseTabWidget;
 class DatabaseWidget;
 class Entry;
@@ -32,6 +37,7 @@ class Group;
 class QLabel;
 class QListView;
 class QStackedWidget;
+class QTimer;
 
 namespace Material
 {
@@ -74,6 +80,21 @@ namespace Material
         SortKey sortKey() const;
         void setSortKey(SortKey key);
 
+        /**
+         * The database the rows belong to. Password re-use can only be seen
+         * across the whole of it, so the health verdict needs it as well as the
+         * row's own entry.
+         */
+        void setDatabase(const QSharedPointer<Database>& db);
+        /** Drop the cached re-use index; the next verdict rebuilds it. */
+        void invalidateHealth();
+        /**
+         * The design's four health states for one entry: Breached, Weak, Reused
+         * or Ok. An entry excluded from the reports or without a password cannot
+         * be judged and answers Unknown, which the row leaves blank.
+         */
+        Health healthOf(Entry* entry) const;
+
         /** The entry behind a proxy row, or nullptr when the row is stale. */
         Entry* entryFromIndex(const QModelIndex& index) const;
         QModelIndex indexFromEntry(Entry* entry) const;
@@ -88,6 +109,10 @@ namespace Material
         EntryModel* entryModel() const;
 
         SortKey m_sortKey = SortKey::Title;
+        QSharedPointer<Database> m_database;
+        // Rebuilt on demand: one pass over the database answers every row.
+        mutable QHash<QString, int> m_reuse;
+        mutable bool m_reuseDirty = true;
     };
 
     /**
@@ -168,11 +193,25 @@ namespace Material
         QWidget* buildCentreColumn();
 
         void applyTheme();
+        /** Stylesheet of the result line; error red while the pattern is broken. */
+        QString resultLineStyle() const;
         void updateFabGeometry();
         void updateVisiblePage();
         void updateResultLine();
         void updateTags();
         void updateDetail();
+        /**
+         * Hand the detail pane a fresh one-time password when the step it was
+         * generated in ends.
+         *
+         * The pane redraws its countdown ring from the wall clock, but the code
+         * itself only ever arrives through setEntryData() and it has no signal
+         * to ask for a newer one - so the step boundary is watched here instead
+         * and the selected entry is read again across it.
+         */
+        void refreshTotp();
+        /** Run that watch only while a code is actually on screen. */
+        void updateTotpTimer();
         void runSearch();
 
         void syncSelectionToDatabase();
@@ -207,11 +246,16 @@ namespace Material
         EntryListModel* m_entryModel = nullptr;
         GroupTreeModel* m_groupModel = nullptr;
         EntryDelegate* m_entryDelegate = nullptr;
+        QTimer* m_totpTimer = nullptr;
+        /** The step the code on screen belongs to; negative when there is none. */
+        qint64 m_totpStep = -1;
 
         QList<QMetaObject::Connection> m_databaseConnections;
         bool m_syncingSelection = false;
         bool m_syncingGroup = false;
         bool m_syncingSearch = false;
+        /** The regex chip is on and the pattern does not compile. */
+        bool m_regexInvalid = false;
     };
 
 } // namespace Material

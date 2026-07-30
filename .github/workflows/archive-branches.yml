@@ -1,0 +1,109 @@
+# Archive every branch into a release asset, so branch refs can be deleted without
+# losing the work behind them.
+#
+# A git bundle is used rather than a zip of the trees: a bundle carries the full
+# commit history and can be cloned from directly, so a branch archived here comes
+# back exactly as it was. A zip would preserve only the files at the tip.
+#
+# The job VERIFIES the archive before publishing it - it clones the bundle back and
+# compares every branch tip against the repository - and fails rather than uploading
+# an archive it cannot restore. Nothing here deletes a branch; deletion is a separate,
+# deliberate act, and should only be done once this release exists.
+name: Archive branches
+
+on:
+  # Manual only. This publishes a release, which is not something a push should do
+  # by accident.
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag for the archive release'
+        required: true
+        default: 'branch-archive'
+
+permissions:
+  contents: write
+
+jobs:
+  archive:
+    name: Bundle and publish
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - name: Check out with full history
+        uses: actions/checkout@v5
+        with:
+          # A shallow clone would silently archive truncated history: the bundle
+          # would build, report "records a complete history" against its own shallow
+          # boundary, and restore branches whose past had been cut off.
+          fetch-depth: 0
+
+      - name: Fetch every branch and tag
+        run: |
+          git fetch --quiet --prune origin '+refs/heads/*:refs/remotes/origin/*' '+refs/tags/*:refs/tags/*'
+          test "$(git rev-parse --is-shallow-repository)" = false \
+            || { echo 'repository is still shallow; refusing to archive truncated history'; exit 1; }
+
+      - name: Build the bundle
+        run: |
+          # Bundle from a bare mirror whose refs live under refs/heads/, so the
+          # result is directly cloneable. Bundling refs/remotes/* produces an
+          # archive that clones as an empty repository.
+          git init --quiet --bare mirror.git
+          git -C mirror.git fetch --quiet "$PWD" '+refs/remotes/origin/*:refs/heads/*'
+          git -C mirror.git fetch --quiet "$PWD" '+refs/tags/*:refs/tags/*'
+          git -C mirror.git symbolic-ref HEAD "refs/heads/${{ github.event.repository.default_branch }}"
+          git -C mirror.git bundle create keepassxc-all-branches.bundle --all
+
+          # A manifest, so the archive says what is in it without being unpacked.
+          {
+            echo "# Branch archive of ${{ github.repository }}"
+            echo "# created $(date -u +%Y-%m-%dT%H:%M:%SZ) from ${{ github.sha }}"
+            echo
+            git -C mirror.git for-each-ref --format='%(objectname) %(refname:short)' refs/heads | sort -k2
+          } > BRANCHES.txt
+          cat BRANCHES.txt
+
+      - name: Refuse an archive that cannot be restored
+        run: |
+          # Clone the bundle back and require every branch tip to match. This is the
+          # whole point of the job: an archive nobody has restored is a guess.
+          git clone --quiet --bare keepassxc-all-branches.bundle restored.git
+          fail=0
+          for ref in $(git for-each-ref --format='%(refname:short)' refs/remotes/origin | sed 's|^origin/||'); do
+            # Written as a full if, not `[ ... ] && continue`: steps run under
+            # bash -e, where a failing AND-list would abort the whole step and
+            # report a clean archive by never reaching the comparison.
+            if [ "$ref" = HEAD ]; then continue; fi
+            want=$(git rev-parse "refs/remotes/origin/$ref")
+            got=$(git -C restored.git rev-parse "refs/heads/$ref" 2>/dev/null || echo missing)
+            if [ "$want" != "$got" ]; then echo "MISMATCH $ref: want $want got $got"; fail=1; fi
+          done
+          git -C restored.git fsck --no-progress --connectivity-only
+          test "$fail" -eq 0 || { echo 'archive does not restore the branches it claims to; refusing to publish'; exit 1; }
+          echo "all branch tips round-trip; $(du -h keepassxc-all-branches.bundle | cut -f1) bundle"
+
+      - name: Publish the archive
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          {
+            echo "Full history of every branch as it stood at $(date -u +%Y-%m-%d), as a git bundle."
+            echo
+            echo 'Restore everything:'
+            echo
+            echo '    git clone keepassxc-all-branches.bundle keepassxc'
+            echo
+            echo 'Restore one branch into an existing clone:'
+            echo
+            echo "    git fetch /path/to/keepassxc-all-branches.bundle 'refs/heads/BRANCH:refs/heads/BRANCH'"
+            echo
+            echo 'BRANCHES.txt lists every branch and the commit it pointed at. The bundle'
+            echo 'carries full history and all tags, so a branch restored from it is identical'
+            echo 'to the branch that was deleted. The job verified that before publishing.'
+          } > NOTES.md
+          gh release create "${{ inputs.tag }}" \
+            --repo '${{ github.repository }}' \
+            --title 'Branch archive' \
+            --notes-file NOTES.md \
+            keepassxc-all-branches.bundle BRANCHES.txt

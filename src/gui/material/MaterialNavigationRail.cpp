@@ -28,6 +28,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QVariantAnimation>
+#include <QWheelEvent>
 
 namespace Material
 {
@@ -37,7 +38,8 @@ namespace Material
         constexpr int BottomMargin = 12;
         constexpr int BrandSize = 56;
         constexpr int BrandGlyphSize = 30;
-        constexpr int BrandGap = 10;
+        // The 10px margin under the brand tile plus the rail's own 4px item gap.
+        constexpr int BrandGap = 14;
         constexpr int TileSpacing = 4;
         constexpr int TilePadTop = 6;
         constexpr int TilePadBottom = 8;
@@ -45,6 +47,8 @@ namespace Material
         constexpr int TileIconSize = 24;
         constexpr int TileTextMargin = 4;
         constexpr int BadgeHeight = 15;
+        /** Inset of the hairline that says the tile run continues past the band. */
+        constexpr int ScrollHintInset = 14;
         constexpr int FooterSize = 48;
         constexpr int FooterSpacing = 4;
         constexpr int FooterGlyphSize = 22;
@@ -112,13 +116,22 @@ namespace Material
         setFocusPolicy(Qt::StrongFocus);
         setAccessibleName(tr("Navigation"));
 
+        // The footer buttons are rounded squares rather than pills, and their
+        // size is pinned as well as requested: ButtonBase fixes a minimum width
+        // from its label metrics on construction, which otherwise outvotes the
+        // diameter and stretches them past the rail's centre column.
         m_themeButton = new IconButton(this);
         m_themeButton->setDiameter(FooterSize);
+        m_themeButton->setFixedSize(FooterSize, FooterSize);
+        m_themeButton->setRadius(Shape::Row);
         m_themeButton->setSymbolSize(FooterGlyphSize);
+        m_themeButton->setToolTip(tr("Toggle light / dark"));
         connect(m_themeButton, &QAbstractButton::clicked, this, &NavigationRail::themeToggleRequested);
 
         m_lockButton = new IconButton(QStringLiteral("lock"), this);
         m_lockButton->setDiameter(FooterSize);
+        m_lockButton->setFixedSize(FooterSize, FooterSize);
+        m_lockButton->setRadius(Shape::Row);
         m_lockButton->setSymbolSize(FooterGlyphSize);
         m_lockButton->setToolTip(tr("Lock databases"));
         m_lockButton->setAccessibleName(m_lockButton->toolTip());
@@ -148,11 +161,12 @@ namespace Material
 
         // The toggle offers the mode the user is not in, so its glyph flips with
         // the theme; the tile metrics follow the type scale and have to be redone.
+        // The tooltip stays the design's static label - only the accessible name,
+        // which has to announce the outcome, names the mode being switched to.
         auto syncTheme = [this] {
             const bool dark = theme()->isDark();
             m_themeButton->setSymbol(dark ? QStringLiteral("light_mode") : QStringLiteral("dark_mode"));
-            m_themeButton->setToolTip(dark ? tr("Switch to the light theme") : tr("Switch to the dark theme"));
-            m_themeButton->setAccessibleName(m_themeButton->toolTip());
+            m_themeButton->setAccessibleName(dark ? tr("Switch to the light theme") : tr("Switch to the dark theme"));
             relayout();
             updateGeometry();
             update();
@@ -241,6 +255,10 @@ namespace Material
         } else {
             m_selectProgress = 1.0;
         }
+        // Selecting a destination from outside the rail - the command palette,
+        // a shortcut - must bring its tile into view, or the rail would show a
+        // selection that is not on screen.
+        ensureVisible(index);
         update();
     }
 
@@ -266,7 +284,8 @@ namespace Material
 
     QSize NavigationRail::minimumSizeHint() const
     {
-        const int height = TopMargin + BrandSize + BrandGap + 2 * FooterSize + FooterSpacing + BottomMargin;
+        const int height = TopMargin + BrandSize + BrandGap + tileHeight(true) + TileSpacing + 2 * FooterSize
+                           + FooterSpacing + BottomMargin;
         return {Layout::RailWidth, height};
     }
 
@@ -282,6 +301,12 @@ namespace Material
 
     int NavigationRail::indexAt(const QPoint& pos) const
     {
+        // A scrolled-out tile keeps its geometry, so the viewport is what makes
+        // it unclickable - otherwise a tile above the brand or under the footer
+        // would still answer to the pointer.
+        if (!tileViewport().contains(pos)) {
+            return -1;
+        }
         for (int i = 0; i < m_destinations.size(); ++i) {
             const QRect& rect = m_destinations.at(i).rect;
             if (!rect.isEmpty() && rect.contains(pos)) {
@@ -289,6 +314,66 @@ namespace Material
             }
         }
         return -1;
+    }
+
+    QRect NavigationRail::tileViewport() const
+    {
+        const int top = TopMargin + BrandSize + BrandGap;
+        // The footer is pinned to the bottom, so the band the tiles may use ends
+        // one item gap above the theme toggle.
+        const int bottom = height() - BottomMargin - 2 * FooterSize - FooterSpacing - TileSpacing;
+        return {0, top, width(), qMax(0, bottom - top)};
+    }
+
+    int NavigationRail::tileRunHeight() const
+    {
+        if (m_destinations.isEmpty()) {
+            return 0;
+        }
+        bool withSublabel = false;
+        for (const auto& destination : m_destinations) {
+            withSublabel = withSublabel || !destination.sublabel.isEmpty();
+        }
+        return m_destinations.size() * tileHeight(withSublabel) + (m_destinations.size() - 1) * TileSpacing;
+    }
+
+    int NavigationRail::maximumScroll() const
+    {
+        return qMax(0, tileRunHeight() - tileViewport().height());
+    }
+
+    bool NavigationRail::clampScroll()
+    {
+        const int clamped = qBound(0, m_scrollOffset, maximumScroll());
+        if (clamped == m_scrollOffset) {
+            return false;
+        }
+        m_scrollOffset = clamped;
+        return true;
+    }
+
+    void NavigationRail::ensureVisible(int index)
+    {
+        if (index < 0 || index >= m_destinations.size() || maximumScroll() == 0) {
+            return;
+        }
+
+        bool withSublabel = false;
+        for (const auto& destination : m_destinations) {
+            withSublabel = withSublabel || !destination.sublabel.isEmpty();
+        }
+        const int tileSize = tileHeight(withSublabel);
+        // Where the tile sits in the unscrolled run, not on screen.
+        const int top = index * (tileSize + TileSpacing);
+        const int viewport = tileViewport().height();
+
+        const int wanted = qBound(top + tileSize - viewport, m_scrollOffset, top);
+        if (wanted == m_scrollOffset) {
+            return;
+        }
+        m_scrollOffset = qBound(0, wanted, maximumScroll());
+        relayout();
+        update();
     }
 
     void NavigationRail::relayout()
@@ -302,16 +387,48 @@ namespace Material
         const int tileLeft = (width() - tileWidth) / 2;
         const int tileSize = tileHeight(withSublabel);
 
-        int y = TopMargin + BrandSize + BrandGap;
+        const int footerLeft = (width() - FooterSize) / 2;
+        const int lockTop = height() - BottomMargin - FooterSize;
+        const int themeTop = lockTop - FooterSpacing - FooterSize;
+        m_lockButton->setGeometry(footerLeft, lockTop, FooterSize, FooterSize);
+        m_themeButton->setGeometry(footerLeft, themeTop, FooterSize, FooterSize);
+
+        m_scrollOffset = qBound(0, m_scrollOffset, maximumScroll());
+
+        // The design draws the rail at 920px, where ten destinations fit with
+        // room to spare. The window's own minimum is 500px, where they do not,
+        // so the run scrolls inside the band between the brand tile and the
+        // footer. Tiles keep their true geometry - painting and hit-testing are
+        // both clipped to the viewport - so a destination that is scrolled out
+        // of sight is still reachable rather than silently gone.
+        const QRect viewport = tileViewport();
+        int y = viewport.top() - m_scrollOffset;
         for (auto& destination : m_destinations) {
             destination.rect = QRect(tileLeft, y, tileWidth, tileSize);
             y += tileSize + TileSpacing;
         }
+    }
 
-        const int footerLeft = (width() - FooterSize) / 2;
-        const int lockTop = height() - BottomMargin - FooterSize;
-        m_lockButton->setGeometry(footerLeft, lockTop, FooterSize, FooterSize);
-        m_themeButton->setGeometry(footerLeft, lockTop - FooterSpacing - FooterSize, FooterSize, FooterSize);
+    void NavigationRail::wheelEvent(QWheelEvent* event)
+    {
+        if (maximumScroll() == 0) {
+            QWidget::wheelEvent(event);
+            return;
+        }
+
+        const QPoint pixels = event->pixelDelta();
+        const int delta = pixels.isNull() ? event->angleDelta().y() / 2 : pixels.y();
+        if (delta == 0) {
+            QWidget::wheelEvent(event);
+            return;
+        }
+
+        m_scrollOffset = qBound(0, m_scrollOffset - delta, maximumScroll());
+        relayout();
+        // The tile under the pointer has changed even though the pointer has not.
+        setHovered(indexAt(event->position().toPoint()));
+        update();
+        event->accept();
     }
 
     void NavigationRail::activate(int index)
@@ -386,16 +503,22 @@ namespace Material
             return 0.0;
         };
 
-        const QColor idle = theme()->color(Role::OnSurfaceVariant);
-        const QColor selected = theme()->color(Role::OnSecondaryContainer);
+        const QColor idle = theme()->color(Role::OnSurface);
+        const QColor selected = theme()->color(Role::OnPrimaryContainer);
         const QFont labelFont = tileLabelFont();
         const QFont sublabelFont = tileSublabelFont();
         const QFontMetrics labelMetrics(labelFont);
         const QFontMetrics sublabelMetrics(sublabelFont);
 
+        // Everything below is clipped to the band between the brand tile and the
+        // footer, so a scrolled tile is cut off cleanly at the edge of the run
+        // instead of painting over either of them.
+        painter.save();
+        painter.setClipRect(tileViewport());
+
         for (int i = 0; i < m_destinations.size(); ++i) {
             const Destination& destination = m_destinations.at(i);
-            if (destination.rect.isEmpty()) {
+            if (destination.rect.isEmpty() || !destination.rect.intersects(tileViewport())) {
                 continue;
             }
 
@@ -411,7 +534,7 @@ namespace Material
                 paintSurface(&painter,
                              destination.rect,
                              Shape::Row,
-                             withAlpha(theme()->color(Role::SecondaryContainer), active));
+                             withAlpha(theme()->color(Role::PrimaryContainer), active));
             }
             if (hasFocus() && i == m_currentIndex) {
                 painter.setPen(QPen(theme()->color(Role::Primary), 2));
@@ -457,12 +580,33 @@ namespace Material
                 painter.drawText(badgeRect, Qt::AlignCenter, destination.badge);
             }
         }
+
+        painter.restore();
+
+        // Two hairlines say the run continues past the band, so a rail that has
+        // scrolled does not look like a rail that has run out of destinations.
+        const QRect viewport = tileViewport();
+        painter.setPen(theme()->color(Role::OutlineVariant));
+        if (m_scrollOffset > 0) {
+            painter.drawLine(viewport.left() + ScrollHintInset,
+                             viewport.top(),
+                             viewport.right() - ScrollHintInset,
+                             viewport.top());
+        }
+        if (m_scrollOffset < maximumScroll()) {
+            painter.drawLine(viewport.left() + ScrollHintInset,
+                             viewport.bottom(),
+                             viewport.right() - ScrollHintInset,
+                             viewport.bottom());
+        }
     }
 
     void NavigationRail::resizeEvent(QResizeEvent* event)
     {
         QWidget::resizeEvent(event);
         relayout();
+        // A taller rail may have made the tail reachable without scrolling.
+        ensureVisible(m_currentIndex);
     }
 
     void NavigationRail::mousePressEvent(QMouseEvent* event)

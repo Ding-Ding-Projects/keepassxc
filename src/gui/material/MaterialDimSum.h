@@ -36,7 +36,7 @@ namespace Material
     /**
      * The dim sum startup surprise.
      *
-     * One launch in a hundred, a small card slides into the bottom right corner
+     * One launch in a hundred, a small card rises into the bottom right corner
      * carrying a randomly drawn dish and its name in both English and
      * Cantonese, holds for six seconds and fades away. It is decoration and
      * nothing else: it never gates startup, never takes focus, never blocks a
@@ -102,12 +102,12 @@ namespace Material
     };
 
     /**
-     * The card itself: a rounded-28 elevated surface pinned to the bottom right
+     * The card itself: a rounded-16 elevated surface pinned to the bottom right
      * of its window, carrying the dish art, its name in both languages and a
      * line of copy pitched at the active language's funny level.
      *
-     * It slides in over Duration::Long, holds, then fades out - or appears and
-     * leaves without motion when the desktop asks for less of it. The widget is
+     * It rises 18px into place over 260ms, holds, then fades out - or appears
+     * and leaves without motion when the desktop asks for less of it. The widget is
      * transparent to the mouse outside the card, so the window underneath never
      * loses a click, and a click on the card dismisses it.
      */
@@ -125,7 +125,7 @@ namespace Material
         qreal transition() const;
         void setTransition(qreal value);
 
-        /** Slide in and arm the hold timer. */
+        /** Rise into place and arm the hold timer. */
         void present();
 
     public slots:
@@ -146,6 +146,8 @@ namespace Material
         void applyTheme();
 
         DimSum::Dish m_dish;
+        /** The caption as written, before the label elides it to one line. */
+        QString m_caption;
         QPointer<QWidget> m_host;
         Card* m_card = nullptr;
         QLabel* m_artLabel = nullptr;

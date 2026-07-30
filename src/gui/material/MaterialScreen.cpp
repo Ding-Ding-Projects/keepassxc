@@ -37,6 +37,9 @@ namespace Material
         constexpr int ContentSpacing = 16;
         constexpr int BlurbWidth = 900;
         constexpr int SearchMinimumWidth = 240;
+        // The headline row opens with the headline and the stretch that pushes
+        // everything else to the right edge; the trailing run starts after them.
+        constexpr int FirstTrailingItem = 2;
     } // namespace
 
     Screen::Screen(QWidget* parent)
@@ -146,6 +149,16 @@ namespace Material
     void Screen::addHeaderWidget(QWidget* widget)
     {
         m_headerLayout->addWidget(widget);
+    }
+
+    void Screen::insertHeaderWidget(int index, QWidget* widget)
+    {
+        m_headerLayout->insertWidget(FirstTrailingItem + qBound(0, index, headerWidgetCount()), widget);
+    }
+
+    int Screen::headerWidgetCount() const
+    {
+        return qMax(0, m_headerLayout->count() - FirstTrailingItem);
     }
 
     QVBoxLayout* Screen::contentLayout() const

@@ -74,6 +74,8 @@ namespace Material
         int indexOf(const QString& id) const;
         int indexAt(const QPoint& pos) const;
         void relayout();
+        /** Whether any segment carries a glyph, which decides if room is kept for one. */
+        bool hasSymbols() const;
 
         QList<Segment> m_segments;
         int m_currentIndex = -1;

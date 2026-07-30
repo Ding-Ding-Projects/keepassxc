@@ -66,6 +66,20 @@ namespace Material
         /** Append a trailing widget to the headline row, e.g. an export pill. */
         void addHeaderWidget(QWidget* widget);
 
+        /**
+         * Insert a trailing widget at @p index among the ones already on the
+         * headline row, so a screen can put an action ahead of the search pill
+         * instead of only after it. Out-of-range indices clamp to the ends.
+         */
+        void insertHeaderWidget(int index, QWidget* widget);
+
+        /**
+         * How many trailing widgets the headline row carries. The search bar
+         * counts as one while it lives there; the history and changelog screens
+         * take it out, and it stops counting from then on.
+         */
+        int headerWidgetCount() const;
+
         /** The column callers fill with cards and lists. */
         QVBoxLayout* contentLayout() const;
         QScrollArea* scrollArea() const;

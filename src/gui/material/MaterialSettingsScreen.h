@@ -74,12 +74,18 @@ namespace Material
 
     public:
         static constexpr int RowHeight = 56;
+        /** The trailing chevron the design's external editor row ends in. */
+        static constexpr int ChevronSize = 18;
+        /** Padding between the trailing element and the right edge. */
+        static constexpr int TrailingMargin = 16;
 
         IntegrationRow(const QString& symbol, const QString& title, QWidget* parent = nullptr);
         ~IntegrationRow() override;
 
         void setDetail(const QString& detail);
         void setStatus(PillKind kind, const QString& text);
+        /** End the row in a chevron instead of a status pill. */
+        void setChevron(bool chevron);
 
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
@@ -99,16 +105,17 @@ namespace Material
         QString m_detail;
         PillLabel* m_status = nullptr;
         bool m_hovered = false;
+        bool m_chevron = false;
     };
 
     /**
      * The settings destination.
      *
-     * A 28px headline with a search bar that filters whole cards, then a
-     * two column grid of rounded-28 outlined cards: appearance, language,
-     * behaviour and integrations. Every control is bound to the real
-     * KeePassXC configuration or to the design system, so the screen is the
-     * settings rather than a preview of them.
+     * A 28px headline with a search bar that filters whole cards, then the
+     * design's 2x2 grid of rounded-28 cards, capped at 1180px: appearance,
+     * language and tone, security and behaviour, integrations. Every control
+     * is bound to the real KeePassXC configuration or to the design system, so
+     * the screen is the settings rather than a preview of them.
      */
     class SettingsScreen : public Screen
     {
@@ -134,44 +141,32 @@ namespace Material
 
         Card* createAppearanceCard();
         Card* createLanguageCard();
-        Card* createVoiceCard();
         Card* createBehaviourCard();
         Card* createIntegrationsCard();
 
         void applyFilter(const QString& text);
         /** Pull the controls back in line with the theme after it changed. */
         void refreshFromTheme();
-        /** Persist the font size slider and restyle the application with it. */
-        void commitFontSize();
-        void updateLanguagePreview();
-        /** Re-render the sample messages from the pending slider positions. */
+        /** Re-render the preview message from the pending slider positions. */
         void updateVoicePreview();
         /** Write the two humour sliders back into the configuration. */
         void commitVoiceLevels();
         /** Pull the voice controls back in line with the stored settings. */
         void refreshFromVoice();
-        /** The point size the font size slider currently asks for. */
-        int previewPointSize() const;
 
         QList<SearchableCard> m_cards;
         SegmentedButton* m_themeSegment = nullptr;
         SegmentedButton* m_densitySegment = nullptr;
+        /** English / 廣東話 / Bilingual: the interface language and the voice. */
         SegmentedButton* m_languageSegment = nullptr;
         QList<SeedSwatch*> m_swatches;
         OutlinedButton* m_fontRowButton = nullptr;
-        QSlider* m_fontSizeSlider = nullptr;
-        QLabel* m_fontSizeValue = nullptr;
-        QSlider* m_recentSlider = nullptr;
-        QLabel* m_recentValue = nullptr;
-        QLabel* m_previewLabel = nullptr;
-        SegmentedButton* m_voiceSegment = nullptr;
         QSlider* m_englishFunnySlider = nullptr;
         QLabel* m_englishFunnyValue = nullptr;
         QSlider* m_cantoneseFunnySlider = nullptr;
         QLabel* m_cantoneseFunnyValue = nullptr;
-        /** Two samples - a routine one and an error - each with both languages. */
-        QList<QLabel*> m_voicePrimaryLabels;
-        QList<QLabel*> m_voiceSecondaryLabels;
+        /** The design's single live preview line. */
+        QLabel* m_previewLabel = nullptr;
         /** Set while the screen writes into its own controls, to stop feedback. */
         bool m_updating = false;
     };

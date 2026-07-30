@@ -20,31 +20,48 @@
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
-#include "MaterialSegmentedButton.h"
 #include "MaterialTheme.h"
 #include "MaterialTopAppBar.h"
 
+#include <QEvent>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLayoutItem>
-#include <QLocale>
 #include <QPainter>
+#include <QRegion>
+#include <QResizeEvent>
 #include <QScrollArea>
+#include <QShowEvent>
 #include <QVBoxLayout>
 
 namespace Material
 {
     namespace
     {
-        constexpr int SheetWidth = 480;
-        constexpr int SheetPadding = 24;
-        constexpr int ListMaxHeight = 520;
-        constexpr int RowPadding = 14;
-        constexpr int RowSpacing = 8;
+        constexpr int SheetWidth = 400;
+        constexpr int SheetMaxHeight = 560;
+
+        /** The panel hangs under the app bar, inset from the window's right edge. */
+        constexpr int AnchorTop = 60;
+        constexpr int AnchorRight = 16;
+
+        /** Room the el3 shadow needs outside the panel, kept inside the mask. */
+        constexpr int ShadowMargin = 24;
+
+        constexpr int HeaderSpacing = 10;
+        constexpr int HeaderTopPadding = 18;
+        constexpr int HeaderBottomPadding = 10;
+        constexpr int ClearButtonHeight = 32;
+        constexpr int CloseSize = 32;
+        constexpr int CloseGlyphSize = 20;
+
+        constexpr int RowHorizontalPadding = 20;
+        constexpr int RowVerticalPadding = 12;
+        constexpr int RowGap = 14;
+        /** Gap between the body copy and the timestamp below it. */
+        constexpr int StampGap = 4;
         constexpr int GlyphSize = 20;
-        constexpr int HeaderGlyphSize = 26;
         constexpr int EmptyGlyphSize = 40;
-        constexpr int DismissSize = 32;
 
         /** A rounded panel filled with a colour role, used for the sheet and the rows. */
         class Panel : public QWidget
@@ -77,6 +94,29 @@ namespace Material
             bool m_outlined;
         };
 
+        /**
+         * One flat list row. It has no fill and no radius of its own; a hairline
+         * along its top edge is the only thing that separates it from the row
+         * above, and from the header when it is the first one.
+         */
+        class SeparatorRow : public QWidget
+        {
+        public:
+            explicit SeparatorRow(QWidget* parent = nullptr)
+                : QWidget(parent)
+            {
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setPen(theme()->color(Role::OutlineVariant));
+                painter.drawLine(0, 0, width() - 1, 0);
+            }
+        };
+
         void styleLabel(QLabel* label, TypeRole type, Role color)
         {
             label->setFont(theme()->font(type));
@@ -90,29 +130,22 @@ namespace Material
             return label;
         }
 
-        /** Today shows the clock only; anything older carries its date. */
-        QString stamp(const QDateTime& when)
+        /**
+         * The stamp on its own line under the body: a full, unambiguous date and
+         * time rather than a locale-shortened one, because it is set in mono and
+         * read down a column.
+         */
+        QLabel* makeStamp(const QDateTime& when)
         {
-            const QLocale locale = QLocale::system();
-            if (when.date() == QDate::currentDate()) {
-                return locale.toString(when.time(), QLocale::ShortFormat);
-            }
-            return locale.toString(when, QLocale::ShortFormat);
-        }
-
-        QString filterId(SeverityLevel severity)
-        {
-            switch (severity) {
-            case SeverityLevel::Success:
-                return QStringLiteral("success");
-            case SeverityLevel::Warning:
-                return QStringLiteral("warning");
-            case SeverityLevel::Error:
-                return QStringLiteral("error");
-            case SeverityLevel::Info:
-                break;
-            }
-            return QStringLiteral("info");
+            auto* label = new QLabel(when.toString(QStringLiteral("yyyy-MM-dd HH:mm")));
+            // Mono at the 11px step, which the type scale has no role of its own for.
+            QFont font = theme()->font(TypeRole::Mono);
+            font.setPointSize(theme()->font(TypeRole::LabelSmall).pointSize());
+            label->setFont(font);
+            label->setStyleSheet(
+                QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(Role::OnSurfaceVariant)));
+            label->setContentsMargins(0, StampGap, 0, 0);
+            return label;
         }
     } // namespace
 
@@ -121,7 +154,12 @@ namespace Material
     {
         buildSheet();
         setSheetWidth(SheetWidth);
+        // Anchored under the app bar rather than centred, and non-modal: a click
+        // outside the panel belongs to whatever is under it, not to the panel.
+        setSheetTopMargin(AnchorTop);
+        setCloseOnClickOutside(false);
         setSheetWidget(m_sheet);
+        anchorSheet();
 
         connect(theme(), &Theme::changed, this, &NotificationCentre::applyTheme);
         applyTheme();
@@ -197,7 +235,9 @@ namespace Material
         if (!bar) {
             return;
         }
-        connect(bar, &TopAppBar::notificationsRequested, this, &Overlay::openOverlay, Qt::UniqueConnection);
+        // The bell toggles: pressing it again while the panel is up puts it away.
+        connect(
+            bar, &TopAppBar::notificationsRequested, this, &NotificationCentre::toggleOverlay, Qt::UniqueConnection);
         bar->setNotificationCount(unreadCount());
     }
 
@@ -222,31 +262,14 @@ namespace Material
         return unread;
     }
 
-    QString NotificationCentre::filter() const
-    {
-        return m_filter;
-    }
-
-    void NotificationCentre::setFilter(const QString& id)
-    {
-        if (id == m_filter) {
-            return;
-        }
-        m_filter = id;
-        if (m_filterBar) {
-            m_filterBar->setCurrentSegment(id);
-        }
-        rebuild();
-    }
-
     void NotificationCentre::clearAll()
     {
-        if (m_items.isEmpty()) {
-            return;
-        }
         m_items.clear();
         rebuild();
         refreshBadge();
+        // Clearing the history is also how the panel is put away: the design
+        // gives the two the same gesture.
+        closeOverlay();
     }
 
     void NotificationCentre::markAllRead()
@@ -283,27 +306,22 @@ namespace Material
 
     void NotificationCentre::buildSheet()
     {
-        m_sheet = new Panel(Shape::ExtraLarge, Role::SurfaceContainerLowest, false);
+        m_sheet = new Panel(Shape::ExtraLarge, Role::SurfaceContainerLowest, true);
+        // The whole panel is bounded, header and rows together, not just the list.
+        m_sheet->setMaximumHeight(SheetMaxHeight);
 
         auto* layout = new QVBoxLayout(m_sheet);
-        layout->setContentsMargins(SheetPadding, 20, SheetPadding, 20);
-        layout->setSpacing(14);
+        // The panel carries no padding of its own: the header and the rows bring
+        // theirs, so a row's top hairline runs the full width of the panel.
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(0);
         layout->addWidget(buildHeader());
-
-        m_filterBar = new SegmentedButton;
-        m_filterBar->addSegment(QStringLiteral("all"), tr("All"));
-        m_filterBar->addSegment(QStringLiteral("info"), severityName(SeverityLevel::Info));
-        m_filterBar->addSegment(QStringLiteral("success"), severityName(SeverityLevel::Success));
-        m_filterBar->addSegment(QStringLiteral("warning"), severityName(SeverityLevel::Warning));
-        m_filterBar->addSegment(QStringLiteral("error"), severityName(SeverityLevel::Error));
-        m_filterBar->setAccessibleName(tr("Filter notifications by severity"));
-        connect(m_filterBar, &SegmentedButton::segmentSelected, this, &NotificationCentre::setFilter);
-        layout->addWidget(m_filterBar);
 
         auto* list = new QWidget;
         m_listLayout = new QVBoxLayout(list);
         m_listLayout->setContentsMargins(0, 0, 0, 0);
-        m_listLayout->setSpacing(RowSpacing);
+        // Rows butt against each other; the hairline is the whole separation.
+        m_listLayout->setSpacing(0);
         m_listLayout->addStretch(1);
 
         m_scroll = new QScrollArea;
@@ -312,13 +330,12 @@ namespace Material
         m_scroll->setFrameShape(QFrame::NoFrame);
         m_scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         m_scroll->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
-        m_scroll->setMaximumHeight(ListMaxHeight);
         m_scroll->setAccessibleName(tr("Notification history"));
         layout->addWidget(m_scroll, 1);
 
         m_emptyState = new QWidget;
         auto* empty = new QVBoxLayout(m_emptyState);
-        empty->setContentsMargins(0, 32, 0, 32);
+        empty->setContentsMargins(RowHorizontalPadding, 32, RowHorizontalPadding, 32);
         empty->setSpacing(8);
         auto* emptyGlyph = new QLabel;
         emptyGlyph->setObjectName(QStringLiteral("notificationEmptyGlyph"));
@@ -339,31 +356,25 @@ namespace Material
     {
         auto* header = new QWidget;
         auto* layout = new QHBoxLayout(header);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setSpacing(12);
+        layout->setContentsMargins(RowHorizontalPadding, HeaderTopPadding, RowHorizontalPadding, HeaderBottomPadding);
+        layout->setSpacing(HeaderSpacing);
 
-        auto* symbol = new QLabel;
-        symbol->setObjectName(QStringLiteral("notificationHeaderGlyph"));
-        layout->addWidget(symbol, 0, Qt::AlignTop);
+        // Three children and no more: the title, the Clear all pill, the close.
+        m_headline = makeLabel(tr("Notifications"), TypeRole::TitleMedium, Role::OnSurface);
+        layout->addWidget(m_headline, 1);
 
-        auto* titles = new QVBoxLayout;
-        titles->setContentsMargins(0, 0, 0, 0);
-        titles->setSpacing(0);
-        m_headline = makeLabel(tr("Notifications"), TypeRole::TitleLarge, Role::OnSurface);
-        titles->addWidget(m_headline);
-        m_subhead = makeLabel(QString(), TypeRole::LabelSmall, Role::OnSurfaceVariant);
-        titles->addWidget(m_subhead);
-        layout->addLayout(titles, 1);
-
-        m_clearButton = new TextButton(QStringLiteral("delete"), tr("Clear all"));
+        m_clearButton = new TextButton(QString(), tr("Clear all"));
+        m_clearButton->setFixedHeight(ClearButtonHeight);
         m_clearButton->setToolTip(tr("Remove every notification from the history"));
         connect(m_clearButton, &QAbstractButton::clicked, this, &NotificationCentre::clearAll);
         layout->addWidget(m_clearButton, 0, Qt::AlignVCenter);
 
         auto* close = new IconButton(QStringLiteral("close"));
+        close->setDiameter(CloseSize);
+        close->setSymbolSize(CloseGlyphSize);
         close->setToolTip(tr("Close"));
         close->setAccessibleName(tr("Close the notification centre"));
-        connect(close, &IconButton::clicked, this, &Overlay::closeOverlay);
+        connect(close, &IconButton::clicked, this, &NotificationCentre::toggleOverlay);
         layout->addWidget(close, 0, Qt::AlignVCenter);
 
         return header;
@@ -371,18 +382,17 @@ namespace Material
 
     QWidget* NotificationCentre::buildRow(const Notification& entry)
     {
-        // Unread entries are filled so the backlog is visible at a glance.
-        auto* row = new Panel(Shape::Row,
-                              entry.read ? Role::SurfaceContainerLowest : Role::SurfaceContainer,
-                              entry.read);
+        auto* row = new SeparatorRow;
         row->setAccessibleName(QStringLiteral("%1: %2").arg(severityName(entry.severity),
                                                             entry.title.isEmpty() ? entry.body : entry.title));
         row->setAccessibleDescription(entry.body);
 
         auto* layout = new QHBoxLayout(row);
-        layout->setContentsMargins(RowPadding, RowPadding, RowPadding - 4, RowPadding);
-        layout->setSpacing(12);
+        layout->setContentsMargins(RowHorizontalPadding, RowVerticalPadding, RowHorizontalPadding, RowVerticalPadding);
+        layout->setSpacing(RowGap);
 
+        // Two children: the severity glyph and the text column. Removal is the
+        // Clear all button's job, so a row carries no affordance of its own.
         auto* glyph = new QLabel;
         glyph->setPixmap(Icons::pixmap(severitySymbol(entry.severity), GlyphSize, severityAccent(entry.severity)));
         glyph->setFixedSize(GlyphSize, GlyphSize);
@@ -390,53 +400,18 @@ namespace Material
 
         auto* column = new QVBoxLayout;
         column->setContentsMargins(0, 0, 0, 0);
-        column->setSpacing(2);
+        column->setSpacing(0);
 
-        auto* titleRow = new QHBoxLayout;
-        titleRow->setContentsMargins(0, 0, 0, 0);
-        titleRow->setSpacing(8);
         const QString title = entry.title.isEmpty() ? severityName(entry.severity) : entry.title;
-        titleRow->addWidget(makeLabel(title, TypeRole::LabelLarge, Role::OnSurface), 1);
-        titleRow->addWidget(makeLabel(stamp(entry.timestamp), TypeRole::LabelSmall, Role::OnSurfaceVariant));
-        column->addLayout(titleRow);
+        column->addWidget(makeLabel(title, TypeRole::LabelLarge, Role::OnSurface));
 
         auto* body = makeLabel(entry.body, TypeRole::BodyMedium, Role::OnSurfaceVariant);
         body->setWordWrap(true);
         column->addWidget(body);
 
-        QList<NotificationAction> live;
-        for (const auto& action : entry.actions) {
-            if (action.isValid() && action.handler) {
-                live.append(action);
-            }
-        }
-        if (!live.isEmpty()) {
-            auto* actions = new QHBoxLayout;
-            actions->setContentsMargins(0, 6, 0, 0);
-            actions->setSpacing(4);
-            for (const auto& action : live) {
-                auto* button = new TextButton(QString(), action.label);
-                connect(button, &QAbstractButton::clicked, this, [this, action] {
-                    if (action.isValid() && action.handler) {
-                        action.handler();
-                    }
-                    closeOverlay();
-                });
-                actions->addWidget(button);
-            }
-            actions->addStretch(1);
-            column->addLayout(actions);
-        }
+        // The stamp reads under the body, not beside the title.
+        column->addWidget(makeStamp(entry.timestamp));
         layout->addLayout(column, 1);
-
-        auto* dismiss = new IconButton(QStringLiteral("close"));
-        dismiss->setDiameter(DismissSize);
-        dismiss->setSymbolSize(16);
-        dismiss->setToolTip(tr("Remove this notification"));
-        dismiss->setAccessibleName(tr("Remove this notification"));
-        const quint64 id = entry.id;
-        connect(dismiss, &IconButton::clicked, this, [this, id] { removeEntry(id); });
-        layout->addWidget(dismiss, 0, Qt::AlignTop);
 
         return row;
     }
@@ -446,8 +421,8 @@ namespace Material
         while (m_listLayout->count() > 0) {
             QLayoutItem* item = m_listLayout->takeAt(0);
             if (QWidget* widget = item->widget()) {
-                // A rebuild can be triggered from a row's own dismiss button, so
-                // the row has to outlive the signal it is emitting.
+                // A rebuild can be triggered from a signal a row is still
+                // emitting, so the row has to outlive it.
                 widget->hide();
                 widget->setParent(nullptr);
                 widget->deleteLater();
@@ -460,27 +435,20 @@ namespace Material
     {
         clearList();
 
-        int shown = 0;
         for (const auto& entry : m_items) {
-            if (m_filter != QStringLiteral("all") && filterId(entry.severity) != m_filter) {
-                continue;
-            }
             m_listLayout->addWidget(buildRow(entry));
-            ++shown;
         }
         m_listLayout->addStretch(1);
 
-        m_emptyState->setVisible(shown == 0);
-        m_scroll->setVisible(shown > 0);
+        m_emptyState->setVisible(m_items.isEmpty());
+        m_scroll->setVisible(!m_items.isEmpty());
 
-        const int unread = unreadCount();
-        m_subhead->setText(unread > 0 ? tr("%n unread of %1", "", unread).arg(m_items.size())
-                                      : tr("%n in the history", "", m_items.size()));
         m_clearButton->setEnabled(!m_items.isEmpty());
 
         if (m_sheet) {
             m_sheet->adjustSize();
             centreSheet();
+            anchorSheet();
         }
     }
 
@@ -504,18 +472,73 @@ namespace Material
 
     void NotificationCentre::applyTheme()
     {
-        if (auto* glyph = m_sheet->findChild<QLabel*>(QStringLiteral("notificationHeaderGlyph"))) {
-            glyph->setPixmap(
-                Icons::pixmap(QStringLiteral("notifications"), HeaderGlyphSize, theme()->color(Role::Primary)));
-        }
         if (auto* glyph = m_sheet->findChild<QLabel*>(QStringLiteral("notificationEmptyGlyph"))) {
             glyph->setPixmap(
                 Icons::pixmap(QStringLiteral("search_off"), EmptyGlyphSize, theme()->color(Role::OnSurfaceVariant)));
         }
-        styleLabel(m_headline, TypeRole::TitleLarge, Role::OnSurface);
-        styleLabel(m_subhead, TypeRole::LabelSmall, Role::OnSurfaceVariant);
+        styleLabel(m_headline, TypeRole::TitleMedium, Role::OnSurface);
         rebuild();
         update();
+    }
+
+    void NotificationCentre::toggleOverlay()
+    {
+        isOpen() ? closeOverlay() : openOverlay();
+    }
+
+    void NotificationCentre::paintEvent(QPaintEvent* event)
+    {
+        Q_UNUSED(event)
+        // No scrim: the design leaves the rest of the interface visible and
+        // clickable while the panel is up. Only the panel's shadow is ours.
+        if (!m_sheet || transition() <= 0.0) {
+            return;
+        }
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing);
+        painter.setOpacity(transition());
+        paintShadow(&painter, m_sheet->geometry(), Shape::ExtraLarge, 3);
+    }
+
+    void NotificationCentre::resizeEvent(QResizeEvent* event)
+    {
+        Overlay::resizeEvent(event);
+        anchorSheet();
+    }
+
+    void NotificationCentre::showEvent(QShowEvent* event)
+    {
+        Overlay::showEvent(event);
+        anchorSheet();
+    }
+
+    bool NotificationCentre::eventFilter(QObject* watched, QEvent* event)
+    {
+        const bool handled = Overlay::eventFilter(watched, event);
+        // The base centres the sheet from several places, including every frame
+        // of the transition. Each of those arrives here as a move or a resize,
+        // and is pulled straight back to the corner the design anchors it to.
+        if (watched == m_sheet && (event->type() == QEvent::Move || event->type() == QEvent::Resize)) {
+            anchorSheet();
+        }
+        return handled;
+    }
+
+    void NotificationCentre::anchorSheet()
+    {
+        if (!m_sheet) {
+            return;
+        }
+
+        const int x = width() - m_sheet->width() - AnchorRight;
+        if (m_sheet->x() != x) {
+            m_sheet->move(x, m_sheet->y());
+        }
+
+        // Everything outside the panel and its shadow is masked away, so the
+        // overlay covers the window without taking a single click from it.
+        setMask(QRegion(m_sheet->geometry().adjusted(-ShadowMargin, -ShadowMargin, ShadowMargin, ShadowMargin)));
     }
 
 } // namespace Material

@@ -233,6 +233,14 @@ void Application::applyFontSize()
     // Adjust application wide default font size
     auto newSize = g_OriginalFontSize + qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 4);
     font.setPointSize(newSize);
+
+    // The interface font row in settings writes a family here. Empty leaves
+    // the platform default alone, which is what a fresh profile gets.
+    const auto family = config()->get(Config::GUI_FontFamily).toString();
+    if (!family.isEmpty()) {
+        font.setFamily(family);
+    }
+
     QApplication::setFont(font);
     QApplication::setFont(font, "QWidget");
 }

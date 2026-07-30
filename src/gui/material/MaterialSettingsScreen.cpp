@@ -28,10 +28,10 @@
 
 #include "config-keepassx.h"
 #include "core/Config.h"
-#include "gui/Application.h"
 #include "keys/drivers/YubiKey.h"
 
 #include <QEnterEvent>
+#include <QFontInfo>
 #include <QFrame>
 #include <QGridLayout>
 #include <QHBoxLayout>
@@ -43,12 +43,13 @@
 #include <QVBoxLayout>
 #include <QVector>
 
-#include <iterator>
-
 namespace Material
 {
     namespace
     {
+        /** The width the design's two column card grid stops growing at. */
+        constexpr int GridMaxWidth = 1180;
+
         /** Dynamic properties that let a label be restyled after a theme change. */
         const char* const TypeProperty = "materialTypeRole";
         const char* const ColorProperty = "materialColorRole";
@@ -115,81 +116,171 @@ namespace Material
             QString sub;
         };
 
-        QString languageSample(const QString& language)
-        {
-            if (language == QLatin1String("en")) {
-                return QStringLiteral("Entry copied to the clipboard. It clears in ten seconds.");
-            }
-            if (language.startsWith(QLatin1String("zh"))) {
-                return QStringLiteral("項目已複製到剪貼簿，十秒後自動清除。");
-            }
-            return SettingsScreen::tr("Entry copied to the clipboard. It clears in ten seconds.");
-        }
-
-        QString fontSizeLabel(int step)
-        {
-            const QStringList steps{SettingsScreen::tr("Smallest"),
-                                    SettingsScreen::tr("Small"),
-                                    SettingsScreen::tr("Default"),
-                                    SettingsScreen::tr("Large"),
-                                    SettingsScreen::tr("Largest")};
-            return steps.at(qBound(1, step, static_cast<int>(steps.size())) - 1);
-        }
-
-        QString recentCountLabel(int count)
-        {
-            return count == 1 ? SettingsScreen::tr("1 database") : SettingsScreen::tr("%1 databases").arg(count);
-        }
-
-        /** The readout on the interface font row, e.g. "Roboto · 10 pt · Regular". */
+        /** The readout on the interface font row, e.g. "Roboto · 14px · Regular". */
         QString fontRowText()
         {
-            return SettingsScreen::tr("%1 · %2 pt · Regular")
+            // The design reports the rendered pixel size. The type scale is
+            // built in points, so the resolved size is asked for rather than
+            // read back: QFont::pixelSize() is -1 for a font sized in points.
+            const QFont body = theme()->font(TypeRole::BodyMedium);
+            return SettingsScreen::tr("%1 · %2px · Regular")
                 .arg(Theme::uiFamily())
-                .arg(theme()->font(TypeRole::BodyMedium).pointSize());
+                .arg(QFontInfo(body).pixelSize());
         }
 
-        QString voiceSegmentId(Voice::Language language)
+        /** The design's five names for an English humour level. */
+        QString englishLevelName(int level)
+        {
+            switch (qBound(Voice::MinLevel, level, Voice::MaxLevel)) {
+            case 1:
+                return SettingsScreen::tr("Fully serious");
+            case 2:
+                return SettingsScreen::tr("Dry");
+            case 3:
+                return SettingsScreen::tr("Warm");
+            case 4:
+                return SettingsScreen::tr("Cheeky");
+            default:
+                break;
+            }
+            return SettingsScreen::tr("Maximum");
+        }
+
+        /** The design's five Cantonese tier names, which it leaves untranslated. */
+        QString cantoneseLevelName(int level)
+        {
+            switch (qBound(Voice::MinLevel, level, Voice::MaxLevel)) {
+            case 1:
+                return QStringLiteral("正經八百");
+            case 2:
+                return QStringLiteral("淡淡定");
+            case 3:
+                return QStringLiteral("有啲鬼馬");
+            case 4:
+                return QStringLiteral("好鬼馬");
+            default:
+                break;
+            }
+            return QStringLiteral("癲晒");
+        }
+
+        QString languageSegmentId(Voice::Language language)
         {
             switch (language) {
             case Voice::Language::Cantonese:
-                return QStringLiteral("cantonese");
+                return QStringLiteral("zh");
             case Voice::Language::Bilingual:
-                return QStringLiteral("bilingual");
+                return QStringLiteral("both");
             case Voice::Language::English:
                 break;
             }
-            return QStringLiteral("english");
+            return QStringLiteral("en");
         }
 
-        Voice::Language voiceLanguageFromSegment(const QString& id)
+        Voice::Language languageFromSegment(const QString& id)
         {
-            if (id == QLatin1String("cantonese")) {
+            if (id == QLatin1String("zh")) {
                 return Voice::Language::Cantonese;
             }
-            if (id == QLatin1String("bilingual")) {
+            if (id == QLatin1String("both")) {
                 return Voice::Language::Bilingual;
             }
             return Voice::Language::English;
         }
 
-        /** The samples the voice preview renders: a routine message and an error. */
-        struct VoiceSample
+        /**
+         * The Qt translation a language segment asks for. Bilingual answers with
+         * an empty string: it is a voice, not a shipped translation, so it
+         * leaves the interface language where the user put it.
+         */
+        QString translationForSegment(const QString& id)
         {
-            const char* key;
-            Voice::Category category;
+            if (id == QLatin1String("zh")) {
+                return QStringLiteral("zh_TW");
+            }
+            if (id == QLatin1String("en")) {
+                return QStringLiteral("en");
+            }
+            return QString();
+        }
+
+        /** The message the live preview renders, as the design does. */
+        const char* const PreviewKey = "entry.deleted";
+
+        QVariantMap previewArgs()
+        {
+            return QVariantMap{{QStringLiteral("title"), SettingsScreen::tr("Example entry")}};
+        }
+
+        /**
+         * A settings card.
+         *
+         * The design fills every card with surfaceContainerLow and still draws
+         * the outlineVariant hairline. Card paints a fill for its Filled variant
+         * and a border for its Outlined one but never both, so it paints itself.
+         */
+        class SettingsCard : public Card
+        {
+        public:
+            explicit SettingsCard(QWidget* parent = nullptr)
+                // Qualified: QFrame::Shape shadows Material::Shape in here.
+                : Card(Card::Variant::Outlined, Material::Shape::ExtraLarge, parent)
+            {
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                paintSurface(&painter,
+                             rect(),
+                             radius(),
+                             theme()->color(Role::SurfaceContainerLow),
+                             theme()->color(Role::OutlineVariant));
+            }
         };
 
-        constexpr VoiceSample VoiceSamples[] = {{"clipboard.copied", Voice::Category::Success},
-                                                {"database.save.failed", Voice::Category::Error}};
-
-        QVariantMap voiceSampleArgs()
+        /**
+         * The live preview panel.
+         *
+         * A rounded-16 surfaceContainer panel with the design's own 14px / 16px
+         * padding, which a Card cannot carry: Card takes its padding from the
+         * density's page padding and puts it back on every theme change.
+         */
+        class PreviewPanel : public QWidget
         {
-            return QVariantMap{
-                {QStringLiteral("seconds"), config()->get(Config::Security_ClearClipboardTimeout).toInt()},
-                {QStringLiteral("name"), QStringLiteral("Personal.kdbx")},
-                {QStringLiteral("error"), SettingsScreen::tr("there is no space left on the device")}};
-        }
+        public:
+            static constexpr int PaddingX = 16;
+            static constexpr int PaddingY = 14;
+
+            explicit PreviewPanel(QWidget* parent = nullptr)
+                : QWidget(parent)
+            {
+                m_layout = new QVBoxLayout(this);
+                m_layout->setContentsMargins(PaddingX, PaddingY, PaddingX, PaddingY);
+                m_layout->setSpacing(6);
+            }
+
+            /** The column the overline and the preview line go into. */
+            QVBoxLayout* contentLayout() const
+            {
+                return m_layout;
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                paintSurface(&painter, rect(), Shape::Row, theme()->color(Role::SurfaceContainer));
+            }
+
+        private:
+            QVBoxLayout* m_layout = nullptr;
+        };
     } // namespace
 
     // ----------------------------------------------------------------- SeedSwatch
@@ -287,6 +378,15 @@ namespace Material
         update();
     }
 
+    void IntegrationRow::setChevron(bool chevron)
+    {
+        m_chevron = chevron;
+        // The two trailing treatments are exclusive: the design's editor row
+        // ends in a chevron, the three status rows end in a pill.
+        m_status->setVisible(!chevron);
+        update();
+    }
+
     QSize IntegrationRow::sizeHint() const
     {
         return QSize(280 + m_status->sizeHint().width(), RowHeight);
@@ -311,8 +411,18 @@ namespace Material
         const QRect glyph(16, (height() - 22) / 2, 22, 22);
         painter.drawPixmap(glyph, Icons::pixmap(m_symbol, 22, theme()->color(Role::OnSurfaceVariant)));
 
+        if (m_chevron) {
+            const QRect chevron(width() - TrailingMargin - ChevronSize,
+                                (height() - ChevronSize) / 2,
+                                ChevronSize,
+                                ChevronSize);
+            painter.drawPixmap(
+                chevron,
+                Icons::pixmap(QStringLiteral("expand_more"), ChevronSize, theme()->color(Role::OnSurfaceVariant)));
+        }
+
         const int left = glyph.right() + 14;
-        const int right = m_status->geometry().left() - 14;
+        const int right = m_chevron ? width() - TrailingMargin - ChevronSize - 14 : m_status->geometry().left() - 14;
         const int available = qMax(0, right - left);
 
         const QFont titleFont = theme()->font(TypeRole::BodyMedium);
@@ -371,25 +481,32 @@ namespace Material
         setSupportingText(tr("Search every option label, description and current value on this surface."));
         setSearchVisible(true);
         if (auto* search = searchBar()) {
-            search->setPlaceholder(tr("Search settings"));
+            search->setPlaceholder(tr("Search every setting"));
             search->setMaximumWidth(380);
             connect(search, &SearchBar::textChanged, this, &SettingsScreen::applyFilter);
         }
 
+        // The design's four cards in a 2x2 grid: appearance and language above,
+        // behaviour and integrations below.
         auto* grid = new QGridLayout;
         grid->setContentsMargins(0, 0, 0, 0);
         grid->setHorizontalSpacing(16);
         grid->setVerticalSpacing(16);
         grid->setColumnStretch(0, 1);
         grid->setColumnStretch(1, 1);
-        grid->addWidget(createAppearanceCard(), 0, 0);
-        grid->addWidget(createLanguageCard(), 0, 1);
-        grid->addWidget(createVoiceCard(), 1, 0);
-        grid->addWidget(createBehaviourCard(), 1, 1);
-        grid->addWidget(createIntegrationsCard(), 2, 0);
-        grid->setRowStretch(3, 1);
+        grid->addWidget(createAppearanceCard(), 0, 0, Qt::AlignTop);
+        grid->addWidget(createLanguageCard(), 0, 1, Qt::AlignTop);
+        grid->addWidget(createBehaviourCard(), 1, 0, Qt::AlignTop);
+        grid->addWidget(createIntegrationsCard(), 1, 1, Qt::AlignTop);
+        grid->setRowStretch(2, 1);
 
-        contentLayout()->addLayout(grid);
+        // The design's grid stops growing at 1180px; a host carries the cap,
+        // because a layout cannot have a maximum width of its own.
+        auto* gridHost = new QWidget;
+        gridHost->setMaximumWidth(GridMaxWidth);
+        gridHost->setLayout(grid);
+
+        contentLayout()->addWidget(gridHost);
         contentLayout()->addStretch(1);
 
         connect(theme(), &Theme::changed, this, &SettingsScreen::refreshFromTheme);
@@ -400,7 +517,7 @@ namespace Material
 
     Card* SettingsScreen::createAppearanceCard()
     {
-        auto* card = new Card(Card::Variant::Outlined, Shape::ExtraLarge);
+        auto* card = new SettingsCard;
         card->setTitleText(tr("Appearance"));
 
         auto* content = card->contentLayout();
@@ -480,40 +597,12 @@ namespace Material
         content->addLayout(fontRow);
         content->addSpacing(14);
 
-        {
-            const QString label = tr("Dim sum surprise");
-            const QString sub = tr("One launch in a hundred, a dim sum dish drops into the corner for a few seconds.");
-
-            auto* row = new QHBoxLayout;
-            row->setContentsMargins(0, 0, 0, 0);
-            row->setSpacing(16);
-
-            auto* text = new QVBoxLayout;
-            text->setContentsMargins(0, 0, 0, 0);
-            text->setSpacing(2);
-            text->addWidget(makeLabel(label, TypeRole::BodyMedium, Role::OnSurface));
-            auto* note = makeLabel(sub, TypeRole::LabelMedium, Role::OnSurfaceVariant);
-            note->setWordWrap(true);
-            text->addWidget(note);
-            row->addLayout(text, 1);
-
-            auto* toggle = new Switch;
-            toggle->setCheckable(true);
-            toggle->setChecked(config()->get(Config::GUI_DimSumSurprise).toBool());
-            connect(toggle, &QAbstractButton::toggled, this, [](bool checked) {
-                config()->set(Config::GUI_DimSumSurprise, checked);
-            });
-            row->addWidget(toggle, 0, Qt::AlignVCenter);
-
-            content->addLayout(row);
-            content->addSpacing(14);
-            haystack << label << sub;
-        }
-
-        content->addWidget(
+        auto* hint =
             makeLabel(tr("The seed colour drives every accent in the application; density drives every row height."),
                       TypeRole::LabelMedium,
-                      Role::OnSurfaceVariant));
+                      Role::OnSurfaceVariant);
+        hint->setWordWrap(true);
+        content->addWidget(hint);
 
         m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
         return card;
@@ -521,130 +610,40 @@ namespace Material
 
     Card* SettingsScreen::createLanguageCard()
     {
-        auto* card = new Card(Card::Variant::Outlined, Shape::ExtraLarge);
-        card->setTitleText(tr("Language & text"));
+        auto* card = new SettingsCard;
+        card->setTitleText(tr("Language & tone"));
 
         auto* content = card->contentLayout();
         content->setSpacing(0);
-        QStringList haystack{tr("Language & text")};
+        QStringList haystack{tr("Language & tone")};
 
-        const QString language = config()->get(Config::GUI_Language).toString();
-
+        // The design gives language and tone a single control: it picks the
+        // interface language and the language the application's own messages
+        // are written in at the same time.
         m_languageSegment = new SegmentedButton;
-        m_languageSegment->addSegment(QStringLiteral("system"), tr("System"));
         m_languageSegment->addSegment(QStringLiteral("en"), QStringLiteral("English"));
-        m_languageSegment->addSegment(QStringLiteral("zh_TW"), QStringLiteral("中文"));
-        // Keep a language chosen elsewhere selectable instead of silently losing it.
-        if (language != QLatin1String("system") && language != QLatin1String("en")
-            && language != QLatin1String("zh_TW")) {
-            m_languageSegment->addSegment(language, language);
-        }
-        m_languageSegment->setCurrentSegment(language);
+        m_languageSegment->addSegment(QStringLiteral("zh"), QStringLiteral("廣東話"));
+        m_languageSegment->addSegment(QStringLiteral("both"), tr("Bilingual"));
+        m_languageSegment->setCurrentSegment(languageSegmentId(Voice::language()));
         connect(m_languageSegment, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
             if (m_updating) {
                 return;
             }
-            config()->set(Config::GUI_Language, id);
-            updateLanguagePreview();
+            Voice::setLanguage(languageFromSegment(id));
+            const QString translation = translationForSegment(id);
+            if (!translation.isEmpty()) {
+                config()->set(Config::GUI_Language, translation);
+            }
+            updateVoicePreview();
         });
         content->addWidget(m_languageSegment);
         content->addSpacing(8);
-        haystack << tr("System") << QStringLiteral("English") << QStringLiteral("中文") << language;
+        haystack << QStringLiteral("English") << QStringLiteral("廣東話") << tr("Bilingual");
 
-        content->addWidget(makeLabel(tr("A new language takes effect the next time KeePassXC starts."),
+        content->addWidget(makeLabel(tr("A new interface language takes effect the next time KeePassXC starts."),
                                      TypeRole::LabelMedium,
                                      Role::OnSurfaceVariant));
-        content->addSpacing(16);
-
-        auto sliderRow = [&haystack, content](const QString& label, QLabel** value) {
-            auto* row = new QHBoxLayout;
-            row->setContentsMargins(0, 0, 0, 0);
-            row->setSpacing(8);
-            row->addWidget(makeLabel(label, TypeRole::BodySmall, Role::OnSurfaceVariant), 1);
-            *value = makeLabel(QString(), TypeRole::LabelLarge, Role::OnSurface);
-            row->addWidget(*value, 0, Qt::AlignRight);
-            content->addLayout(row);
-            content->addSpacing(6);
-            haystack << label;
-
-            auto* slider = new QSlider(Qt::Horizontal);
-            slider->setRange(1, 5);
-            slider->setSingleStep(1);
-            slider->setPageStep(1);
-            content->addWidget(slider);
-            content->addSpacing(18);
-            return slider;
-        };
-
-        m_fontSizeSlider = sliderRow(tr("Interface font size"), &m_fontSizeValue);
-        m_fontSizeSlider->setValue(qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 2) + 3);
-        m_fontSizeValue->setText(fontSizeLabel(m_fontSizeSlider->value()));
-        connect(m_fontSizeSlider, &QSlider::valueChanged, this, [this](int value) {
-            m_fontSizeValue->setText(fontSizeLabel(value));
-            updateLanguagePreview();
-            // Dragging only moves the preview; the application font follows on release.
-            if (!m_updating && !m_fontSizeSlider->isSliderDown()) {
-                commitFontSize();
-            }
-        });
-        connect(m_fontSizeSlider, &QSlider::sliderReleased, this, &SettingsScreen::commitFontSize);
-
-        m_recentSlider = sliderRow(tr("Recent databases remembered"), &m_recentValue);
-        m_recentSlider->setValue(qBound(1, config()->get(Config::NumberOfRememberedLastDatabases).toInt(), 5));
-        m_recentValue->setText(recentCountLabel(m_recentSlider->value()));
-        connect(m_recentSlider, &QSlider::valueChanged, this, [this](int value) {
-            m_recentValue->setText(recentCountLabel(value));
-            if (!m_updating) {
-                config()->set(Config::NumberOfRememberedLastDatabases, value);
-            }
-        });
-
-        auto* preview = new Card(Card::Variant::Filled, Shape::Row);
-        preview->setFillRole(Role::SurfaceContainer);
-        auto* previewContent = preview->contentLayout();
-        previewContent->setSpacing(6);
-
-        auto* overline = makeLabel(tr("PREVIEW"), TypeRole::LabelSmall, Role::OnSurfaceVariant);
-        QFont overlineFont = overline->font();
-        overlineFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
-        overline->setFont(overlineFont);
-        previewContent->addWidget(overline);
-
-        m_previewLabel = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurface);
-        m_previewLabel->setWordWrap(true);
-        previewContent->addWidget(m_previewLabel);
-        content->addWidget(preview);
-        updateLanguagePreview();
-
-        m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
-        return card;
-    }
-
-    Card* SettingsScreen::createVoiceCard()
-    {
-        auto* card = new Card(Card::Variant::Outlined, Shape::ExtraLarge);
-        card->setTitleText(tr("Voice & humour"));
-
-        auto* content = card->contentLayout();
-        content->setSpacing(0);
-        QStringList haystack{tr("Voice & humour")};
-
-        content->addWidget(makeLabel(tr("Message language"), TypeRole::BodySmall, Role::OnSurfaceVariant));
-        content->addSpacing(8);
-
-        m_voiceSegment = new SegmentedButton;
-        m_voiceSegment->addSegment(QStringLiteral("english"), QStringLiteral("English"));
-        m_voiceSegment->addSegment(QStringLiteral("cantonese"), QStringLiteral("廣東話"));
-        m_voiceSegment->addSegment(QStringLiteral("bilingual"), tr("Both"));
-        m_voiceSegment->setCurrentSegment(voiceSegmentId(Voice::language()));
-        connect(m_voiceSegment, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
-            if (!m_updating) {
-                Voice::setLanguage(voiceLanguageFromSegment(id));
-            }
-        });
-        content->addWidget(m_voiceSegment);
-        content->addSpacing(18);
-        haystack << QStringLiteral("English") << QStringLiteral("廣東話") << tr("Both") << tr("Cantonese");
+        content->addSpacing(20);
 
         auto humourSlider = [&haystack, content](const QString& label, QLabel** value) {
             auto* row = new QHBoxLayout;
@@ -662,13 +661,13 @@ namespace Material
             slider->setSingleStep(1);
             slider->setPageStep(1);
             content->addWidget(slider);
-            content->addSpacing(16);
+            content->addSpacing(18);
             return slider;
         };
 
-        m_englishFunnySlider = humourSlider(tr("English humour"), &m_englishFunnyValue);
+        m_englishFunnySlider = humourSlider(tr("Funny level — English"), &m_englishFunnyValue);
         m_englishFunnySlider->setValue(Voice::funnyLevel(Voice::Language::English));
-        m_cantoneseFunnySlider = humourSlider(tr("Cantonese humour 廣東話"), &m_cantoneseFunnyValue);
+        m_cantoneseFunnySlider = humourSlider(tr("Funny level — Cantonese"), &m_cantoneseFunnyValue);
         m_cantoneseFunnySlider->setValue(Voice::funnyLevel(Voice::Language::Cantonese));
 
         for (auto* slider : {m_englishFunnySlider, m_cantoneseFunnySlider}) {
@@ -682,51 +681,31 @@ namespace Material
             connect(slider, &QSlider::sliderReleased, this, &SettingsScreen::commitVoiceLevels);
         }
 
-        auto* preview = new Card(Card::Variant::Filled, Shape::Row);
-        preview->setFillRole(Role::SurfaceContainer);
+        auto* preview = new PreviewPanel;
         auto* previewContent = preview->contentLayout();
-        previewContent->setSpacing(4);
 
-        auto* overline = makeLabel(tr("PREVIEW"), TypeRole::LabelSmall, Role::OnSurfaceVariant);
+        auto* overline = makeLabel(tr("Live preview").toUpper(), TypeRole::LabelSmall, Role::OnSurfaceVariant);
         QFont overlineFont = overline->font();
         overlineFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.8);
         overline->setFont(overlineFont);
         previewContent->addWidget(overline);
 
-        // One routine message and one error, because the level styles both.
-        for (int sample = 0; sample < 2; ++sample) {
-            if (sample > 0) {
-                previewContent->addSpacing(10);
-            }
-            auto* primary = makeLabel(QString(), TypeRole::BodyMedium, Role::OnSurface);
-            primary->setWordWrap(true);
-            previewContent->addWidget(primary);
-            m_voicePrimaryLabels.append(primary);
-
-            auto* secondary = makeLabel(QString(), TypeRole::LabelMedium, Role::OnSurfaceVariant);
-            secondary->setWordWrap(true);
-            previewContent->addWidget(secondary);
-            m_voiceSecondaryLabels.append(secondary);
-        }
+        // One line, from the message catalogue, so the preview is the voice the
+        // rest of the application will speak in rather than a sample of it.
+        m_previewLabel = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurface);
+        m_previewLabel->setWordWrap(true);
+        previewContent->addWidget(m_previewLabel);
         content->addWidget(preview);
-        content->addSpacing(14);
+        content->addSpacing(12);
 
-        auto* disclosure = makeLabel(Voice::disclosureText(), TypeRole::LabelMedium, Role::OnSurfaceVariant);
+        auto* disclosure = makeLabel(tr("The funny level styles every message, including errors, warnings and "
+                                        "destructive confirmations. It changes voice only — what happened, what is "
+                                        "affected and your options stay exact."),
+                                     TypeRole::LabelMedium,
+                                     Role::OnSurfaceVariant);
         disclosure->setWordWrap(true);
         content->addWidget(disclosure);
-        content->addSpacing(12);
-        haystack << Voice::disclosureText();
-
-        auto* resetRow = new QHBoxLayout;
-        resetRow->setContentsMargins(0, 0, 0, 0);
-        resetRow->addStretch(1);
-        auto* reset = new OutlinedButton(QStringLiteral("refresh"), tr("Reset voice to defaults"));
-        reset->setRadius(Shape::Medium);
-        reset->setFixedHeight(Layout::ButtonHeight);
-        connect(reset, &QPushButton::clicked, this, [] { Voice::resetToDefaults(); });
-        resetRow->addWidget(reset, 0, Qt::AlignRight);
-        content->addLayout(resetRow);
-        haystack << tr("Reset voice to defaults");
+        haystack << disclosure->text();
 
         updateVoicePreview();
 
@@ -736,14 +715,31 @@ namespace Material
 
     Card* SettingsScreen::createBehaviourCard()
     {
-        auto* card = new Card(Card::Variant::Outlined, Shape::ExtraLarge);
-        card->setTitleText(tr("Behaviour"));
+        auto* card = new SettingsCard;
+        card->setTitleText(tr("Security & behaviour"));
 
         auto* content = card->contentLayout();
         content->setSpacing(0);
-        QStringList haystack{tr("Behaviour")};
+        QStringList haystack{tr("Security & behaviour")};
+
+        // The design names the two timeouts in the label rather than in a
+        // second control, so the configured numbers are read back into it.
+        const int idleMinutes = qMax(1, config()->get(Config::Security_LockDatabaseIdleSeconds).toInt() / 60);
+        const int clipboardSeconds = config()->get(Config::Security_ClearClipboardTimeout).toInt();
 
         const QVector<ToggleSpec> toggles = {
+            // The design's own rows, in its order.
+            {Config::Security_LockDatabaseIdle,
+             tr("Lock database after %n minute(s) idle", "", idleMinutes),
+             tr("Also locks on screen lock and session switch.")},
+            {Config::Security_ClearClipboard,
+             tr("Clear clipboard after %n second(s)", "", clipboardSeconds),
+             tr("Applies to passwords, TOTP codes and custom attributes.")},
+            {Config::GUI_DimSumSurprise,
+             tr("Dim sum surprise at startup"),
+             tr("1% chance per launch. Non-blocking, auto-dismissing, bundled images only.")},
+            // The rest of this surface's own rows, which the design's four
+            // cards have no room for.
             {Config::SingleInstance,
              tr("Single application instance"),
              tr("A second launch raises the running window instead of opening another one.")},
@@ -766,12 +762,6 @@ namespace Material
             {Config::BackupBeforeSave,
              tr("Back up before saving"),
              tr("Keeps a copy of the previous file next to the database.")},
-            {Config::Security_LockDatabaseIdle,
-             tr("Lock when idle"),
-             tr("Locks the database after the inactivity timeout expires.")},
-            {Config::Security_ClearClipboard,
-             tr("Clear the clipboard"),
-             tr("Applies to passwords, TOTP codes and custom attributes.")},
             {Config::Security_HideNotes,
              tr("Hide entry notes"),
              tr("Notes stay masked in the preview panel until they are revealed.")},
@@ -803,9 +793,9 @@ namespace Material
             rowLayout->addWidget(toggle, 0, Qt::AlignVCenter);
 
             content->addWidget(row);
-            if (i + 1 < toggles.size()) {
-                content->addWidget(makeSeparator());
-            }
+            // The hairline belongs to the row in the design, so the last one
+            // draws it too.
+            content->addWidget(makeSeparator());
             haystack << spec.label << spec.sub;
         }
 
@@ -815,7 +805,7 @@ namespace Material
 
     Card* SettingsScreen::createIntegrationsCard()
     {
-        auto* card = new Card(Card::Variant::Outlined, Shape::ExtraLarge);
+        auto* card = new SettingsCard;
         card->setTitleText(tr("Integrations"));
 
         auto* content = card->contentLayout();
@@ -834,14 +824,18 @@ namespace Material
             connect(row, &IntegrationRow::activated, this, [this, id] { emit integrationActivated(id); });
             content->addWidget(row);
             haystack << title << detail << status;
+            return row;
         };
 
+        // The design ends the editor row in a chevron rather than a status
+        // pill: there is nothing to report, only somewhere to go.
         addRow(QStringLiteral("external-editor"),
                QStringLiteral("edit_document"),
                tr("External editor"),
                tr("Opens notes and attachments in the system editor."),
-               PillKind::Action,
-               tr("Configure"));
+               PillKind::Off,
+               QString())
+            ->setChevron(true);
 
 #ifdef KPXC_FEATURE_BROWSER
         const bool browser = config()->get(Config::Browser_Enabled).toBool();
@@ -912,14 +906,12 @@ namespace Material
 
         m_themeSegment->setCurrentSegment(theme()->isDark() ? QStringLiteral("dark") : QStringLiteral("light"));
         m_densitySegment->setCurrentSegment(Theme::densityToString(theme()->density()));
-        m_fontSizeSlider->setValue(qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 2) + 3);
         for (auto* swatch : m_swatches) {
             swatch->update();
         }
 
         restyleChildren(this);
         m_fontRowButton->setText(fontRowText());
-        updateLanguagePreview();
         updateVoicePreview();
 
         m_updating = false;
@@ -929,7 +921,7 @@ namespace Material
     {
         m_updating = true;
 
-        m_voiceSegment->setCurrentSegment(voiceSegmentId(Voice::language()));
+        m_languageSegment->setCurrentSegment(languageSegmentId(Voice::language()));
         m_englishFunnySlider->setValue(Voice::funnyLevel(Voice::Language::English));
         m_cantoneseFunnySlider->setValue(Voice::funnyLevel(Voice::Language::Cantonese));
         updateVoicePreview();
@@ -945,55 +937,23 @@ namespace Material
 
     void SettingsScreen::updateVoicePreview()
     {
-        if (m_voicePrimaryLabels.isEmpty()) {
+        if (!m_previewLabel) {
             return;
         }
 
         const Voice::Language language =
-            m_voiceSegment ? voiceLanguageFromSegment(m_voiceSegment->currentSegment()) : Voice::language();
+            m_languageSegment ? languageFromSegment(m_languageSegment->currentSegment()) : Voice::language();
         const int english = m_englishFunnySlider->value();
         const int cantonese = m_cantoneseFunnySlider->value();
 
-        m_englishFunnyValue->setText(tr("%1 · %2").arg(english).arg(Voice::levelName(english)));
-        m_cantoneseFunnyValue->setText(tr("%1 · %2").arg(cantonese).arg(Voice::levelName(cantonese)));
+        m_englishFunnyValue->setText(tr("%1 · %2").arg(english).arg(englishLevelName(english)));
+        m_cantoneseFunnyValue->setText(tr("%1 · %2").arg(cantonese).arg(cantoneseLevelName(cantonese)));
 
-        const QVariantMap args = voiceSampleArgs();
-        const int samples = qMin(m_voicePrimaryLabels.size(), static_cast<int>(std::size(VoiceSamples)));
-        for (int i = 0; i < samples; ++i) {
-            const Voice::Line line = Voice::preview(
-                language, english, cantonese, QLatin1String(VoiceSamples[i].key), args, VoiceSamples[i].category);
-            m_voicePrimaryLabels.at(i)->setText(line.primary);
-            m_voiceSecondaryLabels.at(i)->setText(line.secondary);
-            m_voiceSecondaryLabels.at(i)->setVisible(line.hasSecondary());
-        }
-    }
-
-    void SettingsScreen::commitFontSize()
-    {
-        config()->set(Config::GUI_FontSizeOffset, m_fontSizeSlider->value() - 3);
-        Application::applyFontSize();
-        theme()->reload();
-    }
-
-    int SettingsScreen::previewPointSize() const
-    {
-        const int applied = qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 2);
-        const int pending = m_fontSizeSlider ? m_fontSizeSlider->value() - 3 : applied;
-        return qMax(1, theme()->font(TypeRole::BodyMedium).pointSize() + pending - applied);
-    }
-
-    void SettingsScreen::updateLanguagePreview()
-    {
-        if (!m_previewLabel) {
-            return;
-        }
-        const QString language =
-            m_languageSegment ? m_languageSegment->currentSegment() : config()->get(Config::GUI_Language).toString();
-        m_previewLabel->setText(languageSample(language));
-
-        QFont font = theme()->font(TypeRole::BodyMedium);
-        font.setPointSize(previewPointSize());
-        m_previewLabel->setFont(font);
+        // The category is left to the catalogue, which classifies this message
+        // as destructive - the level styles it all the same.
+        const Voice::Line line =
+            Voice::preview(language, english, cantonese, QLatin1String(PreviewKey), previewArgs());
+        m_previewLabel->setText(line.joined());
     }
 
 } // namespace Material

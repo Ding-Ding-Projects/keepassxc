@@ -189,7 +189,7 @@ QLabel:disabled {
 
 QLabel[materialRole="overline"] {
     color: %onSurfaceVariant%;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QLabel[materialRole="mono"] {
@@ -200,7 +200,7 @@ QLabel[materialRole="mono"] {
 /* Honoured by the .ui files that already mark their section headings. */
 *[title="true"] {
     color: %onSurfaceVariant%;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 /* Both spellings: Qt converts enum properties to their number or their key
@@ -303,7 +303,7 @@ QDockWidget {
     color: %onSurfaceVariant%;
     border: 1px solid %outlineVariant%;
     border-radius: %rMedium%px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QDockWidget::title {
@@ -331,7 +331,7 @@ QPushButton {
     padding: 0 20px;
     min-height: %btnH%px;
     min-width: 72px;
-    font-weight: 600;
+    font-weight: 500;
     outline: none;
 }
 
@@ -956,7 +956,7 @@ QTabBar::tab:hover {
 QTabBar::tab:selected {
     background-color: %surface%;
     color: %primary%;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QTabBar::tab:disabled {
@@ -1000,7 +1000,7 @@ QHeaderView::section {
     border: none;
     padding: 6px 10px;
     min-height: 26px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QHeaderView::section:hover {
@@ -1197,7 +1197,7 @@ QGroupBox {
     border-radius: %rXL%px;
     margin-top: 12px;
     padding: 18px 16px 16px 16px;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QGroupBox::title {
@@ -1320,8 +1320,9 @@ QWidget[materialRole="rail"] {
     max-width: %railW%px;
 }
 
+/* The design's header sits one step above the page, on surfaceContainer. */
 QWidget[materialRole="appbar"] {
-    background-color: %surface%;
+    background-color: %surfaceContainer%;
     border: none;
     border-bottom: 1px solid %outlineVariant%;
     min-height: %appBarH%px;
@@ -1401,7 +1402,7 @@ QLabel[materialSeverity="%1"] {
     background-color: transparent;
     border: none;
     color: %2;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 QPushButton[materialSeverity="%1"] {
@@ -1520,7 +1521,7 @@ EntryPreviewWidget QTabBar::tab:selected {
 EntryPreviewWidget #entryTitleLabel,
 EntryPreviewWidget #groupTitleLabel {
     color: %onSurface%;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 EntryPreviewWidget #entryTotpLabel {
@@ -1626,7 +1627,7 @@ WelcomeWidget {
 
 WelcomeWidget #welcomeLabel {
     color: %onSurface%;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 WelcomeWidget #startLabel,
@@ -1711,7 +1712,7 @@ EditWidget {
 
 EditWidget #headerLabel {
     color: %onSurface%;
-    font-weight: 600;
+    font-weight: 500;
     padding: 4px 0 12px 0;
 }
 

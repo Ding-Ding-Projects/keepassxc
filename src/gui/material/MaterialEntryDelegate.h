@@ -33,8 +33,9 @@ namespace Material
      * selection paint a state layer behind the whole row.
      *
      * The model supplies everything through the roles below; the delegate never
-     * touches Entry directly, which keeps it usable for the report and history
-     * lists as well.
+     * touches Entry directly, so any model answering them can be drawn with it.
+     * Only the vault list does today - the report and history screens build
+     * their rows as widgets rather than through a view.
      */
     class EntryDelegate : public QStyledItemDelegate
     {
@@ -49,14 +50,14 @@ namespace Material
             HealthRole, // Material::Health, via QVariant::fromValue()
             TotpRole, // bool, draws the TOTP glyph
             ModifiedRole, // QString, already formatted for display
-            SymbolRole // Material Symbols name for the avatar
+            SymbolRole // Material Symbols name for the avatar; Icons::entrySymbol() derives one
         };
 
         static constexpr int AvatarSize = 36;
         static constexpr int UrlColumnWidth = 132;
         static constexpr int HealthColumnWidth = 104;
         static constexpr int ModifiedColumnWidth = 80;
-        static constexpr int TotpColumnWidth = 32;
+        static constexpr int TotpColumnWidth = 22;
         static constexpr int MenuColumnWidth = 32;
         static constexpr int HealthDotSize = 8;
 

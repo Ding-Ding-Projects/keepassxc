@@ -29,6 +29,8 @@ class QVBoxLayout;
 namespace Material
 {
     class ButtonBase;
+    /** The round symbol badge, defined in MaterialDialog.cpp. */
+    class SymbolBadge;
 
     /**
      * The confirm and message sheet.
@@ -88,7 +90,7 @@ namespace Material
         QWidget* m_sheet = nullptr;
         QVBoxLayout* m_sheetLayout = nullptr;
         QHBoxLayout* m_actionLayout = nullptr;
-        QLabel* m_symbolLabel = nullptr;
+        SymbolBadge* m_symbolBadge = nullptr;
         QLabel* m_headlineLabel = nullptr;
         QLabel* m_supportingLabel = nullptr;
         QString m_symbol;
