@@ -20,6 +20,7 @@
 #include "MaterialDialog.h"
 #include "MaterialHistoryStore.h"
 #include "MaterialNotifier.h"
+#include "MaterialRegexBuilder.h"
 #include "MaterialSearchBar.h"
 
 #include "core/Clock.h"
@@ -28,10 +29,13 @@
 #include "core/EntryAttachments.h"
 #include "core/EntryAttributes.h"
 #include "core/Group.h"
+#include "gui/Clipboard.h"
 
 #include <QCryptographicHash>
 #include <QDir>
 #include <QLocale>
+#include <QRegularExpression>
+#include <QSet>
 #include <QStringList>
 
 #include <algorithm>
@@ -50,6 +54,13 @@ namespace Material
          * rest are counted and reported rather than quietly dropped.
          */
         constexpr int MaximumRows = 200;
+        /**
+         * How many of this window's own restores are remembered. They are a
+         * report of what was done here, not a record anything else keeps, so
+         * the oldest are dropped rather than letting the list grow for as long
+         * as a database stays unlocked.
+         */
+        constexpr int MaximumSessionRestores = 100;
         /** How much of a stored value one diff line shows before eliding. */
         constexpr int DiffValueLength = 60;
         /** The arrow between the two sides of a diff line. */
@@ -132,11 +143,22 @@ namespace Material
          * The design opens its meta line with a short digest, so one is
          * computed rather than borrowed: the entry's own UUID never reaches the
          * screen, and the id survives the list being rebuilt.
+         *
+         * The seed is the revision's own timestamp, not its position in the
+         * history: Entry::truncateHistory() drops the oldest revisions, which
+         * renumbers every position that is left but changes no timestamp.
+         * @p ordinal separates the case KDBX makes possible - two revisions of
+         * one entry stamped within the same second - because two rows sharing
+         * an id would share an entry in the lookup table, and a click on one
+         * would then act on the other.
          */
-        QString entryRevisionId(const Entry* entry, int index)
+        QString entryRevisionId(const Entry* entry, const QDateTime& revisionTime, int ordinal)
         {
-            const QByteArray seed = QStringLiteral("%1:%2").arg(entry->uuidToHex()).arg(index).toUtf8();
-            return QString::fromLatin1(QCryptographicHash::hash(seed, QCryptographicHash::Sha256).toHex());
+            QString seed = QStringLiteral("%1:%2").arg(entry->uuidToHex(), revisionTime.toString(Qt::ISODateWithMs));
+            if (ordinal > 0) {
+                seed += QStringLiteral(":%1").arg(ordinal);
+            }
+            return QString::fromLatin1(QCryptographicHash::hash(seed.toUtf8(), QCryptographicHash::Sha256).toHex());
         }
 
         /**
@@ -339,14 +361,17 @@ namespace Material
                "same revisions the entry editor's History tab lists. The other record is the append-only save log "
                "KeePassXC keeps in the application's data folder, never inside your database folder: it holds no "
                "contents at all, only when a save happened and how many entries and groups it then had, so its rows "
-               "can be compared but not restored. Restores made in this window are listed until the window closes, "
-               "because nothing in the database or the log marks a revision as a restore."));
+               "can be compared but not restored. Restores made in this window are listed for as long as the database "
+               "they were made in stays unlocked, because nothing in the database or the log marks a revision as a "
+               "restore."));
 
-        m_screen->searchBar()->setShowRegexControls(false);
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
             refresh();
         });
+        // The design draws the search field with the regex button beside it, so
+        // the box holds a pattern and the button opens the builder for it.
+        connect(m_screen->searchBar(), &SearchBar::builderRequested, this, &HistoryFeed::openRegexBuilder);
         connect(m_screen, &HistoryScreen::filterChanged, this, &HistoryFeed::refresh);
 
         connect(m_screen, &HistoryScreen::diffRequested, this, &HistoryFeed::showDiff);
@@ -358,17 +383,48 @@ namespace Material
 
     void HistoryFeed::setDatabase(const QSharedPointer<Database>& db)
     {
-        disconnect(m_databaseWatch);
-        m_database = db;
+        if (m_database.lock() != db) {
+            // The restores carry entry titles, which belong to the database
+            // they were read from and to nothing else.
+            m_restores.clear();
+        }
+
+        for (const QMetaObject::Connection& watch : m_databaseWatch) {
+            disconnect(watch);
+        }
+        m_databaseWatch.clear();
+
+        m_database = db.toWeakRef();
         m_databasePath = db ? QDir::fromNativeSeparators(db->filePath()) : QString();
         if (db) {
             // An entry gains a revision from the entry editor, from Auto-Type,
             // from a merge - none of which pass through here. Database's own
             // modified() signal is already debounced, so following it costs one
             // rebuild per burst of edits.
-            m_databaseWatch = connect(db.data(), &Database::modified, this, &HistoryFeed::rebuild);
+            m_databaseWatch.append(connect(db.data(), &Database::modified, this, &HistoryFeed::rebuild));
+            // Save As gives the file a new name, and the save log is keyed by
+            // the name: without this the rows recorded under the old one would
+            // silently stop being listed.
+            m_databaseWatch.append(
+                connect(db.data(), &Database::filePathChanged, this, [this](const QString&, const QString& newPath) {
+                    m_databasePath = QDir::fromNativeSeparators(newPath);
+                    rebuild();
+                }));
+            if (db->rootGroup()) {
+                m_databaseWatch.append(
+                    connect(db->rootGroup(), &QObject::destroyed, this, &HistoryFeed::forgetDatabase));
+            }
         }
         rebuild();
+    }
+
+    void HistoryFeed::forgetDatabase()
+    {
+        // Cleared here rather than left to setDatabase(): when the database is
+        // being destroyed outright the weak reference has already expired, so
+        // the two would compare equal and the titles would stay.
+        m_restores.clear();
+        setDatabase({});
     }
 
     void HistoryFeed::rebuild()
@@ -385,12 +441,25 @@ namespace Material
     QVector<HistoryFeed::Change> HistoryFeed::entryRevisions() const
     {
         QVector<Change> changes;
-        if (!m_database || !m_database->rootGroup()) {
+        const auto database = m_database.lock();
+        if (!database || !database->rootGroup()) {
             return changes;
         }
 
-        const QList<Entry*> entries = m_database->rootGroup()->entriesRecursive(false);
+        // Ids have to be unique across the whole listing, because one lookup
+        // table maps all of them back to their subjects.
+        QSet<QString> taken;
+
+        const QList<Entry*> entries = database->rootGroup()->entriesRecursive(false);
         for (Entry* entry : entries) {
+            // entriesRecursive() walks the recycle bin too. The save log counts
+            // only what is outside it, so leaving deleted entries in would list
+            // their titles as if they were still live and would disagree with
+            // the other source about what this database holds.
+            if (entry->isRecycled()) {
+                continue;
+            }
+
             // historyItems() are the states an entry left behind, oldest first,
             // so the change item i records is the step from it to whatever came
             // next - the following item, or the entry as it stands now.
@@ -403,14 +472,24 @@ namespace Material
                 }
 
                 const EntryChange described = describeEntryChange(before, after);
-                const QString id = entryRevisionId(entry, i);
+                // Seeded from the revision Restore puts back, which is the one
+                // frozen item of the pair: the last row's "after" is the live
+                // entry, and its timestamp moves with every edit.
+                QString id;
+                for (int ordinal = 0;; ++ordinal) {
+                    id = entryRevisionId(entry, before->timeInfo().lastModificationTime(), ordinal);
+                    if (!taken.contains(id)) {
+                        break;
+                    }
+                }
+                taken.insert(id);
 
                 Change change;
                 change.when = after->timeInfo().lastModificationTime();
                 change.entryScoped = true;
                 change.origin.kind = Origin::Kind::EntryRevision;
                 change.origin.entryUuid = entry->uuid();
-                change.origin.historyIndex = i;
+                change.origin.revision = before;
                 change.row.id = id;
                 change.row.symbol = described.symbol;
                 change.row.label = described.label;
@@ -463,11 +542,9 @@ namespace Material
     QVector<HistoryFeed::Change> HistoryFeed::sessionRestores() const
     {
         QVector<Change> changes;
+        // No filtering by database: the list is emptied whenever the database
+        // in front changes, so everything in it belongs to the one shown.
         for (const Restored& restored : m_restores) {
-            if (!m_databasePath.isEmpty() && restored.databasePath != m_databasePath) {
-                continue;
-            }
-
             Change change;
             change.when = restored.when;
             change.entryScoped = true;
@@ -493,6 +570,16 @@ namespace Material
         const bool recentOnly = m_screen->isRecentOnly();
         const bool narrowed = !m_query.isEmpty() || kind != RevisionFilter::All || recentOnly;
 
+        // The search bar carries the regular expression builder, so what it
+        // holds is a pattern. A pattern that will not compile is what half-typed
+        // input looks like, so that falls back to plain containment and the list
+        // narrows as it is typed instead of emptying.
+        const QRegularExpression pattern(m_query, QRegularExpression::CaseInsensitiveOption);
+        const bool byPattern = !m_query.isEmpty() && pattern.isValid();
+        const auto matches = [this, &pattern, byPattern](const QString& text) {
+            return byPattern ? pattern.match(text).hasMatch() : text.contains(m_query, Qt::CaseInsensitive);
+        };
+
         m_origins.clear();
         QVector<Revision> rows;
         int matched = 0;
@@ -508,8 +595,7 @@ namespace Material
             if (recentOnly && change.when < since) {
                 continue;
             }
-            if (!m_query.isEmpty() && !change.row.label.contains(m_query, Qt::CaseInsensitive)
-                && !change.row.meta.contains(m_query, Qt::CaseInsensitive)) {
+            if (!m_query.isEmpty() && !matches(change.row.label) && !matches(change.row.meta)) {
                 continue;
             }
 
@@ -539,7 +625,7 @@ namespace Material
             if (narrowed) {
                 row.label = tr("No change matches these filters");
                 row.meta = tr("%n change(s) in this history", "", m_changes.size());
-            } else if (!m_database) {
+            } else if (m_database.isNull()) {
                 row.label = tr("No database is open");
                 row.meta = tr("Entry revisions are read from the open database; unlock one to see them");
             } else {
@@ -557,17 +643,37 @@ namespace Material
         if (owner) {
             *owner = nullptr;
         }
-        if (!m_database || !m_database->rootGroup() || origin.historyIndex < 0) {
+        const auto database = m_database.lock();
+        if (!database || !database->rootGroup() || origin.revision.isNull()) {
             return nullptr;
         }
-        Entry* entry = m_database->rootGroup()->findEntryByUuid(origin.entryUuid);
-        if (!entry) {
+        Entry* entry = database->rootGroup()->findEntryByUuid(origin.entryUuid);
+        if (!entry || !entry->historyItems().contains(origin.revision.data())) {
             return nullptr;
         }
         if (owner) {
             *owner = entry;
         }
-        return entry->historyItems().value(origin.historyIndex);
+        return origin.revision.data();
+    }
+
+    void HistoryFeed::openRegexBuilder()
+    {
+        if (!m_regexBuilder) {
+            // Built on first use: a screen has no window to hang an overlay off
+            // until it has been put in one.
+            m_regexBuilder = new RegexBuilder(m_screen->window());
+            connect(m_regexBuilder, &RegexBuilder::patternApplied, this, [this](const QString& pattern) {
+                // Applied through the search box, so what filters the list is
+                // what the box shows.
+                m_screen->searchBar()->setText(pattern);
+            });
+            connect(m_regexBuilder, &RegexBuilder::patternCopied, this, [](const QString& pattern) {
+                clipboard()->setText(pattern);
+            });
+        }
+        m_regexBuilder->setPattern(m_screen->searchBar()->text());
+        m_regexBuilder->openOverlay();
     }
 
     void HistoryFeed::showDiff(const QString& id)
@@ -709,19 +815,15 @@ namespace Material
                "disk until you save the database.")
                 .arg(entryName(entry), stamp(revision->timeInfo().lastModificationTime()), fields.join(tr(", "))),
             tr("Restore"));
-        connect(confirm, &Dialog::accepted, this, [this, origin] {
-            applyRestore(origin.entryUuid, origin.historyIndex);
-        });
+        // The origin carries a guarded pointer to the revision itself, so what
+        // is put back is what was on the row, however the history has moved
+        // while the question was on screen.
+        connect(confirm, &Dialog::accepted, this, [this, origin] { applyRestore(origin); });
         confirm->openOverlay();
     }
 
-    void HistoryFeed::applyRestore(const QUuid& entryUuid, int historyIndex)
+    void HistoryFeed::applyRestore(const Origin& origin)
     {
-        Origin origin;
-        origin.kind = Origin::Kind::EntryRevision;
-        origin.entryUuid = entryUuid;
-        origin.historyIndex = historyIndex;
-
         Entry* entry = nullptr;
         Entry* revision = revisionAt(origin, &entry);
         if (!revision || !entry) {
@@ -753,28 +855,44 @@ namespace Material
 
         // copyDataFrom() carried the revision's whole TimeInfo across with the
         // rest of its data. The expiry belongs to the state being restored, but
-        // when the entry was created, last reached and last moved does not -
-        // and the modification is happening now.
+        // when the entry was created, last reached and last moved does not.
         TimeInfo restored = entry->timeInfo();
         restored.setCreationTime(before.creationTime());
         restored.setLastAccessTime(before.lastAccessTime());
         restored.setLocationChanged(before.locationChanged());
         restored.setUsageCount(before.usageCount());
+
+        // addHistoryItem() raises modified(), which is what marks the database
+        // as changed so the restore can be saved; truncateHistory() can raise it
+        // again. Entry answers modified() with updateTimeinfo(), which stamps
+        // both the modification and the access time with the moment it arrived -
+        // so the times above are put back afterwards, or the access time this
+        // restore is meant to leave alone would be the one it destroyed.
+        entry->addHistoryItem(undo);
+        entry->truncateHistory();
+
         restored.setLastModificationTime(Clock::currentDateTimeUtc());
         entry->setTimeInfo(restored);
 
-        // addHistoryItem() raises modified(), which is what marks the database
-        // as changed so the restore can be saved.
-        entry->addHistoryItem(undo);
-        entry->truncateHistory();
+        // Nothing has told the entry list that this row changed: it refreshes a
+        // row on Group::entryDataChanged, which carries Entry::entryDataChanged,
+        // and copyDataFrom() assigns Entry's data members directly without
+        // raising it. That signal is emitted only from Entry's own
+        // emitDataChanged() slot, so it is called through the meta-object; the
+        // vault would otherwise keep showing the values the restore replaced.
+        const bool announced = QMetaObject::invokeMethod(entry, "emitDataChanged", Qt::DirectConnection);
+        Q_ASSERT(announced);
+        Q_UNUSED(announced)
 
         Restored record;
         record.when = Clock::currentDateTimeUtc();
         record.id = sessionRestoreId(entry, record.when);
-        record.databasePath = m_databasePath;
         record.entryTitle = name;
         record.revisionTime = revisionTime;
         m_restores.append(record);
+        while (m_restores.size() > MaximumSessionRestores) {
+            m_restores.removeFirst();
+        }
 
         Notify::success(tr("Revision restored"),
                         tr("\"%1\" is back as it was on %2. Changed back: %3. The state it was in has been kept as a "

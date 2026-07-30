@@ -23,6 +23,7 @@
 #include <QDateTime>
 #include <QHash>
 #include <QObject>
+#include <QPointer>
 #include <QSharedPointer>
 #include <QString>
 #include <QUuid>
@@ -33,6 +34,8 @@ class Entry;
 
 namespace Material
 {
+    class RegexBuilder;
+
     /**
      * What fills the version history destination.
      *
@@ -62,6 +65,9 @@ namespace Material
          * Scope the list to one database, which is also where entry revisions
          * are read from. A null pointer leaves only the save log, which is all
          * that survives a database being closed or locked.
+         *
+         * The reference kept is weak: a feed must never be the reason an
+         * unlocked database stays in memory.
          */
         void setDatabase(const QSharedPointer<Database>& db);
 
@@ -79,7 +85,7 @@ namespace Material
         /**
          * Where a row came from, so an action can find its subject again.
          *
-         * Rows are looked up by id instead of holding an Entry*: the list is
+         * Rows are looked up by id instead of holding a raw Entry*: the list is
          * rebuilt whenever the database changes, and a pointer kept across that
          * could outlive the entry it named.
          */
@@ -95,7 +101,18 @@ namespace Material
             Kind kind = Kind::SaveLog;
             QString logId;
             QUuid entryUuid;
-            int historyIndex = -1;
+            /**
+             * The revision itself, guarded.
+             *
+             * A position in historyItems() cannot name a revision: the list is
+             * oldest first and Entry::truncateHistory() drops from that end, so
+             * every surviving position shifts and an index taken before a
+             * truncation would resolve to a different revision afterwards -
+             * restoring data the user never looked at. A QPointer names one
+             * revision for as long as it exists and nothing once it is gone,
+             * which is the only answer that cannot be wrong.
+             */
+            QPointer<Entry> revision;
         };
 
         /** One change before the screen's filters have had a look at it. */
@@ -113,17 +130,18 @@ namespace Material
         };
 
         /**
-         * A restore this feed performed since the window opened.
+         * A restore this feed performed on the database now in front.
          *
          * Neither the database nor the save log marks a revision as a restore,
-         * so these are the only restores that can be listed truthfully, and
-         * only for as long as the window lives.
+         * so these are the only restores that can be listed truthfully. The
+         * title is a decrypted value, so the list is dropped the moment that
+         * database is locked, closed or swapped for another - it is not kept
+         * for the life of the window.
          */
         struct Restored
         {
             QString id;
             QDateTime when;
-            QString databasePath;
             QString entryTitle;
             QDateTime revisionTime;
         };
@@ -132,26 +150,52 @@ namespace Material
         QVector<Change> savedRevisions() const;
         QVector<Change> sessionRestores() const;
 
+        /**
+         * Let go of everything read from the database.
+         *
+         * Locking hands the database widget a fresh locked database and calls
+         * Database::releaseData() on the old one, which deletes the decrypted
+         * tree. Nothing announces that as a lock - releaseData() silences
+         * Database::modified() before it gets there - but the root group is
+         * destroyed, and that is the moment the entries and their titles stop
+         * existing. Following it is what empties this surface on lock. A reload
+         * or a merge releases the old database the same way, so the feed then
+         * lists only the save log until the window points it at the new one.
+         */
+        void forgetDatabase();
+
         void showDiff(const QString& id);
         void restoreRevision(const QString& id);
 
         void showEntryDiff(const Origin& origin);
         void showSaveDiff(const QString& logId);
-        void applyRestore(const QUuid& entryUuid, int historyIndex);
+        void applyRestore(const Origin& origin);
 
-        /** The revision @p origin names, or nullptr once it is gone. */
+        /** Put the search box's pattern in front of the regex builder. */
+        void openRegexBuilder();
+
+        /**
+         * The revision @p origin names, or nullptr once it is gone.
+         *
+         * A revision counts as gone unless it is still one of @p owner's own
+         * history items: a guarded pointer says the object is alive, not whose
+         * history it is in.
+         */
         Entry* revisionAt(const Origin& origin, Entry** owner) const;
 
         HistoryScreen* m_screen = nullptr;
-        QSharedPointer<Database> m_database;
-        /** Live while a database is in front, so its edits reach the list. */
-        QMetaObject::Connection m_databaseWatch;
+        /** Weak, so a closed or locked database is released on the spot. */
+        QWeakPointer<Database> m_database;
+        /** Live while a database is in front, so its life reaches the list. */
+        QVector<QMetaObject::Connection> m_databaseWatch;
         QString m_databasePath;
         QString m_query;
         /** Everything both sources hold, newest first, before any filtering. */
         QVector<Change> m_changes;
         QHash<QString, Origin> m_origins;
         QVector<Restored> m_restores;
+        /** Built on the first press of the search bar's regex button. */
+        QPointer<RegexBuilder> m_regexBuilder;
     };
 
 } // namespace Material
