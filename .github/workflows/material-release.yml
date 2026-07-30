@@ -453,6 +453,34 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
+      - name: Print the WiX errors last
+        if: failure()
+        shell: pwsh
+        run: |
+          # Deliberately the LAST step of the job. wix.log is already printed by the
+          # Package step and kept as an artifact, but both are unreadable to anyone
+          # reading this job through an API that only returns the tail of the log:
+          # actions/upload-artifact dumps the entire runner environment - several
+          # hundred lines - after every upload, which pushes the real error out of
+          # reach. Printing the errors here puts them in the final few lines, where
+          # they can actually be found.
+          $log = Get-ChildItem '${{ github.workspace }}\build', '${{ github.workspace }}\artifacts' `
+            -Recurse -Filter 'wix.log' -ErrorAction SilentlyContinue | Select-Object -First 1
+          Write-Host '================ WIX ERRORS ================'
+          if ($log) {
+            # candle and light prefix diagnostics with a code such as LGHT0094 or
+            # CNDL0103. Show those first, then a tail of the file for context.
+            $lines = Get-Content $log.FullName
+            $diags = $lines | Select-String -Pattern '(error|warning) [A-Z]{4}\d{4}' -CaseSensitive:$false
+            if ($diags) { $diags | ForEach-Object { Write-Host $_.Line } }
+            else { Write-Host '(no coded diagnostics matched; showing the tail)' }
+            Write-Host '---------------- last 40 lines ----------------'
+            $lines | Select-Object -Last 40 | ForEach-Object { Write-Host $_ }
+          } else {
+            Write-Host 'no wix.log found under build\ or artifacts\'
+          }
+          Write-Host '============== END WIX ERRORS =============='
+
       - name: Refuse a package with no installer in it
         shell: pwsh
         run: |
