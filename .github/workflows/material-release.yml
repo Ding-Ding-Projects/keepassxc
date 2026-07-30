@@ -247,7 +247,20 @@ jobs:
           # would rather not run an installer. Both carry the Qt runtime, the plugins
           # and the CA bundle, because the install rule runs windeployqt.
           New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\artifacts' | Out-Null
-          cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
+          # CPack reports a WiX failure by telling you to go and read wix.log, which
+          # lives inside the build tree and is thrown away with the runner. That is why
+          # this job has never said WHY the MSI could not be built. Print it here, so a
+          # failed run diagnoses itself instead of only announcing that it failed.
+          try {
+            cpack --config build/CPackConfig.cmake -G 'ZIP;WIX' -B '${{ github.workspace }}\artifacts'
+            if ($LASTEXITCODE -ne 0) { throw "cpack exited $LASTEXITCODE" }
+          } catch {
+            Write-Host '::group::wix.log'
+            Get-ChildItem '${{ github.workspace }}\artifacts' -Recurse -Filter 'wix.log' |
+              ForEach-Object { Write-Host "--- $($_.FullName)"; Get-Content $_.FullName }
+            Write-Host '::endgroup::'
+            throw
+          }
           Get-ChildItem '${{ github.workspace }}\artifacts\*.msi', '${{ github.workspace }}\artifacts\*.zip' |
             ForEach-Object { '{0}  {1:N1} MiB' -f $_.Name, ($_.Length / 1MB) }
 
