@@ -61,10 +61,18 @@ component is "finished":
 ```
 for f in src/gui/material/Material*.h; do
   c=${f##*/Material}; c=${c%.h}
+  # Not every header declares a class of its own name: MaterialElevation and
+  # MaterialStyleSheet declare free functions (paintSurface, buildStyleSheet) and
+  # MaterialWidgets is an umbrella include. Those three are expected here and are
+  # not dead; check any OTHER name it prints.
+  case $c in Elevation|StyleSheet|Widgets) continue;; esac
   n=$(grep -rl "\b$c\b" --include=*.cpp src/ | grep -v "material/Material$c" | wc -l)
   [ "$n" = 0 ] && echo "UNREFERENCED: $c"
 done
 ```
+
+It should print nothing. When it printed `SettingsHub`, `SettingsScreen` and `GeneratorSheet`, that was
+3 225 lines of finished UI that had never been constructed.
 
 ### What changed
 
