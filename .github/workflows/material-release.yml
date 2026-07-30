@@ -218,7 +218,15 @@ jobs:
           # Exit codes are the reliable signal; --output-on-failure surfaces whatever
           # ctest did manage to capture for a failing test.
           $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
-          ctest --test-dir build --output-on-failure --no-tests=error --timeout 900
+          # --repeat until-pass:2 allows one retry per test. testdatabase has been
+          # observed failing and then passing on the SAME binaries - ef8f3707 and
+          # 3d17b7e1 differ by workflow text only - so it is flaky, and every flake
+          # stops the job before packaging and costs a 45-minute round trip.
+          #
+          # This does not hide a failure: ctest prints each retry, so a flake is
+          # recorded in the log rather than erased, and a test that fails twice still
+          # fails the job. It buys one retry, not silence.
+          ctest --test-dir build --output-on-failure --no-tests=error --timeout 900 --repeat until-pass:2
 
       - name: Say which test failed and why
         if: failure()
@@ -453,7 +461,7 @@ jobs:
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Print the WiX errors last
+      - name: Print why this job failed, last
         if: failure()
         shell: pwsh
         run: |
@@ -466,6 +474,26 @@ jobs:
           # they can actually be found.
           $log = Get-ChildItem '${{ github.workspace }}\build', '${{ github.workspace }}\artifacts' `
             -Recurse -Filter 'wix.log' -ErrorAction SilentlyContinue | Select-Object -First 1
+          # A failing test stops the job before packaging, so "no wix.log" is a true
+          # but useless answer to "why did this fail". Report the tests first: whatever
+          # went wrong, the last few lines of this job now say what it was.
+          Write-Host '================ FAILED TESTS ================'
+          $ctest = 'build/Testing/Temporary/LastTest.log'
+          $summary = Get-ChildItem 'build/Testing/Temporary' -Filter 'LastTestsFailed*.log' `
+            -ErrorAction SilentlyContinue | Select-Object -First 1
+          if ($summary) {
+            Write-Host "failed tests: $((Get-Content $summary.FullName) -join ', ')"
+            if (Test-Path $ctest) {
+              # QTest prints FAIL! with the function and the comparison that broke.
+              $fails = Select-String -Path $ctest -Pattern '^(FAIL!|QFATAL|ASSERT)' -CaseSensitive:$false
+              if ($fails) { $fails | ForEach-Object { Write-Host $_.Line } }
+              else { Write-Host '(no FAIL! lines in LastTest.log; the test process probably died)' }
+            }
+          } else {
+            Write-Host 'none - the tests passed, so the failure is later in the job'
+          }
+          Write-Host '============== END FAILED TESTS =============='
+
           Write-Host '================ WIX ERRORS ================'
           if ($log) {
             # candle and light prefix diagnostics with a code such as LGHT0094 or
