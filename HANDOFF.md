@@ -1,11 +1,11 @@
 # Handoff — closing the gap between the Material UI and the design
 
-Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6), 29 commits,
-192 files, +10 928 / −1 813.
+Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
+33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
-**Builds and links on MSVC. 43 of 43 tests pass.** The MSI failure that predates this branch has been
-read and fixed — WiX Start Menu shortcuts pointing at documentation the build was configured not to
-produce. §4. The fix has not completed a run yet.
+**Builds and links on MSVC. 43 of 43 tests pass.** Two long-standing CI failures — the MSI and
+CodeQL — have been diagnosed from their actual error output and fixed. Neither fix has completed a
+run yet; §7 says exactly what to check.
 
 This supersedes the previous handoff, which described the Material shell landing. Its §1 ("the vault
 destination is still the stock three-pane widget") is done; several of its other claims were wrong and
@@ -15,8 +15,22 @@ are corrected below.
 
 ## 1. Read this first
 
-**This fork is Windows only.** `src/gui/osutils/nixutils` is gone, so the tree does not configure on
-Linux at all. That is by design, not breakage.
+**This fork is Windows only, and the mechanism matters.** `src/gui/osutils/` ships `winutils/` and
+`macutils/`; `nixutils` is gone. `OSUtils.h` reads:
+
+```c
+#if defined(Q_OS_WIN)
+#include "winutils/WinUtils.h"
+#define osUtils static_cast<OSUtilsBase*>(winUtils())
+#elif defined(Q_OS_MACOS)
+...
+#endif
+```
+
+There is no `#else`. On Linux `osUtils` simply does not exist, so every translation unit that touches
+it fails — across `src/autotype/`, `src/browser/` and `src/gui/`. This is not a missing dependency and
+no apt package fixes it. It is why the tree cannot be built or analysed on a Linux runner, and it cost
+a full CI job (§5) before anyone read the error.
 
 **KeePassXC is invisible to every screen-capture API unless you pass `--allow-screencapture`.**
 `WinUtils.cpp` calls `SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE)` on every top-level
@@ -28,7 +42,8 @@ now cost two sessions hours of misdiagnosis. Always launch with:
 KeePassXC.exe --config %TEMP%\kpxc.ini --allow-screencapture
 ```
 
-**Nothing in this branch has been run.** See §3.
+**Nothing in this branch has ever been run.** Not once. It compiles, links and passes its tests; no
+human or agent has opened the application and looked at the UI this branch exists to change. See §3.
 
 ---
 
@@ -56,8 +71,8 @@ tables, and `SHEETS` / `PALETTE` as JSON) and compared element by element agains
 | `Material::GeneratorSheet` | 520 |
 
 The previous handoff prescribes the objective check for exactly this — grep for the type outside its
-own directory — and it had not been re-run after the shell landed. It is worth re-running whenever a
-component is "finished":
+own directory — and it had not been re-run after the shell landed. Re-run it whenever a component is
+"finished":
 
 ```
 for f in src/gui/material/Material*.h; do
@@ -72,8 +87,8 @@ for f in src/gui/material/Material*.h; do
 done
 ```
 
-It should print nothing. When it printed `SettingsHub`, `SettingsScreen` and `GeneratorSheet`, that was
-3 225 lines of finished UI that had never been constructed.
+It should print nothing, and at `332bf39c` it does. When it printed `SettingsHub`, `SettingsScreen`
+and `GeneratorSheet`, that was 3 225 lines of finished UI that had never been constructed.
 
 ### What changed
 
@@ -94,7 +109,7 @@ It should print nothing. When it printed `SettingsHub`, `SettingsScreen` and `Ge
 ### The defects worth knowing about
 
 Adversarial review of the finished work found 18 problems in code that had already passed review. The
-two that mattered:
+two that mattered are both security-relevant, and both were in code that looked correct:
 
 - **History held a strong `QSharedPointer<Database>`.** Locking neither cleared the surface nor
   released the database, so the decrypted database stayed reachable for the life of the window. It
@@ -108,13 +123,18 @@ Also fixed: a restore was invisible in the vault (`copyDataFrom()` raises nothin
 for), the preserved last-access time was overwritten one line later by `addHistoryItem()`, and Reports
 walked the live entry tree from a worker thread while a nested event loop ran on the GUI thread.
 
+**The standing constraint for anything that touches this surface:** this is a password manager. Never
+fabricate a value, never write a secret to disk or to a log, and never leave a control that looks like
+it works but does not. In particular `HistoryStore` must not persist entry content, passwords or
+attachment bytes to its plaintext JSONL log.
+
 ---
 
 ## 3. How this was verified, and what that is worth
 
-**A full build is impossible in this environment** — Windows-only fork, no `nixutils`. Instead: Qt 6.4
-installed, `uic` and `config-keepassx.h` generated, then `g++ -fsyntax-only -std=c++17` against the
-real headers. That catches everything short of link errors.
+**A full build is impossible in this environment** — Windows-only fork, no `nixutils` (§1). Instead:
+Qt 6.4 installed, `uic` and `config-keepassx.h` generated, then `g++ -fsyntax-only -std=c++17` against
+the real headers. That catches everything short of link errors, and nothing about runtime behaviour.
 
 **Two commits went out broken anyway, and the reason matters.** The check ran against the *working
 tree* while work was landing concurrently, so a `.cpp` could be committed ahead of its `.h`;
@@ -122,7 +142,8 @@ tree* while work was landing concurrently, so a `.cpp` could be committed ahead 
 of them does.
 
 The fix is `scratchpad/verify-and-push.sh`: it resets a detached worktree to `HEAD`, checks *that*, and
-**refuses to push** on any failure. Use it. Do not push otherwise.
+**refuses to push** on any failure. Use it for any C++ change. (It lives in the session scratchpad, not
+the repo — if the scratchpad is gone, rewrite it before the next C++ push rather than pushing blind.)
 
 A green syntax check is not a build. It was wrong about this branch twice.
 
@@ -147,26 +168,37 @@ main.wxs(79) : error LGHT0204 : ICE69: 'CM_FP_share.docs.KeePassXC_UserGuide.htm
 
 **The cause.** `share/windows/wix-template.xml` declared two Start Menu shortcuts targeting
 `[#CM_FP_share.docs.KeePassXC_GettingStarted.html]` and `…_UserGuide.html`. Those file ids exist only
-because `docs/CMakeLists.txt` installs the pages into `${DATA_INSTALL_DIR}/docs` — and that directory
-is added only `if(KPXC_FEATURE_DOCS)`. The workflow configured `-DKPXC_FEATURE_DOCS=OFF`, so the pages
-were never built, never installed, and CPack never emitted their `File` rows. The shortcuts named them
-regardless. `light.exe` does not treat that as a missing icon; it refuses to link.
+because `docs/CMakeLists.txt` installs the pages into `${DATA_INSTALL_DIR}/docs` (`share/docs` on
+Windows) — and that directory is added only `if(KPXC_FEATURE_DOCS)`. The workflow configured
+`-DKPXC_FEATURE_DOCS=OFF`, so the pages were never built, never installed, and CPack never emitted
+their `File` rows. The shortcuts named them regardless. `light.exe` does not treat that as a missing
+icon; it refuses to link.
 
 The package step was coupled to a feature flag that nothing connected it to. Note that theory #3 below
 had the right *variable* and the wrong *mechanism* — it checked for dangling install rules, found none,
-and closed the question. The shortcuts are not install rules.
+and closed the question. The shortcuts are not install rules. Getting the variable right is not the
+same as getting the failure right.
 
-**The fix, in two halves.**
+**The fix, in two halves** (`332bf39c`):
 
-1. `src/CMakeLists.txt` now generates the template with `configure_file(… @ONLY)`, substituting
+1. `src/CMakeLists.txt` generates the template with `configure_file(… @ONLY)`, substituting
    `@KPXC_WIX_DOC_SHORTCUTS@` with the two shortcuts when `KPXC_FEATURE_DOCS` is on and a comment when
    it is off. The MSI builds either way, and the packaged shortcuts and the packaged files can no
-   longer disagree. `@ONLY` matters: the template is full of WiX's own `$(var.CPACK_…)` syntax.
+   longer disagree. `@ONLY` matters: the template is full of WiX's own `$(var.CPACK_…)` syntax that
+   CMake must not touch.
 2. The workflow no longer hard-codes the flag. A step decides it: `gem install asciidoctor`, then
    `--version` to prove it runs, then `KPXC_FEATURE_DOCS=ON` with an explicit `ASCIIDOCTOR_EXE` full
    path. Every failure path downgrades to `OFF` with a `::warning::` rather than failing — a shipped
    installer without help pages beats no installer. `ASCIIDOCTOR_EXE` is passed explicitly because the
    gem installs a `.bat` shim and which extensions `find_program` tries is not worth a 45-minute bet.
+
+Half 2 also fixes a silent defect nobody had noticed: the MSI had been shipping *without* the Getting
+Started and User Guide entries at all.
+
+What was verified locally: the substitution run through real CMake at both settings, both outputs parse
+as XML, all twelve `$(var.CPACK_…)` references survive, and — checked rather than assumed — the `&&` in
+the docs custom command reaches a shell instead of being escaped by `VERBATIM`. What was not verified:
+the packaging run itself.
 
 ### Do not re-try these
 
@@ -174,7 +206,7 @@ and closed the question. The shortcuts are not install rules.
 | --- | --- | --- |
 | 1 | the `-snapshot` version string | `CPACK_PACKAGE_VERSION` uses `KEEPASSXC_VERSION_CLEAN`, which strips it |
 | 2 | `qt.conf` installed twice | it is not |
-| 3 | `KPXC_FEATURE_DOCS=OFF` breaks install rules | it does not — but see above, the flag *was* the cause, through the WiX shortcuts |
+| 3 | `KPXC_FEATURE_DOCS=OFF` breaks install rules | it does not — but the flag *was* the cause, through the WiX shortcuts. See above |
 | 4 | `cpack --config … -B artifacts` | changed to `cd build && cpack`; no effect. Kept, as it matches the workflow that last shipped an MSI |
 | 5 | missing `WixUIExtension.dll` | adding it **caused** `LGHT0091 Duplicate symbol`: CPack already passes it whenever `CPACK_WIX_UI_REF` is set |
 | 6 | the duplicate from #5 | reverted in `f6f9d8c4` |
@@ -194,47 +226,96 @@ final ~30 lines:
 ===== WIX ERRORS  ... END WIX ERRORS  =====     LGHT####/CNDL#### codes, then 40 lines of wix.log
 ```
 
-Fetch it with a **small** tail (45–70 lines). It paid for itself twice: it caught theory #5 as
-self-inflicted within one run, and it produced the ICE67/ICE69 text above. If the MSI ever breaks
-again, read that block first and fix exactly what the code names — `LGHT0091` duplicate symbol,
-`LGHT0094` unresolved symbol, `LGHT0103` file not found, `LGHT0204`/`LGHT0217` ICE validation,
-`CNDL####` a candle compile error. `no wix.log found` means packaging never ran; read the FAILED TESTS
-block instead.
-
-**Unverified:** the fix has not completed a run yet.
+Fetch it with a **small** tail (45–70 lines; 40 is not enough — it lands mid-block). It paid for itself
+twice: it caught theory #5 as self-inflicted within one run, and it produced the ICE67/ICE69 text
+above. If the MSI breaks again, read that block first and fix exactly what the code names — `LGHT0091`
+duplicate symbol, `LGHT0094` unresolved symbol, `LGHT0103` file not found, `LGHT0204`/`LGHT0217` ICE
+validation, `CNDL####` a candle compile error. `no wix.log found` means packaging never ran; read the
+FAILED TESTS block instead.
 
 ---
 
-## 5. Still open
+## 5. CodeQL: also read, also fixed
 
-- **The MSI fix is unverified.** §4 explains it; no run has completed against it yet.
+`Analyze (cpp)` had been red on every run for the life of the branch, and was written off in an earlier
+handoff as "pre-existing, unrelated, maintainer's call". It was neither pre-existing in any useful
+sense nor unfixable — it built on `ubuntu-latest`, and §1 is why that can never work. The job died at
+~28% and reported `CodeQL job status was configuration error` every time.
+
+The choice was to drop `cpp` from the matrix — leaving a password manager with no static analysis at
+all — or to analyse the platform the fork actually targets. `codeql.yml` (`785e4f02`) now runs the same
+MSVC + Ninja + vcpkg recipe `material-release.yml` builds and ships with, sharing its vcpkg cache key.
+Configure runs *before* `codeql init` deliberately, so the tracer captures `src/` and not the vcpkg
+ports. A `codeql-<ref>` concurrency group with `cancel-in-progress: true` was added — unlike a release,
+a superseded analysis is worth nothing.
+
+---
+
+## 6. Still open
+
+- **Both CI fixes are unverified.** §7.
 - **`testdatabase` is flaky.** It failed and then passed on *identical binaries* (`ef8f3707..3d17b7e1`
   differ by workflow text alone). `ctest --repeat until-pass:2` bounds it: retries are printed, and a
   test failing twice still fails the job. Note `testmerge`, which the previous handoff recorded as a
   pre-existing Windows failure, now passes.
-- **`Analyze (cpp)` — fixed, pending its first Windows run.** CodeQL built on `ubuntu-latest` and died
-  at ~28% every time, because `src/gui/osutils/OSUtils.h` defines `osUtils` under `Q_OS_WIN` and
-  `Q_OS_MACOS` and has **no `#else`** — on Linux the macro does not exist, so every unit that touches
-  it fails. No apt package would have fixed that. `codeql.yml` now runs the same MSVC + Ninja + vcpkg
-  recipe `material-release.yml` ships with, sharing its vcpkg cache key. Configure runs *before*
-  `codeql init` so the tracer sees `src/` and not the vcpkg ports. Unverified: it has not completed a
-  run yet, and the first one pays for a cold cache.
+- **The vcpkg cache is never hit.** "Restore the vcpkg cache" completes in ~1 second on every run and
+  Configure then spends 29+ minutes building ports from source — a restore of `.ci-vcpkg` plus the
+  archives could not finish in a second. This is most of the 45-minute round-trip time this branch has
+  been losing. Not yet diagnosed; the likely cause is that runs keep being cancelled or failing before
+  `actions/cache`'s post-step save ever commits the key. Check a run that reached
+  "Post Restore the vcpkg cache" and see whether the save ran or was skipped. **Costs time, not
+  correctness** — do not fix it while a Windows run is live.
 - **Branch archive.** `.github/workflows/archive-branches.yml` bundles all 25 branches with full
   history, verifies the archive restores every tip, and publishes it as a release. It is
-  `workflow_dispatch` only and **has never been run**. Nothing may be deleted until it has.
-- **`main` / branch cleanup** was requested and then parked. Note there is no `main`; the default is
-  `develop`. Of the 24 other branches, 14 share **no common ancestor** with this fork — merging one
-  means resolving 366–686 file conflicts.
+  `workflow_dispatch` only and **has never been run** — an agent cannot trigger it. **A human must run
+  Actions → "Archive branches".** Nothing may be deleted until that release exists and its
+  `BRANCHES.txt` lists all 25. The bundle was verified locally: 25/25 tips, 59 tags, fsck clean, clones
+  successfully.
+- **`main` / branch cleanup** was requested and then parked by the user. Note there is no `main`; the
+  default is `develop`. Of the 24 other branches, 14 share **no common ancestor** with this fork —
+  merging one means resolving 366–686 file conflicts. The user's stated preference, if this resumes,
+  was `git merge -s ours` for those 14 and a fresh `gh-pages`.
 - **Two commits do not compile** (`edc96650`, `593c3ac`). Harmless unless you bisect; can be folded
   into their parents if the history should be clean.
+- **The UI has never been run.** §1. Everything in §2 is verified by reading and by the compiler, not
+  by use.
 
 ---
 
-## 6. Traps
+## 7. Pick it up here
 
-1. **Every push cancels the pending Windows run.** The workflow serialises per branch and only one run
-   may wait. Pushing repeatedly means no run ever completes — which is why the `wix.log` diagnostic sat
-   unexecuted through five pushes. Push, then wait.
+Head is `332bf39c`. Everything is committed and pushed; the working tree is clean.
+
+Two runs decide whether shipping is closed. Neither had finished when this was written:
+
+| run | commit | checks |
+| --- | --- | --- |
+| `material-release` 30566007547 | `332bf39c` | the MSI fix |
+| `codeql` 30566014569 | `332bf39c` | the first Windows analysis |
+
+**For the MSI run**, fetch the `Test (Windows x64)` job log with a tail of 45–70 lines.
+
+- No `===== WIX ERRORS =====` block and an MSI artifact → **shipping is closed.** Say so on PR #6,
+  name the MSI's size, note the suite is green, and note whether the offline documentation shipped.
+- Still failing → read the LGHT/CNDL code and fix exactly what it names. Do not open a seventh
+  configuration theory; §4 lists six dead ones.
+- Also confirm whether "Decide whether the offline documentation can be rendered" chose ON or OFF. It
+  completed in 6 seconds, which is fast for `gem install asciidoctor`, so check it did not quietly fall
+  through to OFF. CMake's feature summary in the Configure output prints `Documentation`. An OFF here
+  is not a failure — the MSI is still valid — but it means the help pages did not ship.
+
+**For the CodeQL run**, confirm the Windows build completed and the analysis uploaded. Its first run
+pays for a cold vcpkg cache, so it is slow.
+
+---
+
+## 8. Traps
+
+1. **Pushing costs you runs, but not symmetrically.** `material-release` sets
+   `cancel-in-progress: false`, so a push does *not* disturb a run that is already executing — it
+   replaces the single *pending* run. `codeql` sets `cancel-in-progress: true`, so a push **does** kill
+   an in-flight analysis and restart it from a cold cache. Before pushing, check what is in flight.
+   Pushing repeatedly is why the `wix.log` diagnostic sat unexecuted through five rounds.
 2. **`git bundle verify` will tell you an archive is complete when it is not.** This working clone was
    *shallow*; bundling it dropped 11 of 25 branches and still reported "records a complete history" —
    true only against its own shallow boundary. Check `git rev-parse --is-shallow-repository` first.
@@ -244,3 +325,7 @@ block instead.
 5. **Findings are not facts.** A 235-finding audit of this UI produced 104 confirmed and 131 refuted
    after adversarial verification. Have claims refuted before acting on them; several "gaps" were
    features that already existed, and one attributed the extended FAB's metrics to `FilledButton`.
+6. **"Pre-existing and unrelated" is a conclusion, not an excuse.** Both CI failures in §4 and §5 were
+   filed that way for rounds. One was a template referencing files a flag had removed; the other was a
+   Linux runner compiling a Windows-only tree. Both were readable from their own error output the whole
+   time. Read the error before classifying the failure.
