@@ -23,6 +23,8 @@
 #include <QStringList>
 #include <QWidget>
 
+class QAction;
+class QMenu;
 class QStackedWidget;
 
 namespace Material
@@ -51,6 +53,14 @@ namespace Material
      * A SnackbarHost covers the stack so toasts float over the content and
      * never over the rail or the app bar.
      *
+     * The rail is painted, not built from widgets, so none of what it offers is
+     * a QAction and none of it would reach the command palette, which lists
+     * commands by walking the window's action tree. The shell therefore carries
+     * an action per destination and one for the rail's theme toggle, grouped
+     * under menus that exist only to name them - see menuPathOf(). Locking is
+     * deliberately absent: the window's Lock All Databases action is what the
+     * rail already triggers, and the palette lists that one under Database.
+     *
      * The shell takes ownership of every page passed to addDestination(),
      * removing it from its previous layout first, so an existing widget can be
      * moved into a destination without leaving a stale layout item behind.
@@ -76,6 +86,9 @@ namespace Material
          *
          * @p page is reparented into the destination stack; passing nullptr
          * creates an empty page so the rail tile still has somewhere to go.
+         *
+         * A command carrying @p label and @p symbol is added alongside the rail
+         * tile, so the destination is reachable from the command palette too.
          */
         void addDestination(const QString& id,
                             QWidget* page,

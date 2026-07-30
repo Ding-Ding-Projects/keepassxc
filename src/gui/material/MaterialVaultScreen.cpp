@@ -60,6 +60,7 @@
 #include <QResizeEvent>
 #include <QScopedValueRollback>
 #include <QStackedWidget>
+#include <QTimer>
 #include <QUrl>
 #include <QVBoxLayout>
 
@@ -82,6 +83,8 @@ namespace Material
         constexpr float EmptyGlyphOpacity = 0.5f;
         /** Below this the row sheds its url, health and modified columns. */
         constexpr int CompactListWidth = 620;
+        /** How often the detail pane's one-time password is checked for a roll-over. */
+        constexpr int TotpWatchInterval = 1000;
 
         /** A type role rescaled to another design size; the scale is anchored at 14px. */
         QFont scaledFont(TypeRole role, int designPx)
@@ -170,21 +173,117 @@ namespace Material
             return 4;
         }
 
-        QString qualityLabel(PasswordHealth::Quality quality)
+        /** A database icon number and the Material Symbols name that stands for it. */
+        struct IconSymbol
         {
-            switch (quality) {
-            case PasswordHealth::Quality::Bad:
-                return VaultScreen::tr("Bad");
-            case PasswordHealth::Quality::Poor:
-                return VaultScreen::tr("Poor");
-            case PasswordHealth::Quality::Weak:
-                return VaultScreen::tr("Weak");
-            case PasswordHealth::Quality::Good:
-                return VaultScreen::tr("Good");
-            case PasswordHealth::Quality::Excellent:
-                return VaultScreen::tr("Excellent");
+            int icon;
+            const char* symbol;
+        };
+
+        /**
+         * The database icons that have an unambiguous counterpart in the symbol
+         * set, by their number in `share/icons/database`. The default key (0) is
+         * deliberately absent so that an entry whose icon was never chosen can
+         * still be named after what it holds; anything else missing here keeps
+         * the fallback below.
+         */
+        constexpr IconSymbol IconSymbols[] = {
+            {1, "public"},
+            {2, "warning"},
+            {3, "dns"},
+            {4, "content_paste"},
+            {5, "translate"},
+            {7, "edit_note"},
+            {8, "cable"},
+            {9, "badge"},
+            {10, "person"},
+            {11, "photo"},
+            {13, "vpn_key"},
+            {16, "language"},
+            {18, "desktop_windows"},
+            {19, "mail"},
+            {21, "calendar_month"},
+            {24, "lan"},
+            {25, "mail"},
+            {26, "save"},
+            {27, "storage"},
+            {29, "terminal"},
+            {30, "terminal"},
+            {32, "analytics"},
+            {34, "settings"},
+            {36, "folder_zip"},
+            {38, "storage"},
+            {39, "history"},
+            {40, "mail"},
+            {42, "memory"},
+            {43, "delete"},
+            {44, "notes"},
+            {46, "help"},
+            {47, "inventory"},
+            {48, "folder"},
+            {49, "folder_open"},
+            {50, "folder_zip"},
+            {51, "lock_open"},
+            {52, "lock"},
+            {53, "check_circle"},
+            {54, "verified"},
+            {55, "image"},
+            {56, "person"},
+            {57, "article"},
+            {58, "vpn_key"},
+            {59, "code"},
+            {61, "settings"},
+            {62, "desktop_windows"},
+            {64, "desktop_windows"},
+            {65, "desktop_windows"},
+            {66, "account_balance"},
+            {67, "verified_user"},
+        };
+
+        /**
+         * The Material Symbols name for one entry's tile in the detail pane.
+         *
+         * The list row can leave its symbol empty and let the delegate fall back
+         * to the entry's own icon, because a delegate paints a QIcon; the pane is
+         * handed a symbol name instead, so the same icon has to be named. A
+         * custom icon has no name to give, and neither has an icon outside the
+         * table above - both keep `key`, which is the row's fallback too.
+         */
+        QString entrySymbol(const Entry* entry)
+        {
+            if (entry->iconUuid().isNull()) {
+                for (const auto& mapping : IconSymbols) {
+                    if (mapping.icon == entry->iconNumber()) {
+                        return QString::fromLatin1(mapping.symbol);
+                    }
+                }
             }
-            return {};
+            // Nothing was chosen for it, so say what it holds: the design's
+            // passkey entry carries the passkey glyph rather than a key.
+            if (entry->hasPasskey()) {
+                return QStringLiteral("passkey");
+            }
+            return QStringLiteral("key");
+        }
+
+        /** The tag that marks an entry as a favourite, as the importers write it. */
+        const QString& favouriteTag()
+        {
+            static const QString tag = QStringLiteral("Favorite");
+            return tag;
+        }
+
+        /**
+         * The one-time password step the current moment falls in.
+         *
+         * Steps are aligned to the epoch, so the code changes exactly when this
+         * number does. It is what the pane draws its countdown ring from, and
+         * what keeps the digits beside the ring in step with it here.
+         */
+        qint64 totpStep(int period)
+        {
+            const int step = period > 0 ? period : static_cast<int>(Totp::DEFAULT_STEP);
+            return QDateTime::currentSecsSinceEpoch() / step;
         }
 
         QString formatSize(qint64 bytes)
@@ -505,6 +604,14 @@ namespace Material
 
         m_entryModel = new EntryListModel(this);
         m_groupModel = new GroupTreeModel(this);
+
+        // The pane counts its ring down from the wall clock but is only ever
+        // handed one code, so the step boundary is watched from here and a fresh
+        // code pushed across it. A second is enough: the check is a division.
+        m_totpTimer = new QTimer(this);
+        m_totpTimer->setInterval(TotpWatchInterval);
+        m_totpTimer->setTimerType(Qt::CoarseTimer);
+        connect(m_totpTimer, &QTimer::timeout, this, &VaultScreen::refreshTotp);
 
         auto* root = new QVBoxLayout(this);
         root->setContentsMargins(0, 0, 0, 0);
@@ -1053,24 +1160,35 @@ namespace Material
         Entry* entry = m_dbWidget && !m_dbWidget->isLocked() ? m_dbWidget->currentSelectedEntry() : nullptr;
         if (!entry) {
             m_detail->clear();
+            m_totpStep = -1;
+            updateTotpTimer();
             return;
         }
 
         EntryDetailData data;
         data.title = entry->resolveMultiplePlaceholders(entry->title());
         data.url = entry->resolveMultiplePlaceholders(entry->displayUrl());
+        data.symbol = entrySymbol(entry);
         data.username = entry->resolveMultiplePlaceholders(entry->username());
         data.password = entry->resolveMultiplePlaceholders(entry->password());
         data.notes = entry->notes();
         data.health = m_entryModel->healthOf(entry);
-        data.favourite = entry->tags().split(QLatin1Char(','), Qt::SkipEmptyParts).contains(QStringLiteral("Favorite"));
+        // tagList() is the stored list: already trimmed, so a tag written with
+        // spaces around it still registers.
+        data.favourite = entry->tagList().contains(favouriteTag());
 
         if (!entry->password().isEmpty()) {
-            const auto health = entry->passwordHealth();
-            data.strengthPercent = qBound(0, health->score(), 100);
-            data.strengthLabel = qualityLabel(health->quality());
+            data.strengthPercent = qBound(0, entry->passwordHealth()->score(), 100);
+        }
+        // The meter is labelled with the health state, not with the password
+        // quality: Healthy / Weak / Reused / Breached, the one vocabulary the
+        // row's health column and the meter's own tint already share. An entry
+        // that cannot be judged is left unlabelled rather than read "Unknown".
+        if (data.health != Health::Unknown) {
+            data.strengthLabel = Theme::healthLabel(data.health);
         }
 
+        m_totpStep = -1;
         if (entry->hasTotp()) {
             bool valid = false;
             const QString code = entry->totp(&valid);
@@ -1080,6 +1198,9 @@ namespace Material
             const auto settings = entry->totpSettings();
             if (settings && settings->step > 0) {
                 data.totpPeriod = static_cast<int>(settings->step);
+            }
+            if (!data.totpCode.isEmpty()) {
+                m_totpStep = totpStep(data.totpPeriod);
             }
         }
 
@@ -1095,6 +1216,35 @@ namespace Material
                                   : tr("No previous versions");
 
         m_detail->setEntryData(data);
+        updateTotpTimer();
+    }
+
+    void VaultScreen::refreshTotp()
+    {
+        if (m_totpStep < 0 || totpStep(m_detail->entryData().totpPeriod) == m_totpStep) {
+            return;
+        }
+        // Same entry, only a newer code. The pane rebuilds itself from whatever
+        // it is handed, so the reveal is put back the way the user left it -
+        // this is not a new selection, where hiding the password is the point.
+        const bool revealed = m_detail->isPasswordVisible();
+        updateDetail();
+        if (m_totpStep >= 0) {
+            m_detail->setPasswordVisible(revealed);
+        }
+    }
+
+    void VaultScreen::updateTotpTimer()
+    {
+        const bool run = m_totpStep >= 0;
+        if (run == m_totpTimer->isActive()) {
+            return;
+        }
+        if (run) {
+            m_totpTimer->start();
+        } else {
+            m_totpTimer->stop();
+        }
     }
 
     void VaultScreen::copyField(const QString& field)
@@ -1118,19 +1268,17 @@ namespace Material
             return;
         }
 
-        static const QString favouriteTag = QStringLiteral("Favorite");
-        QStringList tags = entry->tags().split(QLatin1Char(','), Qt::SkipEmptyParts);
-        for (QString& tag : tags) {
-            tag = tag.trimmed();
-        }
-        const bool has = tags.contains(favouriteTag);
+        // The stored list, trimmed and de-duplicated by setTags() already, so the
+        // test below and the one the detail pane is given cannot disagree.
+        QStringList tags = entry->tagList();
+        const bool has = tags.contains(favouriteTag());
         if (favourite == has) {
             return;
         }
         if (favourite) {
-            tags.append(favouriteTag);
+            tags.append(favouriteTag());
         } else {
-            tags.removeAll(favouriteTag);
+            tags.removeAll(favouriteTag());
         }
         entry->setTags(tags.join(QLatin1Char(',')));
         updateTags();

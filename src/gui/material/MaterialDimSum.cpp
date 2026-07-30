@@ -29,6 +29,7 @@
 #include <QEasingCurve>
 #include <QFile>
 #include <QFileInfo>
+#include <QFontMetrics>
 #include <QGraphicsOpacityEffect>
 #include <QHBoxLayout>
 #include <QJsonArray>
@@ -66,15 +67,21 @@ namespace Material
         /** One launch in a hundred, drawn from the system entropy source. */
         constexpr int OddsDenominator = 100;
 
-        /** Room the card leaves itself for the el2 shadow. */
+        /** Room the card leaves itself for the el3 shadow. */
         constexpr int ShadowMargin = 24;
         constexpr int EdgeMargin = 20;
-        constexpr int CardWidth = 340;
+        constexpr int CardWidth = 360;
+        /** Inset between the card's edge and its contents. */
+        constexpr int CardPadding = 8;
+        /** Gap between the art, the text column and the close button. */
+        constexpr int RowSpacing = 12;
         constexpr int ArtSize = 56;
-        constexpr int CloseSize = 24;
+        constexpr int CloseSize = 36;
+        constexpr int CloseGlyphSize = 18;
 
-        /** Travel of the slide-in, to the right of the resting position. */
-        constexpr int Slide = 28;
+        /** sheetIn lifts the card 18px into its resting place, over 260ms. */
+        constexpr int Rise = 18;
+        constexpr int RiseDuration = 260;
 
         /** How long the card stays put before it fades away. */
         constexpr int Hold = 6000;
@@ -101,46 +108,50 @@ namespace Material
         }
 
         /**
-         * The line under the dish, one per playfulness level. Only the copy
+         * The line under the dish, written at two levels only. Only the copy
          * around the dish is styled this way - the dish's own name is a fact and
          * is written out identically at every level, in both languages.
          */
-        const char* const EnglishCaptions[Voice::MaxLevel] = {
-            "A dim sum illustration, shown at random on one launch in a hundred.",
-            "A dim sum illustration. Back to your database.",
-            "A little dim sum, on the house.",
-            "Yum cha o'clock. Your passwords will keep.",
-            "The trolley came past! Take one before it rolls off. Your database is still locked.",
-        };
+        const char* const PlainEnglishCaption = "A dim sum dish, shown once at startup.";
+        const char* const PlayfulEnglishCaption =
+            "Startup dim sum: translucent, pleated, and none of your business.";
+        const char16_t* const PlainCantoneseCaption = u"開機時出現嘅一款點心。";
+        const char16_t* const PlayfulCantoneseCaption = u"開機點心：透光、有摺、同你啲密碼冇關。";
 
-        const char16_t* const CantoneseCaptions[Voice::MaxLevel] = {
-            u"點心插圖，每一百次啟動隨機顯示一次。",
-            u"點心插圖。返去你嘅資料庫啦。",
-            u"請你食件點心。",
-            u"得閒飲茶。密碼喺度等你。",
-            u"點心車經過！快啲叫一籠。你個資料庫仲鎖住，唔使急。",
-        };
+        /**
+         * Highest English level that still reads as the plain line. The voice
+         * catalogue stores variants at levels 1, 3 and 5 and resolves any other
+         * level by walking down until it finds one, so level 2 lands on the
+         * level 1 wording; the caption follows the same steps.
+         */
+        constexpr int PlainCaptionCeiling = 2;
 
-        QString captionFor(Voice::Language language, int level)
-        {
-            const int index = qBound(Voice::MinLevel, level, Voice::MaxLevel) - 1;
-            if (language == Voice::Language::Cantonese) {
-                return QString::fromUtf16(CantoneseCaptions[index]);
-            }
-            return QString::fromUtf8(EnglishCaptions[index]);
-        }
-
-        /** The caption in the active language mode, at that language's funny level. */
+        /**
+         * The caption in the active language mode.
+         *
+         * The plain line belongs to a professional English setting; anything
+         * more playful, and a Cantonese reader in every case, gets the second
+         * line, which is how the design pitches the pair.
+         */
         QString funnyCaption()
         {
             const Voice::Language language = Voice::language();
-            if (language != Voice::Language::Bilingual) {
-                return captionFor(language, Voice::funnyLevel(language));
+            const bool plain = language != Voice::Language::Cantonese
+                               && Voice::funnyLevel(Voice::Language::English) <= PlainCaptionCeiling;
+            const QString english = QString::fromUtf8(plain ? PlainEnglishCaption : PlayfulEnglishCaption);
+            const QString cantonese = QString::fromUtf16(plain ? PlainCantoneseCaption : PlayfulCantoneseCaption);
+
+            switch (language) {
+            case Voice::Language::Cantonese:
+                return cantonese;
+            case Voice::Language::Bilingual:
+                // Both halves, joined inline rather than with the catalogue's
+                // newline: the caption is a single elided line on this card.
+                return english + QStringLiteral(" · ") + cantonese;
+            case Voice::Language::English:
+                break;
             }
-            // Bilingual carries both lines, each styled by its own slider.
-            return captionFor(Voice::Language::English, Voice::funnyLevel(Voice::Language::English))
-                   + QChar(Voice::BilingualSeparator)
-                   + captionFor(Voice::Language::Cantonese, Voice::funnyLevel(Voice::Language::Cantonese));
+            return english;
         }
 
         /**
@@ -381,14 +392,14 @@ namespace Material
         auto* root = new QVBoxLayout(this);
         root->setContentsMargins(ShadowMargin, ShadowMargin, ShadowMargin, ShadowMargin);
 
-        m_card = new Card(Card::Variant::Filled, Shape::ExtraLarge, this);
-        m_card->setFillRole(Role::SurfaceContainerHigh);
+        m_card = new Card(Card::Variant::Filled, Shape::Row, this);
+        m_card->setFillRole(Role::SurfaceContainerLowest);
         m_card->setFixedWidth(CardWidth);
         root->addWidget(m_card);
 
         auto* row = new QHBoxLayout;
         row->setContentsMargins(0, 0, 0, 0);
-        row->setSpacing(12);
+        row->setSpacing(RowSpacing);
 
         m_artLabel = new QLabel(m_card);
         m_artLabel->setFixedSize(ArtSize, ArtSize);
@@ -400,18 +411,22 @@ namespace Material
         text->setContentsMargins(0, 0, 0, 0);
         text->setSpacing(4);
 
-        m_nameLabel = new QLabel(m_dish.displayName(), m_card);
-        m_nameLabel->setWordWrap(true);
+        // Both lines are single-line and elided in applyTheme(), which is where
+        // the font they have to be measured against is set.
+        m_caption = funnyCaption();
+
+        m_nameLabel = new QLabel(m_card);
+        m_nameLabel->setWordWrap(false);
         text->addWidget(m_nameLabel);
 
-        m_captionLabel = new QLabel(funnyCaption(), m_card);
-        m_captionLabel->setWordWrap(true);
+        m_captionLabel = new QLabel(m_card);
+        m_captionLabel->setWordWrap(false);
         text->addWidget(m_captionLabel);
         row->addLayout(text, 1);
 
         auto* close = new IconButton(QStringLiteral("close"), m_card);
         close->setDiameter(CloseSize);
-        close->setSymbolSize(16);
+        close->setSymbolSize(CloseGlyphSize);
         close->setFocusPolicy(Qt::NoFocus);
         close->setToolTip(tr("Dismiss"));
         close->setAccessibleName(tr("Dismiss the dim sum card"));
@@ -424,7 +439,8 @@ namespace Material
         m_artLabel->setAccessibleName(m_dish.displayName());
         m_artLabel->setAccessibleDescription(tr("An illustration of %1.").arg(m_dish.displayName()));
         m_card->setAccessibleName(tr("Dim sum: %1").arg(m_dish.displayName()));
-        m_card->setAccessibleDescription(m_captionLabel->text());
+        // The untruncated caption, not whatever the label ended up eliding to.
+        m_card->setAccessibleDescription(m_caption);
 
         // The hold timer is built first, and deliberately so: the animation's
         // `finished` handler arms it, so connecting that handler while
@@ -499,12 +515,12 @@ namespace Material
         }
 
         m_animation->stop();
-        m_animation->setDuration(Duration::Long);
+        m_animation->setDuration(RiseDuration);
         m_animation->setEasingCurve(emphasizedCurve());
         m_animation->setStartValue(0.0);
         m_animation->setEndValue(1.0);
         m_animation->start();
-        // The hold is armed when the slide finishes, so the card really does sit
+        // The hold is armed when the rise finishes, so the card really does sit
         // still for its six seconds.
     }
 
@@ -553,7 +569,7 @@ namespace Material
         // and it needs the margin this widget reserves around the card.
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
-        paintShadow(&painter, cardRect(), Shape::ExtraLarge, 2);
+        paintShadow(&painter, cardRect(), Shape::Row, 3);
     }
 
     void DimSumCard::mousePressEvent(QMouseEvent* event)
@@ -586,18 +602,35 @@ namespace Material
         resize(width, height);
 
         const int restingX = m_host->width() - width - EdgeMargin + ShadowMargin;
-        const int offset = m_reducedMotion ? 0 : qRound(Slide * (1.0 - m_transition));
-        move(restingX + offset, m_host->height() - height - EdgeMargin + ShadowMargin);
+        const int restingY = m_host->height() - height - EdgeMargin + ShadowMargin;
+        // sheetIn rises into place, so the offset is below the resting position.
+        const int offset = m_reducedMotion ? 0 : qRound(Rise * (1.0 - m_transition));
+        move(restingX, restingY + offset);
     }
 
     void DimSumCard::applyTheme()
     {
-        m_nameLabel->setFont(theme()->font(TypeRole::TitleSmall));
+        // Card fits its contents to the density's page padding; the design pins
+        // this one card at 8px, and Card::applyTheme() has just undone that.
+        if (auto* root = m_card->layout()) {
+            root->setContentsMargins(CardPadding, CardPadding, CardPadding, CardPadding);
+        }
+
+        // What the text column is left with once the art, the close button and
+        // the gaps either side of them have taken their share.
+        const int textWidth = CardWidth - 2 * CardPadding - ArtSize - CloseSize - 2 * RowSpacing;
+
+        m_nameLabel->setFont(theme()->font(TypeRole::LabelLarge));
         m_nameLabel->setStyleSheet(
             QStringLiteral("background: transparent; color: %1;").arg(theme()->hex(Role::OnSurface)));
-        m_captionLabel->setFont(theme()->font(TypeRole::BodySmall));
+        m_nameLabel->setText(
+            QFontMetrics(m_nameLabel->font()).elidedText(m_dish.displayName(), Qt::ElideRight, textWidth));
+
+        m_captionLabel->setFont(theme()->font(TypeRole::LabelMedium));
         m_captionLabel->setStyleSheet(
             QStringLiteral("background: transparent; color: %1;").arg(theme()->hex(Role::OnSurfaceVariant)));
+        m_captionLabel->setText(QFontMetrics(m_captionLabel->font()).elidedText(m_caption, Qt::ElideRight, textWidth));
+
         reposition();
         update();
     }

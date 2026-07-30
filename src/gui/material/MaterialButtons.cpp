@@ -282,8 +282,8 @@ namespace Material
         painter.setRenderHint(QPainter::Antialiasing);
         paintSurface(&painter, rect(), m_radius, containerColor(), borderColor());
 
-        const QFont font = labelFont();
-        const QFontMetrics metrics(font);
+        const QFont typeface = labelFont();
+        const QFontMetrics metrics(typeface);
         const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
         const int gap = (glyph > 0 && !text().isEmpty()) ? contentGap() : 0;
         // Content is centred in the padded content box rather than in the widget,
@@ -320,7 +320,7 @@ namespace Material
         }
 
         if (!label.isEmpty()) {
-            painter.setFont(font);
+            painter.setFont(typeface);
             painter.setPen(content);
             painter.drawText(QRect(x, 0, labelWidth, height()), Qt::AlignLeft | Qt::AlignVCenter, label);
         }
@@ -644,9 +644,9 @@ namespace Material
     {
         // The design's FAB label is 15px at weight 500 - BodyLarge's size carrying
         // LabelLarge's weight - which no single type role expresses on its own.
-        QFont font = theme()->font(TypeRole::BodyLarge);
-        font.setWeight(QFont::Medium);
-        return font;
+        QFont typeface = theme()->font(TypeRole::BodyLarge);
+        typeface.setWeight(QFont::Medium);
+        return typeface;
     }
 
 } // namespace Material

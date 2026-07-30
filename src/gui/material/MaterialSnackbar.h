@@ -45,9 +45,10 @@ namespace Material
     /**
      * How loud a notification is.
      *
-     * The level picks the colour pair the toast is painted in and decides
-     * whether it leaves on its own: information and success fade out, warnings
-     * and errors wait for the user.
+     * The level picks the glyph a toast leads with and its colour, and decides
+     * whether the toast leaves on its own: information and success fade out,
+     * warnings and errors wait for the user. The surface underneath does not
+     * vary - every toast is painted on the inverse surface.
      */
     enum class SeverityLevel
     {
@@ -66,11 +67,11 @@ namespace Material
     /** Whether @p severity waits for the user instead of timing out. */
     bool severityPersists(SeverityLevel severity);
 
-    /** Surface a notification of @p severity is painted on, from the status roles. */
+    /** The status-role container for @p severity, for surfaces that tint by it. */
     QColor severityContainer(SeverityLevel severity);
     /** Text and glyph colour resolved against severityContainer(). */
     QColor severityOnContainer(SeverityLevel severity);
-    /** Accent for the severity: action labels and the progress fill. */
+    /** Accent for the severity: the leading glyph and the progress fill. */
     QColor severityAccent(SeverityLevel severity);
 
     /**

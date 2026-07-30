@@ -37,6 +37,7 @@ class Group;
 class QLabel;
 class QListView;
 class QStackedWidget;
+class QTimer;
 
 namespace Material
 {
@@ -199,6 +200,18 @@ namespace Material
         void updateResultLine();
         void updateTags();
         void updateDetail();
+        /**
+         * Hand the detail pane a fresh one-time password when the step it was
+         * generated in ends.
+         *
+         * The pane redraws its countdown ring from the wall clock, but the code
+         * itself only ever arrives through setEntryData() and it has no signal
+         * to ask for a newer one - so the step boundary is watched here instead
+         * and the selected entry is read again across it.
+         */
+        void refreshTotp();
+        /** Run that watch only while a code is actually on screen. */
+        void updateTotpTimer();
         void runSearch();
 
         void syncSelectionToDatabase();
@@ -233,6 +246,9 @@ namespace Material
         EntryListModel* m_entryModel = nullptr;
         GroupTreeModel* m_groupModel = nullptr;
         EntryDelegate* m_entryDelegate = nullptr;
+        QTimer* m_totpTimer = nullptr;
+        /** The step the code on screen belongs to; negative when there is none. */
+        qint64 m_totpStep = -1;
 
         QList<QMetaObject::Connection> m_databaseConnections;
         bool m_syncingSelection = false;

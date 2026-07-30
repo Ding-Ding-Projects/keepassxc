@@ -33,7 +33,6 @@ class QVBoxLayout;
 namespace Material
 {
     class ButtonBase;
-    class SegmentedButton;
     class TopAppBar;
 
     /** One line of the notification history. */
@@ -52,10 +51,14 @@ namespace Material
      * The reviewable history behind the snackbars.
      *
      * A snackbar is gone in a few seconds; everything it said is kept here,
-     * newest first, with its severity, its timestamp and whichever of its
-     * actions are still worth offering. The panel opens from the app bar's
-     * notifications button, whose badge carries the unread count, and it can be
-     * filtered by severity or emptied outright.
+     * newest first, with its severity and its timestamp. The panel is toggled
+     * from the app bar's notifications button, whose badge carries the unread
+     * count, and Clear all empties the history and closes it in one gesture.
+     *
+     * It is an Overlay for its sheet transition and its Escape handling only:
+     * unlike every other overlay this one is not modal. It hangs under the app
+     * bar at the top right of the window, draws no scrim, and masks everything
+     * but its own panel away so the interface behind it stays live.
      *
      * History is capped at MaxHistory entries; the oldest fall off the end.
      */
@@ -89,11 +92,8 @@ namespace Material
         int count() const;
         int unreadCount() const;
 
-        /** Severity filter: `all`, `info`, `success`, `warning` or `error`. */
-        QString filter() const;
-        void setFilter(const QString& id);
-
     public slots:
+        /** Empty the history and close the panel, the way the design pairs them. */
         void clearAll();
         void markAllRead();
         void removeEntry(quint64 id);
@@ -105,6 +105,12 @@ namespace Material
         /** Opening the panel is what marks the backlog as seen. */
         void aboutToOpen() override;
 
+        /** The panel's own el3 shadow and nothing else - there is no scrim. */
+        void paintEvent(QPaintEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
+        void showEvent(QShowEvent* event) override;
+        bool eventFilter(QObject* watched, QEvent* event) override;
+
     private:
         void buildSheet();
         QWidget* buildHeader();
@@ -113,18 +119,22 @@ namespace Material
         void rebuild();
         void refreshBadge();
         void applyTheme();
+        /** Toggle, which is what both the app bar bell and the close button do. */
+        void toggleOverlay();
+        /**
+         * Pull the sheet over to the window's top right corner and mask the rest
+         * of the overlay away, so the panel is anchored and non-modal.
+         */
+        void anchorSheet();
 
         QWidget* m_sheet = nullptr;
         QLabel* m_headline = nullptr;
-        QLabel* m_subhead = nullptr;
         ButtonBase* m_clearButton = nullptr;
-        SegmentedButton* m_filterBar = nullptr;
         QScrollArea* m_scroll = nullptr;
         QVBoxLayout* m_listLayout = nullptr;
         QWidget* m_emptyState = nullptr;
         QPointer<TopAppBar> m_appBar;
         QList<Notification> m_items;
-        QString m_filter = QStringLiteral("all");
         quint64 m_nextId = 1;
     };
 
