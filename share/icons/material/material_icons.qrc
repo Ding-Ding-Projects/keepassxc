@@ -1,29 +1,139 @@
 <!DOCTYPE RCC>
 <RCC version="1.0">
     <qresource prefix="/material">
+        <file>account_tree.svg</file>
+        <file>add_link.svg</file>
+        <file>add_photo_alternate.svg</file>
+        <file>analytics.svg</file>
+        <file>badge.svg</file>
+        <file>block.svg</file>
+        <file>blur_on.svg</file>
         <file>bolt.svg</file>
+        <file>cable.svg</file>
         <file>calendar_month.svg</file>
+        <file>category.svg</file>
         <file>check.svg</file>
+        <file>check_circle.svg</file>
+        <file>checklist.svg</file>
         <file>chevron_right.svg</file>
+        <file>cleaning_services.svg</file>
+        <file>cloud_download.svg</file>
+        <file>cloud_sync.svg</file>
+        <file>compress.svg</file>
+        <file>construction.svg</file>
+        <file>content_paste_off.svg</file>
         <file>credit_card.svg</file>
         <file>dark_mode.svg</file>
+        <file>data_object.svg</file>
+        <file>delete_forever.svg</file>
+        <file>delete_sweep.svg</file>
         <file>description.svg</file>
+        <file>desktop_windows.svg</file>
+        <file>difference.svg</file>
+        <file>dock_to_right.svg</file>
+        <file>edit_note.svg</file>
+        <file>emoji_symbols.svg</file>
+        <file>enhanced_encryption.svg</file>
         <file>expand_less.svg</file>
         <file>expand_more.svg</file>
         <file>extension.svg</file>
+        <file>fast_forward.svg</file>
+        <file>file_download.svg</file>
+        <file>file_upload.svg</file>
+        <file>filter_alt.svg</file>
         <file>filter_list.svg</file>
         <file>folder.svg</file>
+        <file>folder_off.svg</file>
+        <file>folder_shared.svg</file>
+        <file>format_color_fill.svg</file>
+        <file>format_color_text.svg</file>
+        <file>format_quote.svg</file>
+        <file>format_size.svg</file>
+        <file>functions.svg</file>
+        <file>gpp_bad.svg</file>
+        <file>grid_view.svg</file>
         <file>group.svg</file>
+        <file>group_add.svg</file>
+        <file>health_metrics.svg</file>
+        <file>hourglass_top.svg</file>
+        <file>html.svg</file>
+        <file>http.svg</file>
+        <file>image.svg</file>
+        <file>import_export.svg</file>
+        <file>input.svg</file>
+        <file>inventory.svg</file>
+        <file>inventory_2.svg</file>
+        <file>key_vertical.svg</file>
+        <file>keyboard_alt.svg</file>
+        <file>keyboard_command_key.svg</file>
+        <file>keyboard_return.svg</file>
+        <file>lan.svg</file>
         <file>light_mode.svg</file>
+        <file>list.svg</file>
+        <file>lock_clock.svg</file>
+        <file>login.svg</file>
         <file>looks_one.svg</file>
         <file>mail.svg</file>
+        <file>mail_lock.svg</file>
+        <file>manage_search.svg</file>
+        <file>memory.svg</file>
+        <file>menu.svg</file>
         <file>minimize.svg</file>
         <file>more_horiz.svg</file>
         <file>more_vert.svg</file>
         <file>notifications.svg</file>
+        <file>notifications_off.svg</file>
+        <file>numbers.svg</file>
+        <file>open_with.svg</file>
+        <file>palette.svg</file>
         <file>person.svg</file>
+        <file>person_off.svg</file>
+        <file>photo.svg</file>
+        <file>pin.svg</file>
+        <file>play_arrow.svg</file>
+        <file>power.svg</file>
+        <file>preview.svg</file>
+        <file>public.svg</file>
+        <file>push_pin.svg</file>
+        <file>qr_code_2.svg</file>
+        <file>query_stats.svg</file>
+        <file>receipt_long.svg</file>
         <file>regular_expression.svg</file>
+        <file>replay.svg</file>
+        <file>restart_alt.svg</file>
+        <file>restore_page.svg</file>
+        <file>rule.svg</file>
+        <file>save_alt.svg</file>
+        <file>save_as.svg</file>
+        <file>screen_lock_portrait.svg</file>
+        <file>screenshot_monitor.svg</file>
+        <file>sd_card.svg</file>
         <file>search_off.svg</file>
+        <file>security.svg</file>
+        <file>share.svg</file>
+        <file>shield.svg</file>
+        <file>smart_button.svg</file>
+        <file>south_west.svg</file>
+        <file>space_bar.svg</file>
+        <file>speed.svg</file>
         <file>star.svg</file>
+        <file>sticky_note_2.svg</file>
+        <file>straighten.svg</file>
+        <file>style.svg</file>
+        <file>swap_vert.svg</file>
+        <file>switch_account.svg</file>
+        <file>table_view.svg</file>
+        <file>text_fields.svg</file>
+        <file>text_format.svg</file>
+        <file>title.svg</file>
+        <file>touch_app.svg</file>
+        <file>translate.svg</file>
+        <file>usb.svg</file>
+        <file>verified.svg</file>
+        <file>verified_user.svg</file>
+        <file>vertical_align_top.svg</file>
+        <file>view_agenda.svg</file>
+        <file>volunteer_activism.svg</file>
+        <file>window.svg</file>
     </qresource>
 </RCC>
