@@ -220,7 +220,7 @@ namespace Material
             }
             if (bar) {
                 bar->setProgress(Snackbar::NoProgress);
-                QTimer::singleShot(Duration::Toast, bar, &Snackbar::dismiss);
+                QTimer::singleShot(ToastLifetime, bar, &Snackbar::dismiss);
             }
             jobs().remove(id);
         }

@@ -31,7 +31,11 @@ namespace Material
     {
         constexpr int TrackBorder = 2;
         constexpr int CheckSize = 16;
-        constexpr int TrackPadding = 8; // knob travel anchor, measured from each end
+        // The design pins the knob's left edge, not its centre: 6px when off and
+        // 24px when on, at 16px and 24px across. Both anchors are therefore the
+        // centres those left edges imply.
+        constexpr qreal KnobOffCenter = 6.0 + Switch::KnobSizeOff / 2.0; // 14
+        constexpr qreal KnobOnCenter = 24.0 + Switch::KnobSizeOn / 2.0; // 36
 
         constexpr qreal HoverAlpha = 0.08;
         constexpr qreal DisabledOpacity = 0.38;
@@ -64,7 +68,7 @@ namespace Material
         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
         m_animation = new QPropertyAnimation(this, "knobPosition", this);
-        m_animation->setDuration(Duration::Medium);
+        m_animation->setDuration(Duration::Toggle);
         m_animation->setEasingCurve(standardCurve());
 
         connect(theme(), &Theme::changed, this, [this] { update(); });
@@ -156,9 +160,10 @@ namespace Material
         const QColor primary = theme()->color(Role::Primary);
         const QColor outline = theme()->color(Role::Outline);
 
-        // Off is a transparent track; the primary fill fades in with the travel.
-        QColor fill = primary;
-        fill.setAlphaF(static_cast<float>(position));
+        // Off is a solid surfaceContainerHighest track, so the switch still reads
+        // as a control on the settings cards it sits on; it warms to primary with
+        // the travel.
+        const QColor fill = lerp(theme()->color(Role::SurfaceContainerHighest), primary, position);
         const QColor border = lerp(outline, primary, position);
         const QColor knobColor = lerp(outline, theme()->color(Role::OnPrimary), position);
 
@@ -180,12 +185,10 @@ namespace Material
             painter.restore();
         }
 
-        // The knob grows from 16px to 24px while its centre travels between the
-        // two 8px anchors, so both ends keep the same optical padding.
+        // The knob grows from 16px to 24px while its centre travels from 14 to 36,
+        // which leaves 6px of track outside the knob at either end.
         const qreal knobSize = KnobSizeOff + (KnobSizeOn - KnobSizeOff) * position;
-        const qreal from = TrackPadding + KnobSizeOff / 2.0;
-        const qreal to = TrackWidth - TrackPadding - KnobSizeOff / 2.0;
-        const qreal centerX = track.left() + from + (to - from) * position;
+        const qreal centerX = track.left() + KnobOffCenter + (KnobOnCenter - KnobOffCenter) * position;
 
         const QRectF knob(centerX - knobSize / 2.0, track.center().y() + 0.5 - knobSize / 2.0, knobSize, knobSize);
         painter.setPen(Qt::NoPen);

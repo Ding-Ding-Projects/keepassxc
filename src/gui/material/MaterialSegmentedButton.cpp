@@ -118,6 +118,16 @@ namespace Material
         return -1;
     }
 
+    bool SegmentedButton::hasSymbols() const
+    {
+        for (const auto& segment : m_segments) {
+            if (!segment.symbol.isEmpty()) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     void SegmentedButton::relayout()
     {
         const int total = count();
@@ -142,12 +152,15 @@ namespace Material
         }
 
         const QFontMetrics metrics(theme()->font(TypeRole::BodySmall));
+        // Once any segment carries a glyph, every segment reserves room for one -
+        // the selected segment falls back to a check - so picking a different one
+        // never resizes the control. A control with no glyphs anywhere is label
+        // only in the design (the density, language and sort selectors), so it
+        // reserves nothing rather than padding out to a glyph it never draws.
+        const int glyph = hasSymbols() ? SegmentSymbolSize + SegmentGap : 0;
         int widest = 0;
         for (const auto& segment : m_segments) {
-            // Every segment reserves glyph room, selected or not, so picking a
-            // different one never resizes the control.
-            const int width =
-                2 * SegmentPadding + SegmentSymbolSize + SegmentGap + metrics.horizontalAdvance(segment.label);
+            const int width = 2 * SegmentPadding + glyph + metrics.horizontalAdvance(segment.label);
             widest = qMax(widest, width);
         }
         return {qMax(widest, MinSegmentWidth) * count(), Layout::ButtonHeight};
@@ -243,12 +256,16 @@ namespace Material
         painter.setBrush(Qt::NoBrush);
         painter.drawPath(roundedPath(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), Shape::Full));
 
+        // The check that stands in for a missing glyph is only drawn on a control
+        // that reserved glyph width in the first place; see sizeHint().
+        const bool glyphs = hasSymbols();
         for (int i = 0; i < m_segments.size(); ++i) {
             const Segment& segment = m_segments.at(i);
             const bool selected = i == m_currentIndex;
             const QColor content = theme()->color(selected ? Role::OnSecondaryContainer : Role::OnSurface);
-            const QString symbol =
-                !segment.symbol.isEmpty() ? segment.symbol : (selected ? QStringLiteral("check") : QString());
+            const QString symbol = !segment.symbol.isEmpty()
+                                       ? segment.symbol
+                                       : (glyphs && selected ? QStringLiteral("check") : QString());
 
             const int glyph = symbol.isEmpty() ? 0 : SegmentSymbolSize;
             const int gap = (glyph > 0 && !segment.label.isEmpty()) ? SegmentGap : 0;

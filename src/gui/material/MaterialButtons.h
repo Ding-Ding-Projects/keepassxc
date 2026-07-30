@@ -77,6 +77,22 @@ namespace Material
         /** Padding either side of the content; the FAB and icon buttons widen it. */
         virtual int horizontalPadding() const;
 
+        /**
+         * The leading and trailing padding taken separately.
+         *
+         * Both answer horizontalPadding() unless a variant says otherwise. The
+         * FAB is the one control the design gives asymmetric padding to, because
+         * its 24px glyph reads optically wider than the label's right sidebearing.
+         */
+        virtual int leadingPadding() const;
+        virtual int trailingPadding() const;
+
+        /** Gap between the leading glyph and the label. */
+        virtual int contentGap() const;
+
+        /** Typeface of the label; the FAB steps up a size. */
+        virtual QFont labelFont() const;
+
         /** Resolved colours, including the hover, pressed and disabled treatments. */
         QColor containerColor() const;
         QColor contentColor() const;
@@ -201,6 +217,10 @@ namespace Material
     /**
      * The 56px extended FAB pinned to the bottom right of the entry list.
      * primaryContainer on onPrimaryContainer, an 18px radius and an el3 shadow.
+     *
+     * Its metrics are its own: 18px leading / 22px trailing padding, a 12px gap
+     * to the label and a 15px medium label, all larger than the shared button
+     * scale because the FAB is the screen's single most prominent action.
      */
     class ExtendedFab : public ButtonBase
     {
@@ -216,6 +236,9 @@ namespace Material
         Role containerRole() const override;
         Role contentRole() const override;
         int horizontalPadding() const override;
+        int leadingPadding() const override;
+        int contentGap() const override;
+        QFont labelFont() const override;
     };
 
 } // namespace Material

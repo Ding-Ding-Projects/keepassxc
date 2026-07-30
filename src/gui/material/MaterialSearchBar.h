@@ -37,6 +37,10 @@ namespace Material
      * variant is the 44px bar the report, history, changelog and settings
      * screens put under their headline.
      *
+     * Only the Prominent bar offers the Regex toggle. A Surface bar is
+     * builder-only: it shows the one round `regular_expression` button the
+     * design gives it, and hides the chip whatever showRegexControls() says.
+     *
      * The widget is a container, not a QLineEdit: it forwards focus to the
      * input and exposes it through lineEdit() for completers and validators.
      */
@@ -47,8 +51,8 @@ namespace Material
     public:
         enum class Variant
         {
-            Prominent, // Layout::SearchBarHeight, surfaceContainerHigh
-            Surface // Layout::SurfaceSearchHeight, surfaceContainer
+            Prominent, // Layout::SearchBarHeight, chip and builder button
+            Surface // Layout::SurfaceSearchHeight, builder button only
         };
 
         explicit SearchBar(QWidget* parent = nullptr);
@@ -68,7 +72,10 @@ namespace Material
         bool isRegexEnabled() const;
         void setRegexEnabled(bool enabled);
 
-        /** Show or hide the Regex chip and the builder button; shown by default. */
+        /**
+         * Show or hide the whole trailing cluster - the builder button, plus the
+         * Regex chip on a Prominent bar. Shown by default.
+         */
         bool showRegexControls() const;
         void setShowRegexControls(bool show);
 

@@ -18,6 +18,7 @@
 #include "MaterialSettingsHub.h"
 
 #include "MaterialButtons.h"
+#include "MaterialDialog.h"
 #include "MaterialElevation.h"
 #include "MaterialNotifier.h"
 #include "MaterialOverlay.h"
@@ -320,14 +321,14 @@ namespace Material
             buildOverview();
         }
 
-        m_sheet->addSidebarSection(tr("SPEC SHEETS"));
+        // The design's overline is the sheet's own label, not a generic one.
+        m_sheet->addSidebarSection(tr("APPLICATION SETTINGS"));
         buildGeneralPage();
         buildAutoTypePage();
         buildSecurityPage();
         buildBrowserPage();
         buildSshAgentPage();
         buildKeeSharePage();
-        buildPasskeysPage();
         buildGeneratorDefaultsPage();
         buildShortcutsPage();
 
@@ -544,6 +545,32 @@ namespace Material
         m_bindings.append(binding);
     }
 
+    void SettingsHub::addCommand(const QString& pageId,
+                                 const QString& section,
+                                 const QString& symbol,
+                                 const QString& label,
+                                 const QString& sub,
+                                 const QString& commandText,
+                                 std::function<void()> command)
+    {
+        Binding binding;
+        binding.pageId = pageId;
+        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.label = label;
+        binding.sub = sub;
+        binding.control = Control::Command;
+        binding.commandText = commandText;
+        binding.command = std::move(command);
+
+        PillKind kind = PillKind::Action;
+        QString text;
+        pillFor(binding, &kind, &text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+
+        m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
+        m_bindings.append(binding);
+    }
+
     int SettingsHub::indexOf(const QString& pageId, const QString& rowKey) const
     {
         return m_index.value(pageId + IndexSeparator + rowKey, -1);
@@ -551,6 +578,14 @@ namespace Material
 
     void SettingsHub::pillFor(const Binding& binding, PillKind* kind, QString* text) const
     {
+        // A command row carries no configuration value, so nothing is read for
+        // it: the pill is the verb the design gives the action.
+        if (binding.control == Control::Command) {
+            *kind = PillKind::Action;
+            *text = binding.commandText;
+            return;
+        }
+
         const QVariant value = config()->get(binding.key);
         switch (binding.control) {
         case Control::Toggle:
@@ -592,6 +627,8 @@ namespace Material
             *text = unset ? tr("Not set") : tr("Configured");
             return;
         }
+        case Control::Command:
+            return;
         }
     }
 
@@ -637,6 +674,12 @@ namespace Material
         }
         const Binding binding = m_bindings.at(index);
 
+        if (binding.control == Control::Command) {
+            if (binding.command) {
+                binding.command();
+            }
+            return;
+        }
         if (binding.control == Control::Toggle) {
             const bool next = !config()->get(binding.key).toBool();
             config()->set(binding.key, next);
@@ -706,8 +749,15 @@ namespace Material
     {
         const QString page = QStringLiteral("general");
         m_sheet->addPage(page, QStringLiteral("tune"), tr("General"));
+        auto* built = m_sheet->page(page);
+        if (built) {
+            built->setNote(tr("Every option on the Basic Settings tab of Application Settings, in Material form."));
+        }
 
         const QString startup = tr("Startup");
+        if (built) {
+            built->setSectionNote(startup, tr("Config keys SingleInstance … GUI_ShowExpiredEntriesOnDatabaseUnlock."));
+        }
         addToggle(page,
                   startup,
                   QStringLiteral("looks_one"),
@@ -760,6 +810,9 @@ namespace Material
                 Config::DefaultDatabaseFileName);
 
         const QString saving = tr("Saving and backups");
+        if (built) {
+            built->setSectionNote(saving, tr("Saving, reloading and backup behaviour."));
+        }
         addToggle(page,
                   saving,
                   QStringLiteral("save"),
@@ -1139,12 +1192,104 @@ namespace Material
                   tr("Hide the pre-release warning"),
                   tr("Stop warning that this build is not meant for production."),
                   Config::Messages_HidePreReleaseWarning);
+
+        // The three actions that own the configuration file itself. They do
+        // what the classic editor's buttons do, so both surfaces agree.
+        const QString settingsFile = tr("Settings file");
+        if (built) {
+            built->setSectionNote(settingsFile, tr("Config is a plain INI file; these three actions own it."));
+        }
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("restart_alt"),
+                   tr("Reset settings to default…"),
+                   tr("Clears every application setting and the recent database list. Databases are untouched."),
+                   tr("Reset"),
+                   [this] { resetSettings(); });
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("file_download"),
+                   tr("Import settings…"),
+                   tr("Replaces the current settings with the contents of an exported INI file."),
+                   tr("Import"),
+                   [this] { importSettings(); });
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("file_upload"),
+                   tr("Export settings…"),
+                   tr("Writes every stored setting to an INI file."),
+                   tr("Export"),
+                   [this] { exportSettings(); });
+    }
+
+    void SettingsHub::resetSettings()
+    {
+        auto* confirm = Dialog::confirm(window(),
+                                        tr("Reset every setting?"),
+                                        tr("Every application setting goes back to its default and the recent "
+                                           "database list is cleared. Your databases are not touched."),
+                                        tr("Reset"),
+                                        true);
+        connect(confirm, &Dialog::accepted, this, [this] {
+            if (config()->hasAccessError()) {
+                Notify::error(tr("Settings not reset"),
+                              tr("The configuration file cannot be written: %1").arg(config()->getFileName()));
+                return;
+            }
+            config()->resetToDefaults();
+            // The recent database list is not a default, so it is cleared
+            // explicitly - which is what the classic editor does.
+            config()->remove(Config::LastDatabases);
+            config()->remove(Config::LastActiveDatabase);
+            config()->remove(Config::LastKeyFiles);
+            config()->remove(Config::LastDir);
+            config()->sync();
+            refreshAll();
+            Notify::success(tr("Settings reset"),
+                            tr("Every setting is back at its default. Some of them take effect the next time "
+                               "KeePassXC starts."));
+        });
+        confirm->openOverlay();
+    }
+
+    void SettingsHub::importSettings()
+    {
+        const QString file = fileDialog()->getOpenFileName(
+            window(), tr("Import KeePassXC Settings"), QString(), QStringLiteral("*.ini"));
+        if (file.isEmpty()) {
+            return;
+        }
+        if (!config()->importSettings(file)) {
+            Notify::error(tr("Settings not imported"),
+                          tr("%1 is not a valid settings file.").arg(QFileInfo(file).fileName()));
+            return;
+        }
+        refreshAll();
+        Notify::success(tr("Settings imported"),
+                        tr("The settings in %1 are now in force. Some of them take effect the next time "
+                           "KeePassXC starts.")
+                            .arg(QFileInfo(file).fileName()));
+    }
+
+    void SettingsHub::exportSettings()
+    {
+        const QString file = fileDialog()->getSaveFileName(
+            window(), tr("Export KeePassXC Settings"), QString(), QStringLiteral("*.ini"));
+        if (file.isEmpty()) {
+            return;
+        }
+        config()->exportSettings(file);
+        Notify::success(tr("Settings exported"), QFileInfo(file).fileName());
     }
 
     void SettingsHub::buildSecurityPage()
     {
         const QString page = QStringLiteral("security");
         m_sheet->addPage(page, QStringLiteral("shield_lock"), tr("Security"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(
+                tr("Timeouts, lock options, convenience and privacy — the Security tab of Application Settings."));
+        }
 
         const QString timeouts = tr("Timeouts");
         addToggle(page,
@@ -1287,6 +1432,9 @@ namespace Material
     {
         const QString page = QStringLiteral("browser");
         m_sheet->addPage(page, QStringLiteral("extension"), tr("Browser Integration"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("Every Browser_* configuration key, as exposed by BrowserSettingsWidget."));
+        }
 
         const QString integration = tr("Integration");
         addToggle(page,
@@ -1371,6 +1519,14 @@ namespace Material
                   tr("Allow database entry requests"),
                   tr("Let the extension enumerate entries rather than ask per site."),
                   Config::Browser_AllowGetDatabaseEntriesRequest);
+        // The design keeps passkeys here rather than on a page of their own:
+        // they arrive through the same extension and obey the same permissions.
+        addToggle(page,
+                  permissions,
+                  QStringLiteral("passkey"),
+                  tr("Allow passkeys on localhost"),
+                  tr("Permit insecure http://localhost origins, for testing."),
+                  Config::Browser_AllowLocalhostWithPasskeys);
 
         const QString proxy = tr("Proxy application");
         addToggle(page,
@@ -1434,6 +1590,10 @@ namespace Material
     {
         const QString page = QStringLiteral("sshagent");
         m_sheet->addPage(page, QStringLiteral("terminal"), tr("SSH Agent"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(
+                tr("SSHAgent_* keys. Keys are published to the agent only while the database is unlocked."));
+        }
 
         const QString agent = tr("Agent");
         addToggle(page,
@@ -1735,6 +1895,9 @@ namespace Material
     {
         const QString page = QStringLiteral("keeshare");
         m_sheet->addPage(page, QStringLiteral("sync"), tr("KeeShare"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("Share groups between databases as signed containers."));
+        }
 
         const QString sharing = tr("Sharing");
         addToggle(page,
@@ -1761,60 +1924,6 @@ namespace Material
                    tr("Active shares"),
                    tr("Which databases are currently importing or exporting."),
                    Config::KeeShare_Active);
-    }
-
-    void SettingsHub::buildPasskeysPage()
-    {
-        const QString page = QStringLiteral("passkeys");
-        m_sheet->addPage(page, QStringLiteral("passkey"), tr("Passkeys"));
-
-        const QString passkeys = tr("Passkeys");
-        addToggle(page,
-                  passkeys,
-                  QStringLiteral("bug_report"),
-                  tr("Allow localhost with passkeys"),
-                  tr("Permit insecure http://localhost origins, for testing."),
-                  Config::Browser_AllowLocalhostWithPasskeys);
-
-        const QString requirements = tr("What passkeys need");
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("extension"),
-                  tr("Browser integration"),
-                  tr("Passkey requests arrive through the extension; without it nothing is served."),
-                  Config::Browser_Enabled);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("lock_open"),
-                  tr("Unlock for a passkey request"),
-                  tr("Raise the unlock prompt when a passkey lives in a locked database."),
-                  Config::Browser_UnlockDatabase);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("link"),
-                  tr("Match the origin scheme"),
-                  tr("Treat http and https origins as different relying parties."),
-                  Config::Browser_MatchUrlScheme);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("database"),
-                  tr("Search every open database"),
-                  tr("Look beyond the active database for a stored passkey."),
-                  Config::Browser_SearchInAllDatabases);
-
-        const QString prompts = tr("Prompts");
-        addToggle(page,
-                  prompts,
-                  QStringLiteral("lock_open"),
-                  tr("Never ask before returning a passkey"),
-                  tr("Skip the access prompt for passkeys as well as passwords."),
-                  Config::Browser_AlwaysAllowAccess);
-        addToggle(page,
-                  prompts,
-                  QStringLiteral("edit"),
-                  tr("Never ask before updating a passkey"),
-                  tr("Skip the update prompt when a relying party re-registers."),
-                  Config::Browser_AlwaysAllowUpdate);
     }
 
 } // namespace Material

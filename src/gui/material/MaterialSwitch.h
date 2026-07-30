@@ -30,7 +30,7 @@ namespace Material
      *
      * A 52x32 track whose knob grows from 16px to 24px as it travels, with the
      * check glyph fading in once on. The knob position is animated over
-     * Duration::Medium and is exposed as a property so the animation can drive
+     * Duration::Toggle and is exposed as a property so the animation can drive
      * it; setChecked() from code animates exactly like a click does.
      */
     class Switch : public QAbstractButton

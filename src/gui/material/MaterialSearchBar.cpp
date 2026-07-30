@@ -32,8 +32,6 @@ namespace Material
 {
     namespace
     {
-        constexpr int GlyphSize = 22;
-        constexpr int ControlSize = 36;
         constexpr int FocusRingWidth = 2;
         constexpr int ProminentWidthHint = 420;
         constexpr int SurfaceWidthHint = 340;
@@ -49,16 +47,61 @@ namespace Material
             return variant == SearchBar::Variant::Prominent ? 18 : 16;
         }
 
-        /** Gap between the glyph, the input and the trailing controls. */
+        /**
+         * Gap between the glyph, the input and the trailing controls. The design
+         * leaves the same gap again to the right of the last control, so this is
+         * also the trailing padding.
+         */
         int contentSpacing(SearchBar::Variant variant)
         {
             return variant == SearchBar::Variant::Prominent ? 8 : 10;
         }
 
-        Role fillRole(SearchBar::Variant variant)
+        /** Size of the painted leading search glyph. */
+        int glyphSize(SearchBar::Variant variant)
         {
-            return variant == SearchBar::Variant::Prominent ? Role::SurfaceContainerHigh : Role::SurfaceContainer;
+            return variant == SearchBar::Variant::Prominent ? 22 : 20;
         }
+
+        /** Diameter of the trailing round controls. */
+        int controlSize(SearchBar::Variant variant)
+        {
+            return variant == SearchBar::Variant::Prominent ? 36 : 32;
+        }
+
+        TypeRole inputType(SearchBar::Variant variant)
+        {
+            return variant == SearchBar::Variant::Prominent ? TypeRole::BodyLarge : TypeRole::BodyMedium;
+        }
+
+        /**
+         * The builder button's glyph. The prominent bar already says "regex" with
+         * its toggle chip, so its button carries the neutral `build` wrench; the
+         * surface bars have only this one control and name it outright.
+         */
+        QString builderSymbol(SearchBar::Variant variant)
+        {
+            return variant == SearchBar::Variant::Prominent ? QStringLiteral("build")
+                                                            : QStringLiteral("regular_expression");
+        }
+
+        int builderSymbolSize(SearchBar::Variant variant)
+        {
+            return variant == SearchBar::Variant::Prominent ? 20 : 18;
+        }
+
+        /**
+         * Only the 52px vault bar offers the Regex toggle; every 44px surface bar
+         * in the design carries the builder button alone.
+         */
+        bool showsRegexChip(SearchBar::Variant variant)
+        {
+            return variant == SearchBar::Variant::Prominent;
+        }
+
+        // Both variants stand off their card on the same fill; only the height,
+        // the padding and the trailing controls differ.
+        constexpr Role FillRole = Role::SurfaceContainerHigh;
     } // namespace
 
     SearchBar::SearchBar(QWidget* parent)
@@ -78,12 +121,10 @@ namespace Material
         layout->addWidget(m_lineEdit, 1);
 
         m_regexChip = new Chip(QStringLiteral("regular_expression"), tr("Regex"), Chip::Kind::Filter, this);
-        m_regexChip->setFixedHeight(ControlSize);
         m_regexChip->setToolTip(tr("Use regular expression"));
         layout->addWidget(m_regexChip, 0);
 
-        m_builderButton = new IconButton(QStringLiteral("build"), this);
-        m_builderButton->setDiameter(ControlSize);
+        m_builderButton = new IconButton(this);
         m_builderButton->setToolTip(tr("Open the regular expression builder"));
         layout->addWidget(m_builderButton, 0);
 
@@ -186,9 +227,12 @@ namespace Material
 
     QSize SearchBar::minimumSizeHint() const
     {
-        int width = 2 * leadingPadding(m_variant) + GlyphSize + 2 * contentSpacing(m_variant) + 60;
+        int width = 2 * leadingPadding(m_variant) + glyphSize(m_variant) + 2 * contentSpacing(m_variant) + 60;
         if (m_showRegexControls) {
-            width += m_regexChip->sizeHint().width() + ControlSize + contentSpacing(m_variant);
+            width += controlSize(m_variant) + contentSpacing(m_variant);
+            if (showsRegexChip(m_variant)) {
+                width += m_regexChip->sizeHint().width() + contentSpacing(m_variant);
+            }
         }
         return {width, barHeight(m_variant)};
     }
@@ -199,7 +243,7 @@ namespace Material
 
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing, true);
-        paintSurface(&painter, rect(), Shape::Full, theme()->color(fillRole(m_variant)));
+        paintSurface(&painter, rect(), Shape::Full, theme()->color(FillRole));
 
         if (m_lineEdit->hasFocus()) {
             // Inset by half the pen so the ring stays inside the pill.
@@ -209,9 +253,11 @@ namespace Material
             painter.drawPath(roundedPath(QRectF(rect()).adjusted(inset, inset, -inset, -inset), Shape::Full));
         }
 
+        const int glyphExtent = glyphSize(m_variant);
         const QPixmap glyph =
-            Icons::pixmap(QStringLiteral("search"), GlyphSize, theme()->color(Role::OnSurfaceVariant));
-        painter.drawPixmap(QRect(leadingPadding(m_variant), (height() - GlyphSize) / 2, GlyphSize, GlyphSize), glyph);
+            Icons::pixmap(QStringLiteral("search"), glyphExtent, theme()->color(Role::OnSurfaceVariant));
+        painter.drawPixmap(
+            QRect(leadingPadding(m_variant), (height() - glyphExtent) / 2, glyphExtent, glyphExtent), glyph);
     }
 
     void SearchBar::resizeEvent(QResizeEvent* event)
@@ -225,16 +271,23 @@ namespace Material
     {
         const int leading = leadingPadding(m_variant);
         const int spacing = contentSpacing(m_variant);
-        const int trailing = m_showRegexControls ? (barHeight(m_variant) - ControlSize) / 2 : leading;
+        // The design leaves the same gap to the right of the last control as it
+        // does between them; with nothing there the field keeps its own padding.
+        const int trailing = m_showRegexControls ? spacing : leading;
 
         setFixedHeight(barHeight(m_variant));
 
         auto* box = qobject_cast<QHBoxLayout*>(layout());
         box->setSpacing(spacing);
         // The glyph is painted, not laid out; the input starts after it.
-        box->setContentsMargins(leading + GlyphSize + spacing, 0, trailing, 0);
+        box->setContentsMargins(leading + glyphSize(m_variant) + spacing, 0, trailing, 0);
 
-        m_lineEdit->setFont(theme()->font(TypeRole::BodyLarge));
+        m_regexChip->setFixedHeight(controlSize(m_variant));
+        m_builderButton->setDiameter(controlSize(m_variant));
+        m_builderButton->setSymbol(builderSymbol(m_variant));
+        m_builderButton->setSymbolSize(builderSymbolSize(m_variant));
+
+        m_lineEdit->setFont(theme()->font(inputType(m_variant)));
         m_lineEdit->setStyleSheet(QStringLiteral("QLineEdit { background: transparent; border: none; padding: 0; "
                                                  "selection-background-color: %1; color: %2; }")
                                       .arg(theme()->hex(Role::Primary), theme()->hex(Role::OnSurface)));
@@ -244,7 +297,7 @@ namespace Material
         palette.setColor(QPalette::PlaceholderText, theme()->color(Role::OnSurfaceVariant));
         m_lineEdit->setPalette(palette);
 
-        m_regexChip->setVisible(m_showRegexControls);
+        m_regexChip->setVisible(m_showRegexControls && showsRegexChip(m_variant));
         m_builderButton->setVisible(m_showRegexControls);
 
         update();
