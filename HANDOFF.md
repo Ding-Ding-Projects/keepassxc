@@ -363,3 +363,42 @@ Two smaller things, neither blocking:
    filed that way for rounds. One was a template referencing files a flag had removed; the other was a
    Linux runner compiling a Windows-only tree. Both were readable from their own error output the whole
    time. Read the error before classifying the failure.
+
+---
+
+## 9. Final cleanup — done in this session
+
+| Item | State | Date |
+| --- | --- | --- |
+| develop pulled to latest (c766e2e7) | ✅ Fast-forward, clean | 2026-07-31 |
+| Merged branches identified and merged | ✅ material-ui-rewrite, feature/fido2 → develop | 2026-07-31 |
+| Deleted merged branches from origin | ✅ Pushed deletion of material-ui-rewrite and eature/fido2 | 2026-07-31 |
+| PR #6 status | ✅ Merged 2026-07-30T21:50:40Z at c766e2e7 | [PR link](https://github.com/Ding-Ding-Projects/keepassxc/pull/6) |
+| Working tree | ✅ Clean, no stashes, no worktrees | 2026-07-31 |
+| Local ↔ remote sync | ✅ HEAD == origin/develop at c766e2e7 | 2026-07-31 |
+
+### Remaining open items (no agent action possible)
+
+| Item | Action needed |
+| --- | --- |
+| Run rchive-branches.yml workflow | Human: Actions → "Archive branches" dispatch |
+| Verify CodeQL Windows build on latest head | Confirm in CI; was cancelled by prior push |
+| Fix two non-compiling commits (edc96650, 593c3ac) if clean history desired | Can be squashed/folded later |
+
+### Active remote branches (unchanged — not ours to delete)
+
+The following remain on origin and were **not** part of this fork's work stream. They belong to upstream or automated tooling:
+
+- copilot/fix-* branches (Copilot-generated fixes from upstream)
+- eature/* branches (upstream features not yet merged there either)
+- ix/* branches (upstream fixes)
+- dependabot/* branch (dependency update)
+- gh-pages (docs site, not built from here)
+- elease/2.7.x (upstream release branch)
+- ork_keepassx_core (legacy fork tracking)
+
+These should only be managed by their respective owners. Our fork is clean.
+
+---
+
+*This handoff supersedes all previous handoff documents for this repository. Last updated: 2026-07-31.*
