@@ -116,14 +116,15 @@ namespace Material
 
         QColor fill;
         if (selected) {
-            fill = theme()->color(Role::SecondaryContainer);
+            fill = theme()->color(Role::PrimaryContainer);
         } else if (hovered) {
             fill = theme()->color(Role::SurfaceContainerHigh);
         }
         paintSurface(painter, row, Shape::Full, fill);
 
-        const QColor content = theme()->color(selected ? Role::OnSecondaryContainer : Role::OnSurface);
-        const int indent = rowDepth(option, index) * m_indentStep + BasePadding;
+        const QColor content = theme()->color(selected ? Role::OnPrimaryContainer : Role::OnSurface);
+        const int depth = rowDepth(option, index);
+        const int indent = depth * m_indentStep + BasePadding;
         QRect available = row.adjusted(indent, 0, -BasePadding, 0);
 
         const QRect iconRect(available.left(), available.center().y() + 1 - IconSize / 2, IconSize, IconSize);
@@ -147,8 +148,9 @@ namespace Material
             }
         }
 
-        // The selected row carries the label at medium weight, as in the design.
-        const QFont labelFont = theme()->font(selected ? TypeRole::LabelLarge : TypeRole::BodyMedium);
+        // Weight is a property of the tree depth, not of the selection: the root
+        // group stays medium and every child stays regular whatever is picked.
+        const QFont labelFont = theme()->font(depth == 0 ? TypeRole::LabelLarge : TypeRole::BodyMedium);
         const QFontMetrics labelMetrics(labelFont);
         const QString label = index.data(Qt::DisplayRole).toString();
         painter->setFont(labelFont);

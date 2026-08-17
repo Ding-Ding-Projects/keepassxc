@@ -26,27 +26,40 @@
 
 class QAction;
 class QLabel;
+class QLineEdit;
 class QScrollArea;
 class QVBoxLayout;
 class QWidget;
 
 namespace Material
 {
-    class SearchBar;
+    /**
+     * The menu an action lives in, e.g. "Database" or "Database ▸ Export".
+     * Empty when the action is not on a menu at all. Shared with the settings
+     * hub, whose Shortcuts page groups by the same path.
+     */
+    QString menuPathOf(const QAction* action);
 
     /**
      * Every command in the application, in one searchable list.
      *
      * The Material shell hides the menu bar and the tool bar, so this is what
      * keeps their commands reachable. It walks the whole QAction tree of its
-     * source window - not a curated list - and shows each action with its icon,
-     * the menu it lives in, and its shortcut. Typing filters on all three;
-     * Up and Down move the highlight, Enter runs it, Escape closes.
+     * source window - not a curated list - and lists each action with its icon
+     * and its shortcut, under an uppercase heading naming the menu it lives in.
+     * Typing filters on all three; Up and Down move the highlight, Enter runs
+     * it, Escape closes.
      *
      * Actions that are separators, that carry no text, or that only exist to
      * open a submenu are left out, because none of them do anything when
      * triggered. Disabled actions are listed but dimmed: knowing a command
      * exists and is unavailable right now is worth more than hiding it.
+     *
+     * The shell's own affordances - switching destination, flipping the theme -
+     * are painted rather than menu commands, so Material::Shell carries an
+     * action for each and the walk picks them up like any other. Nothing is
+     * registered here: this only ever reads the tree it is pointed at, so a
+     * command that is not an action of the source window cannot be listed.
      */
     class CommandPalette : public Overlay
     {
@@ -72,6 +85,11 @@ namespace Material
     signals:
         /** @p action was chosen from the list; it has already been triggered. */
         void commandTriggered(QAction* action);
+        /**
+         * The header's regex button was pressed and the palette has closed.
+         * The host opens the regex builder - the palette does not own it.
+         */
+        void regexRequested();
 
     protected:
         /** The action tree changes with the database state, so it is re-walked. */
@@ -86,6 +104,8 @@ namespace Material
             QPointer<QAction> action;
             QString text;
             QString path;
+            /** Top level menu title; the heading this command is listed under. */
+            QString group;
             QString shortcut;
             QString haystack;
         };
@@ -100,15 +120,14 @@ namespace Material
         void applyTheme();
 
         QWidget* m_sheet = nullptr;
-        QLabel* m_headline = nullptr;
-        QLabel* m_countLabel = nullptr;
-        SearchBar* m_search = nullptr;
+        QLineEdit* m_searchEdit = nullptr;
         QScrollArea* m_scroll = nullptr;
         QVBoxLayout* m_listLayout = nullptr;
-        QWidget* m_emptyState = nullptr;
+        QLabel* m_emptyLabel = nullptr;
         QPointer<QWidget> m_source;
         QList<Command> m_commands;
         QList<QWidget*> m_rows;
+        QList<QWidget*> m_headings;
         QList<int> m_visible;
         int m_selected = -1;
     };

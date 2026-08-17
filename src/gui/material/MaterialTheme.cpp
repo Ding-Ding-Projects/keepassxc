@@ -589,4 +589,21 @@ namespace Material
         return Health::Unknown;
     }
 
+    QString Theme::healthLabel(Health health)
+    {
+        switch (health) {
+        case Health::Ok:
+            return tr("Healthy");
+        case Health::Weak:
+            return tr("Weak");
+        case Health::Reused:
+            return tr("Reused");
+        case Health::Breached:
+            return tr("Breached");
+        case Health::Unknown:
+            break;
+        }
+        return tr("Unknown");
+    }
+
 } // namespace Material

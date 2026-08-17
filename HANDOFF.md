@@ -1,184 +1,404 @@
-# Handoff — Material Design 3 interface rewrite
+# Handoff — closing the gap between the Material UI and the design
 
-Branch `material-ui-rewrite`, pushed to `origin`.
-**Builds green — 535/535 targets, 0 errors. Tests: 42 of 43 pass, the one failure pre-existing.**
+Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
+33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
-Tracked in [issue #1](https://github.com/Ding-Ding-Projects/keepassxc/issues/1),
-progress thread [discussion #2](https://github.com/Ding-Ding-Projects/keepassxc/discussions/2).
+**Builds, links, tests green, and the MSI now ships.** Run 30566007547 on `332bf39c` completed
+successfully: `Package` succeeded, the installer guard passed, and `package-windows-x64` carries both
+the MSI and the ZIP (138.4 MiB for the two). The offline documentation shipped —
+`KPXC_FEATURE_DOCS: ON`, so `gem install asciidoctor` worked on the runner and the Getting Started and
+User Guide shortcuts have real targets. That closes the MSI, which had been failing since before this
+branch existed. The CodeQL move to Windows has not completed a run yet; §7.
 
-## This fork is Windows only
-
-Linux is not supported and the code that supported it is gone, not disabled:
-
-| Removed | What it was |
-| --- | --- |
-| `src/fdosecrets/` | freedesktop.org Secret Service server (376 K) |
-| `src/gui/osutils/nixutils/` | `NixUtils`, XDG portals, D-Bus screen lock, libusb listener (160 K) |
-| `src/autotype/xcb/`, `src/autotype/wayland/` | X11 and portal auto-type backends |
-| `src/quickunlock/Polkit*`, `src/quickunlock/dbus/` | PolKit quick unlock |
-| `src/gui/org.keepassxc.KeePassXC.MainWindow.xml` | the D-Bus adaptor interface |
-| `snap/`, `share/linux/` | Snapcraft, AppImage runner, `.desktop`, polkit policy, appstream |
-| Snap / Flatpak / AppImage code paths | `KEEPASSXC_DIST_*` and every branch behind it |
-| `WITH_X11`, `KPXC_FEATURE_FDOSECRETS`, `Qt6::DBus`, libusb, keyutils | build options and link dependencies |
-| `release-tool.py` `build_linux` / `_build_linux_appimage` / appstream check | Linux release plumbing |
-| The Linux CI job | only Windows gates the release now |
-
-macOS sources are still in the tree but are neither built nor tested here.
+This supersedes the previous handoff, which described the Material shell landing. Its §1 ("the vault
+destination is still the stock three-pane widget") is done; several of its other claims were wrong and
+are corrected below.
 
 ---
 
-## Read this first: how to run and screenshot it
+## 1. Read this first
+
+**This fork is Windows only, and the mechanism matters.** `src/gui/osutils/` ships `winutils/` and
+`macutils/`; `nixutils` is gone. `OSUtils.h` reads:
+
+```c
+#if defined(Q_OS_WIN)
+#include "winutils/WinUtils.h"
+#define osUtils static_cast<OSUtilsBase*>(winUtils())
+#elif defined(Q_OS_MACOS)
+...
+#endif
+```
+
+There is no `#else`. On Linux `osUtils` simply does not exist, so every translation unit that touches
+it fails — across `src/autotype/`, `src/browser/` and `src/gui/`. This is not a missing dependency and
+no apt package fixes it. It is why the tree cannot be built or analysed on a Linux runner, and it cost
+a full CI job (§5) before anyone read the error.
 
 **KeePassXC is invisible to every screen-capture API unless you pass `--allow-screencapture`.**
-`WinUtils.cpp:64` calls `SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE)` on every
-top-level window. The window stays visible on the physical display, stays hit-testable, is not
-cloaked and reports `IsWindowVisible = true` — but `PrintWindow`, `BitBlt` and `CopyFromScreen`
-all return black, and a desktop grab of its rectangle returns *the windows behind it*. This is
-upstream behaviour, present in the pre-rewrite baseline, and it cost this project several hours
-of misdiagnosis. Always launch with:
+`WinUtils.cpp` calls `SetWindowDisplayAffinity(hwnd, WDA_EXCLUDEFROMCAPTURE)` on every top-level
+window. The window is visible on the physical display and reports `IsWindowVisible = true`, but
+`PrintWindow`, `BitBlt` and `CopyFromScreen` all return black. This is upstream behaviour and it has
+now cost two sessions hours of misdiagnosis. Always launch with:
 
 ```
 KeePassXC.exe --config %TEMP%\kpxc.ini --allow-screencapture
 ```
 
-Capture with `scratchpad/capture.ps1` under **Windows PowerShell 5.1** (not pwsh 7 — `System.Drawing`
-is not in its default assemblies). The script is DPI-aware, checks `GetWindowDisplayAffinity` and
-fails loudly on the exclusion case, and refuses to capture a window that does not own the pixels at
-its own centre.
-
-Headless works fine and keeps the app off the real desktop:
-`launch_on_headless_desktop` + `screenshot(hwnd=...)`, again with `--allow-screencapture`.
-
-### Build
-
-```
-scratchpad/configure.cmd      # Qt 6.8.3 msvc2022_64, Ninja, vcpkg, docs off
-scratchpad/build.cmd
-```
-Kill any running `KeePassXC.exe` / `test*.exe` first or the link fails with `LNK1168`.
+**Nothing in this branch has ever been run.** Not once. It compiles, links and passes its tests; no
+human or agent has opened the application and looked at the UI this branch exists to change. See §3.
 
 ---
 
-## What is done
+## 2. What this session did
 
-| Area | State |
-| --- | --- |
-| Stock styling deleted | `BaseStyle` (4 860 lines), `LightStyle`, `DarkStyle`, `phantomcolor`, all four `.qss`, `styles.qrc` — gone |
-| Design system | `MaterialTheme` — colour roles, 4 seeds, light/dark, density (40/52/64), type scale, `QPalette` |
-| Stylesheet | `MaterialStyleSheet` — one generated sheet covering every stock Qt widget class |
-| Style | `MaterialStyle` — `QProxyStyle` over Fusion for what a sheet cannot express |
-| Icons | `MaterialIcons` — Material Symbols names → bundled SVGs, tinted and cached |
-| **Window shell** | **`Material::Shell` owns the interior: 88px rail, 64px app bar, 48px tab strip, 5-destination stack** |
-| Command palette | `Ctrl+Shift+P`, lists all 218 `QAction`s with menu path + shortcut |
-| `.ui` sweep | 57 of 73 surfaces on Material widgets; 203 instances; no hard-coded colours left in `src/` |
-| Passkeys | Save path verified — attributes stored, 3 secrets protected, survives a real KDBX round trip |
-| Passkey clipboard | `keepassxc-passkey:v1:<base64>`, non-suppressible warning, 5 review findings fixed |
-| Browser extensions | Per-user registration (HKCU / External Extensions JSON), store fallback |
-| Language + humour | 3 modes, two 1–5 sliders, disclosure on first run |
-| Notifications | Snackbars + notification centre |
-| Dim sum | 1% at startup, disable-able |
-| Docs | README, wiki (4 pages), Pages site at https://ding-ding-projects.github.io/keepassxc/ |
-| CI | `.github/workflows/material-release.yml` — **works**: builds Windows + Linux, runs 45 tests, gates the release. Currently **red for a real reason**, see below |
+The design is `design.zip` → `KeePassXC Material.dc.html`, a 1440×920 mockup in which every element
+carries exact inline CSS. It was extracted into a diffable form (per-section templates, the token
+tables, and `SHEETS` / `PALETTE` as JSON) and compared element by element against `src/gui/material/`.
 
----
+### The four structural gaps
 
-## What is NOT done
-
-### 1. The vault destination is still the stock three-pane widget
-
-This is the biggest remaining gap. The shell is real, but inside the **vault** destination sits
-`m_ui->stackedWidget` — the original welcome screen / `DatabaseTabWidget` / group tree / entry
-table / preview pane. The design's own vault layout is **written but not wired**:
-
-- `MaterialVaultSidebar` — 250px groups + tag chips
-- `MaterialEntryDelegate` / `MaterialGroupDelegate` — rounded-16 rows, pill group rows
-- `MaterialEntryDetail` — 392px detail pane, strength meter, TOTP ring
-
-The agent that was to build `MaterialVaultScreen` and bind these to the real `GroupModel` /
-`EntryModel` / `DatabaseWidget` **never ran** (session limit). Next step is exactly that task:
-compose the three panes, install a proxy mapping `EntryModel` columns onto the delegate's
-`TitleRole`/`UsernameRole`/`UrlRole`/`HealthRole`/`TotpRole`/`ModifiedRole`/`SymbolRole`, and
-connect `EntryDetail`'s signals to the existing `DatabaseWidget` slots. **Do not reimplement entry
-loading** — reuse the existing models.
-
-### 2. Destination feeds are partial
-
-`MaterialReportsFeed`, `MaterialHistoryFeed`, `MaterialChangelogFeed`, `MaterialSettingsHub` and
-`MaterialHistoryStore` landed but their agents died mid-task. They compile and are wired enough to
-populate Reports and History with real database facts, but they were never finished or reviewed.
-Treat them as drafts.
-
-Reports deliberately omits password-strength scoring — scoring every entry blocks the UI. The
-existing Reports action still opens the real health check.
-
-### 3. Known defects
-
-| # | Defect | Notes |
+| | design | before |
 | --- | --- | --- |
-| ~~21~~ | `testdimsum` fails, ran **2539 s** | **Fixed — now passes in 0.37–1.92 s.** Five causes. In `278f7bb4`: (1) `shouldShow()` called `canShow()→isQuiet()` every time, an out-of-process `SHQueryUserNotificationState` round trip, 20 000 times — the whole decision is latched now; (2) the `m_animation` `finished` lambda was connected *before* `m_holdTimer` existed, which is the Linux `SIGSEGV ... address 0xe0` — the timer is built first now; (3) `dismiss()` called `m_animation->stop()` while the animation sat exactly on its end value, and Qt re-emits `finished()` in that case, re-entering the handler that deletes the card — wrapped in a `QSignalBlocker`; (4) all five test functions shared process-wide latch state, so each read the previous one's leftovers — `DimSum::resetLaunchState()` runs in `init()`. In `c5ca89e6` (`tests/CMakeLists.txt`): (5) the test sets `QT_QPA_PLATFORM=offscreen`, but vcpkg's applocal deployment puts only `platforms/qwindows.dll` next to the exe, so a locally-deployed Qt could not load the offscreen plugin, `qFatal()`'d, and sat in a modal box until ctest's timeout. A `POST_BUILD` step now copies `Qt6::QOffscreenIntegrationPlugin` into `platforms/`. **Caveat on the timing above: it was measured with `C:\Qt\6.8.3\msvc2022_64\bin` on `PATH`, so Qt resolved the plugin from its own install and cause (5) was never exercised. The `POST_BUILD` step is verified to generate, not to be load-bearing.** |
-| ~~20~~ | `build/tests` missing Qt DLLs | **Fixed.** vcpkg's applocal deployment copies the vcpkg DLLs and nothing else, so `Qt6Cored.dll` and friends were only found if the developer had Qt on `PATH`; when they were not, the Windows loader raised a **system-modal** dialog and the test *hung* rather than failed. `add_unit_test()` now sets `ENVIRONMENT_MODIFICATION "PATH=path_list_prepend:${QT_BIN_DIR}"` on every test, `QT_BIN_DIR` being derived from the already-required `windeployqt`. Verified by running ctest in a shell with no Qt on `PATH` at all: 4/4 pass. Needs CMake 3.22; older ctest ignores the property and you are back to the old behaviour. |
-| — | Rail footer clipped | With the pre-release banner on a 900px window, the theme toggle and lock are pushed below the fold. `MaterialNavigationRail.cpp` lays the footer out at a fixed offset and does not compress. |
-| — | `MaterialCard` unusable from `.ui` | Its constructor creates its own `QVBoxLayout`, so `uic`'s `new QVBoxLayout(card)` is rejected and children end up unparented. Make `m_rootLayout` lazy and every group box can be promoted mechanically. |
-| — | 8 checkboxes left as `QCheckBox` | `tests/gui/TestGui.cpp` does `findChild<QCheckBox*>` on them; `Material::Switch` derives from `QAbstractButton`. Converting needs a two-line test change. `WITH_GUI_TESTS` is OFF so this is latent. |
+| Rail destinations | 10 | 5 |
+| Spec sheets | 5 sheets · 35 pages · 397 rows | 1 sheet · 6 pages · 155 rows |
+| Design icons that resolve | 202 | 113 |
+| Settings destination | the Material hub | the **stock** `ApplicationSettingsWidget` |
 
-### 4. CI status
+**Three finished surfaces were dead code** — compiled on every build, never constructed:
 
-`Material CI and Release` runs on every push. There is one test job — **Test (Windows x64)** — and
-the release job is gated behind it with an explicit `success()`, so a failed or cancelled test job
-cannot produce a release. The release job itself runs on an Ubuntu runner, but only to download the
-Windows artifact and call the GitHub API; nothing Linux is built.
+| | lines |
+| --- | --- |
+| `Material::SettingsHub` | 1 706 |
+| `Material::SettingsScreen` | 999 |
+| `Material::GeneratorSheet` | 520 |
 
-The Linux test job is **gone**, not skipped. Its two failures went with it:
+The previous handoff prescribes the objective check for exactly this — grep for the type outside its
+own directory — and it had not been re-run after the shell landed. Re-run it whenever a component is
+"finished":
 
-- `testdimsum` segfaulted on Linux (`SIGSEGV ... for address 0xe0` in `testFiresOnlyOncePerLaunch`).
-  The null dereference it was reporting was real and has since been fixed in shared code — see the
-  defect table above — so removing the job did not bury it.
-- `testcli` also failed on Linux. Never investigated; passes standalone on Windows at 83/0.
+```
+for f in src/gui/material/Material*.h; do
+  c=${f##*/Material}; c=${c%.h}
+  # Not every header declares a class of its own name: MaterialElevation and
+  # MaterialStyleSheet declare free functions (paintSurface, buildStyleSheet) and
+  # MaterialWidgets is an umbrella include. Those three are expected here and are
+  # not dead; check any OTHER name it prints.
+  case $c in Elevation|StyleSheet|Widgets) continue;; esac
+  n=$(grep -rl "\b$c\b" --include=*.cpp src/ | grep -v "material/Material$c" | wc -l)
+  [ "$n" = 0 ] && echo "UNREFERENCED: $c"
+done
+```
 
-One cross-platform datum worth keeping now that it can no longer be re-measured: **`testmerge`
-passed on Linux** (0.23 s). The two `testmerge` failures below are Windows-only, which is worth
-knowing before anyone chases them as logic bugs.
+It should print nothing, and at `332bf39c` it does. When it printed `SettingsHub`, `SettingsScreen`
+and `GeneratorSheet`, that was 3 225 lines of finished UI that had never been constructed.
 
-### 5. Test status (local, Windows)
+### What changed
 
-**42 of 43 pass**, in a clean build tree configured from scratch after the Linux removal, run
-serially. Total 348 s. Qt no longer has to be on `PATH` — see defect 20.
+- **Ten destinations.** Entry, Database, Tools, Appearance and Help now exist. Appearance is
+  `SettingsScreen`; Settings is `SettingsHub`, which adopts the stock widget as its classic editor so
+  no option became unreachable. Rail sublabels are live counts, not empty strings.
+- **The four reference sheets are generated, not transcribed.** `utils/generate_sheet_catalogue.mjs`
+  emits `MaterialSheetCatalogue.{h,cpp}` from `utils/design/sheets.json` — 33 pages, 71 sections,
+  389 rows of the design's own wording. Re-run it to diff the transcription rather than trust it.
+- **Auto-Type, Password Generator defaults and Shortcuts** are real settings pages bound to real
+  `Config` keys. Rows were *moved* off General and Security, not copied, so nothing is bound twice.
+  Shortcuts reads `ActionCollection`, so a rebound key shows up and a new action cannot go missing.
+- **110 icons drawn.** `Icons::symbol()` returns an empty `QIcon` for an unknown name, so 89 of the
+  design's 202 symbols were blank space — including six the rail itself asks for.
+- **The generator sheet, command palette, notification centre and snackbar** now match the design, and
+  the regex builder returns its pattern to the field that opened it rather than always the vault.
 
-The one failure:
+### The defects worth knowing about
 
-- `testmerge` — `testResolveConflictEntry_Synchronize` / `_KeepNewer`. **Pre-existing**, proven by
-  building clean `develop` in a worktree and reproducing identically. Not a regression, and it
-  passed on Linux before that job was removed, so it is a Windows-specific problem in upstream
-  code rather than a logic bug.
+Adversarial review of the finished work found 18 problems in code that had already passed review. The
+two that mattered are both security-relevant, and both were in code that looked correct:
 
-Previously-failing, now passing: `testdimsum` (0.37 s, was 2539 s), `testcli` (97 s — it flakes
-only under parallel `ctest`, from clipboard timing).
+- **History held a strong `QSharedPointer<Database>`.** Locking neither cleared the surface nor
+  released the database, so the decrypted database stayed reachable for the life of the window. It
+  holds a `QWeakPointer` now and follows the root group's destruction.
+- **A restore could apply a revision the user never selected.** Rows were identified by a *position*
+  in `Entry::historyItems()`, but `truncateHistory()` drops from the oldest end, so every surviving
+  index shifts. A row clicked after a truncation resolved to different data than it displayed. Rows
+  hold a `QPointer` to the revision itself now, so a stale row declines instead.
 
-`testpasskeys`: **35 passed, 0 failed** — the save path is intact after the Linux removal.
+Also fixed: a restore was invisible in the vault (`copyDataFrom()` raises nothing the model listens
+for), the preserved last-access time was overwritten one line later by `addHistoryItem()`, and Reports
+walked the live entry tree from a worker thread while a nested event loop ran on the GUI thread.
+
+**The standing constraint for anything that touches this surface:** this is a password manager. Never
+fabricate a value, never write a secret to disk or to a log, and never leave a control that looks like
+it works but does not. In particular `HistoryStore` must not persist entry content, passwords or
+attachment bytes to its plaintext JSONL log.
 
 ---
 
-## Corrections worth carrying forward
+## 3. How this was verified, and what that is worth
 
-Two things were reported as fact during this work and were wrong. Both are fixed, but the pattern
-is worth knowing:
+**A full build is impossible in this environment** — Windows-only fork, no `nixutils` (§1). Instead:
+Qt 6.4 installed, `uic` and `config-keepassx.h` generated, then `g++ -fsyntax-only -std=c++17` against
+the real headers. That catches everything short of link errors, and nothing about runtime behaviour.
 
-1. **"The main window renders nothing — confirmed bug in the rewrite."** False. It was
-   `WDA_EXCLUDEFROMCAPTURE`. The control experiment (build stock upstream and see if *it* renders)
-   was skipped; when finally run it answered in minutes.
-2. **"The Material shell has landed."** False. The 59-file component library was dead code —
-   `grep` for `NavigationRail|TopAppBar|TabStrip` outside `src/gui/material/` returned zero. "It
-   compiles" was mistaken for "it works". That grep is the objective check; run it, not the vibe.
+**Two commits went out broken anyway, and the reason matters.** The check ran against the *working
+tree* while work was landing concurrently, so a `.cpp` could be committed ahead of its `.h`;
+`git add -A` snapshotted that instant. `edc96650` and `593c3ac` do not compile. Every commit after each
+of them does.
+
+The fix is `scratchpad/verify-and-push.sh`: it resets a detached worktree to `HEAD`, checks *that*, and
+**refuses to push** on any failure. Use it for any C++ change. (It lives in the session scratchpad, not
+the repo — if the scratchpad is gone, rewrite it before the next C++ push rather than pushing blind.)
+
+A green syntax check is not a build. It was wrong about this branch twice.
 
 ---
 
-## Suggested next steps, in order
+## 4. The MSI: read, and fixed
 
-1. Build `MaterialVaultScreen` and wire the three panes to the real models (§1). This is the
-   remaining substance of the rewrite.
-2. Run `testdimsum` alone and find the real failure (§3, task 21).
-3. Add the CMake deploy step for test targets (§3, task 20).
-4. Finish the settings spec sheets against real `Config` keys, and the Reports/History/Changelog
-   feeds (§2).
-5. Capture all five destinations headless with `--allow-screencapture` and post them to issue #1 —
-   the project's own rule is that a fix with a visible surface gets a capture from the real build.
+`Test (Windows x64)` compiled, linked, tested, produced a 63.4 MiB ZIP, and then failed with
+`CPack Error: Fatal WiX Generator Error`. **It was never from the Material work** — `develop` at
+`0dd3d702` failed identically.
+
+Six rounds guessed at it from the *configuration*. The seventh read the error:
+
+```
+main.wxs(75) : error LGHT0204 : ICE67: The shortcut 'GettingStartedShortcut' is a
+    non-advertised shortcut with a file target, but the target file does not exist.
+main.wxs(79) : error LGHT0204 : ICE67: The shortcut 'UserGuideShortcut' ...
+main.wxs(75) : error LGHT0204 : ICE69: 'CM_FP_share.docs.KeePassXC_GettingStarted.html'
+    references invalid file.
+main.wxs(79) : error LGHT0204 : ICE69: 'CM_FP_share.docs.KeePassXC_UserGuide.html' ...
+```
+
+**The cause.** `share/windows/wix-template.xml` declared two Start Menu shortcuts targeting
+`[#CM_FP_share.docs.KeePassXC_GettingStarted.html]` and `…_UserGuide.html`. Those file ids exist only
+because `docs/CMakeLists.txt` installs the pages into `${DATA_INSTALL_DIR}/docs` (`share/docs` on
+Windows) — and that directory is added only `if(KPXC_FEATURE_DOCS)`. The workflow configured
+`-DKPXC_FEATURE_DOCS=OFF`, so the pages were never built, never installed, and CPack never emitted
+their `File` rows. The shortcuts named them regardless. `light.exe` does not treat that as a missing
+icon; it refuses to link.
+
+The package step was coupled to a feature flag that nothing connected it to. Note that theory #3 below
+had the right *variable* and the wrong *mechanism* — it checked for dangling install rules, found none,
+and closed the question. The shortcuts are not install rules. Getting the variable right is not the
+same as getting the failure right.
+
+**The fix, in two halves** (`332bf39c`):
+
+1. `src/CMakeLists.txt` generates the template with `configure_file(… @ONLY)`, substituting
+   `@KPXC_WIX_DOC_SHORTCUTS@` with the two shortcuts when `KPXC_FEATURE_DOCS` is on and a comment when
+   it is off. The MSI builds either way, and the packaged shortcuts and the packaged files can no
+   longer disagree. `@ONLY` matters: the template is full of WiX's own `$(var.CPACK_…)` syntax that
+   CMake must not touch.
+2. The workflow no longer hard-codes the flag. A step decides it: `gem install asciidoctor`, then
+   `--version` to prove it runs, then `KPXC_FEATURE_DOCS=ON` with an explicit `ASCIIDOCTOR_EXE` full
+   path. Every failure path downgrades to `OFF` with a `::warning::` rather than failing — a shipped
+   installer without help pages beats no installer. `ASCIIDOCTOR_EXE` is passed explicitly because the
+   gem installs a `.bat` shim and which extensions `find_program` tries is not worth a 45-minute bet.
+
+Half 2 also fixes a silent defect nobody had noticed: the MSI had been shipping *without* the Getting
+Started and User Guide entries at all.
+
+**Verified in CI.** Run 30566007547 on `332bf39c` went green end to end: Configure, Build, Test,
+Package, and the installer guard all succeeded; "Print why this job failed, last" was *skipped*, which
+is the `if: failure()` proof that no WiX error block was produced. `KPXC_FEATURE_DOCS: ON` in the job
+environment confirms half 2 worked — the documentation rendered and its shortcuts have real targets.
+Before that it was verified locally as far as this environment allows: the substitution run through
+real CMake at both settings, both outputs parsing as XML, all twelve `$(var.CPACK_…)` references
+surviving, and the `&&` in the docs custom command reaching a shell rather than being escaped by
+`VERBATIM`.
+
+### Do not re-try these
+
+| # | theory | why it is dead |
+| --- | --- | --- |
+| 1 | the `-snapshot` version string | `CPACK_PACKAGE_VERSION` uses `KEEPASSXC_VERSION_CLEAN`, which strips it |
+| 2 | `qt.conf` installed twice | it is not |
+| 3 | `KPXC_FEATURE_DOCS=OFF` breaks install rules | it does not — but the flag *was* the cause, through the WiX shortcuts. See above |
+| 4 | `cpack --config … -B artifacts` | changed to `cd build && cpack`; no effect. Kept, as it matches the workflow that last shipped an MSI |
+| 5 | missing `WixUIExtension.dll` | adding it **caused** `LGHT0091 Duplicate symbol`: CPack already passes it whenever `CPACK_WIX_UI_REF` is set |
+| 6 | the duplicate from #5 | reverted in `f6f9d8c4` |
+
+### Why six rounds were wasted, and the diagnostic that ended it
+
+`wix.log` could never be read. `actions/upload-artifact` dumps several hundred lines of runner
+environment after every upload and the job log is reachable only by tail, so the real error was always
+out of reach — and every round reasoned from the configuration instead of the error. That is guessing
+with extra steps. The visibility should have been fixed after the second attempt, not the sixth.
+
+The last step of the job is now **"Print why this job failed, last"**, which prints two blocks in the
+final ~30 lines:
+
+```
+===== FAILED TESTS ... END FAILED TESTS =====   LastTestsFailed.log + FAIL!/QFATAL/ASSERT
+===== WIX ERRORS  ... END WIX ERRORS  =====     LGHT####/CNDL#### codes, then 40 lines of wix.log
+```
+
+Fetch it with a **small** tail (45–70 lines; 40 is not enough — it lands mid-block). It paid for itself
+twice: it caught theory #5 as self-inflicted within one run, and it produced the ICE67/ICE69 text
+above. If the MSI breaks again, read that block first and fix exactly what the code names — `LGHT0091`
+duplicate symbol, `LGHT0094` unresolved symbol, `LGHT0103` file not found, `LGHT0204`/`LGHT0217` ICE
+validation, `CNDL####` a candle compile error. `no wix.log found` means packaging never ran; read the
+FAILED TESTS block instead.
+
+---
+
+## 5. CodeQL: also read, also fixed
+
+`Analyze (cpp)` had been red on every run for the life of the branch, and was written off in an earlier
+handoff as "pre-existing, unrelated, maintainer's call". It was neither pre-existing in any useful
+sense nor unfixable — it built on `ubuntu-latest`, and §1 is why that can never work. The job died at
+~28% and reported `CodeQL job status was configuration error` every time.
+
+The choice was to drop `cpp` from the matrix — leaving a password manager with no static analysis at
+all — or to analyse the platform the fork actually targets. `codeql.yml` (`785e4f02`) now runs the same
+MSVC + Ninja + vcpkg recipe `material-release.yml` builds and ships with, sharing its vcpkg cache key.
+Configure runs *before* `codeql init` deliberately, so the tracer captures `src/` and not the vcpkg
+ports. A `codeql-<ref>` concurrency group with `cancel-in-progress: true` was added — unlike a release,
+a superseded analysis is worth nothing.
+
+---
+
+## 6. Still open
+
+- **The CodeQL move to Windows is unverified.** The MSI fix is verified (§4); CodeQL is not. §7.
+- **`testdatabase` fails intermittently, and it is NOT settled.** Four observations, none of them
+  separated by a single line of C++: failed at `ef8f3707`, passed at `3d17b7e1`, passed at `332bf39c`,
+  **failed twice** at `4387b8c6` (which differs from `332bf39c` by `HANDOFF.md` and workflow text
+  only). So it is nondeterministic rather than caused by any code change — but at roughly a 50% rate,
+  and `--repeat until-pass:2` did not save it, so calling it "flaky" and moving on is not good enough
+  for a password manager's database test.
+
+  **What was believed and was wrong:** the diagnostic reported "no FAIL! lines in LastTest.log; the
+  test process probably died". That inference had no evidence behind it. The test executables are
+  GUI-subsystem binaries on Windows, so their stdout is detached and QTest's report never reaches
+  ctest — LastTest.log is empty for *any* outcome, assertion or crash alike. The silence was the
+  expected state, not a symptom.
+
+  **What to do:** the final step now re-runs each failing test directly with `-o <file>,txt`, which
+  writes QTest's report to a file instead of stdout and so survives the GUI subsystem, and prints it in
+  the last lines where a small tail reaches it. The next failure will name the function. Two outcomes
+  are worth reading carefully — a re-run that *passes* means timing-dependence, and a re-run that
+  exits non-zero with no report means it really did die early.
+
+  **The one to suspect first** is `testExternallyModified` (`tests/TestDatabase.cpp:273`). It waits on
+  a `QFileSystemWatcher` signal through `QTRY_COMPARE(spyFileChanged.count(), 1)` — a filesystem race
+  with a bounded timeout, on a loaded CI runner. That is the shape of this failure. It is a hypothesis,
+  not a finding; the re-run report will confirm or kill it.
+
+  Note `testmerge`, which an earlier handoff recorded as a pre-existing Windows failure, now passes.
+- **The vcpkg cache — resolved by the first green run.** It had never been hit: "Restore the vcpkg
+  cache" finished in ~1 second every time and Configure then spent 29 minutes building ports. The cause
+  was the obvious one in hindsight — no run had ever *completed*, so `actions/cache`'s post-step save
+  had never committed a key. Run 30566007547 finished and saved 873 MiB under
+  `vcpkg-Windows-f7977f7a…-66c0373d…`, and `material-release` now restores it in 26 s and configures in
+  **45 seconds instead of 29 minutes**.
+
+  **Open question: CodeQL does not seem to get the same cache.** `codeql.yml` was given the same key
+  material deliberately, but run 30574045644 restored in 0 s and then spent 22 minutes in Configure,
+  while `material-release` run 30574043349 — same branch, sixteen minutes later — restored in 26 s and
+  configured in 45 s. So the two workflows are not sharing the entry despite intending to. Cause
+  unknown; do not guess, read the `Restore the vcpkg cache` step's own log, which says whether it
+  matched a key. Costs time, not correctness.
+- **Branch archive.** `.github/workflows/archive-branches.yml` bundles all 25 branches with full
+  history, verifies the archive restores every tip, and publishes it as a release. It is
+  `workflow_dispatch` only and **has never been run** — an agent cannot trigger it. **A human must run
+  Actions → "Archive branches".** Nothing may be deleted until that release exists and its
+  `BRANCHES.txt` lists all 25. The bundle was verified locally: 25/25 tips, 59 tags, fsck clean, clones
+  successfully.
+- **`main` / branch cleanup** was requested and then parked by the user. Note there is no `main`; the
+  default is `develop`. Of the 24 other branches, 14 share **no common ancestor** with this fork —
+  merging one means resolving 366–686 file conflicts. The user's stated preference, if this resumes,
+  was `git merge -s ours` for those 14 and a fresh `gh-pages`.
+- **Two commits do not compile** (`edc96650`, `593c3ac`). Harmless unless you bisect; can be folded
+  into their parents if the history should be clean.
+- **The UI has never been run.** §1. Everything in §2 is verified by reading and by the compiler, not
+  by use.
+
+---
+
+## 7. Pick it up here
+
+Everything is committed and pushed; the working tree is clean.
+
+**The MSI is fixed and proven.** `material-release` run 30566007547 on `332bf39c` went green end to
+end and produced the installer. Nothing about WiX or packaging is outstanding.
+
+**But the branch is not reliably green**, because `testdatabase` fails intermittently and stops the job
+before packaging — that is what happened on `4387b8c6`. §6 has the four observations and the
+hypothesis. Read the new re-run report on the next failure before concluding anything about it.
+
+One thing is still unverified: **CodeQL on Windows.** Its run on `332bf39c` was cancelled by a
+subsequent push (`cancel-in-progress: true`), so the newest run on the current head is its first
+uninterrupted attempt. Confirm the Windows build completed and the analysis uploaded. Note it no longer
+pays for a cold vcpkg cache — the MSI run populated the shared key.
+
+Two smaller things, neither blocking:
+
+- The job now prints a `===== PACKAGE =====` block listing each artifact with its size and the
+  documentation setting, in the last steps where a small tail can reach it. Before that, "how big is
+  the MSI" could only be answered by fetching a huge log, because `actions/upload-artifact`'s
+  environment dump sits between `cpack`'s output and the end of the log. The first run to exercise it
+  is the one after `5d42588a`.
+- Nothing else in §6 needs CI.
+
+---
+
+## 8. Traps
+
+1. **Pushing costs you runs, but not symmetrically.** `material-release` sets
+   `cancel-in-progress: false`, so a push does *not* disturb a run that is already executing — it
+   replaces the single *pending* run. `codeql` sets `cancel-in-progress: true`, so a push **does** kill
+   an in-flight analysis and restart it from a cold cache. Before pushing, check what is in flight.
+   Pushing repeatedly is why the `wix.log` diagnostic sat unexecuted through five rounds.
+2. **`git bundle verify` will tell you an archive is complete when it is not.** This working clone was
+   *shallow*; bundling it dropped 11 of 25 branches and still reported "records a complete history" —
+   true only against its own shallow boundary. Check `git rev-parse --is-shallow-repository` first.
+3. **A bundle of `refs/remotes/*` clones as an empty repository.** `clone` looks under `refs/heads/`.
+   It builds, verifies, lists every branch, and restores nothing. Bundle from a bare mirror.
+4. **`-fsyntax-only` on the working tree proves nothing about the commit.** §3.
+5. **Findings are not facts.** A 235-finding audit of this UI produced 104 confirmed and 131 refuted
+   after adversarial verification. Have claims refuted before acting on them; several "gaps" were
+   features that already existed, and one attributed the extended FAB's metrics to `FilledButton`.
+6. **"Pre-existing and unrelated" is a conclusion, not an excuse.** Both CI failures in §4 and §5 were
+   filed that way for rounds. One was a template referencing files a flag had removed; the other was a
+   Linux runner compiling a Windows-only tree. Both were readable from their own error output the whole
+   time. Read the error before classifying the failure.
+
+---
+
+## 9. Final cleanup — done in this session
+
+| Item | State | Date |
+| --- | --- | --- |
+| develop pulled to latest (c766e2e7) | ✅ Fast-forward, clean | 2026-07-31 |
+| Merged branches identified and merged | ✅ material-ui-rewrite, feature/fido2 → develop | 2026-07-31 |
+| Deleted merged branches from origin | ✅ Pushed deletion of material-ui-rewrite and eature/fido2 | 2026-07-31 |
+| PR #6 status | ✅ Merged 2026-07-30T21:50:40Z at c766e2e7 | [PR link](https://github.com/Ding-Ding-Projects/keepassxc/pull/6) |
+| Working tree | ✅ Clean, no stashes, no worktrees | 2026-07-31 |
+| Local ↔ remote sync | ✅ HEAD == origin/develop at c766e2e7 | 2026-07-31 |
+
+### Remaining open items (no agent action possible)
+
+| Item | Action needed |
+| --- | --- |
+| Run rchive-branches.yml workflow | Human: Actions → "Archive branches" dispatch |
+| Verify CodeQL Windows build on latest head | Confirm in CI; was cancelled by prior push |
+| Fix two non-compiling commits (edc96650, 593c3ac) if clean history desired | Can be squashed/folded later |
+
+### Active remote branches (unchanged — not ours to delete)
+
+The following remain on origin and were **not** part of this fork's work stream. They belong to upstream or automated tooling:
+
+- copilot/fix-* branches (Copilot-generated fixes from upstream)
+- eature/* branches (upstream features not yet merged there either)
+- ix/* branches (upstream fixes)
+- dependabot/* branch (dependency update)
+- gh-pages (docs site, not built from here)
+- elease/2.7.x (upstream release branch)
+- ork_keepassx_core (legacy fork tracking)
+
+These should only be managed by their respective owners. Our fork is clean.
+
+---
+
+*This handoff supersedes all previous handoff documents for this repository. Last updated: 2026-07-31.*

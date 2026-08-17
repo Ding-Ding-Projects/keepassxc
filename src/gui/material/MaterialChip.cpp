@@ -205,6 +205,47 @@ namespace Material
         update();
     }
 
+    PillKind Chip::restingPill() const
+    {
+        return m_restingPill;
+    }
+
+    PillKind Chip::selectedPill() const
+    {
+        return m_selectedPill;
+    }
+
+    void Chip::setPills(PillKind resting, PillKind selected)
+    {
+        if (resting == m_restingPill && selected == m_selectedPill) {
+            return;
+        }
+        m_restingPill = resting;
+        m_selectedPill = selected;
+        update();
+    }
+
+    bool Chip::showsCheckWhenSelected() const
+    {
+        return m_showsCheck;
+    }
+
+    void Chip::setShowsCheckWhenSelected(bool shows)
+    {
+        if (shows == m_showsCheck) {
+            return;
+        }
+        m_showsCheck = shows;
+        // The check is part of the chip's width, so dropping it resizes the chip.
+        updateGeometry();
+        update();
+    }
+
+    bool Chip::isSelected() const
+    {
+        return isCheckable() && isChecked();
+    }
+
     int Chip::radius() const
     {
         return m_radius;
@@ -230,7 +271,9 @@ namespace Material
 
     QSize Chip::sizeHint() const
     {
-        const bool leading = !m_symbol.isEmpty() || (m_kind == Kind::Filter && isChecked());
+        // Same predicate paintEvent uses to pick its leading glyph, so the width
+        // reserved here and the width drawn there can never drift apart.
+        const bool leading = !m_symbol.isEmpty() || (isSelected() && m_showsCheck);
         const int label = labelWidth(theme()->font(TypeRole::BodySmall), text());
 
         int width = 2 * ChipPadding + label;
@@ -245,7 +288,7 @@ namespace Material
 
     QSize Chip::minimumSizeHint() const
     {
-        const bool leading = !m_symbol.isEmpty() || (m_kind == Kind::Filter && isChecked());
+        const bool leading = !m_symbol.isEmpty() || (isSelected() && m_showsCheck);
         const int label =
             text().isEmpty() ? 0 : labelWidth(theme()->font(TypeRole::BodySmall), QStringLiteral("..."));
 
@@ -263,10 +306,15 @@ namespace Material
     {
         Q_UNUSED(event)
 
-        const bool selected = isCheckable() && isChecked();
-        const QColor fill = selected ? theme()->color(Role::SecondaryContainer) : QColor();
-        const QColor border = selected ? QColor() : theme()->color(Role::Outline);
-        const QColor content = theme()->color(selected ? Role::OnSecondaryContainer : Role::OnSurfaceVariant);
+        // Both states resolve through the PILL table, which is where the design
+        // decides whether a variant is filled, outlined or neither. Six of the
+        // eight pills have no border at all, so this is also how a chip goes
+        // borderless.
+        const bool selected = isSelected();
+        const PillKind pill = selected ? m_selectedPill : m_restingPill;
+        const QColor fill = pillContainerColor(pill);
+        const QColor border = pillBorderColor(pill);
+        const QColor content = pillContentColor(pill);
 
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing);
@@ -281,7 +329,8 @@ namespace Material
             painter.setOpacity(DisabledOpacity);
         }
 
-        const QString leadingSymbol = !m_symbol.isEmpty() ? m_symbol : (selected ? QStringLiteral("check") : QString());
+        const QString leadingSymbol =
+            !m_symbol.isEmpty() ? m_symbol : (selected && m_showsCheck ? QStringLiteral("check") : QString());
         const QRect trailing = trailingRect();
         const QFont labelFont = theme()->font(TypeRole::BodySmall);
         const QFontMetrics metrics(labelFont);

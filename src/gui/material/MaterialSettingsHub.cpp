@@ -18,6 +18,7 @@
 #include "MaterialSettingsHub.h"
 
 #include "MaterialButtons.h"
+#include "MaterialDialog.h"
 #include "MaterialElevation.h"
 #include "MaterialNotifier.h"
 #include "MaterialOverlay.h"
@@ -27,8 +28,11 @@
 #include "MaterialTheme.h"
 
 #include "core/Translator.h"
+#include "MaterialCommandPalette.h"
+#include "gui/ActionCollection.h"
 #include "gui/FileDialog.h"
 
+#include <QAction>
 #include <QFileInfo>
 #include <QHBoxLayout>
 #include <QLabel>
@@ -50,6 +54,56 @@ namespace Material
 
         /** The separator between a page id and a row key in the binding index. */
         const QLatin1Char IndexSeparator('\x1f');
+
+        /**
+         * A glyph for an action on the Shortcuts page. The actions carry icons
+         * from the stock theme rather than Material Symbols names, so the verb
+         * in the label picks the symbol; anything unrecognised falls back to
+         * the page's own glyph rather than to nothing.
+         */
+        QString symbolForAction(const QAction* action)
+        {
+            struct Keyword
+            {
+                const char* needle;
+                const char* symbol;
+            };
+            // Order matters: the first match wins, so "Save As" must be tried
+            // before "Save".
+            static constexpr Keyword Keywords[] = {
+                {"save as", "save_as"},         {"save", "save"},
+                {"open", "folder_open"},        {"new", "add"},
+                {"clone", "content_copy"},      {"copy", "content_copy"},
+                {"paste", "content_paste"},     {"delete", "delete"},
+                {"remove", "delete"},           {"empty", "delete_sweep"},
+                {"restore", "restore"},         {"import", "file_download"},
+                {"export", "file_upload"},      {"merge", "merge"},
+                {"lock", "lock"},               {"unlock", "lock_open"},
+                {"search", "search"},           {"find", "search"},
+                {"settings", "settings"},       {"preferences", "settings"},
+                {"password", "password"},       {"username", "person"},
+                {"url", "link"},                {"totp", "timer"},
+                {"auto-type", "keyboard"},      {"autotype", "keyboard"},
+                {"group", "folder"},            {"entry", "edit_document"},
+                {"database", "database"},       {"report", "health_metrics"},
+                {"help", "help"},               {"about", "info"},
+                {"quit", "logout"},             {"exit", "logout"},
+                {"tag", "label"},               {"sort", "sort"},
+                {"favicon", "image"},           {"passkey", "passkey"},
+                {"ssh", "terminal"},            {"share", "share"},
+                {"hide", "visibility_off"},     {"show", "visibility"},
+                {"expire", "event_busy"},       {"update", "update"},
+                {"close", "close"},             {"theme", "palette"},
+            };
+
+            const QString text = QString(action->text()).remove(QLatin1Char('&')).toLower();
+            for (const auto& keyword : Keywords) {
+                if (text.contains(QLatin1String(keyword.needle))) {
+                    return QString::fromLatin1(keyword.symbol);
+                }
+            }
+            return QStringLiteral("keyboard_command_key");
+        }
 
         /** The rounded-28 panel the value editor sits on. */
         class EditorPanel : public QWidget
@@ -249,6 +303,11 @@ namespace Material
     } // namespace
 
     SettingsHub::SettingsHub(QWidget* parent)
+        : SettingsHub(Overview::Embedded, parent)
+    {
+    }
+
+    SettingsHub::SettingsHub(Overview overview, QWidget* parent)
         : QWidget(parent)
     {
         auto* root = new QVBoxLayout(this);
@@ -258,15 +317,20 @@ namespace Material
         m_sheet = new SpecSheet(this);
         root->addWidget(m_sheet, 1);
 
-        buildOverview();
+        if (overview == Overview::Embedded) {
+            buildOverview();
+        }
 
-        m_sheet->addSidebarSection(tr("SPEC SHEETS"));
+        // The design's overline is the sheet's own label, not a generic one.
+        m_sheet->addSidebarSection(tr("APPLICATION SETTINGS"));
         buildGeneralPage();
+        buildAutoTypePage();
         buildSecurityPage();
         buildBrowserPage();
         buildSshAgentPage();
         buildKeeSharePage();
-        buildPasskeysPage();
+        buildGeneratorDefaultsPage();
+        buildShortcutsPage();
 
         connect(m_sheet, &SpecSheet::rowActivated, this, &SettingsHub::handleRow);
         connect(m_sheet, &SpecSheet::builderRequested, this, [this](const QString& pageId) {
@@ -481,6 +545,32 @@ namespace Material
         m_bindings.append(binding);
     }
 
+    void SettingsHub::addCommand(const QString& pageId,
+                                 const QString& section,
+                                 const QString& symbol,
+                                 const QString& label,
+                                 const QString& sub,
+                                 const QString& commandText,
+                                 std::function<void()> command)
+    {
+        Binding binding;
+        binding.pageId = pageId;
+        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.label = label;
+        binding.sub = sub;
+        binding.control = Control::Command;
+        binding.commandText = commandText;
+        binding.command = std::move(command);
+
+        PillKind kind = PillKind::Action;
+        QString text;
+        pillFor(binding, &kind, &text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+
+        m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
+        m_bindings.append(binding);
+    }
+
     int SettingsHub::indexOf(const QString& pageId, const QString& rowKey) const
     {
         return m_index.value(pageId + IndexSeparator + rowKey, -1);
@@ -488,6 +578,14 @@ namespace Material
 
     void SettingsHub::pillFor(const Binding& binding, PillKind* kind, QString* text) const
     {
+        // A command row carries no configuration value, so nothing is read for
+        // it: the pill is the verb the design gives the action.
+        if (binding.control == Control::Command) {
+            *kind = PillKind::Action;
+            *text = binding.commandText;
+            return;
+        }
+
         const QVariant value = config()->get(binding.key);
         switch (binding.control) {
         case Control::Toggle:
@@ -529,6 +627,8 @@ namespace Material
             *text = unset ? tr("Not set") : tr("Configured");
             return;
         }
+        case Control::Command:
+            return;
         }
     }
 
@@ -557,12 +657,29 @@ namespace Material
 
     void SettingsHub::handleRow(const QString& pageId, const QString& rowKey)
     {
+        // The Shortcuts page is read from the real actions rather than bound to
+        // Config, and rebinding is the classic editor's job.
+        if (pageId == QLatin1String("shortcuts")) {
+            if (m_classic) {
+                showClassicEditor();
+                Notify::info(rowKey.section(QLatin1Char('/'), 1),
+                             tr("Key bindings are changed on the Shortcuts page, which is now open."));
+            }
+            return;
+        }
+
         const int index = indexOf(pageId, rowKey);
         if (index < 0) {
             return;
         }
         const Binding binding = m_bindings.at(index);
 
+        if (binding.control == Control::Command) {
+            if (binding.command) {
+                binding.command();
+            }
+            return;
+        }
         if (binding.control == Control::Toggle) {
             const bool next = !config()->get(binding.key).toBool();
             config()->set(binding.key, next);
@@ -632,8 +749,15 @@ namespace Material
     {
         const QString page = QStringLiteral("general");
         m_sheet->addPage(page, QStringLiteral("tune"), tr("General"));
+        auto* built = m_sheet->page(page);
+        if (built) {
+            built->setNote(tr("Every option on the Basic Settings tab of Application Settings, in Material form."));
+        }
 
         const QString startup = tr("Startup");
+        if (built) {
+            built->setSectionNote(startup, tr("Config keys SingleInstance … GUI_ShowExpiredEntriesOnDatabaseUnlock."));
+        }
         addToggle(page,
                   startup,
                   QStringLiteral("looks_one"),
@@ -686,6 +810,9 @@ namespace Material
                 Config::DefaultDatabaseFileName);
 
         const QString saving = tr("Saving and backups");
+        if (built) {
+            built->setSectionNote(saving, tr("Saving, reloading and backup behaviour."));
+        }
         addToggle(page,
                   saving,
                   QStringLiteral("save"),
@@ -1001,208 +1128,6 @@ namespace Material
                   60,
                   tr("seconds"));
 
-        const QString autoType = tr("Auto-Type");
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("keyboard"),
-                  tr("Match the window title"),
-                  tr("Offer entries whose title appears in the target window title."),
-                  Config::AutoTypeEntryTitleMatch);
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("web"),
-                  tr("Match the entry URL"),
-                  tr("Offer entries whose URL appears in the target window title."),
-                  Config::AutoTypeEntryURLMatch);
-        addToggle(page,
-                  autoType,
-                  QStringLiteral("event_busy"),
-                  tr("Hide expired entries"),
-                  tr("Keep expired entries out of the Auto-Type picker."),
-                  Config::AutoTypeHideExpiredEntry);
-        addNumber(page,
-                  autoType,
-                  QStringLiteral("timer"),
-                  tr("Delay between keystrokes"),
-                  tr("Slow Auto-Type down for applications that drop characters."),
-                  Config::AutoTypeDelay,
-                  0,
-                  2000,
-                  tr("ms"));
-        addNumber(page,
-                  autoType,
-                  QStringLiteral("schedule"),
-                  tr("Delay before the first keystroke"),
-                  tr("Time given to the target window to take focus."),
-                  Config::AutoTypeStartDelay,
-                  0,
-                  10000,
-                  tr("ms"));
-        addNumber(page,
-                  autoType,
-                  QStringLiteral("history"),
-                  tr("Remember the last typed entry for"),
-                  tr("How long the global shortcut repeats the previous entry."),
-                  Config::GlobalAutoTypeRetypeTime,
-                  0,
-                  300,
-                  tr("seconds"));
-        addManaged(page,
-                   autoType,
-                   QStringLiteral("keyboard"),
-                   tr("Global Auto-Type shortcut key"),
-                   tr("Recorded by the shortcut widget in the classic editor."),
-                   Config::GlobalAutoTypeKey);
-        addManaged(page,
-                   autoType,
-                   QStringLiteral("keyboard"),
-                   tr("Global Auto-Type modifiers"),
-                   tr("Recorded together with the shortcut key."),
-                   Config::GlobalAutoTypeModifiers);
-
-        const QString generator = tr("Password generator");
-        addChoice(page,
-                  generator,
-                  QStringLiteral("casino"),
-                  tr("Generator mode"),
-                  tr("Characters or a passphrase."),
-                  Config::PasswordGenerator_Type,
-                  {{0, tr("Password")}, {1, tr("Passphrase")}});
-        addNumber(page,
-                  generator,
-                  QStringLiteral("looks_one"),
-                  tr("Password length"),
-                  tr("Characters drawn for a generated password."),
-                  Config::PasswordGenerator_Length,
-                  1,
-                  128,
-                  tr("characters"));
-        addToggle(page,
-                  generator,
-                  QStringLiteral("short_text"),
-                  tr("Lower case letters"),
-                  tr("Include a-z."),
-                  Config::PasswordGenerator_LowerCase);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("short_text"),
-                  tr("Upper case letters"),
-                  tr("Include A-Z."),
-                  Config::PasswordGenerator_UpperCase);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("looks_one"),
-                  tr("Numbers"),
-                  tr("Include 0-9."),
-                  Config::PasswordGenerator_Numbers);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("code"),
-                  tr("Special characters"),
-                  tr("Include the common punctuation block."),
-                  Config::PasswordGenerator_SpecialChars);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("language"),
-                  tr("Extended ASCII"),
-                  tr("Include the upper half of the Latin-1 table."),
-                  Config::PasswordGenerator_EASCII);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("code"),
-                  tr("Braces"),
-                  tr("Include {[()]}."),
-                  Config::PasswordGenerator_Braces);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("code"),
-                  tr("Punctuation"),
-                  tr("Include .,:;."),
-                  Config::PasswordGenerator_Punctuation);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("code"),
-                  tr("Quotes"),
-                  tr("Include \" and '."),
-                  Config::PasswordGenerator_Quotes);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("remove"),
-                  tr("Dashes and slashes"),
-                  tr("Include -/\\_|."),
-                  Config::PasswordGenerator_Dashes);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("add"),
-                  tr("Math symbols"),
-                  tr("Include <*+!?=."),
-                  Config::PasswordGenerator_Math);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("tag"),
-                  tr("Logograms"),
-                  tr("Include ^°&@#$%."),
-                  Config::PasswordGenerator_Logograms);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("build"),
-                  tr("Advanced mode"),
-                  tr("Show the per-block character switches in the generator."),
-                  Config::PasswordGenerator_AdvancedMode);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("visibility_off"),
-                  tr("Exclude look-alike characters"),
-                  tr("Drop l, 1, I, O, 0 and friends."),
-                  Config::PasswordGenerator_ExcludeAlike);
-        addToggle(page,
-                  generator,
-                  QStringLiteral("check"),
-                  tr("Use every selected group"),
-                  tr("Guarantee at least one character from each enabled set."),
-                  Config::PasswordGenerator_EnsureEvery);
-        addText(page,
-                generator,
-                QStringLiteral("add"),
-                tr("Additional characters"),
-                tr("Characters added to the pool."),
-                Config::PasswordGenerator_AdditionalChars);
-        addText(page,
-                generator,
-                QStringLiteral("remove"),
-                tr("Excluded characters"),
-                tr("Characters removed from the pool."),
-                Config::PasswordGenerator_ExcludedChars);
-        addNumber(page,
-                  generator,
-                  QStringLiteral("looks_one"),
-                  tr("Word count"),
-                  tr("Words drawn for a generated passphrase."),
-                  Config::PasswordGenerator_WordCount,
-                  1,
-                  40,
-                  tr("words"));
-        addText(page,
-                generator,
-                QStringLiteral("short_text"),
-                tr("Word separator"),
-                tr("What goes between the words of a passphrase."),
-                Config::PasswordGenerator_WordSeparator);
-        addText(page,
-                generator,
-                QStringLiteral("menu_book"),
-                tr("Word list"),
-                tr("The list passphrase words are drawn from."),
-                Config::PasswordGenerator_WordList,
-                Control::Path);
-        addChoice(page,
-                  generator,
-                  QStringLiteral("sort_by_alpha"),
-                  tr("Word case"),
-                  tr("How passphrase words are capitalised."),
-                  Config::PasswordGenerator_WordCase,
-                  {{0, tr("lower case")}, {1, tr("UPPER CASE")}, {2, tr("Title Case")}, {3, tr("MiXeD cAsE")}});
-
         const QString voice = tr("Voice");
         addChoice(page,
                   voice,
@@ -1267,12 +1192,104 @@ namespace Material
                   tr("Hide the pre-release warning"),
                   tr("Stop warning that this build is not meant for production."),
                   Config::Messages_HidePreReleaseWarning);
+
+        // The three actions that own the configuration file itself. They do
+        // what the classic editor's buttons do, so both surfaces agree.
+        const QString settingsFile = tr("Settings file");
+        if (built) {
+            built->setSectionNote(settingsFile, tr("Config is a plain INI file; these three actions own it."));
+        }
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("restart_alt"),
+                   tr("Reset settings to default…"),
+                   tr("Clears every application setting and the recent database list. Databases are untouched."),
+                   tr("Reset"),
+                   [this] { resetSettings(); });
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("file_download"),
+                   tr("Import settings…"),
+                   tr("Replaces the current settings with the contents of an exported INI file."),
+                   tr("Import"),
+                   [this] { importSettings(); });
+        addCommand(page,
+                   settingsFile,
+                   QStringLiteral("file_upload"),
+                   tr("Export settings…"),
+                   tr("Writes every stored setting to an INI file."),
+                   tr("Export"),
+                   [this] { exportSettings(); });
+    }
+
+    void SettingsHub::resetSettings()
+    {
+        auto* confirm = Dialog::confirm(window(),
+                                        tr("Reset every setting?"),
+                                        tr("Every application setting goes back to its default and the recent "
+                                           "database list is cleared. Your databases are not touched."),
+                                        tr("Reset"),
+                                        true);
+        connect(confirm, &Dialog::accepted, this, [this] {
+            if (config()->hasAccessError()) {
+                Notify::error(tr("Settings not reset"),
+                              tr("The configuration file cannot be written: %1").arg(config()->getFileName()));
+                return;
+            }
+            config()->resetToDefaults();
+            // The recent database list is not a default, so it is cleared
+            // explicitly - which is what the classic editor does.
+            config()->remove(Config::LastDatabases);
+            config()->remove(Config::LastActiveDatabase);
+            config()->remove(Config::LastKeyFiles);
+            config()->remove(Config::LastDir);
+            config()->sync();
+            refreshAll();
+            Notify::success(tr("Settings reset"),
+                            tr("Every setting is back at its default. Some of them take effect the next time "
+                               "KeePassXC starts."));
+        });
+        confirm->openOverlay();
+    }
+
+    void SettingsHub::importSettings()
+    {
+        const QString file = fileDialog()->getOpenFileName(
+            window(), tr("Import KeePassXC Settings"), QString(), QStringLiteral("*.ini"));
+        if (file.isEmpty()) {
+            return;
+        }
+        if (!config()->importSettings(file)) {
+            Notify::error(tr("Settings not imported"),
+                          tr("%1 is not a valid settings file.").arg(QFileInfo(file).fileName()));
+            return;
+        }
+        refreshAll();
+        Notify::success(tr("Settings imported"),
+                        tr("The settings in %1 are now in force. Some of them take effect the next time "
+                           "KeePassXC starts.")
+                            .arg(QFileInfo(file).fileName()));
+    }
+
+    void SettingsHub::exportSettings()
+    {
+        const QString file = fileDialog()->getSaveFileName(
+            window(), tr("Export KeePassXC Settings"), QString(), QStringLiteral("*.ini"));
+        if (file.isEmpty()) {
+            return;
+        }
+        config()->exportSettings(file);
+        Notify::success(tr("Settings exported"), QFileInfo(file).fileName());
     }
 
     void SettingsHub::buildSecurityPage()
     {
         const QString page = QStringLiteral("security");
         m_sheet->addPage(page, QStringLiteral("shield_lock"), tr("Security"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(
+                tr("Timeouts, lock options, convenience and privacy — the Security tab of Application Settings."));
+        }
 
         const QString timeouts = tr("Timeouts");
         addToggle(page,
@@ -1342,12 +1359,6 @@ namespace Material
                   Config::Security_LockDatabaseOnUserSwitch);
         addToggle(page,
                   locking,
-                  QStringLiteral("keyboard"),
-                  tr("Relock after Auto-Type"),
-                  tr("Lock again once a global Auto-Type has finished."),
-                  Config::Security_RelockAutoType);
-        addToggle(page,
-                  locking,
                   QStringLiteral("fingerprint"),
                   tr("Quick unlock"),
                   tr("Use the platform credential store to reopen a locked database."),
@@ -1394,18 +1405,6 @@ namespace Material
         const QString confirmations = tr("Confirmations");
         addToggle(page,
                   confirmations,
-                  QStringLiteral("help"),
-                  tr("Ask before Auto-Type"),
-                  tr("Confirm which entry is about to be typed."),
-                  Config::Security_AutoTypeAsk);
-        addToggle(page,
-                  confirmations,
-                  QStringLiteral("keyboard"),
-                  tr("Skip the confirmation from the main window"),
-                  tr("Do not ask again when Auto-Type is started from KeePassXC itself."),
-                  Config::Security_AutoTypeSkipMainWindowConfirmation);
-        addToggle(page,
-                  confirmations,
                   QStringLiteral("delete"),
                   tr("Delete to the recycle bin without asking"),
                   tr("Move entries out of sight with no confirmation."),
@@ -1433,6 +1432,9 @@ namespace Material
     {
         const QString page = QStringLiteral("browser");
         m_sheet->addPage(page, QStringLiteral("extension"), tr("Browser Integration"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("Every Browser_* configuration key, as exposed by BrowserSettingsWidget."));
+        }
 
         const QString integration = tr("Integration");
         addToggle(page,
@@ -1517,6 +1519,14 @@ namespace Material
                   tr("Allow database entry requests"),
                   tr("Let the extension enumerate entries rather than ask per site."),
                   Config::Browser_AllowGetDatabaseEntriesRequest);
+        // The design keeps passkeys here rather than on a page of their own:
+        // they arrive through the same extension and obey the same permissions.
+        addToggle(page,
+                  permissions,
+                  QStringLiteral("passkey"),
+                  tr("Allow passkeys on localhost"),
+                  tr("Permit insecure http://localhost origins, for testing."),
+                  Config::Browser_AllowLocalhostWithPasskeys);
 
         const QString proxy = tr("Proxy application");
         addToggle(page,
@@ -1580,6 +1590,10 @@ namespace Material
     {
         const QString page = QStringLiteral("sshagent");
         m_sheet->addPage(page, QStringLiteral("terminal"), tr("SSH Agent"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(
+                tr("SSHAgent_* keys. Keys are published to the agent only while the database is unlocked."));
+        }
 
         const QString agent = tr("Agent");
         addToggle(page,
@@ -1617,10 +1631,273 @@ namespace Material
                 Control::Path);
     }
 
+    void SettingsHub::buildAutoTypePage()
+    {
+        const QString page = QStringLiteral("autotype");
+        m_sheet->addPage(page, QStringLiteral("keyboard"), tr("Auto-Type"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("Window matching, confirmation and platform behaviour for Auto-Type."));
+        }
+
+        const QString matching = tr("Window matching");
+        addToggle(page,
+                  matching,
+                  QStringLiteral("title"),
+                  tr("Use entry title to match windows for global Auto-Type"),
+                  QString(),
+                  Config::AutoTypeEntryTitleMatch);
+        addToggle(page,
+                  matching,
+                  QStringLiteral("link"),
+                  tr("Use entry URL to match windows for global Auto-Type"),
+                  QString(),
+                  Config::AutoTypeEntryURLMatch);
+        addToggle(page,
+                  matching,
+                  QStringLiteral("filter_alt"),
+                  tr("Hide expired entries from Auto-Type"),
+                  QString(),
+                  Config::AutoTypeHideExpiredEntry);
+
+        const QString confirmation = tr("Confirmation and locking");
+        addToggle(page,
+                  confirmation,
+                  QStringLiteral("help"),
+                  tr("Always ask before performing Auto-Type"),
+                  QString(),
+                  Config::Security_AutoTypeAsk);
+        addToggle(page,
+                  confirmation,
+                  QStringLiteral("fast_forward"),
+                  tr("Skip confirmation for main window Auto-Type actions"),
+                  QString(),
+                  Config::Security_AutoTypeSkipMainWindowConfirmation);
+        addToggle(page,
+                  confirmation,
+                  QStringLiteral("lock_clock"),
+                  tr("Re-lock previously locked database after performing Auto-Type"),
+                  QString(),
+                  Config::Security_RelockAutoType);
+
+        const QString typing = tr("Typing and platform");
+        m_sheet->page(page)->setSectionNote(typing, tr("AutoTypeDelay, AutoTypeStartDelay and the global shortcut."));
+        addNumber(page,
+                  typing,
+                  QStringLiteral("timer"),
+                  tr("Auto-Type delay between keystrokes"),
+                  QString(),
+                  Config::AutoTypeDelay,
+                  0,
+                  10000,
+                  tr("ms"));
+        addNumber(page,
+                  typing,
+                  QStringLiteral("hourglass_top"),
+                  tr("Auto-Type start delay"),
+                  QString(),
+                  Config::AutoTypeStartDelay,
+                  0,
+                  10000,
+                  tr("ms"));
+        addManaged(page,
+                   typing,
+                   QStringLiteral("keyboard_alt"),
+                   tr("Global Auto-Type shortcut"),
+                   tr("Recorded by the shortcut field on the Auto-Type page of the classic editor."),
+                   Config::GlobalAutoTypeKey);
+        addManaged(page,
+                   typing,
+                   QStringLiteral("keyboard_command_key"),
+                   tr("Global Auto-Type modifiers"),
+                   tr("Recorded together with the shortcut key."),
+                   Config::GlobalAutoTypeModifiers);
+        addNumber(page,
+                  typing,
+                  QStringLiteral("replay"),
+                  tr("Global Auto-Type retype time"),
+                  QString(),
+                  Config::GlobalAutoTypeRetypeTime,
+                  0,
+                  300,
+                  tr("sec"));
+    }
+
+    void SettingsHub::buildGeneratorDefaultsPage()
+    {
+        const QString page = QStringLiteral("gendefaults");
+        m_sheet->addPage(page, QStringLiteral("casino"), tr("Password Generator defaults"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("PasswordGenerator_* keys — the state the generator opens with."));
+        }
+
+        const QString password = tr("Password mode");
+        addNumber(page,
+                  password,
+                  QStringLiteral("straighten"),
+                  tr("Length"),
+                  tr("1–999"),
+                  Config::PasswordGenerator_Length,
+                  1,
+                  999);
+
+        // The character classes, in the order the generator itself lists them.
+        struct ClassRow
+        {
+            const char* symbol;
+            const char* label;
+            const char* sub;
+            Config::ConfigKey key;
+        };
+        const ClassRow classes[] = {
+            {"text_fields", QT_TR_NOOP("Lower-case letters a-z"), "", Config::PasswordGenerator_LowerCase},
+            {"text_fields", QT_TR_NOOP("Upper-case letters A-Z"), "", Config::PasswordGenerator_UpperCase},
+            {"pin", QT_TR_NOOP("Numbers 0-9"), "", Config::PasswordGenerator_Numbers},
+            {"emoji_symbols", QT_TR_NOOP("Special characters / * + &"), "", Config::PasswordGenerator_SpecialChars},
+            {"data_object", QT_TR_NOOP("Braces { [ ( ) ] }"), "", Config::PasswordGenerator_Braces},
+            {"more_horiz", QT_TR_NOOP("Punctuation . , : ;"), "", Config::PasswordGenerator_Punctuation},
+            {"format_quote", QT_TR_NOOP("Quotes \" '"), "", Config::PasswordGenerator_Quotes},
+            {"remove", QT_TR_NOOP("Dashes and slashes \\ / | _ -"), "", Config::PasswordGenerator_Dashes},
+            {"functions", QT_TR_NOOP("Math symbols < > * + ! ? ="), "", Config::PasswordGenerator_Math},
+            {"language", QT_TR_NOOP("Logograms # $ % && @ ^ ` ~"), "", Config::PasswordGenerator_Logograms},
+            {"translate", QT_TR_NOOP("Extended ASCII"), "", Config::PasswordGenerator_EASCII},
+        };
+        for (const auto& row : classes) {
+            addToggle(page,
+                      password,
+                      QString::fromLatin1(row.symbol),
+                      tr(row.label),
+                      QString::fromLatin1(row.sub),
+                      row.key);
+        }
+
+        addText(page,
+                password,
+                QStringLiteral("add"),
+                tr("Also choose from (additional characters)"),
+                QString(),
+                Config::PasswordGenerator_AdditionalChars);
+        addText(page,
+                password,
+                QStringLiteral("block"),
+                tr("Do not include (excluded characters)"),
+                tr("The Hex button adds every non-hex letter."),
+                Config::PasswordGenerator_ExcludedChars);
+        addToggle(page,
+                  password,
+                  QStringLiteral("blur_on"),
+                  tr("Exclude look-alike characters"),
+                  tr("0 1 l I O | B 8 G 6"),
+                  Config::PasswordGenerator_ExcludeAlike);
+        addToggle(page,
+                  password,
+                  QStringLiteral("checklist"),
+                  tr("Pick characters from every group"),
+                  QString(),
+                  Config::PasswordGenerator_EnsureEvery);
+        addToggle(page,
+                  password,
+                  QStringLiteral("tune"),
+                  tr("Advanced mode"),
+                  tr("Reveals the additional and excluded character fields."),
+                  Config::PasswordGenerator_AdvancedMode);
+
+        const QString passphrase = tr("Passphrase mode");
+        addNumber(page,
+                  passphrase,
+                  QStringLiteral("numbers"),
+                  tr("Word count"),
+                  tr("1–40"),
+                  Config::PasswordGenerator_WordCount,
+                  1,
+                  40);
+        addText(page,
+                passphrase,
+                QStringLiteral("space_bar"),
+                tr("Word separator"),
+                QString(),
+                Config::PasswordGenerator_WordSeparator);
+        addText(page,
+                passphrase,
+                QStringLiteral("menu_book"),
+                tr("Wordlist"),
+                tr("The bundled EFF long list, or a file of your own."),
+                Config::PasswordGenerator_WordList);
+        addChoice(page,
+                  passphrase,
+                  QStringLiteral("text_format"),
+                  tr("Word case"),
+                  QString(),
+                  Config::PasswordGenerator_WordCase,
+                  {{0, tr("lower case")}, {1, tr("UPPER CASE")}, {2, tr("Title Case")}, {3, tr("MiXeD cAsE")}});
+        addChoice(page,
+                  passphrase,
+                  QStringLiteral("category"),
+                  tr("Generator type"),
+                  QString(),
+                  Config::PasswordGenerator_Type,
+                  {{0, tr("Password")}, {1, tr("Passphrase")}});
+    }
+
+    void SettingsHub::buildShortcutsPage()
+    {
+        const QString page = QStringLiteral("shortcuts");
+        m_sheet->addPage(page, QStringLiteral("keyboard_command_key"), tr("Shortcuts"));
+        auto* built = m_sheet->page(page);
+        if (!built) {
+            return;
+        }
+        built->setNote(tr("Every action in the application, with its key binding. "
+                          "Activating a row opens the Shortcuts page of the classic editor, "
+                          "which is where a binding is changed."));
+
+        // The real actions, not a transcription of them, so a rebound key shows
+        // up here and an action added later is not silently missing.
+        const QString unbound = tr("Unassigned");
+        const QString other = tr("Other actions");
+        int listed = 0;
+        const auto actions = ActionCollection::instance() ? ActionCollection::instance()->actions()
+                                                          : QList<QAction*>();
+        for (const QAction* action : actions) {
+            if (!action || action->text().isEmpty() || action->isSeparator()) {
+                continue;
+            }
+            const QString label = QString(action->text()).remove(QLatin1Char('&'));
+            if (label.isEmpty()) {
+                continue;
+            }
+            // Group by the top-level menu the action hangs off, which is what
+            // the design's sections are.
+            const QString path = menuPathOf(action);
+            const QString section = path.isEmpty() ? other : path.section(QStringLiteral(" ▸ "), 0, 0);
+            const QKeySequence shortcut = action->shortcut();
+            const QString keys = shortcut.isEmpty() ? unbound : shortcut.toString(QKeySequence::NativeText);
+
+            built->addRow(section,
+                          symbolForAction(action),
+                          label,
+                          action->toolTip() == label ? QString() : action->toolTip(),
+                          shortcut.isEmpty() ? PillKind::Off : PillKind::Mono,
+                          keys);
+            ++listed;
+        }
+
+        if (listed == 0) {
+            built->addRow(other,
+                          QStringLiteral("info"),
+                          tr("No actions have been registered yet"),
+                          tr("The window builds its action list before this page is read."),
+                          PillKind::Off,
+                          tr("Empty"));
+        }
+    }
+
     void SettingsHub::buildKeeSharePage()
     {
         const QString page = QStringLiteral("keeshare");
         m_sheet->addPage(page, QStringLiteral("sync"), tr("KeeShare"));
+        if (auto* built = m_sheet->page(page)) {
+            built->setNote(tr("Share groups between databases as signed containers."));
+        }
 
         const QString sharing = tr("Sharing");
         addToggle(page,
@@ -1647,60 +1924,6 @@ namespace Material
                    tr("Active shares"),
                    tr("Which databases are currently importing or exporting."),
                    Config::KeeShare_Active);
-    }
-
-    void SettingsHub::buildPasskeysPage()
-    {
-        const QString page = QStringLiteral("passkeys");
-        m_sheet->addPage(page, QStringLiteral("passkey"), tr("Passkeys"));
-
-        const QString passkeys = tr("Passkeys");
-        addToggle(page,
-                  passkeys,
-                  QStringLiteral("bug_report"),
-                  tr("Allow localhost with passkeys"),
-                  tr("Permit insecure http://localhost origins, for testing."),
-                  Config::Browser_AllowLocalhostWithPasskeys);
-
-        const QString requirements = tr("What passkeys need");
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("extension"),
-                  tr("Browser integration"),
-                  tr("Passkey requests arrive through the extension; without it nothing is served."),
-                  Config::Browser_Enabled);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("lock_open"),
-                  tr("Unlock for a passkey request"),
-                  tr("Raise the unlock prompt when a passkey lives in a locked database."),
-                  Config::Browser_UnlockDatabase);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("link"),
-                  tr("Match the origin scheme"),
-                  tr("Treat http and https origins as different relying parties."),
-                  Config::Browser_MatchUrlScheme);
-        addToggle(page,
-                  requirements,
-                  QStringLiteral("database"),
-                  tr("Search every open database"),
-                  tr("Look beyond the active database for a stored passkey."),
-                  Config::Browser_SearchInAllDatabases);
-
-        const QString prompts = tr("Prompts");
-        addToggle(page,
-                  prompts,
-                  QStringLiteral("lock_open"),
-                  tr("Never ask before returning a passkey"),
-                  tr("Skip the access prompt for passkeys as well as passwords."),
-                  Config::Browser_AlwaysAllowAccess);
-        addToggle(page,
-                  prompts,
-                  QStringLiteral("edit"),
-                  tr("Never ask before updating a passkey"),
-                  tr("Skip the update prompt when a relying party re-registers."),
-                  Config::Browser_AlwaysAllowUpdate);
     }
 
 } // namespace Material

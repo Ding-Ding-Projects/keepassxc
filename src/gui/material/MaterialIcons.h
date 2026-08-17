@@ -24,6 +24,8 @@
 #include <QPixmap>
 #include <QString>
 
+class Entry;
+
 namespace Material
 {
     /**
@@ -55,6 +57,31 @@ namespace Material
 
         /** Whether @p name is present in the mapping table. */
         bool hasSymbol(const QString& name);
+
+        /**
+         * The glyph that stands for @p entry in an entry row.
+         *
+         * The design gives every row a symbol chosen for the entry, so this
+         * answers with the first thing the entry actually says about itself:
+         *
+         *   1. a `KPXC_SYMBOL` attribute naming a glyph this table carries,
+         *   2. its URL scheme, then a host label that states what the site is,
+         *   3. a stored passkey, then a TOTP seed,
+         *   4. its KeePass icon number, for the numbers whose meaning is plain,
+         *   5. defaultEntrySymbol().
+         *
+         * The tables behind those rules are deliberately short. Nothing here
+         * guesses what a brand does - an unrecognised entry keeps the neutral
+         * glyph, because one honest default beats a wrong glyph on every row.
+         *
+         * A custom icon is a picture with no Material Symbols name, so it too
+         * ends at the neutral glyph. This is the one answer both the row and
+         * the detail pane draw, so an entry never wears two glyphs at once.
+         */
+        QString entrySymbol(const Entry* entry);
+
+        /** The neutral glyph entrySymbol() falls back to, and rows use when unset. */
+        QString defaultEntrySymbol();
 
         /** Drop every cached rendering. Called when the theme or density changes. */
         void clearCache();

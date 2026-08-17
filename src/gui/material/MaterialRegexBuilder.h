@@ -39,7 +39,7 @@ namespace Material
     /**
      * The regex builder overlay.
      *
-     * A 900px sheet with the token palette on the left and the pattern
+     * A 1000px sheet with the token palette on the left and the pattern
      * workbench on the right: the `/pattern/` field with its flag chips, a
      * status line, a sample text area and the list of matches with their
      * capture groups. Everything is recomputed with QRegularExpression on every
@@ -64,7 +64,7 @@ namespace Material
         QString sampleText() const;
         void setSampleText(const QString& text);
 
-        /** The active flag chips, a subset of "igm" in that order. */
+        /** The active flag chips, a subset of "gimsu" in that order. */
         QString flags() const;
         void setFlags(const QString& flags);
 
@@ -97,7 +97,6 @@ namespace Material
         QPlainTextEdit* m_sampleEdit = nullptr;
         RegexPanel* m_matchPanel = nullptr;
         QVBoxLayout* m_matchLayout = nullptr;
-        QLabel* m_matchHeading = nullptr;
         ButtonBase* m_copyButton = nullptr;
         ButtonBase* m_applyButton = nullptr;
         QHash<QString, RegexTokenChip*> m_flagChips;

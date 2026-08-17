@@ -18,7 +18,6 @@
 #include "MaterialTabStrip.h"
 
 #include "MaterialButtons.h"
-#include "MaterialChip.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
@@ -47,15 +46,32 @@ namespace Material
         constexpr int ControlSize = 34;
         constexpr int ControlBottomMargin = 2;
         constexpr int OverflowGap = 6;
-        // Room for the count badge painted next to the overflow chip.
-        constexpr int OverflowBadgeReserve = 30;
+        constexpr int OverflowPadding = 12;
+        constexpr int OverflowGlyphSize = 18;
         constexpr int BadgeHeight = 18;
+        constexpr int BadgeMinWidth = 18;
+        constexpr int BadgePadding = 5;
 
         QFont tabFont(bool active)
         {
             QFont font = theme()->font(TypeRole::BodySmall);
             font.setWeight(active ? QFont::Medium : QFont::Normal);
             return font;
+        }
+
+        /** The overflow affordance carries the tabs' 13px label at medium weight. */
+        QFont overflowFont()
+        {
+            QFont font = theme()->font(TypeRole::BodySmall);
+            font.setWeight(QFont::Medium);
+            return font;
+        }
+
+        /** Width of the count badge for @p hidden tabs, padding included. */
+        int badgeWidthFor(int hidden)
+        {
+            const QFontMetrics metrics(theme()->font(TypeRole::LabelSmall));
+            return qMax(BadgeMinWidth, metrics.horizontalAdvance(QString::number(hidden)) + 2 * BadgePadding);
         }
 
         /**
@@ -82,13 +98,12 @@ namespace Material
         setFixedHeight(Layout::TabStripHeight);
         setMouseTracking(true);
 
-        m_overflowChip = new Chip(QStringLiteral("more_horiz"), tr("More"), Chip::Kind::Assist, this);
-        m_overflowChip->setToolTip(tr("Show the remaining databases"));
-        m_overflowChip->hide();
-        connect(m_overflowChip, &QAbstractButton::clicked, this, &TabStrip::showOverflowMenu);
-
+        // The trailing controls are pinned as well as sized: ButtonBase fixes a
+        // minimum width from its label metrics on construction, which otherwise
+        // outvotes the diameter and pushes the add button past the strip's edge.
         m_searchButton = new IconButton(QStringLiteral("search"), this);
         m_searchButton->setDiameter(ControlSize);
+        m_searchButton->setFixedSize(ControlSize, ControlSize);
         m_searchButton->setSymbolSize(19);
         m_searchButton->setToolTip(tr("Search open databases"));
         m_searchButton->setAccessibleName(m_searchButton->toolTip());
@@ -96,6 +111,7 @@ namespace Material
 
         m_addButton = new IconButton(QStringLiteral("add"), this);
         m_addButton->setDiameter(ControlSize);
+        m_addButton->setFixedSize(ControlSize, ControlSize);
         m_addButton->setSymbolSize(20);
         m_addButton->setToolTip(tr("Open a database in a new tab"));
         m_addButton->setAccessibleName(m_addButton->toolTip());
@@ -256,10 +272,11 @@ namespace Material
             tab.rect = QRect();
             tab.closeRect = QRect();
         }
+        m_overflowRect = QRect();
+        m_hiddenCount = 0;
 
         const int count = m_tabs.size();
         if (count == 0) {
-            m_overflowChip->hide();
             return;
         }
 
@@ -293,10 +310,10 @@ namespace Material
             for (int i = 0; i < count; ++i) {
                 shown.append(i);
             }
-            m_overflowChip->hide();
         } else {
-            const int chipWidth = m_overflowChip->sizeHint().width() + OverflowBadgeReserve;
-            available -= chipWidth + OverflowGap;
+            // The badge cannot be narrower than the one every tab would need, so
+            // reserving for that worst case never under-reserves.
+            available -= overflowWidth(count) + TabSpacing;
 
             int used = 0;
             for (int i = 0; i < count; ++i) {
@@ -317,7 +334,7 @@ namespace Material
                 shown.append(m_currentIndex);
             }
 
-            m_overflowChip->setVisible(shown.size() < count);
+            m_hiddenCount = count - shown.size();
         }
 
         int x = StripPadding;
@@ -332,13 +349,17 @@ namespace Material
             x += widths.at(index) + TabSpacing;
         }
 
-        if (m_overflowChip->isVisible()) {
-            const QSize chipSize = m_overflowChip->sizeHint();
-            m_overflowChip->setGeometry(x + OverflowGap - TabSpacing,
-                                        height() - ControlBottomMargin - chipSize.height(),
-                                        chipSize.width(),
-                                        chipSize.height());
+        // The chip is one more item in the tab row: same 2px gap, same baseline.
+        if (m_hiddenCount > 0) {
+            m_overflowRect = QRect(x, top, overflowWidth(m_hiddenCount), Layout::TabHeight);
         }
+    }
+
+    int TabStrip::overflowWidth(int hidden) const
+    {
+        const QFontMetrics metrics(overflowFont());
+        return 2 * OverflowPadding + OverflowGlyphSize + OverflowGap + metrics.horizontalAdvance(tr("More"))
+               + OverflowGap + badgeWidthFor(hidden);
     }
 
     void TabStrip::showOverflowMenu()
@@ -357,7 +378,7 @@ namespace Material
             return;
         }
 
-        const QPoint origin(m_overflowChip->x(), m_overflowChip->geometry().bottom() + 2);
+        const QPoint origin(m_overflowRect.x(), m_overflowRect.bottom() + 2);
         const QAction* chosen = menu.exec(mapToGlobal(origin));
         if (!chosen) {
             return;
@@ -397,9 +418,12 @@ namespace Material
                 painter.fillPath(fillPath, hoverFill);
             }
 
-            painter.setBrush(Qt::NoBrush);
-            painter.setPen(QPen(border, 1));
-            painter.drawPath(tabPath(QRectF(tab.rect).adjusted(0.5, 0.5, -0.5, 0.0), Shape::Medium));
+            // Only the active tab is outlined; the rest are borderless.
+            if (active) {
+                painter.setBrush(Qt::NoBrush);
+                painter.setPen(QPen(border, 1));
+                painter.drawPath(tabPath(QRectF(tab.rect).adjusted(0.5, 0.5, -0.5, 0.0), Shape::Medium));
+            }
 
             const QColor content = theme()->color(active ? Role::OnSurface : Role::OnSurfaceVariant);
             const QRect iconRect(tab.rect.x() + TabPadLeft,
@@ -431,24 +455,42 @@ namespace Material
             painter.drawPixmap(closeGlyph, Icons::pixmap(QStringLiteral("close"), CloseGlyphSize, closeTint));
         }
 
-        if (m_overflowChip->isVisible()) {
-            int hidden = 0;
-            for (int i = 0; i < m_tabs.size(); ++i) {
-                hidden += m_tabs.at(i).visible ? 0 : 1;
+        if (!m_overflowRect.isEmpty()) {
+            if (m_overflowHovered) {
+                painter.fillPath(tabPath(QRectF(m_overflowRect), Shape::Medium), hoverFill);
             }
-            if (hidden > 0) {
-                const QString text = QString::number(hidden);
-                const QFont font = theme()->font(TypeRole::LabelSmall);
-                const QFontMetrics metrics(font);
-                const int badgeWidth = qMax(BadgeHeight, metrics.horizontalAdvance(text) + 10);
-                QRect badge(0, 0, badgeWidth, BadgeHeight);
-                badge.moveCenter(QPoint(m_overflowChip->geometry().right() + 4 + badgeWidth / 2,
-                                        m_overflowChip->geometry().center().y()));
-                paintSurface(&painter, badge, Shape::Full, theme()->color(Role::SecondaryContainer));
-                painter.setFont(font);
-                painter.setPen(theme()->color(Role::OnSecondaryContainer));
-                painter.drawText(badge, Qt::AlignCenter, text);
-            }
+
+            const QColor content = theme()->color(Role::OnSurfaceVariant);
+            const QRect glyph(m_overflowRect.x() + OverflowPadding,
+                              m_overflowRect.y() + (m_overflowRect.height() - OverflowGlyphSize) / 2,
+                              OverflowGlyphSize,
+                              OverflowGlyphSize);
+            painter.drawPixmap(glyph, Icons::pixmap(QStringLiteral("more_horiz"), OverflowGlyphSize, content));
+
+            // The badge is the chip's trailing content, inside its right padding.
+            const QString count = QString::number(m_hiddenCount);
+            const int badgeWidth = badgeWidthFor(m_hiddenCount);
+            const QRect badge(m_overflowRect.right() + 1 - OverflowPadding - badgeWidth,
+                              m_overflowRect.y() + (m_overflowRect.height() - BadgeHeight) / 2,
+                              badgeWidth,
+                              BadgeHeight);
+
+            const int labelLeft = glyph.right() + 1 + OverflowGap;
+            const QFont font = overflowFont();
+            painter.setFont(font);
+            painter.setPen(content);
+            painter.drawText(QRect(labelLeft,
+                                   m_overflowRect.y(),
+                                   qMax(0, badge.left() - OverflowGap - labelLeft),
+                                   m_overflowRect.height()),
+                             Qt::AlignLeft | Qt::AlignVCenter,
+                             tr("More"));
+
+            const QFont countFont = theme()->font(TypeRole::LabelSmall);
+            paintSurface(&painter, badge, Shape::Full, theme()->color(Role::SecondaryContainer));
+            painter.setFont(countFont);
+            painter.setPen(theme()->color(Role::OnSecondaryContainer));
+            painter.drawText(badge, Qt::AlignCenter, count);
         }
     }
 
@@ -466,6 +508,12 @@ namespace Material
         }
 
         const QPoint pos = event->position().toPoint();
+        if (!m_overflowRect.isEmpty() && m_overflowRect.contains(pos)) {
+            event->accept();
+            showOverflowMenu();
+            return;
+        }
+
         const int index = indexAt(pos);
         m_pressedIndex = index;
         m_pressedClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
@@ -501,10 +549,16 @@ namespace Material
         const QPoint pos = event->position().toPoint();
         const int index = indexAt(pos);
         const bool overClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
-        if (index != m_hoverIndex || overClose != m_hoverClose) {
+        const bool overOverflow = !m_overflowRect.isEmpty() && m_overflowRect.contains(pos);
+        if (index != m_hoverIndex || overClose != m_hoverClose || overOverflow != m_overflowHovered) {
             m_hoverIndex = index;
             m_hoverClose = overClose;
-            setToolTip(index >= 0 ? m_tabs.at(index).label : QString());
+            m_overflowHovered = overOverflow;
+            if (index >= 0) {
+                setToolTip(m_tabs.at(index).label);
+            } else {
+                setToolTip(overOverflow ? tr("Show the remaining databases") : QString());
+            }
             update();
         }
         QWidget::mouseMoveEvent(event);
@@ -512,9 +566,10 @@ namespace Material
 
     void TabStrip::leaveEvent(QEvent* event)
     {
-        if (m_hoverIndex >= 0 || m_hoverClose) {
+        if (m_hoverIndex >= 0 || m_hoverClose || m_overflowHovered) {
             m_hoverIndex = -1;
             m_hoverClose = false;
+            m_overflowHovered = false;
             update();
         }
         QWidget::leaveEvent(event);

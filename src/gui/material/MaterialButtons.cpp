@@ -30,7 +30,10 @@ namespace Material
     {
         constexpr int ContentGap = 8; // leading glyph to label
         constexpr int LabelPadding = 16;
-        constexpr int FabPadding = 20;
+        // The design's FAB: padding:0 22px 0 18px, gap:12px, a 24px glyph.
+        constexpr int FabLeadingPadding = 18;
+        constexpr int FabPadding = 22;
+        constexpr int FabContentGap = 12;
         constexpr int FabSymbolSize = 24;
         constexpr int IconButtonSymbolSize = 20;
         constexpr int BadgeHeight = 16;
@@ -179,6 +182,26 @@ namespace Material
         return LabelPadding;
     }
 
+    int ButtonBase::leadingPadding() const
+    {
+        return horizontalPadding();
+    }
+
+    int ButtonBase::trailingPadding() const
+    {
+        return horizontalPadding();
+    }
+
+    int ButtonBase::contentGap() const
+    {
+        return ContentGap;
+    }
+
+    QFont ButtonBase::labelFont() const
+    {
+        return theme()->font(TypeRole::LabelLarge);
+    }
+
     bool ButtonBase::isHovered() const
     {
         return m_hovered;
@@ -233,12 +256,12 @@ namespace Material
 
     QSize ButtonBase::sizeHint() const
     {
-        const QFontMetrics metrics(theme()->font(TypeRole::LabelLarge));
+        const QFontMetrics metrics(labelFont());
         const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
         const int label = text().isEmpty() ? 0 : metrics.horizontalAdvance(text());
-        const int gap = (glyph > 0 && label > 0) ? ContentGap : 0;
+        const int gap = (glyph > 0 && label > 0) ? contentGap() : 0;
         const int height = qMax(Layout::ButtonHeight, metrics.height() + 12);
-        const int width = 2 * horizontalPadding() + glyph + gap + label;
+        const int width = leadingPadding() + trailingPadding() + glyph + gap + label;
         return {qMax(width, height), height};
     }
 
@@ -259,11 +282,16 @@ namespace Material
         painter.setRenderHint(QPainter::Antialiasing);
         paintSurface(&painter, rect(), m_radius, containerColor(), borderColor());
 
-        const QFont labelFont = theme()->font(TypeRole::LabelLarge);
-        const QFontMetrics metrics(labelFont);
+        const QFont typeface = labelFont();
+        const QFontMetrics metrics(typeface);
         const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
-        const int gap = (glyph > 0 && !text().isEmpty()) ? ContentGap : 0;
-        const int available = qMax(0, width() - 2 * horizontalPadding() - glyph - gap);
+        const int gap = (glyph > 0 && !text().isEmpty()) ? contentGap() : 0;
+        // Content is centred in the padded content box rather than in the widget,
+        // so a variant with asymmetric padding puts its glyph on the leading edge
+        // the design asks for. With equal padding the two are the same sum.
+        const int boxLeft = leadingPadding();
+        const int boxWidth = qMax(0, width() - leadingPadding() - trailingPadding());
+        const int available = qMax(0, boxWidth - glyph - gap);
         // Only elide when the text genuinely does not fit. sizeHint() makes `available` exactly
         // the text width, and asking elidedText() to fit a string into precisely its own advance
         // costs it the last word to rounding - which is how "Keep it professional" arrives on
@@ -282,7 +310,7 @@ namespace Material
         QColor tint = content;
         tint.setAlpha(255);
 
-        int x = (width() - glyph - gap - labelWidth) / 2;
+        int x = boxLeft + (boxWidth - glyph - gap - labelWidth) / 2;
         if (glyph > 0) {
             const QRect glyphRect(x, (height() - m_symbolSize) / 2, m_symbolSize, m_symbolSize);
             painter.setOpacity(content.alphaF());
@@ -292,7 +320,7 @@ namespace Material
         }
 
         if (!label.isEmpty()) {
-            painter.setFont(labelFont);
+            painter.setFont(typeface);
             painter.setPen(content);
             painter.drawText(QRect(x, 0, labelWidth, height()), Qt::AlignLeft | Qt::AlignVCenter, label);
         }
@@ -449,6 +477,12 @@ namespace Material
     {
         setSymbolSize(IconButtonSymbolSize);
         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        // ButtonBase's constructor already ran enforceLabelWidth(), but virtual
+        // dispatch could not reach IconButton::sizeHint() yet, so the minimum it
+        // pinned came from the label formula - padding plus a glyph, 50px - for a
+        // button that has no label. Re-pin it now that sizeHint() answers with the
+        // diameter, otherwise that stale 50 outvotes every later setDiameter().
+        enforceLabelWidth();
     }
 
     int IconButton::diameter() const
@@ -463,6 +497,11 @@ namespace Material
             return;
         }
         m_diameter = diameter;
+        // The diameter is the entire geometry of a round button, so it has to be
+        // the minimum as well as the hint. Leaving the inherited label-derived
+        // minimum in place is what forced callers to follow setDiameter() with a
+        // setFixedSize() of the same value.
+        enforceLabelWidth();
         updateGeometry();
         update();
     }
@@ -587,6 +626,27 @@ namespace Material
     int ExtendedFab::horizontalPadding() const
     {
         return FabPadding;
+    }
+
+    int ExtendedFab::leadingPadding() const
+    {
+        // Only the leading edge differs; trailingPadding() keeps answering
+        // horizontalPadding(), which is already the design's 22px.
+        return FabLeadingPadding;
+    }
+
+    int ExtendedFab::contentGap() const
+    {
+        return FabContentGap;
+    }
+
+    QFont ExtendedFab::labelFont() const
+    {
+        // The design's FAB label is 15px at weight 500 - BodyLarge's size carrying
+        // LabelLarge's weight - which no single type role expresses on its own.
+        QFont typeface = theme()->font(TypeRole::BodyLarge);
+        typeface.setWeight(QFont::Medium);
+        return typeface;
     }
 
 } // namespace Material

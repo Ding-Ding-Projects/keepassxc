@@ -41,8 +41,20 @@ namespace Material
         constexpr int GlyphGap = 14;
         constexpr int HealthRowHeight = 60;
         constexpr int StatisticsRowHeight = 46;
-        constexpr int ColumnGap = 12;
+        // The health row is one flex gap throughout, the same 14px as GlyphGap.
+        constexpr int ColumnGap = 14;
         constexpr int SearchWidth = 340;
+        // The Fix affordance is a compact pill, not a 40px / 16px / 14px button.
+        constexpr int FixButtonHeight = 32;
+        constexpr int FixButtonPadding = 14;
+        constexpr TypeRole FixLabelRole = TypeRole::BodySmall; // 13px regular
+        // The score chip is a 12px line in 5px of vertical padding, 12px either side.
+        constexpr int ScoreChipPadding = 12;
+        constexpr int ScoreChipVerticalPadding = 5;
+        // The stat grid is 16px from the content above it and 20px from the cards below.
+        constexpr int StatGridBottomGap = 4;
+        // Card content is spaced 8px, so this much makes the design's 18px.
+        constexpr int ExportButtonGap = 2;
 
         QFont weighted(TypeRole role, QFont::Weight weight)
         {
@@ -91,6 +103,120 @@ namespace Material
                 delete item;
             }
         }
+
+        /**
+         * Both report cards are filled *and* outlined. No Card::Variant carries
+         * that combination - Filled paints no border, Outlined no fill - so the
+         * surface is painted here from the same primitive.
+         */
+        class SectionCard : public Card
+        {
+        public:
+            explicit SectionCard(QWidget* parent = nullptr)
+                // Qualified: QFrame::Shape shadows Material::Shape in a QFrame.
+                : Card(Variant::Filled, Material::Shape::ExtraLarge, parent)
+            {
+                setFillRole(Role::SurfaceContainerLow);
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing, true);
+                paintSurface(
+                    &painter, rect(), radius(), theme()->color(fillRole()), theme()->color(Role::OutlineVariant));
+            }
+        };
+
+        /** The compact outlined pill the design ends every health row with. */
+        class FixButton : public OutlinedButton
+        {
+        public:
+            FixButton(const QString& text, QWidget* parent = nullptr)
+                : OutlinedButton(QString(), text, parent)
+            {
+                setFixedHeight(FixButtonHeight);
+                // ButtonBase pinned the minimum width from its own size hint
+                // while this class was still being built; redo it now that the
+                // compact one answers.
+                enforceLabelWidth();
+            }
+
+            QSize sizeHint() const override
+            {
+                const QFontMetrics metrics(theme()->font(FixLabelRole));
+                return {2 * FixButtonPadding + metrics.horizontalAdvance(text()), FixButtonHeight};
+            }
+
+            QSize minimumSizeHint() const override
+            {
+                return sizeHint();
+            }
+
+        protected:
+            int horizontalPadding() const override
+            {
+                return FixButtonPadding;
+            }
+
+            /** ButtonBase draws its label at LabelLarge; this one is 13px. */
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                paintSurface(&painter, rect(), radius(), containerColor(), borderColor());
+
+                painter.setFont(theme()->font(FixLabelRole));
+                painter.setPen(contentColor());
+                painter.drawText(rect(), Qt::AlignCenter, text());
+            }
+        };
+
+        /**
+         * The score chip. PillLabel is the 32px spec-sheet pill; the report
+         * chip is the same treatment at the design's tighter padding.
+         */
+        class ScoreChip : public PillLabel
+        {
+        public:
+            ScoreChip(PillKind kind, const QString& text, QWidget* parent = nullptr)
+                : PillLabel(kind, text, parent)
+            {
+            }
+
+            QSize sizeHint() const override
+            {
+                const QFontMetrics metrics(theme()->font(TypeRole::LabelMedium));
+                return {2 * ScoreChipPadding + metrics.horizontalAdvance(text()),
+                        2 * ScoreChipVerticalPadding + metrics.height()};
+            }
+
+            QSize minimumSizeHint() const override
+            {
+                return sizeHint();
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                // Qualified: QFrame, which QLabel derives from, also has a Shape enum.
+                paintSurface(&painter,
+                             rect(),
+                             Material::Shape::Small,
+                             pillContainerColor(pillKind()),
+                             pillBorderColor(pillKind()));
+
+                painter.setFont(theme()->font(TypeRole::LabelMedium));
+                painter.setPen(pillContentColor(pillKind()));
+                painter.drawText(rect(), Qt::AlignCenter, text());
+            }
+        };
 
         /** A rounded-28 summary tile, tinted with its status family. */
         class StatTile : public QWidget
@@ -173,10 +299,10 @@ namespace Material
                 layout->setSpacing(ColumnGap);
                 layout->addStretch(1);
 
-                m_score = new PillLabel(healthPill(m_row.status), m_row.score, this);
+                m_score = new ScoreChip(healthPill(m_row.status), m_row.score, this);
                 layout->addWidget(m_score);
 
-                m_fix = new OutlinedButton(QString(), fixText, this);
+                m_fix = new FixButton(fixText, this);
                 layout->addWidget(m_fix);
             }
 
@@ -288,15 +414,17 @@ namespace Material
         searchBar()->setFixedWidth(SearchWidth);
 
         m_statGrid = new QGridLayout();
-        m_statGrid->setContentsMargins(0, 0, 0, 0);
+        // The content column already spaces its children 16px apart; the grid
+        // carries the remainder of the design's 20px below it as a margin,
+        // because a spacer item would take that spacing on both of its sides.
+        m_statGrid->setContentsMargins(0, 0, 0, StatGridBottomGap);
         m_statGrid->setSpacing(GridSpacing);
         for (int column = 0; column < StatColumns; ++column) {
             m_statGrid->setColumnStretch(column, 1);
         }
         contentLayout()->addLayout(m_statGrid);
 
-        m_healthCard = new Card(Card::Variant::Filled, Shape::ExtraLarge);
-        m_healthCard->setFillRole(Role::SurfaceContainerLow);
+        m_healthCard = new SectionCard();
         m_healthCard->setTitleText(tr("Password health"));
         m_healthLayout = new QVBoxLayout();
         m_healthLayout->setContentsMargins(0, 0, 0, 0);
@@ -304,16 +432,16 @@ namespace Material
         m_healthCard->contentLayout()->addLayout(m_healthLayout);
         m_healthCard->contentLayout()->addStretch(1);
 
-        m_statisticsCard = new Card(Card::Variant::Filled, Shape::ExtraLarge);
-        m_statisticsCard->setFillRole(Role::SurfaceContainerLow);
+        m_statisticsCard = new SectionCard();
         m_statisticsCard->setTitleText(tr("Statistics"));
         m_statisticsLayout = new QVBoxLayout();
         m_statisticsLayout->setContentsMargins(0, 0, 0, 0);
         m_statisticsLayout->setSpacing(0);
         m_statisticsCard->contentLayout()->addLayout(m_statisticsLayout);
-        m_statisticsCard->contentLayout()->addSpacing(18);
+        m_statisticsCard->contentLayout()->addSpacing(ExportButtonGap);
 
         auto exportButton = new TonalButton(QStringLiteral("download"), tr("Export report"));
+        exportButton->setSymbolSize(GlyphSize);
         connect(exportButton, &QAbstractButton::clicked, this, &ReportsScreen::exportRequested);
         m_statisticsCard->contentLayout()->addWidget(exportButton);
         m_statisticsCard->contentLayout()->addStretch(1);
@@ -371,7 +499,8 @@ namespace Material
         clearLayout(m_healthLayout);
         for (int i = 0; i < m_healthRows.size(); ++i) {
             const HealthRow& row = m_healthRows.at(i);
-            auto widget = new HealthRowWidget(row, tr("Fix"), i + 1 < m_healthRows.size());
+            // The rule belongs to the row in the design, last one included.
+            auto widget = new HealthRowWidget(row, tr("Fix"), true);
             const QString id = row.id;
             connect(widget->fixButton(), &QAbstractButton::clicked, this, [this, id] { emit fixRequested(id); });
             m_healthLayout->addWidget(widget);
@@ -383,8 +512,8 @@ namespace Material
         clearLayout(m_statisticsLayout);
         for (int i = 0; i < m_statistics.size(); ++i) {
             const auto& entry = m_statistics.at(i);
-            m_statisticsLayout->addWidget(
-                new StatisticsRowWidget(entry.first, entry.second, i + 1 < m_statistics.size()));
+            // As on the health rows, the design rules every row.
+            m_statisticsLayout->addWidget(new StatisticsRowWidget(entry.first, entry.second, true));
         }
     }
 

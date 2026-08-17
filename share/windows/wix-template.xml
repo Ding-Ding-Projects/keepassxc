@@ -72,14 +72,15 @@
                             Name="KeePassXC"
                             Target="[#CM_FP_KeePassXC.exe]"
                             WorkingDirectory="INSTALL_ROOT"/>
-                        <Shortcut Id="GettingStartedShortcut"
-                            Name="KeePassXC - Getting Started"
-                            Target="[#CM_FP_share.docs.KeePassXC_GettingStarted.html]"
-                            WorkingDirectory="INSTALL_ROOT" />
-                        <Shortcut Id="UserGuideShortcut"
-                            Name="KeePassXC - User Guide"
-                            Target="[#CM_FP_share.docs.KeePassXC_UserGuide.html]"
-                            WorkingDirectory="INSTALL_ROOT" />
+                        <!--
+                            The Getting Started and User Guide shortcuts, present only
+                            when KPXC_FEATURE_DOCS built and installed the pages they
+                            point at. See KPXC_WIX_DOC_SHORTCUTS in src/CMakeLists.txt:
+                            a shortcut whose Target names a file that was never
+                            installed is not a missing icon, it is a hard packaging
+                            failure (LGHT0204 / ICE67 / ICE69).
+                        -->
+@KPXC_WIX_DOC_SHORTCUTS@
                         <RemoveFile Id="RemoveShortcuts" Name="*.*" On="uninstall" />
                         <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall" />
                         <RegistryValue Root="HKCU" Key="Software\KeePassXC" Name="StartMenuShortcut" Type="integer" Value="1" KeyPath="yes"/>

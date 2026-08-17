@@ -23,6 +23,8 @@
 #include <QDesktopServices>
 #include <QDir>
 #include <QFileInfo>
+#include <QFontDialog>
+#include <QFontInfo>
 #include <QList>
 #include <QLocale>
 #include <QMimeData>
@@ -48,6 +50,8 @@
 #include "core/Metadata.h"
 #include "core/Resources.h"
 #include "core/Tools.h"
+#include "crypto/kdf/Kdf.h"
+#include "format/KeePass2.h"
 #include "gui/AboutDialog.h"
 #include "gui/ActionCollection.h"
 #include "gui/Icons.h"
@@ -58,6 +62,7 @@
 #include "gui/material/MaterialChangelogFeed.h"
 #include "gui/material/MaterialChangelogScreen.h"
 #include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialGeneratorSheet.h"
 #include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialHistoryScreen.h"
 #include "gui/material/MaterialHistoryStore.h"
@@ -67,7 +72,12 @@
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialReportsFeed.h"
 #include "gui/material/MaterialReportsScreen.h"
+#include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSettingsHub.h"
+#include "gui/material/MaterialSettingsScreen.h"
+#include "gui/material/MaterialSheetCatalogue.h"
 #include "gui/material/MaterialShell.h"
+#include "gui/material/MaterialSpecSheet.h"
 #include "gui/material/MaterialTabStrip.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/material/MaterialTopAppBar.h"
@@ -116,6 +126,35 @@ namespace
     QString tabIdFor(const DatabaseWidget* dbWidget)
     {
         return QStringLiteral("db-%1").arg(reinterpret_cast<quintptr>(dbWidget));
+    }
+
+    /**
+     * The app bar's second line for a database: the design's
+     * "KDBX 4.1 · AES-256 · Argon2id · <path>".
+     *
+     * A locked database has not read its header yet, so format, cipher and KDF
+     * are unknown and the line falls back to the path alone rather than
+     * reporting defaults that may not be what is on disk.
+     */
+    QString databaseSubtitle(DatabaseWidget* dbWidget)
+    {
+        const auto db = dbWidget ? dbWidget->database() : QSharedPointer<Database>();
+        if (!db) {
+            return {};
+        }
+        const QString path = QDir::toNativeSeparators(db->filePath());
+        if (dbWidget->isLocked()) {
+            return path;
+        }
+
+        const quint32 version = db->formatVersion();
+        QStringList parts{QStringLiteral("KDBX %1.%2").arg(version >> 16).arg(version & 0xffff),
+                          KeePass2::cipherToString(db->cipher())};
+        if (const auto kdf = db->kdf()) {
+            parts << KeePass2::kdfToString(kdf->uuid());
+        }
+        parts << path;
+        return parts.join(QStringLiteral(" · "));
     }
 
     /** The database behind a widget, or a null pointer when it is locked or absent. */
@@ -711,19 +750,53 @@ MainWindow::MainWindow()
     auto* vaultScreen = new Material::VaultScreen;
     vaultScreen->setHostWidget(m_ui->stackedWidget, m_ui->tabWidget);
 
+    // The settings destination is the Material hub: the spec sheets whose rows
+    // are bound to the real Config keys, plus the stock
+    // ApplicationSettingsWidget adopted as the classic editor so no option
+    // becomes unreachable. The Appearance overview is hoisted out of the hub
+    // because the design's rail gives it a destination of its own.
+    auto* settingsHub = new Material::SettingsHub(Material::SettingsHub::Overview::Hosted, nullptr);
+    settingsHub->setClassicEditor(m_ui->settingsWidget);
+    auto* appearanceScreen = new Material::SettingsScreen;
+
+    // The four reference sheets. Database settings, the entry editor, the
+    // tools and the help pages all live in dialogs and menus elsewhere; these
+    // describe them in the design's own words so the rail is complete.
+    auto* editorSheet = Material::SheetCatalogue::create(QStringLiteral("editor"));
+    auto* databaseSheet = Material::SheetCatalogue::create(QStringLiteral("database"));
+    auto* toolsSheet = Material::SheetCatalogue::create(QStringLiteral("tools"));
+    auto* helpSheet = Material::SheetCatalogue::create(QStringLiteral("help"));
+
+    // The rail's ten destinations, in the design's order. Sublabels that count
+    // something in the open database are refreshed by updateRailSublabels();
+    // a sheet just reports how many pages it ended up with.
+    const auto pages = [](Material::SpecSheet* sheet) {
+        return sheet ? tr("%n page(s)", "", sheet->pageCount()) : QString();
+    };
+
     materialShell->addDestination(
-        QStringLiteral("vault"), vaultScreen, QStringLiteral("key"), tr("Vault"), QString());
+        QStringLiteral("vault"), vaultScreen, QStringLiteral("key_vertical"), tr("Vault"), QString());
     materialShell->addDestination(
-        QStringLiteral("reports"), reportsScreen, QStringLiteral("health_and_safety"), tr("Reports"), QString());
+        QStringLiteral("reports"), reportsScreen, QStringLiteral("health_metrics"), tr("Reports"), QString());
+    materialShell->addDestination(
+        QStringLiteral("editor"), editorSheet, QStringLiteral("edit_note"), tr("Entry"), pages(editorSheet));
+    materialShell->addDestination(
+        QStringLiteral("database"), databaseSheet, QStringLiteral("database"), tr("Database"), pages(databaseSheet));
+    materialShell->addDestination(
+        QStringLiteral("tools"), toolsSheet, QStringLiteral("construction"), tr("Tools"), pages(toolsSheet));
     materialShell->addDestination(
         QStringLiteral("history"), historyScreen, QStringLiteral("history"), tr("History"), QString());
     materialShell->addDestination(QStringLiteral("changelog"),
                                   changelogScreen,
-                                  QStringLiteral("article"),
+                                  QStringLiteral("receipt_long"),
                                   tr("Changelog"),
                                   QString::fromLatin1(KEEPASSXC_VERSION));
     materialShell->addDestination(
-        QStringLiteral("settings"), m_ui->settingsWidget, QStringLiteral("tune"), tr("Settings"), QString());
+        QStringLiteral("settings"), settingsHub, QStringLiteral("tune"), tr("Settings"), pages(settingsHub->specSheet()));
+    materialShell->addDestination(
+        QStringLiteral("appearance"), appearanceScreen, QStringLiteral("palette"), tr("Appearance"), QString());
+    materialShell->addDestination(
+        QStringLiteral("help"), helpSheet, QStringLiteral("help"), tr("Help"), pages(helpSheet));
     m_ui->verticalLayout->addWidget(materialShell, 1);
 
     // The three data-driven destinations. Each feed owns the reading, the
@@ -763,6 +836,21 @@ MainWindow::MainWindow()
             strip->setCurrentTab(currentId);
         }
     };
+    // The rail's counts follow the same events as the tab strip, plus the two
+    // that produce the numbers themselves.
+    connect(reportsFeed, &Material::ReportsFeed::findingCountChanged, this, [this](int count) {
+        m_reportFindings = count;
+        updateRailSublabels();
+    });
+    if (auto* store = Material::HistoryStore::instance()) {
+        connect(store, &Material::HistoryStore::revisionsChanged, this, &MainWindow::updateRailSublabels);
+    }
+    connect(m_ui->tabWidget, &DatabaseTabWidget::currentChanged, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseClosed, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseLocked, this, &MainWindow::updateRailSublabels);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, &MainWindow::updateRailSublabels);
+
     connect(m_ui->tabWidget, &DatabaseTabWidget::currentChanged, this, syncTabStrip);
     connect(m_ui->tabWidget, &DatabaseTabWidget::tabNameChanged, this, syncTabStrip);
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, syncTabStrip);
@@ -796,7 +884,15 @@ MainWindow::MainWindow()
 
     auto* appBar = materialShell->appBar();
     connect(appBar, &Material::TopAppBar::saveRequested, m_ui->actionDatabaseSave, &QAction::trigger);
-    connect(appBar, &Material::TopAppBar::generatorRequested, m_ui->actionPasswordGenerator, &QAction::trigger);
+    // The casino button raises the design's generator sheet. The stock
+    // generator page keeps its menu entry and its place in the palette, so
+    // nothing is lost - only the app bar affordance moves.
+    auto* generatorSheet = new Material::GeneratorSheet(this);
+    connect(appBar, &Material::TopAppBar::generatorRequested, generatorSheet, &Material::Overlay::openOverlay);
+    connect(generatorSheet, &Material::GeneratorSheet::passwordCopied, this, [](const QString& password) {
+        clipboard()->setText(password);
+        Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
+    });
 
     // The bolt button and Ctrl+Shift+P are what the hidden menu bar became.
     auto* commandPalette = new Material::CommandPalette(this);
@@ -804,8 +900,19 @@ MainWindow::MainWindow()
     new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
 
     auto* regexBuilder = new Material::RegexBuilder(this);
-    connect(appBar, &Material::TopAppBar::regexRequested, regexBuilder, &Material::Overlay::openOverlay);
+    auto openBuilderFor = [this, regexBuilder](Material::SearchBar* bar) {
+        m_builderTarget = bar;
+        regexBuilder->openOverlay();
+    };
+    connect(appBar, &Material::TopAppBar::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
+    // A pattern belongs to whichever search bar asked for the builder. Only a
+    // request that came from nowhere in particular - the app bar, the palette,
+    // the shortcut - falls through to searching the vault.
     connect(regexBuilder, &Material::RegexBuilder::patternApplied, this, [this](const QString& pattern) {
+        if (m_builderTarget) {
+            m_builderTarget->setText(pattern);
+            return;
+        }
         if (auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget()) {
             if (shell()) {
                 shell()->setCurrentDestination(QStringLiteral("vault"));
@@ -815,7 +922,56 @@ MainWindow::MainWindow()
     });
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);
+        // Every copy in the design says the same thing about the clipboard.
+        Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
     });
+    // The palette's own header button hands over to the builder.
+    connect(commandPalette, &Material::CommandPalette::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
+
+    // The settings hub asks the window for the three things it cannot do
+    // itself: the font chooser, the real integration pages and the builder.
+    connect(settingsHub, &Material::SettingsHub::builderRequested, this, openBuilderFor);
+    // The Appearance destination is the same screen the hub used to embed, so
+    // it asks the window for the same three things.
+    // Every surface that carries a builder button routes it the same way, so
+    // the pattern lands back in the field it was launched from.
+    for (auto* screen : {static_cast<Material::Screen*>(appearanceScreen),
+                         static_cast<Material::Screen*>(reportsScreen),
+                         static_cast<Material::Screen*>(historyScreen),
+                         static_cast<Material::Screen*>(changelogScreen)}) {
+        if (auto* search = screen->searchBar()) {
+            connect(search, &Material::SearchBar::builderRequested, this, [openBuilderFor, search] {
+                openBuilderFor(search);
+            });
+        }
+    }
+    connect(appearanceScreen, &Material::SettingsScreen::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
+    connect(settingsHub, &Material::SettingsHub::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
+
+    auto showIntegration = [this, settingsHub](const QString& id) {
+        // Each integration row in the overview lands on the spec sheet that
+        // owns it; anything without one falls back to the classic editor.
+        static const QHash<QString, QString> pages{{QStringLiteral("browser"), QStringLiteral("browser")},
+                                                   {QStringLiteral("ssh-agent"), QStringLiteral("sshagent")},
+                                                   {QStringLiteral("yubikey"), QStringLiteral("security")},
+                                                   {QStringLiteral("keeshare"), QStringLiteral("keeshare")},
+                                                   // Passkeys are a browser-integration setting in the
+                                                   // design, and the hub folded them onto that page.
+                                                   {QStringLiteral("passkeys"), QStringLiteral("browser")}};
+        const QString page = pages.value(id);
+        if (page.isEmpty()) {
+            settingsHub->showClassicEditor();
+        } else {
+            settingsHub->setCurrentPage(page);
+        }
+        // Whichever page it landed on, it is the settings destination that
+        // shows it.
+        if (shell()) {
+            shell()->setCurrentDestination(QStringLiteral("settings"));
+        }
+    };
+    connect(appearanceScreen, &Material::SettingsScreen::integrationActivated, this, showIntegration);
+    connect(settingsHub, &Material::SettingsHub::integrationActivated, this, showIntegration);
 
     if (auto* notifications = Material::NotificationCentre::centreFor(this)) {
         notifications->attachAppBar(appBar);
@@ -824,8 +980,15 @@ MainWindow::MainWindow()
 
     connect(materialShell->rail(), &Material::NavigationRail::themeToggleRequested, this, [this] {
         const bool wasDark = theme()->isDark();
+        // Theme::setMode() writes Config::GUI_ApplicationTheme itself, so the
+        // choice outlives the session without going through the View ▸ Theme
+        // action group. Triggering that group instead would persist the same
+        // value and then re-apply the whole theme - style, palette, sheet and
+        // font - for what is only a change of mode.
         theme()->setMode(wasDark ? Material::Mode::Light : Material::Mode::Dark);
-        // Keep the View ▸ Theme radio group honest about what just happened.
+        // setChecked() does not emit QActionGroup::triggered, which is what
+        // makes it the right call here: it moves the radio to the mode that is
+        // now stored without writing it a second time.
         (wasDark ? m_ui->actionThemeLight : m_ui->actionThemeDark)->setChecked(true);
     });
     connect(materialShell->rail(),
@@ -1344,26 +1507,28 @@ void MainWindow::updateWindowTitle()
                                          ? m_ui->tabWidget->tabName(tabWidgetIndex).remove(QLatin1Char('*')).trimmed()
                                          : QString();
 
+        // The rail already names the destination, so the bar names the thing
+        // being looked at: a spec sheet by its own label, the changelog by the
+        // version it ends at, and everything else by the open database.
+        const QString sheetLabel = Material::SheetCatalogue::label(destination);
+
         QString barTitle;
         QString barSubtitle;
-        if (destination == QLatin1String("settings")) {
-            barTitle = tr("Settings");
-            barSubtitle = tr("Application settings");
-        } else if (destination == QLatin1String("reports")) {
-            barTitle = tr("Reports");
-            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
-        } else if (destination == QLatin1String("history")) {
-            barTitle = tr("History");
-            barSubtitle = databaseName.isEmpty() ? tr("No database open") : databaseName;
+        if (!sheetLabel.isEmpty()) {
+            barTitle = sheetLabel;
+            barSubtitle = tr("Recreated from the KeePassXC sources · every option, page and action");
         } else if (destination == QLatin1String("changelog")) {
-            barTitle = tr("Changelog");
-            barSubtitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
+            barTitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
+            barSubtitle = tr("Every released version");
+        } else if (destination == QLatin1String("appearance")) {
+            barTitle = tr("Appearance & language");
+            barSubtitle = tr("Theme, density, language and the voice of the messages");
         } else if (stackedWidgetIndex == StackedWidgetIndex::PasswordGeneratorScreen) {
             barTitle = tr("Password Generator");
             barSubtitle = tr("Standalone generator");
         } else if (dbWidget) {
             barTitle = databaseName.isEmpty() ? BaseWindowTitle : databaseName;
-            barSubtitle = QDir::toNativeSeparators(dbWidget->database()->filePath());
+            barSubtitle = databaseSubtitle(dbWidget);
         } else {
             barTitle = BaseWindowTitle;
             barSubtitle = tr("No database open");
@@ -1487,6 +1652,53 @@ void MainWindow::switchToDatabases()
     if (shell() && shell()->currentDestination() == QLatin1String("settings")) {
         shell()->setCurrentDestination(QStringLiteral("vault"));
     }
+}
+
+void MainWindow::updateRailSublabels()
+{
+    auto* rail = shell() ? shell()->rail() : nullptr;
+    if (!rail) {
+        return;
+    }
+
+    auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+    const auto db = (dbWidget && !dbWidget->isLocked()) ? dbWidget->database() : QSharedPointer<Database>();
+
+    // Vault counts what is actually browsable: a locked or absent database
+    // has nothing to report, and the sublabel disappears rather than lying.
+    QString vault;
+    if (db && db->rootGroup()) {
+        vault = QString::number(db->rootGroup()->entriesRecursive(false).size());
+    }
+    rail->setSublabel(QStringLiteral("vault"), vault);
+
+    // The design puts a warning glyph next to the finding count.
+    rail->setSublabel(QStringLiteral("reports"),
+                      m_reportFindings > 0 ? tr("%1 ⚠").arg(m_reportFindings) : QString());
+
+    const auto* store = Material::HistoryStore::instance();
+    int revisions = 0;
+    if (store) {
+        revisions = db ? store->revisionsFor(db->filePath()).size() : store->revisions().size();
+    }
+    rail->setSublabel(QStringLiteral("history"), revisions > 0 ? QString::number(revisions) : QString());
+}
+
+void MainWindow::chooseInterfaceFont()
+{
+    bool accepted = false;
+    const QFont chosen = QFontDialog::getFont(&accepted, QApplication::font(), this, tr("Interface font"));
+    if (!accepted) {
+        return;
+    }
+
+    // The size is kept as the offset the rest of the application already
+    // understands, so the slider in settings and this dialog agree.
+    config()->set(Config::GUI_FontFamily, chosen.family());
+    const int original = QFontInfo(QApplication::font()).pointSize();
+    config()->set(Config::GUI_FontSizeOffset,
+                  qBound(-2, chosen.pointSize() - original + config()->get(Config::GUI_FontSizeOffset).toInt(), 4));
+    Application::applyFontSize();
 }
 
 void MainWindow::switchToSettings(bool enabled)
@@ -1826,6 +2038,10 @@ void MainWindow::enableMenuAndToolbar()
         materialShell->rail()->setDisabled(false);
         materialShell->appBar()->setDisabled(false);
         materialShell->tabs()->setDisabled(false);
+        // The shell's Go To commands and theme toggle are actions, not part of
+        // the rail widget, so the palette keeps offering them unless they are
+        // turned off by name.
+        materialShell->setCommandsEnabled(true);
     }
 }
 
@@ -1837,6 +2053,7 @@ void MainWindow::disableMenuAndToolbar()
         materialShell->rail()->setDisabled(true);
         materialShell->appBar()->setDisabled(true);
         materialShell->tabs()->setDisabled(true);
+        materialShell->setCommandsEnabled(false);
     }
 }
 

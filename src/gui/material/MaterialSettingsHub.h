@@ -29,6 +29,8 @@
 #include <QVariant>
 #include <QWidget>
 
+#include <functional>
+
 namespace Material
 {
     class SearchBar;
@@ -40,12 +42,13 @@ namespace Material
      *
      * One 266px sidebar over three kinds of surface:
      *
-     *  - Overview, the design's Appearance / Language / Voice / Behaviour /
+     *  - Overview, the design's Appearance / Language / Behaviour /
      *    Integrations cards, which is MaterialSettingsScreen;
-     *  - the seven spec sheets - General, Security, Browser Integration, SSH
-     *    Agent, Secret Service, KeeShare and Passkeys - whose rows are bound to
-     *    the real Config keys, so clicking a row writes the setting and the
-     *    control pill reports the new value;
+     *  - the design's own settings pages - General, Auto-Type, Security,
+     *    Browser Integration, SSH Agent, KeeShare, Password Generator defaults
+     *    and Shortcuts - whose rows are bound to the real Config keys, so
+     *    clicking a row writes the setting and the control pill reports the new
+     *    value;
      *  - the stock ApplicationSettingsWidget, kept reachable as the classic
      *    editor so nothing becomes unreachable if a spec sheet row is missing.
      *
@@ -57,7 +60,21 @@ namespace Material
         Q_OBJECT
 
     public:
+        /** Where the Appearance overview lives. */
+        enum class Overview
+        {
+            /** As the hub's first page, under an OVERVIEW heading. */
+            Embedded,
+            /**
+             * Nowhere in the hub, because the shell shows it as its own
+             * Appearance destination - which is what the design's rail does.
+             * overview() is null in this mode.
+             */
+            Hosted
+        };
+
         explicit SettingsHub(QWidget* parent = nullptr);
+        SettingsHub(Overview overview, QWidget* parent);
         ~SettingsHub() override;
 
         SettingsScreen* overview() const;
@@ -92,7 +109,8 @@ namespace Material
             Choice, // enumerations: a list of options
             Text, // free text: a line edit sheet
             Path, // a file or folder, with a browse button
-            Managed // owned by a real settings page; the row opens the editor
+            Managed, // owned by a real settings page; the row opens the editor
+            Command // not a value at all: the row runs an action
         };
 
         struct Option
@@ -113,15 +131,20 @@ namespace Material
             int maximum = 0;
             QString suffix;
             QList<Option> options;
+            /** Command rows only: the pill's verb and what pressing it runs. */
+            QString commandText;
+            std::function<void()> command;
         };
 
         void buildOverview();
         void buildGeneralPage();
+        void buildAutoTypePage();
+        void buildGeneratorDefaultsPage();
+        void buildShortcutsPage();
         void buildSecurityPage();
         void buildBrowserPage();
         void buildSshAgentPage();
         void buildKeeSharePage();
-        void buildPasskeysPage();
 
         void addToggle(const QString& pageId,
                        const QString& section,
@@ -158,6 +181,19 @@ namespace Material
                         const QString& label,
                         const QString& sub,
                         Config::ConfigKey key);
+        /** A row that runs @p command instead of editing a value. */
+        void addCommand(const QString& pageId,
+                        const QString& section,
+                        const QString& symbol,
+                        const QString& label,
+                        const QString& sub,
+                        const QString& commandText,
+                        std::function<void()> command);
+
+        /** The design's three Settings file actions. */
+        void resetSettings();
+        void importSettings();
+        void exportSettings();
 
         /** Index into m_bindings for a row, or -1. */
         int indexOf(const QString& pageId, const QString& rowKey) const;

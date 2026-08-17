@@ -126,6 +126,42 @@ namespace Material
             return file.commit();
         }
 
+        /**
+         * The kind token as it is written to the log. Kept out of tr() because
+         * the log is data, not display: a line written in one language has to
+         * still classify in another.
+         */
+        QString kindToken(RevisionKind kind)
+        {
+            switch (kind) {
+            case RevisionKind::Entry:
+                return QStringLiteral("entry");
+            case RevisionKind::Group:
+                return QStringLiteral("group");
+            case RevisionKind::Settings:
+                break;
+            }
+            return QStringLiteral("settings");
+        }
+
+        RevisionKind kindFromToken(const QString& token, const HistoryRevision& revision)
+        {
+            if (token == QLatin1String("entry")) {
+                return RevisionKind::Entry;
+            }
+            if (token == QLatin1String("group")) {
+                return RevisionKind::Group;
+            }
+            if (token == QLatin1String("settings")) {
+                return RevisionKind::Settings;
+            }
+            // Lines written before the kind was recorded still carry their
+            // entry deltas, so an entry revision can be recognised; a group
+            // revision cannot, because no group delta was ever stored.
+            return (revision.added + revision.removed + revision.edited) > 0 ? RevisionKind::Entry
+                                                                            : RevisionKind::Settings;
+        }
+
         HistoryRevision fromJson(const QJsonObject& object)
         {
             HistoryRevision revision;
@@ -140,6 +176,7 @@ namespace Material
             revision.added = object.value(QStringLiteral("added")).toInt();
             revision.removed = object.value(QStringLiteral("removed")).toInt();
             revision.edited = object.value(QStringLiteral("edited")).toInt();
+            revision.kind = kindFromToken(object.value(QStringLiteral("kind")).toString(), revision);
             if (!revision.timestamp.isValid()) {
                 revision.id.clear();
             }
@@ -159,6 +196,7 @@ namespace Material
             object.insert(QStringLiteral("added"), revision.added);
             object.insert(QStringLiteral("removed"), revision.removed);
             object.insert(QStringLiteral("edited"), revision.edited);
+            object.insert(QStringLiteral("kind"), kindToken(revision.kind));
             return object;
         }
     } // namespace
@@ -288,6 +326,8 @@ namespace Material
 
         if (!hadFingerprint || !last.isValid()) {
             revision.label = tr("First recorded save of this database - %n entry(s)", "", entryCount);
+            // The first line establishes the entry set, so that is what it is about.
+            revision.kind = RevisionKind::Entry;
         } else {
             for (auto it = current.constBegin(); it != current.constEnd(); ++it) {
                 const auto match = previous.constFind(it.key());
@@ -322,6 +362,16 @@ namespace Material
             }
 
             revision.label = parts.isEmpty() ? tr("Saved with no entry or group changes") : parts.join(tr(", "));
+
+            // Entries win over groups: a save that moved an entry into a new
+            // group is about the entry, not about the group that received it.
+            if (revision.added + revision.removed + revision.edited > 0) {
+                revision.kind = RevisionKind::Entry;
+            } else if (groupDelta != 0) {
+                revision.kind = RevisionKind::Group;
+            } else {
+                revision.kind = RevisionKind::Settings;
+            }
         }
 
         if (!cachePath.isEmpty()) {

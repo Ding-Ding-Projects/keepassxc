@@ -24,22 +24,56 @@ namespace Material
 {
     namespace
     {
-        /**
-         * The three elevation steps, approximated with a single Qt shadow each:
-         * blur radius, downward offset and shadow alpha.
-         */
-        struct ElevationTokens
+        /** One CSS box-shadow layer: `0 <offset>px <blur>px <spread>px black`. */
+        struct ShadowLayer
         {
             qreal blur;
             qreal offset;
+            qreal spread;
             int alpha;
         };
 
-        constexpr ElevationTokens Elevations[] = {{4.0, 1.0, 60}, {10.0, 2.0, 70}, {16.0, 4.0, 80}};
+        /**
+         * The design's --el1 / --el2 / --el3, each a tight key shadow over a
+         * wider ambient one. Both alphas are constant across the three levels;
+         * only the ambient layer's blur, offset and spread grow.
+         */
+        struct ElevationTokens
+        {
+            ShadowLayer key;
+            ShadowLayer ambient;
+        };
+
+        constexpr int KeyAlpha = 76; // rgba(0, 0, 0, .3)
+        constexpr int AmbientAlpha = 38; // rgba(0, 0, 0, .15)
+
+        constexpr ElevationTokens Elevations[] = {
+            {{2.0, 1.0, 0.0, KeyAlpha}, {3.0, 1.0, 1.0, AmbientAlpha}},
+            {{2.0, 1.0, 0.0, KeyAlpha}, {6.0, 2.0, 2.0, AmbientAlpha}},
+            {{3.0, 1.0, 0.0, KeyAlpha}, {8.0, 4.0, 3.0, AmbientAlpha}},
+        };
 
         const ElevationTokens& tokensFor(int level)
         {
             return Elevations[qBound(1, level, 3) - 1];
+        }
+
+        /**
+         * Concentric hairlines fading outwards stand in for a gaussian blur; the
+         * falloff is quadratic so the shadow keeps a defined edge near the shape.
+         * A CSS spread just widens the layer, so it adds to the ring count.
+         */
+        void paintShadowLayer(QPainter* painter, const QRect& rect, int radius, const ShadowLayer& layer)
+        {
+            const int steps = qMax(1, qRound(layer.blur + layer.spread));
+            for (int i = steps; i >= 1; --i) {
+                const qreal falloff = 1.0 - static_cast<qreal>(i) / (steps + 1);
+                QColor shade(0, 0, 0);
+                shade.setAlpha(qRound(layer.alpha * falloff * falloff));
+                painter->setPen(QPen(shade, 1.0));
+                const QRectF ring = QRectF(rect).adjusted(-i, -i + layer.offset, i, i + layer.offset);
+                painter->drawPath(roundedPath(ring, radius + i));
+            }
         }
     } // namespace
 
@@ -94,22 +128,15 @@ namespace Material
         }
 
         const ElevationTokens& tokens = tokensFor(level);
-        const int steps = qMax(1, qRound(tokens.blur));
 
         painter->save();
         painter->setRenderHint(QPainter::Antialiasing, true);
         painter->setBrush(Qt::NoBrush);
 
-        // Concentric hairlines fading outwards stand in for a gaussian blur; the
-        // falloff is quadratic so the shadow keeps a defined edge near the shape.
-        for (int i = steps; i >= 1; --i) {
-            const qreal falloff = 1.0 - static_cast<qreal>(i) / (steps + 1);
-            QColor shade(0, 0, 0);
-            shade.setAlpha(qRound(tokens.alpha * falloff * falloff));
-            painter->setPen(QPen(shade, 1.0));
-            const QRectF ring = QRectF(rect).adjusted(-i, -i + tokens.offset, i, i + tokens.offset);
-            painter->drawPath(roundedPath(ring, radius + i));
-        }
+        // Widest first, so the tight key layer composites over the ambient one
+        // in the same order the CSS declares them.
+        paintShadowLayer(painter, rect, radius, tokens.ambient);
+        paintShadowLayer(painter, rect, radius, tokens.key);
 
         painter->restore();
     }
@@ -135,10 +162,14 @@ namespace Material
     {
         const ElevationTokens& tokens = tokensFor(level);
 
+        // A QGraphicsDropShadowEffect draws one shadow, so the pair collapses
+        // into the ambient layer's reach - it is the layer that gives the lift -
+        // carrying the key layer's alpha, which the design holds at 30 percent
+        // for all three levels instead of ramping it up with the level.
         auto* effect = new QGraphicsDropShadowEffect(parent);
-        effect->setBlurRadius(tokens.blur);
-        effect->setOffset(0.0, tokens.offset);
-        effect->setColor(QColor(0, 0, 0, tokens.alpha));
+        effect->setBlurRadius(tokens.ambient.blur + tokens.ambient.spread);
+        effect->setOffset(0.0, tokens.ambient.offset);
+        effect->setColor(QColor(0, 0, 0, tokens.key.alpha));
         return effect;
     }
 

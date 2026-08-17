@@ -127,9 +127,10 @@ namespace Material
     namespace Duration
     {
         constexpr int Short = 140;
+        constexpr int Toggle = 160; // switch track and knob; the only 160ms transition
         constexpr int Medium = 180;
         constexpr int Long = 240;
-        constexpr int Toast = 3200;
+        constexpr int Toast = 4200;
     } // namespace Duration
 
     /** Fixed layout metrics that do not vary with density. */
@@ -291,6 +292,12 @@ namespace Material
         static QString densityToString(Density density);
 
         static Health healthFromString(const QString& value);
+        /**
+         * The design's name for a health state: Healthy / Weak / Reused /
+         * Breached. Shares one vocabulary with healthColor() so a readout and
+         * its tint can never contradict each other.
+         */
+        static QString healthLabel(Health health);
 
     signals:
         /** Emitted after the scheme, density or type scale changed. */

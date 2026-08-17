@@ -107,6 +107,7 @@ public:
         GUI_ShowExpiredEntriesOnDatabaseUnlock,
         GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays,
         GUI_FontSizeOffset,
+        GUI_FontFamily,
         GUI_DimSumSurprise,
         GUI_VoiceLanguage,
         GUI_FunnyLevelEnglish,
