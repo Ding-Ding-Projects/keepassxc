@@ -23,11 +23,31 @@
 #include <QFontMetrics>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QtMath>
 
 namespace Material
 {
     namespace
     {
+        /**
+         * The width a label needs, rounded the way a size hint has to be.
+         *
+         * QFontMetrics::horizontalAdvance() is QFontMetricsF's answer put
+         * through qRound(), so a string whose real advance is 25.4 pixels
+         * reports 25. Ask for 25 pixels and the label does not fit: elidedText()
+         * compares against the fractional width, decides the text is too long,
+         * and "Regex" is drawn as "Reg...". Rounding up costs at most one pixel
+         * and is the difference between a chip that says what it does and one
+         * that trails off mid-word with empty space beside it.
+         */
+        int labelWidth(const QFont& font, const QString& text)
+        {
+            if (text.isEmpty()) {
+                return 0;
+            }
+            return qCeil(QFontMetricsF(font).horizontalAdvance(text));
+        }
+
         constexpr int ChipPadding = 12;
         constexpr int ChipGap = 6;
         constexpr int ChipSymbolSize = 18;
@@ -210,9 +230,8 @@ namespace Material
 
     QSize Chip::sizeHint() const
     {
-        const QFontMetrics metrics(theme()->font(TypeRole::BodySmall));
         const bool leading = !m_symbol.isEmpty() || (m_kind == Kind::Filter && isChecked());
-        const int label = text().isEmpty() ? 0 : metrics.horizontalAdvance(text());
+        const int label = labelWidth(theme()->font(TypeRole::BodySmall), text());
 
         int width = 2 * ChipPadding + label;
         if (leading) {
@@ -226,9 +245,9 @@ namespace Material
 
     QSize Chip::minimumSizeHint() const
     {
-        const QFontMetrics metrics(theme()->font(TypeRole::BodySmall));
         const bool leading = !m_symbol.isEmpty() || (m_kind == Kind::Filter && isChecked());
-        const int label = text().isEmpty() ? 0 : metrics.horizontalAdvance(QStringLiteral("..."));
+        const int label =
+            text().isEmpty() ? 0 : labelWidth(theme()->font(TypeRole::BodySmall), QStringLiteral("..."));
 
         int width = 2 * ChipPadding + label;
         if (leading) {
@@ -366,15 +385,13 @@ namespace Material
 
     QSize PillLabel::sizeHint() const
     {
-        const QFontMetrics metrics(pillFont(m_kind));
-        const int width = 2 * PillPadding + metrics.horizontalAdvance(text());
+        const int width = 2 * PillPadding + labelWidth(pillFont(m_kind), text());
         return {qMin(width, PillMaxWidth), PillHeight};
     }
 
     QSize PillLabel::minimumSizeHint() const
     {
-        const QFontMetrics metrics(pillFont(m_kind));
-        const int width = 2 * PillPadding + metrics.horizontalAdvance(QStringLiteral("..."));
+        const int width = 2 * PillPadding + labelWidth(pillFont(m_kind), QStringLiteral("..."));
         return {width, PillHeight};
     }
 
