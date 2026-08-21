@@ -401,8 +401,9 @@ namespace Material
         layout->setContentsMargins(RowHorizontalPadding, RowVerticalPadding, RowHorizontalPadding, RowVerticalPadding);
         layout->setSpacing(RowGap);
 
-        // Two children: the severity glyph and the text column. Removal is the
-        // Clear all button's job, so a row carries no affordance of its own.
+        // The severity glyph and text column carry the facts; any still-live
+        // actions follow the timestamp so a deferred operation remains usable
+        // after its snackbar has been dismissed.
         auto* glyph = new QLabel;
         glyph->setPixmap(Icons::pixmap(severitySymbol(entry.severity), GlyphSize, severityAccent(entry.severity)));
         glyph->setFixedSize(GlyphSize, GlyphSize);
@@ -421,6 +422,19 @@ namespace Material
 
         // The stamp reads under the body, not beside the title.
         column->addWidget(makeStamp(entry.timestamp));
+        for (const auto& action : entry.actions) {
+            if (!action.isValid()) {
+                continue;
+            }
+            auto* button = new TextButton(QString(), action.label);
+            button->setAccessibleName(action.label);
+            connect(button, &QAbstractButton::clicked, this, [action] {
+                if (action.isValid() && action.handler) {
+                    action.handler();
+                }
+            });
+            column->addWidget(button, 0, Qt::AlignLeft);
+        }
         layout->addLayout(column, 1);
 
         return row;

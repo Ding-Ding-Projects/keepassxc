@@ -32,6 +32,9 @@
 #include "gui/material/MaterialDimSum.h"
 #include "gui/osutils/OSUtils.h"
 #include "platform/SquirrelLifecycle.h"
+#ifdef KPXC_FEATURE_UPDATES
+#include "networking/UpdateChecker.h"
+#endif
 
 #if defined(WITH_ASAN) && defined(WITH_LSAN)
 #include <sanitizer/lsan_interface.h>
@@ -236,7 +239,15 @@ int main(int argc, char** argv)
 
     // Check if restart was requested
     if (exitCode == RESTART_EXITCODE) {
+#ifdef KPXC_FEATURE_UPDATES
+        const bool updateRestart = updateCheck()->state() == UpdateChecker::State::ReadyToRestart
+                                   || updateCheck()->state() == UpdateChecker::State::Deferred;
+        if (!updateRestart || !updateCheck()->launchUpdatedVersion()) {
+            QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+        }
+#else
         QProcess::startDetached(QCoreApplication::applicationFilePath(), {});
+#endif
     }
 
 #if defined(WITH_ASAN) && defined(WITH_LSAN)

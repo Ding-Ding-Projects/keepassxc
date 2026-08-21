@@ -101,6 +101,7 @@ void TestUpdateCheck::testStateTransitions()
     QVERIFY(UpdateChecker::transitionAllowed(State::Applying, State::ReadyToRestart));
     QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Deferred));
     QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Restarting));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Deferred, State::Restarting));
     QVERIFY(UpdateChecker::transitionAllowed(State::Failed, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Applying));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::ReadyToRestart));

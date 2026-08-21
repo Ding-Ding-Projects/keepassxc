@@ -6,6 +6,7 @@
 #include "gui/material/MaterialNotificationCentre.h"
 
 #include <QApplication>
+#include <QAbstractButton>
 #include <QLineEdit>
 #include <QTest>
 
@@ -59,6 +60,23 @@ void TestMaterialSearchRegistry::existingConsumerSurfacesRegister()
     auto* centre = new NotificationCentre(&host);
     QVERIFY(SearchRegistry::instance()->bar(QStringLiteral("command-palette.commands")));
     QVERIFY(SearchRegistry::instance()->bar(QStringLiteral("notification-centre.history")));
+    int actionCount = 0;
+    centre->record(SeverityLevel::Warning,
+                   QStringLiteral("Update ready"),
+                   QStringLiteral("Restart when convenient"),
+                   {{QStringLiteral("Restart to install update"), [&] { ++actionCount; }, &host}});
+    centre->openOverlay();
+    QApplication::processEvents();
+    QAbstractButton* restart = nullptr;
+    for (auto* button : centre->findChildren<QAbstractButton*>()) {
+        if (button->text() == QStringLiteral("Restart to install update")) {
+            restart = button;
+            break;
+        }
+    }
+    QVERIFY(restart);
+    restart->click();
+    QCOMPARE(actionCount, 1);
     delete palette;
     delete centre;
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("command-palette.commands")), nullptr);

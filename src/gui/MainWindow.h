@@ -115,8 +115,8 @@ private slots:
     void showAboutDialog();
     void performUpdateCheck();
     void showUpdateCheckDialog();
+    void restartForUpdate();
     void focusWindowChanged(QWindow* focusWindow);
-    void hasUpdateAvailable(bool hasUpdate, const QString& version, bool isManuallyRequested);
     void openDonateUrl();
     void openBugReportUrl();
     void openGettingStartedGuide();

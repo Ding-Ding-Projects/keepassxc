@@ -52,6 +52,9 @@ public:
     void downloadAvailableUpdate();
     void cancelDownload();
     void applyVerifiedUpdate(const QString& packagePath);
+    void deferUpdate();
+    bool canRestartThroughSquirrel() const;
+    bool launchUpdatedVersion();
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;

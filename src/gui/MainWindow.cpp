@@ -625,9 +625,47 @@ MainWindow::MainWindow()
 
 #ifdef KPXC_FEATURE_UPDATES
     connect(m_ui->actionCheckForUpdates, SIGNAL(triggered()), SLOT(showUpdateCheckDialog()));
-    connect(UpdateChecker::instance(),
-            SIGNAL(updateCheckFinished(bool, QString, bool)),
-            SLOT(hasUpdateAvailable(bool, QString, bool)));
+    connect(updateCheck(), &UpdateChecker::stateChanged, this, [this](UpdateChecker::State state, UpdateChecker::Failure) {
+        switch (state) {
+        case UpdateChecker::State::Checking:
+            Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Checking for updates…"), -1);
+            break;
+        case UpdateChecker::State::Available:
+            updateCheck()->downloadAvailableUpdate();
+            break;
+        case UpdateChecker::State::NoUpdate:
+            Material::Notify::endProgress(QStringLiteral("squirrel-update"));
+            break;
+        case UpdateChecker::State::Failed:
+            Material::Notify::endProgress(QStringLiteral("squirrel-update"));
+            Material::Notify::error(tr("Update failed"), tr("The update could not be completed. Open the notification history for the recorded state."));
+            break;
+        default:
+            break;
+        }
+    });
+    connect(updateCheck(), &UpdateChecker::downloadProgress, this, [](quint64 received, quint64 total) {
+        const int percent = total == 0 ? 0 : int(qMin<quint64>(100, received * 100 / total));
+        Material::Notify::progress(QStringLiteral("squirrel-update"),
+                                   tr("Downloading update: %1 of %2 MiB")
+                                       .arg(received / (1024 * 1024))
+                                       .arg(total / (1024 * 1024)),
+                                   percent);
+    });
+    connect(updateCheck(), &UpdateChecker::updatePackageReady, this, [](const QString& path) {
+        Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Verifying and staging the update…"), 100);
+        updateCheck()->applyVerifiedUpdate(path);
+    });
+    connect(updateCheck(), &UpdateChecker::updateReadyToRestart, this, [this](const QString& version) {
+        Material::Notify::endProgress(QStringLiteral("squirrel-update"));
+        QList<Material::NotificationAction> actions{
+            {tr("Restart to install update"), [this] { restartForUpdate(); }, this},
+            {tr("Later"), [] { updateCheck()->deferUpdate(); }, this},
+        };
+        Material::Notify::warning(tr("Update %1 is ready").arg(version),
+                                  tr("The update is unsigned and may show an Unknown Publisher or SmartScreen warning. Restart happens only when you choose it."),
+                                  actions);
+    });
     // Setup an update check every hour (checked only occur every 7 days)
     connect(&m_updateCheckTimer, &QTimer::timeout, this, &MainWindow::performUpdateCheck);
     m_updateCheckTimer.start(3.6e6);
@@ -1549,19 +1587,6 @@ void MainWindow::showAboutDialog()
 void MainWindow::performUpdateCheck()
 {
 #ifdef KPXC_FEATURE_UPDATES
-    if (!config()->get(Config::UpdateCheckMessageShown).toBool()) {
-        auto result =
-            MessageBox::question(this,
-                                 tr("Check for updates on startup?"),
-                                 tr("Would you like KeePassXC to check for updates on startup?") + "\n\n"
-                                     + tr("You can always check for updates manually from the application menu."),
-                                 MessageBox::Yes | MessageBox::No,
-                                 MessageBox::Yes);
-
-        config()->set(Config::GUI_CheckForUpdates, (result == MessageBox::Yes));
-        config()->set(Config::UpdateCheckMessageShown, true);
-    }
-
     if (config()->get(Config::GUI_CheckForUpdates).toBool()) {
         updateCheck()->checkForUpdates(false);
     }
@@ -1569,27 +1594,23 @@ void MainWindow::performUpdateCheck()
 #endif
 }
 
-void MainWindow::hasUpdateAvailable(bool hasUpdate, const QString& version, bool isManuallyRequested)
-{
-#ifdef KPXC_FEATURE_UPDATES
-    if (hasUpdate && !isManuallyRequested) {
-        auto* updateCheckDialog = new UpdateCheckDialog(this);
-        updateCheckDialog->showUpdateCheckResponse(hasUpdate, version);
-        updateCheckDialog->show();
-    }
-#else
-    Q_UNUSED(hasUpdate)
-    Q_UNUSED(version)
-    Q_UNUSED(isManuallyRequested)
-#endif
-}
-
 void MainWindow::showUpdateCheckDialog()
 {
 #ifdef KPXC_FEATURE_UPDATES
     updateCheck()->checkForUpdates(true);
-    auto* updateCheckDialog = new UpdateCheckDialog(this);
-    updateCheckDialog->show();
+#endif
+}
+
+void MainWindow::restartForUpdate()
+{
+#ifdef KPXC_FEATURE_UPDATES
+    if (!updateCheck()->canRestartThroughSquirrel()) {
+        Material::Notify::error(tr("Restart unavailable"), tr("The Squirrel update launcher is missing or is not in the expected installation location."));
+        return;
+    }
+    m_appExitCalled = true;
+    m_restartRequested = true;
+    close();
 #endif
 }
 

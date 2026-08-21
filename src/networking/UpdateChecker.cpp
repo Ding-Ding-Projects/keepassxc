@@ -21,6 +21,7 @@
 #include "config-keepassx.h"
 #include "core/Clock.h"
 #include "core/Config.h"
+#include "platform/SquirrelLifecycle.h"
 
 #include <QJsonArray>
 #include <QJsonDocument>
@@ -358,6 +359,41 @@ void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)
     m_applyProcess->start();
 }
 
+void UpdateChecker::deferUpdate()
+{
+    if (m_state == State::ReadyToRestart) {
+        setState(State::Deferred);
+    }
+}
+
+bool UpdateChecker::canRestartThroughSquirrel() const
+{
+    if (m_state != State::ReadyToRestart && m_state != State::Deferred) {
+        return false;
+    }
+    const QString updater = SquirrelLifecycle::updateExecutable(QCoreApplication::applicationDirPath());
+    const QFileInfo info(updater);
+    return info.isFile() && !info.isSymLink()
+           && QDir::cleanPath(info.canonicalFilePath()) == QDir::cleanPath(info.absoluteFilePath());
+}
+
+bool UpdateChecker::launchUpdatedVersion()
+{
+    if (!canRestartThroughSquirrel()) {
+        setState(State::Failed, Failure::RestartFailed);
+        return false;
+    }
+    const QString updater = SquirrelLifecycle::updateExecutable(QCoreApplication::applicationDirPath());
+    setState(State::Restarting);
+    const bool started = QProcess::startDetached(updater,
+                                                 {QStringLiteral("--processStart"), QStringLiteral("KeePassXC.exe")},
+                                                 QFileInfo(updater).absolutePath());
+    if (!started) {
+        setState(State::Failed, Failure::RestartFailed);
+    }
+    return started;
+}
+
 UpdateChecker::State UpdateChecker::state() const { return m_state; }
 UpdateChecker::Failure UpdateChecker::failure() const { return m_failure; }
 UpdateChecker::Candidate UpdateChecker::candidate() const { return m_candidate; }
@@ -378,7 +414,8 @@ bool UpdateChecker::transitionAllowed(State from, State to)
 {
     if (to == State::Failed) return true;
     switch (from) {
-    case State::Idle: case State::NoUpdate: case State::Deferred: case State::Failed: return to == State::Checking;
+    case State::Idle: case State::NoUpdate: case State::Failed: return to == State::Checking;
+    case State::Deferred: return to == State::Checking || to == State::Restarting;
     case State::Checking: return to == State::NoUpdate || to == State::Available;
     case State::Available: return to == State::Checking || to == State::Downloading || to == State::Deferred;
     case State::Downloading: return to == State::Verifying;
