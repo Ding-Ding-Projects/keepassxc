@@ -3,7 +3,8 @@ param(
     [switch]$ProbeLegacyInstaller,
     [switch]$ProbeExecutableVersionMismatch,
     [switch]$ProbeQtBootstrapMissing,
-    [switch]$ProbeReleaseVersionEnvMissing
+    [switch]$ProbeReleaseVersionEnvMissing,
+    [switch]$ProbeProductionBuildScopeMissing
 )
 
 $ErrorActionPreference = 'Stop'
@@ -122,6 +123,24 @@ foreach ($needle in @('set(KEEPASSXC_VERSION_MAJOR "${CMAKE_MATCH_1}")',
 if ($ProbeExecutableVersionMismatch) {
     . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
     Assert-KpxcExecutableVersion -FileVersion '2.8.0.0' -ProductVersion '2.8.0.0' -ExpectedVersion '2.8.1'
+}
+
+$squirrelBuild = Get-Content -Raw -LiteralPath (Join-Path $root 'scripts\build-squirrel.ps1')
+$nativeBuild = Get-Content -Raw -LiteralPath (Join-Path $root 'scripts\build-windows.ps1')
+if ($ProbeProductionBuildScopeMissing) {
+    $squirrelBuild = $squirrelBuild.Replace('-WithTests:$false', '-WithTests:$true')
+}
+$productionBuildContract = @(
+    @{ Text=$squirrelBuild; Needle='-WithTests:$false'; Source='scripts\build-squirrel.ps1' },
+    @{ Text=$nativeBuild; Needle='[bool]$WithTests = $true'; Source='scripts\build-windows.ps1' },
+    @{ Text=$nativeBuild; Needle='$testsOption = if ($WithTests)'; Source='scripts\build-windows.ps1' },
+    @{ Text=$nativeBuild; Needle='"-DWITH_TESTS=$testsOption"'; Source='scripts\build-windows.ps1' },
+    @{ Text=$nativeBuild; Needle="'--target','KeePassXC','keepassxc-cli','keepassxc-proxy','docs'"; Source='scripts\build-windows.ps1' }
+)
+foreach ($item in $productionBuildContract) {
+    if (-not $item.Text.Contains($item.Needle)) {
+        throw "Production-only installer build contract is missing '$($item.Needle)' from $($item.Source)"
+    }
 }
 
 if ($ProbeLegacyInstaller) {
