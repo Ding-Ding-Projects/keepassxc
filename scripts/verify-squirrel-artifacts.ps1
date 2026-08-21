@@ -17,6 +17,7 @@ $setup = Join-Path $dir 'Setup.exe'
 $releases = Join-Path $dir 'RELEASES'
 $full = @(Get-ChildItem -LiteralPath $dir -Filter '*-full.nupkg')
 $delta = @(Get-ChildItem -LiteralPath $dir -Filter '*-delta.nupkg')
+function Get-HashHex([string]$Path, [string]$Algorithm) { $s=[IO.File]::OpenRead($Path); try {$h=[Security.Cryptography.HashAlgorithm]::Create($Algorithm); try {return ([BitConverter]::ToString($h.ComputeHash($s))).Replace('-','').ToLowerInvariant()} finally {$h.Dispose()}} finally {$s.Dispose()} }
 if (-not (Test-Path $setup)) { throw 'Setup.exe is missing.' }
 if (-not (Test-Path $releases)) { throw 'RELEASES is missing.' }
 if ($full.Count -ne 1) { throw "Expected exactly one full package; found $($full.Count)." }
@@ -32,7 +33,7 @@ foreach ($line in Get-Content -LiteralPath $releases) {
     $path = Join-Path $dir $name
     if (-not (Test-Path $path)) { throw "Indexed package is missing: $name" }
     if ((Get-Item $path).Length -ne [int64]$Matches[3]) { throw "Indexed size differs for $name" }
-    if ((Get-FileHash $path -Algorithm SHA1).Hash -ine $Matches[1]) { throw "Indexed SHA-1 differs for $name" }
+    if ((Get-HashHex $path 'SHA1') -ine $Matches[1]) { throw "Indexed SHA-1 differs for $name" }
     $indexed[$name] = $true
 }
 foreach ($pkg in @($full) + @($delta)) { if (-not $indexed.ContainsKey($pkg.Name)) { throw "Package is not indexed by RELEASES: $($pkg.Name)" } }
@@ -54,10 +55,10 @@ $signature = Get-AuthenticodeSignature -FilePath $setup
 if ($signature.Status -ne 'NotSigned') { throw "Setup.exe must be unsigned; status is $($signature.Status)." }
 $receipt = [ordered]@{
     schemaVersion = 1; sourceCommit = $ExpectedCommit; packageId = $ExpectedPackageId; version = $ExpectedVersion; architecture = $ExpectedArchitecture
-    setup = @{ name='Setup.exe'; bytes=(Get-Item $setup).Length; sha256=(Get-FileHash $setup -Algorithm SHA256).Hash.ToLowerInvariant(); signingStatus=$signature.Status.ToString() }
-    releases = @{ sha256=(Get-FileHash $releases -Algorithm SHA256).Hash.ToLowerInvariant() }
-    fullPackages = @($full | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
-    deltaPackages = @($delta | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-FileHash $_.FullName -Algorithm SHA256).Hash.ToLowerInvariant()} })
+    setup = @{ name='Setup.exe'; bytes=(Get-Item $setup).Length; sha256=(Get-HashHex $setup 'SHA256'); signingStatus=$signature.Status.ToString() }
+    releases = @{ sha256=(Get-HashHex $releases 'SHA256') }
+    fullPackages = @($full | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-HashHex $_.FullName 'SHA256')} })
+    deltaPackages = @($delta | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-HashHex $_.FullName 'SHA256')} })
     requiredPackageEntry = $RequiredPackageEntry
 }
 $receipt | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath $OutputPath -Encoding UTF8

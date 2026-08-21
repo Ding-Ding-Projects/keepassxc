@@ -23,9 +23,14 @@
 #include <QStringList>
 #include <QWidget>
 
+#include "MaterialBreakpoints.h"
+
 class QAction;
 class QMenu;
 class QStackedWidget;
+class QHBoxLayout;
+class QToolButton;
+class QResizeEvent;
 
 namespace Material
 {
@@ -131,6 +136,7 @@ namespace Material
          * the palette running it.
          */
         void setCommandsEnabled(bool enabled);
+        Breakpoint breakpoint() const;
 
     public slots:
         void setCurrentDestination(const QString& id);
@@ -138,9 +144,11 @@ namespace Material
     signals:
         /** The visible destination changed, whether by the rail or by a caller. */
         void destinationChanged(const QString& id);
+        void breakpointChanged(Material::Breakpoint breakpoint);
 
     protected:
         void paintEvent(QPaintEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         /**
@@ -149,6 +157,7 @@ namespace Material
          * to the palette are stale the moment the mode flips.
          */
         void retintCommands();
+        void applyBreakpoint(Breakpoint breakpoint);
 
         NavigationRail* m_rail = nullptr;
         TopAppBar* m_appBar = nullptr;
@@ -168,6 +177,11 @@ namespace Material
         QMenu* m_goToMenu = nullptr;
         QMenu* m_viewMenu = nullptr;
         QAction* m_themeAction = nullptr;
+        QWidget* m_bottomBar = nullptr;
+        QHBoxLayout* m_bottomLayout = nullptr;
+        QToolButton* m_moreButton = nullptr;
+        QMenu* m_moreMenu = nullptr;
+        Breakpoint m_breakpoint = Breakpoint::Compact;
     };
 
 } // namespace Material

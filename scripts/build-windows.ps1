@@ -12,10 +12,17 @@ $stage = [IO.Path]::GetFullPath((Join-Path $root $InstallDirectory))
 $started = Get-Date
 function Phase([string]$Message) { if (-not $Silent) { Write-Host "[build] $Message" } }
 function Invoke-Native([string]$File, [string[]]$Arguments) { & $File @Arguments; if ($LASTEXITCODE -ne 0) { throw "$File exited with $LASTEXITCODE." } }
+function Get-Sha256([string]$Path) { $s=[IO.File]::OpenRead($Path); try {$h=[Security.Cryptography.SHA256]::Create(); try {return ([BitConverter]::ToString($h.ComputeHash($s))).Replace('-','')} finally {$h.Dispose()}} finally {$s.Dispose()} }
 
 if (-not [Environment]::Is64BitOperatingSystem) { throw 'A 64-bit Windows installation is required.' }
 & (Join-Path $PSScriptRoot 'download-dependencies.ps1') -Silent:$Silent | Out-Null
-$vcpkgRoot = if ($env:VCPKG_ROOT) { $env:VCPKG_ROOT } else { Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\vcpkg' }
+$dependencyReceipt = Get-Content -Raw -LiteralPath (Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\dependency-receipt.json') | ConvertFrom-Json
+$asciidoctorExe = $dependencyReceipt.asciidoctor.path
+if (-not $asciidoctorExe -or -not (Test-Path $asciidoctorExe)) { throw 'The dependency receipt does not contain a working Asciidoctor executable.' }
+$rubyExe = $dependencyReceipt.ruby.path
+if (-not $rubyExe -or -not (Test-Path $rubyExe)) { throw 'The dependency receipt does not contain a working Ruby executable.' }
+$env:PATH = "$(Split-Path -Parent $rubyExe);$env:PATH"
+$vcpkgRoot = if ($env:KPXC_VCPKG_ROOT) { $env:KPXC_VCPKG_ROOT } else { Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\vcpkg' }
 $vcpkgManifest = Get-Content -Raw -LiteralPath (Join-Path $root 'vcpkg.json') | ConvertFrom-Json
 $baseline = $vcpkgManifest.'builtin-baseline'
 if (-not $baseline) { throw 'vcpkg.json does not declare builtin-baseline.' }
@@ -24,8 +31,15 @@ if (-not (Test-Path (Join-Path $vcpkgRoot '.git'))) {
     Invoke-Native git @('init','--quiet',$vcpkgRoot)
     Invoke-Native git @('-C',$vcpkgRoot,'remote','add','origin','https://github.com/microsoft/vcpkg.git')
 }
-& git -C $vcpkgRoot cat-file -e "$baseline^{commit}" 2>$null
-if ($LASTEXITCODE -ne 0) { Invoke-Native git @('-C',$vcpkgRoot,'fetch','--depth','1','origin',$baseline) }
+$savedErrorAction = $ErrorActionPreference
+$ErrorActionPreference = 'Continue'
+try {
+    & git -C $vcpkgRoot cat-file -e "$baseline^{commit}" 2>$null
+    $baselinePresent = $LASTEXITCODE -eq 0
+} finally {
+    $ErrorActionPreference = $savedErrorAction
+}
+if (-not $baselinePresent) { Invoke-Native git @('-C',$vcpkgRoot,'fetch','--depth','1','origin',$baseline) }
 Invoke-Native git @('-C',$vcpkgRoot,'checkout','--force',$baseline)
 if (-not (Test-Path (Join-Path $vcpkgRoot 'vcpkg.exe'))) { Invoke-Native (Join-Path $vcpkgRoot 'bootstrap-vcpkg.bat') @('-disableMetrics') }
 
@@ -33,7 +47,7 @@ $qtRoot = $env:QT_ROOT_DIR
 if (-not $qtRoot) { throw 'QT_ROOT_DIR must identify the pinned Qt 6.8.3 MSVC x64 installation.' }
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 Phase "Configuring $build."
-Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release','-DWITH_TESTS=ON','-DKPXC_FEATURE_DOCS=ON',"-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot")
+Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release','-DWITH_TESTS=ON','-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot")
 Phase 'Building the native application.'
 Invoke-Native cmake @('--build',$build,'--parallel')
 Phase "Installing to $stage."
@@ -42,6 +56,6 @@ Invoke-Native cmake @('--install',$build,'--prefix',$stage)
 $exe = Join-Path $stage 'KeePassXC.exe'
 if (-not (Test-Path -LiteralPath $exe)) { throw "The staged application is missing $exe." }
 Write-Host "Built application: $exe"
-Write-Host "SHA-256: $((Get-FileHash $exe -Algorithm SHA256).Hash)"
+Write-Host "SHA-256: $(Get-Sha256 $exe)"
 Write-Host "Elapsed: $([int]((Get-Date)-$started).TotalSeconds)s"
 if (-not $Silent -and (Read-Host 'Run KeePassXC now? [y/N]') -match '^(y|yes)$') { Start-Process -FilePath $exe }

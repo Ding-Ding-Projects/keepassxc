@@ -267,6 +267,22 @@ namespace Material
         return m_destinations.size();
     }
 
+    void NavigationRail::setIconsOnly(bool iconsOnly)
+    {
+        if (m_iconsOnly == iconsOnly) {
+            return;
+        }
+        m_iconsOnly = iconsOnly;
+        relayout();
+        updateGeometry();
+        update();
+    }
+
+    bool NavigationRail::iconsOnly() const
+    {
+        return m_iconsOnly;
+    }
+
     QSize NavigationRail::sizeHint() const
     {
         bool withSublabel = false;
@@ -545,10 +561,15 @@ namespace Material
 
             const QColor content = mix(idle, selected, active);
             const QRect iconRect(destination.rect.x() + (destination.rect.width() - TileIconSize) / 2,
-                                 destination.rect.y() + TilePadTop,
+                                 m_iconsOnly ? destination.rect.center().y() - TileIconSize / 2
+                                             : destination.rect.y() + TilePadTop,
                                  TileIconSize,
                                  TileIconSize);
             painter.drawPixmap(iconRect, Icons::pixmap(destination.symbol, TileIconSize, content));
+
+            if (m_iconsOnly) {
+                continue;
+            }
 
             const int textLeft = destination.rect.x() + TileTextMargin;
             const int textWidth = destination.rect.width() - 2 * TileTextMargin;

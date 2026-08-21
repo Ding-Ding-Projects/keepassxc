@@ -31,7 +31,9 @@
 #include <QMenu>
 #include <QPainter>
 #include <QStackedWidget>
+#include <QToolButton>
 #include <QVBoxLayout>
+#include <QResizeEvent>
 
 namespace Material
 {
@@ -46,10 +48,18 @@ namespace Material
     {
         setObjectName(QStringLiteral("materialShell"));
         setAutoFillBackground(false);
+        // The shell must be able to enter the Compact class even though the
+        // full rail and its labels have a much wider aggregate size hint.
+        setMinimumSize(320, 480);
 
-        auto* root = new QHBoxLayout(this);
+        auto* outer = new QVBoxLayout(this);
+        outer->setContentsMargins(0, 0, 0, 0);
+        outer->setSpacing(0);
+
+        auto* root = new QHBoxLayout;
         root->setContentsMargins(0, 0, 0, 0);
         root->setSpacing(0);
+        outer->addLayout(root, 1);
 
         m_rail = new NavigationRail(this);
         root->addWidget(m_rail);
@@ -69,6 +79,24 @@ namespace Material
         column->addWidget(m_stack, 1);
 
         root->addLayout(column, 1);
+
+        m_bottomBar = new QWidget(this);
+        m_bottomBar->setObjectName(QStringLiteral("materialBottomNavigation"));
+        m_bottomBar->setFixedHeight(76);
+        m_bottomLayout = new QHBoxLayout(m_bottomBar);
+        m_bottomLayout->setContentsMargins(4, 4, 4, 4);
+        m_bottomLayout->setSpacing(2);
+        m_moreMenu = new QMenu(m_bottomBar);
+        m_moreButton = new QToolButton(m_bottomBar);
+        m_moreButton->setObjectName(QStringLiteral("materialBottomNavigationMore"));
+        m_moreButton->setText(tr("More"));
+        m_moreButton->setIcon(Icons::symbol(QStringLiteral("more_horiz")));
+        m_moreButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+        m_moreButton->setPopupMode(QToolButton::InstantPopup);
+        m_moreButton->setMenu(m_moreMenu);
+        m_moreButton->setAccessibleName(tr("More destinations"));
+        m_bottomLayout->addWidget(m_moreButton, 1);
+        outer->addWidget(m_bottomBar);
 
         // Over the stack, not over the window: a toast never covers the rail,
         // the app bar or the tab strip.
@@ -111,6 +139,7 @@ namespace Material
         });
 
         s_instance = this;
+        applyBreakpoint(breakpointFor(width()));
     }
 
     Shell::~Shell()
@@ -194,6 +223,18 @@ namespace Material
         addAction(command);
         m_goToMenu->addAction(command);
 
+        if (m_order.size() <= 5) {
+            auto* button = new QToolButton(m_bottomBar);
+            button->setDefaultAction(command);
+            button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+            button->setAutoRaise(true);
+            button->setProperty("destinationId", id);
+            button->setAccessibleName(label);
+            m_bottomLayout->insertWidget(m_bottomLayout->count() - 1, button, 1);
+        } else {
+            m_moreMenu->addAction(command);
+        }
+
         if (m_current.isEmpty()) {
             m_current = id;
             m_stack->setCurrentWidget(page);
@@ -235,6 +276,34 @@ namespace Material
             command->setEnabled(enabled);
         }
         m_themeAction->setEnabled(enabled);
+    }
+
+    Breakpoint Shell::breakpoint() const
+    {
+        return m_breakpoint;
+    }
+
+    void Shell::applyBreakpoint(Breakpoint breakpoint)
+    {
+        const bool changed = m_breakpoint != breakpoint;
+        m_breakpoint = breakpoint;
+        const bool railVisible = hasRail(breakpoint);
+        m_rail->setVisible(railVisible);
+        m_rail->setFixedWidth(railWidth(breakpoint));
+        m_rail->setIconsOnly(breakpoint == Breakpoint::Medium);
+        m_bottomBar->setVisible(!railVisible);
+        if (changed) {
+            emit breakpointChanged(breakpoint);
+        }
+    }
+
+    void Shell::resizeEvent(QResizeEvent* event)
+    {
+        QWidget::resizeEvent(event);
+        applyBreakpoint(breakpointFor(event->size().width()));
+        if (m_snackbars) {
+            m_snackbars->setGeometry(m_stack->rect());
+        }
     }
 
     void Shell::retintCommands()

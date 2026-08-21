@@ -11,6 +11,7 @@ $root = Split-Path -Parent $PSScriptRoot
 $stage = [IO.Path]::GetFullPath((Join-Path $root $StageDirectory))
 $output = [IO.Path]::GetFullPath((Join-Path $root $ArtifactDirectory))
 $scratch = [IO.Path]::GetFullPath((Join-Path $root 'stage\squirrel'))
+function Get-Sha256([string]$Path) { $s=[IO.File]::OpenRead($Path); try {$h=[Security.Cryptography.SHA256]::Create(); try {return ([BitConverter]::ToString($h.ComputeHash($s))).Replace('-','').ToLowerInvariant()} finally {$h.Dispose()}} finally {$s.Dispose()} }
 & (Join-Path $PSScriptRoot 'build-windows.ps1') -Silent -InstallDirectory $StageDirectory
 & (Join-Path $PSScriptRoot 'download-dependencies.ps1') -Silent | Out-Null
 $manifest = Get-Content -Raw -LiteralPath (Join-Path $root 'packaging\squirrel\toolchain.json') | ConvertFrom-Json
@@ -36,10 +37,10 @@ if (-not $package) { throw 'NuGet did not produce the expected application packa
 & $squirrelExe --releasify $package.FullName --releaseDir $output --no-msi
 if ($LASTEXITCODE -ne 0) { throw "Squirrel releasify failed with exit $LASTEXITCODE." }
 $commit = (& git -C $root rev-parse HEAD).Trim()
-$provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Version; architecture='x64'; packageId='KeePassXC.Material'; packagingTool=@{name='squirrel.windows';version=$manifest.squirrelWindows.version;maintenanceStatus=$manifest.squirrelWindows.maintenanceStatus}; stagedExecutable=@{path=$appExe;sha256=(Get-FileHash $appExe -Algorithm SHA256).Hash.ToLowerInvariant()}; generatedAtUtc=[DateTime]::UtcNow.ToString('o') }
+$provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Version; architecture='x64'; packageId='KeePassXC.Material'; packagingTool=@{name='squirrel.windows';version=$manifest.squirrelWindows.version;maintenanceStatus=$manifest.squirrelWindows.maintenanceStatus}; stagedExecutable=@{path=$appExe;sha256=(Get-Sha256 $appExe)}; generatedAtUtc=[DateTime]::UtcNow.ToString('o') }
 $provenancePath = Join-Path $output 'build-provenance.json'
 $provenance | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $provenancePath -Encoding UTF8
 & (Join-Path $PSScriptRoot 'verify-squirrel-artifacts.ps1') -ArtifactDirectory $output -ProvenancePath $provenancePath -ExpectedCommit $commit -ExpectedVersion $Version -ExpectedPackageId 'KeePassXC.Material' -ExpectedArchitecture x64 -RequiredPackageEntry 'lib/net45/KeePassXC.exe' -OutputPath (Join-Path $output 'artifact-receipt.json')
 Write-Host 'Unsigned Squirrel.Windows artifacts were built successfully.'
 Write-Host 'They may trigger Unknown Publisher or SmartScreen warnings.'
-Get-ChildItem $output -File | Select-Object Name,Length,@{Name='SHA256';Expression={(Get-FileHash $_.FullName -Algorithm SHA256).Hash}}
+Get-ChildItem $output -File | Select-Object Name,Length,@{Name='SHA256';Expression={Get-Sha256 $_.FullName}}

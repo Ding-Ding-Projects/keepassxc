@@ -62,6 +62,8 @@ namespace Material
         void setCurrentDestination(const QString& id);
 
         int count() const;
+        void setIconsOnly(bool iconsOnly);
+        bool iconsOnly() const;
 
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
@@ -131,6 +133,7 @@ namespace Material
          * the ones that overflow.
          */
         int m_scrollOffset = 0;
+        bool m_iconsOnly = false;
     };
 
 } // namespace Material
