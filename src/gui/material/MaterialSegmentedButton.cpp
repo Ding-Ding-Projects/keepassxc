@@ -23,6 +23,7 @@
 #include <QEvent>
 #include <QFontMetrics>
 #include <QMouseEvent>
+#include <QKeyEvent>
 #include <QPainter>
 
 namespace Material
@@ -43,7 +44,7 @@ namespace Material
     {
         setMouseTracking(true);
         setCursor(Qt::PointingHandCursor);
-        setFocusPolicy(Qt::NoFocus);
+        setFocusPolicy(Qt::StrongFocus);
         setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
         connect(theme(), &Theme::changed, this, [this] {
@@ -94,6 +95,7 @@ namespace Material
             return;
         }
         m_currentIndex = index;
+        setAccessibleDescription(tr("Selected: %1").arg(m_segments.at(index).label));
         update();
         emit segmentSelected(id);
     }
@@ -201,6 +203,25 @@ namespace Material
         }
     }
 
+    void SegmentedButton::keyPressEvent(QKeyEvent* event)
+    {
+        if (!isEnabled() || m_segments.isEmpty()) {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+        int next = m_currentIndex;
+        if (event->key() == Qt::Key_Left || event->key() == Qt::Key_Up) next = qMax(0, m_currentIndex - 1);
+        else if (event->key() == Qt::Key_Right || event->key() == Qt::Key_Down) next = qMin(m_segments.size() - 1, m_currentIndex + 1);
+        else if (event->key() == Qt::Key_Home) next = 0;
+        else if (event->key() == Qt::Key_End) next = m_segments.size() - 1;
+        else {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+        setCurrentSegment(m_segments.at(next).id);
+        event->accept();
+    }
+
     void SegmentedButton::leaveEvent(QEvent* event)
     {
         QWidget::leaveEvent(event);
@@ -231,6 +252,10 @@ namespace Material
             painter.setOpacity(DisabledOpacity);
         }
         painter.setFont(labelFont);
+        if (hasFocus()) {
+            painter.setPen(QPen(theme()->color(Role::Primary), 3));
+            painter.drawRoundedRect(rect().adjusted(2, 2, -2, -2), Shape::Full, Shape::Full);
+        }
 
         // Fills and dividers live inside the pill; the outline is stroked last
         // so it stays crisp over both.

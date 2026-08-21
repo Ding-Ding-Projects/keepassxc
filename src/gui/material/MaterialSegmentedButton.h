@@ -23,6 +23,8 @@
 #include <QString>
 #include <QWidget>
 
+class QKeyEvent;
+
 namespace Material
 {
     /**
@@ -61,6 +63,7 @@ namespace Material
         void mouseMoveEvent(QMouseEvent* event) override;
         void leaveEvent(QEvent* event) override;
         void resizeEvent(QResizeEvent* event) override;
+        void keyPressEvent(QKeyEvent* event) override;
 
     private:
         struct Segment

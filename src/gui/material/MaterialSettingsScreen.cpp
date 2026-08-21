@@ -20,7 +20,9 @@
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
 #include "MaterialElevation.h"
+#include "MaterialElementOverrides.h"
 #include "MaterialIcons.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialSwitch.h"
@@ -29,15 +31,23 @@
 #include "config-keepassx.h"
 #include "core/Config.h"
 #include "keys/drivers/YubiKey.h"
+#include "gui/Application.h"
 
+#include <QColorDialog>
+#include <QComboBox>
+#include <QCompleter>
 #include <QEnterEvent>
+#include <QFontDatabase>
 #include <QFontInfo>
 #include <QFrame>
 #include <QGridLayout>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QPushButton>
+#include <QResizeEvent>
 #include <QSlider>
 #include <QStringList>
 #include <QVBoxLayout>
@@ -485,33 +495,38 @@ namespace Material
             search->setIdentity(QStringLiteral("appearance.settings"), tr("Appearance settings search"));
             search->setMaximumWidth(380);
             connect(search, &SearchBar::textChanged, this, &SettingsScreen::applyFilter);
+            connect(search, &SearchBar::regexToggled, this, [this] { applyFilter(searchBar()->text()); });
         }
 
         // The design's four cards in a 2x2 grid: appearance and language above,
         // behaviour and integrations below.
-        auto* grid = new QGridLayout;
-        grid->setContentsMargins(0, 0, 0, 0);
-        grid->setHorizontalSpacing(16);
-        grid->setVerticalSpacing(16);
-        grid->setColumnStretch(0, 1);
-        grid->setColumnStretch(1, 1);
-        grid->addWidget(createAppearanceCard(), 0, 0, Qt::AlignTop);
-        grid->addWidget(createLanguageCard(), 0, 1, Qt::AlignTop);
-        grid->addWidget(createBehaviourCard(), 1, 0, Qt::AlignTop);
-        grid->addWidget(createIntegrationsCard(), 1, 1, Qt::AlignTop);
-        grid->setRowStretch(2, 1);
+        m_grid = new QGridLayout;
+        m_grid->setContentsMargins(0, 0, 0, 0);
+        m_grid->setHorizontalSpacing(16);
+        m_grid->setVerticalSpacing(16);
+        m_grid->setColumnStretch(0, 1);
+        m_grid->setColumnStretch(1, 1);
+        m_grid->addWidget(createAppearanceCard(), 0, 0, Qt::AlignTop);
+        m_grid->addWidget(createTypographyCard(), 0, 1, Qt::AlignTop);
+        m_grid->addWidget(createLanguageCard(), 1, 0, Qt::AlignTop);
+        m_grid->addWidget(createOverridesCard(), 1, 1, Qt::AlignTop);
+        m_grid->addWidget(createBehaviourCard(), 2, 0, Qt::AlignTop);
+        m_grid->addWidget(createIntegrationsCard(), 2, 1, Qt::AlignTop);
+        m_grid->setRowStretch(3, 1);
 
         // The design's grid stops growing at 1180px; a host carries the cap,
         // because a layout cannot have a maximum width of its own.
-        auto* gridHost = new QWidget;
-        gridHost->setMaximumWidth(GridMaxWidth);
-        gridHost->setLayout(grid);
+        m_gridHost = new QWidget;
+        m_gridHost->setObjectName(QStringLiteral("appearanceGrid"));
+        m_gridHost->setMaximumWidth(GridMaxWidth);
+        m_gridHost->setLayout(m_grid);
 
-        contentLayout()->addWidget(gridHost);
+        contentLayout()->addWidget(m_gridHost);
         contentLayout()->addStretch(1);
 
         connect(theme(), &Theme::changed, this, &SettingsScreen::refreshFromTheme);
         connect(Voice::notifier(), &Voice::Notifier::changed, this, &SettingsScreen::refreshFromVoice);
+        applyResponsiveGrid();
     }
 
     SettingsScreen::~SettingsScreen() = default;
@@ -534,12 +549,15 @@ namespace Material
         content->addSpacing(8);
 
         m_themeSegment = new SegmentedButton;
+        m_themeSegment->setObjectName(QStringLiteral("appearanceThemeMode"));
+        m_themeSegment->setAccessibleName(tr("Application theme mode"));
+        m_themeSegment->addSegment(QStringLiteral("auto"), tr("Auto"), QStringLiteral("brightness_auto"));
         m_themeSegment->addSegment(QStringLiteral("light"), tr("Light"), QStringLiteral("light_mode"));
         m_themeSegment->addSegment(QStringLiteral("dark"), tr("Dark"), QStringLiteral("dark_mode"));
-        m_themeSegment->setCurrentSegment(theme()->isDark() ? QStringLiteral("dark") : QStringLiteral("light"));
+        m_themeSegment->setCurrentSegment(theme()->configuredMode());
         connect(m_themeSegment, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
             if (!m_updating) {
-                theme()->setMode(id == QLatin1String("dark") ? Mode::Dark : Mode::Light);
+                theme()->setConfiguredMode(id);
             }
         });
         content->addWidget(m_themeSegment);
@@ -555,6 +573,9 @@ namespace Material
         swatches->setSpacing(4);
         for (auto seed : {Seed::KeePass, Seed::Purple, Seed::Green, Seed::Amber}) {
             auto* swatch = new SeedSwatch(seed);
+            swatch->setAccessibleName(Theme::seedDisplayName(seed));
+            swatch->setCheckable(true);
+            swatch->setChecked(theme()->seed() == seed);
             connect(swatch, &QAbstractButton::clicked, this, [this, seed] {
                 if (!m_updating) {
                     theme()->setSeed(seed);
@@ -572,6 +593,8 @@ namespace Material
         content->addSpacing(8);
 
         m_densitySegment = new SegmentedButton;
+        m_densitySegment->setObjectName(QStringLiteral("appearanceDensity"));
+        m_densitySegment->setAccessibleName(tr("Interface density"));
         m_densitySegment->addSegment(QStringLiteral("compact"), tr("Compact"));
         m_densitySegment->addSegment(QStringLiteral("comfortable"), tr("Comfortable"));
         m_densitySegment->addSegment(QStringLiteral("spacious"), tr("Spacious"));
@@ -605,6 +628,169 @@ namespace Material
         hint->setWordWrap(true);
         content->addWidget(hint);
 
+        m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
+        return card;
+    }
+
+    Card* SettingsScreen::createTypographyCard()
+    {
+        auto* card = new SettingsCard;
+        card->setTitleText(tr("Typography"));
+        auto* content = card->contentLayout();
+        content->setSpacing(10);
+        QStringList haystack{tr("Typography"), tr("Font family size scale weight live preview")};
+
+        m_fontFamily = new QComboBox;
+        m_fontFamily->setObjectName(QStringLiteral("appearanceFontFamily"));
+        m_fontFamily->setAccessibleName(tr("Interface font family"));
+        m_fontFamily->setEditable(true);
+        m_fontFamily->setInsertPolicy(QComboBox::NoInsert);
+        const auto families = QFontDatabase::families();
+        for (const auto& family : families) {
+            m_fontFamily->addItem(family);
+            m_fontFamily->setItemData(m_fontFamily->count() - 1, QFont(family), Qt::FontRole);
+        }
+        m_fontFamily->setCurrentText(theme()->uiFamily());
+        m_fontFamily->completer()->setCaseSensitivity(Qt::CaseInsensitive);
+        connect(m_fontFamily, &QComboBox::currentTextChanged, this, [this](const QString& family) {
+            if (m_updating || !QFontDatabase::families().contains(family)) return;
+            config()->set(Config::GUI_FontFamily, family);
+            Application::applyFontSize();
+            theme()->reload();
+        });
+        content->addWidget(m_fontFamily);
+
+        m_fontScaleValue = makeLabel(QString(), TypeRole::LabelMedium, Role::Primary);
+        m_fontScale = new QSlider(Qt::Horizontal);
+        m_fontScale->setObjectName(QStringLiteral("appearanceFontScale"));
+        m_fontScale->setRange(85, 140);
+        m_fontScale->setSingleStep(5);
+        m_fontScale->setAccessibleName(tr("Interface font size scale"));
+        m_fontScale->setValue(qRound(config()->get(Config::GUI_FontScale).toDouble() * 100));
+        connect(m_fontScale, &QSlider::valueChanged, this, [this](int value) {
+            m_fontScaleValue->setText(tr("%1%").arg(value));
+            if (m_updating) return;
+            config()->set(Config::GUI_FontScale, value / 100.0);
+            Application::applyFontSize();
+            theme()->reload();
+        });
+        m_fontScaleValue->setText(tr("%1%").arg(m_fontScale->value()));
+        content->addWidget(m_fontScaleValue);
+        content->addWidget(m_fontScale);
+
+        m_fontWeight = new QComboBox;
+        m_fontWeight->setObjectName(QStringLiteral("appearanceFontWeight"));
+        m_fontWeight->setAccessibleName(tr("Interface font weight"));
+        m_fontWeight->addItem(tr("Light"), 300);
+        m_fontWeight->addItem(tr("Regular"), 400);
+        m_fontWeight->addItem(tr("Medium"), 500);
+        m_fontWeight->addItem(tr("Bold"), 700);
+        m_fontWeight->setCurrentIndex(qMax(0, m_fontWeight->findData(config()->get(Config::GUI_FontWeight).toInt())));
+        connect(m_fontWeight, &QComboBox::currentIndexChanged, this, [this](int index) {
+            if (m_updating || index < 0) return;
+            config()->set(Config::GUI_FontWeight, m_fontWeight->itemData(index));
+            Application::applyFontSize();
+            theme()->reload();
+        });
+        content->addWidget(m_fontWeight);
+
+        m_fontPreview = new QLabel(tr("Example entry\n帶子蝦餃 · 筍尖蝦餃 · 腸粉\nuser@example.test · ••••3391"));
+        m_fontPreview->setObjectName(QStringLiteral("appearanceFontPreview"));
+        m_fontPreview->setAccessibleName(tr("Live interface font preview"));
+        m_fontPreview->setWordWrap(true);
+        m_fontPreview->setMinimumHeight(96);
+        content->addWidget(m_fontPreview);
+
+        m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
+        return card;
+    }
+
+    Card* SettingsScreen::createOverridesCard()
+    {
+        auto* card = new SettingsCard;
+        card->setTitleText(tr("Element overrides"));
+        auto* content = card->contentLayout();
+        content->setSpacing(8);
+        QStringList haystack{tr("Element overrides height radius font size spacing color reset")};
+
+        m_overrideElement = new QComboBox;
+        m_overrideElement->setObjectName(QStringLiteral("appearanceOverrideElement"));
+        m_overrideElement->setAccessibleName(tr("Element to customize"));
+        m_overrideElement->addItem(tr("Appearance search"), QStringLiteral("appearance/search"));
+        m_overrideElement->addItem(tr("Font chooser"), QStringLiteral("appearance/font-button"));
+        m_overrideElement->addItem(tr("Live preview"), QStringLiteral("appearance/preview"));
+        content->addWidget(m_overrideElement);
+
+        auto addSlider = [content](const QString& name, const QString& objectName, int minimum, int maximum) {
+            auto* slider = new QSlider(Qt::Horizontal);
+            slider->setObjectName(objectName);
+            slider->setAccessibleName(name);
+            slider->setRange(minimum, maximum);
+            content->addWidget(slider);
+            return slider;
+        };
+        m_overrideHeight = addSlider(tr("Element height"), QStringLiteral("appearanceOverrideHeight"), 24, 120);
+        m_overrideRadius = addSlider(tr("Element corner radius"), QStringLiteral("appearanceOverrideRadius"), 0, 48);
+        m_overrideFontSize = addSlider(tr("Element font size"), QStringLiteral("appearanceOverrideFontSize"), 8, 32);
+        m_overrideSpacing = addSlider(tr("Element spacing"), QStringLiteral("appearanceOverrideSpacing"), 0, 32);
+
+        m_overrideColor = new QPushButton(tr("Choose continuous background colour"));
+        m_overrideColor->setObjectName(QStringLiteral("appearanceOverrideColor"));
+        m_overrideColor->setAccessibleName(tr("Element background colour"));
+        content->addWidget(m_overrideColor);
+        m_overrideReset = new QPushButton(tr("Reset this element"));
+        m_overrideReset->setObjectName(QStringLiteral("appearanceOverrideReset"));
+        m_overrideReset->setAccessibleName(tr("Reset selected element appearance"));
+        content->addWidget(m_overrideReset);
+
+        m_overridePreview = new QLabel(tr("Element preview"));
+        m_overridePreview->setObjectName(QStringLiteral("appearanceOverridePreview"));
+        m_overridePreview->setAccessibleName(tr("Selected element override preview"));
+        m_overridePreview->setAlignment(Qt::AlignCenter);
+        content->addWidget(m_overridePreview);
+
+        auto load = [this] {
+            m_updating = true;
+            const auto value = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
+            m_overrideHeight->setValue(value.height.value_or(44));
+            m_overrideRadius->setValue(value.radius.value_or(12));
+            m_overrideFontSize->setValue(value.fontSize.value_or(14));
+            m_overrideSpacing->setValue(value.spacing.value_or(8));
+            m_updating = false;
+            applyCurrentOverride();
+        };
+        connect(m_overrideElement, &QComboBox::currentIndexChanged, this, [load](int) { load(); });
+        for (auto* slider : {m_overrideHeight, m_overrideRadius, m_overrideFontSize, m_overrideSpacing}) {
+            connect(slider, &QSlider::valueChanged, this, [this](int) {
+                if (m_updating) return;
+                auto value = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
+                value.height = m_overrideHeight->value();
+                value.radius = m_overrideRadius->value();
+                value.fontSize = m_overrideFontSize->value();
+                value.spacing = m_overrideSpacing->value();
+                ElementOverrides::instance()->set(m_overrideElement->currentData().toString(), value);
+                applyCurrentOverride();
+            });
+        }
+        connect(m_overrideColor, &QPushButton::clicked, this, [this] {
+            auto value = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
+            auto* dialog = new QColorDialog(value.background.value_or(theme()->color(Role::SecondaryContainer)), this);
+            dialog->setOption(QColorDialog::ShowAlphaChannel);
+            dialog->setOption(QColorDialog::DontUseNativeDialog);
+            dialog->setAttribute(Qt::WA_DeleteOnClose);
+            connect(dialog, &QColorDialog::currentColorChanged, this, [this](const QColor& color) {
+                auto current = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
+                current.background = color;
+                ElementOverrides::instance()->set(m_overrideElement->currentData().toString(), current);
+                applyCurrentOverride();
+            });
+            dialog->open();
+        });
+        connect(m_overrideReset, &QPushButton::clicked, this, [this, load] {
+            ElementOverrides::instance()->reset(m_overrideElement->currentData().toString());
+            load();
+        });
+        load();
         m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
         return card;
     }
@@ -889,14 +1075,85 @@ namespace Material
 
     void SettingsScreen::applyFilter(const QString& text)
     {
-        const QString needle = text.trimmed().toLower();
-        for (const auto& entry : m_cards) {
-            entry.card->setVisible(needle.isEmpty() || entry.haystack.contains(needle));
+        const QString needle = text.trimmed();
+        const bool regex = searchBar()->isRegexEnabled() && !needle.isEmpty();
+        bool valid = true;
+        QString error;
+        if (regex) {
+            const auto validation = runBounded(needle, optionsForFlags(searchBar()->regexFlags()), QString());
+            valid = validation.compiled && !validation.blocked && !validation.timedOut;
+            error = validation.error;
         }
+        int matches = 0;
+        for (const auto& entry : m_cards) {
+            bool match = needle.isEmpty() || entry.haystack.contains(needle.toLower());
+            if (regex && valid) {
+                match = !runBounded(needle, optionsForFlags(searchBar()->regexFlags()), entry.haystack).matches.isEmpty();
+            } else if (regex) {
+                match = false;
+            }
+            entry.card->setVisible(match);
+            matches += match ? 1 : 0;
+        }
+        searchBar()->lineEdit()->setAccessibleDescription(valid ? tr("%1 appearance sections match").arg(matches)
+                                                               : tr("Invalid regular expression: %1").arg(error));
         setSupportingText(
-            needle.isEmpty()
+            !valid ? tr("Invalid regular expression: %1").arg(error)
+            : needle.isEmpty()
                 ? tr("Search every option label, description and current value on this surface.")
-                : tr("Matching “%1” across Appearance, Language, Behaviour and Integrations.").arg(text.trimmed()));
+                : tr("%1 appearance section(s) match “%2”.").arg(matches).arg(needle));
+    }
+
+    QWidget* SettingsScreen::overrideTarget(const QString& key) const
+    {
+        if (key == QLatin1String("appearance/search")) return searchBar();
+        if (key == QLatin1String("appearance/font-button")) return m_fontRowButton;
+        if (key == QLatin1String("appearance/preview")) return m_fontPreview;
+        return nullptr;
+    }
+
+    void SettingsScreen::applyCurrentOverride()
+    {
+        const QString key = m_overrideElement ? m_overrideElement->currentData().toString() : QString();
+        auto apply = [](QWidget* widget, const ElementOverrides::Override& value) {
+            if (!widget) return;
+            widget->setMinimumHeight(value.height.value_or(0));
+            QFont font = value.fontSize ? widget->font() : theme()->font(TypeRole::BodyMedium);
+            if (value.fontSize) font.setPointSize(*value.fontSize);
+            widget->setFont(font);
+            QString style;
+            if (value.radius) style += QStringLiteral("border-radius:%1px;").arg(*value.radius);
+            if (value.spacing) style += QStringLiteral("padding:%1px;").arg(*value.spacing);
+            if (value.background) style += QStringLiteral("background:%1;").arg(value.background->name(QColor::HexArgb));
+            if (value.foreground) style += QStringLiteral("color:%1;").arg(value.foreground->name(QColor::HexArgb));
+            widget->setStyleSheet(style);
+        };
+        for (int index = 0; m_overrideElement && index < m_overrideElement->count(); ++index) {
+            const QString elementKey = m_overrideElement->itemData(index).toString();
+            apply(overrideTarget(elementKey), ElementOverrides::instance()->get(elementKey));
+        }
+        apply(m_overridePreview, ElementOverrides::instance()->get(key));
+        if (m_overridePreview) m_overridePreview->setText(m_overrideElement->currentText());
+    }
+
+    void SettingsScreen::applyResponsiveGrid()
+    {
+        if (!m_grid || m_cards.size() < 6) return;
+        const bool single = width() < 840;
+        for (int index = 0; index < m_cards.size(); ++index) {
+            m_grid->removeWidget(m_cards.at(index).card);
+            const int columns = single ? 1 : 2;
+            m_grid->addWidget(m_cards.at(index).card, index / columns, index % columns, Qt::AlignTop);
+        }
+        m_grid->setColumnStretch(0, 1);
+        m_grid->setColumnStretch(1, single ? 0 : 1);
+        m_gridHost->setMinimumWidth(0);
+    }
+
+    void SettingsScreen::resizeEvent(QResizeEvent* event)
+    {
+        Screen::resizeEvent(event);
+        applyResponsiveGrid();
     }
 
     void SettingsScreen::refreshFromTheme()
@@ -905,14 +1162,20 @@ namespace Material
         // the user touching them, or the theme would set itself again.
         m_updating = true;
 
-        m_themeSegment->setCurrentSegment(theme()->isDark() ? QStringLiteral("dark") : QStringLiteral("light"));
+        m_themeSegment->setCurrentSegment(theme()->configuredMode());
         m_densitySegment->setCurrentSegment(Theme::densityToString(theme()->density()));
         for (auto* swatch : m_swatches) {
+            swatch->setChecked(swatch->seed() == theme()->seed());
             swatch->update();
         }
 
         restyleChildren(this);
         m_fontRowButton->setText(fontRowText());
+        if (m_fontFamily) m_fontFamily->setCurrentText(theme()->uiFamily());
+        if (m_fontWeight) m_fontWeight->setCurrentIndex(qMax(0, m_fontWeight->findData(config()->get(Config::GUI_FontWeight).toInt())));
+        if (m_fontScale) m_fontScale->setValue(qRound(config()->get(Config::GUI_FontScale).toDouble() * 100));
+        if (m_fontPreview) m_fontPreview->setFont(theme()->font(TypeRole::BodyMedium));
+        applyCurrentOverride();
         updateVoicePreview();
 
         m_updating = false;
