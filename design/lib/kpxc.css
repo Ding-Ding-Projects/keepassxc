@@ -1,0 +1,137 @@
+/* KeePassXC Material 3 — the design system every page loads.
+   Values are the literals in src/gui/material/MaterialTheme.cpp: LightNeutrals,
+   DarkNeutrals, LightStatus, DarkStatus, SeedPalettes[], Shape, Duration,
+   Layout. Nothing here is invented. */
+
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&family=Noto+Sans+HK:wght@400;500;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap');
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{
+  background:var(--surface);
+  color:var(--on);
+  font-family:var(--ffam);
+  font-size:calc(14px * var(--scale));
+  -webkit-font-smoothing:antialiased;
+  display:flex;
+  flex-direction:column;
+}
+/* The runtime mounts the component into a plain div; make it fill the viewport
+   so a page opened on its own lays out exactly as it does inside the shell. */
+body > div{flex:1;min-height:0;display:flex;flex-direction:column}
+
+a{color:var(--pri);text-decoration:none}
+a:hover{color:var(--onpric);text-decoration:underline}
+button,input,textarea,select{font:inherit;color:inherit}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--outlinevar);border-radius:99px;border:3px solid transparent;background-clip:content-box}
+::-webkit-scrollbar-thumb:hover{background:var(--outline);background-clip:content-box;border:3px solid transparent}
+
+/* ── Colour roles ─────────────────────────────────────────────────────────
+   Neutrals and status follow the mode; the six accent roles follow the seed.
+   The defaults on :root are light + Baseline purple, so a page opened on its
+   own is themed before any attribute is set. A [data-mode]/[data-seed] host
+   further down the tree — the shell — overrides them for everything inside. */
+:root{
+  --surface:#f8f9ff;--lowest:#fff;--low:#f2f3f9;--cont:#eceef4;--high:#e6e8ee;--highest:#e0e2e8;
+  --on:#191c20;--onvar:#41474d;--outline:#71787e;--outlinevar:#c1c7ce;--inv:#2e3135;--oninv:#eff1f7;
+  --err:#ba1a1a;--onerr:#fff;--errc:#ffdad6;--onerrc:#410002;
+  --green:#1b7f37;--greenc:#d2f2d8;--ongreenc:#0b3d1c;
+  --amber:#9a6700;--amberc:#ffe9b8;--onamberc:#5c4400;
+  --pri:#6750a4;--onpri:#fff;--pric:#e9ddff;--onpric:#22005d;--sec:#e8def8;--onsec:#1e192b;
+  --row:52px;--scale:1;--fw:400;--ffam:Roboto,'Noto Sans HK',system-ui,sans-serif;
+  --sp:cubic-bezier(.2,.9,.24,1.06);--std:cubic-bezier(.2,0,0,1);
+  --e1:0 1px 2px rgba(0,0,0,.16),0 1px 3px 1px rgba(0,0,0,.08);
+  --e2:0 1px 2px rgba(0,0,0,.16),0 2px 6px 2px rgba(0,0,0,.08);
+  --e3:0 4px 8px 3px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.18);
+}
+[data-mode="light"]{
+  --surface:#f8f9ff;--lowest:#fff;--low:#f2f3f9;--cont:#eceef4;--high:#e6e8ee;--highest:#e0e2e8;
+  --on:#191c20;--onvar:#41474d;--outline:#71787e;--outlinevar:#c1c7ce;--inv:#2e3135;--oninv:#eff1f7;
+  --err:#ba1a1a;--onerr:#fff;--errc:#ffdad6;--onerrc:#410002;
+  --green:#1b7f37;--greenc:#d2f2d8;--ongreenc:#0b3d1c;
+  --amber:#9a6700;--amberc:#ffe9b8;--onamberc:#5c4400;
+  --e1:0 1px 2px rgba(0,0,0,.16),0 1px 3px 1px rgba(0,0,0,.08);
+  --e2:0 1px 2px rgba(0,0,0,.16),0 2px 6px 2px rgba(0,0,0,.08);
+  --e3:0 4px 8px 3px rgba(0,0,0,.10),0 1px 3px rgba(0,0,0,.18);
+}
+[data-mode="dark"]{
+  --surface:#111417;--lowest:#0c0f12;--low:#191c20;--cont:#1d2024;--high:#282a2e;--highest:#333539;
+  --on:#e1e2e7;--onvar:#c1c7ce;--outline:#8b9198;--outlinevar:#41474d;--inv:#e1e2e7;--oninv:#2e3135;
+  --err:#ffb4ab;--onerr:#690005;--errc:#93000a;--onerrc:#ffdad6;
+  --green:#57ab5a;--greenc:#113a1b;--ongreenc:#b9f0c0;
+  --amber:#d8a739;--amberc:#3d2e00;--onamberc:#ffe08a;
+  --e1:0 1px 2px rgba(0,0,0,.5),0 1px 3px 1px rgba(0,0,0,.3);
+  --e2:0 1px 2px rgba(0,0,0,.5),0 2px 6px 2px rgba(0,0,0,.3);
+  --e3:0 4px 8px 3px rgba(0,0,0,.35),0 1px 3px rgba(0,0,0,.5);
+}
+[data-mode="light"][data-seed="keepass"]{--pri:#006493;--onpri:#fff;--pric:#c9e6ff;--onpric:#001e30;--sec:#d3e5f5;--onsec:#0c1d29}
+[data-mode="dark"][data-seed="keepass"]{--pri:#8dcdff;--onpri:#00344f;--pric:#004b70;--onpric:#c9e6ff;--sec:#394956;--onsec:#d3e5f5}
+[data-mode="light"][data-seed="purple"]{--pri:#6750a4;--onpri:#fff;--pric:#e9ddff;--onpric:#22005d;--sec:#e8def8;--onsec:#1e192b}
+[data-mode="dark"][data-seed="purple"]{--pri:#cfbcff;--onpri:#381e72;--pric:#4f378a;--onpric:#e9ddff;--sec:#4a4458;--onsec:#e8def8}
+[data-mode="light"][data-seed="green"]{--pri:#146c2e;--onpri:#fff;--pric:#a6f5b0;--onpric:#002108;--sec:#d5e8d5;--onsec:#101f12}
+[data-mode="dark"][data-seed="green"]{--pri:#8bd996;--onpri:#003914;--pric:#00531f;--onpric:#a6f5b0;--sec:#3a4b3c;--onsec:#d5e8d5}
+[data-mode="light"][data-seed="amber"]{--pri:#8a5200;--onpri:#fff;--pric:#ffdda9;--onpric:#2c1600;--sec:#f0e0cc;--onsec:#251a09}
+[data-mode="dark"][data-seed="amber"]{--pri:#ffb95c;--onpri:#492900;--pric:#693c00;--onpric:#ffdda9;--sec:#4f4536;--onsec:#f0e0cc}
+[data-density="compact"]{--row:40px}
+[data-density="comfortable"]{--row:52px}
+[data-density="spacious"]{--row:64px}
+
+.sym{
+  font-family:'Material Symbols Rounded';
+  font-weight:400;font-style:normal;line-height:1;letter-spacing:normal;
+  text-transform:none;display:inline-block;white-space:nowrap;word-wrap:normal;
+  direction:ltr;user-select:none;
+  font-variation-settings:'FILL' 0,'wght' 400,'GRAD' 0,'opsz' 24;
+}
+/* Until the icon font loads, a glyph name would render as literal text and
+   blow out the layout. Hide the glyph, keep the box. */
+.sym:not(.ready){color:transparent}
+.fonts-ready .sym{color:inherit}
+
+/* Focus is always visible. The accessibility contract treats unreachable or invisible focus as a
+   completion blocker, not polish. */
+:focus-visible{outline:3px solid var(--pri);outline-offset:2px;border-radius:8px}
+
+@keyframes kpxc-rise{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+@keyframes kpxc-snack{from{opacity:0;transform:translateY(20px) scale(.96)}to{opacity:1;transform:none}}
+@keyframes kpxc-fade{from{opacity:0}to{opacity:1}}
+@keyframes kpxc-slide-r{from{opacity:0;transform:translateX(36px)}to{opacity:1;transform:none}}
+@keyframes kpxc-pop{0%{transform:scale(.8);opacity:0}60%{transform:scale(1.04)}100%{transform:scale(1);opacity:1}}
+@keyframes kpxc-shimmer{0%{background-position:-320px 0}100%{background-position:320px 0}}
+
+/* ── Breakpoints ──────────────────────────────────────────────────────────
+   320 compact · 600 medium · 840 expanded · 1200 large · 1440 extra-large.
+   Nothing clips: panes drop in a fixed order and their content moves to a
+   surface that is still reachable. */
+[data-r="bottombar"]{display:none}
+@media (max-width:599px){
+  [data-r="rail"]{display:none!important}
+  [data-r="bottombar"]{display:flex!important}
+  [data-r="grouppane"]{display:none!important}
+  [data-r="detail"]{display:none!important}
+  [data-r="chrome"]{display:none!important}
+  [data-r="fab"]{bottom:88px!important;right:16px!important}
+  [data-r="stack"]{padding:0 12px 12px!important}
+  [data-r="appbar"]{padding:0 12px!important}
+}
+@media (min-width:600px) and (max-width:839px){
+  [data-r="grouppane"]{display:none!important}
+  [data-r="detail"]{display:none!important}
+  [data-r="rail"]{width:72px!important}
+  [data-r="raillabel"]{display:none!important}
+  [data-r="railsub"]{display:none!important}
+}
+@media (min-width:840px) and (max-width:1199px){
+  [data-r="grouppane"]{display:none!important}
+  [data-r="detail"]{width:340px!important}
+}
+@media (min-width:1200px) and (max-width:1439px){
+  [data-r="grouppane"]{width:216px!important}
+  [data-r="detail"]{width:360px!important}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001ms!important;transition-duration:.001ms!important}
+}
+[data-motion="off"] *{animation-duration:.001ms!important;transition-duration:.001ms!important}

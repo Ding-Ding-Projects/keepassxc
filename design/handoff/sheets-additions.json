@@ -1,0 +1,117 @@
+{
+  "_comment": "New pages for utils/design/sheets.json. Same shape as the existing file. MaterialSheetCatalogue.{h,cpp} is GENERATED from that file by utils/generate_sheet_catalogue.mjs — never hand-edited. Re-run the generator so a transcription can be diffed rather than trusted.",
+  "sheets": [
+    {
+      "id": "tools",
+      "title": "Tools",
+      "pages": [
+        {
+          "id": "regex-builder",
+          "title": "Regex builder",
+          "symbol": "construction",
+          "blurb": "Reachable from every search bar in the application.",
+          "sections": [
+            {
+              "name": "Engine",
+              "rows": [
+                {
+                  "name": "Dialect",
+                  "value": "QRegularExpression (PCRE2). The prototype executes ECMAScript RegExp and says so on the Dialects tab."
+                },
+                {
+                  "name": "Bounds",
+                  "value": "Pattern 512 chars, sample 20 000 chars, 120 ms evaluation budget, 500 matches. Nested-quantifier shapes are flagged before the run."
+                },
+                {
+                  "name": "Return path",
+                  "value": "The accepted pattern goes back to the bar that opened the builder, never unconditionally to the vault."
+                }
+              ]
+            },
+            {
+              "name": "Divergences from ECMAScript",
+              "rows": [
+                {
+                  "name": "Atomic groups",
+                  "value": "(?>…) — PCRE2 only."
+                },
+                {
+                  "name": "Possessive quantifiers",
+                  "value": "a++ a*+ a?+ — PCRE2 only."
+                },
+                {
+                  "name": "Recursion",
+                  "value": "(?R) and (?1) — PCRE2 only."
+                },
+                {
+                  "name": "Unicode properties",
+                  "value": "\\p{…} needs the u flag in JS and UseUnicodePropertiesOption in Qt."
+                },
+                {
+                  "name": "Replacement syntax",
+                  "value": "Qt uses \\1 and \\g<name> in QString::replace(); JS uses $1 and $<name>."
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "id": "external-editor",
+          "title": "External editor",
+          "symbol": "edit_document",
+          "blurb": "Open the database folder or a selected file in your editor.",
+          "sections": [
+            {
+              "name": "Behaviour",
+              "rows": [
+                {
+                  "name": "Detection",
+                  "value": "Scans the usual install paths; anything not found is shown as not found rather than silently omitted."
+                },
+                {
+                  "name": "Degradation",
+                  "value": "With no editor configured the action explains what is missing instead of doing nothing."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "help",
+      "title": "Help",
+      "pages": [
+        {
+          "id": "accessibility",
+          "title": "Accessibility",
+          "symbol": "accessibility_new",
+          "blurb": "What this build commits to.",
+          "sections": [
+            {
+              "name": "Commitments",
+              "rows": [
+                {
+                  "name": "Keyboard",
+                  "value": "Every control reachable, with a visible focus ring and a sensible tab order."
+                },
+                {
+                  "name": "Contrast",
+                  "value": "Every foreground/background pair in the token set meets 4.5:1 for body text."
+                },
+                {
+                  "name": "Motion",
+                  "value": "prefers-reduced-motion is honoured automatically, and there is an explicit toggle beside it."
+                },
+                {
+                  "name": "Clipping",
+                  "value": "No clipped or overlapping text at any of the five breakpoints, three densities or three language modes."
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

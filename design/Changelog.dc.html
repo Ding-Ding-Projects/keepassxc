@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div data-contract="changelog" style="flex:1;min-width:0;display:flex;flex-direction:column;padding-top:14px;min-height:0">
+
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap">
+    <div style="height:44px;flex:1;min-width:230px;max-width:440px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px">
+      <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+      <input type="text" value="{{ q }}" onInput="{{ onQ }}" placeholder="Search changelog…" aria-label="Search changelog" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale));font-family:{{ qFont }}">
+      <button type="button" onClick="{{ toggleRegex }}" style="height:28px;flex:0 0 auto;padding:0 10px;border:1px solid {{ regexBorder }};border-radius:99px;background:{{ regexBg }};color:{{ regexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+    </div>
+
+    <div style="display:flex;align-items:center;gap:6px;height:44px;padding:0 6px 0 12px;background:var(--low);border-radius:99px">
+      <span class="sym" style="font-size:18px;color:var(--onvar)">calendar_month</span>
+      <input type="text" value="{{ from }}" onInput="{{ onFrom }}" placeholder="from" aria-label="From date" style="width:104px;height:36px;border:0;background:transparent;outline:none;font-size:calc(12.5px * var(--scale));font-family:'Roboto Mono',monospace;color:{{ fromFg }}">
+      <span style="color:var(--outline)">→</span>
+      <input type="text" value="{{ to }}" onInput="{{ onTo }}" placeholder="to" aria-label="To date" style="width:104px;height:36px;border:0;background:transparent;outline:none;font-size:calc(12.5px * var(--scale));font-family:'Roboto Mono',monospace;color:{{ toFg }}">
+      <button type="button" onClick="{{ clearDates }}" title="Clear dates" style="width:32px;height:32px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:17px">close</span></button>
+    </div>
+
+    <div style="display:flex;gap:5px;flex-wrap:wrap">
+      <sc-for list="{{ presets }}" as="p" hint-placeholder-count="4">
+        <button type="button" onClick="{{ p.go }}" style="height:32px;padding:0 12px;border:1px solid {{ p.border }};border-radius:8px;background:{{ p.bg }};color:{{ p.fg }};cursor:pointer;font-size:calc(11.5px * var(--scale));font-weight:500;transition:border-radius 180ms var(--sp)" style-active="border-radius:16px">{{ p.label }}</button>
+      </sc-for>
+    </div>
+
+    <div style="flex:1"></div>
+    <button type="button" style="height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12.5px * var(--scale));white-space:nowrap"><span class="sym" style="font-size:18px">download</span>Export {{ exportScope }}</button>
+  </div>
+
+  <sc-if value="{{ dateError }}" hint-placeholder-val="{{ false }}">
+    <div role="alert" style="flex:0 0 auto;display:flex;align-items:center;gap:10px;padding:11px 16px;border-radius:14px;background:var(--errc);color:var(--onerrc);margin-bottom:10px">
+      <span class="sym" style="font-size:19px">event_busy</span>
+      <div style="flex:1;min-width:0;font-size:calc(12.5px * var(--scale));line-height:1.5;text-wrap:pretty">{{ dateErrorText }}</div>
+    </div>
+  </sc-if>
+
+  <div style="flex:0 0 auto;font-size:calc(12px * var(--scale));color:var(--onvar);margin-bottom:12px">{{ summary }}</div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding-right:4px;padding-bottom:20px">
+    <sc-for list="{{ versions }}" as="v" hint-placeholder-count="6">
+      <section style="border-radius:28px;background:var(--low);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:14px;padding:18px 22px;background:{{ v.headBg }};color:{{ v.headFg }}">
+          <span style="font-size:calc(24px * var(--scale));font-weight:500;letter-spacing:-.2px">{{ v.version }}</span>
+          <span style="height:26px;display:inline-flex;align-items:center;padding:0 11px;border-radius:7px;background:rgba(128,128,128,.22);font-size:calc(11.5px * var(--scale));font-family:'Roboto Mono',monospace">{{ v.date }}</span>
+          <span style="flex:1;min-width:0;font-size:calc(12.5px * var(--scale));opacity:.82;font-family:'Noto Sans HK',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ v.codename }}</span>
+          <sc-if value="{{ v.isLatest }}" hint-placeholder-val="{{ false }}">
+            <span style="height:24px;display:inline-flex;align-items:center;padding:0 10px;border-radius:99px;background:var(--pri);color:var(--onpri);font-size:10px;font-weight:700;letter-spacing:.5px">LATEST</span>
+          </sc-if>
+        </div>
+        <div style="padding:14px 22px 18px">
+          <sc-for list="{{ v.changes }}" as="c">
+            <div style="display:flex;gap:12px;padding:9px 0;border-bottom:1px solid var(--outlinevar)">
+              <span style="flex:0 0 auto;min-width:74px;height:22px;display:inline-flex;align-items:center;justify-content:center;border-radius:6px;background:{{ c.bg }};color:{{ c.fg }};font-size:calc(10px * var(--scale));font-weight:700;letter-spacing:.5px">{{ c.kind }}</span>
+              <span style="flex:1;min-width:0;font-size:calc(13px * var(--scale));line-height:1.6;text-wrap:pretty">{{ c.text }}</span>
+            </div>
+          </sc-for>
+          <sc-if value="{{ v.noChanges }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:18px 0;color:var(--onvar);font-size:calc(12.5px * var(--scale));line-height:1.6;text-wrap:pretty">No changes are recorded for this version. That is the honest state of the record, not a gap someone forgot to fill.</div>
+          </sc-if>
+        </div>
+      </section>
+    </sc-for>
+    <sc-if value="{{ noVersions }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:56px 20px;text-align:center;color:var(--onvar)">
+        <span class="sym" style="font-size:44px;color:var(--outlinevar)">search_off</span>
+        <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">{{ emptyEn }}</div>
+        <div style="font-size:calc(12.5px * var(--scale));color:var(--outline);font-family:'Noto Sans HK',sans-serif;margin-top:4px">{{ emptyYue }}</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:860},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;query&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;regexOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;flags&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gi&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { data: null, copy: null, q: '', regex: false, from: '', to: '' };
+
+  async componentDidMount() {
+    const [data, copy] = await Promise.all([import('./lib/vault-data.js'), import('./lib/copy.js')]);
+    this.setState({ data, copy });
+  }
+
+  onQ = e => this.setState({ q: e.target.value });
+  toggleRegex = () => this.setState(s => ({ regex: !s.regex }));
+  onFrom = e => this.setState({ from: e.target.value });
+  onTo = e => this.setState({ to: e.target.value });
+  clearDates = () => this.setState({ from: '', to: '' });
+
+  match(text) {
+    const q = this.state.q.trim();
+    if (!q) return true;
+    if (!this.state.regex) return text.toLowerCase().includes(q.toLowerCase());
+    try { return new RegExp(q, 'i').test(text); } catch (_) { return true; }
+  }
+
+  // Accepts ISO and the locale's d/m/Y. Invalid input is reported inline and
+  // the typed text is never discarded.
+  parseDate(v) {
+    if (!v.trim()) return { ok: true, date: null };
+    const iso = /^(\d{4})-(\d{2})-(\d{2})$/.exec(v.trim());
+    if (iso) return { ok: true, date: new Date(v.trim() + 'T00:00:00Z') };
+    const loc = /^(\d{1,2})[\/.-](\d{1,2})[\/.-](\d{4})$/.exec(v.trim());
+    if (loc) return { ok: true, date: new Date(Date.UTC(+loc[3], +loc[2] - 1, +loc[1])) };
+    return { ok: false, date: null };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const all = s.data ? s.data.CHANGELOG : [];
+    const c = s.copy;
+
+    const f = this.parseDate(s.from);
+    const t = this.parseDate(s.to);
+    const dateError = !f.ok || !t.ok;
+
+    const kindStyle = {
+      added: ['var(--greenc)', 'var(--ongreenc)'],
+      fixed: ['var(--sec)', 'var(--onsec)'],
+      changed: ['var(--amberc)', 'var(--onamberc)'],
+      security: ['var(--errc)', 'var(--onerrc)']
+    };
+
+    // Date filter and search compose — neither overrides the other.
+    const versions = all
+      .filter(v => {
+        if (dateError) return true;
+        const d = new Date(v.date + 'T00:00:00Z');
+        if (f.date && d < f.date) return false;
+        if (t.date && d > t.date) return false;
+        return true;
+      })
+      .map(v => {
+        const changes = v.changes.filter(ch => this.match(ch.text + ' ' + ch.kind + ' ' + v.version + ' ' + v.codename));
+        return { v, changes, keep: changes.length > 0 || this.match(v.version + ' ' + v.codename) };
+      })
+      .filter(x => x.keep)
+      .map((x, i) => ({
+        version: x.v.version, date: x.v.date, codename: x.v.codename,
+        isLatest: x.v.version === (all[0] && all[0].version),
+        headBg: x.v.version === (all[0] && all[0].version) ? 'var(--pric)' : 'var(--cont)',
+        headFg: x.v.version === (all[0] && all[0].version) ? 'var(--onpric)' : 'var(--on)',
+        changes: x.changes.map(ch => ({
+          kind: ch.kind.toUpperCase(), text: ch.text,
+          bg: (kindStyle[ch.kind] || kindStyle.fixed)[0],
+          fg: (kindStyle[ch.kind] || kindStyle.fixed)[1]
+        })),
+        noChanges: x.changes.length === 0
+      }));
+
+    const totalChanges = versions.reduce((a, v) => a + v.changes.length, 0);
+    const empty = c ? c.msg('noResults', this.props.funny || 5, 'en', { q: s.q }) : { en: '' };
+    const emptyY = c ? c.msg('noResults', this.props.funny || 5, 'yue', { q: s.q }) : { yue: '' };
+
+    const preset = (label, days) => ({
+      label,
+      bg: 'transparent', fg: 'var(--onvar)', border: 'var(--outlinevar)',
+      go: () => {
+        if (days == null) return this.setState({ from: '', to: '' });
+        const now = new Date();
+        const then = new Date(now.getTime() - days * 86400000);
+        this.setState({ from: then.toISOString().slice(0, 10), to: now.toISOString().slice(0, 10) });
+      }
+    });
+
+    return {
+      q: s.q, onQ: this.onQ, qFont: s.regex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleRegex: this.toggleRegex,
+      regexBg: s.regex ? 'var(--pri)' : 'transparent',
+      regexFg: s.regex ? 'var(--onpri)' : 'var(--onvar)',
+      regexBorder: s.regex ? 'var(--pri)' : 'var(--outline)',
+
+      from: s.from, to: s.to, onFrom: this.onFrom, onTo: this.onTo, clearDates: this.clearDates,
+      fromFg: f.ok ? 'var(--on)' : 'var(--err)',
+      toFg: t.ok ? 'var(--on)' : 'var(--err)',
+      dateError,
+      dateErrorText: 'Date not understood. Use ISO (2026-08-19) or d/m/Y (19/08/2026). What you typed is still in the field — nothing was discarded, and the list below is unfiltered by date until it parses.',
+
+      presets: [preset('All time', null), preset('Last 90 days', 90), preset('Last year', 365), preset('Last 2 years', 730)],
+
+      summary: versions.length + ' version(s) · ' + totalChanges + ' change(s)'
+        + (s.q.trim() ? ' matching “' + s.q + '”' : '')
+        + ((f.date || t.date) ? ' · ' + (s.from || 'start') + ' → ' + (s.to || 'now') : '')
+        + ' · covering every released version, not just the newest',
+      exportScope: (f.date || t.date || s.q.trim()) ? 'filtered' : 'all',
+
+      versions, noVersions: versions.length === 0,
+      emptyEn: empty.en, emptyYue: emptyY.yue
+    };
+  }
+}
+</script>
+</body>
+</html>

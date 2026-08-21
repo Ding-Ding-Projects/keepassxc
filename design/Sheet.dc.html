@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div data-contract="sheet" style="flex:1;min-width:0;display:flex;gap:14px;padding-top:14px;min-height:0">
+
+  <nav data-r="grouppane" aria-label="Sheet pages" style="width:266px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px;background:var(--low);border-radius:24px;padding:14px 10px;overflow:hidden">
+    <div style="flex:0 0 auto;padding:2px 10px 6px">
+      <div style="font-size:calc(16px * var(--scale));font-weight:500">{{ sheetTitle }}</div>
+      <div style="font-size:calc(11px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif">{{ sheetYue }} · {{ pageCount }}</div>
+    </div>
+    <div style="height:40px;flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:0 6px 0 12px;background:var(--cont);border-radius:99px">
+      <span class="sym" style="font-size:17px;color:var(--onvar)">search</span>
+      <input type="text" value="{{ navQuery }}" onInput="{{ onNavQuery }}" placeholder="Find a page…" aria-label="Find a page" style="flex:1;min-width:0;height:36px;border:0;background:transparent;outline:none;font-size:calc(12.5px * var(--scale))">
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ pages }}" as="p" hint-placeholder-count="8">
+        <button type="button" onClick="{{ p.go }}" style="min-height:48px;flex:0 0 auto;display:flex;align-items:center;gap:11px;padding:6px 12px;border:0;border-radius:99px;background:{{ p.bg }};color:{{ p.fg }};cursor:pointer;text-align:left;transition:background 140ms var(--std),border-radius 200ms var(--sp)" style-hover="background:var(--cont)" style-active="border-radius:14px">
+          <span class="sym" style="font-size:19px;flex:0 0 auto;font-variation-settings:'FILL' {{ p.fill }}">{{ p.symbol }}</span>
+          <span style="flex:1;min-width:0;font-size:calc(13px * var(--scale));font-weight:{{ p.weight }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.label }}</span>
+          <sc-if value="{{ p.hasHits }}" hint-placeholder-val="{{ false }}">
+            <span style="flex:0 0 auto;min-width:22px;height:20px;padding:0 6px;border-radius:99px;background:var(--pri);color:var(--onpri);font-size:10.5px;font-weight:700;display:grid;place-items:center">{{ p.hits }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+  </nav>
+
+  <section style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0">
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="height:44px;flex:1;min-width:230px;max-width:520px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px">
+        <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+        <input type="text" value="{{ q }}" onInput="{{ onQ }}" placeholder="Search this page…" aria-label="Search page" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale));font-family:{{ qFont }}">
+        <button type="button" onClick="{{ toggleRegex }}" style="height:28px;flex:0 0 auto;padding:0 10px;border:1px solid {{ regexBorder }};border-radius:99px;background:{{ regexBg }};color:{{ regexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+        <button type="button" title="Regex builder" style="width:32px;height:32px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:17px">construction</span></button>
+      </div>
+      <div style="font-size:calc(12px * var(--scale));color:var(--onvar)">{{ scopeNote }}</div>
+    </div>
+
+    <div style="flex:1;min-height:0;overflow-y:auto;padding-right:4px;padding-bottom:20px">
+      <div style="margin-bottom:16px">
+        <div style="font-size:calc(28px * var(--scale));font-weight:300;letter-spacing:-.3px;line-height:1.15">{{ pageTitle }}</div>
+        <div style="font-size:calc(12.5px * var(--scale));color:var(--onvar);margin-top:4px;line-height:1.55;text-wrap:pretty">{{ pageBlurb }}</div>
+      </div>
+
+      <sc-if value="{{ isGenerator }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:20px;padding:22px;border-radius:24px;background:var(--pric);color:var(--onpric)">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+            <span style="flex:1;min-width:240px;font-family:'Roboto Mono',monospace;font-size:calc(19px * var(--scale));letter-spacing:1px;word-break:break-all;background:rgba(255,255,255,.28);padding:12px 16px;border-radius:14px">{{ generated }}</span>
+            <button type="button" onClick="{{ regenerate }}" style="height:46px;padding:0 20px;border:0;border-radius:99px;background:var(--pri);color:var(--onpri);cursor:pointer;font-size:calc(13px * var(--scale));font-weight:500;display:flex;align-items:center;gap:8px;transition:border-radius 200ms var(--sp)" style-active="border-radius:14px"><span class="sym" style="font-size:19px">refresh</span>Regenerate</button>
+          </div>
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px">
+            <span style="font-size:calc(11.5px * var(--scale));min-width:78px">Length {{ genLength }}</span>
+            <input type="range" min="8" max="64" step="1" value="{{ genLength }}" onInput="{{ onGenLength }}" aria-label="Password length" style="flex:1;accent-color:var(--pri)">
+          </div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+            <sc-for list="{{ genSets }}" as="g" hint-placeholder-count="4">
+              <button type="button" onClick="{{ g.go }}" style="height:32px;padding:0 13px;border:1px solid {{ g.border }};border-radius:8px;background:{{ g.bg }};color:{{ g.fg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale))">{{ g.label }}</button>
+            </sc-for>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1;height:8px;border-radius:99px;background:rgba(255,255,255,.35);overflow:hidden">
+              <div style="height:100%;width:{{ entropyPct }};background:{{ entropyColor }};border-radius:99px;transition:width 180ms var(--std),background 180ms var(--std)"></div>
+            </div>
+            <span style="font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;white-space:nowrap">{{ entropyLabel }}</span>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ isEditor }}" hint-placeholder-val="{{ false }}">
+        <div style="margin-bottom:20px;border-radius:24px;background:var(--low);padding:20px 22px">
+          <div style="font-size:calc(11px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:12px">Detected editors · GUI_ExternalEditorPath</div>
+          <sc-for list="{{ editors }}" as="e" hint-placeholder-count="4">
+            <button type="button" onClick="{{ e.go }}" style="width:100%;display:flex;align-items:center;gap:12px;min-height:60px;padding:10px 14px;border:1px solid {{ e.border }};border-radius:14px;background:{{ e.bg }};color:{{ e.fg }};cursor:{{ e.cursor }};text-align:left;margin-bottom:6px">
+              <span class="sym" style="font-size:21px;flex:0 0 auto;color:{{ e.iconFg }}">{{ e.symbol }}</span>
+              <span style="flex:1;min-width:0">
+                <span style="display:block;font-size:calc(13.5px * var(--scale))">{{ e.name }}</span>
+                <span style="display:block;font-size:calc(11px * var(--scale));color:var(--onvar);font-family:'Roboto Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.path }}</span>
+              </span>
+              <span style="flex:0 0 auto;font-size:calc(10.5px * var(--scale));color:{{ e.stateFg }};letter-spacing:.5px;text-transform:uppercase;font-weight:500">{{ e.state }}</span>
+            </button>
+          </sc-for>
+          <button type="button" style="width:100%;height:44px;margin-top:6px;border:1px dashed var(--outline);border-radius:14px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12.5px * var(--scale));display:flex;align-items:center;justify-content:center;gap:8px"><span class="sym" style="font-size:18px">add</span>Add an editor…</button>
+        </div>
+      </sc-if>
+
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+        <div style="margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+            <span style="font-size:calc(11px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">{{ sec.name }}</span>
+            <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+          </div>
+          <div style="border-radius:20px;background:var(--low);overflow:hidden">
+            <sc-for list="{{ sec.rows }}" as="r">
+              <div style="display:flex;align-items:flex-start;gap:16px;padding:14px 18px;border-bottom:1px solid var(--outlinevar)" style-hover="background:var(--cont)">
+                <div style="flex:0 0 auto;width:180px;min-width:0;font-size:calc(13px * var(--scale));font-weight:500;line-height:1.45;text-wrap:pretty">{{ r.name }}</div>
+                <div style="flex:1;min-width:0;font-size:calc(12.5px * var(--scale));color:var(--onvar);line-height:1.6;text-wrap:pretty">{{ r.value }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:56px 20px;text-align:center;color:var(--onvar)">
+          <span class="sym" style="font-size:44px;color:var(--outlinevar)">search_off</span>
+          <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">{{ emptyEn }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;sheet&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;editor&quot;,&quot;database&quot;,&quot;tools&quot;,&quot;help&quot;],&quot;default&quot;:&quot;editor&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;query&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;regexOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;flags&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gi&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { data: null, page: 0, q: '', regex: false, navQuery: '', genLength: 24, genSets: { A: true, a: true, '0': true, '#': true }, nonce: 1, editor: 'vscode' };
+
+  SHEETS = {
+    editor: {
+      title: 'Entry', yue: '條目',
+      pages: [
+        { label: 'Overview', symbol: 'article', blurb: 'The fields every entry carries and what the delegate draws from each.', sections: [
+          { name: 'Core fields', rows: [
+            ['Title', 'TitleMedium 18. Drawn first in the row and as the detail headline. Empty titles fall back to the URL host so a row is never blank.'],
+            ['Username', 'BodySmall 13, Roboto Mono. Copied by Ctrl+B; the clipboard clear timer is shared with the password.'],
+            ['Password', 'Never rendered into a widget that survives a lock. Reveal state resets on databaseLocked().'],
+            ['URL', 'Parsed for the host shown in the list column. A non-http scheme is shown verbatim.'],
+            ['Notes', 'Hidden by default when Security_HideNotes is on; recovery codes live here more often than anyone admits.']
+          ] },
+          { name: 'Derived', rows: [
+            ['Health', 'Breached / Weak / Reused / Ok. Re-use can only be judged across the whole database, so EntryListModel::setDatabase() must be called before healthOf().'],
+            ['Modified', 'Sort key for the Modified segment. Formatted relative in the list, absolute in the detail pane.']
+          ] }
+        ] },
+        { label: 'Custom fields', symbol: 'list_alt', blurb: 'Additional attributes, protected or plain.', sections: [
+          { name: 'Behaviour', rows: [
+            ['Protected attributes', 'Stored in the protected map; masked in the detail pane and excluded from search indexing.'],
+            ['Field references', '{REF:P@T:title} resolves at read time. The regex builder ships a preset for the syntax.'],
+            ['Ordering', 'Insertion order is preserved; the editor does not sort them alphabetically behind your back.']
+          ] }
+        ] },
+        { label: 'Attachments', symbol: 'attach_file', blurb: 'Binary attachments and their size budget.', sections: [
+          { name: 'Limits', rows: [
+            ['Per-entry size', 'Counted against HistoryMaxSize; adding a large attachment can silently evict old revisions if it is not checked first.'],
+            ['Preview', 'Text and image types preview inline. Anything else offers save-as only.'],
+            ['History', 'Attachment bytes are never written to the plaintext revision log — only the fact that an attachment changed.']
+          ] }
+        ] },
+        { label: 'Auto-Type', symbol: 'keyboard', blurb: 'Per-entry sequences and window associations.', sections: [
+          { name: 'Sequence', rows: [
+            ['Default', '{USERNAME}{TAB}{PASSWORD}{ENTER} unless the entry overrides it.'],
+            ['Window associations', 'Matched by title, then by URL. A rule that matches nothing is reported, not ignored.'],
+            ['Confirmation', 'Security_AutoTypeAsk gates every performance into another window.']
+          ] }
+        ] },
+        { label: 'Expiry', symbol: 'schedule', blurb: 'Expiry dates and what the reports do with them.', sections: [
+          { name: 'Dates', rows: [
+            ['Expires', 'Drives the Expired report. An expired entry is not hidden; it is flagged.'],
+            ['Presets', 'Today, one week, one month, one year, or a picked date.']
+          ] }
+        ] },
+        { label: 'History', symbol: 'history', blurb: 'Per-entry revisions, distinct from the app-wide Git store.', sections: [
+          { name: 'Model', rows: [
+            ['Rows hold a QPointer', 'Never a position in Entry::historyItems(): truncateHistory() drops from the oldest end and every surviving index shifts. A row clicked after a truncation would otherwise resolve to different data than it displayed.'],
+            ['Last accessed', 'Preserved across a restore. addHistoryItem() overwrote it one line later until that was fixed.']
+          ] }
+        ] },
+        { label: 'Icons', symbol: 'image', blurb: 'Database icons and downloaded favicons.', sections: [
+          { name: 'Sources', rows: [
+            ['Built-in', '69 database icons, retinted per theme mode because Icons::symbol() bakes the content colour into the QIcon.'],
+            ['Custom', 'Stored in the database, shared across entries that reference the same UUID.']
+          ] }
+        ] },
+        { label: 'Tags', symbol: 'label', blurb: 'Free-form tags and how the vault filters on them.', sections: [
+          { name: 'Filtering', rows: [
+            ['Tag chips', 'Shown in the list row, capped at two with the rest reachable in the detail pane.'],
+            ['Search', 'Tags are part of the searchable text, so a regex over the vault bar matches them too.']
+          ] }
+        ] },
+        { label: 'Accessibility', symbol: 'accessibility_new', blurb: 'Roles, focus and announcement for the editor surface.', sections: [
+          { name: 'Requirements', rows: [
+            ['Roles', 'Every field row is a labelled group; reveal and copy are buttons with distinct accessible names.'],
+            ['Focus', 'Visible ring at 3px, offset 2px, on every interactive element. Not optional.'],
+            ['Announcement', 'A copy announces the field name, never the value.']
+          ] }
+        ] }
+      ]
+    },
+    database: {
+      title: 'Database', yue: '資料庫',
+      pages: [
+        { label: 'Overview', symbol: 'database', blurb: 'File format, encryption and what the tab strip reports.', sections: [
+          { name: 'Format', rows: [
+            ['KDBX 4.1', 'Argon2id by default; AES-KDF is read but not written for new databases.'],
+            ['Cipher', 'AES-256-CBC or ChaCha20. Shown on this page rather than buried in a dialog.'],
+            ['Compression', 'GZip, on by default.']
+          ] }
+        ] },
+        { label: 'Credentials', symbol: 'key', blurb: 'Password, key file and hardware key composition.', sections: [
+          { name: 'Composite key', rows: [
+            ['Password', 'Never disclosed, never characterised — not its length, composition, entropy or any partial value.'],
+            ['Key file', 'Any file; the hash is what is used. Losing it is losing the database.'],
+            ['Hardware key', 'YubiKey / OnlyKey challenge-response slot.']
+          ] }
+        ] },
+        { label: 'Encryption settings', symbol: 'lock', blurb: 'KDF parameters and the benchmark that sets them.', sections: [
+          { name: 'Argon2id', rows: [
+            ['Transform rounds', 'Benchmarked against this machine, then stored in the file.'],
+            ['Memory', 'Default 64 MiB. Lowering it to open the database faster lowers it for an attacker too.'],
+            ['Parallelism', 'Defaults to the core count.']
+          ] }
+        ] },
+        { label: 'Merging', symbol: 'merge', blurb: 'Synchronise two copies of the same database.', sections: [
+          { name: 'Conflicts', rows: [
+            ['Newest wins', 'Per field, by modification time, with the loser preserved in entry history.'],
+            ['Conflict surface', 'Presented as a non-blocking review list, not a modal that halts the merge.'],
+            ['Deletions', 'Tombstones are honoured; a deletion on one side does not resurrect on the other.']
+          ] }
+        ] },
+        { label: 'Import / export', symbol: 'swap_horiz', blurb: 'CSV, 1Password, Bitwarden and KeePass 1.', sections: [
+          { name: 'Warnings', rows: [
+            ['Unencrypted export', 'A plaintext CSV of a password vault is a plaintext password vault. Export_WarnUnencrypted gates it.'],
+            ['Field mapping', 'Shown before the import runs, with a preview of the first five records.']
+          ] }
+        ] },
+        { label: 'Maintenance', symbol: 'cleaning_services', blurb: 'Recycle bin, orphaned icons and history pruning.', sections: [
+          { name: 'Cleanup', rows: [
+            ['Empty recycle bin', 'Permanent. The revision store still holds the last snapshot, so this is recoverable from History.'],
+            ['Prune history', 'Drops from the oldest end. Anything referencing an index rather than a revision breaks here.']
+          ] }
+        ] },
+        { label: 'Statistics', symbol: 'query_stats', blurb: 'What the Database statistics report counts.', sections: [
+          { name: 'Counts', rows: [
+            ['Entries / groups', 'Excludes the recycle bin unless the toggle says otherwise.'],
+            ['Unique passwords', 'The denominator behind the Reused report.'],
+            ['Average length', 'Computed without ever holding a plaintext password longer than the calculation.']
+          ] }
+        ] }
+      ]
+    },
+    tools: {
+      title: 'Tools', yue: '工具',
+      pages: [
+        { label: 'Password generator', symbol: 'casino', blurb: 'The generator sheet, with its live entropy readout.', sections: [
+          { name: 'Notes', rows: [
+            ['Entropy', 'Computed from the active character set and length, not from the produced string.'],
+            ['Look-alikes', 'Excluding 0/O and 1/l/I costs about 0.4 bits per character and buys back a password you can read aloud.']
+          ] }
+        ] },
+        { label: 'Regex builder', symbol: 'construction', blurb: 'Reachable from every search bar in the application.', sections: [
+          { name: 'Engine', rows: [
+            ['Dialect', 'QRegularExpression (PCRE2) in the Qt build. The prototype executes ECMAScript RegExp and says so on the Dialects tab.'],
+            ['Bounds', 'Pattern 512 chars, sample 20 000 chars, 120 ms evaluation budget, 500 matches. Nested-quantifier shapes are flagged before the run.'],
+            ['Return path', 'The accepted pattern goes back to the bar that opened the builder, never unconditionally to the vault.']
+          ] }
+        ] },
+        { label: 'External editor', symbol: 'edit_document', blurb: 'Open the database folder or a selected file in your editor.', sections: [
+          { name: 'Behaviour', rows: [
+            ['Detection', 'Scans the usual install paths; anything not found is shown as not found rather than silently omitted.'],
+            ['Degradation', 'With no editor configured the action explains what is missing instead of doing nothing.']
+          ] }
+        ] },
+        { label: 'Health check', symbol: 'health_metrics', blurb: 'The analysis behind the Reports destination.', sections: [
+          { name: 'Threading', rows: [
+            ['Snapshot first', 'The entry tree is snapshotted on the GUI thread, then analysed off it. Walking the live tree from a worker while a nested event loop ran on the GUI thread was a real crash.'],
+            ['Exclusions', 'Security_ExcludeFromReports is per entry and answers Unknown, which the row leaves blank rather than guessing.']
+          ] }
+        ] },
+        { label: 'TOTP', symbol: 'timer', blurb: 'Time-based one-time passwords.', sections: [
+          { name: 'Settings', rows: [
+            ['Algorithm', 'SHA-1, SHA-256 or SHA-512; 6 or 8 digits; 30 or 60 second step.'],
+            ['Display', 'The code is shown with its remaining validity, and cleared from the clipboard on the same timer as a password.']
+          ] }
+        ] },
+        { label: 'Command palette', symbol: 'bolt', blurb: 'Every command the window exposes, by name.', sections: [
+          { name: 'Source', rows: [
+            ['Action tree', 'Built by walking the window action tree, so a destination only appears because the shell carries a QAction for it.'],
+            ['Go To group', 'A deliberate divergence from the design\u2019s six groups — without it, half the rail would have no keyboard route at all.']
+          ] }
+        ] }
+      ]
+    },
+    help: {
+      title: 'Help', yue: '幫手',
+      pages: [
+        { label: 'Getting started', symbol: 'rocket_launch', blurb: 'The offline Getting Started page shipped with the installer.', sections: [
+          { name: 'Packaging', rows: [
+            ['Shortcut target', 'The Start Menu shortcut points at share/docs/KeePassXC_GettingStarted.html, installed only when KPXC_FEATURE_DOCS is on. When the flag was off, WiX still declared the shortcut and light.exe refused to link — that is why the MSI failed for months.'],
+            ['Now', 'The WiX template is generated with configure_file(@ONLY), so the packaged shortcuts and the packaged files can no longer disagree.']
+          ] }
+        ] },
+        { label: 'Keyboard shortcuts', symbol: 'keyboard', blurb: 'Every binding, read live from ActionCollection.', sections: [
+          { name: 'Guarantee', rows: [
+            ['Live', 'A rebound key shows up here and a new action cannot go missing, because nothing is transcribed.']
+          ] }
+        ] },
+        { label: 'Accessibility', symbol: 'accessibility_new', blurb: 'What this build commits to.', sections: [
+          { name: 'Commitments', rows: [
+            ['Keyboard', 'Every control reachable, with a visible focus ring and a sensible tab order.'],
+            ['Contrast', 'Every foreground/background pair in the token set meets 4.5:1 for body text.'],
+            ['Motion', 'prefers-reduced-motion is honoured automatically, and there is an explicit toggle beside it.'],
+            ['Clipping', 'No clipped or overlapping text at any of the five breakpoints, three densities or three language modes.']
+          ] }
+        ] },
+        { label: 'Reporting a problem', symbol: 'bug_report', blurb: 'What to include, and what never to include.', sections: [
+          { name: 'Include', rows: [
+            ['Version and build', 'From the Changelog destination.'],
+            ['Steps', 'What you did, what happened, what you expected.']
+          ] },
+          { name: 'Never include', rows: [
+            ['Secrets', 'No passwords, no key files, no database. Not in an issue, not in a log, not in a screenshot.'],
+            ['Screen captures', 'Every window sets WDA_EXCLUDEFROMCAPTURE, so a capture comes back black unless the app was launched with --allow-screencapture. That is the feature working.']
+          ] }
+        ] },
+        { label: 'About', symbol: 'info', blurb: 'Licence and credits.', sections: [
+          { name: 'Licence', rows: [
+            ['GPL-2.0-or-later', 'KeePassXC is free software. The Material work in this fork is under the same licence.'],
+            ['Fonts', 'Roboto and Roboto Mono under Apache 2.0; Noto Sans HK under the SIL Open Font Licence.']
+          ] }
+        ] }
+      ]
+    }
+  };
+
+  async componentDidMount() {
+    const data = await import('./lib/vault-data.js');
+    this.setState({ data });
+  }
+
+  componentDidUpdate(prev) {
+    if (prev.sheet !== this.props.sheet) this.setState({ page: 0, q: '', navQuery: '' });
+  }
+
+  onQ = e => this.setState({ q: e.target.value });
+  onNavQuery = e => this.setState({ navQuery: e.target.value });
+  toggleRegex = () => this.setState(s => ({ regex: !s.regex }));
+  onGenLength = e => this.setState({ genLength: parseInt(e.target.value, 10), nonce: this.state.nonce + 1 });
+
+  match(text) {
+    const q = this.state.q.trim();
+    if (!q) return true;
+    if (!this.state.regex) return text.toLowerCase().includes(q.toLowerCase());
+    try { return new RegExp(q, 'i').test(text); } catch (_) { return true; }
+  }
+
+  generate() {
+    const sets = { A: 'ABCDEFGHJKLMNPQRSTUVWXYZ', a: 'abcdefghijkmnpqrstuvwxyz', '0': '23456789', '#': '!@#$%^&*-_=+?' };
+    let pool = '';
+    Object.keys(this.state.genSets).forEach(k => { if (this.state.genSets[k]) pool += sets[k]; });
+    if (!pool) return '— pick at least one character set —';
+    let out = '';
+    for (let i = 0; i < this.state.genLength; i++) out += pool[Math.floor(Math.random() * pool.length)];
+    return out;
+  }
+
+  poolSize() {
+    const sizes = { A: 24, a: 24, '0': 8, '#': 13 };
+    let n = 0;
+    Object.keys(this.state.genSets).forEach(k => { if (this.state.genSets[k]) n += sizes[k]; });
+    return n;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const sheet = this.SHEETS[this.props.sheet] || this.SHEETS.editor;
+    const navQ = s.navQuery.trim().toLowerCase();
+
+    const hitsFor = p => {
+      if (!s.q.trim()) return 0;
+      let n = 0;
+      p.sections.forEach(sec => sec.rows.forEach(r => { if (this.match(r[0] + ' ' + r[1])) n++; }));
+      return n;
+    };
+
+    const pages = sheet.pages
+      .map((p, i) => ({ p, i }))
+      .filter(x => !navQ || x.p.label.toLowerCase().includes(navQ))
+      .map(x => ({
+        label: x.p.label, symbol: x.p.symbol,
+        bg: s.page === x.i ? 'var(--sec)' : 'transparent',
+        fg: s.page === x.i ? 'var(--onsec)' : 'var(--on)',
+        weight: s.page === x.i ? '500' : '400',
+        fill: s.page === x.i ? 1 : 0,
+        hasHits: hitsFor(x.p) > 0 && s.page !== x.i,
+        hits: String(hitsFor(x.p)),
+        go: () => this.setState({ page: x.i })
+      }));
+
+    const page = sheet.pages[s.page] || sheet.pages[0];
+    const sections = page.sections
+      .map(sec => ({ name: sec.name, rows: sec.rows.filter(r => this.match(r[0] + ' ' + r[1])).map(r => ({ name: r[0], value: r[1] })) }))
+      .filter(sec => sec.rows.length > 0);
+    const total = sections.reduce((a, x) => a + x.rows.length, 0);
+
+    const bits = Math.round(s.genLength * Math.log2(Math.max(2, this.poolSize())));
+    const editors = s.data ? s.data.EXTERNAL_EDITORS : [];
+
+    return {
+      sheetTitle: sheet.title, sheetYue: sheet.yue,
+      pageCount: sheet.pages.length + ' pages',
+      pages,
+      navQuery: s.navQuery, onNavQuery: this.onNavQuery,
+      q: s.q, onQ: this.onQ, qFont: s.regex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleRegex: this.toggleRegex,
+      regexBg: s.regex ? 'var(--pri)' : 'transparent',
+      regexFg: s.regex ? 'var(--onpri)' : 'var(--onvar)',
+      regexBorder: s.regex ? 'var(--pri)' : 'var(--outline)',
+      scopeNote: s.q.trim() ? total + ' row(s) on this page' : sheet.pages.length + ' pages · each searchable',
+
+      pageTitle: page.label, pageBlurb: page.blurb,
+      sections, noRows: total === 0,
+      emptyEn: 'Nothing on this page matches “' + s.q + '”.',
+
+      isGenerator: this.props.sheet === 'tools' && page.label === 'Password generator',
+      generated: this.generate(),
+      genLength: String(s.genLength),
+      onGenLength: this.onGenLength,
+      regenerate: () => this.setState(st => ({ nonce: st.nonce + 1 })),
+      genSets: [
+        { k: 'A', label: 'A-Z' }, { k: 'a', label: 'a-z' },
+        { k: '0', label: '0-9' }, { k: '#', label: '!@#$' }
+      ].map(g => ({
+        label: g.label,
+        bg: s.genSets[g.k] ? 'var(--pri)' : 'transparent',
+        fg: s.genSets[g.k] ? 'var(--onpri)' : 'inherit',
+        border: s.genSets[g.k] ? 'var(--pri)' : 'currentColor',
+        go: () => this.setState(st => ({ genSets: Object.assign({}, st.genSets, { [g.k]: !st.genSets[g.k] }), nonce: st.nonce + 1 }))
+      })),
+      entropyPct: Math.min(100, Math.round(bits / 160 * 100)) + '%',
+      entropyColor: bits < 60 ? 'var(--err)' : bits < 90 ? 'var(--amber)' : 'var(--green)',
+      entropyLabel: bits + ' bits',
+
+      isEditor: this.props.sheet === 'tools' && page.label === 'External editor',
+      editors: editors.map(e => ({
+        name: e.name, path: e.path, symbol: e.found ? 'edit_document' : 'error',
+        state: e.found ? (s.editor === e.id ? 'active' : 'available') : 'not found',
+        stateFg: e.found ? (s.editor === e.id ? 'var(--pri)' : 'var(--outline)') : 'var(--err)',
+        iconFg: e.found ? 'var(--onvar)' : 'var(--err)',
+        bg: s.editor === e.id ? 'var(--sec)' : 'var(--lowest)',
+        fg: e.found ? 'var(--on)' : 'var(--onvar)',
+        border: s.editor === e.id ? 'transparent' : 'var(--outlinevar)',
+        cursor: e.found ? 'pointer' : 'not-allowed',
+        go: () => e.found && this.setState({ editor: e.id })
+      }))
+    };
+  }
+}
+</script>
+</body>
+</html>

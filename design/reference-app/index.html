@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KeePassXC design reference</title>
+  <style>
+    html, body { height: 100%; margin: 0; font: 14px system-ui, sans-serif; background: #f7f7fb; color: #1b1b1f; }
+    body { display: grid; grid-template-rows: auto 1fr; }
+    header { display: flex; align-items: center; gap: 12px; padding: 10px 14px; border-bottom: 1px solid #c7c7cc; }
+    select { min-width: 280px; min-height: 36px; }
+    iframe { width: 100%; height: 100%; border: 0; background: white; }
+  </style>
+</head>
+<body>
+  <header>
+    <label for="route">Reference route</label>
+    <select id="route"></select>
+    <output id="tuple"></output>
+  </header>
+  <iframe id="preview" title="Checked-in design reference"></iframe>
+  <script>
+    const select = document.querySelector('#route');
+    const preview = document.querySelector('#preview');
+    const tuple = document.querySelector('#tuple');
+
+    fetch('/inventory')
+      .then(response => response.json())
+      .then(inventory => {
+        for (const row of inventory.rows) {
+          const option = document.createElement('option');
+          option.value = row.id;
+          option.textContent = `${row.id} — ${row.screen} / ${row.state}`;
+          select.append(option);
+        }
+        const requested = new URL(location.href).searchParams.get('row');
+        select.value = inventory.rows.some(row => row.id === requested) ? requested : inventory.rows[0].id;
+        const navigate = () => {
+          const row = inventory.rows.find(candidate => candidate.id === select.value);
+          preview.src = row.referenceRoute;
+          tuple.textContent = `${row.tuple.viewport.width}×${row.tuple.viewport.height} @ ${row.tuple.scale} · ${row.tuple.theme} · ${row.tuple.locale}`;
+          history.replaceState(null, '', `?row=${encodeURIComponent(row.id)}`);
+        };
+        select.addEventListener('change', navigate);
+        navigate();
+      });
+  </script>
+</body>
+</html>

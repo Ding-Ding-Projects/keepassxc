@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta name="design_doc_mode" content="app">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div data-kpxc data-mode="{{ mode }}" data-seed="{{ seed }}" data-density="{{ density }}" data-motion="{{ motion }}" style="--scale:{{ scale }};height:100vh;display:flex;flex-direction:column;background:var(--surface);color:var(--on);font-family:var(--ffam);font-size:calc(14px * var(--scale));font-weight:var(--fw);overflow:hidden">
+
+  <div data-r="chrome" data-contract="chrome" style="height:44px;flex:0 0 44px;display:flex;align-items:center;gap:12px;padding:0 0 0 14px;background:var(--low);border-bottom:1px solid var(--outlinevar);user-select:none">
+    <span class="sym" style="font-size:20px;color:var(--pri);font-variation-settings:'FILL' 1">shield_lock</span>
+    <div style="display:flex;align-items:baseline;gap:8px;min-width:0">
+      <span style="font-size:calc(13px * var(--scale));font-weight:500;letter-spacing:.1px;white-space:nowrap">KeePassXC</span>
+      <span style="font-size:calc(12px * var(--scale));color:var(--onvar);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ chromeSubtitle }}</span>
+    </div>
+    <div style="flex:1"></div>
+    <div style="display:flex;align-items:center;gap:6px;padding-right:8px">
+      <button type="button" onClick="{{ toggleInspector }}" title="Inspector — click any element for its Qt contract" style="height:30px;display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid var(--outlinevar);background:{{ inspectorChipBg }};color:var(--on);border-radius:99px;cursor:pointer;font-size:calc(11px * var(--scale));font-weight:500;letter-spacing:.4px">
+        <span class="sym" style="font-size:16px">frame_inspect</span>INSPECT
+      </button>
+    </div>
+    <div style="display:flex;height:44px">
+      <button type="button" title="Minimise" style="width:46px;height:44px;border:0;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)"><span class="sym" style="font-size:18px">remove</span></button>
+      <button type="button" title="Maximise" style="width:46px;height:44px;border:0;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)"><span class="sym" style="font-size:16px">crop_square</span></button>
+      <button type="button" title="Close" style="width:46px;height:44px;border:0;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:#e81123;color:#fff"><span class="sym" style="font-size:18px">close</span></button>
+    </div>
+  </div>
+
+  <div style="flex:1;display:flex;min-height:0">
+
+    <nav data-r="rail" data-contract="rail" aria-label="Destinations" style="width:88px;flex:0 0 auto;background:var(--cont);display:flex;flex-direction:column;align-items:center;padding:10px 0 12px;gap:2px;overflow-y:auto;overflow-x:hidden;transition:width 240ms var(--std)">
+      <button type="button" onClick="{{ openPalette }}" title="Command palette — Ctrl+K" style="width:56px;height:56px;border:0;border-radius:18px;background:var(--pric);color:var(--onpric);display:grid;place-items:center;cursor:pointer;margin-bottom:8px;transition:border-radius 180ms var(--sp),transform 180ms var(--sp)" style-hover="transform:translateY(-1px)" style-active="border-radius:28px;transform:scale(.94)">
+        <span class="sym" style="font-size:26px;font-variation-settings:'FILL' 1">bolt</span>
+      </button>
+      <sc-for list="{{ dests }}" as="d" hint-placeholder-count="10">
+        <button type="button" onClick="{{ d.go }}" aria-current="{{ d.current }}" title="{{ d.title }}" style="width:66px;border:0;background:transparent;padding:0;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;margin-bottom:2px;color:var(--onvar)">
+          <span style="width:{{ d.indW }};height:34px;border-radius:{{ d.indR }};background:{{ d.indBg }};color:{{ d.indFg }};display:grid;place-items:center;transition:background 180ms var(--std),border-radius 200ms var(--sp),width 200ms var(--sp)" style-active="border-radius:10px">
+            <span class="sym" style="font-size:22px;font-variation-settings:'FILL' {{ d.fill }},'wght' 400">{{ d.symbol }}</span>
+          </span>
+          <span data-r="raillabel" style="font-size:calc(11px * var(--scale));font-weight:{{ d.labelWeight }};color:{{ d.labelFg }};line-height:1.15;text-align:center;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ d.label }}</span>
+          <span data-r="railsub" style="font-size:calc(9.5px * var(--scale));color:var(--outline);line-height:1.1;text-align:center;max-width:76px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-family:'Noto Sans HK',Roboto,sans-serif">{{ d.sub }}</span>
+        </button>
+      </sc-for>
+      <div style="flex:1;min-height:8px"></div>
+      <button type="button" onClick="{{ toggleMode }}" title="Toggle light / dark" style="width:48px;height:48px;border:0;border-radius:16px;background:var(--high);color:var(--onvar);display:grid;place-items:center;cursor:pointer;margin-bottom:6px;transition:border-radius 180ms var(--sp)" style-active="border-radius:24px">
+        <span class="sym" style="font-size:22px">{{ modeIcon }}</span>
+      </button>
+      <button type="button" onClick="{{ lockAll }}" title="Lock all databases" style="width:48px;height:48px;border:0;border-radius:16px;background:var(--errc);color:var(--onerrc);display:grid;place-items:center;cursor:pointer;transition:border-radius 180ms var(--sp)" style-active="border-radius:24px">
+        <span class="sym" style="font-size:22px;font-variation-settings:'FILL' 1">lock</span>
+      </button>
+    </nav>
+
+    <div style="flex:1;display:flex;flex-direction:column;min-width:0;min-height:0">
+
+      <header data-r="appbar" data-contract="appbar" style="height:64px;flex:0 0 64px;display:flex;align-items:center;gap:14px;padding:0 18px;background:var(--surface)">
+        <div style="min-width:0;flex:0 0 auto;max-width:230px">
+          <div style="font-size:calc(22px * var(--scale));font-weight:400;letter-spacing:0;line-height:1.1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ destTitle }}</div>
+          <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:calc(11px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;line-height:1.2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ destTitleYue }}</div>
+          </sc-if>
+        </div>
+
+        <div data-contract="search" style="flex:1;max-width:720px;min-width:0;height:52px;display:flex;align-items:center;gap:8px;padding:0 8px 0 16px;background:var(--high);border-radius:99px;border:2px solid {{ searchRing }};transition:border-color 140ms var(--std),background 140ms var(--std)">
+          <span class="sym" style="font-size:20px;color:var(--onvar);flex:0 0 auto">search</span>
+          <input type="text" value="{{ query }}" onInput="{{ onQuery }}" onFocus="{{ onSearchFocus }}" onBlur="{{ onSearchBlur }}" placeholder="{{ searchPlaceholder }}" aria-label="Search entries" style="flex:1;min-width:0;height:44px;border:0;background:transparent;outline:none;font-size:calc(15px * var(--scale));color:var(--on);font-family:{{ queryFont }}">
+          <sc-if value="{{ hasQuery }}" hint-placeholder-val="{{ false }}">
+            <button type="button" onClick="{{ clearQuery }}" title="Clear" style="width:36px;height:36px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center;flex:0 0 auto" style-hover="background:var(--highest)"><span class="sym" style="font-size:18px">close</span></button>
+          </sc-if>
+          <button type="button" onClick="{{ toggleRegex }}" title="Regex mode — plain text is the default" style="height:34px;flex:0 0 auto;display:flex;align-items:center;gap:5px;padding:0 12px;border:1px solid {{ regexChipBorder }};border-radius:99px;background:{{ regexChipBg }};color:{{ regexChipFg }};cursor:pointer;font-size:calc(12px * var(--scale));font-weight:500;font-family:'Roboto Mono',monospace;transition:background 140ms var(--std)">
+            .*
+          </button>
+          <button type="button" onClick="{{ openBuilder }}" title="Open the regex builder anchored to this bar" style="width:36px;height:36px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--highest)"><span class="sym" style="font-size:19px">construction</span></button>
+        </div>
+
+        <div style="flex:1;min-width:0"></div>
+
+        <button type="button" onClick="{{ openNotifications }}" title="Notification centre" data-contract="notifications" style="position:relative;width:44px;height:44px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)">
+          <span class="sym" style="font-size:23px">notifications</span>
+          <sc-if value="{{ hasUnread }}" hint-placeholder-val="{{ true }}">
+            <span style="position:absolute;top:7px;right:7px;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--err);color:var(--onerr);font-size:10px;font-weight:700;display:grid;place-items:center;border:2px solid var(--surface)">{{ unreadCount }}</span>
+          </sc-if>
+        </button>
+        <button type="button" onClick="{{ openPalette }}" title="Command palette — Ctrl+K" style="height:40px;flex:0 0 auto;display:flex;align-items:center;gap:8px;padding:0 14px;border:1px solid var(--outlinevar);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12px * var(--scale))" style-hover="background:var(--cont)">
+          <span class="sym" style="font-size:17px">keyboard_command_key</span>K
+        </button>
+      </header>
+
+      <div data-r="tabs" data-contract="tabstrip" role="tablist" aria-label="Open databases" style="height:48px;flex:0 0 48px;display:flex;align-items:center;gap:6px;padding:0 18px;background:var(--low);border-top:1px solid var(--outlinevar);border-bottom:1px solid var(--outlinevar);overflow:hidden">
+        <sc-for list="{{ visibleTabs }}" as="t" hint-placeholder-count="4">
+          <button type="button" role="tab" aria-selected="{{ t.selected }}" tabindex="{{ t.tabindex }}" onClick="{{ t.go }}" draggable="true" onDragStart="{{ t.dragStart }}" onDragOver="{{ t.dragOver }}" onDrop="{{ t.drop }}" style="height:38px;flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:0 8px 0 14px;border:1px solid {{ t.border }};border-radius:99px;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;font-size:calc(13px * var(--scale));font-weight:{{ t.weight }};max-width:220px;transition:background 140ms var(--std),border-radius 200ms var(--sp)" style-active="border-radius:12px">
+            <sc-if value="{{ t.pinned }}" hint-placeholder-val="{{ false }}"><span class="sym" style="font-size:15px;font-variation-settings:'FILL' 1;flex:0 0 auto">keep</span></sc-if>
+            <span class="sym" style="font-size:16px;flex:0 0 auto;color:{{ t.iconFg }}">{{ t.icon }}</span>
+            <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0">{{ t.label }}</span>
+            <sc-if value="{{ t.dirty }}" hint-placeholder-val="{{ false }}"><span style="width:7px;height:7px;border-radius:99px;background:var(--pri);flex:0 0 auto"></span></sc-if>
+            <span onClick="{{ t.close }}" title="Close" style="width:24px;height:24px;border-radius:99px;display:grid;place-items:center;flex:0 0 auto;color:{{ t.fg }}" style-hover="background:rgba(128,128,128,.25)"><span class="sym" style="font-size:15px">close</span></span>
+          </button>
+        </sc-for>
+        <sc-if value="{{ hasOverflow }}" hint-placeholder-val="{{ true }}">
+          <button type="button" onClick="{{ openTabList }}" title="{{ overflowTitle }}" style="height:38px;flex:0 0 auto;display:flex;align-items:center;gap:4px;padding:0 12px;border:1px dashed var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12px * var(--scale));font-weight:500" style-hover="background:var(--cont)">
+            <span class="sym" style="font-size:18px">more_horiz</span>{{ overflowCount }}
+          </button>
+        </sc-if>
+        <div style="flex:1"></div>
+        <button type="button" onClick="{{ openTabList }}" title="Searchable tab list" style="width:36px;height:36px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)"><span class="sym" style="font-size:19px">manage_search</span></button>
+        <button type="button" title="Open a database" style="width:36px;height:36px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)"><span class="sym" style="font-size:20px">add</span></button>
+      </div>
+
+      <main data-r="stack" style="flex:1;min-height:0;overflow:hidden;padding:0 18px 18px;display:flex">
+        <sc-if value="{{ isVault }}" hint-placeholder-val="{{ true }}">
+          <dc-import name="Vault" lang="{{ lang }}" funny="{{ funnyEn }}" funny-yue="{{ funnyYue }}" query="{{ query }}" regex-on="{{ regexOn }}" flags="{{ flags }}" on-copy="{{ notifyCopy }}" on-inspect="{{ setContract }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isReports }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="Reports" lang="{{ lang }}" funny="{{ funnyEn }}" query="{{ query }}" regex-on="{{ regexOn }}" flags="{{ flags }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="History" lang="{{ lang }}" funny="{{ funnyEn }}" query="{{ query }}" regex-on="{{ regexOn }}" flags="{{ flags }}" on-restore="{{ notifyRestore }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isChangelog }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="Changelog" lang="{{ lang }}" funny="{{ funnyEn }}" query="{{ query }}" regex-on="{{ regexOn }}" flags="{{ flags }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isSettings }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="Settings" lang="{{ lang }}" funny="{{ funnyEn }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isAppearance }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="Appearance" lang="{{ lang }}" mode="{{ mode }}" seed="{{ seed }}" density="{{ density }}" scale="{{ scale }}" funny-en="{{ funnyEn }}" funny-yue="{{ funnyYue }}" motion="{{ motion }}" on-change="{{ applyAppearance }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+        <sc-if value="{{ isSheet }}" hint-placeholder-val="{{ false }}">
+          <dc-import name="Sheet" sheet="{{ dest }}" lang="{{ lang }}" funny="{{ funnyEn }}" query="{{ query }}" regex-on="{{ regexOn }}" flags="{{ flags }}" hint-size="100%,100%"></dc-import>
+        </sc-if>
+      </main>
+    </div>
+  </div>
+
+  <nav data-r="bottombar" aria-label="Destinations" style="flex:0 0 76px;height:76px;display:none;align-items:stretch;background:var(--cont);border-top:1px solid var(--outlinevar);padding:0 4px">
+    <sc-for list="{{ bottomDests }}" as="d" hint-placeholder-count="5">
+      <button type="button" onClick="{{ d.go }}" style="flex:1;min-width:0;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;color:var(--onvar)">
+        <span style="width:56px;height:30px;border-radius:99px;background:{{ d.indBg }};color:{{ d.indFg }};display:grid;place-items:center;transition:background 180ms var(--std)">
+          <span class="sym" style="font-size:21px;font-variation-settings:'FILL' {{ d.fill }}">{{ d.symbol }}</span>
+        </span>
+        <span style="font-size:11px;font-weight:{{ d.labelWeight }};color:{{ d.labelFg }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%">{{ d.label }}</span>
+      </button>
+    </sc-for>
+    <button type="button" onClick="{{ openBottomMore }}" style="flex:1;min-width:0;border:0;background:transparent;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:8px 2px;color:var(--onvar)">
+      <span style="width:56px;height:30px;border-radius:99px;display:grid;place-items:center"><span class="sym" style="font-size:21px">more_horiz</span></span>
+      <span style="font-size:11px">More</span>
+    </button>
+  </nav>
+
+  <div data-r="fab" data-contract="fab" style="position:fixed;right:28px;bottom:28px;z-index:40;display:flex;flex-direction:column;align-items:flex-end;gap:10px">
+    <sc-for list="{{ fabItems }}" as="f" hint-placeholder-count="0">
+      <button type="button" onClick="{{ f.run }}" style="height:48px;display:flex;align-items:center;gap:10px;padding:0 18px;border:0;border-radius:16px;background:var(--high);color:var(--on);box-shadow:var(--e2);cursor:pointer;font-size:calc(13px * var(--scale));font-weight:500;animation:kpxc-rise {{ f.delay }} var(--sp) both" style-hover="background:var(--highest)">
+        <span class="sym" style="font-size:20px;color:var(--pri)">{{ f.symbol }}</span>{{ f.label }}
+      </button>
+    </sc-for>
+    <button type="button" onClick="{{ toggleFab }}" aria-expanded="{{ fabOpen }}" style="height:56px;display:flex;align-items:center;gap:12px;padding:0 22px;border:0;border-radius:{{ fabRadius }};background:var(--pric);color:var(--onpric);box-shadow:var(--e3);cursor:pointer;font-size:calc(15px * var(--scale));font-weight:500;transition:border-radius 240ms var(--sp),transform 240ms var(--sp)" style-active="transform:scale(.95)">
+      <span class="sym" style="font-size:24px;transition:transform 240ms var(--sp);transform:{{ fabIconRotate }}">add</span>
+      <span>{{ fabLabel }}</span>
+    </button>
+  </div>
+
+  <div aria-live="polite" data-contract="snackbar" style="position:fixed;right:28px;bottom:{{ snackBottom }};z-index:60;display:flex;flex-direction:column-reverse;gap:10px;max-width:min(520px,calc(100vw - 40px));pointer-events:none">
+    <sc-for list="{{ snacks }}" as="s" hint-placeholder-count="0">
+      <div role="status" style="pointer-events:auto;min-width:300px;display:flex;align-items:flex-start;gap:12px;padding:14px 12px 14px 18px;border-radius:12px;background:{{ s.bg }};color:{{ s.fg }};box-shadow:var(--e3);animation:kpxc-snack 240ms var(--sp) both">
+        <span class="sym" style="font-size:20px;flex:0 0 auto;margin-top:1px;color:{{ s.iconFg }}">{{ s.symbol }}</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:calc(14px * var(--scale));line-height:1.45;text-wrap:pretty">{{ s.en }}</div>
+          <sc-if value="{{ s.showYue }}" hint-placeholder-val="{{ false }}">
+            <div style="font-size:calc(12.5px * var(--scale));line-height:1.5;opacity:.82;font-family:'Noto Sans HK',sans-serif;margin-top:3px;text-wrap:pretty">{{ s.yue }}</div>
+          </sc-if>
+        </div>
+        <sc-if value="{{ s.hasAction }}" hint-placeholder-val="{{ false }}">
+          <button type="button" onClick="{{ s.act }}" style="flex:0 0 auto;height:36px;padding:0 14px;border:0;border-radius:99px;background:transparent;color:{{ s.actionFg }};font-weight:500;font-size:calc(13px * var(--scale));cursor:pointer">{{ s.actionLabel }}</button>
+        </sc-if>
+        <button type="button" onClick="{{ s.dismiss }}" title="Dismiss" style="flex:0 0 auto;width:36px;height:36px;border:0;border-radius:99px;background:transparent;color:{{ s.fg }};cursor:pointer;display:grid;place-items:center;opacity:.8"><span class="sym" style="font-size:17px">close</span></button>
+      </div>
+    </sc-for>
+  </div>
+
+  <sc-if value="{{ dimSum }}" hint-placeholder-val="{{ false }}">
+    <div data-contract="dimsum" role="status" style="position:fixed;left:50%;bottom:32px;transform:translateX(-50%);z-index:70;width:340px;max-width:calc(100vw - 32px);border-radius:28px;overflow:hidden;background:var(--high);color:var(--on);box-shadow:var(--e3);animation:kpxc-pop 320ms var(--sp) both">
+      <div style="height:150px;background:repeating-linear-gradient(135deg,var(--sec) 0 10px,var(--cont) 10px 20px);display:grid;place-items:center;color:var(--onvar);font-family:'Roboto Mono',monospace;font-size:11px;letter-spacing:.6px;text-align:center;padding:0 20px">{{ dimSumSlot }}</div>
+      <div style="padding:16px 18px 18px">
+        <div style="font-size:calc(17px * var(--scale));font-weight:500">{{ dimSumEn }}</div>
+        <div style="font-size:calc(15px * var(--scale));font-family:'Noto Sans HK',sans-serif;color:var(--pri);margin-top:2px">{{ dimSumYue }}</div>
+        <div style="font-size:calc(12.5px * var(--scale));color:var(--onvar);margin-top:8px;line-height:1.5;text-wrap:pretty">{{ dimSumNote }}</div>
+        <div style="display:flex;gap:8px;margin-top:14px">
+          <button type="button" onClick="{{ closeDimSum }}" style="flex:1;height:40px;border:0;border-radius:99px;background:var(--pric);color:var(--onpric);font-weight:500;cursor:pointer;font-size:calc(13px * var(--scale))">Thanks</button>
+          <button type="button" onClick="{{ disableDimSum }}" style="flex:1;height:40px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(13px * var(--scale))">Turn off</button>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ overlayIsPalette }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.36);display:flex;align-items:flex-start;justify-content:center;padding:96px 16px 16px;animation:kpxc-fade 140ms var(--std) both">
+      <div data-contract="palette" onClick="{{ stop }}" style="width:640px;max-width:100%;max-height:100%;display:flex;flex-direction:column;background:var(--high);color:var(--on);border-radius:28px;box-shadow:var(--e3);overflow:hidden;animation:kpxc-rise 200ms var(--sp) both">
+        <div style="display:flex;align-items:center;gap:12px;padding:0 20px;height:60px;border-bottom:1px solid var(--outlinevar)">
+          <span class="sym" style="font-size:22px;color:var(--onvar)">search</span>
+          <input type="text" value="{{ paletteQuery }}" onInput="{{ onPaletteQuery }}" placeholder="Type a command, or a regex with .* on…" aria-label="Command palette" style="flex:1;height:58px;border:0;background:transparent;outline:none;font-size:calc(16px * var(--scale));color:var(--on)">
+          <button type="button" onClick="{{ togglePaletteRegex }}" style="height:30px;padding:0 11px;border:1px solid {{ paletteRegexBorder }};border-radius:99px;background:{{ paletteRegexBg }};color:{{ paletteRegexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:12px">.*</button>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:8px 0 12px">
+          <sc-for list="{{ paletteGroups }}" as="g" hint-placeholder-count="4">
+            <div style="padding:12px 20px 6px;font-size:calc(11px * var(--scale));font-weight:500;letter-spacing:.8px;color:var(--onvar);text-transform:uppercase">{{ g.name }}</div>
+            <sc-for list="{{ g.items }}" as="c">
+              <button type="button" onClick="{{ c.run }}" style="width:100%;height:48px;display:flex;align-items:center;gap:14px;padding:0 20px;border:0;background:transparent;color:var(--on);cursor:pointer;text-align:left;font-size:calc(14px * var(--scale))" style-hover="background:var(--highest)">
+                <span class="sym" style="font-size:20px;color:var(--onvar)">{{ c.symbol }}</span>
+                <span style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ c.label }}</span>
+                <span style="font-size:11px;color:var(--onvar);font-family:'Roboto Mono',monospace">{{ c.keys }}</span>
+              </button>
+            </sc-for>
+          </sc-for>
+          <sc-if value="{{ paletteEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:40px 20px;text-align:center;color:var(--onvar);font-size:calc(14px * var(--scale))">{{ paletteEmptyMsg }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ overlayIsTabs }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.36);display:flex;align-items:flex-start;justify-content:center;padding:80px 16px 16px;animation:kpxc-fade 140ms var(--std) both">
+      <div onClick="{{ stop }}" style="width:560px;max-width:100%;max-height:100%;display:flex;flex-direction:column;background:var(--high);border-radius:28px;box-shadow:var(--e3);overflow:hidden;animation:kpxc-rise 200ms var(--sp) both">
+        <div style="padding:20px 22px 4px;font-size:calc(18px * var(--scale));font-weight:500">Open databases</div>
+        <div style="padding:4px 22px 14px;font-size:calc(12.5px * var(--scale));color:var(--onvar)">{{ tabListHint }}</div>
+        <div style="padding:0 22px 14px">
+          <div style="height:44px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--cont);border-radius:99px;border:2px solid {{ tabSearchRing }}">
+            <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+            <input type="text" value="{{ tabQuery }}" onInput="{{ onTabQuery }}" placeholder="Filter tabs…" aria-label="Filter tabs" style="flex:1;height:40px;border:0;background:transparent;outline:none;font-size:calc(14px * var(--scale))">
+            <button type="button" onClick="{{ toggleTabRegex }}" style="height:28px;padding:0 10px;border:1px solid {{ tabRegexBorder }};border-radius:99px;background:{{ tabRegexBg }};color:{{ tabRegexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+            <button type="button" onClick="{{ openBuilderForTabs }}" title="Regex builder" style="width:32px;height:32px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:17px">construction</span></button>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:0 12px 16px">
+          <sc-for list="{{ tabListRows }}" as="t" hint-placeholder-count="6">
+            <div style="display:flex;align-items:center;gap:12px;height:56px;padding:0 12px;border-radius:16px;background:{{ t.rowBg }}" style-hover="background:var(--highest)">
+              <span class="sym" style="font-size:20px;color:{{ t.iconFg }}">{{ t.icon }}</span>
+              <button type="button" onClick="{{ t.go }}" style="flex:1;min-width:0;border:0;background:transparent;text-align:left;cursor:pointer;color:var(--on)">
+                <div style="font-size:calc(14px * var(--scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ t.label }}</div>
+                <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar)">{{ t.meta }}</div>
+              </button>
+              <button type="button" onClick="{{ t.pin }}" title="Pin" style="width:40px;height:40px;border:0;border-radius:99px;background:transparent;color:{{ t.pinFg }};cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px;font-variation-settings:'FILL' {{ t.pinFill }}">keep</span></button>
+            </div>
+          </sc-for>
+          <sc-if value="{{ tabListEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:32px 20px;text-align:center;color:var(--onvar);font-size:calc(13.5px * var(--scale))">{{ tabListEmptyMsg }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ overlayIsNotifications }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:80;background:rgba(0,0,0,.3);display:flex;justify-content:flex-end;animation:kpxc-fade 140ms var(--std) both">
+      <div onClick="{{ stop }}" style="width:420px;max-width:100%;height:100%;display:flex;flex-direction:column;background:var(--cont);box-shadow:var(--e3);border-radius:28px 0 0 28px;overflow:hidden;animation:kpxc-slide-r 220ms var(--sp) both">
+        <div style="display:flex;align-items:center;gap:10px;padding:20px 20px 12px">
+          <span class="sym" style="font-size:22px;color:var(--pri)">notifications</span>
+          <div style="flex:1">
+            <div style="font-size:calc(18px * var(--scale));font-weight:500">Notification centre</div>
+            <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif">通知中心 · 收咗都仲搵得返</div>
+          </div>
+          <button type="button" onClick="{{ clearNotifications }}" style="height:34px;padding:0 14px;border:1px solid var(--outlinevar);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12px * var(--scale))">Clear</button>
+          <button type="button" onClick="{{ closeOverlay }}" style="width:36px;height:36px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px">close</span></button>
+        </div>
+        <div style="padding:0 20px 12px">
+          <div style="height:44px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px;border:2px solid {{ notifSearchRing }}">
+            <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+            <input type="text" value="{{ notifQuery }}" onInput="{{ onNotifQuery }}" placeholder="Search notifications…" aria-label="Search notifications" style="flex:1;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale))">
+            <button type="button" onClick="{{ toggleNotifRegex }}" style="height:28px;padding:0 10px;border:1px solid {{ notifRegexBorder }};border-radius:99px;background:{{ notifRegexBg }};color:{{ notifRegexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+          </div>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:0 12px 20px;display:flex;flex-direction:column;gap:6px">
+          <sc-for list="{{ notifRows }}" as="n" hint-placeholder-count="4">
+            <div tabindex="0" style="display:flex;gap:12px;padding:14px;border-radius:18px;background:{{ n.bg }};border-left:4px solid {{ n.accent }}">
+              <span class="sym" style="font-size:20px;color:{{ n.accent }};flex:0 0 auto;margin-top:1px">{{ n.symbol }}</span>
+              <div style="flex:1;min-width:0">
+                <div style="font-size:calc(13.5px * var(--scale));line-height:1.45;text-wrap:pretty">{{ n.en }}</div>
+                <sc-if value="{{ n.showYue }}" hint-placeholder-val="{{ false }}">
+                  <div style="font-size:calc(12px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;line-height:1.5;margin-top:3px;text-wrap:pretty">{{ n.yue }}</div>
+                </sc-if>
+                <div style="font-size:calc(11px * var(--scale));color:var(--outline);margin-top:6px;font-family:'Roboto Mono',monospace">{{ n.when }}</div>
+              </div>
+            </div>
+          </sc-for>
+          <sc-if value="{{ notifEmpty }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:48px 20px;text-align:center;color:var(--onvar);font-size:calc(13.5px * var(--scale))">{{ notifEmptyMsg }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ overlayIsBuilder }}" hint-placeholder-val="{{ false }}">
+    <div onClick="{{ closeOverlay }}" style="position:fixed;inset:0;z-index:90;background:rgba(0,0,0,.42);display:flex;align-items:center;justify-content:center;padding:24px;animation:kpxc-fade 140ms var(--std) both">
+      <div onClick="{{ stop }}" data-contract="regexbuilder" style="width:1040px;max-width:100%;height:100%;max-height:720px;background:var(--low);border-radius:28px;box-shadow:var(--e3);overflow:hidden;display:flex;flex-direction:column;animation:kpxc-rise 220ms var(--sp) both">
+        <dc-import name="RegexBuilder" pattern="{{ builderPattern }}" flags="{{ flags }}" lang="{{ lang }}" funny="{{ funnyEn }}" anchor="{{ builderAnchor }}" on-accept="{{ acceptPattern }}" on-close="{{ closeOverlay }}" hint-size="100%,100%"></dc-import>
+      </div>
+    </div>
+  </sc-if>
+
+  <sc-if value="{{ inspectorOpen }}" hint-placeholder-val="{{ false }}">
+    <aside style="position:fixed;right:0;top:0;bottom:0;width:440px;max-width:100%;z-index:75;background:var(--lowest);border-left:1px solid var(--outlinevar);box-shadow:var(--e3);display:flex;flex-direction:column;animation:kpxc-slide-r 200ms var(--sp) both">
+      <div style="display:flex;align-items:center;gap:10px;padding:16px 18px;border-bottom:1px solid var(--outlinevar)">
+        <span class="sym" style="font-size:21px;color:var(--pri)">frame_inspect</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:calc(15px * var(--scale));font-weight:500">Qt handoff inspector</div>
+          <div style="font-size:calc(11px * var(--scale));color:var(--onvar)">Click any element for its C++ contract</div>
+        </div>
+        <button type="button" onClick="{{ toggleInspector }}" style="width:36px;height:36px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px">close</span></button>
+      </div>
+      <div style="flex:1;overflow-y:auto;padding:18px">
+        <sc-if value="{{ hasContract }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Widget</div>
+            <div style="font-size:calc(20px * var(--scale));font-weight:500;margin:4px 0 10px">{{ cTitle }}</div>
+            <div style="font-family:'Roboto Mono',monospace;font-size:calc(12.5px * var(--scale));background:var(--cont);border-radius:12px;padding:12px 14px;line-height:1.6;word-break:break-word">{{ cClass }}</div>
+            <sc-if value="{{ cHasReplaces }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:10px;padding:12px 14px;border-radius:12px;background:var(--amberc);color:var(--onamberc);font-size:calc(12px * var(--scale));line-height:1.6">
+                <strong style="font-weight:500">Replaces</strong> · {{ cReplaces }}
+              </div>
+            </sc-if>
+            <div style="display:grid;grid-template-columns:96px 1fr;gap:8px 12px;margin-top:18px;font-size:calc(12.5px * var(--scale));line-height:1.55">
+              <div style="color:var(--onvar)">Palette</div><div style="font-family:'Roboto Mono',monospace;word-break:break-word">{{ cRole }}</div>
+              <div style="color:var(--onvar)">Metrics</div><div>{{ cMetrics }}</div>
+            </div>
+            <sc-if value="{{ cHasConfig }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:20px">
+                <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Config keys</div>
+                <sc-for list="{{ cConfig }}" as="k">
+                  <div style="font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));padding:7px 10px;border-radius:8px;background:var(--cont);margin-bottom:5px;word-break:break-word">{{ k }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ cHasSignals }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top:20px">
+                <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Signals</div>
+                <sc-for list="{{ cSignals }}" as="s">
+                  <div style="font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));padding:7px 10px;border-radius:8px;background:var(--sec);color:var(--onsec);margin-bottom:5px;word-break:break-word">{{ s }}</div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <div style="margin-top:20px">
+              <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Files</div>
+              <sc-for list="{{ cFiles }}" as="f">
+                <div style="display:flex;gap:9px;align-items:baseline;margin-bottom:6px">
+                  <span style="flex:0 0 auto;font-size:9.5px;font-weight:700;letter-spacing:.6px;padding:2px 7px;border-radius:99px;background:{{ f.bg }};color:{{ f.fg }}">{{ f.kind }}</span>
+                  <span style="font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));word-break:break-all;line-height:1.5">{{ f.path }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="margin-top:20px;padding:14px 16px;border-radius:14px;background:var(--pric);color:var(--onpric);font-size:calc(12.5px * var(--scale));line-height:1.65;text-wrap:pretty">{{ cNotes }}</div>
+          </div>
+        </sc-if>
+        <sc-if value="{{ noContract }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="padding:20px;border:1px dashed var(--outline);border-radius:16px;color:var(--onvar);font-size:calc(13px * var(--scale));line-height:1.6;text-wrap:pretty">Click anything in the app — the rail, a tab, the search bar, a row — and its Qt class, palette role, metrics, Config keys, signals and the files to create or modify appear here.</div>
+            <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin:24px 0 10px">Acceptance checklist</div>
+            <sc-for list="{{ uhRules }}" as="r" hint-placeholder-count="13">
+              <div style="display:flex;gap:10px;padding:11px 0;border-bottom:1px solid var(--outlinevar)">
+                <span class="sym" style="font-size:18px;color:var(--green);flex:0 0 auto;margin-top:1px">check_circle</span>
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:calc(12.5px * var(--scale));line-height:1.5;text-wrap:pretty">{{ r.rule }}</div>
+                  <div style="font-size:calc(11px * var(--scale));color:var(--onvar);margin-top:3px">{{ r.where }}</div>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </aside>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;seed&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;keepass&quot;,&quot;purple&quot;,&quot;green&quot;,&quot;amber&quot;],&quot;default&quot;:&quot;purple&quot;,&quot;tsType&quot;:&quot;'keepass'|'purple'|'green'|'amber'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light'|'dark'&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;compact&quot;,&quot;comfortable&quot;,&quot;spacious&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Theme&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Voice&quot;},&quot;funnyEn&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Voice&quot;},&quot;funnyYue&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Voice&quot;},&quot;inspectorOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Handoff&quot;}}">
+class Component extends DCLogic {
+  state = {
+    dest: 'vault',
+    mode: 'light',
+    seed: 'purple',
+    density: 'comfortable',
+    scale: 1,
+    motion: 'on',
+    lang: 'both',
+    funnyEn: 5,
+    funnyYue: 5,
+    query: '',
+    regexOn: false,
+    flags: 'gi',
+    searchFocus: false,
+    tabs: [],
+    activeTab: 'personal',
+    dragFrom: null,
+    overlay: null,
+    paletteQuery: '',
+    paletteRegex: false,
+    tabQuery: '',
+    tabRegex: false,
+    notifQuery: '',
+    notifRegex: false,
+    fabOpen: false,
+    snacks: [],
+    notifications: [],
+    dimSum: null,
+    dimSumEnabled: true,
+    inspectorOpen: false,
+    contractId: null,
+    builderAnchor: 'vault',
+    builderPattern: '',
+    data: null,
+    copy: null,
+    contracts: null
+  };
+
+  seq = 0;
+
+  async componentDidMount() {
+    const [data, copy, contracts] = await Promise.all([
+      import('./lib/vault-data.js'),
+      import('./lib/copy.js'),
+      import('./lib/contracts.js')
+    ]);
+    this.setState({
+      data, copy, contracts,
+      tabs: data.DATABASES.map(d => Object.assign({}, d))
+    });
+    // Seed the notification centre with what a running session would have
+    // accumulated. Errors and warnings never auto-dismissed, so they are here.
+    this.setState({
+      notifications: [
+        { id: 'n1', sev: 'error', symbol: 'gpp_bad', key: 'breachedWarn', vars: { n: 2 }, when: '09:12' },
+        { id: 'n2', sev: 'warn', symbol: 'lock_clock', key: 'lockWarn', vars: { db: 'Legacy-2019.kdbx' }, when: '08:40' },
+        { id: 'n3', sev: 'info', symbol: 'history', key: 'restored', vars: { rev: 'r006' }, when: '08:31' },
+        { id: 'n4', sev: 'info', symbol: 'check_circle', key: 'entrySaved', vars: { name: 'Cloudflare', db: 'Personal.kdbx' }, when: '08:02' }
+      ]
+    });
+    this.onKey = e => {
+      const tag = (e.target && e.target.tagName) || '';
+      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        this.setState({ overlay: this.state.overlay === 'palette' ? null : 'palette', paletteQuery: '' });
+      } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'r' && e.shiftKey) {
+        e.preventDefault();
+        this.openBuilder();
+      } else if (e.key === 'Escape') {
+        if (this.state.overlay) this.setState({ overlay: null });
+        else if (this.state.fabOpen) this.setState({ fabOpen: false });
+      } else if (e.key === '/' && tag !== 'INPUT' && tag !== 'TEXTAREA') {
+        e.preventDefault();
+        const el = document.querySelector('input[aria-label="Search entries"]');
+        if (el) el.focus();
+      }
+    };
+    document.addEventListener('keydown', this.onKey);
+
+    this.onClick = e => {
+      if (!this.state.inspectorOpen) return;
+      const host = e.target.closest && e.target.closest('[data-contract]');
+      if (host) this.setState({ contractId: host.getAttribute('data-contract') });
+    };
+    document.addEventListener('click', this.onClick, true);
+
+    // 1% per launch, drawn fresh, never twice. The demo button in Appearance
+    // forces it; the draw itself stays honest.
+    if (this.state.dimSumEnabled && Math.random() < 0.01) {
+      this.showDimSum();
+    }
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.onKey);
+    document.removeEventListener('click', this.onClick, true);
+  }
+
+  // ── copy helpers ─────────────────────────────────────────────────────────
+  t(pair) {
+    const c = this.state.copy;
+    if (!c) return Array.isArray(pair) ? pair[0] : '';
+    return c.pick(pair, this.state.lang === 'yue' ? 'yue' : 'en');
+  }
+  t2(pair) {
+    const c = this.state.copy;
+    if (!c || this.state.lang !== 'both') return '';
+    return Array.isArray(pair) ? pair[1] : '';
+  }
+  m(key, vars) {
+    const c = this.state.copy;
+    if (!c) return { en: '', yue: '' };
+    const en = c.msg(key, this.state.funnyEn, 'en', vars);
+    const yue = c.msg(key, this.state.funnyYue, 'yue', vars);
+    return { en: this.state.lang === 'yue' ? yue.yue : en.en, yue: yue.yue };
+  }
+
+  // ── snackbars ────────────────────────────────────────────────────────────
+  snack(key, vars, sev, action) {
+    const id = 's' + ++this.seq;
+    const s = { id, key, vars, sev: sev || 'info', action: action || null };
+    this.setState(st => ({
+      snacks: st.snacks.concat([s]).slice(-4),
+      notifications: [{
+        id: 'n' + id, sev: s.sev, key, vars,
+        symbol: sev === 'error' ? 'error' : sev === 'warn' ? 'warning' : 'check_circle',
+        when: new Date().toTimeString().slice(0, 5)
+      }].concat(st.notifications).slice(0, 200)
+    }));
+    // Errors and warnings persist until dismissed; everything else auto-clears.
+    if (s.sev === 'info') {
+      setTimeout(() => this.setState(st => ({ snacks: st.snacks.filter(x => x.id !== id) })), 4200);
+    }
+  }
+
+  showDimSum() {
+    const list = this.state.data ? this.state.data.DIM_SUM : [];
+    if (!list.length) return;
+    const dish = list[Math.floor(Math.random() * list.length)];
+    this.setState({ dimSum: dish });
+    setTimeout(() => this.setState(st => (st.dimSum === dish ? { dimSum: null } : {})), 6000);
+  }
+
+  // ── derived ──────────────────────────────────────────────────────────────
+  get destList() {
+    const d = this.state.data;
+    const NAV = this.state.copy ? this.state.copy.NAV : {};
+    const counts = {
+      vault: d ? d.ENTRIES.length + ' shown' : '',
+      reports: d ? d.REPORTS.reduce((a, r) => a + (r.severity === 'green' || r.severity === 'neutral' ? 0 : r.count), 0) + ' findings' : '',
+      editor: '9 pages', database: '7 pages', tools: '6 pages',
+      history: d ? d.REVISIONS.length + ' revisions' : '',
+      changelog: '2.9.0', settings: '11 pages', appearance: '', help: '5 pages'
+    };
+    return ['vault', 'reports', 'editor', 'database', 'tools', 'history', 'changelog', 'settings', 'appearance', 'help']
+      .map(id => ({ id, nav: NAV[id] || [id, id], sub: counts[id] || '' }));
+  }
+
+  symbolFor(id) {
+    return {
+      vault: 'key_vertical', reports: 'health_metrics', editor: 'edit_note', database: 'database',
+      tools: 'construction', history: 'history', changelog: 'receipt_long', settings: 'tune',
+      appearance: 'palette', help: 'help'
+    }[id];
+  }
+
+  railItem(d, compact) {
+    const on = this.state.dest === d.id;
+    return {
+      id: d.id,
+      symbol: this.symbolFor(d.id),
+      label: this.t(d.nav),
+      sub: this.state.lang === 'both' ? d.nav[1] : d.sub,
+      title: d.nav[0] + (d.sub ? ' — ' + d.sub : ''),
+      current: on ? 'page' : 'false',
+      indW: compact ? '56px' : (on ? '66px' : '58px'),
+      indR: on ? '17px' : '17px',
+      indBg: on ? 'var(--sec)' : 'transparent',
+      indFg: on ? 'var(--onsec)' : 'var(--onvar)',
+      labelFg: on ? 'var(--on)' : 'var(--onvar)',
+      labelWeight: on ? '700' : '400',
+      fill: on ? 1 : 0,
+      go: () => this.setState({ dest: d.id, fabOpen: false })
+    };
+  }
+
+  filterRows(rows, q, regexOn, flags, keyOf) {
+    if (!q.trim()) return rows;
+    if (!regexOn) return rows.filter(r => keyOf(r).toLowerCase().includes(q.trim().toLowerCase()));
+    try {
+      const re = new RegExp(q, flags.replace('g', ''));
+      return rows.filter(r => re.test(keyOf(r)));
+    } catch (_) {
+      return rows;
+    }
+  }
+
+  paletteCommands() {
+    const NAV = this.state.copy ? this.state.copy.NAV : {};
+    const go = id => () => this.setState({ dest: id, overlay: null });
+    return [
+      { group: 'Go To', items: this.destList.map(d => ({ label: 'Go to ' + d.nav[0], symbol: this.symbolFor(d.id), keys: '', run: go(d.id) })) },
+      { group: 'Database', items: [
+        { label: 'Lock all databases', symbol: 'lock', keys: 'Ctrl+L', run: () => { this.setState({ overlay: null }); this.lockAll(); } },
+        { label: 'Save database', symbol: 'save', keys: 'Ctrl+S', run: () => { this.setState({ overlay: null }); this.snack('entrySaved', { name: 'Cloudflare', db: 'Personal.kdbx' }); } },
+        { label: 'Open database…', symbol: 'folder_open', keys: 'Ctrl+O', run: () => this.setState({ overlay: null }) },
+        { label: 'Open database folder in external editor', symbol: 'edit_document', keys: '', run: () => { this.setState({ overlay: null, dest: 'tools' }); this.snack('externalEditor', { path: 'C:\\vaults\\Personal.kdbx', editor: 'Visual Studio Code' }); } }
+      ] },
+      { group: 'Entries', items: [
+        { label: 'New entry', symbol: 'add', keys: 'Ctrl+N', run: () => this.setState({ overlay: null, dest: 'editor' }) },
+        { label: 'Copy password', symbol: 'content_copy', keys: 'Ctrl+C', run: () => { this.setState({ overlay: null }); this.snack('clipboardCopied', {}); } },
+        { label: 'Generate password…', symbol: 'casino', keys: 'Ctrl+G', run: () => this.setState({ overlay: null, dest: 'tools' }) }
+      ] },
+      { group: 'Tools', items: [
+        { label: 'Regex builder', symbol: 'construction', keys: 'Ctrl+Shift+R', run: () => this.openBuilder() },
+        { label: 'Password health report', symbol: 'health_metrics', keys: '', run: go('reports') },
+        { label: 'Show a dim sum', symbol: 'restaurant', keys: '', run: () => { this.setState({ overlay: null }); this.showDimSum(); } }
+      ] },
+      { group: 'View', items: [
+        { label: 'Toggle light / dark', symbol: 'contrast', keys: '', run: () => { this.setState({ overlay: null }); this.toggleMode(); } },
+        { label: 'Theme: Automatic', symbol: 'brightness_auto', keys: '', run: () => this.setState({ overlay: null }) },
+        { label: 'Density: Compact', symbol: 'density_small', keys: '', run: () => this.setState({ overlay: null, density: 'compact' }) },
+        { label: 'Density: Comfortable', symbol: 'density_medium', keys: '', run: () => this.setState({ overlay: null, density: 'comfortable' }) },
+        { label: 'Toggle notification centre', symbol: 'notifications', keys: '', run: () => this.setState({ overlay: 'notifications' }) },
+        { label: 'Toggle Qt handoff inspector', symbol: 'frame_inspect', keys: '', run: () => this.setState({ overlay: null, inspectorOpen: !this.state.inspectorOpen }) }
+      ] },
+      { group: 'Help', items: [
+        { label: 'Getting started', symbol: 'help', keys: 'F1', run: go('help') },
+        { label: 'Changelog', symbol: 'receipt_long', keys: '', run: go('changelog') }
+      ] }
+    ];
+  }
+
+  // ── actions ──────────────────────────────────────────────────────────────
+  toggleMode = () => this.setState(s => ({ mode: s.mode === 'dark' ? 'light' : 'dark' }));
+  toggleInspector = () => this.setState(s => ({ inspectorOpen: !s.inspectorOpen }));
+  toggleFab = () => this.setState(s => ({ fabOpen: !s.fabOpen }));
+  closeOverlay = () => this.setState({ overlay: null });
+  stop = e => e.stopPropagation();
+  openPalette = () => this.setState({ overlay: 'palette', paletteQuery: '' });
+  openNotifications = () => this.setState({ overlay: 'notifications' });
+  openTabList = () => this.setState({ overlay: 'tabs' });
+  openBottomMore = () => this.setState({ overlay: 'palette', paletteQuery: '' });
+  clearNotifications = () => this.setState({ notifications: [] });
+  clearQuery = () => this.setState({ query: '' });
+  onQuery = e => this.setState({ query: e.target.value });
+  onSearchFocus = () => this.setState({ searchFocus: true });
+  onSearchBlur = () => this.setState({ searchFocus: false });
+  toggleRegex = () => this.setState(s => ({ regexOn: !s.regexOn }));
+  onPaletteQuery = e => this.setState({ paletteQuery: e.target.value });
+  togglePaletteRegex = () => this.setState(s => ({ paletteRegex: !s.paletteRegex }));
+  onTabQuery = e => this.setState({ tabQuery: e.target.value });
+  toggleTabRegex = () => this.setState(s => ({ tabRegex: !s.tabRegex }));
+  onNotifQuery = e => this.setState({ notifQuery: e.target.value });
+  toggleNotifRegex = () => this.setState(s => ({ notifRegex: !s.notifRegex }));
+  closeDimSum = () => this.setState({ dimSum: null });
+  disableDimSum = () => this.setState({ dimSum: null, dimSumEnabled: false });
+  setContract = id => this.setState({ contractId: id, inspectorOpen: true });
+
+  openBuilder = () => this.setState({ overlay: 'builder', builderAnchor: 'Vault search', builderPattern: this.state.query });
+  openBuilderForTabs = () => this.setState({ overlay: 'builder', builderAnchor: 'Tab list filter', builderPattern: this.state.tabQuery });
+  acceptPattern = (pattern, flags) => {
+    // The pattern returns to the bar that opened the builder — never
+    // unconditionally to the vault.
+    if (this.state.builderAnchor === 'Tab list filter') {
+      this.setState({ tabQuery: pattern, tabRegex: true, flags, overlay: 'tabs' });
+    } else {
+      this.setState({ query: pattern, regexOn: true, flags, overlay: null });
+    }
+  };
+
+  lockAll = () => this.snack('lockWarn', { db: 'all open databases' }, 'warn');
+  notifyCopy = what => this.snack('clipboardCopied', { what });
+  notifyRestore = rev => this.snack('restored', { rev });
+  applyAppearance = patch => {
+    if (patch.forceDimSum) { this.showDimSum(); return; }
+    this.setState(patch);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const C = s.contracts ? s.contracts.CONTRACTS : {};
+    const NAV = s.copy ? s.copy.NAV : {};
+    const dests = this.destList;
+    const nav = NAV[s.dest] || [s.dest, s.dest];
+    const bilingual = s.lang === 'both';
+
+    const activeDb = s.tabs.find(t => t.id === s.activeTab);
+    const pinned = s.tabs.filter(t => t.pinned);
+    const rest = s.tabs.filter(t => !t.pinned);
+    const shown = pinned.concat(rest.slice(0, 3));
+    const overflow = rest.slice(3);
+
+    const tabView = (t, i) => ({
+      selected: t.id === s.activeTab ? 'true' : 'false',
+      tabindex: t.id === s.activeTab ? '0' : '-1',
+      pinned: !!t.pinned,
+      dirty: !!t.dirty,
+      label: t.short,
+      icon: t.locked ? 'lock' : 'database',
+      iconFg: t.locked ? 'var(--err)' : (t.id === s.activeTab ? 'var(--onsec)' : 'var(--onvar)'),
+      bg: t.id === s.activeTab ? 'var(--sec)' : 'transparent',
+      fg: t.id === s.activeTab ? 'var(--onsec)' : 'var(--onvar)',
+      border: t.id === s.activeTab ? 'transparent' : 'var(--outlinevar)',
+      weight: t.id === s.activeTab ? '500' : '400',
+      go: () => this.setState({ activeTab: t.id }),
+      close: e => { e.stopPropagation(); this.setState(st => ({ tabs: st.tabs.filter(x => x.id !== t.id) })); },
+      dragStart: () => this.setState({ dragFrom: t.id }),
+      dragOver: e => e.preventDefault(),
+      drop: e => {
+        e.preventDefault();
+        const from = s.dragFrom;
+        if (!from || from === t.id) return;
+        this.setState(st => {
+          const arr = st.tabs.slice();
+          const fi = arr.findIndex(x => x.id === from);
+          const ti = arr.findIndex(x => x.id === t.id);
+          arr.splice(ti, 0, arr.splice(fi, 1)[0]);
+          return { tabs: arr, dragFrom: null };
+        });
+      }
+    });
+
+    const tabRows = this.filterRows(s.tabs, s.tabQuery, s.tabRegex, 'i', t => t.name).map(t => ({
+      label: t.name,
+      meta: t.entries + ' entries' + (t.locked ? ' · locked' : '') + (t.dirty ? ' · unsaved changes' : ''),
+      icon: t.locked ? 'lock' : 'database',
+      iconFg: t.locked ? 'var(--err)' : 'var(--onvar)',
+      rowBg: t.id === s.activeTab ? 'var(--sec)' : 'transparent',
+      pinFg: t.pinned ? 'var(--pri)' : 'var(--onvar)',
+      pinFill: t.pinned ? 1 : 0,
+      go: () => this.setState({ activeTab: t.id, overlay: null }),
+      pin: () => this.setState(st => ({ tabs: st.tabs.map(x => x.id === t.id ? Object.assign({}, x, { pinned: !x.pinned }) : x) }))
+    }));
+
+    const pq = s.paletteQuery;
+    const groups = this.paletteCommands()
+      .map(g => ({ name: g.group, items: this.filterRows(g.items, pq, s.paletteRegex, 'i', c => c.label) }))
+      .filter(g => g.items.length);
+
+    const notifRows = this.filterRows(s.notifications, s.notifQuery, s.notifRegex, 'i', n => {
+      const m = this.m(n.key, n.vars);
+      return m.en + ' ' + m.yue;
+    }).map(n => {
+      const m = this.m(n.key, n.vars);
+      return {
+        en: m.en, yue: m.yue, showYue: bilingual, when: n.when, symbol: n.symbol,
+        accent: n.sev === 'error' ? 'var(--err)' : n.sev === 'warn' ? 'var(--amber)' : 'var(--pri)',
+        bg: n.sev === 'error' ? 'var(--errc)' : n.sev === 'warn' ? 'var(--amberc)' : 'var(--high)'
+      };
+    });
+
+    const snacks = s.snacks.map(sn => {
+      const m = this.m(sn.key, sn.vars);
+      const err = sn.sev === 'error';
+      const warn = sn.sev === 'warn';
+      return {
+        en: m.en, yue: m.yue, showYue: bilingual,
+        symbol: err ? 'error' : warn ? 'warning' : 'check_circle',
+        bg: err ? 'var(--errc)' : warn ? 'var(--amberc)' : 'var(--inv)',
+        fg: err ? 'var(--onerrc)' : warn ? 'var(--onamberc)' : 'var(--oninv)',
+        iconFg: err ? 'var(--err)' : warn ? 'var(--amber)' : 'var(--pri)',
+        actionFg: err ? 'var(--onerrc)' : warn ? 'var(--onamberc)' : 'var(--pri)',
+        hasAction: !!sn.action, actionLabel: sn.action ? sn.action.label : '',
+        act: () => this.setState(st => ({ snacks: st.snacks.filter(x => x.id !== sn.id) })),
+        dismiss: () => this.setState(st => ({ snacks: st.snacks.filter(x => x.id !== sn.id) }))
+      };
+    });
+
+    const fabItems = s.fabOpen ? [
+      { symbol: 'add', label: 'New entry', id: 'entry' },
+      { symbol: 'create_new_folder', label: 'New group', id: 'group' },
+      { symbol: 'casino', label: 'Generate password', id: 'gen' },
+      { symbol: 'construction', label: 'Regex builder', id: 'regex' },
+      { symbol: 'upload_file', label: 'Import…', id: 'import' }
+    ].map((f, i) => ({
+      symbol: f.symbol, label: f.label,
+      delay: (200 + i * 40) + 'ms',
+      run: () => {
+        this.setState({ fabOpen: false });
+        if (f.id === 'regex') this.openBuilder();
+        else if (f.id === 'gen') this.setState({ dest: 'tools' });
+        else if (f.id === 'entry') this.setState({ dest: 'editor' });
+        else this.snack('entrySaved', { name: 'Untitled', db: activeDb ? activeDb.name : 'Personal.kdbx' });
+      }
+    })) : [];
+
+    const c = C[s.contractId];
+    const noMatchMsg = this.m('noResults', { q: pq });
+
+    return {
+      mode: s.mode, seed: s.seed, density: s.density, motion: s.motion, scale: s.scale,
+      lang: s.lang, funnyEn: s.funnyEn, funnyYue: s.funnyYue, dest: s.dest,
+      query: s.query, regexOn: s.regexOn, flags: s.flags, bilingual,
+      chromeSubtitle: activeDb ? '— ' + activeDb.name + (activeDb.dirty ? ' *' : '') : '— no database open',
+      inspectorChipBg: s.inspectorOpen ? 'var(--pric)' : 'transparent',
+
+      dests: dests.map(d => this.railItem(d, false)),
+      bottomDests: dests.slice(0, 5).map(d => this.railItem(d, true)),
+      modeIcon: s.mode === 'dark' ? 'light_mode' : 'dark_mode',
+
+      destTitle: this.t(nav),
+      destTitleYue: nav[1],
+      searchPlaceholder: s.regexOn
+        ? 'PCRE2 pattern — the Qt build runs QRegularExpression'
+        : (bilingual ? 'Search entries · 搵條目' : 'Search entries'),
+      queryFont: s.regexOn ? "'Roboto Mono',monospace" : 'inherit',
+      searchRing: s.searchFocus ? 'var(--pri)' : 'transparent',
+      hasQuery: s.query.length > 0,
+      regexChipBg: s.regexOn ? 'var(--pri)' : 'transparent',
+      regexChipFg: s.regexOn ? 'var(--onpri)' : 'var(--onvar)',
+      regexChipBorder: s.regexOn ? 'var(--pri)' : 'var(--outline)',
+      onQuery: this.onQuery, onSearchFocus: this.onSearchFocus, onSearchBlur: this.onSearchBlur,
+      clearQuery: this.clearQuery, toggleRegex: this.toggleRegex, openBuilder: this.openBuilder,
+
+      visibleTabs: shown.map(tabView),
+      hasOverflow: overflow.length > 0,
+      overflowCount: '+' + overflow.length,
+      overflowTitle: overflow.length + ' more database(s) — never clipped silently',
+      openTabList: this.openTabList,
+
+      isVault: s.dest === 'vault',
+      isReports: s.dest === 'reports',
+      isHistory: s.dest === 'history',
+      isChangelog: s.dest === 'changelog',
+      isSettings: s.dest === 'settings',
+      isAppearance: s.dest === 'appearance',
+      isSheet: ['editor', 'database', 'tools', 'help'].indexOf(s.dest) > -1,
+
+      notifyCopy: this.notifyCopy, notifyRestore: this.notifyRestore,
+      applyAppearance: this.applyAppearance, setContract: this.setContract,
+
+      hasUnread: s.notifications.length > 0,
+      unreadCount: s.notifications.length > 9 ? '9+' : String(s.notifications.length),
+      openNotifications: this.openNotifications, openPalette: this.openPalette,
+      toggleMode: this.toggleMode, lockAll: this.lockAll,
+      toggleInspector: this.toggleInspector, openBottomMore: this.openBottomMore,
+
+      fabOpen: s.fabOpen ? 'true' : 'false',
+      fabItems,
+      fabRadius: s.fabOpen ? '16px' : '28px',
+      fabIconRotate: s.fabOpen ? 'rotate(45deg)' : 'none',
+      fabLabel: s.fabOpen ? 'Close' : (bilingual ? 'New entry · 加' : 'New entry'),
+      toggleFab: this.toggleFab,
+
+      snacks, snackBottom: s.fabOpen ? '360px' : '108px',
+
+      dimSum: !!s.dimSum,
+      dimSumEn: s.dimSum ? s.dimSum.en : '',
+      dimSumYue: s.dimSum ? s.dimSum.yue : '',
+      dimSumNote: s.dimSum ? s.dimSum.note : '',
+      dimSumSlot: s.dimSum ? 'bundled asset · share/dimsum/' + s.dimSum.id + '.png' : '',
+      closeDimSum: this.closeDimSum, disableDimSum: this.disableDimSum,
+
+      overlayIsPalette: s.overlay === 'palette',
+      overlayIsTabs: s.overlay === 'tabs',
+      overlayIsNotifications: s.overlay === 'notifications',
+      overlayIsBuilder: s.overlay === 'builder',
+      closeOverlay: this.closeOverlay, stop: this.stop,
+
+      paletteQuery: pq, onPaletteQuery: this.onPaletteQuery,
+      paletteGroups: groups, paletteEmpty: groups.length === 0,
+      paletteEmptyMsg: noMatchMsg.en,
+      togglePaletteRegex: this.togglePaletteRegex,
+      paletteRegexBg: s.paletteRegex ? 'var(--pri)' : 'transparent',
+      paletteRegexFg: s.paletteRegex ? 'var(--onpri)' : 'var(--onvar)',
+      paletteRegexBorder: s.paletteRegex ? 'var(--pri)' : 'var(--outline)',
+
+      tabQuery: s.tabQuery, onTabQuery: this.onTabQuery, tabListRows: tabRows,
+      tabListEmpty: tabRows.length === 0,
+      tabListEmptyMsg: this.m('noResults', { q: s.tabQuery }).en,
+      tabListHint: 'Drag a tab to reorder · pin to keep it left of the overflow · order and pinning persist across restarts',
+      tabSearchRing: 'transparent', toggleTabRegex: this.toggleTabRegex,
+      tabRegexBg: s.tabRegex ? 'var(--pri)' : 'transparent',
+      tabRegexFg: s.tabRegex ? 'var(--onpri)' : 'var(--onvar)',
+      tabRegexBorder: s.tabRegex ? 'var(--pri)' : 'var(--outline)',
+      openBuilderForTabs: this.openBuilderForTabs,
+
+      notifQuery: s.notifQuery, onNotifQuery: this.onNotifQuery, notifRows,
+      notifEmpty: notifRows.length === 0,
+      notifEmptyMsg: s.notifications.length ? this.m('noResults', { q: s.notifQuery }).en : 'Nothing yet. Dismissed notifications land here.',
+      notifSearchRing: 'transparent', toggleNotifRegex: this.toggleNotifRegex,
+      notifRegexBg: s.notifRegex ? 'var(--pri)' : 'transparent',
+      notifRegexFg: s.notifRegex ? 'var(--onpri)' : 'var(--onvar)',
+      notifRegexBorder: s.notifRegex ? 'var(--pri)' : 'var(--outline)',
+      clearNotifications: this.clearNotifications,
+
+      builderPattern: s.builderPattern, builderAnchor: s.builderAnchor, acceptPattern: this.acceptPattern,
+
+      inspectorOpen: s.inspectorOpen,
+      hasContract: !!c, noContract: !c,
+      cTitle: c ? c.title : '',
+      cClass: c ? c.class : '',
+      cHasReplaces: !!(c && c.replaces), cReplaces: c && c.replaces ? c.replaces : '',
+      cRole: c ? c.role : '', cMetrics: c ? c.metrics : '',
+      cHasConfig: !!(c && c.config && c.config.length), cConfig: c ? c.config : [],
+      cHasSignals: !!(c && c.signals && c.signals.length), cSignals: c ? c.signals : [],
+      cFiles: c ? c.files.map(f => ({
+        kind: f[0].toUpperCase(), path: f[1],
+        bg: f[0] === 'create' ? 'var(--greenc)' : 'var(--amberc)',
+        fg: f[0] === 'create' ? 'var(--ongreenc)' : 'var(--onamberc)'
+      })) : [],
+      cNotes: c ? c.notes : '',
+      uhRules: s.contracts ? s.contracts.UH_RULES : []
+    };
+  }
+}
+</script>
+</body>
+</html>

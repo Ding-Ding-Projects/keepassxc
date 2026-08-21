@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div style="flex:1;min-width:0;display:flex;gap:14px;padding-top:14px">
+
+  <aside data-r="grouppane" data-contract="entrylist" style="width:250px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px;background:var(--low);border-radius:24px;padding:14px 10px;overflow:hidden">
+    <div style="height:44px;flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:0 6px 0 12px;background:var(--cont);border-radius:99px">
+      <span class="sym" style="font-size:18px;color:var(--onvar)">filter_list</span>
+      <input type="text" value="{{ groupQuery }}" onInput="{{ onGroupQuery }}" placeholder="{{ groupPlaceholder }}" aria-label="Filter groups" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13px * var(--scale));font-family:{{ groupFont }}">
+      <button type="button" onClick="{{ toggleGroupRegex }}" title="Regex filter" style="height:26px;flex:0 0 auto;padding:0 9px;border:1px solid {{ groupRegexBorder }};border-radius:99px;background:{{ groupRegexBg }};color:{{ groupRegexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px;padding-right:2px">
+      <sc-for list="{{ groups }}" as="g" hint-placeholder-count="10">
+        <button type="button" onClick="{{ g.go }}" style="height:var(--row);flex:0 0 auto;display:flex;align-items:center;gap:10px;padding-left:{{ g.indent }};padding-right:12px;border:0;border-radius:99px;background:{{ g.bg }};color:{{ g.fg }};cursor:pointer;text-align:left;transition:background 140ms var(--std),border-radius 200ms var(--sp)" style-hover="background:var(--cont)" style-active="border-radius:14px">
+          <span class="sym" style="font-size:19px;flex:0 0 auto;font-variation-settings:'FILL' {{ g.fill }}">{{ g.symbol }}</span>
+          <span style="flex:1;min-width:0;overflow:hidden">
+            <span style="display:block;font-size:calc(13.5px * var(--scale));font-weight:{{ g.weight }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.name }}</span>
+            <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+              <span style="display:block;font-size:calc(10.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g.yue }}</span>
+            </sc-if>
+          </span>
+          <span style="flex:0 0 auto;font-size:calc(11px * var(--scale));color:var(--onvar);font-family:'Roboto Mono',monospace">{{ g.count }}</span>
+        </button>
+      </sc-for>
+      <sc-if value="{{ groupsEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:28px 14px;text-align:center;color:var(--onvar);font-size:calc(12.5px * var(--scale));line-height:1.6;text-wrap:pretty">{{ groupsEmptyMsg }}</div>
+      </sc-if>
+    </div>
+  </aside>
+
+  <section style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;overflow:hidden">
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+      <div style="display:flex;align-items:baseline;gap:9px;min-width:0">
+        <span style="font-size:calc(28px * var(--scale));font-weight:300;letter-spacing:-.3px;white-space:nowrap">{{ countLabel }}</span>
+        <span style="font-size:calc(13px * var(--scale));color:var(--onvar);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ scopeLabel }}</span>
+      </div>
+      <div style="flex:1;min-width:12px"></div>
+      <div role="group" aria-label="Sort" style="display:flex;height:38px;border:1px solid var(--outline);border-radius:99px;overflow:hidden;flex:0 0 auto">
+        <sc-for list="{{ sorts }}" as="s" hint-placeholder-count="3">
+          <button type="button" onClick="{{ s.go }}" aria-pressed="{{ s.on }}" style="height:36px;display:flex;align-items:center;gap:6px;padding:0 16px;border:0;border-right:1px solid var(--outlinevar);background:{{ s.bg }};color:{{ s.fg }};cursor:pointer;font-size:calc(12.5px * var(--scale));font-weight:{{ s.weight }};white-space:nowrap">
+            <span class="sym" style="font-size:16px;opacity:{{ s.checkOpacity }}">check</span>{{ s.label }}
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:6px;flex:0 0 auto">
+        <sc-for list="{{ healthFilters }}" as="h" hint-placeholder-count="4">
+          <button type="button" onClick="{{ h.go }}" style="height:32px;display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid {{ h.border }};border-radius:8px;background:{{ h.bg }};color:{{ h.fg }};cursor:pointer;font-size:calc(11.5px * var(--scale));font-weight:500;white-space:nowrap;transition:border-radius 180ms var(--sp)" style-active="border-radius:16px">
+            <span style="width:8px;height:8px;border-radius:99px;background:{{ h.dot }}"></span>{{ h.label }} {{ h.count }}
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ patternBad }}" hint-placeholder-val="{{ false }}">
+      <div role="alert" style="flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:14px;background:var(--errc);color:var(--onerrc)">
+        <span class="sym" style="font-size:19px;flex:0 0 auto">error</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:calc(13px * var(--scale));line-height:1.5;text-wrap:pretty">{{ patternErrEn }}</div>
+          <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size:calc(12px * var(--scale));opacity:.85;font-family:'Noto Sans HK',sans-serif;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ patternErrYue }}</div>
+          </sc-if>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:3px;padding-right:4px">
+      <sc-for list="{{ rows }}" as="e" hint-placeholder-count="12">
+        <div onClick="{{ e.select }}" tabindex="0" role="button" aria-selected="{{ e.selected }}" style="height:var(--row);flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:0 14px 0 12px;border-radius:16px;background:{{ e.bg }};cursor:pointer;transition:background 140ms var(--std),border-radius 200ms var(--sp)" style-hover="background:var(--cont)" style-active="border-radius:8px">
+          <span style="width:8px;height:8px;flex:0 0 auto;border-radius:99px;background:{{ e.dot }}" title="{{ e.healthLabel }}"></span>
+          <span style="width:34px;height:34px;flex:0 0 auto;border-radius:11px;background:{{ e.avatarBg }};color:{{ e.avatarFg }};display:grid;place-items:center;font-size:calc(13px * var(--scale));font-weight:500">{{ e.initial }}</span>
+          <span style="flex:2;min-width:0;overflow:hidden">
+            <span style="display:block;font-size:calc(14px * var(--scale));font-weight:{{ e.weight }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ e.title }}</span>
+            <span style="display:block;font-size:calc(11.5px * var(--scale));color:var(--onvar);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Roboto Mono',monospace">{{ e.username }}</span>
+          </span>
+          <span style="flex:1.4;min-width:0;font-size:calc(12px * var(--scale));color:var(--onvar);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Roboto Mono',monospace">{{ e.host }}</span>
+          <span style="flex:0 0 auto;display:flex;gap:5px">
+            <sc-for list="{{ e.tags }}" as="tg">
+              <span style="height:22px;display:inline-flex;align-items:center;padding:0 9px;border-radius:6px;background:var(--sec);color:var(--onsec);font-size:calc(10.5px * var(--scale));font-weight:500">{{ tg }}</span>
+            </sc-for>
+          </span>
+          <span style="flex:0 0 auto;width:84px;text-align:right;font-size:calc(11.5px * var(--scale));color:var(--outline);font-family:'Roboto Mono',monospace">{{ e.when }}</span>
+          <span onClick="{{ e.copy }}" title="Copy password" style="flex:0 0 auto;width:34px;height:34px;border-radius:99px;display:grid;place-items:center;color:var(--onvar)" style-hover="background:var(--highest);color:var(--pri)"><span class="sym" style="font-size:18px">content_copy</span></span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ rowsEmpty }}" hint-placeholder-val="{{ false }}">
+        <div style="flex:1;display:grid;place-items:center;padding:40px 20px">
+          <div style="text-align:center;max-width:420px">
+            <span class="sym" style="font-size:52px;color:var(--outlinevar)">{{ emptySymbol }}</span>
+            <div style="font-size:calc(16px * var(--scale));margin-top:14px;line-height:1.5;text-wrap:pretty">{{ emptyEn }}</div>
+            <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:calc(13.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;margin-top:6px;line-height:1.6;text-wrap:pretty">{{ emptyYue }}</div>
+            </sc-if>
+          </div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ loading }}" hint-placeholder-val="{{ true }}">
+        <sc-for list="{{ skeletons }}" as="k" hint-placeholder-count="8">
+          <div style="height:var(--row);flex:0 0 auto;border-radius:16px;background:linear-gradient(90deg,var(--low) 0px,var(--cont) 160px,var(--low) 320px);background-size:640px 100%;animation:kpxc-shimmer 1.1s linear infinite"></div>
+        </sc-for>
+      </sc-if>
+    </div>
+  </section>
+
+  <aside data-r="detail" data-contract="detail" style="width:392px;flex:0 0 auto;display:flex;flex-direction:column;background:var(--low);border-radius:28px;overflow:hidden">
+    <sc-if value="{{ hasSelection }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;min-height:0;display:flex;flex-direction:column">
+        <div style="flex:0 0 auto;padding:22px 22px 18px;background:{{ heroBg }};color:{{ heroFg }}">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+            <span style="height:26px;display:inline-flex;align-items:center;gap:6px;padding:0 11px;border-radius:8px;background:{{ healthChipBg }};color:{{ healthChipFg }};font-size:calc(11px * var(--scale));font-weight:500">
+              <span class="sym" style="font-size:14px">{{ healthSymbol }}</span>{{ healthText }}
+            </span>
+            <div style="flex:1"></div>
+            <button type="button" onClick="{{ editEntry }}" title="Edit" style="width:36px;height:36px;border:0;border-radius:99px;background:rgba(128,128,128,.16);color:inherit;cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px">edit</span></button>
+            <button type="button" onClick="{{ historyEntry }}" title="Revision history" style="width:36px;height:36px;border:0;border-radius:99px;background:rgba(128,128,128,.16);color:inherit;cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px">history</span></button>
+          </div>
+          <div style="font-size:calc(24px * var(--scale));font-weight:400;line-height:1.2;text-wrap:pretty">{{ selTitle }}</div>
+          <div style="font-size:calc(12.5px * var(--scale));opacity:.78;margin-top:4px;font-family:'Roboto Mono',monospace;word-break:break-all">{{ selUrl }}</div>
+        </div>
+
+        <div style="flex:1;min-height:0;overflow-y:auto;padding:16px 18px 20px;display:flex;flex-direction:column;gap:8px">
+          <sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+            <div style="display:flex;align-items:center;gap:12px;min-height:56px;padding:9px 8px 9px 14px;border-radius:14px;background:{{ f.bg }}">
+              <div style="flex:1;min-width:0">
+                <div style="font-size:calc(11px * var(--scale));color:var(--onvar);letter-spacing:.5px;text-transform:uppercase;font-weight:500">{{ f.key }}</div>
+                <div style="font-size:calc(14px * var(--scale));font-family:{{ f.font }};margin-top:2px;word-break:break-all;line-height:1.4">{{ f.value }}</div>
+              </div>
+              <sc-if value="{{ f.protect }}" hint-placeholder-val="{{ false }}">
+                <button type="button" onClick="{{ f.reveal }}" title="Reveal" style="flex:0 0 auto;width:38px;height:38px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--highest)"><span class="sym" style="font-size:19px">{{ f.revealIcon }}</span></button>
+              </sc-if>
+              <button type="button" onClick="{{ f.copy }}" title="Copy" style="flex:0 0 auto;width:38px;height:38px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--highest);color:var(--pri)"><span class="sym" style="font-size:19px">content_copy</span></button>
+            </div>
+          </sc-for>
+
+          <sc-if value="{{ hasNotes }}" hint-placeholder-val="{{ false }}">
+            <div style="padding:14px;border-radius:14px;background:var(--cont)">
+              <div style="font-size:calc(11px * var(--scale));color:var(--onvar);letter-spacing:.5px;text-transform:uppercase;font-weight:500;margin-bottom:6px">{{ notesLabel }}</div>
+              <div style="font-size:calc(13px * var(--scale));line-height:1.6;text-wrap:pretty">{{ selNotes }}</div>
+            </div>
+          </sc-if>
+
+          <sc-if value="{{ hasAttachments }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top:4px">
+              <div style="display:flex;align-items:center;gap:8px;margin:8px 4px 8px">
+                <span style="font-size:calc(11px * var(--scale));color:var(--onvar);letter-spacing:.5px;text-transform:uppercase;font-weight:500">{{ attachLabel }}</span>
+                <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+              </div>
+              <div style="height:38px;display:flex;align-items:center;gap:7px;padding:0 6px 0 12px;background:var(--cont);border-radius:99px;margin-bottom:8px">
+                <span class="sym" style="font-size:16px;color:var(--onvar)">search</span>
+                <input type="text" value="{{ attachQuery }}" onInput="{{ onAttachQuery }}" placeholder="Filter attachments & fields…" aria-label="Filter attachments" style="flex:1;min-width:0;height:34px;border:0;background:transparent;outline:none;font-size:calc(12px * var(--scale))">
+                <button type="button" onClick="{{ toggleAttachRegex }}" style="height:24px;flex:0 0 auto;padding:0 8px;border:1px solid {{ attachRegexBorder }};border-radius:99px;background:{{ attachRegexBg }};color:{{ attachRegexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:10px">.*</button>
+              </div>
+              <sc-for list="{{ attachments }}" as="a">
+                <div style="display:flex;align-items:center;gap:11px;height:48px;padding:0 10px 0 14px;border-radius:12px;background:var(--cont);margin-bottom:5px" style-hover="background:var(--high)">
+                  <span class="sym" style="font-size:19px;color:var(--onvar)">attach_file</span>
+                  <span style="flex:1;min-width:0;font-size:calc(12.5px * var(--scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-family:'Roboto Mono',monospace">{{ a.name }}</span>
+                  <span style="flex:0 0 auto;font-size:calc(11px * var(--scale));color:var(--outline)">{{ a.size }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </sc-if>
+
+          <div style="display:flex;gap:8px;margin-top:8px">
+            <button type="button" onClick="{{ copyPassword }}" style="flex:1;height:44px;border:0;border-radius:99px;background:var(--pri);color:var(--onpri);cursor:pointer;font-size:calc(13.5px * var(--scale));font-weight:500;display:flex;align-items:center;justify-content:center;gap:8px;transition:border-radius 200ms var(--sp)" style-active="border-radius:14px">
+              <span class="sym" style="font-size:19px">content_copy</span>{{ copyBtnLabel }}
+            </button>
+            <button type="button" onClick="{{ openUrl }}" title="Open URL" style="flex:0 0 auto;width:44px;height:44px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:19px">open_in_new</span></button>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+    <sc-if value="{{ noSelection }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:1;display:grid;place-items:center;padding:40px 28px;text-align:center;color:var(--onvar)">
+        <div>
+          <span class="sym" style="font-size:46px;color:var(--outlinevar)">touch_app</span>
+          <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">Select an entry to see its fields. Nothing is decrypted into this pane until you do.</div>
+        </div>
+      </div>
+    </sc-if>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:860},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;funnyYue&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;query&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;regexOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;flags&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gi&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onCopy&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(label: string) =&gt; void&quot;},&quot;onInspect&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(contractId: string) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = {
+    data: null, copy: null,
+    group: 'root',
+    groupQuery: '', groupRegex: false,
+    selected: 'e01',
+    sort: 'title',
+    health: null,
+    revealed: {},
+    attachQuery: '', attachRegex: false,
+    loading: true
+  };
+
+  async componentDidMount() {
+    const [data, copy] = await Promise.all([import('./lib/vault-data.js'), import('./lib/copy.js')]);
+    this.setState({ data, copy });
+    // A short skeleton pass so the loading state is a real state, not a claim.
+    setTimeout(() => this.setState({ loading: false }), 520);
+  }
+
+  t(pair) {
+    const lang = this.props.lang === 'yue' ? 'yue' : 'en';
+    if (!Array.isArray(pair)) return '';
+    return lang === 'yue' ? pair[1] : pair[0];
+  }
+  m(key, vars) {
+    const c = this.state.copy;
+    if (!c) return { en: '', yue: '' };
+    const lvl = this.props.funny != null ? this.props.funny : 5;
+    const en = c.msg(key, lvl, 'en', vars);
+    const yue = c.msg(key, this.props.funnyYue != null ? this.props.funnyYue : lvl, 'yue', vars);
+    return { en: this.props.lang === 'yue' ? yue.yue : en.en, yue: yue.yue };
+  }
+
+  filter(rows, q, regexOn, keyOf) {
+    if (!q || !q.trim()) return { rows, error: null };
+    if (!regexOn) {
+      const needle = q.trim().toLowerCase();
+      return { rows: rows.filter(r => keyOf(r).toLowerCase().includes(needle)), error: null };
+    }
+    try {
+      const re = new RegExp(q, (this.props.flags || 'gi').replace('g', ''));
+      return { rows: rows.filter(r => { re.lastIndex = 0; return re.test(keyOf(r)); }), error: null };
+    } catch (err) {
+      return { rows, error: String(err.message || err) };
+    }
+  }
+
+  hostOf(url) {
+    if (!url) return '—';
+    return url.replace(/^[a-z]+:\/\//i, '').split('/')[0];
+  }
+
+  ago(iso) {
+    const d = new Date(iso);
+    const days = Math.round((Date.now() - d.getTime()) / 86400000);
+    if (days < 1) return 'today';
+    if (days < 30) return days + 'd ago';
+    if (days < 365) return Math.round(days / 30) + 'mo ago';
+    return Math.round(days / 365) + 'y ago';
+  }
+
+  select = id => () => this.setState({ selected: id, revealed: {} });
+  onGroupQuery = e => this.setState({ groupQuery: e.target.value });
+  toggleGroupRegex = () => this.setState(s => ({ groupRegex: !s.groupRegex }));
+  onAttachQuery = e => this.setState({ attachQuery: e.target.value });
+  toggleAttachRegex = () => this.setState(s => ({ attachRegex: !s.attachRegex }));
+  copyField = label => e => {
+    if (e) e.stopPropagation();
+    if (this.props.onCopy) this.props.onCopy(label);
+  };
+
+  renderVals() {
+    const s = this.state;
+    const p = this.props;
+    const d = s.data;
+    const bilingual = p.lang === 'both';
+    const T = s.copy ? s.copy.TERMS : {};
+
+    const allGroups = d ? d.GROUPS : [];
+    const gf = this.filter(allGroups, s.groupQuery, s.groupRegex, g => g.name + ' ' + g.yue);
+    const groups = gf.rows.map(g => ({
+      name: g.name, yue: g.yue, count: g.count, symbol: g.symbol,
+      indent: (12 + g.depth * 16) + 'px',
+      bg: s.group === g.id ? 'var(--sec)' : 'transparent',
+      fg: s.group === g.id ? 'var(--onsec)' : 'var(--on)',
+      weight: s.group === g.id ? '500' : '400',
+      fill: s.group === g.id ? 1 : 0,
+      go: () => this.setState({ group: g.id })
+    }));
+
+    let entries = d ? d.ENTRIES.slice() : [];
+    if (s.group !== 'root') {
+      entries = entries.filter(e => e.group === s.group || e.group.indexOf(s.group + '-') === 0);
+    }
+    if (s.health) entries = entries.filter(e => e.health === s.health);
+
+    const ef = this.filter(entries, p.query || '', !!p.regexOn, e => e.title + ' ' + e.username + ' ' + e.url + ' ' + e.tags.join(' ') + ' ' + e.notes);
+    entries = ef.rows;
+
+    const order = { breached: 0, weak: 1, reused: 2, ok: 3 };
+    if (s.sort === 'title') entries.sort((a, b) => a.title.localeCompare(b.title));
+    else if (s.sort === 'modified') entries.sort((a, b) => new Date(b.modified) - new Date(a.modified));
+    else entries.sort((a, b) => (order[a.health] - order[b.health]) || a.title.localeCompare(b.title));
+
+    const dot = h => h === 'breached' ? 'var(--err)' : h === 'weak' || h === 'reused' ? 'var(--amber)' : 'var(--green)';
+    const healthName = h => ({ ok: T.healthy, weak: T.weak, reused: T.reused, breached: T.breached }[h] || ['Unknown', '唔知']);
+
+    const rows = entries.map(e => ({
+      title: e.title,
+      username: e.username,
+      host: this.hostOf(e.url),
+      when: this.ago(e.modified),
+      tags: e.tags.slice(0, 2),
+      initial: e.title.charAt(0).toUpperCase(),
+      dot: dot(e.health),
+      healthLabel: this.t(healthName(e.health)),
+      selected: e.id === s.selected ? 'true' : 'false',
+      bg: e.id === s.selected ? 'var(--sec)' : 'var(--lowest)',
+      weight: e.id === s.selected ? '500' : '400',
+      avatarBg: e.id === s.selected ? 'var(--pri)' : 'var(--cont)',
+      avatarFg: e.id === s.selected ? 'var(--onpri)' : 'var(--onvar)',
+      select: this.select(e.id),
+      copy: this.copyField(e.title)
+    }));
+
+    const counts = { breached: 0, weak: 0, reused: 0, ok: 0 };
+    (d ? d.ENTRIES : []).forEach(e => { counts[e.health]++; });
+    const hf = [
+      { id: 'breached', label: this.t(T.breached || ['Breached', '洩漏咗']), c: counts.breached, col: 'var(--err)', bgc: 'var(--errc)', fgc: 'var(--onerrc)' },
+      { id: 'weak', label: this.t(T.weak || ['Weak', '弱']), c: counts.weak, col: 'var(--amber)', bgc: 'var(--amberc)', fgc: 'var(--onamberc)' },
+      { id: 'reused', label: this.t(T.reused || ['Reused', '翻用']), c: counts.reused, col: 'var(--amber)', bgc: 'var(--amberc)', fgc: 'var(--onamberc)' },
+      { id: 'ok', label: this.t(T.healthy || ['Healthy', '健康']), c: counts.ok, col: 'var(--green)', bgc: 'var(--greenc)', fgc: 'var(--ongreenc)' }
+    ].map(h => ({
+      label: h.label, count: h.c, dot: h.col,
+      bg: s.health === h.id ? h.bgc : 'transparent',
+      fg: s.health === h.id ? h.fgc : 'var(--onvar)',
+      border: s.health === h.id ? 'transparent' : 'var(--outlinevar)',
+      go: () => this.setState({ health: s.health === h.id ? null : h.id })
+    }));
+
+    const sel = d ? d.ENTRIES.find(e => e.id === s.selected) : null;
+    const extra = sel && d.FIELDS[sel.id] ? d.FIELDS[sel.id] : [];
+    const baseFields = sel ? [
+      { key: this.t(T.username || ['Username', '用戶名']), value: sel.username, protect: false, mono: true },
+      { key: this.t(T.password || ['Password', '密碼']), value: sel.password, protect: true, mono: true },
+      { key: this.t(T.url || ['URL', '網址']), value: sel.url || '—', protect: false, mono: true },
+      { key: this.t(T.modified || ['Modified', '改過']), value: new Date(sel.modified).toISOString().slice(0, 16).replace('T', ' ') + ' UTC', protect: false, mono: true }
+    ].concat(extra.map(f => ({ key: f.key, value: f.value, protect: f.protect, mono: false }))) : [];
+
+    const af = this.filter(baseFields, s.attachQuery, s.attachRegex, f => f.key + ' ' + f.value);
+    const fields = af.rows.map((f, i) => ({
+      key: f.key,
+      value: f.protect && !s.revealed[f.key] ? '••••••••••••••••' : f.value,
+      protect: f.protect,
+      font: f.mono || f.protect ? "'Roboto Mono',monospace" : 'inherit',
+      bg: f.protect ? 'var(--highest)' : 'var(--cont)',
+      revealIcon: s.revealed[f.key] ? 'visibility_off' : 'visibility',
+      reveal: () => this.setState(st => ({ revealed: Object.assign({}, st.revealed, { [f.key]: !st.revealed[f.key] }) })),
+      copy: this.copyField(f.key)
+    }));
+
+    const atts = sel && d.ATTACHMENTS[sel.id] ? d.ATTACHMENTS[sel.id] : [];
+    const attachments = this.filter(atts, s.attachQuery, s.attachRegex, a => a.name).rows;
+
+    const empty = (p.query || '').trim() ? this.m('noResults', { q: p.query }) : this.m('emptyVault', {});
+    const hsel = sel ? sel.health : 'ok';
+
+    return {
+      bilingual,
+      groups, groupsEmpty: groups.length === 0 && !s.loading,
+      groupsEmptyMsg: this.m('noResults', { q: s.groupQuery }).en,
+      groupQuery: s.groupQuery, onGroupQuery: this.onGroupQuery,
+      groupPlaceholder: bilingual ? 'Filter groups · 篩選' : 'Filter groups',
+      groupFont: s.groupRegex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleGroupRegex: this.toggleGroupRegex,
+      groupRegexBg: s.groupRegex ? 'var(--pri)' : 'transparent',
+      groupRegexFg: s.groupRegex ? 'var(--onpri)' : 'var(--onvar)',
+      groupRegexBorder: s.groupRegex ? 'var(--pri)' : 'var(--outline)',
+
+      countLabel: rows.length + (rows.length === 1 ? ' entry' : ' entries'),
+      scopeLabel: (allGroups.find(g => g.id === s.group) || { name: '' }).name + (p.query ? ' · matching “' + p.query + '”' : '') + (p.regexOn ? ' · regex' : ''),
+
+      sorts: [
+        { id: 'title', label: this.t(['Title', '名']) },
+        { id: 'modified', label: this.t(['Modified', '改過']) },
+        { id: 'health', label: this.t(['Health', '健康']) }
+      ].map(x => ({
+        label: x.label,
+        on: s.sort === x.id ? 'true' : 'false',
+        bg: s.sort === x.id ? 'var(--sec)' : 'transparent',
+        fg: s.sort === x.id ? 'var(--onsec)' : 'var(--onvar)',
+        weight: s.sort === x.id ? '500' : '400',
+        checkOpacity: s.sort === x.id ? '1' : '0',
+        go: () => this.setState({ sort: x.id })
+      })),
+      healthFilters: hf,
+
+      patternBad: !!ef.error,
+      patternErrEn: ef.error ? this.m('regexInvalid', { err: ef.error }).en : '',
+      patternErrYue: ef.error ? this.m('regexInvalid', { err: ef.error }).yue : '',
+
+      rows, rowsEmpty: rows.length === 0 && !s.loading,
+      loading: s.loading, skeletons: [1, 2, 3, 4, 5, 6, 7, 8],
+      emptySymbol: (p.query || '').trim() ? 'search_off' : 'inbox',
+      emptyEn: empty.en, emptyYue: empty.yue,
+
+      hasSelection: !!sel, noSelection: !sel,
+      selTitle: sel ? sel.title : '',
+      selUrl: sel ? (sel.url || 'no URL') : '',
+      selNotes: sel ? sel.notes : '',
+      hasNotes: !!(sel && sel.notes),
+      notesLabel: this.t(T.notes || ['Notes', '備註']),
+      attachLabel: this.t(T.attachments || ['Attachments', '附件']),
+      hasAttachments: atts.length > 0,
+      attachments,
+      attachQuery: s.attachQuery, onAttachQuery: this.onAttachQuery,
+      toggleAttachRegex: this.toggleAttachRegex,
+      attachRegexBg: s.attachRegex ? 'var(--pri)' : 'transparent',
+      attachRegexFg: s.attachRegex ? 'var(--onpri)' : 'var(--onvar)',
+      attachRegexBorder: s.attachRegex ? 'var(--pri)' : 'var(--outline)',
+      fields,
+
+      heroBg: hsel === 'breached' ? 'var(--errc)' : hsel === 'ok' ? 'var(--pric)' : 'var(--amberc)',
+      heroFg: hsel === 'breached' ? 'var(--onerrc)' : hsel === 'ok' ? 'var(--onpric)' : 'var(--onamberc)',
+      healthChipBg: 'rgba(128,128,128,.2)',
+      healthChipFg: 'inherit',
+      healthSymbol: hsel === 'breached' ? 'gpp_bad' : hsel === 'ok' ? 'verified_user' : 'warning',
+      healthText: this.t(healthName(hsel)),
+
+      copyBtnLabel: bilingual ? 'Copy password · 抄密碼' : this.t(T.copy || ['Copy password', '抄密碼']),
+      copyPassword: this.copyField('password'),
+      openUrl: () => {},
+      editEntry: () => {},
+      historyEntry: () => {}
+    };
+  }
+}
+</script>
+</body>
+</html>

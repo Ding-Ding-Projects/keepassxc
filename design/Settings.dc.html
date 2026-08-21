@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div data-contract="settings" style="flex:1;min-width:0;display:flex;gap:14px;padding-top:14px;min-height:0">
+
+  <nav data-r="grouppane" aria-label="Settings pages" style="width:266px;flex:0 0 auto;display:flex;flex-direction:column;gap:10px;background:var(--low);border-radius:24px;padding:14px 10px;overflow:hidden">
+    <div style="height:40px;flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:0 6px 0 12px;background:var(--cont);border-radius:99px">
+      <span class="sym" style="font-size:17px;color:var(--onvar)">search</span>
+      <input type="text" value="{{ navQuery }}" onInput="{{ onNavQuery }}" placeholder="Find a page…" aria-label="Find a settings page" style="flex:1;min-width:0;height:36px;border:0;background:transparent;outline:none;font-size:calc(12.5px * var(--scale))">
+    </div>
+    <div style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ pages }}" as="p" hint-placeholder-count="11">
+        <button type="button" onClick="{{ p.go }}" style="min-height:52px;flex:0 0 auto;display:flex;align-items:center;gap:11px;padding:6px 12px;border:0;border-radius:99px;background:{{ p.bg }};color:{{ p.fg }};cursor:pointer;text-align:left;transition:background 140ms var(--std),border-radius 200ms var(--sp)" style-hover="background:var(--cont)" style-active="border-radius:14px">
+          <span class="sym" style="font-size:20px;flex:0 0 auto;font-variation-settings:'FILL' {{ p.fill }}">{{ p.symbol }}</span>
+          <span style="flex:1;min-width:0">
+            <span style="display:block;font-size:calc(13.5px * var(--scale));font-weight:{{ p.weight }};white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.label }}</span>
+            <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+              <span style="display:block;font-size:calc(10.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.yue }}</span>
+            </sc-if>
+          </span>
+          <sc-if value="{{ p.hasHits }}" hint-placeholder-val="{{ false }}">
+            <span style="flex:0 0 auto;min-width:22px;height:20px;padding:0 6px;border-radius:99px;background:var(--pri);color:var(--onpri);font-size:10.5px;font-weight:700;display:grid;place-items:center">{{ p.hits }}</span>
+          </sc-if>
+        </button>
+      </sc-for>
+    </div>
+    <button type="button" style="flex:0 0 auto;height:42px;display:flex;align-items:center;justify-content:center;gap:8px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12px * var(--scale))">
+      <span class="sym" style="font-size:17px">tune</span>Classic editor
+    </button>
+  </nav>
+
+  <section style="flex:1;min-width:0;display:flex;flex-direction:column;gap:12px;min-height:0">
+    <div style="flex:0 0 auto;display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      <div style="height:44px;flex:1;min-width:230px;max-width:520px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px">
+        <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+        <input type="text" value="{{ q }}" onInput="{{ onQ }}" placeholder="{{ searchPlaceholder }}" aria-label="Search settings" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale));font-family:{{ qFont }}">
+        <button type="button" onClick="{{ toggleRegex }}" style="height:28px;flex:0 0 auto;padding:0 10px;border:1px solid {{ regexBorder }};border-radius:99px;background:{{ regexBg }};color:{{ regexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+        <button type="button" title="Regex builder" style="width:32px;height:32px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:17px">construction</span></button>
+      </div>
+      <div style="font-size:calc(12px * var(--scale));color:var(--onvar)">{{ scopeNote }}</div>
+    </div>
+
+    <sc-if value="{{ hasElsewhere }}" hint-placeholder-val="{{ false }}">
+      <div style="flex:0 0 auto;display:flex;align-items:flex-start;gap:10px;padding:12px 16px;border-radius:14px;background:var(--amberc);color:var(--onamberc)">
+        <span class="sym" style="font-size:19px;flex:0 0 auto">info</span>
+        <div style="flex:1;min-width:0">
+          <div style="font-size:calc(12.5px * var(--scale));line-height:1.55;margin-bottom:7px;text-wrap:pretty">{{ elsewhereText }}</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">
+            <sc-for list="{{ elsewhere }}" as="e">
+              <button type="button" onClick="{{ e.go }}" style="height:28px;padding:0 12px;border:1px solid currentColor;border-radius:99px;background:transparent;color:inherit;cursor:pointer;font-size:calc(11.5px * var(--scale))">{{ e.label }} ({{ e.hits }})</button>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </sc-if>
+
+    <div style="flex:1;min-height:0;overflow-y:auto;padding-right:4px;padding-bottom:20px">
+      <div style="margin-bottom:16px">
+        <div style="font-size:calc(28px * var(--scale));font-weight:300;letter-spacing:-.3px;line-height:1.15">{{ pageTitle }}</div>
+        <div style="font-size:calc(12.5px * var(--scale));color:var(--onvar);margin-top:4px;line-height:1.55;text-wrap:pretty">{{ pageBlurb }}</div>
+      </div>
+
+      <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="3">
+        <div style="margin-bottom:18px">
+          <div style="display:flex;align-items:center;gap:9px;margin-bottom:9px">
+            <span style="font-size:calc(11px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">{{ sec.name }}</span>
+            <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+          </div>
+          <div style="border-radius:20px;background:var(--low);overflow:hidden">
+            <sc-for list="{{ sec.rows }}" as="r">
+              <div style="display:flex;align-items:center;gap:14px;min-height:64px;padding:12px 18px;border-bottom:1px solid var(--outlinevar)" style-hover="background:var(--cont)">
+                <div style="flex:1;min-width:0">
+                  <div style="font-size:calc(13.5px * var(--scale));line-height:1.4;text-wrap:pretty">{{ r.label }}</div>
+                  <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);margin-top:3px;line-height:1.5;text-wrap:pretty">{{ r.hint }}</div>
+                  <div style="font-size:calc(10.5px * var(--scale));color:var(--outline);margin-top:4px;font-family:'Roboto Mono',monospace;word-break:break-all">{{ r.key }}</div>
+                </div>
+                <sc-if value="{{ r.isSwitch }}" hint-placeholder-val="{{ true }}">
+                  <button type="button" onClick="{{ r.toggle }}" role="switch" aria-checked="{{ r.on }}" aria-label="{{ r.label }}" style="flex:0 0 auto;width:52px;height:32px;border-radius:99px;border:2px solid {{ r.border }};background:{{ r.track }};cursor:pointer;position:relative;transition:background 160ms var(--std)">
+                    <span style="position:absolute;top:{{ r.knobTop }};left:{{ r.knobLeft }};width:{{ r.knobSize }};height:{{ r.knobSize }};border-radius:99px;background:{{ r.knobBg }};transition:left 160ms var(--sp),width 160ms var(--sp),height 160ms var(--sp),top 160ms var(--sp)"></span>
+                  </button>
+                </sc-if>
+                <sc-if value="{{ r.isValue }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:0 0 auto;height:38px;display:flex;align-items:center;padding:0 14px;border:1px solid var(--outlinevar);border-radius:10px;background:var(--lowest);font-size:calc(12.5px * var(--scale));font-family:'Roboto Mono',monospace;white-space:nowrap">{{ r.value }}</div>
+                </sc-if>
+                <sc-if value="{{ r.isShortcut }}" hint-placeholder-val="{{ false }}">
+                  <div style="flex:0 0 auto;display:flex;gap:4px">
+                    <sc-for list="{{ r.keys }}" as="k">
+                      <kbd style="height:30px;min-width:30px;display:inline-flex;align-items:center;justify-content:center;padding:0 9px;border:1px solid var(--outline);border-bottom-width:2px;border-radius:7px;background:var(--lowest);font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale))">{{ k }}</kbd>
+                    </sc-for>
+                  </div>
+                </sc-if>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+
+      <sc-if value="{{ noRows }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:56px 20px;text-align:center;color:var(--onvar)">
+          <span class="sym" style="font-size:44px;color:var(--outlinevar)">search_off</span>
+          <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">{{ emptyEn }}</div>
+        </div>
+      </sc-if>
+    </div>
+  </section>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;}}">
+class Component extends DCLogic {
+  state = { copy: null, page: 'general', q: '', regex: false, navQuery: '', values: {} };
+
+  // Every row names the real Config key it binds. Rows were MOVED off General
+  // and Security into Auto-Type, Generator and Shortcuts, never copied, so no
+  // key is bound twice.
+  PAGES = [
+    { id: 'general', label: 'General', yue: '一般', symbol: 'settings', blurb: 'Startup, updates and the basics of how the application behaves.', sections: [
+      { name: 'Startup', rows: [
+        ['sw', 'Start minimised to the system tray', 'The window is created but never shown until the tray icon is used.', 'GUI_MinimizeToTray', true],
+        ['sw', 'Remember last opened databases', 'Reopens the tabs that were open at exit, in their saved order.', 'GUI_RememberLastDatabases', true],
+        ['sw', 'Automatically open the previous database', 'Prompts for the key immediately at launch.', 'General_AutoReloadOnChange', false]
+      ] },
+      { name: 'Updates', rows: [
+        ['sw', 'Check for updates at startup', 'One HTTPS request to the release feed. Nothing is sent about your vault.', 'GUI_CheckForUpdates', true],
+        ['sw', 'Include pre-releases', 'Beta builds ship the newest Material work and the newest bugs.', 'GUI_CheckForUpdatesIncludeBetas', false]
+      ] },
+      { name: 'Files', rows: [
+        ['v', 'Backup before saving', 'Keeps N generations beside the database file.', 'Backup_BeforeSave', '3 generations'],
+        ['sw', 'Use atomic saves', 'Writes to a temporary file and renames. Safer on network shares.', 'UseAtomicSaves', true]
+      ] }
+    ] },
+    { id: 'security', label: 'Security', yue: '保安', symbol: 'security', blurb: 'Locking, the clipboard, and what is allowed to stay in memory.', sections: [
+      { name: 'Locking', rows: [
+        ['v', 'Lock after inactivity', 'The database is closed and its key material wiped.', 'Security_LockDatabaseIdleSeconds', '300 s'],
+        ['sw', 'Lock when the session is locked', 'Follows the Windows session lock.', 'Security_LockDatabaseOnScreenLock', true],
+        ['sw', 'Lock when minimised', 'Aggressive, and the right default on a shared machine.', 'Security_LockDatabaseMinimize', false]
+      ] },
+      { name: 'Clipboard', rows: [
+        ['v', 'Clear clipboard after', 'The timer survives the window closing.', 'Security_ClearClipboardTimeout', '10 s'],
+        ['sw', 'Clear search query on lock', 'The query itself can leak which account you were looking at.', 'Security_ClearSearch', true]
+      ] },
+      { name: 'Display', rows: [
+        ['sw', 'Hide passwords in the preview panel', 'Reveal stays per-entry and resets on lock.', 'Security_HidePasswordPreviewPanel', true],
+        ['sw', 'Hide notes by default', 'Notes often carry recovery codes.', 'Security_HideNotes', false]
+      ] }
+    ] },
+    { id: 'autotype', label: 'Auto-Type', yue: '自動輸入', symbol: 'keyboard', blurb: 'Sequences, matching and the global shortcut. Moved here off General.', sections: [
+      { name: 'Behaviour', rows: [
+        ['sw', 'Enable Auto-Type', 'Turns the whole subsystem off, including the global shortcut.', 'Security_EnableAutoType', true],
+        ['v', 'Default sequence', 'Applied when an entry does not override it.', 'AutoType_DefaultSequence', '{USERNAME}{TAB}{PASSWORD}{ENTER}'],
+        ['v', 'Typing delay', 'Milliseconds between simulated keystrokes.', 'AutoType_TypeDelay', '25 ms']
+      ] },
+      { name: 'Matching', rows: [
+        ['sw', 'Match by window title', 'Falls back to the URL field when no title rule matches.', 'AutoType_MatchByTitle', true],
+        ['sw', 'Always ask before performing Auto-Type', 'A confirmation before anything is typed into another window.', 'Security_AutoTypeAsk', true]
+      ] },
+      { name: 'Shortcut', rows: [
+        ['k', 'Global Auto-Type shortcut', 'Registered system-wide; conflicts are reported rather than swallowed.', 'AutoType_GlobalShortcut', ['Ctrl', 'Shift', 'V']]
+      ] }
+    ] },
+    { id: 'generator', label: 'Password generator', yue: '密碼產生器', symbol: 'casino', blurb: 'Defaults for the generator sheet. Moved here off Security.', sections: [
+      { name: 'Character sets', rows: [
+        ['v', 'Default length', 'Applied to a new generated password.', 'Generator_Length', '24'],
+        ['sw', 'Upper case A-Z', '', 'Generator_UpperCase', true],
+        ['sw', 'Lower case a-z', '', 'Generator_LowerCase', true],
+        ['sw', 'Numbers 0-9', '', 'Generator_Numbers', true],
+        ['sw', 'Special characters', '', 'Generator_SpecialChars', true],
+        ['sw', 'Exclude look-alike characters', 'Drops 0/O and 1/l/I so a written-down password can be read back.', 'Generator_ExcludeAlike', true]
+      ] },
+      { name: 'Passphrase', rows: [
+        ['v', 'Word count', '', 'Generator_WordCount', '7'],
+        ['v', 'Word list', '', 'Generator_WordList', 'eff_large.wordlist'],
+        ['v', 'Separator', '', 'Generator_WordSeparator', '-']
+      ] }
+    ] },
+    { id: 'shortcuts', label: 'Shortcuts', yue: '快捷鍵', symbol: 'keyboard_command_key', blurb: 'Read from ActionCollection, so a rebound key shows up here and a new action cannot go missing.', sections: [
+      { name: 'Database', rows: [
+        ['k', 'Open database', '', 'actionDatabaseOpen', ['Ctrl', 'O']],
+        ['k', 'Save database', '', 'actionDatabaseSave', ['Ctrl', 'S']],
+        ['k', 'Lock all databases', '', 'actionLockDatabases', ['Ctrl', 'L']]
+      ] },
+      { name: 'Entries', rows: [
+        ['k', 'New entry', '', 'actionEntryNew', ['Ctrl', 'N']],
+        ['k', 'Copy password', '', 'actionEntryCopyPassword', ['Ctrl', 'C']],
+        ['k', 'Copy username', '', 'actionEntryCopyUsername', ['Ctrl', 'B']]
+      ] },
+      { name: 'Material shell', rows: [
+        ['k', 'Command palette', '', 'actionCommandPalette', ['Ctrl', 'K']],
+        ['k', 'Regex builder', '', 'actionRegexBuilder', ['Ctrl', 'Shift', 'R']],
+        ['k', 'Focus search', '', 'actionFocusSearch', ['/']]
+      ] }
+    ] },
+    { id: 'browser', label: 'Browser integration', yue: '瀏覽器', symbol: 'public', blurb: 'The native messaging bridge and what it is allowed to answer.', sections: [
+      { name: 'Bridge', rows: [
+        ['sw', 'Enable browser integration', 'Installs the native messaging host manifest.', 'Browser_Enabled', true],
+        ['sw', 'Ask before returning credentials', 'Every site asks once and the answer is remembered per entry.', 'Browser_AlwaysAllowAccess', false],
+        ['sw', 'Match URL scheme', 'http:// and https:// are treated as different sites.', 'Browser_MatchUrlScheme', true]
+      ] }
+    ] },
+    { id: 'ssh', label: 'SSH agent', yue: 'SSH', symbol: 'terminal', blurb: 'Keys held in memory for the life of the unlocked database.', sections: [
+      { name: 'Agent', rows: [
+        ['sw', 'Enable SSH agent integration', '', 'SSHAgent_Enabled', true],
+        ['sw', 'Use OpenSSH for Windows', 'Otherwise the Pageant protocol is used.', 'SSHAgent_UseOpenSSH', true],
+        ['sw', 'Remove keys when the database is locked', 'Leaving them loaded defeats the lock.', 'SSHAgent_ClearOnLock', true]
+      ] }
+    ] },
+    { id: 'interface', label: 'Interface', yue: '介面', symbol: 'dashboard', blurb: 'Shell layout, tabs and the notification surface. Appearance has the visual side.', sections: [
+      { name: 'Tabs', rows: [
+        ['sw', 'Show the database tab strip', 'Hiding it does not close anything; the tab list stays reachable.', 'GUI_ShowTabStrip', true],
+        ['sw', 'Persist tab order and pinning', 'Written on reorder, restored at launch.', 'GUI_TabOrder', true],
+        ['sw', 'Overflow into a searchable list', 'Tabs are never clipped silently.', 'GUI_TabOverflow', true]
+      ] },
+      { name: 'Notifications', rows: [
+        ['v', 'Auto-dismiss timeout', 'Errors and warnings ignore this and persist until dismissed.', 'GUI_NotificationTimeout', '4200 ms'],
+        ['v', 'Notification history limit', '', 'GUI_NotificationHistoryLimit', '200'],
+        ['sw', 'Announce notifications to the screen reader', '', 'GUI_NotificationAnnounce', true]
+      ] },
+      { name: 'Search', rows: [
+        ['sw', 'Start every search bar in regex mode', 'Plain text is the default per the design; this opts the whole app in.', 'GUI_SearchRegexDefault', false],
+        ['v', 'Default regex flags', 'Applied to a bar that has no saved flags of its own.', 'GUI_SearchFlags', 'gi']
+      ] }
+    ] },
+    { id: 'history', label: 'History & backups', yue: '歷史同備份', symbol: 'history', blurb: 'The local Git-backed revision store that lives beside the app data directory.', sections: [
+      { name: 'Revision store', rows: [
+        ['sw', 'Keep a local revision history', 'An isolated repository beside the app data directory — never a .git inside your own folder.', 'History_Enabled', true],
+        ['v', 'Retention', 'Older revisions are pruned, oldest first.', 'History_RetentionDays', '365 days'],
+        ['v', 'Maximum revisions per record', '', 'History_MaxRevisions', '200'],
+        ['sw', 'Snapshot settings changes too', 'Settings belong in the same snapshot as the records they configure.', 'History_IncludeSettings', true]
+      ] },
+      { name: 'Entry history', rows: [
+        ['v', 'Maximum history items per entry', 'truncateHistory() drops from the oldest end.', 'HistoryMaxItems', '10'],
+        ['v', 'Maximum history size per entry', '', 'HistoryMaxSize', '6 MiB']
+      ] }
+    ] },
+    { id: 'tools', label: 'External tools', yue: '外部工具', symbol: 'edit_document', blurb: 'The editor that opens the database folder, and where exports go.', sections: [
+      { name: 'External editor', rows: [
+        ['v', 'Editor', 'Detected on this machine. Degrades with a clear message when none is found.', 'GUI_ExternalEditorPath', 'Visual Studio Code'],
+        ['v', 'Arguments', '', 'GUI_ExternalEditorArgs', '--new-window "%1"']
+      ] },
+      { name: 'Export', rows: [
+        ['v', 'Default export format', '', 'Export_DefaultFormat', 'Markdown'],
+        ['sw', 'Warn before an unencrypted export', 'A plaintext CSV of a password vault is a plaintext password vault.', 'Export_WarnUnencrypted', true]
+      ] }
+    ] },
+    { id: 'advanced', label: 'Advanced', yue: '進階', symbol: 'code', blurb: 'Diagnostics and the settings that are easy to regret.', sections: [
+      { name: 'Diagnostics', rows: [
+        ['sw', 'Enable verbose logging', 'Never logs secrets, field values or attachment bytes.', 'Advanced_VerboseLogging', false],
+        ['sw', 'Allow screen capture', 'Off by default: WinUtils applies WDA_EXCLUDEFROMCAPTURE to every window, so screenshots come back black until this is on.', 'Advanced_AllowScreenCapture', false]
+      ] },
+      { name: 'Experimental', rows: [
+        ['sw', 'Material shell', 'Turning this off restores the stock three-pane widget.', 'GUI_MaterialShell', true],
+        ['sw', 'Custom window chrome', 'Windows only.', 'GUI_CustomWindowChrome', true]
+      ] }
+    ] }
+  ];
+
+  async componentDidMount() {
+    const copy = await import('./lib/copy.js');
+    this.setState({ copy });
+  }
+
+  onQ = e => this.setState({ q: e.target.value });
+  onNavQuery = e => this.setState({ navQuery: e.target.value });
+  toggleRegex = () => this.setState(s => ({ regex: !s.regex }));
+
+  match(text) {
+    const q = this.state.q.trim();
+    if (!q) return true;
+    if (!this.state.regex) return text.toLowerCase().includes(q.toLowerCase());
+    try { return new RegExp(q, 'i').test(text); } catch (_) { return true; }
+  }
+
+  rowText(r) { return r[1] + ' ' + r[2] + ' ' + r[3] + ' ' + (Array.isArray(r[4]) ? r[4].join(' ') : String(r[4])); }
+
+  hitsFor(page) {
+    if (!this.state.q.trim()) return 0;
+    let n = 0;
+    page.sections.forEach(sec => sec.rows.forEach(r => { if (this.match(this.rowText(r))) n++; }));
+    return n;
+  }
+
+  renderVals() {
+    const s = this.state;
+    const bilingual = this.props.lang === 'both';
+    const navQ = s.navQuery.trim().toLowerCase();
+
+    const pages = this.PAGES.filter(p => !navQ || (p.label + ' ' + p.yue).toLowerCase().includes(navQ)).map(p => {
+      const hits = this.hitsFor(p);
+      return {
+        label: p.label, yue: p.yue, symbol: p.symbol,
+        bg: s.page === p.id ? 'var(--sec)' : 'transparent',
+        fg: s.page === p.id ? 'var(--onsec)' : 'var(--on)',
+        weight: s.page === p.id ? '500' : '400',
+        fill: s.page === p.id ? 1 : 0,
+        hasHits: hits > 0 && s.page !== p.id,
+        hits: String(hits),
+        go: () => this.setState({ page: p.id })
+      };
+    });
+
+    const page = this.PAGES.find(p => p.id === s.page) || this.PAGES[0];
+
+    const setV = key => () => this.setState(st => ({ values: Object.assign({}, st.values, { [key]: !(st.values[key] != null ? st.values[key] : true) }) }));
+
+    const sections = page.sections.map(sec => ({
+      name: sec.name,
+      rows: sec.rows.filter(r => this.match(this.rowText(r))).map(r => {
+        const [type, label, hint, key, val] = r;
+        const on = s.values[key] != null ? s.values[key] : val === true;
+        return {
+          label, hint: hint || '—', key,
+          isSwitch: type === 'sw', isValue: type === 'v', isShortcut: type === 'k',
+          value: type === 'v' ? String(val) : '',
+          keys: type === 'k' ? val : [],
+          on: on ? 'true' : 'false',
+          track: on ? 'var(--pri)' : 'var(--highest)',
+          border: on ? 'var(--pri)' : 'var(--outline)',
+          knobBg: on ? 'var(--onpri)' : 'var(--outline)',
+          knobSize: on ? '22px' : '14px',
+          knobLeft: on ? '24px' : '7px',
+          knobTop: on ? '3px' : '7px',
+          toggle: type === 'sw' ? setV(key) : (() => {})
+        };
+      })
+    })).filter(sec => sec.rows.length > 0);
+
+    // State plainly when a match sits on a different tab.
+    const elsewhere = s.q.trim() ? this.PAGES.filter(p => p.id !== page.id).map(p => ({
+      label: p.label, hits: this.hitsFor(p), id: p.id
+    })).filter(x => x.hits > 0).map(x => ({
+      label: x.label, hits: String(x.hits), go: () => this.setState({ page: x.id })
+    })) : [];
+
+    const total = sections.reduce((a, x) => a + x.rows.length, 0);
+
+    return {
+      bilingual, pages,
+      navQuery: s.navQuery, onNavQuery: this.onNavQuery,
+      q: s.q, onQ: this.onQ, qFont: s.regex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleRegex: this.toggleRegex,
+      regexBg: s.regex ? 'var(--pri)' : 'transparent',
+      regexFg: s.regex ? 'var(--onpri)' : 'var(--onvar)',
+      regexBorder: s.regex ? 'var(--pri)' : 'var(--outline)',
+      searchPlaceholder: 'Search this page — labels, descriptions and current values',
+      scopeNote: s.q.trim() ? total + ' row(s) on this page' : '11 pages · each searchable, each wired to the builder',
+
+      hasElsewhere: elsewhere.length > 0,
+      elsewhere,
+      elsewhereText: 'Matches for “' + s.q + '” also sit on other pages:',
+
+      pageTitle: page.label + (bilingual ? ' · ' + page.yue : ''),
+      pageBlurb: page.blurb,
+      sections, noRows: total === 0,
+      emptyEn: 'Nothing on this page matches “' + s.q + '”.'
+    };
+  }
+}
+</script>
+</body>
+</html>

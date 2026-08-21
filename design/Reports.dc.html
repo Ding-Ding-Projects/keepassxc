@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div data-contract="reports" style="flex:1;min-width:0;display:flex;flex-direction:column;padding-top:14px;min-height:0">
+
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:12px;margin-bottom:14px;flex-wrap:wrap">
+    <div style="height:44px;flex:1;min-width:240px;max-width:520px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px">
+      <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+      <input type="text" value="{{ q }}" onInput="{{ onQ }}" placeholder="Search findings…" aria-label="Search findings" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale));font-family:{{ qFont }}">
+      <button type="button" onClick="{{ toggleRegex }}" style="height:28px;flex:0 0 auto;padding:0 10px;border:1px solid {{ regexBorder }};border-radius:99px;background:{{ regexBg }};color:{{ regexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+    </div>
+    <div style="flex:1"></div>
+    <button type="button" style="height:40px;display:flex;align-items:center;gap:8px;padding:0 16px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12.5px * var(--scale))"><span class="sym" style="font-size:18px">download</span>Export Markdown</button>
+  </div>
+
+  <div style="flex:0 0 auto;display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:14px">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+      <div style="padding:18px 20px 16px;border-radius:24px;background:{{ s.bg }};color:{{ s.fg }}">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:4px">
+          <span class="sym" style="font-size:18px">{{ s.symbol }}</span>
+          <span style="font-size:calc(11.5px * var(--scale));font-weight:500;letter-spacing:.4px">{{ s.label }}</span>
+        </div>
+        <div style="font-size:calc(44px * var(--scale));font-weight:300;line-height:1.05;letter-spacing:-1px">{{ s.value }}</div>
+        <div style="font-size:calc(11px * var(--scale));opacity:.78;margin-top:2px;font-family:'Noto Sans HK',sans-serif">{{ s.yue }}</div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column;gap:10px;padding-right:4px;padding-bottom:20px">
+    <sc-for list="{{ cards }}" as="c" hint-placeholder-count="6">
+      <section style="border-radius:24px;background:var(--low);overflow:hidden">
+        <button type="button" onClick="{{ c.toggle }}" aria-expanded="{{ c.open }}" style="width:100%;display:flex;align-items:center;gap:14px;padding:18px 20px;border:0;background:transparent;color:var(--on);cursor:pointer;text-align:left">
+          <span style="width:44px;height:44px;flex:0 0 auto;border-radius:14px;background:{{ c.chipBg }};color:{{ c.chipFg }};display:grid;place-items:center">
+            <span class="sym" style="font-size:22px">{{ c.symbol }}</span>
+          </span>
+          <span style="flex:1;min-width:0">
+            <span style="display:flex;align-items:baseline;gap:9px">
+              <span style="font-size:calc(16px * var(--scale));font-weight:500">{{ c.title }}</span>
+              <sc-if value="{{ bilingual }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif">{{ c.yue }}</span>
+              </sc-if>
+            </span>
+            <span style="display:block;font-size:calc(12.5px * var(--scale));color:var(--onvar);margin-top:3px;line-height:1.5;text-wrap:pretty">{{ c.blurb }}</span>
+          </span>
+          <span style="flex:0 0 auto;min-width:44px;height:32px;padding:0 13px;border-radius:99px;background:{{ c.chipBg }};color:{{ c.chipFg }};font-size:calc(14px * var(--scale));font-weight:500;display:grid;place-items:center">{{ c.count }}</span>
+          <span class="sym" style="flex:0 0 auto;font-size:22px;color:var(--onvar);transition:transform 200ms var(--sp);transform:{{ c.arrow }}">expand_more</span>
+        </button>
+        <sc-if value="{{ c.expanded }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 20px 18px">
+            <sc-for list="{{ c.rows }}" as="r">
+              <div style="display:flex;align-items:center;gap:12px;height:52px;padding:0 14px;border-radius:14px;background:var(--lowest);margin-bottom:5px" style-hover="background:var(--cont)">
+                <span style="width:8px;height:8px;flex:0 0 auto;border-radius:99px;background:{{ c.dot }}"></span>
+                <span style="flex:1;min-width:0;font-size:calc(13.5px * var(--scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</span>
+                <span style="flex:0 0 auto;font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Roboto Mono',monospace">{{ r.host }}</span>
+                <button type="button" style="flex:0 0 auto;height:32px;padding:0 13px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(11.5px * var(--scale))">Fix</button>
+              </div>
+            </sc-for>
+            <sc-if value="{{ c.noRows }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:22px;text-align:center;color:var(--onvar);font-size:calc(12.5px * var(--scale));line-height:1.55;text-wrap:pretty">{{ c.emptyText }}</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </section>
+    </sc-for>
+    <sc-if value="{{ noCards }}" hint-placeholder-val="{{ false }}">
+      <div style="padding:56px 20px;text-align:center;color:var(--onvar)">
+        <span class="sym" style="font-size:44px;color:var(--outlinevar)">search_off</span>
+        <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">{{ emptyEn }}</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:860},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;query&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;regexOn&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;},&quot;flags&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gi&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+class Component extends DCLogic {
+  state = { data: null, copy: null, q: '', regex: false, open: { breached: true } };
+
+  async componentDidMount() {
+    const [data, copy] = await Promise.all([import('./lib/vault-data.js'), import('./lib/copy.js')]);
+    this.setState({ data, copy });
+  }
+
+  onQ = e => this.setState({ q: e.target.value });
+  toggleRegex = () => this.setState(s => ({ regex: !s.regex }));
+
+  match(text) {
+    const q = this.state.q.trim();
+    if (!q) return true;
+    if (!this.state.regex) return text.toLowerCase().includes(q.toLowerCase());
+    try { return new RegExp(q, 'i').test(text); } catch (_) { return true; }
+  }
+
+  renderVals() {
+    const s = this.state;
+    const d = s.data;
+    const reports = d ? d.REPORTS : [];
+    const entries = d ? d.ENTRIES : [];
+    const bilingual = this.props.lang === 'both';
+
+    const sev = {
+      error: ['var(--errc)', 'var(--onerrc)', 'var(--err)'],
+      amber: ['var(--amberc)', 'var(--onamberc)', 'var(--amber)'],
+      green: ['var(--greenc)', 'var(--ongreenc)', 'var(--green)'],
+      neutral: ['var(--cont)', 'var(--on)', 'var(--outline)']
+    };
+
+    const hostOf = name => {
+      const e = entries.find(x => x.title === name);
+      return e ? (e.url || '').replace(/^[a-z]+:\/\//i, '').split('/')[0] : '—';
+    };
+
+    const cards = reports.filter(r => this.match(r.title + ' ' + r.yue + ' ' + r.blurb + ' ' + r.rows.join(' '))).map(r => {
+      const open = !!s.open[r.id];
+      const [bg, fg, dot] = sev[r.severity] || sev.neutral;
+      return {
+        title: r.title, yue: r.yue, blurb: r.blurb, count: String(r.count),
+        symbol: r.symbol, chipBg: bg, chipFg: fg, dot,
+        open: open ? 'true' : 'false', expanded: open,
+        arrow: open ? 'rotate(180deg)' : 'none',
+        rows: r.rows.map(n => ({ name: n, host: hostOf(n) })),
+        noRows: r.rows.length === 0,
+        emptyText: r.id === 'health'
+          ? 'Nothing to list — these entries have no finding against them.'
+          : 'This report has no per-entry rows; it summarises the database as a whole.',
+        toggle: () => this.setState(st => ({ open: Object.assign({}, st.open, { [r.id]: !st.open[r.id] }) }))
+      };
+    });
+
+    const counts = { breached: 0, weak: 0, reused: 0, ok: 0 };
+    entries.forEach(e => counts[e.health]++);
+
+    return {
+      bilingual,
+      q: s.q, onQ: this.onQ, qFont: s.regex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleRegex: this.toggleRegex,
+      regexBg: s.regex ? 'var(--pri)' : 'transparent',
+      regexFg: s.regex ? 'var(--onpri)' : 'var(--onvar)',
+      regexBorder: s.regex ? 'var(--pri)' : 'var(--outline)',
+
+      stats: [
+        { label: 'Health score', value: '78', yue: '健康分', symbol: 'ecg_heart', bg: 'var(--pric)', fg: 'var(--onpric)' },
+        { label: 'Breached', value: String(counts.breached), yue: '洩漏咗', symbol: 'gpp_bad', bg: 'var(--errc)', fg: 'var(--onerrc)' },
+        { label: 'Needs work', value: String(counts.weak + counts.reused), yue: '要執', symbol: 'warning', bg: 'var(--amberc)', fg: 'var(--onamberc)' },
+        { label: 'Healthy', value: String(counts.ok), yue: '健康', symbol: 'verified_user', bg: 'var(--greenc)', fg: 'var(--ongreenc)' }
+      ],
+      cards, noCards: cards.length === 0 && reports.length > 0,
+      emptyEn: 'Nothing in the reports matches “' + s.q + '”. Try a shorter query, or switch regex off and search like a normal person.'
+    };
+  }
+}
+</script>
+</body>
+</html>

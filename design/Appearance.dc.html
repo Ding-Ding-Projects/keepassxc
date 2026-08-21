@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div style="flex:1;min-width:0;display:flex;flex-direction:column;padding-top:14px;min-height:0">
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap">
+    <div style="height:44px;flex:1;min-width:240px;max-width:520px;display:flex;align-items:center;gap:8px;padding:0 8px 0 14px;background:var(--high);border-radius:99px">
+      <span class="sym" style="font-size:19px;color:var(--onvar)">search</span>
+      <input type="text" value="{{ query }}" onInput="{{ onQuery }}" placeholder="Search appearance settings…" aria-label="Search appearance settings" style="flex:1;min-width:0;height:40px;border:0;background:transparent;outline:none;font-size:calc(13.5px * var(--scale));font-family:{{ queryFont }}">
+      <button type="button" onClick="{{ toggleRegex }}" style="height:28px;flex:0 0 auto;padding:0 10px;border:1px solid {{ regexBorder }};border-radius:99px;background:{{ regexBg }};color:{{ regexFg }};cursor:pointer;font-family:'Roboto Mono',monospace;font-size:11px">.*</button>
+      <button type="button" onClick="{{ openBuilder }}" title="Regex builder" style="width:32px;height:32px;flex:0 0 auto;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center"><span class="sym" style="font-size:17px">construction</span></button>
+    </div>
+    <div style="font-size:calc(12px * var(--scale));color:var(--onvar);white-space:nowrap">{{ matchNote }}</div>
+  </div>
+
+  <div style="flex:1;min-height:0;overflow-y:auto;display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:14px;align-content:start;padding-right:4px;padding-bottom:20px">
+
+    <sc-if value="{{ showTheme }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--low);border-radius:24px;padding:20px 22px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <span class="sym" style="font-size:20px;color:var(--pri)">palette</span>
+          <span style="font-size:calc(16px * var(--scale));font-weight:500">Theme</span>
+        </div>
+        <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;margin-bottom:16px">主題 · 改咗即刻見到，唔使 restart</div>
+
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Mode · GUI_ApplicationTheme</div>
+        <div style="display:flex;gap:6px;margin-bottom:20px">
+          <sc-for list="{{ modes }}" as="m" hint-placeholder-count="3">
+            <button type="button" onClick="{{ m.go }}" style="flex:1;height:44px;display:flex;align-items:center;justify-content:center;gap:7px;border:1px solid {{ m.border }};border-radius:12px;background:{{ m.bg }};color:{{ m.fg }};cursor:pointer;font-size:calc(12.5px * var(--scale));font-weight:{{ m.weight }};transition:border-radius 200ms var(--sp)" style-active="border-radius:22px">
+              <span class="sym" style="font-size:18px">{{ m.symbol }}</span>{{ m.label }}
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Seed palette · GUI_MaterialSeed</div>
+        <div style="display:flex;gap:10px;margin-bottom:20px">
+          <sc-for list="{{ seeds }}" as="s" hint-placeholder-count="4">
+            <button type="button" onClick="{{ s.go }}" title="{{ s.title }}" aria-pressed="{{ s.on }}" style="flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;border:0;background:transparent;cursor:pointer;padding:0">
+              <span style="width:100%;height:48px;border-radius:{{ s.radius }};background:{{ s.swatch }};border:3px solid {{ s.ring }};display:grid;place-items:center;transition:border-radius 240ms var(--sp),border-color 160ms var(--std)">
+                <span class="sym" style="font-size:20px;color:#fff;opacity:{{ s.checkOpacity }}">check</span>
+              </span>
+              <span style="font-size:calc(10.5px * var(--scale));color:{{ s.labelFg }};text-align:center;line-height:1.25">{{ s.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Density · GUI_MaterialDensity — row height {{ rowPx }}</div>
+        <div style="display:flex;gap:6px">
+          <sc-for list="{{ densities }}" as="d" hint-placeholder-count="3">
+            <button type="button" onClick="{{ d.go }}" style="flex:1;height:40px;border:1px solid {{ d.border }};border-radius:10px;background:{{ d.bg }};color:{{ d.fg }};cursor:pointer;font-size:calc(12px * var(--scale));font-weight:{{ d.weight }}">{{ d.label }}</button>
+          </sc-for>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ showType }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--low);border-radius:24px;padding:20px 22px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <span class="sym" style="font-size:20px;color:var(--pri)">text_fields</span>
+          <span style="font-size:calc(16px * var(--scale));font-weight:500">Typography</span>
+        </div>
+        <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;margin-bottom:16px">字型 · CJK fallback 永遠掛住，唔會變豆腐字</div>
+
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Family · GUI_FontFamily</div>
+        <div style="display:flex;flex-direction:column;gap:5px;margin-bottom:18px">
+          <sc-for list="{{ families }}" as="f" hint-placeholder-count="4">
+            <button type="button" onClick="{{ f.go }}" style="display:flex;align-items:center;gap:10px;height:46px;padding:0 14px;border:1px solid {{ f.border }};border-radius:12px;background:{{ f.bg }};color:{{ f.fg }};cursor:pointer;text-align:left">
+              <span class="sym" style="font-size:17px;opacity:{{ f.checkOpacity }}">check</span>
+              <span style="flex:1;min-width:0;font-family:{{ f.stack }};font-size:calc(13.5px * var(--scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ f.sample }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Size scale · GUI_FontScale</span>
+          <span style="font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri)">{{ scaleLabel }}</span>
+        </div>
+        <input type="range" min="0.85" max="1.4" step="0.05" value="{{ scale }}" onInput="{{ onScale }}" aria-label="Font size scale" style="width:100%;accent-color:var(--pri);margin-bottom:18px">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Weight · GUI_FontWeight</span>
+          <span style="font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri)">{{ weight }}</span>
+        </div>
+        <div style="display:flex;gap:6px">
+          <sc-for list="{{ weights }}" as="w" hint-placeholder-count="3">
+            <button type="button" onClick="{{ w.go }}" style="flex:1;height:38px;border:1px solid {{ w.border }};border-radius:10px;background:{{ w.bg }};color:{{ w.fg }};cursor:pointer;font-size:calc(12px * var(--scale));font-weight:{{ w.fontWeight }}">{{ w.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="margin-top:18px;padding:16px;border-radius:16px;background:var(--lowest);border:1px solid var(--outlinevar)">
+          <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:10px">Live preview</div>
+          <div style="font-size:calc(22px * var(--scale));line-height:1.25">AWS — production root</div>
+          <div style="font-size:calc(14px * var(--scale));color:var(--onvar);margin-top:4px;font-family:'Noto Sans HK',sans-serif">帶子蝦餃 · 筍尖蝦餃 · 腸粉</div>
+          <div style="font-size:calc(13px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri);margin-top:6px">ops@acme.example · ••••3391</div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ showVoice }}" hint-placeholder-val="{{ true }}">
+      <section data-contract="language" style="background:var(--low);border-radius:24px;padding:20px 22px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <span class="sym" style="font-size:20px;color:var(--pri)">translate</span>
+          <span style="font-size:calc(16px * var(--scale));font-weight:500">Language &amp; voice</span>
+        </div>
+        <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;margin-bottom:16px">語言同語氣 · 講法會變，講嘅嘢唔會變</div>
+
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:8px">Mode · GUI_Language</div>
+        <div style="display:flex;gap:6px;margin-bottom:20px">
+          <sc-for list="{{ langs }}" as="l" hint-placeholder-count="3">
+            <button type="button" onClick="{{ l.go }}" style="flex:1;height:52px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;border:1px solid {{ l.border }};border-radius:12px;background:{{ l.bg }};color:{{ l.fg }};cursor:pointer">
+              <span style="font-size:calc(12.5px * var(--scale));font-weight:{{ l.weight }}">{{ l.label }}</span>
+              <span style="font-size:calc(10.5px * var(--scale));opacity:.72;font-family:'Noto Sans HK',sans-serif">{{ l.native }}</span>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Funny level · English · GUI_FunnyLevelEn</span>
+          <span style="font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri)">{{ funnyEn }}/5</span>
+        </div>
+        <input type="range" min="1" max="5" step="1" value="{{ funnyEn }}" onInput="{{ onFunnyEn }}" aria-label="Funny level, English" style="width:100%;accent-color:var(--pri);margin-bottom:14px">
+
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">粵語搞笑程度 · GUI_FunnyLevelYue</span>
+          <span style="font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri)">{{ funnyYue }}/5</span>
+        </div>
+        <input type="range" min="1" max="5" step="1" value="{{ funnyYue }}" onInput="{{ onFunnyYue }}" aria-label="Funny level, Cantonese" style="width:100%;accent-color:var(--pri);margin-bottom:16px">
+
+        <div style="padding:14px 16px;border-radius:16px;background:var(--lowest);border:1px solid var(--outlinevar)">
+          <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:10px">Same facts, different voice</div>
+          <sc-for list="{{ voiceSamples }}" as="v" hint-placeholder-count="3">
+            <div style="margin-bottom:12px">
+              <div style="font-size:calc(9.5px * var(--scale));letter-spacing:.7px;text-transform:uppercase;color:var(--outline);margin-bottom:3px">{{ v.key }}</div>
+              <div style="font-size:calc(12.5px * var(--scale));line-height:1.55;text-wrap:pretty">{{ v.en }}</div>
+              <div style="font-size:calc(12px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;line-height:1.6;margin-top:2px;text-wrap:pretty">{{ v.yue }}</div>
+            </div>
+          </sc-for>
+          <div style="font-size:calc(11px * var(--scale));color:var(--outline);line-height:1.6;padding-top:8px;border-top:1px solid var(--outlinevar);text-wrap:pretty">Every level names the same file, the same account and the same irreversible action. The level changes how it reads, never what it says.</div>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding:12px 14px;border-radius:14px;background:var(--cont)">
+          <span class="sym" style="font-size:20px;color:var(--onvar)">record_voice_over</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:calc(12.5px * var(--scale))">Spoken narrator</div>
+            <div style="font-size:calc(11px * var(--scale));color:var(--onvar);line-height:1.5;text-wrap:pretty">Off by default. Serialised so utterances never overlap; yields to an active screen reader.</div>
+          </div>
+          <button type="button" onClick="{{ toggleNarrator }}" role="switch" aria-checked="{{ narrator }}" style="flex:0 0 auto;width:52px;height:32px;border-radius:99px;border:2px solid {{ narratorBorder }};background:{{ narratorTrack }};cursor:pointer;position:relative;transition:background 160ms var(--std)">
+            <span style="position:absolute;top:{{ narratorTop }};left:{{ narratorLeft }};width:{{ narratorKnob }};height:{{ narratorKnob }};border-radius:99px;background:{{ narratorKnobBg }};transition:left 160ms var(--sp),width 160ms var(--sp),height 160ms var(--sp),top 160ms var(--sp)"></span>
+          </button>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ showOverrides }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--low);border-radius:24px;padding:20px 22px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:4px">
+          <span class="sym" style="font-size:20px;color:var(--pri)">tune</span>
+          <span style="font-size:calc(16px * var(--scale));font-weight:500">Element overrides</span>
+        </div>
+        <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;margin-bottom:14px">逐件改 · 每件都存得住，撳一下 reset 就返返原狀</div>
+
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+          <sc-for list="{{ elements }}" as="e" hint-placeholder-count="6">
+            <button type="button" onClick="{{ e.go }}" style="height:32px;padding:0 13px;border:1px solid {{ e.border }};border-radius:8px;background:{{ e.bg }};color:{{ e.fg }};cursor:pointer;font-size:calc(11.5px * var(--scale));transition:border-radius 180ms var(--sp)" style-active="border-radius:16px">{{ e.label }}</button>
+          </sc-for>
+        </div>
+
+        <div style="padding:16px;border-radius:16px;background:var(--lowest);border:1px solid var(--outlinevar)">
+          <div style="display:flex;align-items:center;gap:8px;margin-bottom:14px">
+            <span style="font-size:calc(13px * var(--scale));font-weight:500">{{ currentElement }}</span>
+            <div style="flex:1"></div>
+            <button type="button" onClick="{{ resetElement }}" style="height:28px;padding:0 12px;border:1px solid var(--outlinevar);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(11px * var(--scale))">Reset</button>
+          </div>
+          <sc-for list="{{ overrideControls }}" as="o" hint-placeholder-count="4">
+            <div style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:5px">
+                <span style="font-size:calc(11px * var(--scale));color:var(--onvar)">{{ o.label }}</span>
+                <span style="font-size:calc(11px * var(--scale));font-family:'Roboto Mono',monospace;color:var(--pri)">{{ o.value }}</span>
+              </div>
+              <input type="range" min="{{ o.min }}" max="{{ o.max }}" step="{{ o.step }}" value="{{ o.raw }}" onInput="{{ o.set }}" aria-label="{{ o.label }}" style="width:100%;accent-color:var(--pri)">
+            </div>
+          </sc-for>
+          <div style="margin-top:14px;padding:14px;border-radius:12px;background:var(--cont);display:flex;align-items:center;gap:12px">
+            <span style="width:{{ previewW }};height:{{ previewH }};border-radius:{{ previewR }};background:var(--sec);color:var(--onsec);display:grid;place-items:center;font-size:{{ previewFs }};transition:all 180ms var(--std)">{{ currentElement }}</span>
+          </div>
+          <div style="font-size:calc(10.5px * var(--scale));color:var(--outline);margin-top:10px;font-family:'Roboto Mono',monospace;word-break:break-all;line-height:1.6">GUI_ElementOverrides["{{ currentKey }}"] = {{ overrideJson }}</div>
+        </div>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ showMotion }}" hint-placeholder-val="{{ true }}">
+      <section style="background:var(--low);border-radius:24px;padding:20px 22px">
+        <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px">
+          <span class="sym" style="font-size:20px;color:var(--pri)">animation</span>
+          <span style="font-size:calc(16px * var(--scale));font-weight:500">Motion &amp; extras</span>
+        </div>
+        <sc-for list="{{ toggles }}" as="t" hint-placeholder-count="4">
+          <div style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:14px;background:var(--lowest);margin-bottom:7px">
+            <span class="sym" style="font-size:20px;color:var(--onvar);flex:0 0 auto">{{ t.symbol }}</span>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:calc(12.5px * var(--scale))">{{ t.label }}</div>
+              <div style="font-size:calc(11px * var(--scale));color:var(--onvar);line-height:1.5;text-wrap:pretty">{{ t.hint }}</div>
+            </div>
+            <button type="button" onClick="{{ t.go }}" role="switch" aria-checked="{{ t.on }}" style="flex:0 0 auto;width:52px;height:32px;border-radius:99px;border:2px solid {{ t.border }};background:{{ t.track }};cursor:pointer;position:relative;transition:background 160ms var(--std)">
+              <span style="position:absolute;top:{{ t.knobTop }};left:{{ t.knobLeft }};width:{{ t.knobSize }};height:{{ t.knobSize }};border-radius:99px;background:{{ t.knobBg }};transition:left 160ms var(--sp),width 160ms var(--sp),height 160ms var(--sp),top 160ms var(--sp)"></span>
+            </button>
+          </div>
+        </sc-for>
+        <button type="button" onClick="{{ forceDimSum }}" style="width:100%;height:44px;margin-top:8px;border:1px solid var(--outline);border-radius:12px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(12.5px * var(--scale));display:flex;align-items:center;justify-content:center;gap:8px">
+          <span class="sym" style="font-size:18px">restaurant</span>Show a dim sum now (the real draw is 1% per launch)
+        </button>
+      </section>
+    </sc-if>
+
+    <sc-if value="{{ nothingMatches }}" hint-placeholder-val="{{ false }}">
+      <div style="grid-column:1/-1;padding:56px 20px;text-align:center;color:var(--onvar)">
+        <span class="sym" style="font-size:44px;color:var(--outlinevar)">search_off</span>
+        <div style="font-size:calc(14px * var(--scale));margin-top:12px;line-height:1.55;text-wrap:pretty">{{ emptyEn }}</div>
+        <div style="font-size:calc(12.5px * var(--scale));color:var(--outline);font-family:'Noto Sans HK',sans-serif;margin-top:4px">{{ emptyYue }}</div>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1200,&quot;height&quot;:860},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;mode&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;seed&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;keepass&quot;,&quot;purple&quot;,&quot;green&quot;,&quot;amber&quot;],&quot;default&quot;:&quot;purple&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;density&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;compact&quot;,&quot;comfortable&quot;,&quot;spacious&quot;],&quot;default&quot;:&quot;comfortable&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;scale&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:0.85,&quot;max&quot;:1.4,&quot;step&quot;:0.05,&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;},&quot;funnyEn&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;funnyYue&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;motion&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;on&quot;,&quot;off&quot;],&quot;default&quot;:&quot;on&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onChange&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(patch: object) =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = {
+    copy: null,
+    query: '', regex: false,
+    weight: 400,
+    family: 'roboto',
+    element: 'Entry row',
+    overrides: {},
+    narrator: false,
+    dimSumEnabled: true,
+    highContrast: false,
+    railSublabels: true
+  };
+
+  ELEMENTS = {
+    'Entry row': { key: 'material/entryRow', h: [40, 88, 52], r: [0, 28, 16], fs: [11, 20, 14] },
+    'Nav rail': { key: 'material/navigationRail', h: [48, 96, 56], r: [0, 28, 17], fs: [9, 16, 11] },
+    'Tab': { key: 'material/tabStrip/tab', h: [30, 56, 38], r: [0, 28, 19], fs: [11, 18, 13] },
+    'Search bar': { key: 'material/searchBar', h: [40, 72, 52], r: [0, 28, 26], fs: [12, 20, 15] },
+    'Snackbar': { key: 'material/snackbar', h: [44, 96, 60], r: [0, 28, 12], fs: [11, 18, 14] },
+    'FAB': { key: 'material/fab', h: [40, 80, 56], r: [0, 28, 28], fs: [12, 20, 15] }
+  };
+
+  async componentDidMount() {
+    const copy = await import('./lib/copy.js');
+    this.setState({ copy });
+  }
+
+  push(patch) { if (this.props.onChange) this.props.onChange(patch); }
+
+  onQuery = e => this.setState({ query: e.target.value });
+  toggleRegex = () => this.setState(s => ({ regex: !s.regex }));
+  onScale = e => this.push({ scale: parseFloat(e.target.value) });
+  onFunnyEn = e => this.push({ funnyEn: parseInt(e.target.value, 10) });
+  onFunnyYue = e => this.push({ funnyYue: parseInt(e.target.value, 10) });
+  toggleNarrator = () => this.setState(s => ({ narrator: !s.narrator }));
+
+  matches(text) {
+    const q = this.state.query.trim();
+    if (!q) return true;
+    if (!this.state.regex) return text.toLowerCase().includes(q.toLowerCase());
+    try { return new RegExp(q, 'i').test(text); } catch (_) { return true; }
+  }
+
+  toggle(label, hint, symbol, on, go) {
+    return {
+      label, hint, symbol, on: on ? 'true' : 'false',
+      track: on ? 'var(--pri)' : 'var(--highest)',
+      border: on ? 'var(--pri)' : 'var(--outline)',
+      knobBg: on ? 'var(--onpri)' : 'var(--outline)',
+      knobSize: on ? '22px' : '14px',
+      knobLeft: on ? '24px' : '7px',
+      knobTop: on ? '3px' : '7px',
+      go
+    };
+  }
+
+  renderVals() {
+    const s = this.state;
+    const p = this.props;
+    const c = s.copy;
+    const scale = p.scale != null ? p.scale : 1;
+    const funnyEn = p.funnyEn != null ? p.funnyEn : 5;
+    const funnyYue = p.funnyYue != null ? p.funnyYue : 5;
+
+    const seedInfo = [
+      { id: 'keepass', label: 'KeePassXC blue', swatch: '#006493' },
+      { id: 'purple', label: 'Baseline purple', swatch: '#6750a4' },
+      { id: 'green', label: 'Vault green', swatch: '#1b7f37' },
+      { id: 'amber', label: 'Signal amber', swatch: '#9a6700' }
+    ];
+
+    const el = this.ELEMENTS[s.element];
+    const ov = s.overrides[s.element] || { h: el.h[2], r: el.r[2], fs: el.fs[2] };
+
+    const setOv = k => e => {
+      const v = parseInt(e.target.value, 10);
+      this.setState(st => ({ overrides: Object.assign({}, st.overrides, { [st.element]: Object.assign({}, ov, { [k]: v }) }) }));
+    };
+
+    const samples = c ? ['clipboardCopied', 'deleteConfirm', 'saveError'].map(k => {
+      const vars = { name: 'AWS — production root', db: 'Personal.kdbx' };
+      return {
+        key: k,
+        en: c.msg(k, funnyEn, 'en', vars).en,
+        yue: c.msg(k, funnyYue, 'yue', vars).yue
+      };
+    }) : [];
+
+    const showTheme = this.matches('theme mode light dark seed palette density row height GUI_ApplicationTheme GUI_MaterialSeed GUI_MaterialDensity');
+    const showType = this.matches('typography font family size scale weight CJK fallback GUI_FontFamily GUI_FontScale GUI_FontWeight preview');
+    const showVoice = this.matches('language voice cantonese english bilingual funny level narrator GUI_Language GUI_FunnyLevelEn GUI_FunnyLevelYue 粵語 語言');
+    const showOverrides = this.matches('element overrides radius spacing size font per element reset GUI_ElementOverrides');
+    const showMotion = this.matches('motion reduced animation dim sum surprise contrast rail sublabels GUI_DimSumEnabled');
+
+    const empty = c ? c.msg('noResults', funnyEn, 'en', { q: s.query }) : { en: '', yue: '' };
+    const emptyY = c ? c.msg('noResults', funnyYue, 'yue', { q: s.query }) : { yue: '' };
+    const shown = [showTheme, showType, showVoice, showOverrides, showMotion].filter(Boolean).length;
+
+    return {
+      query: s.query, onQuery: this.onQuery,
+      queryFont: s.regex ? "'Roboto Mono',monospace" : 'inherit',
+      toggleRegex: this.toggleRegex,
+      regexBg: s.regex ? 'var(--pri)' : 'transparent',
+      regexFg: s.regex ? 'var(--onpri)' : 'var(--onvar)',
+      regexBorder: s.regex ? 'var(--pri)' : 'var(--outline)',
+      openBuilder: () => {},
+      matchNote: s.query.trim() ? shown + ' of 5 sections match' : '5 sections · every one searchable',
+
+      showTheme, showType, showVoice, showOverrides, showMotion,
+      nothingMatches: shown === 0,
+      emptyEn: empty.en, emptyYue: emptyY.yue,
+
+      modes: [
+        { id: 'light', label: 'Light', symbol: 'light_mode' },
+        { id: 'dark', label: 'Dark', symbol: 'dark_mode' },
+        { id: 'auto', label: 'Auto', symbol: 'brightness_auto' }
+      ].map(m => ({
+        label: m.label, symbol: m.symbol,
+        bg: p.mode === m.id ? 'var(--sec)' : 'transparent',
+        fg: p.mode === m.id ? 'var(--onsec)' : 'var(--onvar)',
+        border: p.mode === m.id ? 'transparent' : 'var(--outlinevar)',
+        weight: p.mode === m.id ? '500' : '400',
+        go: () => this.push({ mode: m.id === 'auto' ? 'light' : m.id })
+      })),
+
+      seeds: seedInfo.map(x => ({
+        label: x.label, title: x.label, swatch: x.swatch,
+        on: p.seed === x.id ? 'true' : 'false',
+        ring: p.seed === x.id ? 'var(--on)' : 'transparent',
+        radius: p.seed === x.id ? '16px' : '26px',
+        checkOpacity: p.seed === x.id ? '1' : '0',
+        labelFg: p.seed === x.id ? 'var(--on)' : 'var(--onvar)',
+        go: () => this.push({ seed: x.id })
+      })),
+
+      rowPx: { compact: '40px', comfortable: '52px', spacious: '64px' }[p.density] || '52px',
+      densities: [
+        { id: 'compact', label: 'Compact' },
+        { id: 'comfortable', label: 'Comfortable' },
+        { id: 'spacious', label: 'Spacious' }
+      ].map(d => ({
+        label: d.label,
+        bg: p.density === d.id ? 'var(--sec)' : 'transparent',
+        fg: p.density === d.id ? 'var(--onsec)' : 'var(--onvar)',
+        border: p.density === d.id ? 'transparent' : 'var(--outlinevar)',
+        weight: p.density === d.id ? '500' : '400',
+        go: () => this.push({ density: d.id })
+      })),
+
+      families: [
+        { id: 'roboto', stack: "Roboto,'Noto Sans HK',sans-serif", sample: 'Roboto · 帶子蝦餃 · 0123' },
+        { id: 'system', stack: "system-ui,'Noto Sans HK',sans-serif", sample: 'System UI · 帶子蝦餃 · 0123' },
+        { id: 'noto', stack: "'Noto Sans HK',Roboto,sans-serif", sample: 'Noto Sans HK · 帶子蝦餃 · 0123' },
+        { id: 'mono', stack: "'Roboto Mono','Noto Sans HK',monospace", sample: 'Roboto Mono · 帶子蝦餃 · 0123' }
+      ].map(f => ({
+        stack: f.stack, sample: f.sample,
+        checkOpacity: s.family === f.id ? '1' : '0',
+        bg: s.family === f.id ? 'var(--sec)' : 'var(--lowest)',
+        fg: s.family === f.id ? 'var(--onsec)' : 'var(--on)',
+        border: s.family === f.id ? 'transparent' : 'var(--outlinevar)',
+        go: () => this.setState({ family: f.id })
+      })),
+
+      scale: String(scale),
+      scaleLabel: Math.round(scale * 100) + '%',
+      onScale: this.onScale,
+      weight: String(s.weight),
+      weights: [
+        { v: 300, label: 'Light' }, { v: 400, label: 'Regular' }, { v: 500, label: 'Medium' }
+      ].map(w => ({
+        label: w.label, fontWeight: String(w.v),
+        bg: s.weight === w.v ? 'var(--sec)' : 'transparent',
+        fg: s.weight === w.v ? 'var(--onsec)' : 'var(--onvar)',
+        border: s.weight === w.v ? 'transparent' : 'var(--outlinevar)',
+        go: () => this.setState({ weight: w.v })
+      })),
+
+      langs: [
+        { id: 'en', label: 'English', native: 'English' },
+        { id: 'yue', label: 'Cantonese', native: '廣東話' },
+        { id: 'both', label: 'Bilingual', native: 'English + 粵' }
+      ].map(l => ({
+        label: l.label, native: l.native,
+        bg: p.lang === l.id ? 'var(--sec)' : 'transparent',
+        fg: p.lang === l.id ? 'var(--onsec)' : 'var(--onvar)',
+        border: p.lang === l.id ? 'transparent' : 'var(--outlinevar)',
+        weight: p.lang === l.id ? '500' : '400',
+        go: () => this.push({ lang: l.id })
+      })),
+      funnyEn: String(funnyEn), funnyYue: String(funnyYue),
+      onFunnyEn: this.onFunnyEn, onFunnyYue: this.onFunnyYue,
+      voiceSamples: samples,
+
+      narrator: s.narrator ? 'true' : 'false',
+      narratorTrack: s.narrator ? 'var(--pri)' : 'var(--highest)',
+      narratorBorder: s.narrator ? 'var(--pri)' : 'var(--outline)',
+      narratorKnobBg: s.narrator ? 'var(--onpri)' : 'var(--outline)',
+      narratorKnob: s.narrator ? '22px' : '14px',
+      narratorLeft: s.narrator ? '24px' : '7px',
+      narratorTop: s.narrator ? '3px' : '7px',
+      toggleNarrator: this.toggleNarrator,
+
+      elements: Object.keys(this.ELEMENTS).map(k => ({
+        label: k,
+        bg: s.element === k ? 'var(--sec)' : 'transparent',
+        fg: s.element === k ? 'var(--onsec)' : 'var(--onvar)',
+        border: s.element === k ? 'transparent' : 'var(--outlinevar)',
+        go: () => this.setState({ element: k })
+      })),
+      currentElement: s.element,
+      currentKey: el.key,
+      resetElement: () => this.setState(st => {
+        const next = Object.assign({}, st.overrides);
+        delete next[st.element];
+        return { overrides: next };
+      }),
+      overrideControls: [
+        { label: 'Height', value: ov.h + ' px', raw: String(ov.h), min: String(el.h[0]), max: String(el.h[1]), step: '1', set: setOv('h') },
+        { label: 'Corner radius', value: ov.r + ' px', raw: String(ov.r), min: String(el.r[0]), max: String(el.r[1]), step: '1', set: setOv('r') },
+        { label: 'Label size', value: ov.fs + ' px', raw: String(ov.fs), min: String(el.fs[0]), max: String(el.fs[1]), step: '1', set: setOv('fs') }
+      ],
+      previewW: '160px', previewH: ov.h + 'px', previewR: ov.r + 'px', previewFs: ov.fs + 'px',
+      overrideJson: JSON.stringify({ height: ov.h, radius: ov.r, fontSize: ov.fs }),
+
+      toggles: [
+        this.toggle('Reduced motion', 'Also honoured automatically from the OS preference.', 'motion_photos_off', p.motion === 'off', () => this.push({ motion: p.motion === 'off' ? 'on' : 'off' })),
+        this.toggle('Dim sum surprise', '1% chance per launch. Bundled local images, never a network fetch.', 'restaurant', s.dimSumEnabled, () => this.setState(st => ({ dimSumEnabled: !st.dimSumEnabled }))),
+        this.toggle('Rail sublabels', 'Live counts under each destination, not empty strings.', 'label', s.railSublabels, () => this.setState(st => ({ railSublabels: !st.railSublabels }))),
+        this.toggle('Increase contrast', 'Raises outline and on-surface contrast for low-vision use.', 'contrast', s.highContrast, () => this.setState(st => ({ highContrast: !st.highContrast })))
+      ],
+      forceDimSum: () => this.push({ forceDimSum: Date.now() })
+    };
+  }
+}
+</script>
+</body>
+</html>

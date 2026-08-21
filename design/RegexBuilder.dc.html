@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="./lib/kpxc.css">
+<script src="./lib/fonts.js"></script>
+</helmet>
+
+<div style="flex:1;min-height:0;display:flex;flex-direction:column;background:var(--low);color:var(--on)">
+
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:14px;padding:18px 22px 14px">
+    <span class="sym" style="font-size:24px;color:var(--pri)">construction</span>
+    <div style="min-width:0">
+      <div style="font-size:calc(19px * var(--scale));font-weight:500;line-height:1.2">Regex builder</div>
+      <div style="font-size:calc(11.5px * var(--scale));color:var(--onvar);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">Anchored to: <strong style="font-weight:500">{{ anchor }}</strong> · 砌完會寫返落嗰個搜尋欄</div>
+    </div>
+    <div style="flex:1"></div>
+    <div role="group" aria-label="Dialect" style="display:flex;height:36px;border:1px solid var(--outline);border-radius:99px;overflow:hidden">
+      <sc-for list="{{ dialects }}" as="d" hint-placeholder-count="3">
+        <button type="button" onClick="{{ d.go }}" style="height:34px;padding:0 15px;border:0;border-right:1px solid var(--outlinevar);background:{{ d.bg }};color:{{ d.fg }};cursor:pointer;font-size:calc(12px * var(--scale));font-weight:{{ d.weight }};white-space:nowrap">{{ d.label }}</button>
+      </sc-for>
+    </div>
+    <button type="button" onClick="{{ close }}" style="width:38px;height:38px;border:0;border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;display:grid;place-items:center" style-hover="background:var(--cont)"><span class="sym" style="font-size:20px">close</span></button>
+  </div>
+
+  <div style="flex:1;min-height:0;display:flex;gap:16px;padding:0 22px">
+
+    <div style="width:400px;flex:0 0 auto;display:flex;flex-direction:column;gap:12px;min-height:0;overflow-y:auto;padding-right:4px">
+
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Pattern</span>
+          <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+          <span style="font-size:calc(10.5px * var(--scale));color:var(--outline);font-family:'Roboto Mono',monospace">{{ patternLen }}/512</span>
+        </div>
+        <div style="display:flex;align-items:stretch;border:2px solid {{ patternRing }};border-radius:14px;background:var(--lowest);overflow:hidden">
+          <span style="flex:0 0 auto;width:24px;display:grid;place-items:center;background:var(--cont);color:var(--onvar);font-family:'Roboto Mono',monospace;font-size:14px">/</span>
+          <textarea value="{{ pattern }}" onInput="{{ onPattern }}" spellcheck="false" aria-label="Regular expression pattern" style="flex:1;min-width:0;min-height:78px;border:0;background:transparent;outline:none;padding:11px 10px;font-family:'Roboto Mono',monospace;font-size:calc(13.5px * var(--scale));line-height:1.6;resize:vertical;color:var(--on)"></textarea>
+          <span style="flex:0 0 auto;width:24px;display:grid;place-items:center;background:var(--cont);color:var(--onvar);font-family:'Roboto Mono',monospace;font-size:14px">/</span>
+        </div>
+      </div>
+
+      <div>
+        <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:7px">Flags · {{ flagDialect }}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <sc-for list="{{ flagChips }}" as="f" hint-placeholder-count="6">
+            <button type="button" onClick="{{ f.go }}" title="{{ f.title }}" style="height:32px;display:flex;align-items:center;gap:6px;padding:0 12px;border:1px solid {{ f.border }};border-radius:8px;background:{{ f.bg }};color:{{ f.fg }};cursor:pointer;font-size:calc(11.5px * var(--scale));font-family:'Roboto Mono',monospace;transition:border-radius 180ms var(--sp)" style-active="border-radius:16px">
+              <span class="sym" style="font-size:14px;opacity:{{ f.checkOpacity }}">check</span>{{ f.label }}
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ hasRisk }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display:flex;gap:10px;padding:12px 14px;border-radius:14px;background:var(--amberc);color:var(--onamberc)">
+          <span class="sym" style="font-size:19px;flex:0 0 auto;margin-top:1px">warning</span>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:calc(12.5px * var(--scale));font-weight:500;margin-bottom:4px">Backtracking risk</div>
+            <sc-for list="{{ risks }}" as="r">
+              <div style="font-size:calc(12px * var(--scale));line-height:1.55;text-wrap:pretty">· {{ r.en }}</div>
+            </sc-for>
+            <div style="font-size:calc(11.5px * var(--scale));opacity:.85;margin-top:5px;line-height:1.55;font-family:'Noto Sans HK',sans-serif;text-wrap:pretty">評估有 120ms 上限，行唔完就停，唔會拖死成個 app。</div>
+          </div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ hasError }}" hint-placeholder-val="{{ false }}">
+        <div role="alert" style="display:flex;gap:10px;padding:12px 14px;border-radius:14px;background:var(--errc);color:var(--onerrc)">
+          <span class="sym" style="font-size:19px;flex:0 0 auto;margin-top:1px">error</span>
+          <div style="flex:1;min-width:0;font-size:calc(12.5px * var(--scale));line-height:1.55;font-family:'Roboto Mono',monospace;word-break:break-word">{{ error }}</div>
+        </div>
+      </sc-if>
+
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Token blocks</span>
+          <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+          <span style="font-size:calc(10.5px * var(--scale));color:var(--outline)">drag to reorder</span>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;min-height:44px;padding:9px;border:1px dashed var(--outlinevar);border-radius:14px;background:var(--lowest)">
+          <sc-for list="{{ tokens }}" as="t" hint-placeholder-count="0">
+            <span draggable="true" onDragStart="{{ t.dragStart }}" onDragOver="{{ t.dragOver }}" onDrop="{{ t.drop }}" onClick="{{ t.remove }}" title="{{ t.title }}" style="height:30px;display:inline-flex;align-items:center;gap:6px;padding:0 10px;border-radius:8px;background:{{ t.bg }};color:{{ t.fg }};cursor:grab;font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));user-select:none;max-width:100%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+              <span class="sym" style="font-size:13px;opacity:.65">drag_indicator</span>{{ t.text }}
+            </span>
+          </sc-for>
+          <sc-if value="{{ noTokens }}" hint-placeholder-val="{{ true }}">
+            <span style="font-size:calc(12px * var(--scale));color:var(--outline);padding:5px 4px">Type a pattern above, or start from a preset.</span>
+          </sc-if>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+          <sc-for list="{{ inserts }}" as="i" hint-placeholder-count="10">
+            <button type="button" onClick="{{ i.go }}" title="{{ i.title }}" style="height:28px;padding:0 10px;border:1px solid var(--outlinevar);border-radius:8px;background:transparent;color:var(--onvar);cursor:pointer;font-family:'Roboto Mono',monospace;font-size:calc(11px * var(--scale))" style-hover="background:var(--cont);color:var(--on)">{{ i.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:7px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Pattern library</span>
+          <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+        </div>
+        <div style="height:38px;display:flex;align-items:center;gap:7px;padding:0 12px;background:var(--cont);border-radius:99px;margin-bottom:8px">
+          <span class="sym" style="font-size:16px;color:var(--onvar)">search</span>
+          <input type="text" value="{{ presetQuery }}" onInput="{{ onPresetQuery }}" placeholder="Search presets…" aria-label="Search presets" style="flex:1;min-width:0;height:34px;border:0;background:transparent;outline:none;font-size:calc(12px * var(--scale))">
+        </div>
+        <div style="display:flex;flex-direction:column;gap:4px">
+          <sc-for list="{{ presets }}" as="p" hint-placeholder-count="6">
+            <button type="button" onClick="{{ p.go }}" style="display:flex;align-items:center;gap:10px;min-height:46px;padding:7px 12px;border:0;border-radius:12px;background:var(--lowest);color:var(--on);cursor:pointer;text-align:left" style-hover="background:var(--cont)">
+              <span class="sym" style="font-size:17px;color:var(--pri);flex:0 0 auto">bookmark</span>
+              <span style="flex:1;min-width:0">
+                <span style="display:block;font-size:calc(12.5px * var(--scale));white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.name }}</span>
+                <span style="display:block;font-size:calc(10.5px * var(--scale));color:var(--onvar);font-family:'Roboto Mono',monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.pattern }}</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;min-height:0">
+      <div role="tablist" style="flex:0 0 auto;display:flex;gap:6px">
+        <sc-for list="{{ tabs }}" as="t" hint-placeholder-count="5">
+          <button type="button" role="tab" aria-selected="{{ t.on }}" onClick="{{ t.go }}" style="height:36px;display:flex;align-items:center;gap:7px;padding:0 15px;border:1px solid {{ t.border }};border-radius:99px;background:{{ t.bg }};color:{{ t.fg }};cursor:pointer;font-size:calc(12.5px * var(--scale));font-weight:{{ t.weight }};white-space:nowrap;transition:border-radius 180ms var(--sp)" style-active="border-radius:12px">
+            <span class="sym" style="font-size:16px">{{ t.symbol }}</span>{{ t.label }}
+            <sc-if value="{{ t.hasBadge }}" hint-placeholder-val="{{ false }}">
+              <span style="min-width:20px;height:19px;padding:0 6px;border-radius:99px;background:{{ t.badgeBg }};color:{{ t.badgeFg }};font-size:10.5px;font-weight:700;display:grid;place-items:center">{{ t.badge }}</span>
+            </sc-if>
+          </button>
+        </sc-for>
+      </div>
+
+      <div style="flex:0 0 auto">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+          <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">Sample text</span>
+          <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+          <span style="font-size:calc(10.5px * var(--scale));color:var(--outline);font-family:'Roboto Mono',monospace">{{ sampleLen }}/20000 · {{ elapsed }}</span>
+        </div>
+        <textarea value="{{ sample }}" onInput="{{ onSample }}" spellcheck="false" aria-label="Sample text" style="width:100%;height:96px;border:1px solid var(--outlinevar);border-radius:14px;background:var(--lowest);outline:none;padding:11px 13px;font-family:'Roboto Mono',monospace;font-size:calc(12.5px * var(--scale));line-height:1.65;resize:vertical;color:var(--on)"></textarea>
+      </div>
+
+      <div style="flex:1;min-height:0;overflow-y:auto;border-radius:16px;background:var(--lowest);padding:2px 0">
+
+        <sc-if value="{{ tabMatches }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="display:grid;grid-template-columns:52px 74px 1fr {{ groupCols }};gap:0;position:sticky;top:0;background:var(--cont);z-index:1">
+              <div style="padding:9px 12px;font-size:calc(10.5px * var(--scale));font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--onvar)">#</div>
+              <div style="padding:9px 12px;font-size:calc(10.5px * var(--scale));font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--onvar)">At</div>
+              <div style="padding:9px 12px;font-size:calc(10.5px * var(--scale));font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--onvar)">Match</div>
+              <sc-for list="{{ groupHeads }}" as="g">
+                <div style="padding:9px 12px;font-size:calc(10.5px * var(--scale));font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--pri);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ g }}</div>
+              </sc-for>
+            </div>
+            <sc-for list="{{ matchRows }}" as="m" hint-placeholder-count="0">
+              <div style="display:grid;grid-template-columns:52px 74px 1fr {{ groupCols }};border-bottom:1px solid var(--outlinevar)" style-hover="background:var(--cont)">
+                <div style="padding:9px 12px;font-size:calc(11.5px * var(--scale));color:var(--outline);font-family:'Roboto Mono',monospace">{{ m.n }}</div>
+                <div style="padding:9px 12px;font-size:calc(11.5px * var(--scale));color:var(--outline);font-family:'Roboto Mono',monospace">{{ m.at }}</div>
+                <div style="padding:9px 12px;font-size:calc(12px * var(--scale));font-family:'Roboto Mono',monospace;word-break:break-all"><span style="background:var(--sec);color:var(--onsec);padding:1px 4px;border-radius:4px">{{ m.text }}</span></div>
+                <sc-for list="{{ m.groups }}" as="g">
+                  <div style="padding:9px 12px;font-size:calc(11.5px * var(--scale));font-family:'Roboto Mono',monospace;word-break:break-all;color:var(--onvar)">{{ g }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noMatches }}" hint-placeholder-val="{{ false }}">
+              <div style="padding:44px 20px;text-align:center;color:var(--onvar)">
+                <span class="sym" style="font-size:38px;color:var(--outlinevar)">search_off</span>
+                <div style="font-size:calc(13.5px * var(--scale));margin-top:10px;line-height:1.55;text-wrap:pretty">{{ noMatchEn }}</div>
+                <div style="font-size:calc(12px * var(--scale));color:var(--outline);font-family:'Noto Sans HK',sans-serif;margin-top:4px">{{ noMatchYue }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ timedOut }}" hint-placeholder-val="{{ false }}">
+              <div style="margin:10px 12px;padding:11px 14px;border-radius:12px;background:var(--amberc);color:var(--onamberc);font-size:calc(12px * var(--scale));line-height:1.55;text-wrap:pretty">Evaluation hit the 120 ms budget and stopped early. The matches above are real; there may be more.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabExplain }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:6px 0">
+            <sc-for list="{{ explain }}" as="t" hint-placeholder-count="0">
+              <div style="display:flex;gap:12px;padding:11px 16px;border-bottom:1px solid var(--outlinevar)">
+                <span style="flex:0 0 auto;min-width:64px;padding:4px 9px;border-radius:7px;background:{{ t.bg }};color:{{ t.fg }};font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));text-align:center;height:fit-content;word-break:break-all">{{ t.text }}</span>
+                <span style="flex:1;min-width:0">
+                  <span style="display:block;font-size:calc(12.5px * var(--scale));line-height:1.5;text-wrap:pretty">{{ t.en }}</span>
+                  <span style="display:block;font-size:calc(11.5px * var(--scale));color:var(--onvar);font-family:'Noto Sans HK',sans-serif;line-height:1.55;margin-top:2px;text-wrap:pretty">{{ t.yue }}</span>
+                </span>
+                <span style="flex:0 0 auto;font-size:calc(10px * var(--scale));color:var(--outline);letter-spacing:.5px;text-transform:uppercase;align-self:center">{{ t.type }}</span>
+              </div>
+            </sc-for>
+            <sc-if value="{{ noTokens }}" hint-placeholder-val="{{ true }}">
+              <div style="padding:44px 20px;text-align:center;color:var(--onvar);font-size:calc(13px * var(--scale))">Nothing to explain yet — the pattern is empty.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabReplace }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px">
+            <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin-bottom:7px">Replacement · $1 $&lt;name&gt; $&amp;</div>
+            <input type="text" value="{{ replacement }}" onInput="{{ onReplacement }}" spellcheck="false" aria-label="Replacement" style="width:100%;height:42px;border:1px solid var(--outlinevar);border-radius:12px;background:var(--low);outline:none;padding:0 13px;font-family:'Roboto Mono',monospace;font-size:calc(12.5px * var(--scale));color:var(--on)">
+            <div style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500;margin:16px 0 7px">Result</div>
+            <pre style="margin:0;padding:14px;border-radius:12px;background:var(--low);font-family:'Roboto Mono',monospace;font-size:calc(12px * var(--scale));line-height:1.7;white-space:pre-wrap;word-break:break-word;color:var(--on);max-height:240px;overflow:auto">{{ replaced }}</pre>
+            <div style="margin-top:12px;padding:11px 14px;border-radius:12px;background:var(--cont);font-size:calc(11.5px * var(--scale));line-height:1.6;color:var(--onvar);text-wrap:pretty">Qt uses <span style="font-family:'Roboto Mono',monospace">\\1</span> and <span style="font-family:'Roboto Mono',monospace">\\g&lt;name&gt;</span> in <span style="font-family:'Roboto Mono',monospace">QString::replace()</span>, not <span style="font-family:'Roboto Mono',monospace">$1</span>. The preview above runs the JS engine; the export tab writes the Qt form.</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabExport }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px;display:flex;flex-direction:column;gap:12px">
+            <sc-for list="{{ exports }}" as="x" hint-placeholder-count="4">
+              <div>
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                  <span style="font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">{{ x.label }}</span>
+                  <div style="flex:1;height:1px;background:var(--outlinevar)"></div>
+                  <button type="button" onClick="{{ x.copy }}" style="height:26px;padding:0 11px;border:1px solid var(--outlinevar);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(10.5px * var(--scale))">Copy</button>
+                </div>
+                <pre style="margin:0;padding:13px 15px;border-radius:12px;background:var(--low);font-family:'Roboto Mono',monospace;font-size:calc(12px * var(--scale));line-height:1.65;white-space:pre-wrap;word-break:break-word;color:var(--on)">{{ x.code }}</pre>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabCheat }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:6px 0">
+            <sc-for list="{{ cheatSections }}" as="c" hint-placeholder-count="5">
+              <div style="padding:14px 16px 6px;font-size:calc(10.5px * var(--scale));letter-spacing:.9px;text-transform:uppercase;color:var(--onvar);font-weight:500">{{ c.name }}</div>
+              <sc-for list="{{ c.rows }}" as="r">
+                <div style="display:flex;gap:12px;padding:8px 16px;align-items:baseline" style-hover="background:var(--cont)">
+                  <button type="button" onClick="{{ r.insert }}" style="flex:0 0 auto;min-width:88px;padding:4px 9px;border:0;border-radius:7px;background:var(--sec);color:var(--onsec);font-family:'Roboto Mono',monospace;font-size:calc(11.5px * var(--scale));cursor:pointer;text-align:left">{{ r.token }}</button>
+                  <span style="flex:1;min-width:0;font-size:calc(12px * var(--scale));line-height:1.5;text-wrap:pretty">{{ r.desc }}</span>
+                  <span style="flex:0 0 auto;font-size:calc(10px * var(--scale));color:{{ r.availFg }};letter-spacing:.4px">{{ r.avail }}</span>
+                </div>
+              </sc-for>
+            </sc-for>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ tabDialect }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:16px;display:flex;flex-direction:column;gap:14px">
+            <sc-for list="{{ dialectCards }}" as="d" hint-placeholder-count="2">
+              <div style="padding:16px 18px;border-radius:16px;background:{{ d.bg }};border:1px solid var(--outlinevar)">
+                <div style="display:flex;align-items:center;gap:9px">
+                  <span class="sym" style="font-size:19px;color:var(--pri)">{{ d.symbol }}</span>
+                  <span style="font-size:calc(14.5px * var(--scale));font-weight:500">{{ d.label }}</span>
+                  <sc-if value="{{ d.isRuntime }}" hint-placeholder-val="{{ false }}">
+                    <span style="height:22px;padding:0 9px;border-radius:99px;background:var(--greenc);color:var(--ongreenc);font-size:10px;font-weight:700;display:grid;place-items:center;letter-spacing:.5px">RUNS HERE</span>
+                  </sc-if>
+                  <sc-if value="{{ d.isShipping }}" hint-placeholder-val="{{ false }}">
+                    <span style="height:22px;padding:0 9px;border-radius:99px;background:var(--pric);color:var(--onpric);font-size:10px;font-weight:700;display:grid;place-items:center;letter-spacing:.5px">SHIPS IN QT</span>
+                  </sc-if>
+                </div>
+                <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:5px">
+                  <sc-for list="{{ d.flags }}" as="f">
+                    <span style="height:26px;display:inline-flex;align-items:center;padding:0 10px;border-radius:7px;background:var(--cont);color:var(--onvar);font-family:'Roboto Mono',monospace;font-size:calc(10.5px * var(--scale))">{{ f }}</span>
+                  </sc-for>
+                </div>
+                <sc-for list="{{ d.notes }}" as="n">
+                  <div style="font-size:calc(12px * var(--scale));line-height:1.6;color:var(--onvar);margin-top:8px;text-wrap:pretty">· {{ n }}</div>
+                </sc-for>
+              </div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="flex:0 0 auto;display:flex;align-items:center;gap:12px;padding:14px 22px 18px">
+    <div style="font-size:calc(12px * var(--scale));color:var(--onvar);min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ statusLine }}</div>
+    <div style="flex:1"></div>
+    <button type="button" onClick="{{ close }}" style="height:42px;padding:0 20px;border:1px solid var(--outline);border-radius:99px;background:transparent;color:var(--onvar);cursor:pointer;font-size:calc(13px * var(--scale))">Cancel</button>
+    <button type="button" onClick="{{ apply }}" disabled="{{ applyDisabled }}" style="height:42px;padding:0 24px;border:0;border-radius:99px;background:{{ applyBg }};color:{{ applyFg }};cursor:{{ applyCursor }};font-size:calc(13.5px * var(--scale));font-weight:500;display:flex;align-items:center;gap:9px;transition:border-radius 200ms var(--sp)" style-active="border-radius:14px">
+      <span class="sym" style="font-size:19px">check</span>{{ applyLabel }}
+    </button>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1040,&quot;height&quot;:720},&quot;pattern&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;flags&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;gi&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;lang&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;en&quot;,&quot;yue&quot;,&quot;both&quot;],&quot;default&quot;:&quot;both&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;funny&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;min&quot;:1,&quot;max&quot;:5,&quot;step&quot;:1,&quot;default&quot;:5,&quot;tsType&quot;:&quot;number&quot;},&quot;anchor&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Vault search&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;onAccept&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;(pattern: string, flags: string) =&gt; void&quot;},&quot;onClose&quot;:{&quot;editor&quot;:null,&quot;tsType&quot;:&quot;() =&gt; void&quot;}}">
+class Component extends DCLogic {
+  state = {
+    lab: null,
+    pattern: '',
+    flags: 'gi',
+    dialect: 'both',
+    tab: 'matches',
+    sample: 'ops@example.test  https://service.example/console\nuser@example.test  http://host.example:5432/status\n••••3391  ••••7742  帶子蝦餃\npassword: not-a-real-value',
+    replacement: '[$<local>]',
+    presetQuery: '',
+    dragFrom: null,
+    seeded: false
+  };
+
+  async componentDidMount() {
+    const lab = await import('./lib/regex-lab.js');
+    this.setState({ lab });
+  }
+
+  componentDidUpdate() {
+    if (!this.state.seeded && this.props.pattern != null) {
+      this.setState({ seeded: true, pattern: this.props.pattern || '', flags: this.props.flags || 'gi' });
+    }
+  }
+
+  onPattern = e => this.setState({ pattern: e.target.value });
+  onSample = e => this.setState({ sample: e.target.value });
+  onReplacement = e => this.setState({ replacement: e.target.value });
+  onPresetQuery = e => this.setState({ presetQuery: e.target.value });
+  close = () => this.props.onClose && this.props.onClose();
+  apply = () => {
+    if (!this.state.pattern.trim()) return;
+    this.props.onAccept && this.props.onAccept(this.state.pattern, this.state.flags);
+  };
+  insert = frag => () => this.setState(s => ({ pattern: s.pattern + frag }));
+
+  toggleFlag = f => () => this.setState(s => ({
+    flags: s.flags.includes(f) ? s.flags.split('').filter(x => x !== f).join('') : s.flags + f
+  }));
+
+  cheat() {
+    return [
+      { name: 'Characters', rows: [
+        ['.', 'Any character except newline (unless the dot-all flag is set).', 'both'],
+        ['\\d', 'A digit, 0-9.', 'both'],
+        ['\\w', 'A word character: letter, digit or underscore.', 'both'],
+        ['\\s', 'Whitespace.', 'both'],
+        ['[a-f]', 'Any one character in the range a to f.', 'both'],
+        ['[^a-f]', 'Any one character NOT in that range.', 'both'],
+        ['\\p{Script=Han}', 'A Unicode property. Needs the u flag in JS, UseUnicodePropertiesOption in Qt.', 'both']
+      ] },
+      { name: 'Anchors', rows: [
+        ['^', 'Start of the string, or of a line with the multiline flag.', 'both'],
+        ['$', 'End of the string, or of a line with the multiline flag.', 'both'],
+        ['\\b', 'A word boundary.', 'both'],
+        ['\\A', 'Start of the subject, ignoring multiline.', 'qt']
+      ] },
+      { name: 'Groups', rows: [
+        ['(…)', 'Capture group, numbered from 1.', 'both'],
+        ['(?:…)', 'Group without capturing.', 'both'],
+        ['(?<name>…)', 'Named capture group.', 'both'],
+        ['(?>…)', 'Atomic group — never gives back what it matched.', 'qt'],
+        ['(?R)', 'Recurse the whole pattern.', 'qt']
+      ] },
+      { name: 'Look-around', rows: [
+        ['(?=…)', 'Lookahead: what follows must match.', 'both'],
+        ['(?!…)', 'Negative lookahead: what follows must not match.', 'both'],
+        ['(?<=…)', 'Lookbehind: what precedes must match.', 'both'],
+        ['(?<!…)', 'Negative lookbehind: what precedes must not match.', 'both']
+      ] },
+      { name: 'Quantifiers', rows: [
+        ['*', 'Zero or more, greedy.', 'both'],
+        ['+', 'One or more, greedy.', 'both'],
+        ['?', 'Optional — zero or one.', 'both'],
+        ['{2,5}', 'Between two and five times.', 'both'],
+        ['+?', 'One or more, lazy — as few as possible.', 'both'],
+        ['++', 'One or more, possessive — never backtracks.', 'qt']
+      ] },
+      { name: 'References', rows: [
+        ['\\1', 'Back-reference to capture group 1.', 'both'],
+        ['\\k<name>', 'Back-reference to a named group.', 'both']
+      ] }
+    ];
+  }
+
+  renderVals() {
+    const s = this.state;
+    const lab = s.lab;
+    const D = lab ? lab.DIALECTS : { js: { flags: [], notes: [] }, qt: { flags: [], notes: [] } };
+
+    const tokens = lab && s.pattern ? lab.tokenize(s.pattern) : [];
+    const risks = lab ? lab.riskReport(s.pattern) : [];
+    const result = lab ? lab.run(s.pattern, s.flags, s.sample) : { ok: false, matches: [], names: [], error: null, ms: 0 };
+    const sub = lab ? lab.substitute(s.pattern, s.flags, s.sample, s.replacement) : { ok: false, out: '' };
+    const ex = lab ? lab.translate(s.pattern, s.flags) : { js: '', qt: '', python: '', grep: '' };
+
+    const maxGroups = result.matches.reduce((a, m) => Math.max(a, m.groups.length), 0);
+    const groupHeads = [];
+    for (let i = 0; i < maxGroups; i++) {
+      groupHeads.push(result.names[i] ? '$<' + result.names[i] + '>' : '$' + (i + 1));
+    }
+
+    const tokenColour = t => {
+      const map = {
+        literal: ['var(--cont)', 'var(--on)'],
+        charclass: ['var(--sec)', 'var(--onsec)'],
+        class: ['var(--sec)', 'var(--onsec)'],
+        group: ['var(--pric)', 'var(--onpric)'],
+        look: ['var(--amberc)', 'var(--onamberc)'],
+        quant: ['var(--greenc)', 'var(--ongreenc)'],
+        anchor: ['var(--errc)', 'var(--onerrc)'],
+        alt: ['var(--highest)', 'var(--on)'],
+        backref: ['var(--pric)', 'var(--onpric)'],
+        unicode: ['var(--sec)', 'var(--onsec)'],
+        escape: ['var(--cont)', 'var(--onvar)'],
+        dot: ['var(--highest)', 'var(--on)']
+      };
+      return map[t] || ['var(--cont)', 'var(--on)'];
+    };
+
+    const rebuild = arr => arr.map(t => t.text).join('');
+
+    const presetRows = (lab ? lab.PRESETS : []).filter(p => {
+      const q = s.presetQuery.trim().toLowerCase();
+      return !q || (p.name + ' ' + p.yue + ' ' + p.pattern).toLowerCase().includes(q);
+    });
+
+    const dialectFlags = s.dialect === 'qt' ? D.qt.flags : D.js.flags;
+    const jsFlagSet = 'imsugy';
+
+    const flagChips = (s.dialect === 'qt' ? D.qt.flags : D.js.flags).map(f => {
+      const jsChar = { CaseInsensitiveOption: 'i', MultilineOption: 'm', DotMatchesEverythingOption: 's', UseUnicodePropertiesOption: 'u', ExtendedPatternSyntaxOption: 'x', InvertedGreedinessOption: 'U' }[f.f] || f.f;
+      const on = s.flags.includes(jsChar);
+      return {
+        label: s.dialect === 'qt' ? f.f.replace('Option', '') : f.f,
+        title: f.en + ' · ' + f.yue,
+        checkOpacity: on ? '1' : '0',
+        bg: on ? 'var(--sec)' : 'transparent',
+        fg: on ? 'var(--onsec)' : 'var(--onvar)',
+        border: on ? 'transparent' : 'var(--outlinevar)',
+        go: jsFlagSet.includes(jsChar) ? this.toggleFlag(jsChar) : (() => {})
+      };
+    });
+
+    const tabs = [
+      { id: 'matches', label: 'Matches', symbol: 'format_list_numbered', badge: String(result.matches.length), badged: true },
+      { id: 'explain', label: 'Explain', symbol: 'menu_book', badge: String(tokens.length), badged: tokens.length > 0 },
+      { id: 'replace', label: 'Replace', symbol: 'find_replace', badged: false },
+      { id: 'export', label: 'Export', symbol: 'code', badged: false },
+      { id: 'cheat', label: 'Cheat sheet', symbol: 'quiz', badged: false },
+      { id: 'dialect', label: 'Dialects', symbol: 'compare_arrows', badged: false }
+    ].map(t => ({
+      label: t.label, symbol: t.symbol,
+      on: s.tab === t.id ? 'true' : 'false',
+      bg: s.tab === t.id ? 'var(--sec)' : 'transparent',
+      fg: s.tab === t.id ? 'var(--onsec)' : 'var(--onvar)',
+      border: s.tab === t.id ? 'transparent' : 'var(--outlinevar)',
+      weight: s.tab === t.id ? '500' : '400',
+      hasBadge: !!t.badged,
+      badge: t.badge || '',
+      badgeBg: s.tab === t.id ? 'var(--pri)' : 'var(--highest)',
+      badgeFg: s.tab === t.id ? 'var(--onpri)' : 'var(--onvar)',
+      go: () => this.setState({ tab: t.id })
+    }));
+
+    const cheatSections = this.cheat().map(c => ({
+      name: c.name,
+      rows: c.rows.map(r => ({
+        token: r[0], desc: r[1],
+        avail: r[2] === 'qt' ? 'Qt only' : 'both',
+        availFg: r[2] === 'qt' ? 'var(--amber)' : 'var(--outline)',
+        insert: this.insert(r[0].replace('…', ''))
+      }))
+    }));
+
+    const inserts = [
+      ['\\d', 'a digit'], ['\\w', 'a word character'], ['\\s', 'whitespace'],
+      ['[a-z]', 'a character class'], ['(…)', 'a capture group'], ['(?<name>)', 'a named group'],
+      ['(?=)', 'lookahead'], ['(?<=)', 'lookbehind'], ['\\1', 'a back-reference'],
+      ['\\p{L}', 'a Unicode property'], ['^', 'start'], ['$', 'end'], ['|', 'alternation'],
+      ['+', 'one or more'], ['*', 'zero or more'], ['{2,5}', 'a bounded repeat']
+    ].map(x => ({ label: x[0], title: x[1], go: this.insert(x[0].replace('…', '')) }));
+
+    const noMatch = { en: 'No matches in the sample text.', yue: '喺樣本入面一個都冇中。' };
+
+    return {
+      anchor: this.props.anchor || 'Vault search',
+      pattern: s.pattern, onPattern: this.onPattern,
+      patternLen: String(s.pattern.length),
+      patternRing: result.error ? 'var(--err)' : (s.pattern ? 'var(--pri)' : 'var(--outlinevar)'),
+      sample: s.sample, onSample: this.onSample, sampleLen: String(s.sample.length),
+      elapsed: result.ms + ' ms',
+
+      dialects: [
+        { id: 'js', label: 'ECMAScript' },
+        { id: 'qt', label: 'QRegularExpression' },
+        { id: 'both', label: 'Both' }
+      ].map(d => ({
+        label: d.label,
+        bg: s.dialect === d.id ? 'var(--sec)' : 'transparent',
+        fg: s.dialect === d.id ? 'var(--onsec)' : 'var(--onvar)',
+        weight: s.dialect === d.id ? '500' : '400',
+        go: () => this.setState({ dialect: d.id, tab: d.id === 'both' ? s.tab : s.tab })
+      })),
+      flagDialect: s.dialect === 'qt' ? 'QRegularExpression::PatternOptions' : 'RegExp flags',
+      flagChips,
+
+      hasRisk: risks.length > 0, risks,
+      hasError: !!result.error, error: result.error || '',
+
+      tokens: tokens.map((t, i) => ({
+        text: t.text, title: t.en + ' · ' + t.yue + '  (click to remove)',
+        bg: tokenColour(t.type)[0], fg: tokenColour(t.type)[1],
+        dragStart: () => this.setState({ dragFrom: i }),
+        dragOver: e => e.preventDefault(),
+        drop: e => {
+          e.preventDefault();
+          const from = s.dragFrom;
+          if (from == null || from === i) return;
+          const arr = tokens.slice();
+          arr.splice(i, 0, arr.splice(from, 1)[0]);
+          this.setState({ pattern: rebuild(arr), dragFrom: null });
+        },
+        remove: () => {
+          const arr = tokens.slice();
+          arr.splice(i, 1);
+          this.setState({ pattern: rebuild(arr) });
+        }
+      })),
+      noTokens: tokens.length === 0,
+      inserts,
+
+      presetQuery: s.presetQuery, onPresetQuery: this.onPresetQuery,
+      presets: presetRows.map(p => ({
+        name: p.name + ' · ' + p.yue,
+        pattern: p.pattern,
+        go: () => this.setState({ pattern: p.pattern, flags: p.flags, sample: p.sample })
+      })),
+
+      tabs,
+      tabMatches: s.tab === 'matches', tabExplain: s.tab === 'explain',
+      tabReplace: s.tab === 'replace', tabExport: s.tab === 'export',
+      tabCheat: s.tab === 'cheat', tabDialect: s.tab === 'dialect',
+
+      groupCols: maxGroups ? 'repeat(' + maxGroups + ',minmax(80px,1fr))' : '',
+      groupHeads,
+      matchRows: result.matches.map((m, i) => ({
+        n: String(i + 1), at: String(m.index), text: m.text || '∅',
+        groups: m.groups.map(g => g == null ? '—' : g)
+      })),
+      noMatches: result.matches.length === 0 && !result.error && !!s.pattern,
+      noMatchEn: noMatch.en, noMatchYue: noMatch.yue,
+      timedOut: !!result.timedOut,
+
+      explain: tokens.map(t => ({
+        text: t.text, en: t.en, yue: t.yue, type: t.type,
+        bg: tokenColour(t.type)[0], fg: tokenColour(t.type)[1]
+      })),
+
+      replacement: s.replacement, onReplacement: this.onReplacement,
+      replaced: sub.ok ? sub.out : (sub.error || ''),
+
+      exports: [
+        { label: 'C++ · Qt', code: ex.qt, copy: () => {} },
+        { label: 'JavaScript', code: ex.js, copy: () => {} },
+        { label: 'Python', code: ex.python, copy: () => {} },
+        { label: 'grep (PCRE)', code: ex.grep, copy: () => {} }
+      ],
+
+      cheatSections,
+
+      dialectCards: [
+        {
+          label: D.js.label || 'ECMAScript (RegExp)', symbol: 'javascript',
+          bg: 'var(--lowest)', isRuntime: true, isShipping: false,
+          flags: (D.js.flags || []).map(f => f.f + ' — ' + f.en),
+          notes: D.js.notes || []
+        },
+        {
+          label: D.qt.label || 'QRegularExpression (PCRE2)', symbol: 'code_blocks',
+          bg: 'var(--lowest)', isRuntime: false, isShipping: true,
+          flags: (D.qt.flags || []).map(f => f.f.replace('Option', '')),
+          notes: D.qt.notes || []
+        }
+      ],
+
+      statusLine: result.error
+        ? 'Pattern does not compile — nothing was searched.'
+        : result.matches.length + ' match(es) · ' + result.ms + ' ms · budget 120 ms · sample capped at 20 000 chars',
+      applyDisabled: !s.pattern.trim(),
+      applyBg: s.pattern.trim() ? 'var(--pri)' : 'var(--highest)',
+      applyFg: s.pattern.trim() ? 'var(--onpri)' : 'var(--outline)',
+      applyCursor: s.pattern.trim() ? 'pointer' : 'not-allowed',
+      applyLabel: 'Use in ' + (this.props.anchor || 'search'),
+      apply: this.apply, close: this.close
+    };
+  }
+}
+</script>
+</body>
+</html>
