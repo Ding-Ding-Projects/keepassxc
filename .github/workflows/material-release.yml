@@ -23,6 +23,56 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
 
+      - name: Install pinned Qt 6.8.3 for MSVC 2022 x64
+        uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730
+        with:
+          version: 6.8.3
+          host: windows
+          target: desktop
+          arch: win64_msvc2022_64
+          dir: ${{ runner.temp }}\Qt
+          cache: true
+          set-env: true
+
+      - name: Verify and export the installed Qt root
+        shell: powershell
+        run: |
+          $qtRoot = $env:QT_ROOT_DIR
+          if (-not $qtRoot) {
+            $deployTools = @(Get-ChildItem -LiteralPath (Join-Path $env:RUNNER_TEMP 'Qt') -Filter windeployqt.exe -File -Recurse)
+            if ($deployTools.Count -ne 1) { throw "Expected one windeployqt.exe under the pinned Qt installation; found $($deployTools.Count)." }
+            $qtRoot = Split-Path -Parent (Split-Path -Parent $deployTools[0].FullName)
+          }
+          $qtRoot = [IO.Path]::GetFullPath($qtRoot)
+          $qmake = Join-Path $qtRoot 'bin\qmake.exe'
+          $windeployqt = Join-Path $qtRoot 'bin\windeployqt.exe'
+          if (-not (Test-Path -LiteralPath $qmake -PathType Leaf)) { throw "Pinned qmake.exe is missing from $qtRoot." }
+          if (-not (Test-Path -LiteralPath $windeployqt -PathType Leaf)) { throw "Pinned windeployqt.exe is missing from $qtRoot." }
+          $qtVersion = (& $qmake -query QT_VERSION).Trim()
+          $qtSpec = (& $qmake -query QMAKE_XSPEC).Trim()
+          if ($LASTEXITCODE -ne 0 -or $qtVersion -ne '6.8.3') { throw "Expected Qt 6.8.3; qmake reported '$qtVersion'." }
+          if ($qtSpec -notmatch 'win32-msvc') { throw "Expected the MSVC Qt build; qmake reported '$qtSpec'." }
+          "QT_ROOT_DIR=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+          $qtBin = Join-Path $qtRoot 'bin'
+          $qtBin | Out-File -FilePath $env:GITHUB_PATH -Append -Encoding utf8
+          Write-Host "QT_ROOT_DIR=$qtRoot"
+
+      - name: Export the MSVC 2022 x64 environment
+        shell: powershell
+        run: |
+          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+          if (-not (Test-Path -LiteralPath $vswhere -PathType Leaf)) { throw 'vswhere.exe is unavailable.' }
+          $vsRoot = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+          if (-not $vsRoot) { throw 'No Visual Studio installation with the MSVC x64 toolchain was found.' }
+          $vcvars = Join-Path $vsRoot 'VC\Auxiliary\Build\vcvars64.bat'
+          if (-not (Test-Path -LiteralPath $vcvars -PathType Leaf)) { throw "vcvars64.bat is missing from $vsRoot." }
+          cmd.exe /d /s /c "call `"$vcvars`" >nul && set" | ForEach-Object {
+            if ($_ -match '^([A-Za-z_][A-Za-z0-9_()\[\]]*)=(.*)$') {
+              "$($Matches[1])=$($Matches[2])" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
+            }
+          }
+          if ($LASTEXITCODE -ne 0) { throw "vcvars64.bat exited with $LASTEXITCODE." }
+
       - name: Verify the Squirrel-only packaging boundary
         shell: powershell
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-squirrel-only-packaging.ps1

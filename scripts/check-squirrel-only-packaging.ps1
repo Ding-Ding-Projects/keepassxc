@@ -1,5 +1,9 @@
 [CmdletBinding()]
-param([switch]$ProbeLegacyInstaller, [switch]$ProbeExecutableVersionMismatch)
+param(
+    [switch]$ProbeLegacyInstaller,
+    [switch]$ProbeExecutableVersionMismatch,
+    [switch]$ProbeQtBootstrapMissing
+)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -61,6 +65,25 @@ $workflowVersionContract = @(
 foreach ($needle in $workflowVersionContract) {
     if (-not $workflow.Contains($needle)) {
         throw "Monotonic package version contract is missing from the workflow: $needle"
+    }
+}
+
+$qtBootstrapContract = @(
+    'uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730',
+    'version: 6.8.3',
+    'arch: win64_msvc2022_64',
+    '"QT_ROOT_DIR=$qtRoot" | Out-File -FilePath $env:GITHUB_ENV',
+    "VC\Auxiliary\Build\vcvars64.bat",
+    'build-installer.bat /s -Version ${{ steps.package_version.outputs.value }}'
+)
+$qtWorkflow = if ($ProbeQtBootstrapMissing) {
+    $workflow.Replace($qtBootstrapContract[0], 'uses: missing-qt-bootstrap')
+} else {
+    $workflow
+}
+foreach ($needle in $qtBootstrapContract) {
+    if (-not $qtWorkflow.Contains($needle)) {
+        throw "Pinned Qt/MSVC bootstrap contract is missing from the workflow: $needle"
     }
 }
 
