@@ -397,6 +397,9 @@ namespace Material
             Notify::success(tr("History exported"), tr("Written to %1.").arg(QDir::toNativeSeparators(fileName)));
         });
         connect(HistoryStore::instance(), &HistoryStore::revisionsChanged, this, &HistoryFeed::rebuild);
+        connect(HistoryStore::instance(), &HistoryStore::writeFailed, this, [](const QString& message) {
+            Notify::error(tr("Local history unavailable"), message);
+        });
     }
 
     HistoryFeed::~HistoryFeed() = default;
@@ -935,6 +938,10 @@ namespace Material
         while (m_restores.size() > MaximumSessionRestores) {
             m_restores.removeFirst();
         }
+
+        // The durable ledger records only the event class and counts. Entry
+        // titles and restored field values stay inside the encrypted database.
+        HistoryStore::instance()->recordEvent(m_database.lock(), tr("Restored an entry revision"), RevisionKind::Entry);
 
         Notify::success(tr("Revision restored"),
                         tr("\"%1\" is back as it was on %2. Changed back: %3. The state it was in has been kept as a "

@@ -22,6 +22,7 @@
 - [x] Register command-palette and notification-history searches and make both consumers mode/flag aware.
 - [ ] Migrate every remaining dialog and auxiliary surface to the shared component system.
 - [x] Add the first native History parity batch without changing append-only restore semantics.
+- [x] Replace the plaintext History save log with an isolated local Git ledger and atomic redacted fingerprint transactions.
 - [x] Add the first native Reports parity batch with truthful states, real category data, selection/export, regex filtering, accessibility, and responsive reflow.
 - [x] Add the first native Appearance parity batch with typography persistence, element overrides, regex filtering, keyboard controls, and narrow reflow.
 - [ ] Complete deterministic reference-versus-built parity evidence for every design surface.
