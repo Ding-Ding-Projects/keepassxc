@@ -31,9 +31,17 @@ namespace SquirrelLifecycle
     struct Layout
     {
         QString applicationDirectory;
+        QString applicationExecutable;
         QString packageRoot;
         QString updateExecutable;
         QString version;
+    };
+
+    enum class RegistrationDecision
+    {
+        Claim,
+        Refresh,
+        PreserveForeign
     };
 
     struct ProcessResult
@@ -68,6 +76,7 @@ namespace SquirrelLifecycle
     bool parseVersion(const QString& value);
     std::optional<Layout> validateLayout(const QString& applicationDirectory);
     QString openCommand(const Layout& layout);
+    RegistrationDecision registrationDecision(bool hasExistingValues, bool ownershipMarker);
     ProcessResult runShortHelper(const QString& program,
                                  const QStringList& arguments,
                                  const QString& workingDirectory,

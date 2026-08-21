@@ -34,13 +34,23 @@ namespace
         }
     }
 
-    bool setOwnedCommand(const QString& key, const QString& command)
+    bool setOwnedRegistration(const QString& rootKey, const QString& command)
     {
-        QSettings settings(key, QSettings::NativeFormat);
-        settings.setValue(QStringLiteral("Default"), command);
-        settings.setValue(OwnershipValue, true);
-        settings.sync();
-        return settings.status() == QSettings::NoError;
+        QSettings root(rootKey, QSettings::NativeFormat);
+        const auto decision = SquirrelLifecycle::registrationDecision(!root.allKeys().isEmpty(),
+                                                                      root.value(OwnershipValue).toBool());
+        if (decision == SquirrelLifecycle::RegistrationDecision::PreserveForeign) {
+            return false;
+        }
+        root.setValue(OwnershipValue, true);
+        root.sync();
+        if (root.status() != QSettings::NoError) {
+            return false;
+        }
+        QSettings commandSettings(rootKey + QStringLiteral("\\shell\\open\\command"), QSettings::NativeFormat);
+        commandSettings.setValue(QStringLiteral("Default"), command);
+        commandSettings.sync();
+        return commandSettings.status() == QSettings::NoError;
     }
 
     bool removeOwnedKey(const QString& key)
@@ -71,6 +81,14 @@ namespace SquirrelLifecycle
     bool IntegrationResult::succeeded() const
     {
         return browser && fileAssociation && uri;
+    }
+
+    RegistrationDecision registrationDecision(bool hasExistingValues, bool ownershipMarker)
+    {
+        if (ownershipMarker) {
+            return RegistrationDecision::Refresh;
+        }
+        return hasExistingValues ? RegistrationDecision::PreserveForeign : RegistrationDecision::Claim;
     }
 
     bool parseVersion(const QString& value)
@@ -141,7 +159,17 @@ namespace SquirrelLifecycle
             || QDir::cleanPath(updater.canonicalFilePath()) != QDir::cleanPath(updater.absoluteFilePath())) {
             return std::nullopt;
         }
-        return Layout{appInfo.absoluteFilePath(), root.absolutePath(), updater.absoluteFilePath(), version};
+        const QFileInfo application(QDir(appInfo.absoluteFilePath()).filePath(QStringLiteral("KeePassXC.exe")));
+        if (!application.exists() || !application.isFile() || application.isSymLink()
+            || application.canonicalFilePath().isEmpty()
+            || QDir::cleanPath(application.canonicalFilePath()) != QDir::cleanPath(application.absoluteFilePath())) {
+            return std::nullopt;
+        }
+        return Layout{appInfo.absoluteFilePath(),
+                      application.absoluteFilePath(),
+                      root.absolutePath(),
+                      updater.absoluteFilePath(),
+                      version};
     }
 
     ProcessResult runShortHelper(const QString& program,
@@ -187,8 +215,7 @@ namespace SquirrelLifecycle
 
     QString openCommand(const Layout& layout)
     {
-        const QString executable = QDir::toNativeSeparators(
-            QDir(layout.applicationDirectory).filePath(QStringLiteral("KeePassXC.exe")));
+        const QString executable = QDir::toNativeSeparators(layout.applicationExecutable);
         return QStringLiteral("\"") + executable + QStringLiteral("\" \"%1\"");
     }
 
@@ -205,25 +232,25 @@ namespace SquirrelLifecycle
             const QString command = openCommand(layout);
             const QString progIdRoot =
                 QStringLiteral("HKEY_CURRENT_USER\\Software\\Classes\\%1").arg(FileProgId);
-            result.fileAssociation = setOwnedCommand(progIdRoot + QStringLiteral("\\shell\\open\\command"), command);
-            QSettings progId(progIdRoot, QSettings::NativeFormat);
-            progId.setValue(OwnershipValue, true);
-            progId.sync();
-            QSettings extension(QStringLiteral("HKEY_CURRENT_USER\\Software\\Classes\\.kdbx\\OpenWithProgids"),
-                                QSettings::NativeFormat);
-            extension.setValue(FileProgId, QByteArray());
-            extension.sync();
-            result.fileAssociation = result.fileAssociation && progId.status() == QSettings::NoError
-                                     && extension.status() == QSettings::NoError;
+            result.fileAssociation = setOwnedRegistration(progIdRoot, command);
+            if (result.fileAssociation) {
+                QSettings extension(
+                    QStringLiteral("HKEY_CURRENT_USER\\Software\\Classes\\.kdbx\\OpenWithProgids"),
+                    QSettings::NativeFormat);
+                extension.setValue(FileProgId, QByteArray());
+                extension.sync();
+                result.fileAssociation = extension.status() == QSettings::NoError;
+            }
 
             const QString uriRoot = QStringLiteral("HKEY_CURRENT_USER\\Software\\Classes\\%1").arg(UriScheme);
-            QSettings uri(uriRoot, QSettings::NativeFormat);
-            uri.setValue(QStringLiteral("Default"), QStringLiteral("URL:KeePassXC Protocol"));
-            uri.setValue(QStringLiteral("URL Protocol"), QString());
-            uri.setValue(OwnershipValue, true);
-            uri.sync();
-            result.uri = uri.status() == QSettings::NoError
-                         && setOwnedCommand(uriRoot + QStringLiteral("\\shell\\open\\command"), command);
+            result.uri = setOwnedRegistration(uriRoot, command);
+            if (result.uri) {
+                QSettings uri(uriRoot, QSettings::NativeFormat);
+                uri.setValue(QStringLiteral("Default"), QStringLiteral("URL:KeePassXC Protocol"));
+                uri.setValue(QStringLiteral("URL Protocol"), QString());
+                uri.sync();
+                result.uri = uri.status() == QSettings::NoError;
+            }
         } else if (event == Event::Uninstall) {
 #ifdef KPXC_FEATURE_BROWSER
             result.browser = browserInstaller.removeInstallOwnedRegistrations();

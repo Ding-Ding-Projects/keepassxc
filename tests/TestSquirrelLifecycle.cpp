@@ -4,6 +4,7 @@
 
 #include <QDir>
 #include <QFile>
+#include <QProcess>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -27,6 +28,11 @@ namespace
         }
         QFile updater(QDir(root).filePath(QStringLiteral("Update.exe")));
         if (!updater.open(QIODevice::WriteOnly) || updater.write("MZtest") <= 0) {
+            return {};
+        }
+        updater.close();
+        QFile application(QDir(app).filePath(QStringLiteral("KeePassXC.exe")));
+        if (!application.open(QIODevice::WriteOnly) || application.write("MZapp") <= 0) {
             return {};
         }
         return app;
@@ -120,6 +126,7 @@ void TestSquirrelLifecycle::layoutValidation()
     QCOMPARE(QDir::cleanPath(layout->packageRoot),
              QDir::cleanPath(directory.filePath(QStringLiteral("KeePassXC.Material"))));
     QVERIFY(layout->updateExecutable.endsWith(QStringLiteral("Update.exe")));
+    QVERIFY(layout->applicationExecutable.endsWith(QStringLiteral("KeePassXC.exe")));
     QCOMPARE(SquirrelLifecycle::openCommand(*layout),
              QStringLiteral("\"")
                  + QDir::toNativeSeparators(QDir(app).filePath(QStringLiteral("KeePassXC.exe")))
@@ -141,6 +148,67 @@ void TestSquirrelLifecycle::layoutValidation()
                  .has_value());
     QVERIFY(QFile::remove(layout->updateExecutable));
     QVERIFY(!SquirrelLifecycle::validateLayout(app).has_value());
+
+    QTemporaryDir missingApplicationDirectory;
+    QVERIFY(missingApplicationDirectory.isValid());
+    const QString missingApplication = createLayout(missingApplicationDirectory);
+    QVERIFY(!missingApplication.isEmpty());
+    const QString applicationPath = QDir(missingApplication).filePath(QStringLiteral("KeePassXC.exe"));
+    QVERIFY(QFile::remove(applicationPath));
+    QVERIFY(!SquirrelLifecycle::validateLayout(missingApplication).has_value());
+    QVERIFY(QDir().mkpath(applicationPath));
+    QVERIFY(!SquirrelLifecycle::validateLayout(missingApplication).has_value());
+
+    QTemporaryDir linkedApplicationDirectory;
+    QVERIFY(linkedApplicationDirectory.isValid());
+    const QString linkedApplication = createLayout(linkedApplicationDirectory);
+    QVERIFY(!linkedApplication.isEmpty());
+    const QString linkedPath = QDir(linkedApplication).filePath(QStringLiteral("KeePassXC.exe"));
+    QVERIFY(QFile::remove(linkedPath));
+    const QString realPath = linkedApplicationDirectory.filePath(QStringLiteral("real-keepassxc.exe"));
+    QFile realApplication(realPath);
+    QVERIFY(realApplication.open(QIODevice::WriteOnly));
+    QVERIFY(realApplication.write("MZreal") > 0);
+    realApplication.close();
+    if (QFile::link(realPath, linkedPath) && QFileInfo(linkedPath).isSymLink()) {
+        QVERIFY(!SquirrelLifecycle::validateLayout(linkedApplication).has_value());
+    }
+
+    QTemporaryDir junctionDirectory;
+    QVERIFY(junctionDirectory.isValid());
+    const QString junctionRoot = junctionDirectory.filePath(QStringLiteral("KeePassXC.Material"));
+    const QString realApp = junctionDirectory.filePath(QStringLiteral("real-app-2.8.1"));
+    QVERIFY(QDir().mkpath(junctionRoot));
+    QVERIFY(QDir().mkpath(realApp));
+    QFile junctionUpdater(QDir(junctionRoot).filePath(QStringLiteral("Update.exe")));
+    QVERIFY(junctionUpdater.open(QIODevice::WriteOnly));
+    QVERIFY(junctionUpdater.write("MZtest") > 0);
+    junctionUpdater.close();
+    QFile junctionApplication(QDir(realApp).filePath(QStringLiteral("KeePassXC.exe")));
+    QVERIFY(junctionApplication.open(QIODevice::WriteOnly));
+    QVERIFY(junctionApplication.write("MZapp") > 0);
+    junctionApplication.close();
+    const QString junctionApp = QDir(junctionRoot).filePath(QStringLiteral("app-2.8.1"));
+    const int junctionExit = QProcess::execute(
+        QStringLiteral("cmd.exe"),
+        {QStringLiteral("/d"),
+         QStringLiteral("/c"),
+         QStringLiteral("mklink /J \"%1\" \"%2\" >nul").arg(QDir::toNativeSeparators(junctionApp),
+                                                                  QDir::toNativeSeparators(realApp))});
+    if (junctionExit == 0) {
+        QVERIFY(!SquirrelLifecycle::validateLayout(junctionApp).has_value());
+    }
+}
+
+void TestSquirrelLifecycle::registryOwnershipDecisions()
+{
+    using Decision = SquirrelLifecycle::RegistrationDecision;
+    QCOMPARE(SquirrelLifecycle::registrationDecision(false, false), Decision::Claim);
+    QCOMPARE(SquirrelLifecycle::registrationDecision(true, true), Decision::Refresh);
+    QCOMPARE(SquirrelLifecycle::registrationDecision(true, false), Decision::PreserveForeign);
+    // Losing our marker after installation makes the record foreign again. It
+    // must be preserved during refresh and uninstall rather than reclaimed.
+    QCOMPARE(SquirrelLifecycle::registrationDecision(true, false), Decision::PreserveForeign);
 }
 
 void TestSquirrelLifecycle::processResultContract()

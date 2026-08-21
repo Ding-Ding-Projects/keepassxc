@@ -12,6 +12,7 @@ private slots:
     void classification();
     void firstRunConsumption();
     void layoutValidation();
+    void registryOwnershipDecisions();
     void processResultContract();
     void shortHelperEvidence();
     void handleUsesExactOwnedSeams();
