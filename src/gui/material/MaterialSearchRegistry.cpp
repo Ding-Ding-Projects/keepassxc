@@ -2,6 +2,11 @@
 
 #include "MaterialSearchBar.h"
 
+#include <QCursor>
+#include <QLineEdit>
+#include <QMenu>
+#include <QTimer>
+
 #include <QCoreApplication>
 
 namespace Material
@@ -66,4 +71,28 @@ namespace Material
     }
 
     QString SearchRegistry::currentLabel() const { return m_current ? m_current->searchLabel() : QString(); }
+
+    void SearchRegistry::restoreCurrentFocus() const
+    {
+        auto* target = current();
+        if (!target) {
+            return;
+        }
+        QMenu* ownerMenu = nullptr;
+        for (QWidget* widget = target->parentWidget(); widget; widget = widget->parentWidget()) {
+            if ((ownerMenu = qobject_cast<QMenu*>(widget))) {
+                break;
+            }
+        }
+        if (ownerMenu && !ownerMenu->isVisible()) {
+            QWidget* anchor = ownerMenu->parentWidget();
+            const QPoint origin = anchor ? anchor->mapToGlobal(QPoint(0, anchor->height())) : QCursor::pos();
+            ownerMenu->popup(origin);
+        }
+        QTimer::singleShot(0, target, [target] {
+            if (target->isVisible()) {
+                target->lineEdit()->setFocus(Qt::OtherFocusReason);
+            }
+        });
+    }
 } // namespace Material

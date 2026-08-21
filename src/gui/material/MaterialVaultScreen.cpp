@@ -24,6 +24,7 @@
 #include "MaterialIcons.h"
 #include "MaterialNotifier.h"
 #include "MaterialOverlay.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialTheme.h"
@@ -702,6 +703,19 @@ namespace Material
         m_groupScopeMenu = new QMenu(m_groupScopeButton);
         m_groupScopeMenu->setAccessibleName(tr("Vault groups"));
         m_groupScopeButton->setMenu(m_groupScopeMenu);
+        m_groupScopeSearch = new SearchBar(SearchBar::Variant::Prominent, m_groupScopeMenu);
+        m_groupScopeSearch->setObjectName(QStringLiteral("materialVaultGroupScopeSearch"));
+        m_groupScopeSearch->setPlaceholder(tr("Search groups"));
+        m_groupScopeSearch->setIdentity(QStringLiteral("vault.group-scope"), tr("Vault group scope search"));
+        m_groupScopeSearch->lineEdit()->setAccessibleName(tr("Search vault groups"));
+        connect(m_groupScopeSearch, &SearchBar::textChanged, this, &VaultScreen::filterGroupScopeMenu);
+        connect(m_groupScopeSearch, &SearchBar::regexToggled, this, [this] {
+            filterGroupScopeMenu(m_groupScopeSearch->text());
+        });
+        m_groupScopeSearchAction = new QWidgetAction(m_groupScopeMenu);
+        m_groupScopeSearchAction->setDefaultWidget(m_groupScopeSearch);
+        m_groupScopeMenu->addAction(m_groupScopeSearchAction);
+        m_groupScopeMenu->addSeparator();
         connect(m_groupScopeMenu, &QMenu::aboutToShow, this, &VaultScreen::rebuildGroupScopeMenu);
         summaryLayout->addWidget(m_groupScopeButton, 0);
 
@@ -917,17 +931,11 @@ namespace Material
 
     void VaultScreen::rebuildGroupScopeMenu()
     {
-        m_groupScopeMenu->clear();
+        for (auto* action : m_groupScopeActions) {
+            m_groupScopeMenu->removeAction(action);
+            action->deleteLater();
+        }
         m_groupScopeActions.clear();
-        m_groupScopeSearch = new QLineEdit(m_groupScopeMenu);
-        m_groupScopeSearch->setObjectName(QStringLiteral("materialVaultGroupScopeSearch"));
-        m_groupScopeSearch->setPlaceholderText(tr("Search groups"));
-        m_groupScopeSearch->setAccessibleName(tr("Search vault groups"));
-        connect(m_groupScopeSearch, &QLineEdit::textChanged, this, &VaultScreen::filterGroupScopeMenu);
-        auto* searchAction = new QWidgetAction(m_groupScopeMenu);
-        searchAction->setDefaultWidget(m_groupScopeSearch);
-        m_groupScopeMenu->addAction(searchAction);
-        m_groupScopeMenu->addSeparator();
 
         std::function<void(const QModelIndex&, int)> append = [&](const QModelIndex& parent, int depth) {
             for (int row = 0; row < m_groupModel->rowCount(parent); ++row) {
@@ -956,15 +964,35 @@ namespace Material
             }
         };
         append(QModelIndex(), 0);
+        filterGroupScopeMenu(m_groupScopeSearch->text());
         m_groupScopeSearch->setFocus(Qt::PopupFocusReason);
     }
 
     void VaultScreen::filterGroupScopeMenu(const QString& query)
     {
         const QString needle = query.trimmed();
-        for (auto* action : m_groupScopeActions) {
-            action->setVisible(needle.isEmpty() || action->text().trimmed().contains(needle, Qt::CaseInsensitive));
+        bool valid = true;
+        QString error;
+        const bool regex = m_groupScopeSearch->isRegexEnabled() && !needle.isEmpty();
+        if (regex) {
+            const auto validation = runBounded(needle, optionsForFlags(m_groupScopeSearch->regexFlags()), QString());
+            valid = validation.compiled && !validation.blocked && !validation.timedOut;
+            error = validation.error;
         }
+        for (auto* action : m_groupScopeActions) {
+            const QString label = action->text().trimmed();
+            bool match = needle.isEmpty() || label.contains(needle, Qt::CaseInsensitive);
+            if (regex && valid) {
+                const auto run = runBounded(needle, optionsForFlags(m_groupScopeSearch->regexFlags()), label);
+                match = !run.matches.isEmpty();
+            } else if (regex) {
+                match = false;
+            }
+            action->setVisible(match);
+        }
+        m_groupScopeSearch->lineEdit()->setAccessibleDescription(valid ? tr("Valid group filter")
+                                                                    : tr("Invalid regular expression: %1").arg(error));
+        m_groupScopeSearch->setToolTip(valid ? QString() : tr("Invalid regular expression: %1").arg(error));
     }
 
     void VaultScreen::setHostWidget(QStackedWidget* host, DatabaseTabWidget* tabs)

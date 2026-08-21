@@ -5,6 +5,8 @@
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialEntryDetail.h"
 #include "gui/material/MaterialVaultSidebar.h"
+#include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSearchRegistry.h"
 
 #include <QApplication>
 #include <QMenu>
@@ -48,7 +50,9 @@ void TestMaterialShellResponsive::preservesDestinationAccessAcrossBreakpoints()
     QCOMPARE(more->menu()->actions().size(), 6); // search field and five destinations
     more->menu()->popup(more->mapToGlobal(QPoint(0, 0)));
     QApplication::processEvents();
-    auto* moreSearch = more->menu()->findChild<QLineEdit*>(QStringLiteral("materialBottomNavigationMoreSearch"));
+    auto* moreBar = more->menu()->findChild<SearchBar*>(QStringLiteral("materialBottomNavigationMoreSearch"));
+    QVERIFY(moreBar);
+    auto* moreSearch = moreBar->lineEdit();
     QVERIFY(moreSearch);
     QCOMPARE(moreSearch->accessibleName(), QStringLiteral("Search more destinations"));
     moreSearch->setText(QStringLiteral("Destination 9"));
@@ -92,6 +96,88 @@ void TestMaterialShellResponsive::preservesDestinationAccessAcrossBreakpoints()
     QVERIFY(!shell.rail()->iconsOnly());
     QCOMPARE(shell.rail()->width(), 88);
     QCOMPARE(shell.destinations().size(), 10);
+}
+
+void TestMaterialShellResponsive::fallbackSearchesAreIndependentAndRestoreFocus()
+{
+    Shell shell;
+    for (int index = 0; index < 10; ++index) {
+        shell.addDestination(QStringLiteral("destination-%1").arg(index),
+                             new QWidget,
+                             QStringLiteral("folder"),
+                             QStringLiteral("Destination %1").arg(index));
+    }
+    VaultScreen vault;
+    shell.resize(599, 700);
+    shell.show();
+    vault.show();
+    QApplication::processEvents();
+
+    auto* moreButton = shell.findChild<QToolButton*>(QStringLiteral("materialBottomNavigationMore"));
+    auto* more = shell.findChild<SearchBar*>(QStringLiteral("materialBottomNavigationMoreSearch"));
+    auto* groups = vault.findChild<SearchBar*>(QStringLiteral("materialVaultGroupScopeSearch"));
+    QVERIFY(moreButton);
+    QVERIFY(more);
+    QVERIFY(groups);
+    QVERIFY(more != groups);
+    QCOMPARE(more->searchId(), QStringLiteral("navigation.compact-more"));
+    QCOMPARE(groups->searchId(), QStringLiteral("vault.group-scope"));
+    QCOMPARE(SearchRegistry::instance()->bar(more->searchId()), more);
+    QCOMPARE(SearchRegistry::instance()->bar(groups->searchId()), groups);
+
+    more->setRegexFlags(QStringLiteral("im"));
+    more->setRegexEnabled(true);
+    more->setText(QStringLiteral("^Destination 9$"));
+    int visible = 0;
+    for (auto* action : moreButton->menu()->actions()) {
+        if (action->objectName().startsWith(QStringLiteral("materialDestination_")) && action->isVisible()) {
+            ++visible;
+        }
+    }
+    QCOMPARE(visible, 1);
+    QVERIFY(groups->text().isEmpty());
+    QVERIFY(!groups->isRegexEnabled());
+    QCOMPARE(groups->regexFlags(), QStringLiteral("i"));
+
+    more->setText(QStringLiteral("["));
+    QVERIFY(more->lineEdit()->accessibleDescription().startsWith(QStringLiteral("Invalid regular expression")));
+    visible = 0;
+    for (auto* action : moreButton->menu()->actions()) {
+        if (action->objectName().startsWith(QStringLiteral("materialDestination_")) && action->isVisible()) {
+            ++visible;
+        }
+    }
+    QCOMPARE(visible, 0);
+
+    groups->setRegexFlags(QStringLiteral("s"));
+    groups->setRegexEnabled(true);
+    groups->setText(QStringLiteral("["));
+    QVERIFY(groups->lineEdit()->accessibleDescription().startsWith(QStringLiteral("Invalid regular expression")));
+    QCOMPARE(more->regexFlags(), QStringLiteral("im"));
+    QCOMPARE(more->text(), QStringLiteral("["));
+
+    moreButton->menu()->popup(moreButton->mapToGlobal(QPoint(0, moreButton->height())));
+    QApplication::processEvents();
+    emit more->builderRequested();
+    QCOMPARE(SearchRegistry::instance()->current(), more);
+    moreButton->menu()->close();
+    SearchRegistry::instance()->restoreCurrentFocus();
+    QApplication::processEvents();
+    QVERIFY(moreButton->menu()->isVisible());
+    QCOMPARE(QApplication::focusWidget(), more->lineEdit());
+    moreButton->menu()->close();
+
+    auto* groupButton = vault.groupScopeButton();
+    groupButton->menu()->popup(groupButton->mapToGlobal(QPoint(0, groupButton->height())));
+    QApplication::processEvents();
+    emit groups->builderRequested();
+    QCOMPARE(SearchRegistry::instance()->current(), groups);
+    groupButton->menu()->close();
+    SearchRegistry::instance()->restoreCurrentFocus();
+    QApplication::processEvents();
+    QVERIFY(groupButton->menu()->isVisible());
+    QCOMPARE(QApplication::focusWidget(), groups->lineEdit());
+    groupButton->menu()->close();
 }
 
 void TestMaterialShellResponsive::emitsOnlyOnBreakpointTransitions()

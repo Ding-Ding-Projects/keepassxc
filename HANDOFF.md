@@ -13,6 +13,10 @@ header. Compact navigation keeps the first five destinations in a 76 px bottom b
 a searchable More menu, with current-state and focus handoff when the rail is hidden. A clean MSVC
 and Qt 6.8.3 build produced the staged executable, and the focused breakpoint and shell tests pass.
 No built-artifact visual capture has run yet, so this is source-line and local-test evidence only.
+Both fallback searches are registered independently (`navigation.compact-more` and
+`vault.group-scope`) and use the shared full regex builder with private pattern, flags, mode,
+validation, and menu-aware focus restoration; a deliberate missing-registration probe turned the
+responsive test red before the exact registration was restored.
 
 The first real Squirrel candidate was produced from commit `a98ef19842595a638e07ff4e59fbfdc418be21c8`:
 `Setup.exe` was 73,158,144 bytes and reported `NotSigned`; the full package was 72,320,747 bytes.

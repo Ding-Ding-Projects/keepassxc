@@ -1031,7 +1031,9 @@ MainWindow::MainWindow()
         target->setRegexFlags(regexBuilder->flags());
         target->setRegexEnabled(true);
         target->setText(pattern);
-        target->lineEdit()->setFocus(Qt::OtherFocusReason);
+    });
+    connect(regexBuilder, &Material::Overlay::closed, this, [] {
+        Material::SearchRegistry::instance()->restoreCurrentFocus();
     });
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);

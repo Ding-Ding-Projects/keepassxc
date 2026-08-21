@@ -20,6 +20,8 @@
 #include "MaterialIcons.h"
 #include "MaterialNavigationRail.h"
 #include "MaterialSnackbar.h"
+#include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialTabStrip.h"
 #include "MaterialTheme.h"
 #include "MaterialTopAppBar.h"
@@ -29,8 +31,8 @@
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QLayout>
-#include <QMenu>
 #include <QLineEdit>
+#include <QMenu>
 #include <QPainter>
 #include <QStackedWidget>
 #include <QToolButton>
@@ -91,17 +93,18 @@ namespace Material
         m_bottomLayout->setSpacing(2);
         m_moreMenu = new QMenu(m_bottomBar);
         m_moreMenu->setAccessibleName(tr("More destinations"));
-        m_moreSearch = new QLineEdit(m_moreMenu);
+        m_moreSearch = new SearchBar(SearchBar::Variant::Prominent, m_moreMenu);
         m_moreSearch->setObjectName(QStringLiteral("materialBottomNavigationMoreSearch"));
-        m_moreSearch->setPlaceholderText(tr("Search destinations"));
-        m_moreSearch->setAccessibleName(tr("Search more destinations"));
+        m_moreSearch->setPlaceholder(tr("Search destinations"));
+        m_moreSearch->setIdentity(QStringLiteral("navigation.compact-more"), tr("Compact More destination search"));
+        m_moreSearch->lineEdit()->setAccessibleName(tr("Search more destinations"));
         m_moreSearchAction = new QWidgetAction(m_moreMenu);
         m_moreSearchAction->setDefaultWidget(m_moreSearch);
         m_moreMenu->addAction(m_moreSearchAction);
-        connect(m_moreSearch, &QLineEdit::textChanged, this, &Shell::filterMoreDestinations);
+        connect(m_moreSearch, &SearchBar::textChanged, this, &Shell::filterMoreDestinations);
+        connect(m_moreSearch, &SearchBar::regexToggled, this, [this] { filterMoreDestinations(m_moreSearch->text()); });
         connect(m_moreMenu, &QMenu::aboutToShow, this, [this] {
-            m_moreSearch->clear();
-            m_moreSearch->setFocus(Qt::PopupFocusReason);
+            m_moreSearch->lineEdit()->setFocus(Qt::PopupFocusReason);
         });
         m_moreButton = new QToolButton(m_bottomBar);
         m_moreButton->setObjectName(QStringLiteral("materialBottomNavigationMore"));
@@ -350,9 +353,27 @@ namespace Material
     void Shell::filterMoreDestinations(const QString& query)
     {
         const QString needle = query.trimmed();
-        for (auto* action : m_moreDestinationActions) {
-            action->setVisible(needle.isEmpty() || action->text().contains(needle, Qt::CaseInsensitive));
+        bool valid = true;
+        QString error;
+        const bool regex = m_moreSearch->isRegexEnabled() && !needle.isEmpty();
+        if (regex) {
+            const auto validation = runBounded(needle, optionsForFlags(m_moreSearch->regexFlags()), QString());
+            valid = validation.compiled && !validation.blocked && !validation.timedOut;
+            error = validation.error;
         }
+        for (auto* action : m_moreDestinationActions) {
+            bool match = needle.isEmpty() || action->text().contains(needle, Qt::CaseInsensitive);
+            if (regex && valid) {
+                const auto run = runBounded(needle, optionsForFlags(m_moreSearch->regexFlags()), action->text());
+                match = !run.matches.isEmpty();
+            } else if (regex) {
+                match = false;
+            }
+            action->setVisible(match);
+        }
+        m_moreSearch->lineEdit()->setAccessibleDescription(valid ? tr("Valid destination filter")
+                                                                 : tr("Invalid regular expression: %1").arg(error));
+        m_moreSearch->setToolTip(valid ? QString() : tr("Invalid regular expression: %1").arg(error));
     }
 
     void Shell::handOffNavigationFocus(bool compact, bool navigationHadFocus)

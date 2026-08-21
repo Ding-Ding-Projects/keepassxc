@@ -31,7 +31,6 @@ class QStackedWidget;
 class QHBoxLayout;
 class QToolButton;
 class QResizeEvent;
-class QLineEdit;
 class QWidgetAction;
 
 namespace Material
@@ -40,6 +39,7 @@ namespace Material
     class SnackbarHost;
     class TabStrip;
     class TopAppBar;
+    class SearchBar;
 
     /**
      * The whole interior of the main window.
@@ -186,7 +186,7 @@ namespace Material
         QHBoxLayout* m_bottomLayout = nullptr;
         QToolButton* m_moreButton = nullptr;
         QMenu* m_moreMenu = nullptr;
-        QLineEdit* m_moreSearch = nullptr;
+        SearchBar* m_moreSearch = nullptr;
         QWidgetAction* m_moreSearchAction = nullptr;
         QList<QAction*> m_moreDestinationActions;
         QHash<QString, QToolButton*> m_bottomButtons;

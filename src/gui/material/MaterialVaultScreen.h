@@ -41,8 +41,8 @@ class QStackedWidget;
 class QTimer;
 class QToolButton;
 class QMenu;
-class QLineEdit;
 class QAction;
+class QWidgetAction;
 
 namespace Material
 {
@@ -253,7 +253,8 @@ namespace Material
         QToolButton* m_groupScopeButton = nullptr;
         QToolButton* m_detailSheetButton = nullptr;
         QMenu* m_groupScopeMenu = nullptr;
-        QLineEdit* m_groupScopeSearch = nullptr;
+        SearchBar* m_groupScopeSearch = nullptr;
+        QWidgetAction* m_groupScopeSearchAction = nullptr;
         QList<QAction*> m_groupScopeActions;
         SegmentedButton* m_sortControl = nullptr;
         QLabel* m_resultLabel = nullptr;
