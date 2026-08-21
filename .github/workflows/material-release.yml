@@ -181,6 +181,8 @@ jobs:
       - name: Create the GitHub Release
         shell: bash
         env:
+          PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}
+          RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN || github.token }}
           GH_REPO: ${{ github.repository }}
         run: |

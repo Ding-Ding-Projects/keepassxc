@@ -13,6 +13,7 @@
 - Packaging: Propagate one monotonic three-part version through the native executable, Squirrel feed, update manifest, and release.
 - Installation: Harden Squirrel lifecycle arguments and refresh only install-owned shortcuts, browser messaging, file associations, and URI registrations.
 - Packaging: Verify that the packaged executable FileVersion and ProductVersion match the release version.
+- Release: Pass the verified package version and matching tag explicitly into the publication step.
 - Build: Provision and verify the pinned Qt 6.8.3 MSVC x64 toolchain before the Squirrel package build.
 - Interface: Apply all five Material window classes with exact rail, group-pane, and detail widths; compact navigation now has a searchable More menu, and hidden vault panes retain keyboard-accessible group and detail routes.
 - Interface: Bind independent full regex builders to Compact More and the narrow vault group scope, including per-field flags, validation, and focus restoration.

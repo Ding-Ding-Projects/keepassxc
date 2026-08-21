@@ -2,7 +2,8 @@
 param(
     [switch]$ProbeLegacyInstaller,
     [switch]$ProbeExecutableVersionMismatch,
-    [switch]$ProbeQtBootstrapMissing
+    [switch]$ProbeQtBootstrapMissing,
+    [switch]$ProbeReleaseVersionEnvMissing
 )
 
 $ErrorActionPreference = 'Stop'
@@ -65,6 +66,30 @@ $workflowVersionContract = @(
 foreach ($needle in $workflowVersionContract) {
     if (-not $workflow.Contains($needle)) {
         throw "Monotonic package version contract is missing from the workflow: $needle"
+    }
+}
+
+$createReleaseMatch = [regex]::Match(
+    $workflow,
+    '(?ms)^\s{6}- name: Create the GitHub Release\r?\n(?<step>.*?)(?=^\s{6}- name:|\z)')
+if (-not $createReleaseMatch.Success) {
+    throw 'Create the GitHub Release step cannot be located for environment validation.'
+}
+$createReleaseStep = $createReleaseMatch.Groups['step'].Value
+if ($ProbeReleaseVersionEnvMissing) {
+    $createReleaseStep = $createReleaseStep.Replace(
+        'PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}',
+        'PACKAGE_VERSION: missing')
+}
+$releaseStepVersionContract = @(
+    'PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}',
+    'RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}',
+    'gh release create "${RELEASE_TAG}"',
+    '--title "KeePassXC Material ${PACKAGE_VERSION}"'
+)
+foreach ($needle in $releaseStepVersionContract) {
+    if (-not $createReleaseStep.Contains($needle)) {
+        throw "Create Release step is missing its local version environment boundary: $needle"
     }
 }
 
