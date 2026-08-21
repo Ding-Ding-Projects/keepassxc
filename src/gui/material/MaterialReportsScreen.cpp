@@ -25,8 +25,15 @@
 #include "MaterialSearchBar.h"
 
 #include <QGridLayout>
+#include <QCheckBox>
+#include <QComboBox>
 #include <QHBoxLayout>
+#include <QLabel>
+#include <QLineEdit>
 #include <QPainter>
+#include <QProgressBar>
+#include <QResizeEvent>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 namespace Material
@@ -226,6 +233,7 @@ namespace Material
                 : QWidget(parent)
                 , m_card(card)
             {
+                setAccessibleName(ReportsScreen::tr("%1: %2. %3").arg(card.label, card.value, card.sub));
                 setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
             }
 
@@ -293,10 +301,14 @@ namespace Material
                 , m_separator(separator)
             {
                 setFixedHeight(HealthRowHeight);
+                setAccessibleName(ReportsScreen::tr("%1. %2. %3").arg(row.title, row.reason, row.score));
 
                 auto layout = new QHBoxLayout(this);
                 layout->setContentsMargins(0, 0, 0, 0);
                 layout->setSpacing(ColumnGap);
+                m_select = new QCheckBox(this);
+                m_select->setAccessibleName(ReportsScreen::tr("Select finding: %1").arg(m_row.title));
+                layout->addWidget(m_select);
                 layout->addStretch(1);
 
                 m_score = new ScoreChip(healthPill(m_row.status), m_row.score, this);
@@ -310,6 +322,7 @@ namespace Material
             {
                 return m_fix;
             }
+            QCheckBox* selection() const { return m_select; }
 
         protected:
             void paintEvent(QPaintEvent* event) override
@@ -353,6 +366,7 @@ namespace Material
             bool m_separator = true;
             PillLabel* m_score = nullptr;
             ButtonBase* m_fix = nullptr;
+            QCheckBox* m_select = nullptr;
         };
 
         /** A 46px key over value row of the statistics card. */
@@ -366,6 +380,7 @@ namespace Material
                 , m_separator(separator)
             {
                 setFixedHeight(StatisticsRowHeight);
+                setAccessibleName(ReportsScreen::tr("%1: %2").arg(key, value));
             }
 
         protected:
@@ -414,6 +429,30 @@ namespace Material
         searchBar()->setIdentity(QStringLiteral("reports.findings"), tr("Report findings search"));
         searchBar()->setFixedWidth(SearchWidth);
 
+        m_category = new QComboBox;
+        m_category->setObjectName(QStringLiteral("reportsCategory"));
+        m_category->setAccessibleName(tr("Report category"));
+        m_category->addItem(tr("All findings"), QStringLiteral("all"));
+        m_category->addItem(tr("Weak"), QStringLiteral("weak"));
+        m_category->addItem(tr("Reused"), QStringLiteral("reused"));
+        m_category->addItem(tr("Expired"), QStringLiteral("expired"));
+        m_category->addItem(tr("Excluded"), QStringLiteral("excluded"));
+        connect(m_category, &QComboBox::currentIndexChanged, this, [this](int index) {
+            emit categoryChanged(m_category->itemData(index).toString());
+        });
+        insertHeaderWidget(0, m_category);
+
+        m_stateLabel = new QLabel;
+        m_stateLabel->setObjectName(QStringLiteral("reportsState"));
+        m_stateLabel->setAccessibleName(tr("Report state"));
+        m_stateLabel->setWordWrap(true);
+        m_progress = new QProgressBar;
+        m_progress->setObjectName(QStringLiteral("reportsProgress"));
+        m_progress->setAccessibleName(tr("Report progress"));
+        m_progress->hide();
+        contentLayout()->addWidget(m_stateLabel);
+        contentLayout()->addWidget(m_progress);
+
         m_statGrid = new QGridLayout();
         // The content column already spaces its children 16px apart; the grid
         // carries the remainder of the design's 20px below it as a margin,
@@ -427,18 +466,40 @@ namespace Material
 
         m_healthCard = new SectionCard();
         m_healthCard->setTitleText(tr("Password health"));
+        m_healthToggle = new QToolButton;
+        m_healthToggle->setText(tr("Collapse password health"));
+        m_healthToggle->setAccessibleName(m_healthToggle->text());
+        m_healthToggle->setCheckable(true);
+        m_healthToggle->setChecked(true);
+        m_healthCard->contentLayout()->addWidget(m_healthToggle);
+        m_bulkExport = new QToolButton;
+        m_bulkExport->setText(tr("Export selected findings"));
+        m_bulkExport->setAccessibleName(m_bulkExport->text());
+        m_bulkExport->setEnabled(false);
+        connect(m_bulkExport, &QToolButton::clicked, this, [this] { emit bulkExportRequested(selectedFindingIds()); });
+        m_healthCard->contentLayout()->addWidget(m_bulkExport);
+        m_healthContent = new QWidget;
         m_healthLayout = new QVBoxLayout();
         m_healthLayout->setContentsMargins(0, 0, 0, 0);
         m_healthLayout->setSpacing(0);
-        m_healthCard->contentLayout()->addLayout(m_healthLayout);
+        m_healthContent->setLayout(m_healthLayout);
+        m_healthCard->contentLayout()->addWidget(m_healthContent);
         m_healthCard->contentLayout()->addStretch(1);
 
         m_statisticsCard = new SectionCard();
         m_statisticsCard->setTitleText(tr("Statistics"));
+        m_statisticsToggle = new QToolButton;
+        m_statisticsToggle->setText(tr("Collapse statistics"));
+        m_statisticsToggle->setAccessibleName(m_statisticsToggle->text());
+        m_statisticsToggle->setCheckable(true);
+        m_statisticsToggle->setChecked(true);
+        m_statisticsCard->contentLayout()->addWidget(m_statisticsToggle);
+        m_statisticsContent = new QWidget;
         m_statisticsLayout = new QVBoxLayout();
         m_statisticsLayout->setContentsMargins(0, 0, 0, 0);
         m_statisticsLayout->setSpacing(0);
-        m_statisticsCard->contentLayout()->addLayout(m_statisticsLayout);
+        m_statisticsContent->setLayout(m_statisticsLayout);
+        m_statisticsCard->contentLayout()->addWidget(m_statisticsContent);
         m_statisticsCard->contentLayout()->addSpacing(ExportButtonGap);
 
         auto exportButton = new TonalButton(QStringLiteral("download"), tr("Export report"));
@@ -447,17 +508,18 @@ namespace Material
         m_statisticsCard->contentLayout()->addWidget(exportButton);
         m_statisticsCard->contentLayout()->addStretch(1);
 
-        auto columns = new QGridLayout();
-        columns->setContentsMargins(0, 0, 0, 0);
-        columns->setSpacing(GridSpacing);
-        columns->addWidget(m_healthCard, 0, 0);
-        columns->addWidget(m_statisticsCard, 0, 1);
-        columns->setColumnStretch(0, 14);
-        columns->setColumnStretch(1, 10);
-        contentLayout()->addLayout(columns);
+        m_columns = new QGridLayout();
+        m_columns->setContentsMargins(0, 0, 0, 0);
+        m_columns->setSpacing(GridSpacing);
+        contentLayout()->addLayout(m_columns);
         contentLayout()->addStretch(1);
 
+        connect(m_healthToggle, &QToolButton::toggled, m_healthContent, &QWidget::setVisible);
+        connect(m_statisticsToggle, &QToolButton::toggled, m_statisticsContent, &QWidget::setVisible);
+
         connect(theme(), &Theme::changed, this, &ReportsScreen::rebuild);
+        setState(State::Empty, tr("Open and unlock a database to calculate reports."));
+        applyResponsiveLayout();
     }
 
     ReportsScreen::~ReportsScreen() = default;
@@ -490,22 +552,30 @@ namespace Material
     void ReportsScreen::rebuildStatCards()
     {
         clearLayout(m_statGrid);
+        const int columns = width() < 600 ? 1 : width() < 1200 ? 2 : StatColumns;
         for (int i = 0; i < m_statCards.size(); ++i) {
-            m_statGrid->addWidget(new StatTile(m_statCards.at(i)), i / StatColumns, i % StatColumns);
+            m_statGrid->addWidget(new StatTile(m_statCards.at(i)), i / columns, i % columns);
         }
     }
 
     void ReportsScreen::rebuildHealthRows()
     {
         clearLayout(m_healthLayout);
+        m_selectedIds.clear();
         for (int i = 0; i < m_healthRows.size(); ++i) {
             const HealthRow& row = m_healthRows.at(i);
             // The rule belongs to the row in the design, last one included.
             auto widget = new HealthRowWidget(row, tr("Fix"), true);
             const QString id = row.id;
             connect(widget->fixButton(), &QAbstractButton::clicked, this, [this, id] { emit fixRequested(id); });
+            widget->selection()->setEnabled(!id.isEmpty());
+            connect(widget->selection(), &QCheckBox::toggled, this, [this, id](bool checked) {
+                if (checked) m_selectedIds.insert(id); else m_selectedIds.remove(id);
+                updateBulkActions();
+            });
             m_healthLayout->addWidget(widget);
         }
+        updateBulkActions();
     }
 
     void ReportsScreen::rebuildStatistics()
@@ -516,6 +586,67 @@ namespace Material
             // As on the health rows, the design rules every row.
             m_statisticsLayout->addWidget(new StatisticsRowWidget(entry.first, entry.second, true));
         }
+    }
+
+    void ReportsScreen::setState(State state, const QString& message, int progress)
+    {
+        m_state = state;
+        m_stateLabel->setText(message);
+        m_stateLabel->setVisible(!message.isEmpty());
+        const bool showProgress = state == State::Loading || state == State::Progress;
+        m_progress->setVisible(showProgress);
+        if (showProgress) {
+            m_progress->setRange(progress < 0 ? 0 : 0, progress < 0 ? 0 : 100);
+            if (progress >= 0) m_progress->setValue(qBound(0, progress, 100));
+        }
+        const bool hasContent = state == State::Populated || state == State::Warning;
+        m_healthCard->setVisible(hasContent);
+        m_statisticsCard->setVisible(hasContent);
+    }
+
+    ReportsScreen::State ReportsScreen::state() const { return m_state; }
+
+    QStringList ReportsScreen::selectedFindingIds() const
+    {
+        QStringList ids(m_selectedIds.cbegin(), m_selectedIds.cend());
+        ids.sort();
+        return ids;
+    }
+
+    void ReportsScreen::setSearchValidation(bool valid, const QString& message)
+    {
+        searchBar()->lineEdit()->setAccessibleDescription(valid ? tr("Report filter is valid") : message);
+        if (!valid) setState(State::Warning, message);
+    }
+
+    void ReportsScreen::updateBulkActions()
+    {
+        m_bulkExport->setEnabled(!m_selectedIds.isEmpty());
+        m_bulkExport->setText(tr("Export %n selected finding(s)", "", m_selectedIds.size()));
+    }
+
+    void ReportsScreen::applyResponsiveLayout()
+    {
+        m_columns->removeWidget(m_healthCard);
+        m_columns->removeWidget(m_statisticsCard);
+        if (width() < 840) {
+            m_columns->addWidget(m_healthCard, 0, 0);
+            m_columns->addWidget(m_statisticsCard, 1, 0);
+            m_columns->setColumnStretch(0, 1);
+            m_columns->setColumnStretch(1, 0);
+        } else {
+            m_columns->addWidget(m_healthCard, 0, 0);
+            m_columns->addWidget(m_statisticsCard, 0, 1);
+            m_columns->setColumnStretch(0, 14);
+            m_columns->setColumnStretch(1, 10);
+        }
+        rebuildStatCards();
+    }
+
+    void ReportsScreen::resizeEvent(QResizeEvent* event)
+    {
+        Screen::resizeEvent(event);
+        applyResponsiveLayout();
     }
 
 } // namespace Material

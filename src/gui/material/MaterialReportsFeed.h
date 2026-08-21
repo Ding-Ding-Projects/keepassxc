@@ -129,13 +129,15 @@ namespace Material
         QVector<Finding> filteredFindings() const;
         QVector<QPair<QString, QString>> filteredStatistics() const;
         void apply();
-        QString markdown() const;
-        void exportMarkdown();
+        bool matches(const QString& text) const;
+        QString markdown(const QStringList& selectedIds = {}) const;
+        void exportMarkdown(const QStringList& selectedIds = {});
 
         ReportsScreen* m_screen = nullptr;
         QSharedPointer<Database> m_db;
         Snapshot m_snapshot;
         QString m_query;
+        QString m_category = QStringLiteral("all");
         bool m_busy = false;
         bool m_refreshPending = false; // a refresh asked for while m_busy, owed once the pass lands
     };

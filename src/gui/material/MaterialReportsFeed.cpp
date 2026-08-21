@@ -20,6 +20,7 @@
 #include "MaterialButtons.h"
 #include "MaterialNotifier.h"
 #include "MaterialReportsScreen.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 
 #include "core/Clock.h"
@@ -150,6 +151,11 @@ namespace Material
             m_query = text.trimmed();
             apply();
         });
+        connect(m_screen->searchBar(), &SearchBar::regexToggled, this, [this] { apply(); });
+        connect(m_screen, &ReportsScreen::categoryChanged, this, [this](const QString& category) {
+            m_category = category;
+            apply();
+        });
 
         // Findings carry an entry UUID. The healthy / filtered-empty placeholder
         // carries none, and its action opens the detailed reports instead of
@@ -161,7 +167,10 @@ namespace Material
                 emit entryEditRequested(id);
             }
         });
-        connect(m_screen, &ReportsScreen::exportRequested, this, &ReportsFeed::exportMarkdown);
+        connect(m_screen, &ReportsScreen::exportRequested, this, [this] { exportMarkdown(); });
+        connect(m_screen, &ReportsScreen::bulkExportRequested, this, [this](const QStringList& ids) {
+            exportMarkdown(ids);
+        });
     }
 
     ReportsFeed::~ReportsFeed() = default;
@@ -169,6 +178,9 @@ namespace Material
     void ReportsFeed::setDatabase(const QSharedPointer<Database>& db)
     {
         m_db = db;
+        if (!db) {
+            m_screen->setState(ReportsScreen::State::Empty, tr("Open and unlock a database to calculate reports."));
+        }
         refresh();
     }
 
@@ -184,6 +196,7 @@ namespace Material
         }
 
         m_busy = true;
+        m_screen->setState(ReportsScreen::State::Loading, tr("Calculating reports…"));
 
         // The pass walks the live group and entry tree, and that tree belongs
         // to the interface thread. Handing it to a worker and waiting with
@@ -326,16 +339,15 @@ namespace Material
 
     QVector<ReportsFeed::Finding> ReportsFeed::filteredFindings() const
     {
-        if (m_query.isEmpty()) {
-            return m_snapshot.findings;
-        }
-
         QVector<Finding> matching;
         for (const Finding& finding : m_snapshot.findings) {
-            if (finding.title.contains(m_query, Qt::CaseInsensitive)
-                || finding.path.contains(m_query, Qt::CaseInsensitive)
-                || finding.reason.contains(m_query, Qt::CaseInsensitive)
-                || finding.quality.contains(m_query, Qt::CaseInsensitive)) {
+            const bool category = m_category == QLatin1String("all")
+                                  || (m_category == QLatin1String("weak") && (finding.bad || finding.tooShort))
+                                  || (m_category == QLatin1String("reused") && finding.reused)
+                                  || (m_category == QLatin1String("expired") && finding.expired)
+                                  || (m_category == QLatin1String("excluded") && finding.excluded);
+            if (category && matches(finding.title + QLatin1Char(' ') + finding.path + QLatin1Char(' ')
+                                    + finding.reason + QLatin1Char(' ') + finding.quality)) {
                 matching.append(finding);
             }
         }
@@ -344,13 +356,9 @@ namespace Material
 
     QVector<QPair<QString, QString>> ReportsFeed::filteredStatistics() const
     {
-        if (m_query.isEmpty()) {
-            return m_snapshot.statistics;
-        }
-
         QVector<QPair<QString, QString>> matching;
         for (const auto& row : m_snapshot.statistics) {
-            if (row.first.contains(m_query, Qt::CaseInsensitive) || row.second.contains(m_query, Qt::CaseInsensitive)) {
+            if (matches(row.first + QLatin1Char(' ') + row.second)) {
                 matching.append(row);
             }
         }
@@ -362,9 +370,34 @@ namespace Material
         return m_snapshot.valid ? m_snapshot.findings.size() : 0;
     }
 
+    bool ReportsFeed::matches(const QString& text) const
+    {
+        if (m_query.isEmpty()) return true;
+        if (!m_screen->searchBar()->isRegexEnabled()) return text.contains(m_query, Qt::CaseInsensitive);
+        const auto run = runBounded(m_query, optionsForFlags(m_screen->searchBar()->regexFlags()), text);
+        return run.compiled && !run.blocked && !run.timedOut && !run.matches.isEmpty();
+    }
+
     void ReportsFeed::apply()
     {
         emit findingCountChanged(findingCount());
+
+        if (!m_snapshot.valid) {
+            m_screen->setStatCards({});
+            m_screen->setHealthRows({});
+            m_screen->setStatistics({});
+            m_screen->setState(ReportsScreen::State::Empty, tr("Open and unlock a database to calculate reports."));
+            return;
+        }
+        bool searchValid = true;
+        QString searchError;
+        if (m_screen->searchBar()->isRegexEnabled() && !m_query.isEmpty()) {
+            const auto validation = runBounded(m_query, optionsForFlags(m_screen->searchBar()->regexFlags()), QString());
+            searchValid = validation.compiled && !validation.blocked && !validation.timedOut;
+            searchError = validation.error;
+        }
+        m_screen->setSearchValidation(searchValid,
+                                      searchValid ? QString() : tr("Invalid regular expression: %1").arg(searchError));
 
         QVector<StatCard> cards;
         if (m_snapshot.valid) {
@@ -425,9 +458,12 @@ namespace Material
         m_screen->setStatCards(cards);
         m_screen->setHealthRows(rows);
         m_screen->setStatistics(filteredStatistics());
+        m_screen->setState(searchValid ? ReportsScreen::State::Populated : ReportsScreen::State::Warning,
+                           searchValid ? tr("Breach exposure has not been checked online.")
+                                       : tr("Invalid regular expression: %1").arg(searchError));
     }
 
-    QString ReportsFeed::markdown() const
+    QString ReportsFeed::markdown(const QStringList& selectedIds) const
     {
         QString text;
         QTextStream out(&text);
@@ -462,7 +498,12 @@ namespace Material
                           "this report does not perform.")
             << "\n\n";
 
-        const QVector<Finding> findings = filteredFindings();
+        QVector<Finding> findings = filteredFindings();
+        if (!selectedIds.isEmpty()) {
+            findings.erase(std::remove_if(findings.begin(), findings.end(), [&selectedIds](const Finding& finding) {
+                return !selectedIds.contains(finding.uuid);
+            }), findings.end());
+        }
         out << "## " << tr("Password health") << "\n\n";
         if (findings.isEmpty()) {
             out << (m_query.isEmpty() ? tr("The health check found nothing to change.")
@@ -492,7 +533,7 @@ namespace Material
         return text;
     }
 
-    void ReportsFeed::exportMarkdown()
+    void ReportsFeed::exportMarkdown(const QStringList& selectedIds)
     {
         QString suggestion = QStringLiteral("keepassxc-report.md");
         const QString base = QFileInfo(m_snapshot.databasePath).completeBaseName();
@@ -515,7 +556,7 @@ namespace Material
             Notify::error(tr("Export failed"), tr("Could not write %1.").arg(QDir::toNativeSeparators(fileName)));
             return;
         }
-        file.write(markdown().toUtf8());
+        file.write(markdown(selectedIds).toUtf8());
         file.close();
 
         // The confirmation offers the file it just wrote, rather than leaving

@@ -22,11 +22,18 @@
 #include "MaterialTheme.h"
 
 #include <QPair>
+#include <QSet>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 
 class QGridLayout;
 class QVBoxLayout;
+class QLabel;
+class QProgressBar;
+class QToolButton;
+class QResizeEvent;
+class QComboBox;
 
 namespace Material
 {
@@ -71,29 +78,52 @@ namespace Material
         Q_OBJECT
 
     public:
+        enum class State { Empty, Loading, Populated, Progress, Warning, Error };
         explicit ReportsScreen(QWidget* parent = nullptr);
         ~ReportsScreen() override;
 
         void setStatCards(const QVector<StatCard>& cards);
         void setHealthRows(const QVector<HealthRow>& rows);
         void setStatistics(const QVector<QPair<QString, QString>>& statistics);
+        void setState(State state, const QString& message = {}, int progress = -1);
+        State state() const;
+        QStringList selectedFindingIds() const;
+        void setSearchValidation(bool valid, const QString& message = {});
 
     signals:
         /** The Fix button of the health row carrying @p id was pressed. */
         void fixRequested(const QString& id);
         void exportRequested();
+        void bulkExportRequested(const QStringList& ids);
+        void categoryChanged(const QString& category);
+
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void rebuild();
         void rebuildStatCards();
         void rebuildHealthRows();
         void rebuildStatistics();
+        void applyResponsiveLayout();
+        void updateBulkActions();
 
         QGridLayout* m_statGrid = nullptr;
         QVBoxLayout* m_healthLayout = nullptr;
         QVBoxLayout* m_statisticsLayout = nullptr;
         Card* m_healthCard = nullptr;
         Card* m_statisticsCard = nullptr;
+        QWidget* m_healthContent = nullptr;
+        QWidget* m_statisticsContent = nullptr;
+        QGridLayout* m_columns = nullptr;
+        QLabel* m_stateLabel = nullptr;
+        QProgressBar* m_progress = nullptr;
+        QToolButton* m_healthToggle = nullptr;
+        QToolButton* m_statisticsToggle = nullptr;
+        QToolButton* m_bulkExport = nullptr;
+        QComboBox* m_category = nullptr;
+        State m_state = State::Empty;
+        QSet<QString> m_selectedIds;
         QVector<StatCard> m_statCards;
         QVector<HealthRow> m_healthRows;
         QVector<QPair<QString, QString>> m_statistics;

@@ -5,6 +5,7 @@
 ### Changes
 
 - Build: Enforce the Windows-only source boundary and remove the remaining macOS translation and Unix package-helper registrations.
+- Interface: Give Reports explicit states, real category filtering, independent bounded regex search, collapsible sections, selectable findings with scoped export, accessible row facts, and responsive reflow.
 - Interface: Expand Appearance with Auto/Light/Dark mode, live persisted font family/scale/weight, responsive cards, safe per-element overrides, continuous color selection, and regex-aware filtering.
 - Packaging: Make the verified unsigned Squirrel.Windows artifacts the sole Windows installer and release path.
 - Packaging: Propagate one monotonic three-part version through the native executable, Squirrel feed, update manifest, and release.

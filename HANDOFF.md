@@ -6,6 +6,13 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The first Reports parity batch retains the GUI-thread `HealthChecker` and `DatabaseStats` walk while
+adding explicit empty/loading/populated/progress/warning/error states, real weak/reused/expired/
+excluded categories, bounded regex filtering, collapsible sections, selectable findings, and scoped
+Markdown export. Painted rows now expose their full facts to assistive technology and reflow at the
+five shell widths. The inventory records the real Reports destination route as implemented in
+source; visual captures, audits, comparisons, and diffs remain pending.
+
 The first Appearance parity batch now exposes Auto/Light/Dark, seed, density, installed font
 family, 85–140% scale, weight, a live CJK-safe preview, sparse per-element overrides, and a
 continuous alpha-aware colour dialog. Appearance search is independently registered and now honors
