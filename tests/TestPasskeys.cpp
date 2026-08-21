@@ -26,6 +26,7 @@
 #include "core/EntryAttributes.h"
 #include "core/Group.h"
 #include "core/Metadata.h"
+#include "core/Totp.h"
 #include "crypto/Crypto.h"
 #include "format/KeePass2Reader.h"
 #include "format/KeePass2Writer.h"
@@ -547,6 +548,12 @@ void TestPasskeys::testEntry()
                                         QString("privateKey"));
 
     QVERIFY(entry->hasPasskey());
+
+    entry->setTotp(Totp::createSettings(QStringLiteral("JBSWY3DPEHPK3PXP"),
+                                        Totp::DEFAULT_DIGITS,
+                                        Totp::DEFAULT_STEP));
+    QVERIFY(entry->hasValidTotp());
+    QVERIFY(entry->hasPasskey());
 }
 
 /**
@@ -611,6 +618,10 @@ void TestPasskeys::testPasskeySurvivesDatabaseRoundTrip()
     const auto sourceEntries = sourceDb->rootGroup()->entries();
     QCOMPARE(sourceEntries.count(), 1);
     QVERIFY(sourceEntries.first()->hasPasskey());
+    sourceEntries.first()->setTotp(Totp::createSettings(QStringLiteral("JBSWY3DPEHPK3PXP"),
+                                                        Totp::DEFAULT_DIGITS,
+                                                        Totp::DEFAULT_STEP));
+    QVERIFY(sourceEntries.first()->hasValidTotp());
 
     QBuffer buffer;
     QVERIFY(buffer.open(QIODevice::ReadWrite));
@@ -634,6 +645,7 @@ void TestPasskeys::testPasskeySurvivesDatabaseRoundTrip()
 
     auto* restored = targetEntries.first();
     QVERIFY(restored->hasPasskey());
+    QVERIFY(restored->hasValidTotp());
 
     const auto* attributes = restored->attributes();
     QCOMPARE(attributes->value(EntryAttributes::KPEX_PASSKEY_PRIVATE_KEY_PEM), QStringLiteral("privateKeyPem"));

@@ -123,6 +123,8 @@ private slots:
     void updateHistoryButtons(const QModelIndex& current, const QModelIndex& previous);
     void useExpiryPreset(QAction* action);
     void toggleHideNotes(bool visible);
+    void setupTotp();
+    void updateTotp();
     void pickColor();
 #ifdef KPXC_FEATURE_SSHAGENT
     void toKeeAgentSettings(KeeAgentSettings& settings) const;
@@ -131,7 +133,6 @@ private slots:
     void updateSSHAgentAttachment();
     void updateSSHAgentAttachments();
     void updateSSHAgentKeyInfo();
-    void updateTotp();
     void browsePrivateKey();
     void addKeyToAgent();
     void removeKeyFromAgent();

@@ -33,6 +33,8 @@ NOTE: When Microsoft Edge is installed as a managed application, system administ
 === Configure KeePassXC-Browser
 To start using KeePassXC-Browser, you must configure it so that it can communicate with the KeePassXC application on your desktop.
 
+On Windows, when browser integration and automatic extension setup are enabled but all native-messaging registrations are missing, KeePassXC repairs the Chrome-family, Firefox-family, and Edge host registrations on startup. This recovers profiles whose browser integration setting survived an application update while the per-browser registration did not.
+
 To configure KeePassXC-Browser, perform the following steps:
 
 1. Open the KeePassXC application on your desktop and navigate to Tools > Settings.

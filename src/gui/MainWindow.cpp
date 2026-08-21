@@ -707,30 +707,6 @@ MainWindow::MainWindow()
     // Properly shutdown on logoff, restart, and shutdown
     connect(qApp, &QGuiApplication::commitDataRequest, this, [this] { m_appExitCalled = true; });
 
-#ifdef KEEPASSXC_BUILD_TYPE_SNAPSHOT
-    auto* hidePreRelWarn = new QAction(tr("Don't show again for this version"), m_ui->globalMessageWidget);
-    m_ui->globalMessageWidget->addAction(hidePreRelWarn);
-    auto hidePreRelWarnConn = QSharedPointer<QMetaObject::Connection>::create();
-    *hidePreRelWarnConn = connect(
-        m_ui->globalMessageWidget, &KMessageWidget::hideAnimationFinished, [this, hidePreRelWarn, hidePreRelWarnConn] {
-            m_ui->globalMessageWidget->removeAction(hidePreRelWarn);
-            disconnect(*hidePreRelWarnConn);
-            hidePreRelWarn->deleteLater();
-        });
-    connect(hidePreRelWarn, &QAction::triggered, [this] {
-        m_ui->globalMessageWidget->animatedHide();
-        config()->set(Config::Messages_HidePreReleaseWarning, KEEPASSXC_VERSION);
-    });
-
-    if (config()->get(Config::Messages_HidePreReleaseWarning) != KEEPASSXC_VERSION) {
-        m_ui->globalMessageWidget->showMessage(tr("WARNING: You are using a development snapshot build of KeePassXC.\n"
-                                                  "Maintain a backup of your databases in the event of unknown bugs.\n"
-                                                  "This version is not meant for production use."),
-                                               MessageWidget::Warning,
-                                               -1);
-    }
-#endif
-
     connect(qApp, SIGNAL(anotherInstanceStarted()), this, SLOT(bringToFront()));
     connect(qApp, SIGNAL(applicationActivated()), this, SLOT(bringToFront()));
     connect(qApp, SIGNAL(openFile(QString)), this, SLOT(openDatabase(QString)));

@@ -42,6 +42,7 @@
 #include "core/PasswordGenerator.h"
 #include "core/TimeDelta.h"
 #include "gui/PasswordWidget.h"
+#include "gui/TotpSetupDialog.h"
 #ifdef KPXC_FEATURE_SSHAGENT
 #include "sshagent/OpenSSHKey.h"
 #include "sshagent/OpenSSHKeyGenDialog.h"
@@ -253,6 +254,7 @@ void EditEntryWidget::setupMain()
     });
 
     connect(m_mainUi->revealNotesButton, &QToolButton::clicked, this, &EditEntryWidget::toggleHideNotes);
+    connect(m_mainUi->setupTotpButton, &QPushButton::clicked, this, &EditEntryWidget::setupTotp);
 
     m_mainUi->expirePresets->setMenu(createPresetsMenu());
     connect(m_mainUi->expirePresets->menu(), SIGNAL(triggered(QAction*)), this, SLOT(useExpiryPreset(QAction*)));
@@ -797,13 +799,6 @@ void EditEntryWidget::toKeeAgentSettings(KeeAgentSettings& settings) const
     settings.setSaveAttachmentToTempFile(m_sshAgentSettings.saveAttachmentToTempFile());
 }
 
-void EditEntryWidget::updateTotp()
-{
-    if (m_entry) {
-        m_attributesModel->setEntryAttributes(m_entry->attributes());
-    }
-}
-
 void EditEntryWidget::browsePrivateKey()
 {
     auto fileName = fileDialog()->getOpenFileName(this, tr("Select private key"), FileDialog::getLastDir("sshagent"));
@@ -937,6 +932,25 @@ void EditEntryWidget::generatePrivateKey()
 }
 #endif
 
+void EditEntryWidget::updateTotp()
+{
+    if (m_entry) {
+        m_attributesModel->setEntryAttributes(m_entry->attributes());
+        m_mainUi->setupTotpButton->setText(m_entry->hasTotp() ? tr("Edit TOTP...") : tr("Set up TOTP..."));
+    }
+}
+
+void EditEntryWidget::setupTotp()
+{
+    if (!m_entry || !m_create || m_history) {
+        return;
+    }
+
+    auto setupTotpDialog = new TotpSetupDialog(this, m_entry);
+    connect(setupTotpDialog, &TotpSetupDialog::totpUpdated, this, &EditEntryWidget::updateTotp);
+    setupTotpDialog->open();
+}
+
 void EditEntryWidget::useExpiryPreset(QAction* action)
 {
     m_mainUi->expireCheck->setChecked(true);
@@ -1069,6 +1083,10 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->expireCheck->setChecked(entry->timeInfo().expires());
     m_mainUi->expireDatePicker->setDateTime(entry->timeInfo().expiryTime().toLocalTime());
     m_mainUi->expirePresets->setEnabled(!m_history);
+    m_mainUi->totpLabel->setVisible(m_create && !m_history);
+    m_mainUi->setupTotpButton->setVisible(m_create && !m_history);
+    m_mainUi->setupTotpButton->setEnabled(m_create && !m_history);
+    updateTotp();
 
     QList<QString> commonUsernames = m_db->commonUsernames();
     m_usernameCompleterModel->setStringList(commonUsernames);

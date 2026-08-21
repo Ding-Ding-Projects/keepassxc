@@ -86,7 +86,10 @@ bool NativeMessageInstaller::isBrowserEnabled(SupportedBrowsers browser)
 {
 #ifdef Q_OS_WIN
     QSettings settings(getTargetPath(browser), QSettings::NativeFormat);
-    return !settings.value("Default").isNull();
+    const auto registeredPath = QDir::toNativeSeparators(settings.value(QStringLiteral("Default")).toString());
+    const auto expectedPath = QDir::toNativeSeparators(getNativeMessagePath(browser));
+    return !registeredPath.isEmpty() && registeredPath.compare(expectedPath, Qt::CaseInsensitive) == 0
+           && QFileInfo::exists(expectedPath);
 #else
     return QFile::exists(getNativeMessagePath(browser));
 #endif
@@ -101,19 +104,32 @@ bool NativeMessageInstaller::isBrowserEnabled(SupportedBrowsers browser)
 void NativeMessageInstaller::setBrowserEnabled(SupportedBrowsers browser, bool enabled)
 {
     if (enabled) {
-#ifdef Q_OS_WIN
-        // Create a registry key
-        QSettings settings(getTargetPath(browser), QSettings::NativeFormat);
-        settings.setValue("Default", getNativeMessagePath(browser));
-#endif
-        // Always create the script file
+        const auto manifestPath = QDir::toNativeSeparators(getNativeMessagePath(browser));
+        // Create and validate the manifest before advertising it to the browser.
         if (!createNativeMessageFile(browser)) {
             QMessageBox::critical(
                 nullptr,
                 QObject::tr("Browser Plugin Failure"),
                 QObject::tr("Could not save the native messaging script file for %1.").arg(getBrowserName(browser)),
                 QMessageBox::Ok);
+            return;
         }
+#ifdef Q_OS_WIN
+        // Create a registry key
+        QSettings settings(getTargetPath(browser), QSettings::NativeFormat);
+        settings.setValue(QStringLiteral("Default"), manifestPath);
+        settings.sync();
+        const auto registeredPath =
+            QDir::toNativeSeparators(settings.value(QStringLiteral("Default")).toString());
+        if (settings.status() != QSettings::NoError
+            || registeredPath.compare(manifestPath, Qt::CaseInsensitive) != 0) {
+            QMessageBox::critical(
+                nullptr,
+                QObject::tr("Browser Plugin Failure"),
+                QObject::tr("Could not register the native messaging script for %1.").arg(getBrowserName(browser)),
+                QMessageBox::Ok);
+        }
+#endif
     } else {
         // Remove the script file
         const QString fileName = getNativeMessagePath(browser);

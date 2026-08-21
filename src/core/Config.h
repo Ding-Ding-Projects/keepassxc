@@ -216,7 +216,6 @@ public:
         PasswordGenerator_Type,
 
         Messages_NoLegacyKeyFileWarning,
-        Messages_HidePreReleaseWarning,
 
         // Special internal value
         Deleted

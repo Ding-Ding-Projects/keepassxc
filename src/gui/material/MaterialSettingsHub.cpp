@@ -1189,13 +1189,6 @@ namespace Material
                   tr("Hide the legacy key file warning"),
                   tr("Stop warning about key files in the old format."),
                   Config::Messages_NoLegacyKeyFileWarning);
-        addToggle(page,
-                  updates,
-                  QStringLiteral("warning"),
-                  tr("Hide the pre-release warning"),
-                  tr("Stop warning that this build is not meant for production."),
-                  Config::Messages_HidePreReleaseWarning);
-
         // The three actions that own the configuration file itself. They do
         // what the classic editor's buttons do, so both surfaces agree.
         const QString settingsFile = tr("Settings file");

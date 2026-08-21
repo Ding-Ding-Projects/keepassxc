@@ -122,9 +122,9 @@ execute_process(COMMAND git tag --points-at HEAD
         OUTPUT_VARIABLE GIT_TAG
         ERROR_QUIET)
 string(REGEX REPLACE "latest" "" GIT_TAG "${GIT_TAG}")
-if(GIT_TAG MATCHES "[0-9]+\.[0-9]+\.[0-9]+")
-    string(STRIP "${GIT_TAG}" GIT_TAG)
-    set(OVERRIDE_VERSION ${GIT_TAG})
+string(STRIP "${GIT_TAG}" GIT_TAG)
+if(GIT_TAG MATCHES "^v?([0-9]+\\.[0-9]+\\.[0-9]+)$")
+    set(OVERRIDE_VERSION "${CMAKE_MATCH_1}")
 elseif(EXISTS ${CMAKE_SOURCE_DIR}/.version)
     file(READ ${CMAKE_SOURCE_DIR}/.version OVERRIDE_VERSION)
 endif()

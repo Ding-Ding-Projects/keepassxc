@@ -2,6 +2,15 @@
 
 Last verified: 2026-08-21
 
+## Current task update
+
+- The entry editor now exposes direct TOTP setup only while creating an unsaved entry; the existing TOTP dialog validates and stores the secret on that disposable in-memory entry before its final save. Existing-entry edit sessions keep the established selected-entry action so editor Cancel semantics are unchanged.
+- TOTP and passkey attributes coexist on one entry and survive a real KDBX round trip.
+- Browser startup repairs the otherwise unusable state where browser integration and automatic extension setup are enabled but Chrome-family, Firefox-family, and Edge native-messaging registrations are all absent.
+- The development-snapshot startup warning and its obsolete settings control/config key are removed. Other actionable error and user-triggered completion notifications remain.
+- Tagged CMake configuration now accepts an exact semantic version with one optional leading `v` and normalizes it before the strict version check.
+- Focused verification at the task tree: `testbrowser` passed in 0.22 seconds and `testpasskeys` passed in 0.26 seconds. `testgui`, `testbrowser`, and `testpasskeys` all compiled successfully. The isolated `testAddEntry` run crashed before entering the test body with access violation `0xc0000005` in `AutoTypeExecutor::~AutoTypeExecutor`; GUI runtime verification is therefore blocked by that unrelated harness teardown crash rather than reported as passed.
+
 ## Current repository state
 
 This fork is a 64-bit Windows 10/11 native C++/Qt 6 application. CMake rejects non-Windows,

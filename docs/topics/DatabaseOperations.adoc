@@ -128,7 +128,7 @@ TIP: Your computer time must be synchronized with an internet time source to gen
 
 WARNING: Storing TOTP codes in the same database as the password will eliminate the advantages of two-factor authentication. If you desire maximum security, we recommend keeping TOTP codes in a separate database that you only unlock when needed.
 
-To add TOTP to a database entry, you must first retrieve the secret string from the website or application you are authenticating to. Often this secret is accompanied with a QR code and can be copy/pasted below. Example:
+To add TOTP to a database entry, you must first retrieve the secret string from the website or application you are authenticating to. Often this secret is accompanied with a QR code and can be copy/pasted below. When creating a new entry, select _Set up TOTP..._ directly in the entry form and paste the secret before saving the entry. For an existing entry, use the entry's _TOTP_ -> _Set up TOTP..._ menu. Example:
 
 .Example TOTP Secret
 image::totp_code_example.png[,40%]

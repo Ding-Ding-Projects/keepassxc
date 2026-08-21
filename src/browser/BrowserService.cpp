@@ -99,6 +99,19 @@ BrowserService* BrowserService::instance()
 void BrowserService::setEnabled(bool enabled)
 {
     if (enabled) {
+#ifdef Q_OS_WIN
+        // A profile restored from an older Squirrel installation can retain the global browser-integration
+        // preference while losing every native-messaging registration. When automatic extension setup is enabled,
+        // repair that unusable state without requiring the user to discover the per-browser checkboxes first.
+        if (browserSettings()->autoInstallExtension()
+            && !browserSettings()->browserSupport(BrowserShared::CHROME)
+            && !browserSettings()->browserSupport(BrowserShared::FIREFOX)
+            && !browserSettings()->browserSupport(BrowserShared::EDGE)) {
+            browserSettings()->setBrowserSupport(BrowserShared::CHROME, true);
+            browserSettings()->setBrowserSupport(BrowserShared::FIREFOX, true);
+            browserSettings()->setBrowserSupport(BrowserShared::EDGE, true);
+        }
+#endif
         // Update KeePassXC/keepassxc-proxy binary paths to Native Messaging scripts
         if (browserSettings()->updateBinaryPath()) {
             browserSettings()->updateBinaryPaths();

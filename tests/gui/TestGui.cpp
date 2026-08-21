@@ -846,6 +846,18 @@ void TestGui::testAddEntry()
     QVERIFY(usernameComboBox);
     QTest::mouseClick(usernameComboBox, Qt::LeftButton);
     QTest::keyClicks(usernameComboBox, "AutocompletionUsername");
+    auto* setupTotpButton = editEntryWidget->findChild<QPushButton*>("setupTotpButton");
+    QVERIFY(setupTotpButton);
+    QVERIFY(setupTotpButton->isVisible());
+    QTest::mouseClick(setupTotpButton, Qt::LeftButton);
+    QPointer<TotpSetupDialog> setupTotpDialog = editEntryWidget->findChild<TotpSetupDialog*>("TotpSetupDialog");
+    QTRY_VERIFY(setupTotpDialog);
+    auto* seedEdit = setupTotpDialog->findChild<QLineEdit*>("seedEdit");
+    QTest::keyClicks(seedEdit, "JBSWY3DPEHPK3PXP");
+    auto* setupTotpButtonBox = setupTotpDialog->findChild<QDialogButtonBox*>("buttonBox");
+    QTest::mouseClick(setupTotpButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
+    QTRY_VERIFY(setupTotpDialog.isNull());
+    QCOMPARE(setupTotpButton->text(), QString("Edit TOTP..."));
     auto* editEntryWidgetButtonBox = editEntryWidget->findChild<QDialogButtonBox*>("buttonBox");
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
@@ -855,6 +867,7 @@ void TestGui::testAddEntry()
 
     QCOMPARE(entry->title(), QString("test"));
     QCOMPARE(entry->username(), QString("AutocompletionUsername"));
+    QVERIFY(entry->hasValidTotp());
     QCOMPARE(entry->historyItems().size(), 0);
 
     m_db->updateCommonUsernames();
