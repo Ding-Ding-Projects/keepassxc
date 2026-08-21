@@ -18,6 +18,27 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+
+      - name: Verify Changelog provenance history
+        shell: powershell
+        run: |
+          $PSNativeCommandUseErrorActionPreference = $false
+          $shallow = (& git rev-parse --is-shallow-repository).Trim()
+          if ($LASTEXITCODE -ne 0 -or $shallow -ne 'false') { throw "Release checkout is shallow: $shallow" }
+          $tags = @(git tag --list)
+          if ($LASTEXITCODE -ne 0 -or $tags.Count -eq 0) { throw 'Release checkout contains no historical tags.' }
+          foreach ($tag in $tags) {
+            $commit = (& git rev-parse --verify "$tag^{commit}" 2>$null).Trim()
+            if ($LASTEXITCODE -ne 0 -or $commit -notmatch '^[0-9a-f]{40}$') {
+              throw "Historical tag cannot resolve to a commit object: $tag"
+            }
+            & git cat-file -e "$commit^{commit}" 2>$null
+            if ($LASTEXITCODE -ne 0) { throw "Historical commit object is missing for tag: $tag" }
+          }
+          Write-Host "Verified $($tags.Count) historical tag commit object(s)."
 
       - name: Install pinned Qt 6.8.3 for MSVC 2022 x64
         uses: jurplel/install-qt-action@48d3ad6db93f3627c8ee7a0454bc6f3744f7e730

@@ -5,7 +5,8 @@ param(
     [switch]$ProbeQtBootstrapMissing,
     [switch]$ProbeReleaseVersionEnvMissing,
     [switch]$ProbeProductionBuildScopeMissing,
-    [switch]$ProbeSharedReleaseConcurrency
+    [switch]$ProbeSharedReleaseConcurrency,
+    [switch]$ProbeChangelogTagCheckoutMissing
 )
 
 $ErrorActionPreference = 'Stop'
@@ -76,6 +77,31 @@ foreach ($group in $concurrencyGroups) {
     $value = $group.Groups['value'].Value
     if ($value.Contains('github.ref') -or -not $value.Contains('github.run_id')) {
         throw "Release workflow concurrency can replace pending runs unless it is unique per run id: $value"
+    }
+}
+$checkoutMatch = [regex]::Match(
+    $workflow,
+    '(?ms)^\s{6}- name: Checkout\r?\n(?<step>.*?)(?=^\s{6}- name:|\z)')
+if (-not $checkoutMatch.Success) { throw 'Release checkout step cannot be located for provenance validation.' }
+$checkoutStep = $checkoutMatch.Groups['step'].Value
+if ($ProbeChangelogTagCheckoutMissing) {
+    $checkoutStep = $checkoutStep.Replace('fetch-depth: 0', 'fetch-depth: 1')
+}
+foreach ($needle in @('uses: actions/checkout@v7', 'fetch-depth: 0', 'fetch-tags: true')) {
+    if (-not $checkoutStep.Contains($needle)) {
+        throw "Changelog provenance checkout is incomplete: $needle"
+    }
+}
+$tagVerificationContract = @(
+    '- name: Verify Changelog provenance history',
+    'git rev-parse --is-shallow-repository',
+    'git tag --list',
+    'git rev-parse --verify "$tag^{commit}"',
+    'git cat-file -e "$commit^{commit}"'
+)
+foreach ($needle in $tagVerificationContract) {
+    if (-not $workflow.Contains($needle)) {
+        throw "Changelog provenance history verification is missing: $needle"
     }
 }
 $workflowVersionContract = @(
