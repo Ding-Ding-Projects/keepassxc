@@ -6,6 +6,21 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The first Reports parity batch retains the GUI-thread `HealthChecker` and `DatabaseStats` walk while
+adding explicit empty/loading/populated/progress/warning/error states, real weak/reused/expired/
+excluded categories, bounded regex filtering, collapsible sections, selectable findings, and scoped
+Markdown export. Painted rows now expose their full facts to assistive technology and reflow at the
+five shell widths. The inventory records the real Reports destination route as implemented in
+source; visual captures, audits, comparisons, and diffs remain pending.
+The corrective follow-up replaces the older two-section presentation with the canon's six stable
+cards: `breached`, `weak`, `reused`, `expired`, `healthy`, and `statistics`. Weak/reused/expired
+membership overlaps by real UUID; healthy rows come from the same `HealthChecker` pass; statistics
+come from `DatabaseStats`; breach remains explicitly unavailable because this pass has no real HIBP
+result. Expansion state is independent and survives content rebuilds.
+The superseded standalone Password Health and Statistics cards are no longer constructed at all;
+the header owns Export All and selected-finding export, and the focused Chut requires exactly six
+`reportCard_*` widgets with no legacy card objects.
+
 The first Appearance parity batch now exposes Auto/Light/Dark, seed, density, installed font
 family, 85–140% scale, weight, a live CJK-safe preview, sparse per-element overrides, and a
 continuous alpha-aware colour dialog. Appearance search is independently registered and now honors

@@ -22,11 +22,19 @@
 #include "MaterialTheme.h"
 
 #include <QPair>
+#include <QHash>
+#include <QSet>
 #include <QString>
+#include <QStringList>
 #include <QVector>
 
 class QGridLayout;
 class QVBoxLayout;
+class QLabel;
+class QProgressBar;
+class QToolButton;
+class QResizeEvent;
+class QComboBox;
 
 namespace Material
 {
@@ -58,6 +66,19 @@ namespace Material
         Health status = Health::Unknown;
     };
 
+    struct ReportCard
+    {
+        QString id;
+        QString title;
+        QString blurb;
+        QString count;
+        QString symbol;
+        Health status = Health::Unknown;
+        QVector<HealthRow> rows;
+        QVector<QPair<QString, QString>> statistics;
+        bool unavailable = false;
+    };
+
     /**
      * The reports destination.
      *
@@ -71,32 +92,49 @@ namespace Material
         Q_OBJECT
 
     public:
+        enum class State { Empty, Loading, Populated, Progress, Warning, Error };
         explicit ReportsScreen(QWidget* parent = nullptr);
         ~ReportsScreen() override;
 
         void setStatCards(const QVector<StatCard>& cards);
-        void setHealthRows(const QVector<HealthRow>& rows);
-        void setStatistics(const QVector<QPair<QString, QString>>& statistics);
+        void setReportCards(const QVector<ReportCard>& cards);
+        QStringList reportCardIds() const;
+        bool isCardExpanded(const QString& id) const;
+        void setCardExpanded(const QString& id, bool expanded);
+        void setState(State state, const QString& message = {}, int progress = -1);
+        State state() const;
+        QStringList selectedFindingIds() const;
+        void setSearchValidation(bool valid, const QString& message = {});
 
     signals:
         /** The Fix button of the health row carrying @p id was pressed. */
         void fixRequested(const QString& id);
         void exportRequested();
+        void bulkExportRequested(const QStringList& ids);
+        void categoryChanged(const QString& category);
+
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void rebuild();
         void rebuildStatCards();
-        void rebuildHealthRows();
-        void rebuildStatistics();
+        void rebuildReportCards();
+        void applyResponsiveLayout();
+        void updateBulkActions();
 
         QGridLayout* m_statGrid = nullptr;
-        QVBoxLayout* m_healthLayout = nullptr;
-        QVBoxLayout* m_statisticsLayout = nullptr;
-        Card* m_healthCard = nullptr;
-        Card* m_statisticsCard = nullptr;
+        QGridLayout* m_reportCardsLayout = nullptr;
+        QWidget* m_reportCardsHost = nullptr;
+        QLabel* m_stateLabel = nullptr;
+        QProgressBar* m_progress = nullptr;
+        QToolButton* m_bulkExport = nullptr;
+        QComboBox* m_category = nullptr;
+        State m_state = State::Empty;
+        QSet<QString> m_selectedIds;
+        QVector<ReportCard> m_reportCards;
+        QHash<QString, bool> m_expandedCards;
         QVector<StatCard> m_statCards;
-        QVector<HealthRow> m_healthRows;
-        QVector<QPair<QString, QString>> m_statistics;
     };
 
 } // namespace Material

@@ -164,6 +164,18 @@ add_unit_test(NAME testconfig SOURCES TestConfig.cpp
 add_unit_test(NAME testmaterialvoice SOURCES TestMaterialVoice.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 
+add_unit_test(NAME testmaterialreports SOURCES TestMaterialReports.cpp
+        LIBS ${TEST_LIBRARIES})
+set_tests_properties(testmaterialreports PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialreports POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialreports>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialreports>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testmaterialappearance SOURCES TestMaterialAppearance.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialappearance PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
