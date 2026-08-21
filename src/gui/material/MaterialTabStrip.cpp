@@ -24,13 +24,16 @@
 #include "MaterialTabOverflow.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QFontMetrics>
 #include <QMenu>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
 #include <QSet>
+#include <QStringList>
 
 namespace Material
 {
@@ -100,6 +103,8 @@ namespace Material
     {
         setFixedHeight(Layout::TabStripHeight);
         setMouseTracking(true);
+        setFocusPolicy(Qt::StrongFocus);
+        setAccessibleName(tr("Open database tabs"));
 
         // The trailing controls are pinned as well as sized: ButtonBase fixes a
         // minimum width from its label metrics on construction, which otherwise
@@ -138,10 +143,12 @@ namespace Material
         tab.id = id;
         tab.symbol = symbol;
         tab.label = label;
+        resetPointerInteraction();
         m_tabs.append(tab);
 
         if (m_currentIndex < 0) {
             m_currentIndex = m_tabs.size() - 1;
+            m_focusId = tab.id;
         }
 
         relayout();
@@ -155,6 +162,8 @@ namespace Material
             return;
         }
 
+        const QString replacementFocus = m_focusId == id ? currentTab() : m_focusId;
+        resetPointerInteraction();
         m_tabs.removeAt(index);
         if (m_tabs.isEmpty()) {
             m_currentIndex = -1;
@@ -165,19 +174,22 @@ namespace Material
         }
 
         m_hoverIndex = -1;
-        m_pressedIndex = -1;
+        m_focusId = replacementFocus == id ? QString() : replacementFocus;
+        if (m_focusId.isEmpty() && m_currentIndex >= 0 && m_currentIndex < m_tabs.size()) {
+            m_focusId = m_tabs.at(m_currentIndex).id;
+        }
         relayout();
         update();
     }
 
     void TabStrip::clear()
     {
+        resetPointerInteraction();
         m_tabs.clear();
         m_currentIndex = -1;
         m_hoverIndex = -1;
-        m_pressedIndex = -1;
-        m_pressedClose = false;
         m_hoverClose = false;
+        m_focusId.clear();
         relayout();
         update();
     }
@@ -185,6 +197,9 @@ namespace Material
     void TabStrip::setTabs(const QList<TabDescriptor>& descriptors, const QString& currentRuntimeId)
     {
         const QString hoveredId = m_hoverIndex >= 0 && m_hoverIndex < m_tabs.size() ? m_tabs.at(m_hoverIndex).id : QString();
+        const QString focusedId = m_focusId;
+        const QString previousCurrentId = currentTab();
+        resetPointerInteraction();
         QList<Tab> reconciled;
         reconciled.reserve(descriptors.size());
         for (const auto& descriptor : descriptors) {
@@ -199,11 +214,12 @@ namespace Material
             reconciled.append(tab);
         }
         m_tabs = reconciled;
-        m_currentIndex = indexOf(currentRuntimeId);
+        const QString requestedCurrentId = currentRuntimeId.isEmpty() ? previousCurrentId : currentRuntimeId;
+        m_currentIndex = indexOf(requestedCurrentId);
         if (m_currentIndex < 0 && !m_tabs.isEmpty()) m_currentIndex = 0;
         m_hoverIndex = indexOf(hoveredId);
-        m_pressedIndex = -1;
-        m_pressedClose = false;
+        m_focusId = indexOf(focusedId) >= 0 ? focusedId : currentTab();
+        if (m_focusId.isEmpty() && !m_tabs.isEmpty()) m_focusId = m_tabs.first().id;
         relayout();
         update();
     }
@@ -292,6 +308,90 @@ namespace Material
             }
         }
         return -1;
+    }
+
+    void TabStrip::resetPointerInteraction()
+    {
+        m_pressedId.clear();
+        m_pressedClose = false;
+        m_dragSourceId.clear();
+        m_dragBeforeId.clear();
+        m_dragIndicatorX = -1;
+        m_dragDropValid = false;
+        m_dragging = false;
+    }
+
+    void TabStrip::updateDragInsertion(const QPoint& pos)
+    {
+        m_dragBeforeId.clear();
+        m_dragIndicatorX = -1;
+        m_dragDropValid = false;
+
+        const int sourceIndex = indexOf(m_dragSourceId);
+        if (sourceIndex < 0 || !m_tabs.at(sourceIndex).visible
+            || pos.y() < m_tabs.at(sourceIndex).rect.top() || pos.y() > m_tabs.at(sourceIndex).rect.bottom()) {
+            return;
+        }
+
+        const bool pinned = m_tabs.at(sourceIndex).pinned;
+        QList<int> visiblePartition;
+        for (int i = 0; i < m_tabs.size(); ++i) {
+            if (i != sourceIndex && m_tabs.at(i).visible && m_tabs.at(i).pinned == pinned) {
+                visiblePartition.append(i);
+            }
+        }
+        if (visiblePartition.isEmpty()) {
+            return;
+        }
+
+        int beforeIndex = -1;
+        for (const int candidate : visiblePartition) {
+            if (pos.x() < m_tabs.at(candidate).rect.center().x()) {
+                beforeIndex = candidate;
+                m_dragIndicatorX = m_tabs.at(candidate).rect.left();
+                break;
+            }
+        }
+
+        if (beforeIndex < 0) {
+            const int lastVisible = visiblePartition.constLast();
+            m_dragIndicatorX = m_tabs.at(lastVisible).rect.right() + 1;
+
+            // An empty beforeId is the end of the source pin partition. If
+            // hidden tabs remain in that partition, insert before the first
+            // one instead so the drop does not leap past unseen tabs.
+            for (int i = lastVisible + 1; i < m_tabs.size(); ++i) {
+                if (i != sourceIndex && m_tabs.at(i).pinned == pinned) {
+                    beforeIndex = i;
+                    break;
+                }
+            }
+        }
+
+        if (beforeIndex >= 0) {
+            m_dragBeforeId = m_tabs.at(beforeIndex).id;
+        }
+
+        QStringList currentPartition;
+        for (const auto& tab : m_tabs) {
+            if (tab.pinned == pinned) {
+                currentPartition.append(tab.id);
+            }
+        }
+        QStringList desiredPartition = currentPartition;
+        desiredPartition.removeAll(m_dragSourceId);
+        const int insertion = m_dragBeforeId.isEmpty() ? desiredPartition.size() : desiredPartition.indexOf(m_dragBeforeId);
+        if (insertion < 0) {
+            m_dragBeforeId.clear();
+            m_dragIndicatorX = -1;
+            return;
+        }
+        desiredPartition.insert(insertion, m_dragSourceId);
+        m_dragDropValid = desiredPartition != currentPartition;
+        if (!m_dragDropValid) {
+            m_dragBeforeId.clear();
+            m_dragIndicatorX = -1;
+        }
     }
 
     void TabStrip::relayout()
@@ -446,6 +546,11 @@ namespace Material
             } else if (i == m_hoverIndex) {
                 painter.fillPath(fillPath, hoverFill);
             }
+            if (hasFocus() && tab.id == m_focusId) {
+                painter.setPen(QPen(theme()->color(Role::Primary), 2));
+                painter.setBrush(Qt::NoBrush);
+                painter.drawRoundedRect(tab.rect.adjusted(2, 2, -2, -2), Shape::Small, Shape::Small);
+            }
 
             // Only the active tab is outlined; the rest are borderless.
             if (active) {
@@ -531,6 +636,14 @@ namespace Material
             painter.setPen(theme()->color(Role::OnSecondaryContainer));
             painter.drawText(badge, Qt::AlignCenter, count);
         }
+
+        if (m_dragging && m_dragDropValid && m_dragIndicatorX >= 0) {
+            painter.fillRect(QRect(m_dragIndicatorX - 1,
+                                   height() - Layout::TabHeight + 3,
+                                   3,
+                                   Layout::TabHeight - 6),
+                             theme()->color(Role::Primary));
+        }
     }
 
     void TabStrip::resizeEvent(QResizeEvent* event)
@@ -548,14 +661,22 @@ namespace Material
 
         const QPoint pos = event->position().toPoint();
         if (!m_overflowRect.isEmpty() && m_overflowRect.contains(pos)) {
+            resetPointerInteraction();
             event->accept();
             openOverflow();
             return;
         }
 
         const int index = indexAt(pos);
-        m_pressedIndex = index;
+        resetPointerInteraction();
+        m_pressedId = index >= 0 ? m_tabs.at(index).id : QString();
         m_pressedClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
+        m_dragSourceId = m_pressedClose ? QString() : m_pressedId;
+        m_pressPosition = pos;
+        if (index >= 0) {
+            m_focusId = m_tabs.at(index).id;
+            setFocus(Qt::MouseFocusReason);
+        }
 
         if (index >= 0 && !m_pressedClose && index != m_currentIndex) {
             m_currentIndex = index;
@@ -569,14 +690,29 @@ namespace Material
 
     void TabStrip::mouseReleaseEvent(QMouseEvent* event)
     {
-        const int pressed = m_pressedIndex;
+        const QString pressedId = m_pressedId;
         const bool wasClose = m_pressedClose;
-        m_pressedIndex = -1;
-        m_pressedClose = false;
+        const bool wasDragging = m_dragging;
+        const bool dropValid = m_dragDropValid;
+        const QString dragSourceId = m_dragSourceId;
+        const QString dragBeforeId = m_dragBeforeId;
+        resetPointerInteraction();
 
-        if (event->button() == Qt::LeftButton && wasClose && pressed >= 0 && pressed < m_tabs.size()
-            && m_tabs.at(pressed).closeRect.contains(event->position().toPoint())) {
-            emit tabCloseRequested(m_tabs.at(pressed).id);
+        if (event->button() == Qt::LeftButton && wasDragging && dropValid && !dragSourceId.isEmpty()
+            && indexOf(dragSourceId) >= 0
+            && (dragBeforeId.isEmpty() || indexOf(dragBeforeId) >= 0)
+            && (dragBeforeId.isEmpty()
+                || m_tabs.at(indexOf(dragBeforeId)).pinned == m_tabs.at(indexOf(dragSourceId)).pinned)) {
+            emit tabMoveRequested(dragSourceId, dragBeforeId);
+            update();
+            event->accept();
+            return;
+        }
+
+        const int pressedIndex = indexOf(pressedId);
+        if (event->button() == Qt::LeftButton && wasClose && pressedIndex >= 0
+            && m_tabs.at(pressedIndex).closeRect.contains(event->position().toPoint())) {
+            emit tabCloseRequested(pressedId);
         }
 
         update();
@@ -587,8 +723,14 @@ namespace Material
     {
         const QPoint pos = event->position().toPoint();
         const int index = indexAt(pos);
-        const bool overClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
+        const bool overClose = !m_dragging && index >= 0 && m_tabs.at(index).closeRect.contains(pos);
         const bool overOverflow = !m_overflowRect.isEmpty() && m_overflowRect.contains(pos);
+        const int sourceIndex = indexOf(m_dragSourceId);
+        if (sourceIndex >= 0 && !m_pressedClose && (event->buttons() & Qt::LeftButton)
+            && (m_dragging || (pos - m_pressPosition).manhattanLength() >= QApplication::startDragDistance())) {
+            m_dragging = true;
+            updateDragInsertion(pos);
+        }
         if (index != m_hoverIndex || overClose != m_hoverClose || overOverflow != m_overflowHovered) {
             m_hoverIndex = index;
             m_hoverClose = overClose;
@@ -612,6 +754,58 @@ namespace Material
             update();
         }
         QWidget::leaveEvent(event);
+    }
+
+    void TabStrip::keyPressEvent(QKeyEvent* event)
+    {
+        if (m_tabs.isEmpty()) {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+        int focusIndex = indexOf(m_focusId);
+        if (focusIndex < 0) {
+            focusIndex = qMax(0, m_currentIndex);
+            m_focusId = m_tabs.at(focusIndex).id;
+        }
+        const bool move = event->modifiers().testFlag(Qt::ControlModifier)
+                          && event->modifiers().testFlag(Qt::ShiftModifier);
+        const int direction = event->key() == Qt::Key_Left ? -1 : event->key() == Qt::Key_Right ? 1 : 0;
+        if (direction != 0) {
+            const int target = focusIndex + direction;
+            if (target >= 0 && target < m_tabs.size() && m_tabs.at(target).pinned == m_tabs.at(focusIndex).pinned) {
+                if (move) {
+                    const QString before = direction < 0
+                                               ? m_tabs.at(target).id
+                                               : [&] {
+                                                     for (int candidate = target + 1; candidate < m_tabs.size(); ++candidate) {
+                                                         if (m_tabs.at(candidate).pinned == m_tabs.at(focusIndex).pinned) {
+                                                             return m_tabs.at(candidate).id;
+                                                         }
+                                                     }
+                                                     return QString();
+                                                 }();
+                    emit tabMoveRequested(m_tabs.at(focusIndex).id, before);
+                } else {
+                    m_focusId = m_tabs.at(target).id;
+                    update();
+                }
+            }
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+            setCurrentTab(m_focusId);
+            emit tabSelected(m_focusId);
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Escape && m_dragging) {
+            resetPointerInteraction();
+            update();
+            event->accept();
+            return;
+        }
+        QWidget::keyPressEvent(event);
     }
 
     void TabStrip::contextMenuEvent(QContextMenuEvent* event)
@@ -638,9 +832,19 @@ namespace Material
         } else if (chosen == earlier && canEarlier) {
             emit tabMoveRequested(tab.id, m_tabs.at(index - 1).id);
         } else if (chosen == later && canLater) {
-            const QString before = index + 2 < m_tabs.size() && m_tabs.at(index + 2).pinned == tab.pinned
-                                       ? m_tabs.at(index + 2).id
-                                       : QString();
+            QString before;
+            bool passedAdjacent = false;
+            for (int candidate = index + 1; candidate < m_tabs.size(); ++candidate) {
+                if (m_tabs.at(candidate).pinned == tab.pinned) {
+                    if (passedAdjacent) {
+                        before = m_tabs.at(candidate).id;
+                        break;
+                    }
+                    // The adjacent same-partition tab is the one being moved
+                    // past; the next one is the stable insertion anchor.
+                    passedAdjacent = true;
+                }
+            }
             emit tabMoveRequested(tab.id, before);
         } else if (chosen == close) {
             emit tabCloseRequested(tab.id);
