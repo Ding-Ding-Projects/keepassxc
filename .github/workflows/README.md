@@ -12,6 +12,8 @@ build-installer.bat /s
 
 That script bootstraps the pinned toolchain, builds and stages the native Qt application through `cmake --install`, deploys the Qt runtime with `windeployqt`, creates the Squirrel.Windows package, and verifies the result. The workflow does not duplicate those commands.
 
+The installer route passes `-WithTests:$false` into the native build helper. It configures `WITH_TESTS=OFF` and builds only the production application, CLI, native-messaging proxy, and offline-documentation targets before `cmake --install`. It never builds CTest or QTest executables. A direct `build.bat` remains test-capable by default; callers can also select its validated `-WithTests` value explicitly. This keeps local verification available without making every package spend time compiling a suite Der Machine is deliberately not going to run.
+
 Before calling the root script, the workflow installs the exact Qt 6.8.3 MSVC 2022 x64 distribution through the action pinned at commit `48d3ad6db93f3627c8ee7a0454bc6f3744f7e730`. It verifies `qmake.exe`, `windeployqt.exe`, `QT_VERSION=6.8.3`, and an MSVC platform specification, then exports the resolved installation directory as `QT_ROOT_DIR`. It also resolves `vcvars64.bat` through `vswhere` and exports that environment so the root script's Ninja invocation receives `cl.exe`, the linker, and the Windows SDK paths. The workflow still delegates every native configure, build, install, and package command to `build-installer.bat`.
 
 Required assets are `Setup.exe`, `RELEASES`, exactly one full `.nupkg`, any compatible generated delta package, `artifact-receipt.json`, `build-provenance.json`, and `update-manifest-v1.json`.
