@@ -1,5 +1,14 @@
 # Handoff — closing the gap between the Material UI and the design
 
+> **Incomplete Settings checkpoint (2026-08-21):** Config now distinguishes explicitly persisted
+> values from compiled defaults; Material settings rows expose visible provenance and full
+> explanations, own independent bounded-regex searches, support keyboard activation, and use a
+> compact page picker below 600 logical pixels. Dialog emoji preference and a bounded, versioned,
+> local-only personal-vocabulary JSON cache/reset are wired to real Config keys. Settings mutations
+> append a redacted application-settings event to local Git History. Appearance theme/seed/density/
+> font duplication was removed from General. This checkpoint has not received a focused MSVC build
+> or Settings test target and is not complete design parity; see ROADMAP.md.
+
 > **Current direction (2026-08-21):** the fork is becoming a 64-bit Windows-only application with
 > unsigned Squirrel.Windows installation and updates. Root build scripts, pinned packaging metadata,
 > an artifact verifier, a hard CMake platform boundary, and the responsive breakpoint model are in

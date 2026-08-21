@@ -142,6 +142,8 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},
     {Config::GUI_FunnyLevelCantonese, {QS("GUI/FunnyLevelCantonese"), Roaming, 3}},
     {Config::GUI_VoiceDisclosureShown, {QS("GUI/VoiceDisclosureShown"), Roaming, false}},
+    {Config::GUI_ShowDialogEmojis, {QS("GUI/ShowDialogEmojis"), Roaming, true}},
+    {Config::GUI_PersonalVocabularyCache, {QS("GUI/PersonalVocabularyCache"), Local, QS("")}},
     {Config::GUI_TabOrder, {QS("GUI/TabOrder"), Roaming, QStringList{}}},
     {Config::GUI_PinnedTabs, {QS("GUI/PinnedTabs"), Roaming, QStringList{}}},
     {Config::GUI_TabOverflow, {QS("GUI/TabOverflow"), Roaming, true}},
@@ -265,6 +267,12 @@ QVariant Config::get(ConfigKey key)
 QVariant Config::getDefault(Config::ConfigKey key)
 {
     return configStrings[key].defaultValue;
+}
+
+bool Config::isUserSet(Config::ConfigKey key) const
+{
+    const auto cfg = configStrings[key];
+    return cfg.type == Local && m_localSettings ? m_localSettings->contains(cfg.name) : m_settings->contains(cfg.name);
 }
 
 bool Config::hasAccessError()

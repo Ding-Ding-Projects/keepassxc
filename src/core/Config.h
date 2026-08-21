@@ -116,6 +116,8 @@ public:
         GUI_FunnyLevelEnglish,
         GUI_FunnyLevelCantonese,
         GUI_VoiceDisclosureShown,
+        GUI_ShowDialogEmojis,
+        GUI_PersonalVocabularyCache,
         GUI_TabOrder,
         GUI_PinnedTabs,
         GUI_TabOverflow,
@@ -231,6 +233,7 @@ public:
     ~Config() override;
     QVariant get(ConfigKey key);
     QVariant getDefault(ConfigKey key);
+    bool isUserSet(ConfigKey key) const;
     QString getFileName();
     void set(ConfigKey key, const QVariant& value);
     void remove(ConfigKey key);

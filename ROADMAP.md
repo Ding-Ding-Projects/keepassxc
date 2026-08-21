@@ -10,6 +10,8 @@
 
 ## Material UI rewrite
 
+- [ ] Complete Settings destination parity; the current checkpoint adds real provenance/search/persistence foundations but still lacks focused compiled verification and the full canonical tab/anatomy migration.
+
 - [x] Add the five responsive window-size classes and exact boundary tests.
 - [x] Integrate responsive navigation, searchable compact bottom navigation, group-scope fallback, and an accessible narrow-layout detail sheet.
 - [ ] Complete search registry, tab overflow, regex safety, appearance overrides, generated voice strings, and external-editor integration.

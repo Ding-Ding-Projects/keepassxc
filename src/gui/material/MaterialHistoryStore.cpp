@@ -340,6 +340,24 @@ namespace Material
         return true;
     }
 
+    bool HistoryStore::recordSettingsEvent(const QString& redactedLabel)
+    {
+        if (redactedLabel.trimmed().isEmpty()) return false;
+        load();
+        HistoryRevision revision;
+        revision.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        revision.timestamp = QDateTime::currentDateTimeUtc();
+        revision.databasePath = QCryptographicHash::hash(QByteArrayLiteral("keepassxc-application-settings"), QCryptographicHash::Sha256).toHex();
+        revision.databaseName = tr("Application settings");
+        revision.label = redactedLabel;
+        revision.kind = RevisionKind::Settings;
+        if (!commitTransaction(revision, QByteArrayLiteral("[]"))) {
+            emit writeFailed(tr("The settings change completed, but its local history record could not be written."));
+            return false;
+        }
+        return true;
+    }
+
     QVector<HistoryRevision> HistoryStore::revisions() const { return revisions(0, MaximumPageSize); }
     QVector<HistoryRevision> HistoryStore::revisions(int offset, int limit) const
     {

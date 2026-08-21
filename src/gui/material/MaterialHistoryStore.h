@@ -125,6 +125,7 @@ namespace Material
         bool recordSave(const QSharedPointer<Database>& db);
         /** Record an already-completed redacted event such as restore/import/bulk. */
         bool recordEvent(const QSharedPointer<Database>& db, const QString& redactedLabel, RevisionKind kind);
+        bool recordSettingsEvent(const QString& redactedLabel);
 
         /** Every recorded revision, newest first. */
         QVector<HistoryRevision> revisions() const;
