@@ -23,6 +23,7 @@ function Get-HashHex([string]$Path, [string]$Algorithm) { $s=[IO.File]::OpenRead
 if (-not (Test-Path $setup)) { throw 'Setup.exe is missing.' }
 if (-not (Test-Path $releases)) { throw 'RELEASES is missing.' }
 if ($full.Count -ne 1) { throw "Expected exactly one full package; found $($full.Count)." }
+if ((Get-Item $setup).Length -lt $full[0].Length) { throw 'Setup.exe is smaller than the full package and appears to be an incomplete Squirrel stub.' }
 if ($RequireDelta -and $delta.Count -eq 0) { throw 'A required delta package is missing.' }
 $provenance = Get-Content -Raw -LiteralPath $ProvenancePath | ConvertFrom-Json
 if ($provenance.sourceCommit -ne $ExpectedCommit -or $provenance.version -ne $ExpectedVersion -or $provenance.packageId -ne $ExpectedPackageId -or $provenance.architecture -ne $ExpectedArchitecture) { throw 'Build provenance does not match the expected candidate.' }

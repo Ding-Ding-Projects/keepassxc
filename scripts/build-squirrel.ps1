@@ -45,8 +45,10 @@ do {
     $releasesCandidate = Join-Path $output 'RELEASES'
     $fullCandidate = @(Get-ChildItem -LiteralPath $output -Filter '*-full.nupkg' -ErrorAction SilentlyContinue)
     if ((Test-Path $setupCandidate) -and (Test-Path $releasesCandidate) -and $fullCandidate.Count -eq 1) {
-        $sizes = "$(Get-Item $setupCandidate | Select-Object -ExpandProperty Length):$((Get-Item $releasesCandidate).Length):$($fullCandidate[0].Length)"
-        if ($sizes -eq $lastSizes) { ++$stableObservations } else { $stableObservations = 0; $lastSizes = $sizes }
+        $setupLength = (Get-Item $setupCandidate).Length
+        $fullLength = $fullCandidate[0].Length
+        $sizes = "${setupLength}:$((Get-Item $releasesCandidate).Length):$fullLength"
+        if ($setupLength -ge $fullLength -and $sizes -eq $lastSizes) { ++$stableObservations } else { $stableObservations = 0; $lastSizes = $sizes }
     }
     if ($stableObservations -lt 2) { Start-Sleep -Milliseconds 500 }
 } while ($stableObservations -lt 2 -and [DateTime]::UtcNow -lt $deadline)
