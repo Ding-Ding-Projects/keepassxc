@@ -23,6 +23,7 @@
 #include "MaterialTheme.h"
 
 #include <QAction>
+#include <QContextMenuEvent>
 #include <QFontMetrics>
 #include <QMenu>
 #include <QMouseEvent>
@@ -363,10 +364,12 @@ namespace Material
             // The active tab always keeps a slot, even when it sorts into the tail.
             if (m_currentIndex >= 0 && !shown.contains(m_currentIndex)) {
                 int needed = widths.at(m_currentIndex) + TabSpacing;
-                while (!shown.isEmpty() && needed > 0) {
+                while (!shown.isEmpty() && needed > 0 && !m_tabs.at(shown.last()).pinned) {
                     needed -= widths.at(shown.takeLast()) + TabSpacing;
                 }
-                shown.append(m_currentIndex);
+                if (needed <= 0) {
+                    shown.append(m_currentIndex);
+                }
             }
 
             m_hiddenCount = count - shown.size();
@@ -618,6 +621,27 @@ namespace Material
             update();
         }
         QWidget::leaveEvent(event);
+    }
+
+    void TabStrip::contextMenuEvent(QContextMenuEvent* event)
+    {
+        const int index = indexAt(event->pos());
+        if (index < 0 || index >= m_tabs.size()) {
+            QWidget::contextMenuEvent(event);
+            return;
+        }
+        const Tab& tab = m_tabs.at(index);
+        QMenu menu(this);
+        QAction* pin = menu.addAction(Icons::symbol(tab.pinned ? QStringLiteral("keep_off") : QStringLiteral("keep")),
+                                      tab.pinned ? tr("Unpin tab") : tr("Pin tab"));
+        QAction* close = menu.addAction(Icons::symbol(QStringLiteral("close")), tr("Close tab"));
+        const QAction* chosen = menu.exec(event->globalPos());
+        if (chosen == pin) {
+            emit tabPinRequested(tab.id, !tab.pinned);
+        } else if (chosen == close) {
+            emit tabCloseRequested(tab.id);
+        }
+        event->accept();
     }
 
 } // namespace Material

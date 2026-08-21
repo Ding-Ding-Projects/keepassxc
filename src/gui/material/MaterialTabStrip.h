@@ -25,6 +25,8 @@
 
 #include "MaterialTabDescriptor.h"
 
+class QContextMenuEvent;
+
 namespace Material
 {
     class IconButton;
@@ -68,6 +70,7 @@ namespace Material
     signals:
         void tabSelected(const QString& id);
         void tabCloseRequested(const QString& id);
+        void tabPinRequested(const QString& id, bool pinned);
         void newTabRequested();
         void searchRequested();
 
@@ -78,6 +81,7 @@ namespace Material
         void mouseReleaseEvent(QMouseEvent* event) override;
         void mouseMoveEvent(QMouseEvent* event) override;
         void leaveEvent(QEvent* event) override;
+        void contextMenuEvent(QContextMenuEvent* event) override;
 
     private:
         struct Tab

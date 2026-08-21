@@ -874,7 +874,8 @@ MainWindow::MainWindow()
                                 persistenceKey,
                                 dbWidget->isLocked() ? QStringLiteral("lock") : QStringLiteral("database"),
                                 m_ui->tabWidget->tabName(i),
-                                !persistenceKey.isEmpty() && pinned.contains(persistenceKey),
+                                persistenceKey.isEmpty() ? m_sessionPinnedTabs.contains(id)
+                                                         : pinned.contains(persistenceKey),
                                 !persistenceKey.isEmpty()});
             if (i == m_ui->tabWidget->currentIndex()) {
                 currentId = id;
@@ -932,6 +933,28 @@ MainWindow::MainWindow()
                 m_ui->tabWidget->closeDatabaseTab(i);
                 break;
             }
+        }
+    });
+    connect(tabStrip, &Material::TabStrip::tabPinRequested, this, [this, syncTabStrip](const QString& id, bool pinned) {
+        for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
+            auto* widget = m_ui->tabWidget->databaseWidgetFromIndex(i);
+            if (tabIdFor(widget) != id) continue;
+            const auto database = widget ? widget->database() : QSharedPointer<Database>();
+            const QString key = database ? Material::tabPersistenceKeyForPath(database->filePath()) : QString();
+            if (key.isEmpty()) {
+                if (pinned) {
+                    m_sessionPinnedTabs.insert(id);
+                } else {
+                    m_sessionPinnedTabs.remove(id);
+                }
+            } else {
+                QStringList values = config()->get(Config::GUI_PinnedTabs).toStringList();
+                values.removeAll(key);
+                if (pinned) values.append(key);
+                config()->set(Config::GUI_PinnedTabs, values);
+            }
+            syncTabStrip();
+            break;
         }
     });
     connect(tabStrip, &Material::TabStrip::newTabRequested, m_ui->actionDatabaseOpen, &QAction::trigger);

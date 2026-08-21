@@ -26,6 +26,7 @@
 #include <QProgressBar>
 #include <QSystemTrayIcon>
 #include <QTimer>
+#include <QSet>
 
 #include "core/SignalMultiplexer.h"
 #include "gui/DatabaseWidget.h"
@@ -213,6 +214,7 @@ private:
     bool m_appExitCalled = false;
     bool m_appExiting = false;
     bool m_restartRequested = false;
+    QSet<QString> m_sessionPinnedTabs;
     bool m_contextMenuFocusLock = false;
     bool m_showToolbarSeparator = false;
     bool m_allowScreenCapture = false;
