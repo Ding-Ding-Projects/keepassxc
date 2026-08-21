@@ -18,10 +18,7 @@
 #include "QuickUnlockInterface.h"
 #include <QObject>
 
-#if defined(Q_OS_MACOS)
-#include "TouchID.h"
-#define QUICKUNLOCK_IMPLEMENTATION TouchID
-#elif defined(Q_CC_MSVC)
+#if defined(Q_CC_MSVC)
 #include "WindowsHello.h"
 #define QUICKUNLOCK_IMPLEMENTATION WindowsHello
 #else

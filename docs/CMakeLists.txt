@@ -42,19 +42,3 @@ install(FILES
         ${OUT_DIR}/KeePassXC_UserGuide.html
         ${OUT_DIR}/KeePassXC_KeyboardShortcuts.html
         DESTINATION ${DATA_INSTALL_DIR}/docs)
-
-# Build Man Pages on Linux and macOS
-if(UNIX)
-    add_custom_command(OUTPUT keepassxc.1 keepassxc-cli.1
-        COMMAND ${ASCIIDOCTOR_EXE} -D ${OUT_DIR} -b manpage ${REV} ./man/keepassxc.1.adoc
-        COMMAND ${ASCIIDOCTOR_EXE} -D ${OUT_DIR} -b manpage ${REV} ./man/keepassxc-cli.1.adoc
-        DEPENDS ${DOC_DIR}/man/keepassxc.1.adoc ${DOC_DIR}/man/keepassxc-cli.1.adoc
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        VERBATIM)
-    add_custom_target(manpages ALL DEPENDS keepassxc.1 keepassxc-cli.1)
-
-    install(FILES
-        ${OUT_DIR}/keepassxc.1
-        ${OUT_DIR}/keepassxc-cli.1
-        DESTINATION ${CMAKE_INSTALL_MANDIR}/man1/)
-endif()

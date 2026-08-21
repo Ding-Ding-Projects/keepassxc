@@ -34,22 +34,6 @@ add_custom_command(TARGET icons
         POST_BUILD
         COMMAND bash ./icons/minify.sh
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-if(APPLE)
-    add_custom_command(TARGET icons
-            POST_BUILD
-            COMMAND xcrun actool share/macosx/keepassxc.icon
-                --compile share/macosx
-                --output-partial-info-plist /dev/null
-                --app-icon keepassxc
-                --include-all-app-icons
-                --enable-on-demand-resources NO
-                --target-device mac
-                --minimum-deployment-target 11.0
-                --platform macosx
-                --output-format human-readable-text
-            WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-endif()
-
 # ICO for Windows
 add_custom_command(TARGET icons
     POST_BUILD

@@ -5,7 +5,7 @@
 - [x] Reject non-Windows, non-MSVC, and non-x64 configurations at CMake configure time.
 - [x] Add pinned root dependency, native build, and Squirrel.Windows installer entry points.
 - [x] Validate `RELEASES`, hashes, package paths, required payload, and unsigned setup state.
-- [ ] Remove remaining macOS and Unix-only registrations after their Windows consumers are audited.
+- [x] Remove audited macOS source, bundle, auto-type, quick-unlock, icon, compiler-probe, and Unix manpage paths.
 - [ ] Remove WiX/CPack only after the verified real Squirrel package also installs and launches successfully.
 
 ## Material UI rewrite

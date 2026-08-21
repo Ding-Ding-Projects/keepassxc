@@ -8,20 +8,8 @@ set(autotype_SOURCES
         AutoTypeSelectDialog.cpp
         PickcharsDialog.cpp
         WindowSelectComboBox.cpp
-        test/AutoTypeTest.cpp)
-
-# Platform specific auto-type implementations
-if(APPLE)
-    list(APPEND autotype_SOURCES
-            mac/AutoTypeMac.cpp)
-elseif(WIN32)
-    list(APPEND autotype_SOURCES
-            windows/AutoTypeWindows.cpp)
-endif()
+        test/AutoTypeTest.cpp
+        windows/AutoTypeWindows.cpp)
 
 add_library(autotype STATIC ${autotype_SOURCES})
 target_link_libraries(autotype Qt6::Core Qt6::Widgets)
-
-if(APPLE)
-    target_link_libraries(autotype "-framework Foundation" "-framework AppKit" "-framework Carbon" "-framework ScreenCaptureKit")
-endif()

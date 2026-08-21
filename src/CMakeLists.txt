@@ -256,20 +256,6 @@ set(gui_SOURCES
         ../share/voice/voice.qrc
         ../share/wizard/wizard.qrc)
 
-if(APPLE)
-    list(APPEND gui_SOURCES
-            gui/osutils/macutils/DeviceListenerMac.cpp
-            gui/osutils/macutils/MacPasteboard.cpp
-            gui/osutils/macutils/MacUtils.cpp
-            gui/osutils/macutils/ScreenLockListenerMac.cpp
-            gui/osutils/macutils/AppKitImpl.mm
-            gui/osutils/macutils/AppKit.h
-            quickunlock/TouchID.mm)
-
-    # TODO: Remove -Wno-error once deprecation warnings have been resolved.
-    set_source_files_properties(quickunlock/TouchID.mm PROPERTY COMPILE_FLAGS "-Wno-old-style-cast")
-endif()
-
 if(WIN32)
     list(APPEND gui_SOURCES
             gui/material/MaterialWindowChrome.cpp
@@ -361,15 +347,6 @@ target_link_libraries(keepassxc_gui
         ${keeshare_LIB}
         ${sshagent_LIB})
 
-if(APPLE)
-    target_link_libraries(keepassxc_gui "-framework Foundation -framework AppKit -framework Carbon -framework Security -framework LocalAuthentication -framework ScreenCaptureKit")
-    if(Qt6MacExtras_FOUND)
-        target_link_libraries(keepassxc_gui Qt6::MacExtras)
-    endif()
-endif()
-if(HAIKU)
-    target_link_libraries(keepassxc_gui network)
-endif()
 if(WIN32)
     target_link_libraries(keepassxc_gui Wtsapi32.lib Ws2_32.lib)
     if (WINSDK)
@@ -396,50 +373,6 @@ if(WIN32)
     list(APPEND WIN32_ResourceFiles "${CMAKE_SOURCE_DIR}/share/windows/icon.rc")
     target_sources(${PROGNAME} PUBLIC ${WIN32_ResourceFiles})
 
-elseif(APPLE AND WITH_APP_BUNDLE)
-    set(MACOSX_BUNDLE_IDENTIFIER org.keepassxc.keepassxc)
-    set(MACOSX_BUNDLE_ICON_NAME keepassxc)
-    set(MACOSX_BUNDLE_APPLE_ENTITLEMENTS "${CMAKE_SOURCE_DIR}/share/macosx/keepassxc.entitlements")
-    configure_file("${CMAKE_SOURCE_DIR}/share/macosx/Info.plist.cmake" ${CMAKE_CURRENT_BINARY_DIR}/Info.plist)
-    install(FILES "${CMAKE_SOURCE_DIR}/share/macosx/embedded.provisionprofile" DESTINATION ${BUNDLE_INSTALL_DIR})
-    set(MACOSX_BUNDLE_RESOURCE_FILES
-            "${CMAKE_SOURCE_DIR}/share/macosx/Assets.car"
-            "${CMAKE_SOURCE_DIR}/share/macosx/keepassxc.icns"
-    )
-    set_target_properties(${PROGNAME} PROPERTIES
-            MACOSX_BUNDLE ON
-            MACOSX_BUNDLE_INFO_PLIST "${CMAKE_CURRENT_BINARY_DIR}/Info.plist"
-            CPACK_BUNDLE_APPLE_ENTITLEMENTS "${MACOSX_BUNDLE_APPLE_ENTITLEMENTS}"
-            RESOURCE "${MACOSX_BUNDLE_RESOURCE_FILES}"
-    )
-    target_sources(${PROGNAME} PUBLIC ${MACOSX_BUNDLE_RESOURCE_FILES})
-
-    if(QT_MAC_USE_COCOA AND EXISTS "${QT_LIBRARY_DIR}/Resources/qt_menu.nib")
-        install(DIRECTORY "${QT_LIBRARY_DIR}/Resources/qt_menu.nib"
-                DESTINATION "${DATA_INSTALL_DIR}")
-    endif()
-
-    # Sign binaries
-    if(WITH_XC_CODESIGN_IDENTITY)
-        configure_file("${CMAKE_SOURCE_DIR}/cmake/MacOSCodesign.cmake.in" "${CMAKE_BINARY_DIR}/MacOSCodesign.cmake" @ONLY)
-        set(CPACK_PRE_BUILD_SCRIPTS "${CMAKE_BINARY_DIR}/MacOSCodesign.cmake")
-        if(WITH_XC_NOTARY_KEYCHAIN_PROFILE)
-            configure_file("${CMAKE_SOURCE_DIR}/cmake/MacOSCodesign.cmake.in" "${CMAKE_BINARY_DIR}/MacOSCodesign.cmake" @ONLY)
-            set(CPACK_POST_BUILD_SCRIPTS "${CMAKE_BINARY_DIR}/MacOSCodesign.cmake")
-        else()
-            message(INFO "Do not forget to notarize DMG package before distribution!")
-        endif()
-    endif()
-
-    set(CPACK_GENERATOR "DragNDrop")
-    set(CPACK_DMG_FORMAT "UDBZ")
-    set(CPACK_DMG_DS_STORE "${CMAKE_SOURCE_DIR}/share/macosx/DS_Store.in")
-    set(CPACK_DMG_BACKGROUND_IMAGE "${CMAKE_SOURCE_DIR}/share/macosx/background.tiff")
-    set(CPACK_DMG_VOLUME_NAME "${PROGNAME}")
-    set(CPACK_SYSTEM_NAME "OSX")
-    set(CPACK_STRIP_FILES ON)
-    set(CPACK_PACKAGE_FILE_NAME "${PROGNAME}-${KEEPASSXC_VERSION}")
-    include(CPack)
 endif()
 
 install(TARGETS ${PROGNAME}
@@ -630,5 +563,5 @@ if(WIN32)
 endif()
 
 # The install commands in this subdirectory will be executed after all the install commands in the
-# current scope are ran. It is required for correct functioning of macdeployqt.
+# current scope are run. This keeps deployment behavior deterministic.
 add_subdirectory(post_install)

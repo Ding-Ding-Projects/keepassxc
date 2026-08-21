@@ -11,6 +11,10 @@ The first real Squirrel candidate was produced from commit `a98ef19842595a638e07
 The deterministic artifact verifier passed. Installation, launch, update, rollback, and uninstall
 remain unverified, so WiX has deliberately not been removed yet.
 
+The next Windows-only contraction removed the macOS UI backend, auto-type implementation, Touch ID,
+bundle and DMG assets, Apple compiler probes, and Unix manpage target after confirming the Windows
+replacements remained compiled. The complete native build and all 46 registered local tests passed.
+
 Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
 33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
