@@ -22,13 +22,7 @@ message(STATUS "Including translations...\n")
 
 qt6_add_translation(QM_FILES ${TRANSLATION_FILES})
 
-if(WIN32)
-    file(GLOB QTBASE_TRANSLATIONS ${Qt6_PREFIX}/share/qt/translations/qtbase_*.qm)
-elseif(APPLE)
-    file(GLOB QTBASE_TRANSLATIONS
-            /usr/share/qt/translations/qtbase_*.qm
-            ${Qt6_PREFIX}/translations/qtbase_*.qm)
-endif()
+file(GLOB QTBASE_TRANSLATIONS ${Qt6_PREFIX}/share/qt/translations/qtbase_*.qm)
 set(QM_FILES ${QM_FILES} ${QTBASE_TRANSLATIONS})
 
 install(FILES ${QM_FILES} DESTINATION ${DATA_INSTALL_DIR}/translations)
