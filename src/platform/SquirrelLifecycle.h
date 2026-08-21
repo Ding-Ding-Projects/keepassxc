@@ -11,6 +11,7 @@ namespace SquirrelLifecycle
     enum class Event
     {
         None,
+        Invalid,
         Install,
         Updated,
         Uninstall,

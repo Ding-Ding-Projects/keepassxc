@@ -2,7 +2,9 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QHash>
 #include <QProcess>
+#include <QRegularExpression>
 
 #include <cstdlib>
 
@@ -32,22 +34,41 @@ namespace SquirrelLifecycle
 {
     Event classify(const QStringList& arguments)
     {
-        if (arguments.contains(QStringLiteral("--squirrel-install"), Qt::CaseInsensitive)) {
-            return Event::Install;
+        if (arguments.size() < 2) {
+            return Event::None;
         }
-        if (arguments.contains(QStringLiteral("--squirrel-updated"), Qt::CaseInsensitive)) {
-            return Event::Updated;
+
+        const QHash<QString, Event> lifecycleFlags = {
+            {QStringLiteral("--squirrel-install"), Event::Install},
+            {QStringLiteral("--squirrel-updated"), Event::Updated},
+            {QStringLiteral("--squirrel-uninstall"), Event::Uninstall},
+            {QStringLiteral("--squirrel-obsolete"), Event::Obsolete},
+            {QStringLiteral("--squirrel-firstrun"), Event::FirstRun},
+        };
+        int lifecycleCount = 0;
+        for (int index = 1; index < arguments.size(); ++index) {
+            lifecycleCount += lifecycleFlags.contains(arguments.at(index).toLower()) ? 1 : 0;
         }
-        if (arguments.contains(QStringLiteral("--squirrel-uninstall"), Qt::CaseInsensitive)) {
-            return Event::Uninstall;
+        if (lifecycleCount == 0) {
+            return Event::None;
         }
-        if (arguments.contains(QStringLiteral("--squirrel-obsolete"), Qt::CaseInsensitive)) {
-            return Event::Obsolete;
+        if (lifecycleCount != 1 || !lifecycleFlags.contains(arguments.at(1).toLower())) {
+            return Event::Invalid;
         }
-        if (arguments.contains(QStringLiteral("--squirrel-firstrun"), Qt::CaseInsensitive)) {
-            return Event::FirstRun;
+
+        const Event event = lifecycleFlags.value(arguments.at(1).toLower());
+        const bool validArity = event == Event::FirstRun ? arguments.size() == 2 : arguments.size() == 3;
+        if (!validArity) {
+            return Event::Invalid;
         }
-        return Event::None;
+        if (event != Event::FirstRun) {
+            static const QRegularExpression versionExpression(
+                QStringLiteral("^\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$"));
+            if (!versionExpression.match(arguments.at(2)).hasMatch()) {
+                return Event::Invalid;
+            }
+        }
+        return event;
     }
 
     QString updateExecutable(const QString& applicationDirectory)
@@ -65,6 +86,9 @@ namespace SquirrelLifecycle
     std::optional<int> handle(const QStringList& arguments, const QString& applicationDirectory)
     {
         const Event event = classify(arguments);
+        if (event == Event::Invalid) {
+            return EXIT_FAILURE;
+        }
         if (event == Event::None || event == Event::FirstRun) {
             return std::nullopt;
         }
