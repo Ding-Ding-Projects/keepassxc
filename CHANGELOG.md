@@ -1,5 +1,8 @@
 # Changelog
 
+- Interface: Rebuild the native Changelog destination around the complete bundled release record, composed locale/ISO date and bounded regex filtering, safe Markdown rendering, truthful commit provenance, filtered copy/export, accessibility, and responsive cards.
+- Interface: Generate and guard exact tag-to-commit provenance for every bundled release, add explicit Changelog states and breakpoint reflow, and make allowlisted Markdown links interactive.
+
 ## 2.8.0 (Pending)
 
 ### Changes

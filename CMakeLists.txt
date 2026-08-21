@@ -424,6 +424,14 @@ endif()
 add_subdirectory(src)
 add_subdirectory(share)
 
+find_program(KPXC_NODE_EXECUTABLE NAMES node REQUIRED)
+add_custom_target(check_changelog_provenance
+    COMMAND "${KPXC_NODE_EXECUTABLE}" "${CMAKE_SOURCE_DIR}/scripts/generate-changelog-provenance.mjs" --check
+    WORKING_DIRECTORY "${CMAKE_SOURCE_DIR}"
+    COMMENT "Validating bundled changelog release provenance"
+    VERBATIM)
+add_dependencies(KeePassXC check_changelog_provenance)
+
 if(WITH_TESTS)
     enable_testing()
     add_subdirectory(tests)

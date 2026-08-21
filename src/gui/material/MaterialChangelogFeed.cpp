@@ -29,12 +29,21 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QHash>
+#include <QApplication>
+#include <QClipboard>
+
+int qInitResources_changelog();
 
 namespace Material
 {
     namespace
     {
         const QString ChangelogResource = QStringLiteral(":/docs/CHANGELOG.md");
+        const QString ProvenanceResource = QStringLiteral(":/docs/changelog-provenance.json");
         const QString ExportDirectoryRole = QStringLiteral("changelog");
 
         /** `## 2.7.12 (2026-03-10)` - the version and whatever is in the brackets. */
@@ -82,6 +91,7 @@ namespace Material
         , m_screen(screen)
     {
         Q_ASSERT(m_screen);
+        ::qInitResources_changelog();
 
         // The design keeps the changelog header to one row: title and Export,
         // then the filter row. There is no blurb between them.
@@ -104,8 +114,28 @@ namespace Material
             m_releases.append(missing);
         }
 
+        QFile provenance(ProvenanceResource);
+        if (provenance.open(QIODevice::ReadOnly)) {
+            QHash<QString, QJsonObject> records;
+            for (const auto& value : QJsonDocument::fromJson(provenance.readAll()).object().value(QStringLiteral("records")).toArray()) {
+                const auto object = value.toObject();
+                records.insert(object.value(QStringLiteral("version")).toString(), object);
+            }
+            for (auto& release : m_releases) {
+                const auto record = records.value(release.version);
+                release.commitSha = record.value(QStringLiteral("sha")).toString();
+                release.commitUrl = record.value(QStringLiteral("url")).toString();
+                release.commitAvailable = record.value(QStringLiteral("released")).toBool()
+                                          && release.commitSha.size() == 40 && !release.commitUrl.isEmpty();
+            }
+        }
+
         m_screen->setReleases(m_releases);
         connect(m_screen, &ChangelogScreen::exportRequested, this, &ChangelogFeed::exportMarkdown);
+        connect(m_screen, &ChangelogScreen::copyRequested, this, [this] {
+            QApplication::clipboard()->setText(markdown());
+            Notify::success(tr("Changelog copied"), tr("The filtered changelog was copied as Markdown."));
+        });
     }
 
     ChangelogFeed::~ChangelogFeed() = default;
@@ -210,30 +240,7 @@ namespace Material
 
     QVector<Release> ChangelogFeed::filtered() const
     {
-        // The same rule the screen filters by, so an export matches what is shown.
-        const QString query = m_screen->searchBar()->text().trimmed();
-        if (query.isEmpty()) {
-            return m_releases;
-        }
-
-        QVector<Release> shown;
-        for (const Release& release : m_releases) {
-            if (release.version.contains(query, Qt::CaseInsensitive)) {
-                shown.append(release);
-                continue;
-            }
-            Release trimmed = release;
-            trimmed.items.clear();
-            for (const ChangeItem& item : release.items) {
-                if (matches(item, query)) {
-                    trimmed.items.append(item);
-                }
-            }
-            if (!trimmed.items.isEmpty()) {
-                shown.append(trimmed);
-            }
-        }
-        return shown;
+        return m_screen->filteredReleases();
     }
 
     QString ChangelogFeed::markdown() const
@@ -250,6 +257,8 @@ namespace Material
             out << "- " << tr("Filter") << ": `" << query << "`\n";
         }
         out << "- " << tr("Releases") << ": " << shown.size() << " / " << m_releases.size() << "\n\n";
+        out << "- " << tr("Date range") << ": " << m_screen->fromDate().toString(Qt::ISODate)
+            << " .. " << m_screen->toDate().toString(Qt::ISODate) << "\n\n";
 
         if (shown.isEmpty()) {
             out << tr("No release matches the active filter.") << "\n";
@@ -265,6 +274,9 @@ namespace Material
                 out << " - " << release.status;
             }
             out << "\n\n";
+            out << "- " << tr("Completion commit") << ": "
+                << (release.commitAvailable ? QStringLiteral("[%1](%2)").arg(release.commitSha, release.commitUrl)
+                                            : tr("Unavailable in the bundled authoritative changelog")) << "\n";
             for (const ChangeItem& item : release.items) {
                 out << "- **" << item.tag << "** " << item.text << "\n";
             }

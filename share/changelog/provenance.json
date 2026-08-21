@@ -1,0 +1,443 @@
+{
+  "schemaVersion": 1,
+  "origin": "https://github.com/Ding-Ding-Projects/keepassxc",
+  "records": [
+    {
+      "version": "2.8.0",
+      "released": false,
+      "reason": "Pending entry has no immutable release tag."
+    },
+    {
+      "version": "2.7.12",
+      "released": true,
+      "tag": "2.7.12",
+      "date": "2026-03-10",
+      "sha": "860e51d8e9a5a67e73de79b173ae9bd5bdb5ebda",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/860e51d8e9a5a67e73de79b173ae9bd5bdb5ebda"
+    },
+    {
+      "version": "2.7.11",
+      "released": true,
+      "tag": "2.7.11",
+      "date": "2025-11-23",
+      "sha": "01e5b6ee1d3e8fdef203505c645962696cb8d97c",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/01e5b6ee1d3e8fdef203505c645962696cb8d97c"
+    },
+    {
+      "version": "2.7.10",
+      "released": true,
+      "tag": "2.7.10",
+      "date": "2025-03-02",
+      "sha": "b342be457153aa098c8bbce0f8b0fd3baa8c158f",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/b342be457153aa098c8bbce0f8b0fd3baa8c158f"
+    },
+    {
+      "version": "2.7.9",
+      "released": true,
+      "tag": "2.7.9",
+      "date": "2024-06-19",
+      "sha": "8f6dd13b0add1dd3fb666cc43ae1e5db478b1827",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/8f6dd13b0add1dd3fb666cc43ae1e5db478b1827"
+    },
+    {
+      "version": "2.7.8",
+      "released": true,
+      "tag": "2.7.8",
+      "date": "2024-05-05",
+      "sha": "f6757d35aded625318e34ec745583604c814b7c3",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/f6757d35aded625318e34ec745583604c814b7c3"
+    },
+    {
+      "version": "2.7.7",
+      "released": true,
+      "tag": "2.7.7",
+      "date": "2024-03-09",
+      "sha": "68e2dd8d22fdef79c72ad5902e026c698e2ff087",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/68e2dd8d22fdef79c72ad5902e026c698e2ff087"
+    },
+    {
+      "version": "2.7.6",
+      "released": true,
+      "tag": "2.7.6",
+      "date": "2023-08-15",
+      "sha": "dd21defcf38e06e6aa4286fe85bfbb399b1e36e9",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/dd21defcf38e06e6aa4286fe85bfbb399b1e36e9"
+    },
+    {
+      "version": "2.7.5",
+      "released": true,
+      "tag": "2.7.5",
+      "date": "2023-05-14",
+      "sha": "9d0537bdab70c49b6e0f551e1cda30e01b3d413a",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/9d0537bdab70c49b6e0f551e1cda30e01b3d413a"
+    },
+    {
+      "version": "2.7.4",
+      "released": true,
+      "tag": "2.7.4",
+      "date": "2022-10-29",
+      "sha": "63b2394ed0598aea6b0f5ad16430ac93256c21bb",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/63b2394ed0598aea6b0f5ad16430ac93256c21bb"
+    },
+    {
+      "version": "2.7.3",
+      "released": true,
+      "tag": "2.7.3",
+      "date": "2022-10-23",
+      "sha": "d8483d33501a802efb9f47b49d329a1bb15a791f",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/d8483d33501a802efb9f47b49d329a1bb15a791f"
+    },
+    {
+      "version": "2.7.1",
+      "released": true,
+      "tag": "2.7.1",
+      "date": "2022-04-05",
+      "sha": "5916a8f8dd93eb6a5de544caedd7a9d8e9a3b1ee",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/5916a8f8dd93eb6a5de544caedd7a9d8e9a3b1ee"
+    },
+    {
+      "version": "2.7.0",
+      "released": true,
+      "tag": "2.7.0",
+      "date": "2022-03-21",
+      "sha": "d7a9ef493241421402cbe3aba2518e159c4a2dd8",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/d7a9ef493241421402cbe3aba2518e159c4a2dd8"
+    },
+    {
+      "version": "2.6.6",
+      "released": true,
+      "tag": "2.6.6",
+      "date": "2021-06-12",
+      "sha": "9c108b95100bfa3b172edcfd5754aa2e831a3221",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/9c108b95100bfa3b172edcfd5754aa2e831a3221"
+    },
+    {
+      "version": "2.6.5",
+      "released": true,
+      "tag": "2.6.5",
+      "date": "2021-06-08",
+      "sha": "2b262c5b2438d8ef8febcde5ede2043a4e00c192",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/2b262c5b2438d8ef8febcde5ede2043a4e00c192"
+    },
+    {
+      "version": "2.6.4",
+      "released": true,
+      "tag": "2.6.4",
+      "date": "2021-01-31",
+      "sha": "34a78f0ec3a3c030218c71a57c6fa56e6cb0bc44",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/34a78f0ec3a3c030218c71a57c6fa56e6cb0bc44"
+    },
+    {
+      "version": "2.6.3",
+      "released": true,
+      "tag": "2.6.3",
+      "date": "2021-01-12",
+      "sha": "beae1869a3dba01fe93b8dd2aae84788388d77e8",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/beae1869a3dba01fe93b8dd2aae84788388d77e8"
+    },
+    {
+      "version": "2.6.2",
+      "released": true,
+      "tag": "2.6.2",
+      "date": "2020-10-21",
+      "sha": "e9b9582817affd7936d4b6b07c22c482d7d0d3a6",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/e9b9582817affd7936d4b6b07c22c482d7d0d3a6"
+    },
+    {
+      "version": "2.6.1",
+      "released": true,
+      "tag": "2.6.1",
+      "date": "2020-08-19",
+      "sha": "9a35bba3b702256e025af48260fb56a012676fe4",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/9a35bba3b702256e025af48260fb56a012676fe4"
+    },
+    {
+      "version": "2.6.0",
+      "released": true,
+      "tag": "2.6.0",
+      "date": "2020-07-06",
+      "sha": "07659547ce6967e4b26e5ec981dcd1324ac8ff4c",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/07659547ce6967e4b26e5ec981dcd1324ac8ff4c"
+    },
+    {
+      "version": "2.5.4",
+      "released": true,
+      "tag": "2.5.4",
+      "date": "2020-04-09",
+      "sha": "dcca5aa0f0ee2f2b8685787c01f934cb2b506ef7",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/dcca5aa0f0ee2f2b8685787c01f934cb2b506ef7"
+    },
+    {
+      "version": "2.5.3",
+      "released": true,
+      "tag": "2.5.3",
+      "date": "2020-01-19",
+      "sha": "f8c962bd253ab4d5c0ce2fe7029688057e50a778",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/f8c962bd253ab4d5c0ce2fe7029688057e50a778"
+    },
+    {
+      "version": "2.5.2",
+      "released": true,
+      "tag": "2.5.2",
+      "date": "2020-01-04",
+      "sha": "62cda9dd402c207d9036959db574877348bd0b13",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/62cda9dd402c207d9036959db574877348bd0b13"
+    },
+    {
+      "version": "2.5.1",
+      "released": true,
+      "tag": "2.5.1",
+      "date": "2019-11-11",
+      "sha": "0fd883686c05c7689bf8f074b02dcfff3a705a97",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/0fd883686c05c7689bf8f074b02dcfff3a705a97"
+    },
+    {
+      "version": "2.5.0",
+      "released": true,
+      "tag": "2.5.0",
+      "date": "2019-10-26",
+      "sha": "1ab8a9f42c065bd575490ad7f3fa43ce72a59d8a",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/1ab8a9f42c065bd575490ad7f3fa43ce72a59d8a"
+    },
+    {
+      "version": "2.4.3",
+      "released": true,
+      "tag": "2.4.3",
+      "date": "2019-06-12",
+      "sha": "5d6ef0c47191f1bd9e8ae296920357aeb74e8fd5",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/5d6ef0c47191f1bd9e8ae296920357aeb74e8fd5"
+    },
+    {
+      "version": "2.4.2",
+      "released": true,
+      "tag": "2.4.2",
+      "date": "2019-05-31",
+      "sha": "a775031fe9471310e50232d1861d4991e2803aff",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/a775031fe9471310e50232d1861d4991e2803aff"
+    },
+    {
+      "version": "2.4.1",
+      "released": true,
+      "tag": "2.4.1",
+      "date": "2019-04-12",
+      "sha": "7bafe65d17e98348b0ff5fb46f117bdf05764cc6",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/7bafe65d17e98348b0ff5fb46f117bdf05764cc6"
+    },
+    {
+      "version": "2.4.0",
+      "released": true,
+      "tag": "2.4.0",
+      "date": "2019-03-19",
+      "sha": "c51752df3913329d6fc78563c54ddd6ebd994b0f",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/c51752df3913329d6fc78563c54ddd6ebd994b0f"
+    },
+    {
+      "version": "2.3.4",
+      "released": true,
+      "tag": "2.3.4",
+      "date": "2018-08-21",
+      "sha": "6fe821c30ec747e7fda0a8abe75d774d61a21054",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/6fe821c30ec747e7fda0a8abe75d774d61a21054"
+    },
+    {
+      "version": "2.3.3",
+      "released": true,
+      "tag": "2.3.3",
+      "date": "2018-05-09",
+      "sha": "0a155d89a3bb67676b0c993fb1eda4317e7b473c",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/0a155d89a3bb67676b0c993fb1eda4317e7b473c"
+    },
+    {
+      "version": "2.3.2",
+      "released": true,
+      "tag": "2.3.2",
+      "date": "2018-05-07",
+      "sha": "2bb72eba0292ad44016b496d84907a9aa7968684",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/2bb72eba0292ad44016b496d84907a9aa7968684"
+    },
+    {
+      "version": "2.3.1",
+      "released": true,
+      "tag": "2.3.1",
+      "date": "2018-03-06",
+      "sha": "2fcaeeaec88827632bf2e0407adc34bdcd19fc5e",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/2fcaeeaec88827632bf2e0407adc34bdcd19fc5e"
+    },
+    {
+      "version": "2.3.0",
+      "released": true,
+      "tag": "2.3.0",
+      "date": "2018-02-27",
+      "sha": "4c0ed74341173482415c484a2ad07df204150213",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/4c0ed74341173482415c484a2ad07df204150213"
+    },
+    {
+      "version": "2.2.4",
+      "released": true,
+      "tag": "2.2.4",
+      "date": "2017-12-13",
+      "sha": "4723f66d23db95f8318f04ee3aeae448d2305c9c",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/4723f66d23db95f8318f04ee3aeae448d2305c9c"
+    },
+    {
+      "version": "2.2.2",
+      "released": true,
+      "tag": "2.2.2",
+      "date": "2017-10-22",
+      "sha": "6d46717cfc2d61bfc6a5335b02e95c6b1d9bf482",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/6d46717cfc2d61bfc6a5335b02e95c6b1d9bf482"
+    },
+    {
+      "version": "2.2.1",
+      "released": true,
+      "tag": "2.2.1",
+      "date": "2017-10-01",
+      "sha": "2bce9c8add07226e9a05e9e0fd0e5e66b236d5b6",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/2bce9c8add07226e9a05e9e0fd0e5e66b236d5b6"
+    },
+    {
+      "version": "2.2.0",
+      "released": true,
+      "tag": "2.2.0",
+      "date": "2017-06-23",
+      "sha": "caa49a8ef3ee28ed478192389b21d61107b3b8e0",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/caa49a8ef3ee28ed478192389b21d61107b3b8e0"
+    },
+    {
+      "version": "2.1.4",
+      "released": true,
+      "tag": "2.1.4",
+      "date": "2017-04-09",
+      "sha": "cb283bb95ae559d044415f426f841c27bff383f0",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/cb283bb95ae559d044415f426f841c27bff383f0"
+    },
+    {
+      "version": "2.1.3",
+      "released": true,
+      "tag": "2.1.3",
+      "date": "2017-03-03",
+      "sha": "76dcfb5ed0c874f6a835ef0347ddf6098b149e9b",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/76dcfb5ed0c874f6a835ef0347ddf6098b149e9b"
+    },
+    {
+      "version": "2.1.2",
+      "released": true,
+      "tag": "2.1.2",
+      "date": "2017-02-17",
+      "sha": "b9279f73fa58d75e1ec88f734f3c77c0f015a348",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/b9279f73fa58d75e1ec88f734f3c77c0f015a348"
+    },
+    {
+      "version": "2.1.1",
+      "released": true,
+      "tag": "2.1.1",
+      "date": "2017-02-06",
+      "sha": "44c58a66d1076d0112f93d84fccd47c6e41dab5a",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/44c58a66d1076d0112f93d84fccd47c6e41dab5a"
+    },
+    {
+      "version": "2.1.0",
+      "released": true,
+      "tag": "2.1.0",
+      "date": "2017-01-22",
+      "sha": "8a3ac7a26e7d6e2355dc1eb4829bdce96ded2a27",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/8a3ac7a26e7d6e2355dc1eb4829bdce96ded2a27"
+    },
+    {
+      "version": "2.0.3",
+      "released": true,
+      "tag": "2.0.3",
+      "date": "2016-09-04",
+      "sha": "c8857ac2babcc392f04f1b9e38d65d7ab39ba1bf",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/c8857ac2babcc392f04f1b9e38d65d7ab39ba1bf"
+    },
+    {
+      "version": "2.0.2",
+      "released": true,
+      "tag": "2.0.2",
+      "date": "2016-02-02",
+      "sha": "3679b2170142c14362fa75e990ef85b80b1b1b46",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/3679b2170142c14362fa75e990ef85b80b1b1b46"
+    },
+    {
+      "version": "2.0.1",
+      "released": true,
+      "tag": "2.0.1",
+      "date": "2016-01-31",
+      "sha": "00f068b93eff93ffa5399ce599b2f672f4f5c905",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/00f068b93eff93ffa5399ce599b2f672f4f5c905"
+    },
+    {
+      "version": "2.0",
+      "released": true,
+      "tag": "2.0.0",
+      "date": "2015-12-06",
+      "sha": "24275d8dc40b3b048a4dde4dca9ceb63a19be8af",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/24275d8dc40b3b048a4dde4dca9ceb63a19be8af"
+    },
+    {
+      "version": "2.0 Beta 2",
+      "released": true,
+      "tag": "2.0-beta2",
+      "date": "2015-09-06",
+      "sha": "a954e9a4d8b75187d125520f3b929ebc0491b701",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/a954e9a4d8b75187d125520f3b929ebc0491b701"
+    },
+    {
+      "version": "2.0 Beta 1",
+      "released": true,
+      "tag": "2.0-beta1",
+      "date": "2015-07-18",
+      "sha": "7d3fb58cf586e56d881b2592f0b0f07df215575e",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/7d3fb58cf586e56d881b2592f0b0f07df215575e"
+    },
+    {
+      "version": "2.0 Alpha 6",
+      "released": true,
+      "tag": "2.0-alpha6",
+      "date": "2014-04-12",
+      "sha": "43a1d54bba48f38b1059b4400091edb3f9f20daa",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/43a1d54bba48f38b1059b4400091edb3f9f20daa"
+    },
+    {
+      "version": "2.0 Alpha 5",
+      "released": true,
+      "tag": "2.0-alpha5",
+      "date": "2013-12-20",
+      "sha": "0cbf59209b0e2c2cfd5a52adfdf56a99d5460561",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/0cbf59209b0e2c2cfd5a52adfdf56a99d5460561"
+    },
+    {
+      "version": "2.0 Alpha 4",
+      "released": true,
+      "tag": "2.0-alpha4",
+      "date": "2013-03-29",
+      "sha": "98372f9df88ba6cb4773f8d8a14c66f343c90814",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/98372f9df88ba6cb4773f8d8a14c66f343c90814"
+    },
+    {
+      "version": "2.0 Alpha 3",
+      "released": true,
+      "tag": "2.0-alpha3",
+      "date": "2012-10-27",
+      "sha": "16094be4a3953e3e550dd05c78c8866ad8ff08e3",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/16094be4a3953e3e550dd05c78c8866ad8ff08e3"
+    },
+    {
+      "version": "2.0 Alpha 2",
+      "released": true,
+      "tag": "2.0-alpha2",
+      "date": "2012-07-02",
+      "sha": "40f194fe4b0bc3ed3355457f6c3298015be169dd",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/40f194fe4b0bc3ed3355457f6c3298015be169dd"
+    },
+    {
+      "version": "2.0 Alpha 1",
+      "released": true,
+      "tag": "2.0-alpha1",
+      "date": "2012-05-07",
+      "sha": "000be1e5be5b23ed18e890e56f2ec324c806aeb0",
+      "url": "https://github.com/Ding-Ding-Projects/keepassxc/commit/000be1e5be5b23ed18e890e56f2ec324c806aeb0"
+    }
+  ]
+}

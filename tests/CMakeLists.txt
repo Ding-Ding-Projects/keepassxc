@@ -176,6 +176,18 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testmaterialchangelog SOURCES TestMaterialChangelog.cpp
+        LIBS ${TEST_LIBRARIES})
+set_tests_properties(testmaterialchangelog PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialchangelog POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialchangelog>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialchangelog>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testmaterialreports SOURCES TestMaterialReports.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialreports PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")

@@ -24,9 +24,15 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include <QDate>
 
 class QLabel;
 class QVBoxLayout;
+class QDateEdit;
+class QComboBox;
+class QProgressBar;
+class QBoxLayout;
+class QResizeEvent;
 
 namespace Material
 {
@@ -48,6 +54,9 @@ namespace Material
         QString date;
         QString status;
         PillKind statusTint = PillKind::Value;
+        QString commitSha;
+        QString commitUrl;
+        bool commitAvailable = false;
         QVector<ChangeItem> items;
     };
 
@@ -63,13 +72,23 @@ namespace Material
         Q_OBJECT
 
     public:
+        enum class State { Empty, Loading, Populated, Progress, Warning, Error };
         explicit ChangelogScreen(QWidget* parent = nullptr);
         ~ChangelogScreen() override;
 
         void setReleases(const QVector<Release>& releases);
+        QVector<Release> filteredReleases() const;
+        QDate fromDate() const;
+        QDate toDate() const;
+        void setState(State state, const QString& message, int progress = -1);
+        State state() const;
 
     signals:
         void exportRequested();
+        void copyRequested();
+
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void rebuild();
@@ -81,6 +100,14 @@ namespace Material
         QLabel* m_countLabel = nullptr;
         QVector<Release> m_releases;
         QString m_query;
+        QDateEdit* m_fromDate = nullptr;
+        QDateEdit* m_toDate = nullptr;
+        QComboBox* m_datePreset = nullptr;
+        QLabel* m_stateLabel = nullptr;
+        QProgressBar* m_progress = nullptr;
+        State m_state = State::Loading;
+        QBoxLayout* m_filterLayout = nullptr;
+        QBoxLayout* m_dateLayout = nullptr;
     };
 
 } // namespace Material
