@@ -22,9 +22,20 @@
 #include "MaterialScreen.h"
 
 #include <QString>
+#include <QStringList>
+#include <QDate>
+#include <QDateTime>
+#include <QHash>
+#include <QSet>
 #include <QVector>
 
 class QVBoxLayout;
+class QDateEdit;
+class QComboBox;
+class QLabel;
+class QProgressBar;
+class QToolButton;
+class QResizeEvent;
 
 namespace Material
 {
@@ -66,6 +77,8 @@ namespace Material
         RevisionTint tint = RevisionTint::Neutral;
         bool canDiff = false;
         bool canRestore = false;
+        QString action;
+        QDateTime timestamp;
     };
 
     /** Which kind of revision the Entries / Settings chips leave showing. */
@@ -88,10 +101,18 @@ namespace Material
         Q_OBJECT
 
     public:
+        enum class State { Empty, Loading, Populated, Progress, Warning, Error };
         explicit HistoryScreen(QWidget* parent = nullptr);
         ~HistoryScreen() override;
 
         void setRevisions(const QVector<Revision>& revisions);
+        void setState(State state, const QString& message = {}, int progress = -1);
+        State state() const;
+        QDate fromDate() const;
+        QDate toDate() const;
+        QStringList actionFilters() const;
+        void setActionCounts(const QHash<QString, int>& counts);
+        QStringList selectedRevisionIds() const;
 
         /** Which of the two mutually exclusive kind chips is pressed. */
         RevisionFilter kindFilter() const;
@@ -105,15 +126,32 @@ namespace Material
         void restoreRequested(const QString& id);
         /** A filter chip was pressed or released. */
         void filterChanged();
+        void exportRequested(const QStringList& ids);
+
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void rebuild();
+        void updateSelectionActions();
+        void applyResponsiveLayout();
 
         QVBoxLayout* m_revisionLayout = nullptr;
         QVector<Revision> m_revisions;
         Chip* m_entriesChip = nullptr;
         Chip* m_settingsChip = nullptr;
         Chip* m_recentChip = nullptr;
+        Chip* m_restoreChip = nullptr;
+        QDateEdit* m_fromDate = nullptr;
+        QDateEdit* m_toDate = nullptr;
+        QComboBox* m_datePreset = nullptr;
+        QLabel* m_stateLabel = nullptr;
+        QProgressBar* m_progress = nullptr;
+        QToolButton* m_exportSelected = nullptr;
+        QToolButton* m_deleteUnavailable = nullptr;
+        QWidget* m_filterPanel = nullptr;
+        QSet<QString> m_selectedIds;
+        State m_state = State::Empty;
     };
 
 } // namespace Material

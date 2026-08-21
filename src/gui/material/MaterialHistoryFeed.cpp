@@ -20,6 +20,7 @@
 #include "MaterialDialog.h"
 #include "MaterialHistoryStore.h"
 #include "MaterialNotifier.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 
 #include "core/Clock.h"
@@ -32,10 +33,14 @@
 
 #include <QCryptographicHash>
 #include <QDir>
+#include <QFile>
+#include <QFileDialog>
 #include <QLocale>
+#include <QLineEdit>
 #include <QRegularExpression>
 #include <QSet>
 #include <QStringList>
+#include <QTextStream>
 
 #include <algorithm>
 
@@ -368,12 +373,29 @@ namespace Material
             m_query = text.trimmed();
             refresh();
         });
+        connect(m_screen->searchBar(), &SearchBar::regexToggled, this, &HistoryFeed::refresh);
         // The design draws the search field with the regex button beside it, so
         // the box holds a pattern and the button opens the builder for it.
         connect(m_screen, &HistoryScreen::filterChanged, this, &HistoryFeed::refresh);
 
         connect(m_screen, &HistoryScreen::diffRequested, this, &HistoryFeed::showDiff);
         connect(m_screen, &HistoryScreen::restoreRequested, this, &HistoryFeed::restoreRevision);
+        connect(m_screen, &HistoryScreen::exportRequested, this, [this](const QStringList& ids) {
+            const QString fileName = QFileDialog::getSaveFileName(m_screen, tr("Export history"), QStringLiteral("history.md"), tr("Markdown (*.md)"));
+            if (fileName.isEmpty()) return;
+            QFile file(fileName);
+            if (!file.open(QIODevice::WriteOnly | QIODevice::Truncate | QIODevice::Text)) {
+                Notify::error(tr("Export failed"), tr("Could not write %1.").arg(QDir::toNativeSeparators(fileName)));
+                return;
+            }
+            QTextStream out(&file);
+            out << "# " << tr("Version history") << "\n\n";
+            for (const auto& change : m_changes) {
+                if (!ids.isEmpty() && !ids.contains(change.row.id)) continue;
+                out << "- " << change.row.label << " — " << change.row.meta << "\n";
+            }
+            Notify::success(tr("History exported"), tr("Written to %1.").arg(QDir::toNativeSeparators(fileName)));
+        });
         connect(HistoryStore::instance(), &HistoryStore::revisionsChanged, this, &HistoryFeed::rebuild);
     }
 
@@ -427,6 +449,7 @@ namespace Material
 
     void HistoryFeed::rebuild()
     {
+        m_screen->setState(HistoryScreen::State::Loading, tr("Loading history…"));
         m_changes = entryRevisions();
         m_changes.append(savedRevisions());
         m_changes.append(sessionRestores());
@@ -495,6 +518,8 @@ namespace Material
                 change.row.tint = described.tint;
                 change.row.canDiff = true;
                 change.row.canRestore = true;
+                change.row.action = QStringLiteral("entry");
+                change.row.timestamp = change.when;
                 changes.append(change);
             }
         }
@@ -532,6 +557,9 @@ namespace Material
             // the save before it, nothing to put back.
             change.row.canDiff = true;
             change.row.canRestore = false;
+            change.row.action = recordedRevision.kind == RevisionKind::Settings ? QStringLiteral("settings")
+                                                                                : QStringLiteral("entry");
+            change.row.timestamp = change.when;
             changes.append(change);
         }
         return changes;
@@ -556,6 +584,8 @@ namespace Material
             // in its own right, so this row is a record, not a handle.
             change.row.canDiff = false;
             change.row.canRestore = false;
+            change.row.action = QStringLiteral("restore");
+            change.row.timestamp = change.when;
             changes.append(change);
         }
         return changes;
@@ -563,36 +593,40 @@ namespace Material
 
     void HistoryFeed::refresh()
     {
-        const RevisionFilter kind = m_screen->kindFilter();
-        const QDateTime since = QDateTime::currentDateTime().addDays(-HistoryScreen::recentDays());
-        const bool recentOnly = m_screen->isRecentOnly();
-        const bool narrowed = !m_query.isEmpty() || kind != RevisionFilter::All || recentOnly;
-
-        // The search bar carries the regular expression builder, so what it
-        // holds is a pattern. A pattern that will not compile is what half-typed
-        // input looks like, so that falls back to plain containment and the list
-        // narrows as it is typed instead of emptying.
-        const QRegularExpression pattern(m_query, QRegularExpression::CaseInsensitiveOption);
-        const bool byPattern = !m_query.isEmpty() && pattern.isValid();
-        const auto matches = [this, &pattern, byPattern](const QString& text) {
-            return byPattern ? pattern.match(text).hasMatch() : text.contains(m_query, Qt::CaseInsensitive);
+        const QStringList actions = m_screen->actionFilters();
+        QDate from = m_screen->fromDate();
+        if (m_screen->isRecentOnly()) {
+            from = qMax(from, QDate::currentDate().addDays(-m_screen->recentDays()));
+        }
+        const QDate to = m_screen->toDate();
+        const bool narrowed = !m_query.isEmpty() || !actions.isEmpty() || from > QDate(1970, 1, 1)
+                              || to < QDate::currentDate();
+        bool regexValid = true;
+        QString regexError;
+        if (m_screen->searchBar()->isRegexEnabled() && !m_query.isEmpty()) {
+            const auto validation = runBounded(m_query, optionsForFlags(m_screen->searchBar()->regexFlags()), QString());
+            regexValid = validation.compiled && !validation.blocked && !validation.timedOut;
+            regexError = validation.error;
+        }
+        const auto matches = [this, regexValid](const QString& text) {
+            if (m_query.isEmpty()) return true;
+            if (!m_screen->searchBar()->isRegexEnabled()) return text.contains(m_query, Qt::CaseInsensitive);
+            if (!regexValid) return false;
+            return !runBounded(m_query, optionsForFlags(m_screen->searchBar()->regexFlags()), text).matches.isEmpty();
         };
+
+        QHash<QString, int> actionCounts;
+        for (const auto& change : m_changes) actionCounts[change.row.action] += 1;
+        m_screen->setActionCounts(actionCounts);
+        m_screen->searchBar()->lineEdit()->setAccessibleDescription(regexValid ? tr("History filter is valid")
+                                                                         : tr("Invalid regular expression: %1").arg(regexError));
 
         m_origins.clear();
         QVector<Revision> rows;
         int matched = 0;
         for (const Change& change : m_changes) {
-            if (kind == RevisionFilter::Entries && !change.entryScoped) {
-                continue;
-            }
-            // Settings is the other half of the pair: everything that was not
-            // about a single entry.
-            if (kind == RevisionFilter::Settings && change.entryScoped) {
-                continue;
-            }
-            if (recentOnly && change.when < since) {
-                continue;
-            }
+            if (!actions.isEmpty() && !actions.contains(change.row.action)) continue;
+            if (change.when.date() < from || change.when.date() > to) continue;
             if (!m_query.isEmpty() && !matches(change.row.label) && !matches(change.row.meta)) {
                 continue;
             }
@@ -634,6 +668,10 @@ namespace Material
         }
 
         m_screen->setRevisions(rows);
+        m_screen->setState(!regexValid ? HistoryScreen::State::Warning
+                                       : (m_changes.isEmpty() ? HistoryScreen::State::Empty : HistoryScreen::State::Populated),
+                           !regexValid ? tr("Invalid regular expression: %1").arg(regexError)
+                                       : tr("%n matching revision(s)", "", matched));
     }
 
     Entry* HistoryFeed::revisionAt(const Origin& origin, Entry** owner) const
