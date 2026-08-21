@@ -1,750 +1,129 @@
-#  Copyright (C) 2026 KeePassXC Team <team@keepassxc.org>
-#
-#  This program is free software: you can redistribute it and/or modify
-#  it under the terms of the GNU General Public License as published by
-#  the Free Software Foundation, either version 2 or (at your option)
-#  version 3 of the License.
-#
-#  This program is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-#  GNU General Public License for more details.
-#
-#  You should have received a copy of the GNU General Public License
-#  along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-# Material fork CI and release pipeline.
-#
-# This fork is Windows-only: the Material interface targets Windows and nothing else, so
-# there is exactly one build-and-test job. It builds and tests on Windows, then publishes
-# exactly one non-draft, non-prerelease GitHub Release per run carrying the MSI installer
-# and ZIP that build actually produced. A failing test job skips the release job, so a red
-# run never publishes anything, and a run whose cpack produced no MSI fails rather than
-# publishing a release with nothing installable in it.
-
-name: Material CI and Release
+name: Material Squirrel Build and Release
 
 on:
   push:
-    # Every branch. Tag pushes deliberately do NOT match a `branches` filter, so the tag
-    # this workflow creates for its own release cannot re-trigger the workflow. That is
-    # the only feedback path that could exist here: no job pushes a commit, a branch, a
-    # wiki update, or anything else back to the repository.
-    branches:
-      - '**'
+    branches: ['**']
   workflow_dispatch:
 
-# Least privilege by default; only the release job widens this to contents: write.
 permissions:
   contents: read
 
 concurrency:
-  # Serialize runs per ref so two runs cannot race on tag creation. Never cancel an
-  # in-flight run: a cancelled run is a lost release.
-  group: material-release-${{ github.ref }}
+  group: material-squirrel-release-${{ github.ref }}
   cancel-in-progress: false
 
-env:
-  QT_VERSION: '6.8.3'
-  # KPXC_FEATURE_DOCS is NOT set here. It is decided by the "Render the offline
-  # documentation" step below, which turns it on when asciidoctor is available
-  # and off when it is not, and appends the choice to this list. See that step.
-  CMAKE_COMMON_OPTIONS: -DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON
-
 jobs:
-  # =================================================================================
-  # Windows: MSVC + Ninja, native dependencies from vcpkg (as documented in README.md).
-  # The only build in this workflow; the fork does not support any other platform.
-  # =================================================================================
-  test-windows:
-    name: Test (Windows x64)
+  package-windows:
+    name: Package unsigned Windows x64 installer
     runs-on: windows-2022
-    timeout-minutes: 150
-
-    env:
-      # NOTE: the repository already tracks a `vcpkg/` directory holding the overlay
-      # triplets referenced by vcpkg-configuration.json. The vcpkg tool itself must
-      # therefore live somewhere else or that directory would be clobbered. The `runner`
-      # context is not available in a job-level `env:` block, so these are expressed
-      # against `github.workspace`.
-      VCPKG_ROOT: ${{ github.workspace }}\.ci-vcpkg
-      VCPKG_DEFAULT_BINARY_CACHE: ${{ github.workspace }}\.ci-vcpkg-archives
-      VCPKG_TARGET_TRIPLET: x64-windows
-      VCPKG_DISABLE_METRICS: '1'
-
+    timeout-minutes: 180
     steps:
       - name: Checkout
         uses: actions/checkout@v7
 
-      - name: Set up CMake and Ninja
-        uses: lukka/get-cmake@latest
+      - name: Verify the Squirrel-only packaging boundary
+        shell: powershell
+        run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-squirrel-only-packaging.ps1
 
-      - name: Set up Qt ${{ env.QT_VERSION }}
-        uses: jurplel/install-qt-action@v4
-        with:
-          version: ${{ env.QT_VERSION }}
-          host: windows
-          target: desktop
-          arch: win64_msvc2022_64
-          cache: true
+      - name: Build the unsigned Squirrel.Windows installer
+        shell: cmd
+        run: build-installer.bat /s
 
-      - name: Set up the MSVC x64 environment
-        shell: pwsh
+      - name: Collect required Squirrel.Windows artifacts
+        shell: powershell
         run: |
-          # Ninja invokes cl.exe directly, so the compiler, linker and SDK include/lib
-          # paths have to be in the environment. Locate the toolchain with vswhere and
-          # export the vcvars environment to the rest of the job.
-          $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
-          if (-not (Test-Path $vswhere)) { throw "vswhere.exe not found; no Visual Studio installation" }
-          $vsPath = & $vswhere -latest -products * `
-            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
-          if (-not $vsPath) { throw "No Visual Studio installation with the C++ toolchain was found" }
-          $vcvars = Join-Path $vsPath 'VC\Auxiliary\Build\vcvars64.bat'
-          if (-not (Test-Path $vcvars)) { throw "vcvars64.bat not found at $vcvars" }
-          cmd.exe /c "call `"$vcvars`" >nul 2>&1 && set" | ForEach-Object {
-              if ($_ -match '^([A-Za-z_][A-Za-z0-9_()\[\]]*)=(.*)$') {
-                  Add-Content -Path $env:GITHUB_ENV -Value "$($matches[1])=$($matches[2])"
-              }
+          $source = Join-Path $env:GITHUB_WORKSPACE 'dist\squirrel-windows'
+          $destination = Join-Path $env:GITHUB_WORKSPACE 'artifacts'
+          New-Item -ItemType Directory -Force -Path $destination | Out-Null
+          $required = @('Setup.exe', 'RELEASES', 'artifact-receipt.json', 'build-provenance.json', 'update-manifest-v1.json')
+          foreach ($name in $required) {
+            $path = Join-Path $source $name
+            if (-not (Test-Path -LiteralPath $path -PathType Leaf)) { throw "Required Squirrel artifact is missing: $name" }
+            Copy-Item -LiteralPath $path -Destination $destination
           }
+          $full = @(Get-ChildItem -LiteralPath $source -Filter '*-full.nupkg' -File)
+          if ($full.Count -ne 1) { throw "Expected exactly one full Squirrel package; found $($full.Count)." }
+          Copy-Item -LiteralPath $full[0].FullName -Destination $destination
+          Get-ChildItem -LiteralPath $source -Filter '*-delta.nupkg' -File | Copy-Item -Destination $destination
 
-      - name: Read the pinned vcpkg baseline from vcpkg.json
-        id: vcpkg_baseline
-        shell: pwsh
-        run: |
-          $manifest = Get-Content -Raw -Path "${{ github.workspace }}\vcpkg.json" | ConvertFrom-Json
-          $baseline = $manifest.'builtin-baseline'
-          if (-not $baseline) { throw "vcpkg.json does not declare a builtin-baseline" }
-          Write-Host "vcpkg builtin-baseline: $baseline"
-          "commit=$baseline" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
-
-      - name: Restore the vcpkg cache
-        id: vcpkg_cache
-        uses: actions/cache@v6
-        with:
-          # The vcpkg checkout itself plus the binary cache of already-compiled ports.
-          path: |
-            ${{ github.workspace }}\.ci-vcpkg
-            ${{ github.workspace }}\.ci-vcpkg-archives
-          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-${{ steps.vcpkg_baseline.outputs.commit }}
-          restore-keys: |
-            vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}-
-            vcpkg-${{ runner.os }}-
-
-      - name: Set up vcpkg
-        shell: pwsh
-        run: |
-          # -------------------------------------------------------------------------
-          # WHY THIS IS NOT `git clone --depth 1`
-          #
-          # vcpkg.json pins "builtin-baseline" to an exact vcpkg commit. While resolving
-          # the manifest, vcpkg runs inside its own checkout:
-          #
-          #     git show <builtin-baseline>:versions/baseline.json
-          #
-          # A `git clone --depth 1` fetches only the tip of master, so that commit object
-          # is not present locally and the run dies with:
-          #
-          #     error: failed to git show versions/baseline.json
-          #
-          # The fix is to make the pinned commit exist locally. We fetch exactly that SHA
-          # at depth 1 (GitHub permits fetching an arbitrary SHA), which is correct and
-          # far cheaper than unshallowing the entire vcpkg history. If the server ever
-          # refuses a by-SHA fetch we fall back to a full, unshallowed fetch, which also
-          # satisfies the `git show`.
-          # -------------------------------------------------------------------------
-
-          # PowerShell 7.4 turns a non-zero native exit code into a terminating error
-          # because GitHub sets $ErrorActionPreference = 'Stop' for pwsh steps. This
-          # script inspects $LASTEXITCODE itself, so opt out of that behaviour.
-          $ErrorActionPreference = 'Continue'
-          $PSNativeCommandUseErrorActionPreference = $false
-
-          $baseline = '${{ steps.vcpkg_baseline.outputs.commit }}'
-          $vcpkgRoot = '${{ github.workspace }}\.ci-vcpkg'
-
-          New-Item -ItemType Directory -Force -Path $vcpkgRoot | Out-Null
-          New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\.ci-vcpkg-archives' | Out-Null
-
-          if (-not (Test-Path (Join-Path $vcpkgRoot '.git'))) {
-              git init --quiet $vcpkgRoot
-              if ($LASTEXITCODE -ne 0) { throw "git init failed in $vcpkgRoot" }
-              git -C $vcpkgRoot remote add origin https://github.com/microsoft/vcpkg.git
-              if ($LASTEXITCODE -ne 0) { throw "could not add the vcpkg remote" }
-          }
-
-          # A miss here is the normal cold-cache case, so keep its stderr out of the log.
-          git -C $vcpkgRoot cat-file -e "$baseline^{commit}" 2>$null
-          if ($LASTEXITCODE -ne 0) {
-              Write-Host "Fetching pinned vcpkg baseline $baseline"
-              git -C $vcpkgRoot fetch --depth 1 origin $baseline
-              if ($LASTEXITCODE -ne 0) {
-                  Write-Host "By-SHA fetch failed; fetching the full history instead."
-                  git -C $vcpkgRoot fetch --no-tags origin
-                  if ($LASTEXITCODE -ne 0) { throw "Unable to fetch vcpkg baseline $baseline" }
-              }
-          }
-
-          git -C $vcpkgRoot -c advice.detachedHead=false checkout --force $baseline
-          if ($LASTEXITCODE -ne 0) { throw "Unable to check out vcpkg baseline $baseline" }
-
-          # Prove the object manifest resolution needs is really there before we build.
-          git -C $vcpkgRoot show "${baseline}:versions/baseline.json" | Out-Null
-          if ($LASTEXITCODE -ne 0) { throw "vcpkg baseline $baseline has no versions/baseline.json" }
-
-          & "$vcpkgRoot\bootstrap-vcpkg.bat" -disableMetrics
-          if ($LASTEXITCODE -ne 0) { throw "bootstrap-vcpkg.bat failed" }
-
-      - name: Decide whether the offline documentation can be rendered
-        shell: pwsh
-        run: |
-          # -------------------------------------------------------------------------
-          # The MSI's Start Menu group offers "Getting Started" and "User Guide".
-          # Both are asciidoctor-rendered pages that docs/CMakeLists.txt installs,
-          # and that directory is only added when KPXC_FEATURE_DOCS is on. This job
-          # used to hard-code it OFF, which silently dropped both pages from the
-          # installer - and, until the template was fixed, broke the MSI outright.
-          #
-          # asciidoctor is a Ruby gem and Ruby is preinstalled on windows-2022, so
-          # rendering the documentation costs a few seconds. But a release must not
-          # hinge on a gem install: if anything here fails, the documentation is
-          # dropped and the build carries on, because a shipped installer without
-          # the help pages beats no installer at all. Either way the choice is
-          # printed and the WiX template follows it, so the packaged shortcuts and
-          # the packaged files always agree.
-          #
-          # ASCIIDOCTOR_EXE is passed to CMake as a full path rather than left to
-          # find_program: the gem installs a .bat shim on Windows, and which
-          # extensions find_program will try is not worth betting a 45-minute run on.
-          # -------------------------------------------------------------------------
-          $ErrorActionPreference = 'Continue'
-          $PSNativeCommandUseErrorActionPreference = $false
-
-          $docs = 'OFF'
-          $exe = ''
-
-          $gem = Get-Command gem -ErrorAction SilentlyContinue
-          if (-not $gem) {
-              Write-Host "::warning::No Ruby/gem on this runner; the offline documentation will not be built."
-          } else {
-              gem install asciidoctor --no-document
-              if ($LASTEXITCODE -ne 0) {
-                  Write-Host "::warning::gem install asciidoctor failed; the offline documentation will not be built."
-              } else {
-                  $cmd = Get-Command asciidoctor -ErrorAction SilentlyContinue
-                  if (-not $cmd) {
-                      Write-Host "::warning::asciidoctor installed but is not on PATH; the offline documentation will not be built."
-                  } else {
-                      $exe = $cmd.Source
-                      # Prove it runs before committing the build to it. A gem that
-                      # installs but cannot execute would otherwise fail the whole
-                      # run much later, during Configure.
-                      & $exe --version | Select-Object -First 1
-                      if ($LASTEXITCODE -ne 0) {
-                          Write-Host "::warning::asciidoctor at $exe does not run; the offline documentation will not be built."
-                          $exe = ''
-                      } else {
-                          $docs = 'ON'
-                      }
-                  }
-              }
-          }
-
-          if ($docs -eq 'ON') {
-              Write-Host "Offline documentation: ON (asciidoctor at $exe)"
-              # CMake wants forward slashes; a backslash path becomes an escape.
-              $cmakePath = $exe -replace '\\', '/'
-              $extra = "-DKPXC_FEATURE_DOCS=ON `"-DASCIIDOCTOR_EXE=$cmakePath`""
-          } else {
-              Write-Host "Offline documentation: OFF - the installer will ship without the help pages."
-              $extra = "-DKPXC_FEATURE_DOCS=OFF"
-          }
-
-          # GITHUB_ENV wins over the workflow-level `env:` for every later step.
-          "CMAKE_COMMON_OPTIONS=${{ env.CMAKE_COMMON_OPTIONS }} $extra" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-          "KPXC_FEATURE_DOCS=$docs" | Out-File -FilePath $env:GITHUB_ENV -Append -Encoding utf8
-
-      - name: Configure
-        shell: pwsh
-        run: |
-          # X_VCPKG_APPLOCAL_DEPS_INSTALL puts the vcpkg DLLs (botan, argon2, and the
-          # rest) into the install tree. Without it the installer ships an executable
-          # that cannot start on a machine that has never seen vcpkg.
-          cmake -B build -S . -G Ninja `
-            ${{ env.CMAKE_COMMON_OPTIONS }} `
-            -DCMAKE_TOOLCHAIN_FILE="${{ github.workspace }}/.ci-vcpkg/scripts/buildsystems/vcpkg.cmake" `
-            -DVCPKG_TARGET_TRIPLET=${{ env.VCPKG_TARGET_TRIPLET }} `
-            -DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON `
-            -DCMAKE_PREFIX_PATH="$env:QT_ROOT_DIR"
-
-      - name: Build
-        shell: pwsh
-        run: cmake --build build --parallel
-
-      - name: Test
-        shell: pwsh
-        run: |
-          # The test executables end up as GUI-subsystem binaries on Windows, so their
-          # stdout is detached from the console and QTest chatter never reaches the log.
-          # Exit codes are the reliable signal; --output-on-failure surfaces whatever
-          # ctest did manage to capture for a failing test.
-          $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
-          # --repeat until-pass:2 allows one retry per test. testdatabase has been
-          # observed failing and then passing on the SAME binaries - ef8f3707 and
-          # 3d17b7e1 differ by workflow text only - so it is flaky, and every flake
-          # stops the job before packaging and costs a 45-minute round trip.
-          #
-          # This does not hide a failure: ctest prints each retry, so a flake is
-          # recorded in the log rather than erased, and a test that fails twice still
-          # fails the job. It buys one retry, not silence.
-          ctest --test-dir build --output-on-failure --no-tests=error --timeout 900 --repeat until-pass:2
-
-      - name: Say which test failed and why
-        if: failure()
-        shell: pwsh
-        run: |
-          # A failing test has so far reported only its name and a duration -
-          # --output-on-failure printed nothing at all for it, so there was no way
-          # to tell an assertion from a crash. ctest keeps the full per-test output
-          # in LastTest.log regardless of what it echoed to the console, and QTest
-          # can be asked for a report of its own. Print both, and keep the log as an
-          # artifact, so a red run names the failing function instead of just the
-          # binary.
-          $log = 'build/Testing/Temporary/LastTest.log'
-          if (Test-Path $log) {
-            Write-Host '::group::LastTest.log'
-            Get-Content $log
-            Write-Host '::endgroup::'
-          } else {
-            Write-Host "no $log; ctest did not get far enough to write one"
-          }
-
-          # Re-run just the failures with QTest reporting to a file, which does not
-          # depend on the executable's stdout reaching the console.
-          Write-Host '::group::re-run of failing tests'
-          ctest --test-dir build --rerun-failed --output-on-failure --timeout 900 `
-            --test-output-size-passed 0 --test-output-size-failed 1000000
-          Write-Host '::endgroup::'
-          exit 0
-
-      - name: Keep the test log
-        if: failure()
+      - name: Upload safe package evidence even when packaging fails
+        if: ${{ always() }}
+        continue-on-error: true
         uses: actions/upload-artifact@v7
         with:
-          name: test-logs-windows-x64
+          name: package-windows-x64-${{ github.run_id }}
           path: |
-            build/Testing/Temporary/*.log
-          if-no-files-found: ignore
-
-      - name: Ensure the WiX Toolset is available
-        shell: pwsh
-        run: |
-          # CPack's WIX generator shells out to candle.exe and light.exe. The hosted
-          # image has shipped WiX 3 for years, but it is not contractual, so the
-          # absence is repaired rather than discovered at packaging time.
-          if ($env:WIX -and (Test-Path (Join-Path $env:WIX 'bin\candle.exe'))) {
-            $wixBin = Join-Path $env:WIX 'bin'
-          } else {
-            choco install wixtoolset --no-progress -y
-            $candle = Get-ChildItem 'C:\Program Files (x86)\WiX Toolset*\bin\candle.exe' `
-              -ErrorAction SilentlyContinue | Select-Object -First 1
-            if (-not $candle) { throw 'WiX Toolset 3 is not installed and could not be installed.' }
-            $wixBin = $candle.DirectoryName
-          }
-          Write-Host "Using WiX at $wixBin"
-          Add-Content $env:GITHUB_PATH $wixBin
-
-      - name: Package
-        shell: pwsh
-        run: |
-          # The project configures CPack with ZIP and WIX generators itself, so this
-          # produces the same two artifacts the upstream Windows release does: an MSI
-          # that a user can actually install, and a ZIP of the same tree for anyone who
-          # would rather not run an installer. Both carry the Qt runtime, the plugins
-          # and the CA bundle, because the install rule runs windeployqt.
-          New-Item -ItemType Directory -Force -Path '${{ github.workspace }}\artifacts' | Out-Null
-          # CPack reports a WiX failure by telling you to go and read wix.log, which
-          # lives inside the build tree and is thrown away with the runner. That is why
-          # this job has never said WHY the MSI could not be built. Print it here, so a
-          # failed run diagnoses itself instead of only announcing that it failed. The
-          # same evidence, plus the generated sources, is preserved as an artifact by the
-          # next step: printing only helps someone who reads this run's log, and every
-          # run that has carried this change so far was cancelled before anyone did.
-          try {
-            # Run cpack from inside the build tree, exactly as the release.yml this
-            # workflow replaced did - that one published v2.8.0-ci.2 with a real 66 MB
-            # MSI, and this one has never produced an MSI at all. Every configure flag
-            # is identical between the two; the invocation was the only difference.
-            # Redirecting -B outside the build tree also lengthens every staged path
-            # (artifacts\_CPack_Packages\win64\WIX\... rather than build\_CPack_...),
-            # and MAX_PATH is a well-known way to make light.exe fail on a Qt tree
-            # while the ZIP generator, which stages the same files, succeeds - which is
-            # exactly the asymmetry seen here.
-            Push-Location build
-            try {
-              cpack -G 'ZIP;WIX'
-              if ($LASTEXITCODE -ne 0) { throw "cpack exited $LASTEXITCODE" }
-            } finally {
-              Pop-Location
-            }
-            Move-Item -Force -Path 'build\*.msi', 'build\*.zip' `
-              -Destination '${{ github.workspace }}\artifacts' -ErrorAction SilentlyContinue
-          } catch {
-            Write-Host '::group::wix.log'
-            # cpack now stages inside the build tree, so the log lives under
-            # build\_CPack_Packages. Both roots are searched: the staging location is
-            # the one thing this step must not get wrong.
-            $logs = Get-ChildItem '${{ github.workspace }}\build', '${{ github.workspace }}\artifacts' `
-              -Recurse -Filter 'wix.log' -ErrorAction SilentlyContinue
-            if ($logs) {
-              $logs | ForEach-Object { Write-Host "--- $($_.FullName)"; Get-Content $_.FullName }
-            } else {
-              # An absent log is itself a finding: it means CPack failed before it ever
-              # ran candle or light. Say so, rather than printing nothing and leaving the
-              # reader to assume the log was empty or the search was broken.
-              Write-Host 'No wix.log was produced. CPack failed before invoking candle/light.'
-            }
-            Write-Host '::endgroup::'
-            throw
-          }
-          Get-ChildItem '${{ github.workspace }}\artifacts\*.msi', '${{ github.workspace }}\artifacts\*.zip' |
-            ForEach-Object { '{0}  {1:N1} MiB' -f $_.Name, ($_.Length / 1MB) }
-
-      # ---------------------------------------------------------------------------
-      # Diagnostics for the WIX generator.
-      #
-      # Every WiX failure reaches the log as the same three lines - "Problem running
-      # WiX", "Fatal WiX Generator Error", "Problem compressing the directory" - which
-      # name neither the tool that failed nor the input it choked on. CPack writes the
-      # real reason to wix.log, and candle's and light's actual inputs to .wxs/.wxi
-      # files, all inside the packaging tree, all of which die with the runner.
-      #
-      # These two steps lift that evidence out. Everything captured is generated build
-      # metadata: tool command lines, file paths, and CPack's own configuration. No
-      # source, no binaries, no secrets. The staged install tree is recorded as a
-      # listing rather than copied, both because it is the same tens of MiB already
-      # published as the ZIP and because the listing - not the bytes - is what answers
-      # the "path over 260 characters" and "name WiX cannot turn into an Id" questions.
-      # ---------------------------------------------------------------------------
-      - name: Collect the WiX diagnostics
-        # always(), not failure(): a cancelled run still leaves its evidence behind, and
-        # on a green run the same files record what a working package looked like, which
-        # is the only baseline a future failure can be diffed against.
-        if: always()
-        shell: pwsh
-        run: |
-          # Pure evidence-gathering. It must never be the reason a run goes red, so it
-          # swallows its own errors; it cannot turn a red run green, because a step that
-          # succeeds after a failed one does not clear the job's failure.
-          # GitHub sets 'Stop' for pwsh steps, which would promote a missing file into a
-          # terminating error and lose the rest of the evidence.
-          $ErrorActionPreference = 'Continue'
-
-          $out = '${{ github.workspace }}\wix-diagnostics'
-          $summary = Join-Path $out 'summary.txt'
-          try {
-            New-Item -ItemType Directory -Force -Path $out | Out-Null
-            $lines = @("Collected for ${{ github.sha }} on $(Get-Date -Format o)")
-
-            # CPack derives this directory from the system name and the generator name,
-            # so find it instead of hardcoding "win64\WIX" and silently collecting
-            # nothing the day either one changes.
-            $wixTop = Get-ChildItem '${{ github.workspace }}\build\_CPack_Packages' `
-              -Recurse -Directory -Filter 'WIX' -ErrorAction SilentlyContinue | Select-Object -First 1
-
-            if (-not $wixTop) {
-              $lines += 'No _CPack_Packages/**/WIX directory: cpack did not reach the WIX generator.'
-            } else {
-              $lines += "WiX packaging directory: $($wixTop.FullName)"
-
-              # wix.log carries the candle and light command lines and their output, so
-              # it names which tool failed. The .wxs and .wxi are exactly what CPack
-              # generated and handed to candle; the .wixobj are what candle produced, so
-              # their presence alone distinguishes a candle failure from a light one.
-              # license.rtf is CPack's conversion of CPACK_RESOURCE_FILE_LICENSE, kept
-              # because an empty one would explain a light failure by itself.
-              $wanted = @('.log', '.wxs', '.wxi', '.wixobj', '.rtf')
-              $copied = Get-ChildItem $wixTop.FullName -File -ErrorAction SilentlyContinue |
-                Where-Object { $wanted -contains $_.Extension }
-              $copied | Copy-Item -Destination $out -ErrorAction SilentlyContinue
-              $lines += "Captured: $((($copied | ForEach-Object { $_.Name }) -join ', '))"
-
-              # The staged tree is what CPack turned into File elements. Longest source
-              # path first, so the first data line answers the path-length question
-              # outright instead of requiring the reader to scan the whole listing.
-              $stage = Get-ChildItem $wixTop.FullName -Directory -ErrorAction SilentlyContinue |
-                Select-Object -First 1
-              if ($stage) {
-                $files = @(Get-ChildItem $stage.FullName -Recurse -File -ErrorAction SilentlyContinue)
-                $lines += "Staged install tree: $($stage.FullName) ($($files.Count) files)"
-                $header = @(
-                  "# Staged install tree for $($stage.Name)",
-                  '# Columns: full source path length, size in bytes, path relative to the install root.',
-                  '# Sorted longest first: candle and light open these paths through the',
-                  '# Win32 API, which stops at 260 characters unless long paths are enabled.',
-                  ''
-                )
-                $rows = $files | Sort-Object { $_.FullName.Length } -Descending | ForEach-Object {
-                  '{0,4}  {1,12}  {2}' -f $_.FullName.Length, $_.Length, $_.FullName.Substring($stage.FullName.Length)
-                }
-                ($header + $rows) | Set-Content (Join-Path $out 'staged-install-tree.txt')
-              } else {
-                $lines += 'No staged install tree: cpack failed before staging the install.'
-              }
-            }
-
-            # The configuration CPack actually consumed, as opposed to what the
-            # CMakeLists appears to say - the two differ whenever a variable is set
-            # after include(CPack).
-            Copy-Item '${{ github.workspace }}\build\CPackConfig.cmake' -Destination $out `
-              -ErrorAction SilentlyContinue
-
-            # Which WiX is on PATH. The template declares RequiredVersion 3.6.3303.0,
-            # and the runner image and the chocolatey fallback do not ship the same
-            # build, so the version belongs in the record next to the failure.
-            $candle = Get-Command candle.exe -ErrorAction SilentlyContinue
-            if ($candle) {
-              $lines += "candle.exe: $($candle.Source) ($($candle.Version))"
-            } else {
-              $lines += 'candle.exe is not on PATH.'
-            }
-
-            $glob = '${{ github.workspace }}\build'
-            $produced = Get-ChildItem "$glob\*.msi", "$glob\*.zip" -ErrorAction SilentlyContinue
-            $lines += "Packages produced: $((($produced | ForEach-Object { $_.Name }) -join ', '))"
-            $lines | Set-Content $summary
-            Write-Host ($lines -join "`n")
-          } catch {
-            # Record the failure to collect rather than hiding it, so an empty artifact
-            # is never mistaken for an absence of evidence.
-            "Diagnostics collection failed: $_" | Set-Content $summary -ErrorAction SilentlyContinue
-            Write-Host "Diagnostics collection failed: $_"
-          }
-
-      - name: Upload the WiX diagnostics
-        if: always()
-        uses: actions/upload-artifact@v7
-        with:
-          name: wix-diagnostics-windows-x64
-          path: wix-diagnostics
-          # warn, not error: this artifact is evidence about a failure, so being unable
-          # to collect it must not become a second failure that masks the first.
+            artifacts/Setup.exe
+            artifacts/RELEASES
+            artifacts/*.nupkg
+            artifacts/artifact-receipt.json
+            artifacts/build-provenance.json
+            artifacts/update-manifest-v1.json
           if-no-files-found: warn
           retention-days: 7
 
-      - name: Print why this job failed, last
-        if: failure()
-        shell: pwsh
-        run: |
-          # Deliberately the LAST step of the job. wix.log is already printed by the
-          # Package step and kept as an artifact, but both are unreadable to anyone
-          # reading this job through an API that only returns the tail of the log:
-          # actions/upload-artifact dumps the entire runner environment - several
-          # hundred lines - after every upload, which pushes the real error out of
-          # reach. Printing the errors here puts them in the final few lines, where
-          # they can actually be found.
-          $log = Get-ChildItem '${{ github.workspace }}\build', '${{ github.workspace }}\artifacts' `
-            -Recurse -Filter 'wix.log' -ErrorAction SilentlyContinue | Select-Object -First 1
-          # A failing test stops the job before packaging, so "no wix.log" is a true
-          # but useless answer to "why did this fail". Report the tests first: whatever
-          # went wrong, the last few lines of this job now say what it was.
-          Write-Host '================ FAILED TESTS ================'
-          $ctest = 'build/Testing/Temporary/LastTest.log'
-          $summary = Get-ChildItem 'build/Testing/Temporary' -Filter 'LastTestsFailed*.log' `
-            -ErrorAction SilentlyContinue | Select-Object -First 1
-          if ($summary) {
-            $failed = @(Get-Content $summary.FullName)
-            Write-Host "failed tests: $($failed -join ', ')"
-            if (Test-Path $ctest) {
-              # QTest prints FAIL! with the function and the comparison that broke.
-              $fails = Select-String -Path $ctest -Pattern '^(FAIL!|QFATAL|ASSERT)' -CaseSensitive:$false
-              if ($fails) { $fails | ForEach-Object { Write-Host $_.Line } }
-            }
-
-            # -----------------------------------------------------------------------
-            # Why LastTest.log is not enough, and what this does instead.
-            #
-            # The test executables are GUI-subsystem binaries on Windows (see the Test
-            # step), so their stdout is detached and QTest's report never reaches
-            # ctest. LastTest.log therefore holds nothing from the test whether it
-            # asserted, hung or crashed - so "no FAIL! lines" says nothing at all
-            # about which of those happened. An earlier version of this step read that
-            # silence as "the test process probably died", which was an inference with
-            # no evidence behind it.
-            #
-            # QTest can write its report straight to a file with -o, which does not go
-            # through stdout and so survives the GUI subsystem. Re-run each failing
-            # test that way and print the report here, in the last step, where a small
-            # tail can reach it.
-            #
-            # A re-run that PASSES is itself the answer: the test is timing-dependent,
-            # not broken. testExternallyModified is the one to suspect - it waits on a
-            # QFileSystemWatcher signal through QTRY_COMPARE, which is a filesystem
-            # race on a loaded runner.
-            # -----------------------------------------------------------------------
-            $env:PATH = "$env:QT_ROOT_DIR\bin;${{ github.workspace }}\build\vcpkg_installed\${{ env.VCPKG_TARGET_TRIPLET }}\bin;$env:PATH"
-            foreach ($entry in $failed) {
-              # LastTestsFailed.log lines look like "32:testdatabase".
-              $name = ($entry -split ':', 2)[-1].Trim()
-              if (-not $name) { continue }
-              $exe = Get-ChildItem '${{ github.workspace }}\build' -Recurse -Filter "$name.exe" `
-                -ErrorAction SilentlyContinue | Select-Object -First 1
-              if (-not $exe) { Write-Host "  ($name.exe not found; cannot re-run it)"; continue }
-
-              $report = Join-Path $env:RUNNER_TEMP "$name-qtest.txt"
-              Write-Host "---------------- $name, re-run with QTest reporting to a file ----------------"
-              & $exe.FullName -o "$report,txt" -maxwarnings 0 2>&1 | Out-Null
-              $code = $LASTEXITCODE
-              if (Test-Path $report) {
-                # The report ends with the totals and every failure above them.
-                Get-Content $report | Select-Object -Last 40 | ForEach-Object { Write-Host $_ }
-              } else {
-                Write-Host "  (no report written; $name.exe exited $code before QTest could)"
-              }
-              if ($code -eq 0) {
-                Write-Host "  NOTE: $name PASSED on this re-run - it is timing-dependent, not broken."
-              } else {
-                Write-Host "  $name exited $code on the re-run too."
-              }
-            }
-          } else {
-            Write-Host 'none - the tests passed, so the failure is later in the job'
-          }
-          Write-Host '============== END FAILED TESTS =============='
-
-          Write-Host '================ WIX ERRORS ================'
-          if ($log) {
-            # candle and light prefix diagnostics with a code such as LGHT0094 or
-            # CNDL0103. Show those first, then a tail of the file for context.
-            $lines = Get-Content $log.FullName
-            $diags = $lines | Select-String -Pattern '(error|warning) [A-Z]{4}\d{4}' -CaseSensitive:$false
-            if ($diags) { $diags | ForEach-Object { Write-Host $_.Line } }
-            else { Write-Host '(no coded diagnostics matched; showing the tail)' }
-            Write-Host '---------------- last 40 lines ----------------'
-            $lines | Select-Object -Last 40 | ForEach-Object { Write-Host $_ }
-          } else {
-            Write-Host 'no wix.log found under build\ or artifacts\'
-          }
-          Write-Host '============== END WIX ERRORS =============='
-
-      - name: Refuse a package with no installer in it
-        shell: pwsh
-        run: |
-          # A release without an installer is not a release. Fail here, in the job that
-          # knows why, rather than letting the release job publish an empty promise.
-          $msi = Get-ChildItem '${{ github.workspace }}\artifacts\*.msi' -ErrorAction SilentlyContinue
-          if (-not $msi) { throw 'cpack produced no MSI; refusing to hand a release job nothing to publish.' }
-
-          # Say what was actually produced. cpack prints this far enough up the log that
-          # actions/upload-artifact's several-hundred-line environment dump buries it,
-          # and "how big is the MSI" then costs a huge log fetch to answer. Printing it
-          # here, in the last steps, keeps it inside a small tail.
-          Write-Host "===== PACKAGE ====="
-          Get-ChildItem '${{ github.workspace }}\artifacts\*' -File |
-              Sort-Object Name |
-              ForEach-Object { "{0,-52} {1,10:N1} MiB" -f $_.Name, ($_.Length / 1MB) } |
-              Write-Host
-          Write-Host "offline documentation: $env:KPXC_FEATURE_DOCS"
-          Write-Host "===== END PACKAGE ====="
-
-      - name: Upload the Windows package
-        uses: actions/upload-artifact@v7
-        with:
-          name: package-windows-x64
-          path: |
-            artifacts/*.msi
-            artifacts/*.zip
-          if-no-files-found: error
-          retention-days: 7
-
-  # =================================================================================
-  # Release. Runs only when the Windows job succeeded, and only for the default branch
-  # or a manual dispatch. Publishes the package that job genuinely built.
-  # =================================================================================
   release:
-    name: Release
-    needs: [test-windows]
-    # success() is explicit rather than implied: a failed or cancelled test job must not
-    # produce a release under any circumstances.
+    name: Publish Squirrel.Windows release
+    needs: [package-windows]
     if: >-
       success()
       && (github.event_name == 'workflow_dispatch'
       || github.ref == format('refs/heads/{0}', github.event.repository.default_branch))
     runs-on: ubuntu-24.04
     timeout-minutes: 20
-
-    # The only place in this workflow that needs write access. The release is created
-    # with the automatically provided GITHUB_TOKEN; no organization or repository secret
-    # is referenced, and the token is never printed.
     permissions:
       contents: write
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
-
-      - name: Download the built package
+      - name: Download the verified package
         uses: actions/download-artifact@v8
         with:
-          name: package-windows-x64
+          name: package-windows-x64-${{ github.run_id }}
           path: artifacts
 
-      - name: Verify that the installer is present
+      - name: Verify required release assets
+        shell: bash
         run: |
           set -euo pipefail
-          ls -l artifacts
-          # Checked in the build job too. Checked again here because this is the step
-          # standing between a missing installer and a release that claims to have one.
+          test -s artifacts/Setup.exe
+          test -s artifacts/RELEASES
+          test -s artifacts/artifact-receipt.json
+          test -s artifacts/build-provenance.json
+          test -s artifacts/update-manifest-v1.json
           shopt -s nullglob
-          msi=(artifacts/*.msi)
-          zip=(artifacts/*.zip)
-          test ${#msi[@]} -eq 1 || { echo "expected exactly one MSI, found ${#msi[@]}" >&2; exit 1; }
-          test -s "${msi[0]}"
-          test ${#zip[@]} -eq 1 || { echo "expected exactly one ZIP, found ${#zip[@]}" >&2; exit 1; }
-          test -s "${zip[0]}"
-          {
-            echo "MSI_PATH=${msi[0]}"
-            echo "MSI_NAME=$(basename "${msi[0]}")"
-            echo "ZIP_PATH=${zip[0]}"
-            echo "ZIP_NAME=$(basename "${zip[0]}")"
-          } >> "$GITHUB_ENV"
+          full=(artifacts/*-full.nupkg)
+          test ${#full[@]} -eq 1
 
-      - name: Compose the release notes
+      - name: Compose release notes
+        shell: bash
         env:
-          # A unique, monotonic tag per run: run_number increases with every run of this
-          # workflow on the repository and run_attempt with every re-run, so no earlier
-          # release can be recycled or overwritten.
           RELEASE_TAG: v0.0.${{ github.run_number }}.${{ github.run_attempt }}
         run: |
           set -euo pipefail
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
-          {
-            echo "Automated build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`."
-            echo
-            echo "This fork is Windows-only."
-            echo
-            echo "| Platform | Artifact | Notes |"
-            echo "| --- | --- | --- |"
-            echo "| Windows x64 | \`${MSI_NAME}\` | The installer. Self-contained; the Qt runtime is deployed by windeployqt. |"
-            echo "| Windows x64 | \`${ZIP_NAME}\` | The same tree, unpacked by hand instead. |"
-            echo
-            echo "Configured with \`-DCMAKE_BUILD_TYPE=Release -DWITH_TESTS=ON\`; the full ctest suite passed on Windows."
-            echo
-            echo "Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}"
-          } > release-notes.md
-          cat release-notes.md
+          cat > release-notes.md <<EOF
+          Automated unsigned Windows x64 build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`.
+
+          This release uses Squirrel.Windows exclusively. \`Setup.exe\` may trigger Windows Unknown Publisher or SmartScreen warnings because code signing is permanently disabled.
+
+          Required assets: \`Setup.exe\`, \`RELEASES\`, one full \`.nupkg\`, build provenance, artifact receipt, and the versioned update manifest. Delta packages are attached when Squirrel can produce them from a compatible previous full package.
+
+          No tests or lint run in GitHub Actions. Local verification is reported separately from this packaging and publication workflow.
+
+          Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          EOF
 
       - name: Create the GitHub Release
+        shell: bash
         env:
-          # Built-in token granted by the permissions block above.
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN || github.token }}
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
+          assets=(artifacts/Setup.exe artifacts/RELEASES artifacts/*.nupkg artifacts/artifact-receipt.json artifacts/build-provenance.json artifacts/update-manifest-v1.json)
           gh release create "${RELEASE_TAG}" \
             --target "${GITHUB_SHA}" \
             --title "KeePassXC Material ${RELEASE_TAG}" \
             --notes-file release-notes.md \
             --draft=false \
             --prerelease=false \
-            "${MSI_PATH}" "${ZIP_PATH}"
-          echo "Published **${RELEASE_TAG}** for \`${GITHUB_SHA}\`." >> "$GITHUB_STEP_SUMMARY"
+            "${assets[@]}"

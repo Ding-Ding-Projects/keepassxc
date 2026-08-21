@@ -721,49 +721,35 @@ class Build(Command):
     # noinspection PyMethodMayBeStatic
     def build_windows(self, version, src_dir, output_dir, *, parallelism, cmake_opts, platform_target,
                       sign, sign_identity, sign_timestamp_url, with_tests, mingw, **_):
-        # Setup build signing if requested
         if sign:
-            cmake_opts.append(f'-DWITH_XC_CODESIGN_IDENTITY={sign_identity}')
-            cmake_opts.append(f'-DWITH_XC_CODESIGN_TIMESTAMP_URL={sign_timestamp_url}')
-        # Use vcpkg for dependency deployment
-        cmake_opts.append('-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON')
-
+            raise Error('Code signing is permanently disabled for Windows packages.')
         if mingw:
-            vs_env = os.environ.copy()
-        else:
-            # Find Visual Studio and capture build environment
-            vs_env = _capture_vs_env(arch=platform_target)
+            raise Error('The Windows package requires the MSVC x64 build path.')
+        if with_tests:
+            logger.info('The Squirrel packaging command builds packages only; run local tests separately.')
 
-        # Use vs_env to resolve common tools
-        cmake_cmd = shutil.which('cmake', path=vs_env.get('PATH'))
-        cpack_cmd = shutil.which('cpack', path=vs_env.get('PATH'))
-        ctest_cmd = shutil.which('ctest', path=vs_env.get('PATH'))
-        
-        if not cmake_cmd or not cpack_cmd or not ctest_cmd:
-            raise Error('CMake tools (cmake, cpack, ctest) not found on PATH!')
-        if not _cmd_exists('candle.exe', path=vs_env.get('PATH')) or not _cmd_exists('light.exe', path=vs_env.get('PATH')) \
-            or not _cmd_exists('heat.exe', path=vs_env.get('PATH')):
-            raise Error('WiX Toolset (candle.exe, light.exe, heat.exe) not found on the PATH!')
+        installer = src_dir / 'build-installer.bat'
+        if not installer.is_file():
+            raise Error('Squirrel installer entry point not found: %s', installer)
+        logger.info('Building the unsigned Squirrel.Windows package through build-installer.bat...')
+        _run(['cmd.exe', '/d', '/c', str(installer), '/s', version], cwd=src_dir, capture_output=False)
 
-        # Start the build
-        with tempfile.TemporaryDirectory() as build_dir:
-            logger.info('Configuring build...')
-            _run([cmake_cmd, *cmake_opts, str(src_dir)], cwd=build_dir, env=vs_env, capture_output=False)
-
-            logger.info('Compiling sources...')
-            _run([cmake_cmd, '--build', '.', f'--parallel', str(parallelism)],
-                 cwd=build_dir, env=vs_env, capture_output=False)
-
-            if with_tests:
-                self._run_tests(cwd=build_dir, ctest_cmd=ctest_cmd)
-
-            logger.info('Packaging application...')
-            _run([cpack_cmd, '-G', 'ZIP;WIX'], cwd=build_dir, env=vs_env, capture_output=False)
-
-            artifacts = list(Path(build_dir).glob("*.zip")) + list(Path(build_dir).glob("*.msi"))
-            for artifact in artifacts:
-                artifact.replace(output_dir / artifact.name)
-                logger.info(f'Created artifact: {output_dir / artifact.name}')
+        squirrel_output = src_dir / 'dist' / 'squirrel-windows'
+        required = ['Setup.exe', 'RELEASES', 'artifact-receipt.json', 'build-provenance.json']
+        for name in required:
+            if not (squirrel_output / name).is_file():
+                raise Error('Required Squirrel artifact is missing: %s', name)
+        packages = list(squirrel_output.glob('*.nupkg'))
+        if not any(path.name.endswith('-full.nupkg') for path in packages):
+            raise Error('The Squirrel output has no full package.')
+        output_dir.mkdir(parents=True, exist_ok=True)
+        artifacts = [*(squirrel_output / name for name in required), *packages,
+                     squirrel_output / 'update-manifest-v1.json']
+        for artifact in artifacts:
+            if artifact.is_file():
+                destination = output_dir / artifact.name
+                shutil.copy2(artifact, destination)
+                logger.info('Created artifact: %s', destination)
 
     # noinspection PyMethodMayBeStatic
     def build_macos(self, version, src_dir, output_dir, *, use_system_deps, parallelism, cmake_opts,
