@@ -17,6 +17,7 @@
 - [x] Add stable hashed tab persistence identities, descriptor reconciliation, preferred order keys, and pin-state foundations.
 - [x] Add explicit pin/unpin controls with persistent file-backed pins and session-only unsaved pins.
 - [x] Replace the transient hidden-tab menu with a registered searchable all-tab material overlay.
+- [x] Add stable-ID move commands that reorder the authoritative database tab widget and persist preferred order.
 - [x] Centralize existing material search ownership and remove private Vault/History regex builders.
 - [x] Register command-palette and notification-history searches and make both consumers mode/flag aware.
 - [ ] Migrate every remaining dialog and auxiliary surface to the shared component system.

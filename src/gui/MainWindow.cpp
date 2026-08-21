@@ -34,6 +34,7 @@
 #include <QStatusBar>
 #include <QSysInfo>
 #include <QTimer>
+#include <QTabBar>
 #include <QToolButton>
 #include <QWindow>
 
@@ -956,6 +957,40 @@ MainWindow::MainWindow()
             syncTabStrip();
             break;
         }
+    });
+    connect(tabStrip, &Material::TabStrip::tabMoveRequested, this, [this, tabStrip, syncTabStrip](const QString& id, const QString& beforeId) {
+        auto desired = tabStrip->tabs();
+        int from = -1;
+        for (int i = 0; i < desired.size(); ++i) if (desired.at(i).runtimeId == id) { from = i; break; }
+        if (from < 0) return;
+        const auto moved = desired.takeAt(from);
+        int destination = desired.size();
+        if (!beforeId.isEmpty()) {
+            for (int i = 0; i < desired.size(); ++i) if (desired.at(i).runtimeId == beforeId) { destination = i; break; }
+        }
+        desired.insert(destination, moved);
+
+        for (int target = 0; target < desired.size(); ++target) {
+            int current = -1;
+            for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
+                if (tabIdFor(m_ui->tabWidget->databaseWidgetFromIndex(i)) == desired.at(target).runtimeId) {
+                    current = i;
+                    break;
+                }
+            }
+            if (current >= 0 && current != target) {
+                m_ui->tabWidget->tabBar()->moveTab(current, target);
+            }
+        }
+
+        QStringList persistentOrder;
+        for (const auto& descriptor : desired) {
+            if (descriptor.persistable && !persistentOrder.contains(descriptor.persistenceKey)) {
+                persistentOrder.append(descriptor.persistenceKey);
+            }
+        }
+        config()->set(Config::GUI_TabOrder, persistentOrder);
+        syncTabStrip();
     });
     connect(tabStrip, &Material::TabStrip::newTabRequested, m_ui->actionDatabaseOpen, &QAction::trigger);
 

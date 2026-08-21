@@ -625,10 +625,23 @@ namespace Material
         QMenu menu(this);
         QAction* pin = menu.addAction(Icons::symbol(tab.pinned ? QStringLiteral("keep_off") : QStringLiteral("keep")),
                                       tab.pinned ? tr("Unpin tab") : tr("Pin tab"));
+        QAction* earlier = menu.addAction(Icons::symbol(QStringLiteral("arrow_back")), tr("Move tab earlier"));
+        QAction* later = menu.addAction(Icons::symbol(QStringLiteral("arrow_forward")), tr("Move tab later"));
         QAction* close = menu.addAction(Icons::symbol(QStringLiteral("close")), tr("Close tab"));
+        const bool canEarlier = index > 0 && m_tabs.at(index - 1).pinned == tab.pinned;
+        const bool canLater = index + 1 < m_tabs.size() && m_tabs.at(index + 1).pinned == tab.pinned;
+        earlier->setEnabled(canEarlier);
+        later->setEnabled(canLater);
         const QAction* chosen = menu.exec(event->globalPos());
         if (chosen == pin) {
             emit tabPinRequested(tab.id, !tab.pinned);
+        } else if (chosen == earlier && canEarlier) {
+            emit tabMoveRequested(tab.id, m_tabs.at(index - 1).id);
+        } else if (chosen == later && canLater) {
+            const QString before = index + 2 < m_tabs.size() && m_tabs.at(index + 2).pinned == tab.pinned
+                                       ? m_tabs.at(index + 2).id
+                                       : QString();
+            emit tabMoveRequested(tab.id, before);
         } else if (chosen == close) {
             emit tabCloseRequested(tab.id);
         }

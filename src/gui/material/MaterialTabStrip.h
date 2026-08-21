@@ -73,6 +73,7 @@ namespace Material
         void tabSelected(const QString& id);
         void tabCloseRequested(const QString& id);
         void tabPinRequested(const QString& id, bool pinned);
+        void tabMoveRequested(const QString& id, const QString& beforeId);
         void newTabRequested();
         void searchRequested();
 
