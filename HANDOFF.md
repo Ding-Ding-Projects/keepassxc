@@ -11,6 +11,16 @@ Last verified: 2026-08-21
 - Tagged CMake configuration now accepts an exact semantic version with one optional leading `v` and normalizes it before the strict version check.
 - Focused verification at the task tree: `testbrowser` passed in 0.22 seconds and `testpasskeys` passed in 0.26 seconds. `testgui`, `testbrowser`, and `testpasskeys` all compiled successfully. The isolated `testAddEntry` run crashed before entering the test body with access violation `0xc0000005` in `AutoTypeExecutor::~AutoTypeExecutor`; GUI runtime verification is therefore blocked by that unrelated harness teardown crash rather than reported as passed.
 
+## Closeout handoff — 2026-08-21
+
+- The preserved Settings checkpoint from `f27d787934fd11667cb0cd017390c95531da27f6` is integrated during this closeout. Its source changes include truthful persisted/default provenance, independent bounded per-page search, keyboard-operable rows, compact page selection, a dialog-emoji preference, bounded local personal-vocabulary loading/reset, and redacted Settings history events.
+- Focused Settings compilation, runtime interaction, design-parity evidence, and negative completeness tests were not completed during this closeout. The work remains explicitly incomplete rather than being treated as verified by the merge.
+- Installer Visual C++ prerequisite detection is tracked in [issue #8](https://github.com/Ding-Ding-Projects/keepassxc/issues/8).
+- Unsolicited main-window minimizing is tracked in [issue #9](https://github.com/Ding-Ding-Projects/keepassxc/issues/9).
+- Unconditional Material Design 3 and legacy-style-route removal are tracked in [issue #10](https://github.com/Ding-Ding-Projects/keepassxc/issues/10).
+- Per-database embedded Git history is tracked in [issue #11](https://github.com/Ding-Ding-Projects/keepassxc/issues/11).
+- The fail-closed per-surface feature inventory and remaining implementation are tracked in [issue #12](https://github.com/Ding-Ding-Projects/keepassxc/issues/12).
+
 ## Current repository state
 
 This fork is a 64-bit Windows 10/11 native C++/Qt 6 application. CMake rejects non-Windows,
@@ -19,10 +29,10 @@ supported installer and update format; CPack, WiX, MSI, NSIS, and portable-ZIP r
 removed. Code signing is permanently disabled, so setup and update executables must report
 `NotSigned` and may trigger Unknown Publisher or SmartScreen warnings.
 
-The default branch is `develop`. Local `develop` and `origin/develop` both resolve to
-`a3fe002b4285d26976cd6818b7257d8dbbad4d13`. The primary checkout is clean and has no linked
-worktrees or stashes. One incomplete Settings checkpoint is preserved, but deliberately not merged,
-on `origin/codex/settings-parity` at `f27d787934fd11667cb0cd017390c95531da27f6`.
+The default branch is `develop`. Its exact pushed closeout commit and ancestry proof are recorded in
+issue #7. The incomplete Settings checkpoint is no longer a branch-only change: its source commit
+`f27d787934fd11667cb0cd017390c95531da27f6` is integrated while its missing verification remains
+open in issue #12. No stash contains task work.
 
 ## Completed architecture and delivery work
 

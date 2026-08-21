@@ -29,6 +29,10 @@
 class QLabel;
 class QStackedWidget;
 class QVBoxLayout;
+class QBoxLayout;
+class QComboBox;
+class QResizeEvent;
+class QKeyEvent;
 
 namespace Material
 {
@@ -60,6 +64,8 @@ namespace Material
         QString key() const;
 
         void setPill(PillKind kind, const QString& text);
+        void setProvenance(const QString& text);
+        QString provenance() const;
         PillLabel* pill() const;
 
         QSize sizeHint() const override;
@@ -70,6 +76,7 @@ namespace Material
 
     protected:
         void paintEvent(QPaintEvent* event) override;
+        void keyPressEvent(QKeyEvent* event) override;
         void mouseReleaseEvent(QMouseEvent* event) override;
         void enterEvent(QEnterEvent* event) override;
         void leaveEvent(QEvent* event) override;
@@ -79,6 +86,7 @@ namespace Material
         QString m_symbol;
         QString m_label;
         QString m_sub;
+        QString m_provenance;
         PillLabel* m_pill = nullptr;
         bool m_hovered = false;
     };
@@ -210,6 +218,9 @@ namespace Material
         /** A page's search bar asked for the regex builder. */
         void builderRequested(const QString& pageId);
 
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
+
     private:
         void applyTheme();
         /** Mirror @p text onto every other page and refresh the cross-page notices. */
@@ -227,6 +238,8 @@ namespace Material
         QString m_currentPage;
         /** Set while a search is being mirrored, to stop the pages echoing. */
         bool m_mirroring = false;
+        QBoxLayout* m_rootLayout = nullptr;
+        QComboBox* m_pagePicker = nullptr;
     };
 
 } // namespace Material

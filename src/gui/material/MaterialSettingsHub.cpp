@@ -26,6 +26,7 @@
 #include "MaterialSettingsScreen.h"
 #include "MaterialSpecSheet.h"
 #include "MaterialTheme.h"
+#include "MaterialHistoryStore.h"
 
 #include "core/Translator.h"
 #include "MaterialCommandPalette.h"
@@ -40,6 +41,9 @@
 #include <QPainter>
 #include <QSpinBox>
 #include <QVBoxLayout>
+#include <QFile>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <functional>
 
@@ -338,7 +342,10 @@ namespace Material
                 emit builderRequested(page->searchBar());
             }
         });
-        connect(config(), &Config::changed, this, [this](Config::ConfigKey) { refreshAll(); });
+        connect(config(), &Config::changed, this, [this](Config::ConfigKey) {
+            refreshAll();
+            HistoryStore::instance()->recordSettingsEvent(tr("Changed an application setting"));
+        });
 
         refreshAll();
     }
@@ -649,6 +656,20 @@ namespace Material
         QString text;
         pillFor(binding, &kind, &text);
         row->setPill(kind, text);
+        if (binding.control == Control::Command) {
+            row->setProvenance(tr("Action · no stored setting"));
+        } else {
+            const QVariant current = config()->get(binding.key);
+            const QVariant fallback = config()->getDefault(binding.key);
+            const auto display = [](const QVariant& value) {
+                if (value.metaType().id() == QMetaType::Bool) return value.toBool() ? QStringLiteral("true") : QStringLiteral("false");
+                const QString text = value.toString();
+                return text.isEmpty() ? QStringLiteral("(empty)") : text;
+            };
+            row->setProvenance(config()->isUserSet(binding.key)
+                                   ? tr("Persisted user value: %1").arg(display(current))
+                                   : tr("Compiled default: %1").arg(display(fallback)));
+        }
     }
 
     void SettingsHub::refreshAll()
@@ -866,51 +887,10 @@ namespace Material
                   tr("Write in place, for file systems that refuse the rename."),
                   Config::UseDirectWriteSaves);
 
-        const QString appearance = tr("Appearance");
-        addChoice(page,
-                  appearance,
-                  QStringLiteral("light_mode"),
-                  tr("Application theme"),
-                  tr("Light, dark, or whatever the desktop asks for."),
-                  Config::GUI_ApplicationTheme,
-                  {{QStringLiteral("auto"), tr("Follow the system")},
-                   {QStringLiteral("light"), tr("Light")},
-                   {QStringLiteral("dark"), tr("Dark")},
-                   {QStringLiteral("classic"), tr("Classic")}});
-        addChoice(page,
-                  appearance,
-                  QStringLiteral("star"),
-                  tr("Colour seed"),
-                  tr("The key colour every Material role is derived from."),
-                  Config::GUI_MaterialSeed,
-                  {{QStringLiteral("keepass"), tr("KeePass blue")},
-                   {QStringLiteral("purple"), tr("Purple")},
-                   {QStringLiteral("green"), tr("Green")},
-                   {QStringLiteral("amber"), tr("Amber")}});
-        addChoice(page,
-                  appearance,
-                  QStringLiteral("filter_list"),
-                  tr("Density"),
-                  tr("Row height for every list, tree and table."),
-                  Config::GUI_MaterialDensity,
-                  {{QStringLiteral("compact"), tr("Compact")},
-                   {QStringLiteral("comfortable"), tr("Comfortable")},
-                   {QStringLiteral("spacious"), tr("Spacious")}});
-        addToggle(page,
-                  appearance,
-                  QStringLiteral("expand_less"),
-                  tr("Compact mode"),
-                  tr("Tighten the stock widgets that are not part of the Material shell."),
-                  Config::GUI_CompactMode);
-        addNumber(page,
-                  appearance,
-                  QStringLiteral("short_text"),
-                  tr("Font size offset"),
-                  tr("Points added to every font in the interface."),
-                  Config::GUI_FontSizeOffset,
-                  -4,
-                  8,
-                  tr("pt"));
+        // Theme, seed, density and font controls belong exclusively to the
+        // Appearance destination; Settings links there instead of duplicating
+        // state with a second editor.
+        const QString appearance = tr("Language and content");
 
         QList<Option> languages;
         languages.append({QStringLiteral("system"), tr("Follow the system")});
@@ -1163,6 +1143,59 @@ namespace Material
                   tr("Voice disclosure shown"),
                   tr("Records that the note about the message voice has been read."),
                   Config::GUI_VoiceDisclosureShown);
+        addToggle(page,
+                  voice,
+                  QStringLiteral("emoji_emotions"),
+                  tr("Show emojis in dialogs and message boxes"),
+                  tr("Adds relevant decorative emoji while keeping action labels and accessible names factual."),
+                  Config::GUI_ShowDialogEmojis);
+        addCommand(page,
+                   voice,
+                   QStringLiteral("upload_file"),
+                   tr("Personal vocabulary JSON"),
+                   tr("Load a bounded versioned local-only replacement file; no source path or private mapping is exported."),
+                   tr("Choose file…"),
+                   [this] {
+                       const QString path = fileDialog()->getOpenFileName(this, tr("Choose personal vocabulary JSON"), {}, tr("JSON (*.json)"));
+                       if (path.isEmpty()) return;
+                       QFile file(path);
+                       if (!file.open(QIODevice::ReadOnly) || file.size() > 65536) {
+                           Notify::error(tr("Vocabulary not loaded"), tr("The file must be readable and no larger than 64 KiB."));
+                           return;
+                       }
+                       QJsonParseError parseError;
+                       const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
+                       const QJsonObject root = document.object();
+                       const QJsonObject replacements = root.value(QStringLiteral("replacements")).toObject();
+                       bool valid = document.isObject() && root.size() == 2
+                                    && root.value(QStringLiteral("schemaVersion")).toInt() == 1
+                                    && root.contains(QStringLiteral("replacements")) && replacements.size() <= 500;
+                       for (auto it = replacements.begin(); valid && it != replacements.end(); ++it) {
+                           valid = it.value().isString() && !it.key().isEmpty() && it.key().size() <= 128
+                                   && it.value().toString().size() <= 512
+                                   && it.key() != QLatin1String("__proto__") && it.key() != QLatin1String("constructor")
+                                   && it.key() != QLatin1String("prototype");
+                       }
+                       if (!valid || parseError.error != QJsonParseError::NoError) {
+                           Notify::error(tr("Vocabulary not loaded"), tr("The JSON must use schema version 1 with at most 500 bounded string replacements."));
+                           return;
+                       }
+                       config()->set(Config::GUI_PersonalVocabularyCache,
+                                     QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact)));
+                       Notify::success(tr("Vocabulary loaded"), tr("The validated private cache is active on this computer."));
+                       refreshAll();
+                   });
+        addCommand(page,
+                   voice,
+                   QStringLiteral("delete_sweep"),
+                   tr("Clear personal vocabulary"),
+                   tr("Purges the validated local cache and restores the application's original wording."),
+                   tr("Clear"),
+                   [this] {
+                       config()->remove(Config::GUI_PersonalVocabularyCache);
+                       Notify::success(tr("Vocabulary cleared"), tr("Original wording is active again."));
+                       refreshAll();
+                   });
 
         const QString updates = tr("Updates and notices");
         addToggle(page,

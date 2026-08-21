@@ -23,6 +23,7 @@
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
+#include "MaterialRegexSafety.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
@@ -30,6 +31,10 @@
 #include <QPainter>
 #include <QStackedWidget>
 #include <QVBoxLayout>
+#include <QLineEdit>
+#include <QComboBox>
+#include <QResizeEvent>
+#include <QKeyEvent>
 
 namespace Material
 {
@@ -37,7 +42,7 @@ namespace Material
     {
         constexpr int GlyphColumn = 24;
         constexpr int RowGap = 14;
-        constexpr int PageSearchWidth = 340;
+        constexpr int PageSearchWidth = 520;
         constexpr int PageMaxWidth = 1120;
         constexpr int NoteMaxWidth = 820;
 
@@ -100,6 +105,8 @@ namespace Material
         , m_sub(sub)
     {
         setCursor(Qt::PointingHandCursor);
+        setFocusPolicy(Qt::StrongFocus);
+        setAccessibleName(m_label);
         // Keep the press here so the release is delivered to this row and not
         // swallowed by the section card underneath.
         setAttribute(Qt::WA_NoMousePropagation, true);
@@ -129,6 +136,17 @@ namespace Material
         updateGeometry();
         update();
     }
+
+    void SpecSheetRow::setProvenance(const QString& text)
+    {
+        m_provenance = text;
+        setAccessibleDescription(QStringLiteral("%1. %2").arg(m_sub, m_provenance));
+        setMinimumHeight(m_provenance.isEmpty() ? RowHeight : 72);
+        updateGeometry();
+        update();
+    }
+
+    QString SpecSheetRow::provenance() const { return m_provenance; }
 
     PillLabel* SpecSheetRow::pill() const
     {
@@ -176,7 +194,9 @@ namespace Material
         const QFontMetrics noteMetrics(noteFont);
 
         const bool hasSub = !m_sub.isEmpty();
-        const int block = labelMetrics.height() + (hasSub ? noteMetrics.height() + 2 : 0);
+        const bool hasProvenance = !m_provenance.isEmpty();
+        const int block = labelMetrics.height() + (hasSub ? noteMetrics.height() + 2 : 0)
+                          + (hasProvenance ? noteMetrics.height() + 2 : 0);
         int top = (height() - block) / 2;
 
         painter.setFont(labelFont);
@@ -193,6 +213,13 @@ namespace Material
                              Qt::AlignLeft | Qt::AlignVCenter,
                              noteMetrics.elidedText(m_sub, Qt::ElideRight, available));
         }
+        if (hasProvenance) {
+            top += (hasSub ? noteMetrics.height() + 2 : labelMetrics.height() + 2);
+            painter.setFont(noteFont);
+            painter.setPen(theme()->color(Role::Primary));
+            painter.drawText(QRect(left, top, available, noteMetrics.height()), Qt::AlignLeft | Qt::AlignVCenter,
+                             noteMetrics.elidedText(m_provenance, Qt::ElideRight, available));
+        }
     }
 
     void SpecSheetRow::mouseReleaseEvent(QMouseEvent* event)
@@ -201,6 +228,16 @@ namespace Material
             emit activated(m_key);
         }
         QWidget::mouseReleaseEvent(event);
+    }
+
+    void SpecSheetRow::keyPressEvent(QKeyEvent* event)
+    {
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space) {
+            emit activated(m_key);
+            event->accept();
+            return;
+        }
+        QWidget::keyPressEvent(event);
     }
 
     void SpecSheetRow::enterEvent(QEnterEvent* event)
@@ -289,19 +326,31 @@ namespace Material
             applyFilter(text);
             emit searchTextChanged(text);
         });
+        connect(m_search, &SearchBar::regexToggled, this, [this] { applyFilter(m_search->text()); });
         connect(m_search, &SearchBar::builderRequested, this, &SpecSheetPage::builderRequested);
     }
 
     void SpecSheetPage::applyFilter(const QString& text)
     {
-        const QString needle = text.trimmed().toLower();
+        const QString raw = text.trimmed();
+        const QString needle = raw.toLower();
+        const bool regex = m_search->isRegexEnabled() && !raw.isEmpty();
+        bool valid = true;
+        QString error;
+        if (regex) {
+            const auto check = runBounded(raw, optionsForFlags(m_search->regexFlags()), QString());
+            valid = check.compiled && !check.blocked && !check.timedOut;
+            error = check.error;
+        }
         int shown = 0;
         for (auto it = m_sections.constBegin(); it != m_sections.constEnd(); ++it) {
             Card* card = it.value();
             const auto rows = card->findChildren<SpecSheetRow*>();
             int visible = 0;
             for (auto* row : rows) {
-                const bool match = needle.isEmpty() || row->property(HaystackProperty).toString().contains(needle);
+                const QString haystack = row->property(HaystackProperty).toString();
+                const bool match = needle.isEmpty() || (!regex && haystack.contains(needle))
+                                   || (regex && valid && !runBounded(raw, optionsForFlags(m_search->regexFlags()), haystack).matches.isEmpty());
                 row->setVisible(match);
                 visible += match ? 1 : 0;
             }
@@ -317,6 +366,8 @@ namespace Material
                                        .arg(shown)
                                        .arg(m_rowOrder.size())
                                        .arg(text.trimmed()));
+        m_search->lineEdit()->setAccessibleDescription(valid ? tr("%1 settings match on this tab").arg(shown)
+                                                            : tr("Invalid regular expression: %1").arg(error));
     }
 
     SpecSheetPage::~SpecSheetPage() = default;
@@ -428,8 +479,18 @@ namespace Material
         : QWidget(parent)
     {
         auto* root = new QHBoxLayout(this);
+        m_rootLayout = root;
         root->setContentsMargins(0, 0, 0, 0);
         root->setSpacing(0);
+
+        m_pagePicker = new QComboBox(this);
+        m_pagePicker->setObjectName(QStringLiteral("settingsPagePicker"));
+        m_pagePicker->setAccessibleName(tr("Settings tab"));
+        m_pagePicker->hide();
+        connect(m_pagePicker, &QComboBox::currentIndexChanged, this, [this](int index) {
+            if (index >= 0) setCurrentPage(m_pagePicker->itemData(index).toString());
+        });
+        root->addWidget(m_pagePicker);
 
         m_sidebar = new QWidget(this);
         m_sidebar->setObjectName(QStringLiteral("materialSpecSheetSidebar"));
@@ -485,6 +546,7 @@ namespace Material
 
         m_sidebarLayout->insertWidget(m_sidebarLayout->count() - 1, button);
         m_pageButtons.insert(id, button);
+        m_pagePicker->addItem(title, id);
 
         if (m_currentPage.isEmpty()) {
             m_currentPage = id;
@@ -507,9 +569,7 @@ namespace Material
         connect(page, &SpecSheetPage::rowActivated, this, [this, id](const QString& rowKey) {
             emit rowActivated(id, rowKey);
         });
-        connect(page, &SpecSheetPage::searchTextChanged, this, [this, id](const QString& text) {
-            syncSearch(id, text);
-        });
+        // Every tab owns its query, flags, validation, and mode independently.
         connect(page, &SpecSheetPage::builderRequested, this, [this, id] { emit builderRequested(id); });
 
         registerPage(id, symbol, title, page);
@@ -588,7 +648,22 @@ namespace Material
         m_currentPage = id;
         m_stack->setCurrentWidget(target);
         applyTheme();
+        const int pickerIndex = m_pagePicker->findData(id);
+        if (pickerIndex >= 0 && pickerIndex != m_pagePicker->currentIndex()) m_pagePicker->setCurrentIndex(pickerIndex);
         emit currentPageChanged(id);
+    }
+
+    void SpecSheet::resizeEvent(QResizeEvent* event)
+    {
+        QWidget::resizeEvent(event);
+        const int width = event->size().width();
+        const bool compact = width < 600;
+        m_rootLayout->setDirection(compact ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
+        m_pagePicker->setVisible(compact);
+        m_sidebar->setVisible(!compact);
+        if (!compact) {
+            m_sidebar->setFixedWidth(width < 840 ? 160 : width < 1200 ? 216 : Layout::SheetNavWidth);
+        }
     }
 
     void SpecSheet::applyTheme()
