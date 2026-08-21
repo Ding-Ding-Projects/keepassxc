@@ -30,6 +30,7 @@
 #include <QLocale>
 #include <QMimeData>
 #include <QShortcut>
+#include <QSet>
 #include <QStatusBar>
 #include <QSysInfo>
 #include <QTimer>
@@ -123,7 +124,7 @@ namespace
         return Material::Shell::instance();
     }
 
-    /** Stable tab strip id for a database widget. Tabs are keyed by identity, not index. */
+    /** Runtime tab id for one live database widget. Persistence uses a separate path digest. */
     QString tabIdFor(const DatabaseWidget* dbWidget)
     {
         return QStringLiteral("db-%1").arg(reinterpret_cast<quintptr>(dbWidget));
@@ -856,7 +857,10 @@ MainWindow::MainWindow()
         if (!strip) {
             return;
         }
-        strip->clear();
+        QList<Material::TabDescriptor> descriptors;
+        const QStringList preferredOrder = config()->get(Config::GUI_TabOrder).toStringList();
+        const QStringList pinnedList = config()->get(Config::GUI_PinnedTabs).toStringList();
+        const QSet<QString> pinned(pinnedList.cbegin(), pinnedList.cend());
         QString currentId;
         for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
             auto* dbWidget = m_ui->tabWidget->databaseWidgetFromIndex(i);
@@ -864,16 +868,28 @@ MainWindow::MainWindow()
                 continue;
             }
             const QString id = tabIdFor(dbWidget);
-            strip->addTab(id,
-                          dbWidget->isLocked() ? QStringLiteral("lock") : QStringLiteral("database"),
-                          m_ui->tabWidget->tabName(i));
+            const auto database = dbWidget->database();
+            const QString persistenceKey = database ? Material::tabPersistenceKeyForPath(database->filePath()) : QString();
+            descriptors.append({id,
+                                persistenceKey,
+                                dbWidget->isLocked() ? QStringLiteral("lock") : QStringLiteral("database"),
+                                m_ui->tabWidget->tabName(i),
+                                !persistenceKey.isEmpty() && pinned.contains(persistenceKey),
+                                !persistenceKey.isEmpty()});
             if (i == m_ui->tabWidget->currentIndex()) {
                 currentId = id;
             }
         }
-        if (!currentId.isEmpty()) {
-            strip->setCurrentTab(currentId);
-        }
+        std::stable_sort(descriptors.begin(), descriptors.end(), [&preferredOrder](const auto& left, const auto& right) {
+            if (left.pinned != right.pinned) return left.pinned;
+            const int leftIndex = preferredOrder.indexOf(left.persistenceKey);
+            const int rightIndex = preferredOrder.indexOf(right.persistenceKey);
+            if (leftIndex < 0 && rightIndex < 0) return false;
+            if (leftIndex < 0) return false;
+            if (rightIndex < 0) return true;
+            return leftIndex < rightIndex;
+        });
+        strip->setTabs(descriptors, currentId);
     };
     // The rail's counts follow the same events as the tab strip, plus the two
     // that produce the numbers themselves.

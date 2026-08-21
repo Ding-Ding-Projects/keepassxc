@@ -23,6 +23,8 @@
 #include <QString>
 #include <QWidget>
 
+#include "MaterialTabDescriptor.h"
+
 namespace Material
 {
     class IconButton;
@@ -49,6 +51,8 @@ namespace Material
         void addTab(const QString& id, const QString& symbol, const QString& label);
         void removeTab(const QString& id);
         void clear();
+        void setTabs(const QList<TabDescriptor>& tabs, const QString& currentRuntimeId);
+        QList<TabDescriptor> tabs() const;
 
         void setTabLabel(const QString& id, const QString& label);
         void setTabSymbol(const QString& id, const QString& symbol);
@@ -81,6 +85,9 @@ namespace Material
             QString id;
             QString symbol;
             QString label;
+            QString persistenceKey;
+            bool pinned = false;
+            bool persistable = false;
             QRect rect;
             QRect closeRect;
             bool visible = true;

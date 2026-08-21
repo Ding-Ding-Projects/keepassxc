@@ -139,6 +139,10 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},
     {Config::GUI_FunnyLevelCantonese, {QS("GUI/FunnyLevelCantonese"), Roaming, 3}},
     {Config::GUI_VoiceDisclosureShown, {QS("GUI/VoiceDisclosureShown"), Roaming, false}},
+    {Config::GUI_TabOrder, {QS("GUI/TabOrder"), Roaming, QStringList{}}},
+    {Config::GUI_PinnedTabs, {QS("GUI/PinnedTabs"), Roaming, QStringList{}}},
+    {Config::GUI_TabOverflow, {QS("GUI/TabOverflow"), Roaming, true}},
+    {Config::GUI_ShowTabStrip, {QS("GUI/ShowTabStrip"), Roaming, true}},
 
     {Config::GUI_MainWindowGeometry, {QS("GUI/MainWindowGeometry"), Local, {}}},
     {Config::GUI_MainWindowState, {QS("GUI/MainWindowState"), Local, {}}},

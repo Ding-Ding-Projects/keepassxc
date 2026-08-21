@@ -197,6 +197,18 @@ endif()
 add_unit_test(NAME testmaterialregexsafety SOURCES TestMaterialRegexSafety.cpp
         LIBS ${TEST_LIBRARIES})
 
+add_unit_test(NAME testmaterialtabs SOURCES TestMaterialTabs.cpp
+        LIBS ${TEST_LIBRARIES})
+set_tests_properties(testmaterialtabs PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialtabs POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialtabs>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialtabs>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testsquirrellifecycle SOURCES TestSquirrelLifecycle.cpp
         LIBS ${TEST_LIBRARIES})
 

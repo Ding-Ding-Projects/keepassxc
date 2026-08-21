@@ -113,6 +113,10 @@ public:
         GUI_FunnyLevelEnglish,
         GUI_FunnyLevelCantonese,
         GUI_VoiceDisclosureShown,
+        GUI_TabOrder,
+        GUI_PinnedTabs,
+        GUI_TabOverflow,
+        GUI_ShowTabStrip,
 
         GUI_MainWindowGeometry,
         GUI_MainWindowState,

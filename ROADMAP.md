@@ -14,6 +14,7 @@
 - [ ] Integrate responsive navigation, compact bottom navigation, and pane alternatives.
 - [ ] Complete search registry, tab overflow, regex safety, appearance overrides, generated voice strings, and external-editor integration.
 - [x] Add shared regex limits, high-risk shape refusal, zero-width safety, sample/match caps, and explicit result states.
+- [x] Add stable hashed tab persistence identities, descriptor reconciliation, preferred order keys, and pin-state foundations.
 - [x] Centralize existing material search ownership and remove private Vault/History regex builders.
 - [x] Register command-palette and notification-history searches and make both consumers mode/flag aware.
 - [ ] Migrate every remaining dialog and auxiliary surface to the shared component system.

@@ -179,6 +179,41 @@ namespace Material
         update();
     }
 
+    void TabStrip::setTabs(const QList<TabDescriptor>& descriptors, const QString& currentRuntimeId)
+    {
+        const QString hoveredId = m_hoverIndex >= 0 && m_hoverIndex < m_tabs.size() ? m_tabs.at(m_hoverIndex).id : QString();
+        QList<Tab> reconciled;
+        reconciled.reserve(descriptors.size());
+        for (const auto& descriptor : descriptors) {
+            if (descriptor.runtimeId.isEmpty()) continue;
+            Tab tab;
+            tab.id = descriptor.runtimeId;
+            tab.persistenceKey = descriptor.persistenceKey;
+            tab.symbol = descriptor.symbol;
+            tab.label = descriptor.label;
+            tab.pinned = descriptor.pinned;
+            tab.persistable = descriptor.persistable;
+            reconciled.append(tab);
+        }
+        m_tabs = reconciled;
+        m_currentIndex = indexOf(currentRuntimeId);
+        if (m_currentIndex < 0 && !m_tabs.isEmpty()) m_currentIndex = 0;
+        m_hoverIndex = indexOf(hoveredId);
+        m_pressedIndex = -1;
+        m_pressedClose = false;
+        relayout();
+        update();
+    }
+
+    QList<TabDescriptor> TabStrip::tabs() const
+    {
+        QList<TabDescriptor> result;
+        for (const auto& tab : m_tabs) {
+            result.append({tab.id, tab.persistenceKey, tab.symbol, tab.label, tab.pinned, tab.persistable});
+        }
+        return result;
+    }
+
     void TabStrip::setTabLabel(const QString& id, const QString& label)
     {
         const int index = indexOf(id);
@@ -342,10 +377,10 @@ namespace Material
             Tab& tab = m_tabs[index];
             tab.visible = true;
             tab.rect = QRect(x, top, widths.at(index), Layout::TabHeight);
-            tab.closeRect = QRect(tab.rect.right() - TabPadRight - CloseSize + 1,
-                                  top + (Layout::TabHeight - CloseSize) / 2,
-                                  CloseSize,
-                                  CloseSize);
+            tab.closeRect = tab.pinned ? QRect() : QRect(tab.rect.right() - TabPadRight - CloseSize + 1,
+                                                         top + (Layout::TabHeight - CloseSize) / 2,
+                                                         CloseSize,
+                                                         CloseSize);
             x += widths.at(index) + TabSpacing;
         }
 
@@ -433,7 +468,8 @@ namespace Material
             painter.drawPixmap(iconRect, Icons::pixmap(tab.symbol, TabIconSize, content));
 
             const int labelLeft = iconRect.right() + 1 + TabGap;
-            const int labelWidth = qMax(0, tab.closeRect.left() - TabGap - labelLeft);
+            const int trailingLeft = tab.pinned ? tab.rect.right() - TabPadRight - CloseSize + 1 : tab.closeRect.left();
+            const int labelWidth = qMax(0, trailingLeft - TabGap - labelLeft);
             const QFont font = tabFont(active);
             const QFontMetrics metrics(font);
             painter.setFont(font);
@@ -442,6 +478,15 @@ namespace Material
                              Qt::AlignLeft | Qt::AlignVCenter,
                              metrics.elidedText(tab.label, Qt::ElideRight, labelWidth));
 
+            if (tab.pinned) {
+                const QRect pinRect(tab.rect.right() - TabPadRight - CloseSize + 1,
+                                    tab.rect.y() + (tab.rect.height() - CloseSize) / 2,
+                                    CloseSize,
+                                    CloseSize);
+                painter.drawPixmap(pinRect.adjusted(2, 2, -2, -2),
+                                   Icons::pixmap(QStringLiteral("keep"), CloseGlyphSize, content));
+                continue;
+            }
             const bool closeHovered = i == m_hoverIndex && m_hoverClose;
             if (closeHovered) {
                 paintSurface(&painter, tab.closeRect, Shape::Full, theme()->color(Role::SurfaceContainerHighest));
