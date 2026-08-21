@@ -8,6 +8,7 @@
 - Interface: Expand Appearance with Auto/Light/Dark mode, live persisted font family/scale/weight, responsive cards, safe per-element overrides, continuous color selection, and regex-aware filtering.
 - Packaging: Make the verified unsigned Squirrel.Windows artifacts the sole Windows installer and release path.
 - Packaging: Propagate one monotonic three-part version through the native executable, Squirrel feed, update manifest, and release.
+- Installation: Harden Squirrel lifecycle arguments and refresh only install-owned shortcuts, browser messaging, file associations, and URI registrations.
 - Packaging: Verify that the packaged executable FileVersion and ProductVersion match the release version.
 - Build: Provision and verify the pinned Qt 6.8.3 MSVC x64 toolchain before the Squirrel package build.
 - Interface: Apply all five Material window classes with exact rail, group-pane, and detail widths; compact navigation now has a searchable More menu, and hidden vault panes retain keyboard-accessible group and detail routes.

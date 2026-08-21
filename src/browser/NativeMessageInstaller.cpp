@@ -29,6 +29,7 @@
 #include <QMessageBox>
 #include <QProcessEnvironment>
 #include <QRegularExpression>
+#include <QSet>
 #include <QSettings>
 #include <QStandardPaths>
 
@@ -135,6 +136,63 @@ void NativeMessageInstaller::updateBinaryPaths()
             setBrowserEnabled(static_cast<SupportedBrowsers>(i), true);
         }
     }
+}
+
+bool NativeMessageInstaller::refreshInstallOwnedRegistrations()
+{
+    bool succeeded = true;
+    QSet<QString> visitedRegistryPaths;
+    for (int i = 0; i < SupportedBrowsers::MAX_SUPPORTED; ++i) {
+        const auto browser = static_cast<SupportedBrowsers>(i);
+        const QString registryPath = getTargetPath(browser);
+        if (!registryPath.startsWith(QStringLiteral("HKEY_CURRENT_USER\\"))
+            || visitedRegistryPaths.contains(registryPath)) {
+            continue;
+        }
+        visitedRegistryPaths.insert(registryPath);
+        QSettings settings(registryPath, QSettings::NativeFormat);
+        const QString manifestPath = QDir::toNativeSeparators(getNativeMessagePath(browser));
+        const QString registeredPath = QDir::toNativeSeparators(settings.value(QStringLiteral("Default")).toString());
+        if (registeredPath.isEmpty() || registeredPath.compare(manifestPath, Qt::CaseInsensitive) != 0) {
+            continue;
+        }
+        if (!createNativeMessageFile(browser)) {
+            succeeded = false;
+            continue;
+        }
+        settings.setValue(QStringLiteral("Default"), manifestPath);
+        settings.sync();
+        succeeded = succeeded && settings.status() == QSettings::NoError;
+    }
+    return succeeded;
+}
+
+bool NativeMessageInstaller::removeInstallOwnedRegistrations()
+{
+    bool succeeded = true;
+    QSet<QString> visitedRegistryPaths;
+    for (int i = 0; i < SupportedBrowsers::MAX_SUPPORTED; ++i) {
+        const auto browser = static_cast<SupportedBrowsers>(i);
+        const QString registryPath = getTargetPath(browser);
+        if (!registryPath.startsWith(QStringLiteral("HKEY_CURRENT_USER\\"))
+            || visitedRegistryPaths.contains(registryPath)) {
+            continue;
+        }
+        visitedRegistryPaths.insert(registryPath);
+        QSettings settings(registryPath, QSettings::NativeFormat);
+        const QString manifestPath = QDir::toNativeSeparators(getNativeMessagePath(browser));
+        const QString registeredPath = QDir::toNativeSeparators(settings.value(QStringLiteral("Default")).toString());
+        if (registeredPath.compare(manifestPath, Qt::CaseInsensitive) != 0) {
+            continue;
+        }
+        settings.remove(QStringLiteral("Default"));
+        settings.sync();
+        succeeded = succeeded && settings.status() == QSettings::NoError;
+        if (QFileInfo::exists(manifestPath) && !QFile::remove(manifestPath)) {
+            succeeded = false;
+        }
+    }
+    return succeeded;
 }
 
 /**

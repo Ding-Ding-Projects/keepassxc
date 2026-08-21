@@ -77,9 +77,12 @@ int main(int argc, char** argv)
     Application::setApplicationVersion(KEEPASSXC_VERSION);
     app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
 
-    if (const auto lifecycleExit = SquirrelLifecycle::handle(app.arguments(), QCoreApplication::applicationDirPath())) {
+    QStringList applicationArguments = app.arguments();
+    if (const auto lifecycleExit = SquirrelLifecycle::handle(applicationArguments,
+                                                              QCoreApplication::applicationDirPath())) {
         return *lifecycleExit;
     }
+    SquirrelLifecycle::consume(applicationArguments);
 
     // HACK: Prevent long-running threads from deadlocking the program with only 1 CPU
     // See https://github.com/keepassxreboot/keepassxc/issues/10391
@@ -103,7 +106,6 @@ int main(int argc, char** argv)
     QCommandLineOption allowScreenCaptureOption("allow-screencapture",
                                                 QObject::tr("allow screenshots and app recording (Windows/macOS)"));
     QCommandLineOption startMinimized("minimized", QObject::tr("start minimized to the system tray"));
-    QCommandLineOption squirrelFirstRun("squirrel-firstrun");
 
     QCommandLineOption helpOption = parser.addHelpOption();
     QCommandLineOption versionOption = parser.addVersionOption();
@@ -116,9 +118,8 @@ int main(int argc, char** argv)
     parser.addOption(debugInfoOption);
     parser.addOption(allowScreenCaptureOption);
     parser.addOption(startMinimized);
-    parser.addOption(squirrelFirstRun);
 
-    parser.process(app);
+    parser.process(applicationArguments);
 
     // Exit early if we're only showing the help / version
     if (parser.isSet(versionOption) || parser.isSet(helpOption)) {

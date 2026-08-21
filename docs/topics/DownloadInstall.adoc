@@ -19,6 +19,8 @@ Updates use the same Squirrel.Windows package identity. The application download
 
 The Squirrel installation directory is versioned and application-owned. Store password databases in a user-selected data location, not inside the installation directory. Updating or uninstalling the application does not authorize deletion of user databases.
 
+During install and update lifecycle events, the application refreshes its Squirrel shortcut and the browser native-messaging, `.kdbx` Open With, and `keepassxc:` URI records that this installation owns. Lifecycle flags are accepted only in Squirrel's first argument position with the expected version argument. Uninstall removes only records carrying this installation's ownership marker; it does not remove password databases, application data, foreign handlers, or another application's registration.
+
 Portable ZIP, MSI, WiX, NSIS, Linux, and macOS installation routes are not supported by this fork.
 
 // end::content[]
