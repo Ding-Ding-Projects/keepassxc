@@ -60,8 +60,6 @@ namespace Material
         constexpr int ScoreChipVerticalPadding = 5;
         // The stat grid is 16px from the content above it and 20px from the cards below.
         constexpr int StatGridBottomGap = 4;
-        // Card content is spaced 8px, so this much makes the design's 18px.
-        constexpr int ExportButtonGap = 2;
 
         QFont weighted(TypeRole role, QFont::Weight weight)
         {
@@ -464,49 +462,18 @@ namespace Material
         }
         contentLayout()->addLayout(m_statGrid);
 
-        m_healthCard = new SectionCard();
-        m_healthCard->setTitleText(tr("Password health"));
-        m_healthToggle = new QToolButton;
-        m_healthToggle->setText(tr("Collapse password health"));
-        m_healthToggle->setAccessibleName(m_healthToggle->text());
-        m_healthToggle->setCheckable(true);
-        m_healthToggle->setChecked(true);
-        m_healthCard->contentLayout()->addWidget(m_healthToggle);
+        auto* exportAll = new QToolButton;
+        exportAll->setObjectName(QStringLiteral("reportsExportAll"));
+        exportAll->setText(tr("Export report"));
+        exportAll->setAccessibleName(exportAll->text());
+        connect(exportAll, &QToolButton::clicked, this, &ReportsScreen::exportRequested);
+        insertHeaderWidget(1, exportAll);
         m_bulkExport = new QToolButton;
         m_bulkExport->setText(tr("Export selected findings"));
         m_bulkExport->setAccessibleName(m_bulkExport->text());
         m_bulkExport->setEnabled(false);
         connect(m_bulkExport, &QToolButton::clicked, this, [this] { emit bulkExportRequested(selectedFindingIds()); });
-        insertHeaderWidget(1, m_bulkExport);
-        m_healthContent = new QWidget;
-        m_healthLayout = new QVBoxLayout();
-        m_healthLayout->setContentsMargins(0, 0, 0, 0);
-        m_healthLayout->setSpacing(0);
-        m_healthContent->setLayout(m_healthLayout);
-        m_healthCard->contentLayout()->addWidget(m_healthContent);
-        m_healthCard->contentLayout()->addStretch(1);
-
-        m_statisticsCard = new SectionCard();
-        m_statisticsCard->setTitleText(tr("Statistics"));
-        m_statisticsToggle = new QToolButton;
-        m_statisticsToggle->setText(tr("Collapse statistics"));
-        m_statisticsToggle->setAccessibleName(m_statisticsToggle->text());
-        m_statisticsToggle->setCheckable(true);
-        m_statisticsToggle->setChecked(true);
-        m_statisticsCard->contentLayout()->addWidget(m_statisticsToggle);
-        m_statisticsContent = new QWidget;
-        m_statisticsLayout = new QVBoxLayout();
-        m_statisticsLayout->setContentsMargins(0, 0, 0, 0);
-        m_statisticsLayout->setSpacing(0);
-        m_statisticsContent->setLayout(m_statisticsLayout);
-        m_statisticsCard->contentLayout()->addWidget(m_statisticsContent);
-        m_statisticsCard->contentLayout()->addSpacing(ExportButtonGap);
-
-        auto exportButton = new TonalButton(QStringLiteral("download"), tr("Export report"));
-        exportButton->setSymbolSize(GlyphSize);
-        connect(exportButton, &QAbstractButton::clicked, this, &ReportsScreen::exportRequested);
-        m_statisticsCard->contentLayout()->addWidget(exportButton);
-        m_statisticsCard->contentLayout()->addStretch(1);
+        insertHeaderWidget(2, m_bulkExport);
 
         m_reportCardsHost = new QWidget;
         m_reportCardsHost->setObjectName(QStringLiteral("reportsCards"));
@@ -515,9 +482,6 @@ namespace Material
         m_reportCardsLayout->setSpacing(GridSpacing);
         contentLayout()->addWidget(m_reportCardsHost);
         contentLayout()->addStretch(1);
-
-        connect(m_healthToggle, &QToolButton::toggled, m_healthContent, &QWidget::setVisible);
-        connect(m_statisticsToggle, &QToolButton::toggled, m_statisticsContent, &QWidget::setVisible);
 
         connect(theme(), &Theme::changed, this, &ReportsScreen::rebuild);
         setState(State::Empty, tr("Open and unlock a database to calculate reports."));
@@ -530,18 +494,6 @@ namespace Material
     {
         m_statCards = cards;
         rebuildStatCards();
-    }
-
-    void ReportsScreen::setHealthRows(const QVector<HealthRow>& rows)
-    {
-        m_healthRows = rows;
-        rebuildHealthRows();
-    }
-
-    void ReportsScreen::setStatistics(const QVector<QPair<QString, QString>>& statistics)
-    {
-        m_statistics = statistics;
-        rebuildStatistics();
     }
 
     void ReportsScreen::setReportCards(const QVector<ReportCard>& cards)
@@ -572,8 +524,7 @@ namespace Material
     void ReportsScreen::rebuild()
     {
         rebuildStatCards();
-        rebuildHealthRows();
-        rebuildStatistics();
+        rebuildReportCards();
     }
 
     void ReportsScreen::rebuildStatCards()
@@ -582,36 +533,6 @@ namespace Material
         const int columns = width() < 600 ? 1 : width() < 1200 ? 2 : StatColumns;
         for (int i = 0; i < m_statCards.size(); ++i) {
             m_statGrid->addWidget(new StatTile(m_statCards.at(i)), i / columns, i % columns);
-        }
-    }
-
-    void ReportsScreen::rebuildHealthRows()
-    {
-        clearLayout(m_healthLayout);
-        m_selectedIds.clear();
-        for (int i = 0; i < m_healthRows.size(); ++i) {
-            const HealthRow& row = m_healthRows.at(i);
-            // The rule belongs to the row in the design, last one included.
-            auto widget = new HealthRowWidget(row, tr("Fix"), true);
-            const QString id = row.id;
-            connect(widget->fixButton(), &QAbstractButton::clicked, this, [this, id] { emit fixRequested(id); });
-            widget->selection()->setEnabled(!id.isEmpty());
-            connect(widget->selection(), &QCheckBox::toggled, this, [this, id](bool checked) {
-                if (checked) m_selectedIds.insert(id); else m_selectedIds.remove(id);
-                updateBulkActions();
-            });
-            m_healthLayout->addWidget(widget);
-        }
-        updateBulkActions();
-    }
-
-    void ReportsScreen::rebuildStatistics()
-    {
-        clearLayout(m_statisticsLayout);
-        for (int i = 0; i < m_statistics.size(); ++i) {
-            const auto& entry = m_statistics.at(i);
-            // As on the health rows, the design rules every row.
-            m_statisticsLayout->addWidget(new StatisticsRowWidget(entry.first, entry.second, true));
         }
     }
 

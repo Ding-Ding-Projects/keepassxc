@@ -23,9 +23,6 @@ void TestMaterialReports::statesSelectionAndAccessibility()
     QVERIFY(screen.findChild<QProgressBar*>(QStringLiteral("reportsProgress"))->isVisible());
 
     screen.setStatCards({{QStringLiteral("Healthy"), QStringLiteral("4"), QStringLiteral("of 6"), Health::Ok}});
-    screen.setHealthRows({{QStringLiteral("id-a"), QStringLiteral("warning"), QStringLiteral("Alpha"), QStringLiteral("Weak"), QStringLiteral("20 bits"), Health::Weak},
-                          {QStringLiteral("id-b"), QStringLiteral("warning"), QStringLiteral("Beta"), QStringLiteral("Reused"), QStringLiteral("30 bits"), Health::Reused}});
-    screen.setStatistics({{QStringLiteral("Entries"), QStringLiteral("6")}});
     const QVector<ReportCard> canonical{
         {QStringLiteral("breached"), QStringLiteral("Breached"), QStringLiteral("Not checked"), QStringLiteral("—"), QStringLiteral("gpp_bad"), Health::Unknown, {}, {}, true},
         {QStringLiteral("weak"), QStringLiteral("Weak"), QStringLiteral("Weak passwords"), QStringLiteral("2"), QStringLiteral("warning"), Health::Weak,
@@ -40,6 +37,13 @@ void TestMaterialReports::statesSelectionAndAccessibility()
     screen.setState(ReportsScreen::State::Populated);
     QCOMPARE(screen.state(), ReportsScreen::State::Populated);
     QCOMPARE(screen.reportCardIds(), QStringList({QStringLiteral("breached"), QStringLiteral("weak"), QStringLiteral("reused"), QStringLiteral("expired"), QStringLiteral("healthy"), QStringLiteral("statistics")}));
+    int canonicalWidgets = 0;
+    for (auto* widget : screen.findChildren<QWidget*>()) {
+        if (widget->objectName().startsWith(QStringLiteral("reportCard_"))) ++canonicalWidgets;
+    }
+    QCOMPARE(canonicalWidgets, 6);
+    QVERIFY(!screen.findChild<QWidget*>(QStringLiteral("reportsHealthCard")));
+    QVERIFY(!screen.findChild<QWidget*>(QStringLiteral("reportsStatisticsCard")));
     QVERIFY(screen.isCardExpanded(QStringLiteral("breached")));
     QVERIFY(!screen.isCardExpanded(QStringLiteral("weak")));
     auto* weakToggle = screen.findChild<QToolButton*>(QStringLiteral("reportToggle_weak"));

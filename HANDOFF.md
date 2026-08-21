@@ -17,6 +17,9 @@ cards: `breached`, `weak`, `reused`, `expired`, `healthy`, and `statistics`. Wea
 membership overlaps by real UUID; healthy rows come from the same `HealthChecker` pass; statistics
 come from `DatabaseStats`; breach remains explicitly unavailable because this pass has no real HIBP
 result. Expansion state is independent and survives content rebuilds.
+The superseded standalone Password Health and Statistics cards are no longer constructed at all;
+the header owns Export All and selected-finding export, and the focused Chut requires exactly six
+`reportCard_*` widgets with no legacy card objects.
 
 The first Appearance parity batch now exposes Auto/Light/Dark, seed, density, installed font
 family, 85–140% scale, weight, a live CJK-safe preview, sparse per-element overrides, and a

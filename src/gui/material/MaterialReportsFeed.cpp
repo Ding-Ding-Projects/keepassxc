@@ -384,8 +384,7 @@ namespace Material
 
         if (!m_snapshot.valid) {
             m_screen->setStatCards({});
-            m_screen->setHealthRows({});
-            m_screen->setStatistics({});
+            m_screen->setReportCards({});
             m_screen->setState(ReportsScreen::State::Empty, tr("Open and unlock a database to calculate reports."));
             return;
         }
@@ -456,8 +455,6 @@ namespace Material
         }
 
         m_screen->setStatCards(cards);
-        m_screen->setHealthRows(rows);
-        m_screen->setStatistics(filteredStatistics());
         auto toRows = [this](const QVector<Finding>& findings) {
             QVector<HealthRow> result;
             for (const auto& finding : findings) {

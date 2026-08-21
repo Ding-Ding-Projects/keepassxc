@@ -97,8 +97,6 @@ namespace Material
         ~ReportsScreen() override;
 
         void setStatCards(const QVector<StatCard>& cards);
-        void setHealthRows(const QVector<HealthRow>& rows);
-        void setStatistics(const QVector<QPair<QString, QString>>& statistics);
         void setReportCards(const QVector<ReportCard>& cards);
         QStringList reportCardIds() const;
         bool isCardExpanded(const QString& id) const;
@@ -121,26 +119,15 @@ namespace Material
     private:
         void rebuild();
         void rebuildStatCards();
-        void rebuildHealthRows();
-        void rebuildStatistics();
         void rebuildReportCards();
         void applyResponsiveLayout();
         void updateBulkActions();
 
         QGridLayout* m_statGrid = nullptr;
-        QVBoxLayout* m_healthLayout = nullptr;
-        QVBoxLayout* m_statisticsLayout = nullptr;
-        Card* m_healthCard = nullptr;
-        Card* m_statisticsCard = nullptr;
-        QWidget* m_healthContent = nullptr;
-        QWidget* m_statisticsContent = nullptr;
-        QGridLayout* m_columns = nullptr;
         QGridLayout* m_reportCardsLayout = nullptr;
         QWidget* m_reportCardsHost = nullptr;
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
-        QToolButton* m_healthToggle = nullptr;
-        QToolButton* m_statisticsToggle = nullptr;
         QToolButton* m_bulkExport = nullptr;
         QComboBox* m_category = nullptr;
         State m_state = State::Empty;
@@ -148,8 +135,6 @@ namespace Material
         QVector<ReportCard> m_reportCards;
         QHash<QString, bool> m_expandedCards;
         QVector<StatCard> m_statCards;
-        QVector<HealthRow> m_healthRows;
-        QVector<QPair<QString, QString>> m_statistics;
     };
 
 } // namespace Material
