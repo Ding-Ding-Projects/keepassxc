@@ -35,6 +35,8 @@ public:
     QString getProxyPath() const;
     QString getInstalledProxyPath() const;
     void updateBinaryPaths();
+    bool refreshInstallOwnedRegistrations();
+    bool removeInstallOwnedRegistrations();
 
 private:
     QString getTargetPath(BrowserShared::SupportedBrowsers browser) const;
