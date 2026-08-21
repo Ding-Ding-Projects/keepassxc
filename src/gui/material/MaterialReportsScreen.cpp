@@ -477,7 +477,7 @@ namespace Material
         m_bulkExport->setAccessibleName(m_bulkExport->text());
         m_bulkExport->setEnabled(false);
         connect(m_bulkExport, &QToolButton::clicked, this, [this] { emit bulkExportRequested(selectedFindingIds()); });
-        m_healthCard->contentLayout()->addWidget(m_bulkExport);
+        insertHeaderWidget(1, m_bulkExport);
         m_healthContent = new QWidget;
         m_healthLayout = new QVBoxLayout();
         m_healthLayout->setContentsMargins(0, 0, 0, 0);
@@ -508,10 +508,12 @@ namespace Material
         m_statisticsCard->contentLayout()->addWidget(exportButton);
         m_statisticsCard->contentLayout()->addStretch(1);
 
-        m_columns = new QGridLayout();
-        m_columns->setContentsMargins(0, 0, 0, 0);
-        m_columns->setSpacing(GridSpacing);
-        contentLayout()->addLayout(m_columns);
+        m_reportCardsHost = new QWidget;
+        m_reportCardsHost->setObjectName(QStringLiteral("reportsCards"));
+        m_reportCardsLayout = new QGridLayout(m_reportCardsHost);
+        m_reportCardsLayout->setContentsMargins(0, 0, 0, 0);
+        m_reportCardsLayout->setSpacing(GridSpacing);
+        contentLayout()->addWidget(m_reportCardsHost);
         contentLayout()->addStretch(1);
 
         connect(m_healthToggle, &QToolButton::toggled, m_healthContent, &QWidget::setVisible);
@@ -540,6 +542,31 @@ namespace Material
     {
         m_statistics = statistics;
         rebuildStatistics();
+    }
+
+    void ReportsScreen::setReportCards(const QVector<ReportCard>& cards)
+    {
+        m_reportCards = cards;
+        for (const auto& card : cards) {
+            if (!m_expandedCards.contains(card.id)) m_expandedCards.insert(card.id, card.id == QLatin1String("breached"));
+        }
+        rebuildReportCards();
+    }
+
+    QStringList ReportsScreen::reportCardIds() const
+    {
+        QStringList ids;
+        for (const auto& card : m_reportCards) ids.append(card.id);
+        return ids;
+    }
+
+    bool ReportsScreen::isCardExpanded(const QString& id) const { return m_expandedCards.value(id); }
+
+    void ReportsScreen::setCardExpanded(const QString& id, bool expanded)
+    {
+        if (!reportCardIds().contains(id) || m_expandedCards.value(id) == expanded) return;
+        m_expandedCards[id] = expanded;
+        rebuildReportCards();
     }
 
     void ReportsScreen::rebuild()
@@ -588,6 +615,67 @@ namespace Material
         }
     }
 
+    void ReportsScreen::rebuildReportCards()
+    {
+        clearLayout(m_reportCardsLayout);
+        const int columns = width() < 840 ? 1 : 2;
+        for (int index = 0; index < m_reportCards.size(); ++index) {
+            const auto cardData = m_reportCards.at(index);
+            auto* card = new SectionCard;
+            card->setObjectName(QStringLiteral("reportCard_") + cardData.id);
+            auto* toggle = new QToolButton(card);
+            toggle->setObjectName(QStringLiteral("reportToggle_") + cardData.id);
+            toggle->setCheckable(true);
+            toggle->setChecked(m_expandedCards.value(cardData.id));
+            toggle->setText(tr("%1 · %2").arg(cardData.title, cardData.count));
+            toggle->setAccessibleName(tr("%1 report, %2. %3").arg(cardData.title, cardData.count, cardData.blurb));
+            toggle->setAccessibleDescription(cardData.unavailable
+                                                 ? tr("Unavailable; not checked")
+                                                 : (toggle->isChecked() ? tr("Expanded") : tr("Collapsed")));
+            connect(toggle, &QToolButton::toggled, this, [this, id = cardData.id](bool expanded) {
+                m_expandedCards[id] = expanded;
+                rebuildReportCards();
+            });
+            card->contentLayout()->addWidget(toggle);
+
+            auto* body = new QWidget(card);
+            auto* bodyLayout = new QVBoxLayout(body);
+            bodyLayout->setContentsMargins(0, 0, 0, 0);
+            bodyLayout->setSpacing(4);
+            if (cardData.id == QLatin1String("statistics")) {
+                for (int row = 0; row < cardData.statistics.size(); ++row) {
+                    const auto& value = cardData.statistics.at(row);
+                    bodyLayout->addWidget(new StatisticsRowWidget(value.first, value.second, true));
+                }
+            } else {
+                for (const auto& row : cardData.rows) {
+                    auto* widget = new HealthRowWidget(row, tr("Fix"), true);
+                    widget->selection()->setEnabled(!row.id.isEmpty());
+                    widget->selection()->setChecked(m_selectedIds.contains(row.id));
+                    connect(widget->selection(), &QCheckBox::toggled, this, [this, id = row.id](bool checked) {
+                        if (checked) m_selectedIds.insert(id); else m_selectedIds.remove(id);
+                        updateBulkActions();
+                    });
+                    connect(widget->fixButton(), &QAbstractButton::clicked, this, [this, id = row.id] {
+                        if (!id.isEmpty()) emit fixRequested(id);
+                    });
+                    bodyLayout->addWidget(widget);
+                }
+            }
+            if (cardData.unavailable || (cardData.rows.isEmpty() && cardData.statistics.isEmpty())) {
+                auto* empty = new QLabel(cardData.unavailable ? tr("Not checked. Run the real breach report to obtain results.")
+                                                              : tr("No rows in this report."));
+                empty->setWordWrap(true);
+                empty->setAccessibleName(empty->text());
+                bodyLayout->addWidget(empty);
+            }
+            body->setVisible(toggle->isChecked());
+            card->contentLayout()->addWidget(body);
+            m_reportCardsLayout->addWidget(card, index / columns, index % columns, Qt::AlignTop);
+        }
+        updateBulkActions();
+    }
+
     void ReportsScreen::setState(State state, const QString& message, int progress)
     {
         m_state = state;
@@ -600,8 +688,7 @@ namespace Material
             if (progress >= 0) m_progress->setValue(qBound(0, progress, 100));
         }
         const bool hasContent = state == State::Populated || state == State::Warning;
-        m_healthCard->setVisible(hasContent);
-        m_statisticsCard->setVisible(hasContent);
+        m_reportCardsHost->setVisible(hasContent);
     }
 
     ReportsScreen::State ReportsScreen::state() const { return m_state; }
@@ -627,20 +714,8 @@ namespace Material
 
     void ReportsScreen::applyResponsiveLayout()
     {
-        m_columns->removeWidget(m_healthCard);
-        m_columns->removeWidget(m_statisticsCard);
-        if (width() < 840) {
-            m_columns->addWidget(m_healthCard, 0, 0);
-            m_columns->addWidget(m_statisticsCard, 1, 0);
-            m_columns->setColumnStretch(0, 1);
-            m_columns->setColumnStretch(1, 0);
-        } else {
-            m_columns->addWidget(m_healthCard, 0, 0);
-            m_columns->addWidget(m_statisticsCard, 0, 1);
-            m_columns->setColumnStretch(0, 14);
-            m_columns->setColumnStretch(1, 10);
-        }
         rebuildStatCards();
+        rebuildReportCards();
     }
 
     void ReportsScreen::resizeEvent(QResizeEvent* event)

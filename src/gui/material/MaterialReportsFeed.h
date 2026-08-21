@@ -116,6 +116,7 @@ namespace Material
             int passkeys = 0;
             int relyingParties = 0; // distinct relying parties across the passkeys
             QVector<Finding> findings;
+            QVector<Finding> healthyFindings;
             QVector<QPair<QString, QString>> statistics;
         };
 

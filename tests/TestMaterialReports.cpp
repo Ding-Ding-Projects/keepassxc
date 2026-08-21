@@ -26,8 +26,29 @@ void TestMaterialReports::statesSelectionAndAccessibility()
     screen.setHealthRows({{QStringLiteral("id-a"), QStringLiteral("warning"), QStringLiteral("Alpha"), QStringLiteral("Weak"), QStringLiteral("20 bits"), Health::Weak},
                           {QStringLiteral("id-b"), QStringLiteral("warning"), QStringLiteral("Beta"), QStringLiteral("Reused"), QStringLiteral("30 bits"), Health::Reused}});
     screen.setStatistics({{QStringLiteral("Entries"), QStringLiteral("6")}});
+    const QVector<ReportCard> canonical{
+        {QStringLiteral("breached"), QStringLiteral("Breached"), QStringLiteral("Not checked"), QStringLiteral("—"), QStringLiteral("gpp_bad"), Health::Unknown, {}, {}, true},
+        {QStringLiteral("weak"), QStringLiteral("Weak"), QStringLiteral("Weak passwords"), QStringLiteral("2"), QStringLiteral("warning"), Health::Weak,
+         {{QStringLiteral("id-a"), QStringLiteral("warning"), QStringLiteral("Alpha"), QStringLiteral("Weak"), QStringLiteral("20 bits"), Health::Weak},
+          {QStringLiteral("id-b"), QStringLiteral("warning"), QStringLiteral("Beta"), QStringLiteral("Reused"), QStringLiteral("30 bits"), Health::Reused}}},
+        {QStringLiteral("reused"), QStringLiteral("Reused"), QStringLiteral("Reused passwords"), QStringLiteral("1"), QStringLiteral("content_copy"), Health::Reused},
+        {QStringLiteral("expired"), QStringLiteral("Expired"), QStringLiteral("Expired entries"), QStringLiteral("1"), QStringLiteral("event_busy"), Health::Weak},
+        {QStringLiteral("healthy"), QStringLiteral("Healthy"), QStringLiteral("Healthy entries"), QStringLiteral("4"), QStringLiteral("verified_user"), Health::Ok},
+        {QStringLiteral("statistics"), QStringLiteral("Statistics"), QStringLiteral("Database facts"), QStringLiteral("1"), QStringLiteral("query_stats"), Health::Unknown, {}, {{QStringLiteral("Entries"), QStringLiteral("6")}}}
+    };
+    screen.setReportCards(canonical);
     screen.setState(ReportsScreen::State::Populated);
     QCOMPARE(screen.state(), ReportsScreen::State::Populated);
+    QCOMPARE(screen.reportCardIds(), QStringList({QStringLiteral("breached"), QStringLiteral("weak"), QStringLiteral("reused"), QStringLiteral("expired"), QStringLiteral("healthy"), QStringLiteral("statistics")}));
+    QVERIFY(screen.isCardExpanded(QStringLiteral("breached")));
+    QVERIFY(!screen.isCardExpanded(QStringLiteral("weak")));
+    auto* weakToggle = screen.findChild<QToolButton*>(QStringLiteral("reportToggle_weak"));
+    QVERIFY(weakToggle);
+    QVERIFY(!weakToggle->accessibleName().isEmpty());
+    weakToggle->click();
+    QVERIFY(screen.isCardExpanded(QStringLiteral("weak")));
+    auto* breachedToggle = screen.findChild<QToolButton*>(QStringLiteral("reportToggle_breached"));
+    QVERIFY(breachedToggle->accessibleDescription().contains(QStringLiteral("Unavailable")));
 
     const auto checks = screen.findChildren<QCheckBox*>();
     QCOMPARE(checks.size(), 2);

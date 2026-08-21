@@ -22,6 +22,7 @@
 #include "MaterialTheme.h"
 
 #include <QPair>
+#include <QHash>
 #include <QSet>
 #include <QString>
 #include <QStringList>
@@ -65,6 +66,19 @@ namespace Material
         Health status = Health::Unknown;
     };
 
+    struct ReportCard
+    {
+        QString id;
+        QString title;
+        QString blurb;
+        QString count;
+        QString symbol;
+        Health status = Health::Unknown;
+        QVector<HealthRow> rows;
+        QVector<QPair<QString, QString>> statistics;
+        bool unavailable = false;
+    };
+
     /**
      * The reports destination.
      *
@@ -85,6 +99,10 @@ namespace Material
         void setStatCards(const QVector<StatCard>& cards);
         void setHealthRows(const QVector<HealthRow>& rows);
         void setStatistics(const QVector<QPair<QString, QString>>& statistics);
+        void setReportCards(const QVector<ReportCard>& cards);
+        QStringList reportCardIds() const;
+        bool isCardExpanded(const QString& id) const;
+        void setCardExpanded(const QString& id, bool expanded);
         void setState(State state, const QString& message = {}, int progress = -1);
         State state() const;
         QStringList selectedFindingIds() const;
@@ -105,6 +123,7 @@ namespace Material
         void rebuildStatCards();
         void rebuildHealthRows();
         void rebuildStatistics();
+        void rebuildReportCards();
         void applyResponsiveLayout();
         void updateBulkActions();
 
@@ -116,6 +135,8 @@ namespace Material
         QWidget* m_healthContent = nullptr;
         QWidget* m_statisticsContent = nullptr;
         QGridLayout* m_columns = nullptr;
+        QGridLayout* m_reportCardsLayout = nullptr;
+        QWidget* m_reportCardsHost = nullptr;
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
         QToolButton* m_healthToggle = nullptr;
@@ -124,6 +145,8 @@ namespace Material
         QComboBox* m_category = nullptr;
         State m_state = State::Empty;
         QSet<QString> m_selectedIds;
+        QVector<ReportCard> m_reportCards;
+        QHash<QString, bool> m_expandedCards;
         QVector<StatCard> m_statCards;
         QVector<HealthRow> m_healthRows;
         QVector<QPair<QString, QString>> m_statistics;

@@ -273,11 +273,6 @@ namespace Material
                     ++snapshot.weakOrShort;
                 }
 
-                if (health->quality() >= PasswordHealth::Quality::Good) {
-                    ++snapshot.healthy;
-                    continue;
-                }
-
                 Finding finding;
                 finding.uuid = entry->uuidToHex();
                 finding.title = entry->title();
@@ -291,6 +286,11 @@ namespace Material
                 finding.expired = entry->isExpired();
                 finding.reused = uses.value(entry->password()) > 1;
                 finding.tooShort = entry->password().length() <= PasswordHealth::Length::Short;
+                if (health->quality() >= PasswordHealth::Quality::Good) {
+                    ++snapshot.healthy;
+                    snapshot.healthyFindings.append(finding);
+                    continue;
+                }
                 snapshot.findings.append(finding);
             }
         }
@@ -458,6 +458,42 @@ namespace Material
         m_screen->setStatCards(cards);
         m_screen->setHealthRows(rows);
         m_screen->setStatistics(filteredStatistics());
+        auto toRows = [this](const QVector<Finding>& findings) {
+            QVector<HealthRow> result;
+            for (const auto& finding : findings) {
+                if (!matches(finding.title + QLatin1Char(' ') + finding.reason + QLatin1Char(' ') + finding.path)) continue;
+                HealthRow row;
+                row.id = finding.uuid;
+                row.symbol = faultSymbol(finding.expired, finding.bad, finding.reused, finding.tooShort);
+                row.title = finding.title;
+                row.reason = finding.reason.isEmpty() ? finding.path : finding.reason;
+                row.score = tr("%n bit(s)", "", finding.entropy);
+                row.status = healthOf(finding.bad, finding.reused);
+                result.append(row);
+            }
+            return result;
+        };
+        QVector<Finding> reused;
+        QVector<Finding> expired;
+        for (const auto& finding : m_snapshot.findings) {
+            if (finding.reused) reused.append(finding);
+            if (finding.expired) expired.append(finding);
+        }
+        QVector<ReportCard> reportCards{
+            {QStringLiteral("breached"), tr("Breached"), tr("Requires the real breach report; this local pass does not guess."), QStringLiteral("—"), QStringLiteral("gpp_bad"), Health::Unknown, {}, {}, true},
+            {QStringLiteral("weak"), tr("Weak"), tr("Passwords below the health threshold."), QString::number(m_snapshot.findings.size()), QStringLiteral("warning"), Health::Weak, toRows(m_snapshot.findings)},
+            {QStringLiteral("reused"), tr("Reused"), tr("Passwords used by more than one entry."), QString::number(reused.size()), QStringLiteral("content_copy"), Health::Reused, toRows(reused)},
+            {QStringLiteral("expired"), tr("Expired"), tr("Entries whose expiry date has passed."), QString::number(expired.size()), QStringLiteral("event_busy"), Health::Weak, toRows(expired)},
+            {QStringLiteral("healthy"), tr("Healthy"), tr("Entries meeting the current password-health threshold."), QString::number(m_snapshot.healthyFindings.size()), QStringLiteral("verified_user"), Health::Ok, toRows(m_snapshot.healthyFindings)},
+            {QStringLiteral("statistics"), tr("Statistics"), tr("Facts calculated by DatabaseStats."), QString::number(filteredStatistics().size()), QStringLiteral("query_stats"), Health::Unknown, {}, filteredStatistics()}
+        };
+        reportCards.erase(std::remove_if(reportCards.begin(), reportCards.end(), [this](const ReportCard& card) {
+            QString haystack = card.title + QLatin1Char(' ') + card.blurb;
+            for (const auto& row : card.rows) haystack += QLatin1Char(' ') + row.title + QLatin1Char(' ') + row.reason;
+            for (const auto& row : card.statistics) haystack += QLatin1Char(' ') + row.first + QLatin1Char(' ') + row.second;
+            return !matches(haystack);
+        }), reportCards.end());
+        m_screen->setReportCards(reportCards);
         m_screen->setState(searchValid ? ReportsScreen::State::Populated : ReportsScreen::State::Warning,
                            searchValid ? tr("Breach exposure has not been checked online.")
                                        : tr("Invalid regular expression: %1").arg(searchError));
@@ -503,6 +539,9 @@ namespace Material
             findings.erase(std::remove_if(findings.begin(), findings.end(), [&selectedIds](const Finding& finding) {
                 return !selectedIds.contains(finding.uuid);
             }), findings.end());
+            for (const auto& healthy : m_snapshot.healthyFindings) {
+                if (selectedIds.contains(healthy.uuid)) findings.append(healthy);
+            }
         }
         out << "## " << tr("Password health") << "\n\n";
         if (findings.isEmpty()) {
