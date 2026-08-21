@@ -9,6 +9,9 @@ class TestMaterialShellResponsive : public QObject
 
 private slots:
     void preservesDestinationAccessAcrossBreakpoints();
+    void emitsOnlyOnBreakpointTransitions();
+    void appliesVaultPaneContract();
+    void fallbackSearchesAreIndependentAndRestoreFocus();
 };
 
 #endif // KEEPASSXC_TESTMATERIALSHELLRESPONSIVE_H

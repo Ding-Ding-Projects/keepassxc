@@ -24,6 +24,7 @@ namespace Material
         SearchBar* current() const;
         void setCurrent(SearchBar* bar);
         QString currentLabel() const;
+        void restoreCurrentFocus() const;
 
     signals:
         void builderRequested(Material::SearchBar* bar);

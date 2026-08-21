@@ -10,6 +10,8 @@
 #ifndef KEEPASSXC_MATERIALBREAKPOINTS_H
 #define KEEPASSXC_MATERIALBREAKPOINTS_H
 
+#include <QMetaType>
+
 namespace Material
 {
     enum class Breakpoint
@@ -28,5 +30,7 @@ namespace Material
     int railWidth(Breakpoint breakpoint);
     int detailWidth(Breakpoint breakpoint);
 } // namespace Material
+
+Q_DECLARE_METATYPE(Material::Breakpoint)
 
 #endif // KEEPASSXC_MATERIALBREAKPOINTS_H

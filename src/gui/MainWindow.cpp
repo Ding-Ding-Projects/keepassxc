@@ -785,6 +785,8 @@ MainWindow::MainWindow()
     // whenever an unlocked database is being browsed.
     auto* vaultScreen = new Material::VaultScreen;
     vaultScreen->setHostWidget(m_ui->stackedWidget, m_ui->tabWidget);
+    vaultScreen->setBreakpoint(materialShell->breakpoint());
+    connect(materialShell, &Material::Shell::breakpointChanged, vaultScreen, &Material::VaultScreen::setBreakpoint);
 
     // The settings destination is the Material hub: the spec sheets whose rows
     // are bound to the real Config keys, plus the stock
@@ -1029,7 +1031,9 @@ MainWindow::MainWindow()
         target->setRegexFlags(regexBuilder->flags());
         target->setRegexEnabled(true);
         target->setText(pattern);
-        target->lineEdit()->setFocus(Qt::OtherFocusReason);
+    });
+    connect(regexBuilder, &Material::Overlay::closed, this, [] {
+        Material::SearchRegistry::instance()->restoreCurrentFocus();
     });
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);
