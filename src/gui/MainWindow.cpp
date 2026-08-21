@@ -658,14 +658,9 @@ MainWindow::MainWindow()
         updateCheck()->applyVerifiedUpdate(path);
     });
     connect(updateCheck(), &UpdateChecker::updateReadyToRestart, this, [this](const QString& version) {
+        Q_UNUSED(version)
         Material::Notify::endProgress(QStringLiteral("squirrel-update"));
-        QList<Material::NotificationAction> actions{
-            {tr("Restart to install update"), [this] { restartForUpdate(); }, this},
-            {tr("Later"), [] { updateCheck()->deferUpdate(); }, this},
-        };
-        Material::Notify::warning(tr("Update %1 is ready").arg(version),
-                                  tr("The update is unsigned and may show an Unknown Publisher or SmartScreen warning. Restart happens only when you choose it."),
-                                  actions);
+        showUpdateReadyNotification();
     });
     // Setup an update check every hour (checked only occur every 7 days)
     connect(&m_updateCheckTimer, &QTimer::timeout, this, &MainWindow::performUpdateCheck);
@@ -1676,13 +1671,62 @@ void MainWindow::showUpdateCheckDialog()
 void MainWindow::restartForUpdate()
 {
 #ifdef KPXC_FEATURE_UPDATES
+    if (m_squirrelRestartRequested) {
+        return;
+    }
     if (!updateCheck()->canRestartThroughSquirrel()) {
         Material::Notify::error(tr("Restart unavailable"), tr("The Squirrel update launcher is missing or is not in the expected installation location."));
         return;
     }
+    m_squirrelRestartRequested = true;
+    if (auto* centre = Material::NotificationCentre::centreFor(this); centre && m_updateNotificationId != 0) {
+        centre->updateEntry(m_updateNotificationId,
+                            tr("Restarting to install update"),
+                            tr("KeePassXC is closing safely before the verified update starts."),
+                            Material::SeverityLevel::Warning,
+                            {});
+    }
     m_appExitCalled = true;
-    m_restartRequested = true;
     close();
+#endif
+}
+
+void MainWindow::deferUpdateForLater()
+{
+#ifdef KPXC_FEATURE_UPDATES
+    updateCheck()->deferUpdate();
+    showUpdateReadyNotification(true);
+#endif
+}
+
+void MainWindow::showUpdateReadyNotification(bool replaceExisting)
+{
+#ifdef KPXC_FEATURE_UPDATES
+    const auto candidate = updateCheck()->candidate();
+    const QString title = tr("Update %1 is ready").arg(candidate.version);
+    const QString body = tr("Current version: %1. Available version: %2. The update is unsigned and may show an Unknown Publisher or SmartScreen warning. Restart happens only when you choose it.")
+                             .arg(QStringLiteral(KEEPASSXC_VERSION), candidate.version);
+    QList<Material::NotificationAction> actions{
+        {tr("Restart to install update"), [this] { restartForUpdate(); }, this},
+        {tr("Release notes"), [this, notes = candidate.notesUrl] { customOpenUrl(notes); }, this},
+    };
+    if (updateCheck()->state() == UpdateChecker::State::ReadyToRestart) {
+        actions.append({tr("Later"), [this] { deferUpdateForLater(); }, this});
+    }
+
+    auto* centre = Material::NotificationCentre::centreFor(this);
+    if (replaceExisting && centre && m_updateNotificationId != 0) {
+        centre->updateEntry(m_updateNotificationId, title, body, Material::SeverityLevel::Warning, actions);
+        return;
+    }
+
+    Material::Notify::warning(title, body, actions);
+    if (centre) {
+        const auto notifications = centre->notifications();
+        if (!notifications.isEmpty()) {
+            m_updateNotificationId = notifications.constFirst().id;
+        }
+    }
 #endif
 }
 
@@ -2000,12 +2044,32 @@ void MainWindow::closeEvent(QCloseEvent* event)
     if (m_appExiting) {
         saveWindowInformation();
         event->accept();
+        if (m_squirrelRestartRequested) {
+#ifdef KPXC_FEATURE_UPDATES
+            if (kpxcApp->restart([] { return updateCheck()->launchUpdatedVersion(); })) {
+                return;
+            }
+            m_appExiting = false;
+            m_appExitCalled = false;
+            m_squirrelRestartRequested = false;
+            event->ignore();
+            Material::Notify::error(
+                tr("Restart failed"),
+                tr("The verified update remains installed, but the Squirrel launcher could not start it. KeePassXC is still open."));
+            showUpdateReadyNotification(true);
+            return;
+#endif
+        }
         m_restartRequested ? kpxcApp->restart() : QApplication::quit();
         return;
     }
 
     m_appExitCalled = false;
     m_restartRequested = false;
+    if (m_squirrelRestartRequested) {
+        m_squirrelRestartRequested = false;
+        showUpdateReadyNotification(true);
+    }
     event->ignore();
 }
 

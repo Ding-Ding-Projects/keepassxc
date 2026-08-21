@@ -50,6 +50,7 @@ namespace
 
 const QString UpdateChecker::ErrorVersion("error");
 UpdateChecker* UpdateChecker::m_instance(nullptr);
+UpdateChecker::RestartLauncher UpdateChecker::m_restartLauncher;
 
 UpdateChecker::UpdateChecker(QObject* parent)
     : QObject(parent)
@@ -371,10 +372,10 @@ bool UpdateChecker::canRestartThroughSquirrel() const
     if (m_state != State::ReadyToRestart && m_state != State::Deferred) {
         return false;
     }
-    const QString updater = SquirrelLifecycle::updateExecutable(QCoreApplication::applicationDirPath());
-    const QFileInfo info(updater);
-    return info.isFile() && !info.isSymLink()
-           && QDir::cleanPath(info.canonicalFilePath()) == QDir::cleanPath(info.absoluteFilePath());
+    QString program;
+    QStringList arguments;
+    QString workingDirectory;
+    return restartCommand(QCoreApplication::applicationDirPath(), program, arguments, workingDirectory);
 }
 
 bool UpdateChecker::launchUpdatedVersion()
@@ -383,15 +384,67 @@ bool UpdateChecker::launchUpdatedVersion()
         setState(State::Failed, Failure::RestartFailed);
         return false;
     }
-    const QString updater = SquirrelLifecycle::updateExecutable(QCoreApplication::applicationDirPath());
+    QString updater;
+    QStringList arguments;
+    QString workingDirectory;
+    if (!restartCommand(QCoreApplication::applicationDirPath(), updater, arguments, workingDirectory)) {
+        setState(State::Failed, Failure::RestartFailed);
+        return false;
+    }
     setState(State::Restarting);
-    const bool started = QProcess::startDetached(updater,
-                                                 {QStringLiteral("--processStart"), QStringLiteral("KeePassXC.exe")},
-                                                 QFileInfo(updater).absolutePath());
+    const bool started = launchRestartCommand(updater, arguments, workingDirectory);
     if (!started) {
         setState(State::Failed, Failure::RestartFailed);
     }
     return started;
+}
+
+bool UpdateChecker::restartCommand(const QString& applicationDirectory,
+                                   QString& program,
+                                   QStringList& arguments,
+                                   QString& workingDirectory)
+{
+    program.clear();
+    arguments.clear();
+    workingDirectory.clear();
+
+    const QFileInfo applicationDirectoryInfo(QDir::cleanPath(applicationDirectory));
+    static const QRegularExpression appDirectoryPattern(
+        QStringLiteral("^app-\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$"));
+    if (!applicationDirectoryInfo.isDir()
+        || !appDirectoryPattern.match(applicationDirectoryInfo.fileName()).hasMatch()) {
+        return false;
+    }
+
+    const QDir packageRoot = applicationDirectoryInfo.dir();
+    const QFileInfo updaterInfo(packageRoot.filePath(QStringLiteral("Update.exe")));
+    if (!updaterInfo.isFile() || updaterInfo.isSymLink() || updaterInfo.canonicalFilePath().isEmpty()
+        || QDir::cleanPath(updaterInfo.canonicalFilePath()) != QDir::cleanPath(updaterInfo.absoluteFilePath())) {
+        return false;
+    }
+
+    program = updaterInfo.absoluteFilePath();
+    arguments = {QStringLiteral("--processStart"), QStringLiteral("KeePassXC.exe")};
+    workingDirectory = packageRoot.absolutePath();
+    return true;
+}
+
+bool UpdateChecker::launchRestartCommand(const QString& program,
+                                         const QStringList& arguments,
+                                         const QString& workingDirectory)
+{
+    return m_restartLauncher ? m_restartLauncher(program, arguments, workingDirectory)
+                             : QProcess::startDetached(program, arguments, workingDirectory);
+}
+
+void UpdateChecker::setRestartLauncherForTests(RestartLauncher launcher)
+{
+    m_restartLauncher = std::move(launcher);
+}
+
+void UpdateChecker::resetRestartLauncherForTests()
+{
+    m_restartLauncher = {};
 }
 
 UpdateChecker::State UpdateChecker::state() const { return m_state; }

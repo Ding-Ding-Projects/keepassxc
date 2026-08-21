@@ -85,6 +85,11 @@ namespace Material
 
         /** Rewrite an entry filed earlier, e.g. a job that has since finished. */
         void updateEntry(quint64 id, const QString& body, SeverityLevel severity);
+        void updateEntry(quint64 id,
+                         const QString& title,
+                         const QString& body,
+                         SeverityLevel severity,
+                         const QList<NotificationAction>& actions);
 
         /** Take the badge over, and open on the app bar's notifications button. */
         void attachAppBar(TopAppBar* bar);

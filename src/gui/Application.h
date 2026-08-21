@@ -24,6 +24,8 @@
 #include <QString>
 #include <QtNetwork/qlocalserver.h>
 
+#include <functional>
+
 #if defined(Q_OS_WIN) || (defined(Q_OS_UNIX) && !defined(Q_OS_MACOS))
 
 class OSEventFilter;
@@ -54,6 +56,7 @@ public:
     bool sendLockToInstance();
 
     void restart();
+    bool restart(const std::function<bool()>& launcher);
 
 signals:
     void openFile(const QString& filename);
