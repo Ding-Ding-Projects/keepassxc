@@ -5,22 +5,24 @@
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "format/KeePass2.h"
 
 #include <QCryptographicHash>
 #include <QDir>
+#include <QDebug>
 #include <QFile>
 #include <QFileInfo>
 #include <QHash>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QLockFile>
 #include <QProcess>
 #include <QStandardPaths>
+#include <QSaveFile>
 #include <QThread>
+#include <QtEndian>
 #include <QUuid>
-#ifdef Q_OS_WIN
-#include <qt_windows.h>
-#endif
 
 namespace Material
 {
@@ -31,6 +33,8 @@ namespace Material
         constexpr int MaximumPageSize = 500;
         const QString StateName = QStringLiteral("revisions.json");
         const QString FingerprintsName = QStringLiteral("fingerprints");
+        const QString SnapshotsName = QStringLiteral("snapshots");
+        constexpr int LockTimeoutMs = 3000;
 
         struct ProcessResult { bool started = false; bool timedOut = false; int exitCode = -1; QByteArray out; QByteArray err; bool ok() const { return started && !timedOut && exitCode == 0; } };
 
@@ -70,9 +74,23 @@ namespace Material
             return QString::fromLatin1(QCryptographicHash::hash(value.toUtf8(), QCryptographicHash::Sha256).toHex().left(characters));
         }
 
+        QString byteDigest(const QByteArray& value)
+        {
+            return QString::fromLatin1(QCryptographicHash::hash(value, QCryptographicHash::Sha256).toHex());
+        }
+
         QString databaseId(const QString& path)
         {
             return digest(QDir::cleanPath(QDir::fromNativeSeparators(path)));
+        }
+
+        bool isKdbx(const QByteArray& bytes)
+        {
+            if (bytes.size() < 12) return false;
+            const auto* data = reinterpret_cast<const uchar*>(bytes.constData());
+            const quint32 first = qFromLittleEndian<quint32>(data);
+            const quint32 second = qFromLittleEndian<quint32>(data + 4);
+            return first == KeePass2::SIGNATURE_1 && second == KeePass2::SIGNATURE_2;
         }
 
         QHash<QString, QString> fingerprintOf(const QSharedPointer<Database>& db, int* entries, int* groups)
@@ -117,11 +135,13 @@ namespace Material
 
         QJsonObject toJson(const HistoryRevision& v)
         {
-            return {{QStringLiteral("id"), v.id}, {QStringLiteral("time"), v.timestamp.toUTC().toString(Qt::ISODateWithMs)},
-                    {QStringLiteral("databaseId"), v.databasePath}, {QStringLiteral("name"), v.databaseName},
-                    {QStringLiteral("label"), v.label}, {QStringLiteral("kind"), kindToken(v.kind)},
-                    {QStringLiteral("entries"), v.entryCount}, {QStringLiteral("groups"), v.groupCount},
-                    {QStringLiteral("added"), v.added}, {QStringLiteral("removed"), v.removed}, {QStringLiteral("edited"), v.edited}};
+            QJsonObject object{{QStringLiteral("id"), v.id}, {QStringLiteral("time"), v.timestamp.toUTC().toString(Qt::ISODateWithMs)},
+                               {QStringLiteral("databaseId"), v.databasePath}, {QStringLiteral("name"), v.databaseName},
+                               {QStringLiteral("label"), v.label}, {QStringLiteral("kind"), kindToken(v.kind)},
+                               {QStringLiteral("entries"), v.entryCount}, {QStringLiteral("groups"), v.groupCount},
+                               {QStringLiteral("added"), v.added}, {QStringLiteral("removed"), v.removed}, {QStringLiteral("edited"), v.edited}};
+            if (!v.snapshotPath.isEmpty()) { object.insert(QStringLiteral("snapshot"), v.snapshotPath); object.insert(QStringLiteral("snapshotSha256"), v.snapshotSha256); }
+            return object;
         }
 
         HistoryRevision fromJson(const QJsonObject& o)
@@ -132,6 +152,7 @@ namespace Material
             v.label = o.value(QStringLiteral("label")).toString(); v.kind = kindFromToken(o.value(QStringLiteral("kind")).toString());
             v.entryCount = o.value(QStringLiteral("entries")).toInt(); v.groupCount = o.value(QStringLiteral("groups")).toInt();
             v.added = o.value(QStringLiteral("added")).toInt(); v.removed = o.value(QStringLiteral("removed")).toInt(); v.edited = o.value(QStringLiteral("edited")).toInt();
+            v.snapshotPath = o.value(QStringLiteral("snapshot")).toString(); v.snapshotSha256 = o.value(QStringLiteral("snapshotSha256")).toString();
             if (!v.timestamp.isValid() || v.databasePath.size() != 64) v.id.clear(); return v;
         }
 
@@ -144,21 +165,14 @@ namespace Material
         bool atomicReplace(const QString& target, const QByteArray& bytes)
         {
             QDir().mkpath(QFileInfo(target).absolutePath());
-            const QString temporary = target + QStringLiteral(".%1.tmp").arg(QUuid::createUuid().toString(QUuid::WithoutBraces));
-            QFile file(temporary);
-            if (!file.open(QIODevice::WriteOnly) || file.write(bytes) != bytes.size() || !file.flush()) { file.close(); QFile::remove(temporary); return false; }
-            file.close();
             for (int attempt = 0; attempt < ReplaceAttempts; ++attempt) {
-#ifdef Q_OS_WIN
-                if (MoveFileExW(reinterpret_cast<LPCWSTR>(temporary.utf16()), reinterpret_cast<LPCWSTR>(target.utf16()), MOVEFILE_REPLACE_EXISTING | MOVEFILE_WRITE_THROUGH)) return true;
-                const DWORD error = GetLastError();
-                if (error != ERROR_SHARING_VIOLATION && error != ERROR_ACCESS_DENIED && error != ERROR_LOCK_VIOLATION) break;
-#else
-                if (QFile::rename(temporary, target)) return true;
-#endif
+                QSaveFile file(target);
+                file.setDirectWriteFallback(false);
+                if (file.open(QIODevice::WriteOnly) && file.write(bytes) == bytes.size() && file.commit()) return true;
+                file.cancelWriting();
                 QThread::msleep(static_cast<unsigned long>(10 * (attempt + 1)));
             }
-            QFile::remove(temporary); return false;
+            return false;
         }
     }
 
@@ -180,6 +194,9 @@ namespace Material
     {
         const QString repo = repositoryPath();
         if (repo.isEmpty() || !QDir().mkpath(repo) || m_gitExecutable.isEmpty()) return false;
+        QLockFile initializationLock(QDir(repo).filePath(QStringLiteral("initialization.lock")));
+        initializationLock.setStaleLockTime(0);
+        if (!initializationLock.tryLock(LockTimeoutMs)) return false;
         if (!QFileInfo::exists(QDir(repo).filePath(QStringLiteral(".git")))) {
             if (!git(m_gitExecutable, repo, {QStringLiteral("init"), QStringLiteral("--quiet")}).ok()) return false;
             if (!git(m_gitExecutable, repo, {QStringLiteral("config"), QStringLiteral("user.name"), QStringLiteral("KeePassXC History")}).ok()) return false;
@@ -191,6 +208,9 @@ namespace Material
     bool HistoryStore::migrateLegacy()
     {
         if (!QFileInfo::exists(logPath()) || QFileInfo::exists(QDir(repositoryPath()).filePath(StateName))) return true;
+        QLockFile lock(QDir(repositoryPath()).filePath(QStringLiteral("ledger.lock")));
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs)) return false;
         QFile source(logPath()); if (!source.open(QIODevice::ReadOnly | QIODevice::Text)) return false;
         QVector<HistoryRevision> imported;
         while (!source.atEnd()) {
@@ -220,24 +240,47 @@ namespace Material
         for (const auto& value : QJsonDocument::fromJson(file.readAll()).array()) { const auto revision = fromJson(value.toObject()); if (revision.isValid()) m_revisions.append(revision); }
     }
 
-    bool HistoryStore::commitTransaction(const HistoryRevision& revision, const QByteArray& fingerprint)
+    bool HistoryStore::commitTransaction(const HistoryRevision& revision,
+                                         const QByteArray& fingerprint,
+                                         const QByteArray& encryptedSnapshot)
     {
-        if (!ensureRepository()) return false;
-        QVector<HistoryRevision> next = m_revisions; next.append(revision);
+        if (!ensureRepository()) { qWarning() << "Local history repository initialization failed"; return false; }
+        QLockFile lock(QDir(repositoryPath()).filePath(QStringLiteral("ledger.lock")));
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs)) { qWarning() << "Local history lock acquisition failed" << lock.error(); return false; }
+        QVector<HistoryRevision> committed;
+        QFile committedState(QDir(repositoryPath()).filePath(StateName));
+        if (committedState.open(QIODevice::ReadOnly)) {
+            for (const auto& value : QJsonDocument::fromJson(committedState.readAll()).array()) {
+                const auto existing = fromJson(value.toObject());
+                if (existing.isValid()) committed.append(existing);
+            }
+            committedState.close();
+        }
+        QVector<HistoryRevision> next = committed; next.append(revision);
         const QString statePath = QDir(repositoryPath()).filePath(StateName);
         const QString fpPath = fingerprintPath(revision.databasePath);
-        const auto rollback = [this, statePath, fpPath] {
+        const QString snapshotAbsolute = revision.snapshotPath.isEmpty() ? QString() : QDir(repositoryPath()).filePath(revision.snapshotPath);
+        const auto rollback = [this, statePath, fpPath, snapshotAbsolute] {
             if (git(m_gitExecutable, repositoryPath(), {QStringLiteral("rev-parse"), QStringLiteral("--verify"), QStringLiteral("HEAD")}).ok()) {
                 git(m_gitExecutable, repositoryPath(), {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("HEAD")});
             } else {
                 QFile::remove(statePath);
                 QFile::remove(fpPath);
             }
+            if (!snapshotAbsolute.isEmpty()) QFile::remove(snapshotAbsolute);
         };
-        if (!atomicReplace(statePath, revisionsJson(next)) || !atomicReplace(fpPath, fingerprint)) { rollback(); return false; }
-        const auto add = git(m_gitExecutable, repositoryPath(), {QStringLiteral("add"), QStringLiteral("--"), StateName, FingerprintsName});
+        QStringList staged{StateName, FingerprintsName};
+        if (!atomicReplace(statePath, revisionsJson(next))) { qWarning() << "Local history revision transaction failed"; rollback(); return false; }
+        if (!atomicReplace(fpPath, fingerprint)) { qWarning() << "Local history fingerprint transaction failed"; rollback(); return false; }
+        if (!revision.snapshotPath.isEmpty()) {
+            const QString snapshotPath = QDir(repositoryPath()).filePath(revision.snapshotPath);
+            if (encryptedSnapshot.isEmpty() || !atomicReplace(snapshotPath, encryptedSnapshot)) { qWarning() << "Local history snapshot transaction failed" << snapshotPath << encryptedSnapshot.size(); rollback(); return false; }
+            staged << SnapshotsName;
+        }
+        const auto add = git(m_gitExecutable, repositoryPath(), QStringList{QStringLiteral("add"), QStringLiteral("--")} + staged);
         const auto commit = add.ok() ? git(m_gitExecutable, repositoryPath(), {QStringLiteral("commit"), QStringLiteral("--quiet"), QStringLiteral("-m"), QStringLiteral("Record history event %1").arg(revision.id)}) : ProcessResult{};
-        if (!commit.ok()) { rollback(); return false; }
+        if (!commit.ok()) { qWarning() << "Local history Git transaction failed" << add.err << commit.err; rollback(); return false; }
         m_revisions = next; emit revisionsChanged(); return true;
     }
 
@@ -260,7 +303,18 @@ namespace Material
             r.label = parts.isEmpty() ? tr("Saved with no entry or group changes") : parts.join(tr(", "));
             r.kind = r.added + r.removed + r.edited > 0 ? RevisionKind::Entry : groupDelta != 0 ? RevisionKind::Group : RevisionKind::Settings;
         }
-        if (!commitTransaction(r, fingerprintJson(current))) { emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage.")); return false; }
+        QByteArray encryptedSnapshot;
+        QFile databaseFile(db->filePath());
+        if (databaseFile.open(QIODevice::ReadOnly)) {
+            encryptedSnapshot = databaseFile.readAll();
+            if (isKdbx(encryptedSnapshot)) {
+                r.snapshotPath = QStringLiteral("%1/%2/%3.kdbx").arg(SnapshotsName, opaqueId, r.id);
+                r.snapshotSha256 = byteDigest(encryptedSnapshot);
+            } else {
+                encryptedSnapshot.clear();
+            }
+        }
+        if (!commitTransaction(r, fingerprintJson(current), encryptedSnapshot)) { emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage.")); return false; }
         return true;
     }
 
@@ -301,5 +355,24 @@ namespace Material
     HistoryRevision HistoryStore::predecessor(const QString& id) const
     {
         const auto target = revision(id); HistoryRevision previous; for (const auto& v : m_revisions) { if (v.id == id) return previous; if (v.databasePath == target.databasePath) previous = v; } return {};
+    }
+
+    QByteArray HistoryStore::snapshot(const QString& revisionId, QString* error) const
+    {
+        const auto fail = [error](const QString& message) { if (error) *error = message; return QByteArray(); };
+        const HistoryRevision value = revision(revisionId);
+        if (!value.isValid() || value.snapshotPath.isEmpty()) return fail(tr("No encrypted snapshot is available for this revision."));
+        const QString normalized = QDir::cleanPath(value.snapshotPath);
+        const QString expectedPrefix = QStringLiteral("%1/%2/").arg(SnapshotsName, value.databasePath);
+        if (QDir::isAbsolutePath(normalized) || normalized.startsWith(QStringLiteral("../")) || !normalized.startsWith(expectedPrefix)) {
+            return fail(tr("The encrypted snapshot path is outside the local history repository."));
+        }
+        QFile file(QDir(repositoryPath()).filePath(normalized));
+        if (!file.open(QIODevice::ReadOnly)) return fail(tr("The encrypted snapshot file is missing."));
+        const QByteArray bytes = file.readAll();
+        if (!isKdbx(bytes)) return fail(tr("The snapshot is not a valid KDBX container."));
+        if (byteDigest(bytes) != value.snapshotSha256) return fail(tr("The encrypted snapshot hash does not match its revision."));
+        if (error) error->clear();
+        return bytes;
     }
 }

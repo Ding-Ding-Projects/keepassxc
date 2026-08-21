@@ -10,5 +10,6 @@ private slots:
     void gitStoreTransactionAndRestart();
     void gitStoreFailureDoesNotAdvanceFingerprint();
     void gitStoreMigratesLegacyOnce();
+    void gitStoreSerializesConcurrentWriters();
 };
 #endif

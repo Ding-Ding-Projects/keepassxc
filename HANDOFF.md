@@ -17,8 +17,15 @@ The History save ledger now lives in an isolated Git repository beneath the stab
 directory. Each successful save or Material restore appends a commit containing only redacted
 counts, labels, an opaque SHA-256 database identity, and truncated entry-state hashes; database
 paths, entry titles, passwords, TOTP data, attachments, and database contents are not stored. The
-revision list and fingerprint are replaced with unique temporary files and committed together, so a
-failed Git operation rolls the work tree back and cannot advance the in-memory fingerprint baseline.
+revision list and fingerprint are replaced through unique `QSaveFile` temporary files with bounded
+retry and committed together, so a failed Git operation rolls the work tree back and cannot advance
+the in-memory fingerprint baseline. A repository-scoped `QLockFile` serializes migration and every
+write/index/commit transaction with a bounded three-second wait.
+After a successful database save, the store accepts only bytes carrying the real KDBX signatures,
+then commits those already-encrypted bytes under an opaque snapshot path with their SHA-256. Snapshot
+retrieval revalidates repository containment, database identity, signature, and hash; it is read-only
+and never overwrites a live database. Restore events are metadata-only and say that their encrypted
+snapshot is unavailable until the next database save.
 Git subprocesses have a ten-second deadline, use repository-local deterministic identity, ignore
 global/system Git configuration, and never configure a remote. Existing JSONL records are imported
 once only when the new repository is empty; a failed import leaves the legacy file untouched.

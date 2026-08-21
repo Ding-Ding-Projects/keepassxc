@@ -57,7 +57,7 @@ namespace Material
          * years carries hundreds of revisions and each row is a widget, so the
          * rest are counted and reported rather than quietly dropped.
          */
-        constexpr int MaximumRows = 200;
+        constexpr int MaximumRows = 500;
         /**
          * How many of this window's own restores are remembered. They are a
          * report of what was done here, not a record anything else keeps, so
@@ -545,6 +545,8 @@ namespace Material
             if (m_databasePath.isEmpty()) {
                 meta = QStringLiteral("%1 · %2").arg(meta, recordedRevision.databaseName);
             }
+            meta += recordedRevision.snapshotPath.isEmpty() ? tr(" · encrypted snapshot unavailable")
+                                                            : tr(" · encrypted snapshot available");
 
             Change change;
             change.when = recordedRevision.timestamp;

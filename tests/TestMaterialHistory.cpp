@@ -6,6 +6,7 @@
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "config-keepassx-tests.h"
 #include <QCheckBox>
 #include <QDateEdit>
 #include <QLineEdit>
@@ -20,6 +21,7 @@
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QTemporaryDir>
+#include <future>
 
 using namespace Material;
 
@@ -96,7 +98,9 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
     QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
 
     auto db = QSharedPointer<Database>::create();
-    db->setFilePath(QDir(root.path()).filePath(QStringLiteral("private-name.kdbx")));
+    const QString encryptedPath = QDir(root.path()).filePath(QStringLiteral("private-name.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), encryptedPath));
+    db->setFilePath(encryptedPath);
     auto* entry = new Entry;
     entry->setGroup(db->rootGroup());
     entry->setTitle(QStringLiteral("secret title that must not persist"));
@@ -117,6 +121,23 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
     QCOMPARE(log.exitCode(), 0);
     QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("3"));
 
+    const auto savedRevision = store.revisionsFor(db->filePath()).at(1);
+    QVERIFY(!savedRevision.snapshotPath.isEmpty());
+    QString snapshotError;
+    const QByteArray snapshot = store.snapshot(savedRevision.id, &snapshotError);
+    QVERIFY2(!snapshot.isEmpty(), qPrintable(snapshotError));
+    QFile encryptedSource(encryptedPath);
+    QVERIFY(encryptedSource.open(QIODevice::ReadOnly));
+    QCOMPARE(snapshot, encryptedSource.readAll());
+    QVERIFY(!snapshot.contains("secret password that must not persist"));
+    QVERIFY(store.revisionsFor(db->filePath()).at(0).snapshotPath.isEmpty());
+
+    QProcess gitShow;
+    gitShow.start(gitExecutable, {QStringLiteral("-C"), repository, QStringLiteral("show"), QStringLiteral("HEAD:%1").arg(savedRevision.snapshotPath)});
+    QVERIFY(gitShow.waitForFinished(10000));
+    QCOMPARE(gitShow.exitCode(), 0);
+    QCOMPARE(gitShow.readAllStandardOutput(), snapshot);
+
     QFile state(QDir(repository).filePath(QStringLiteral("revisions.json")));
     QVERIFY(state.open(QIODevice::ReadOnly));
     const QByteArray bytes = state.readAll();
@@ -127,6 +148,14 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
 
     HistoryStore restarted(root.path(), gitExecutable);
     QCOMPARE(restarted.revisionsFor(db->filePath()).size(), 3);
+    QCOMPARE(restarted.snapshot(savedRevision.id), snapshot);
+
+    QFile corrupt(QDir(repository).filePath(savedRevision.snapshotPath));
+    QVERIFY(corrupt.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    corrupt.write("not-kdbx");
+    corrupt.close();
+    QVERIFY(restarted.snapshot(savedRevision.id, &snapshotError).isEmpty());
+    QVERIFY(!snapshotError.isEmpty());
 }
 
 void TestMaterialHistory::gitStoreFailureDoesNotAdvanceFingerprint()
@@ -174,6 +203,35 @@ void TestMaterialHistory::gitStoreMigratesLegacyOnce()
     QFile migrated(QDir(history).filePath(QStringLiteral("repository/revisions.json")));
     QVERIFY(migrated.open(QIODevice::ReadOnly));
     QVERIFY(!migrated.readAll().contains("C:/private/location"));
+}
+
+void TestMaterialHistory::gitStoreSerializesConcurrentWriters()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY(!gitExecutable.isEmpty());
+    const auto write = [storage = root.path(), gitExecutable](const QString& name) {
+        auto db = QSharedPointer<Database>::create();
+        const QString path = QDir(storage).filePath(name + QStringLiteral(".kdbx"));
+        if (!QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path)) return false;
+        db->setFilePath(path);
+        HistoryStore store(storage, gitExecutable);
+        return store.recordSave(db);
+    };
+    auto first = std::async(std::launch::async, write, QStringLiteral("one"));
+    auto second = std::async(std::launch::async, write, QStringLiteral("two"));
+    QVERIFY(first.get());
+    QVERIFY(second.get());
+    HistoryStore readback(root.path(), gitExecutable);
+    QCOMPARE(readback.revisions().size(), 2);
+
+    QProcess log;
+    log.start(gitExecutable,
+              {QStringLiteral("-C"), QDir(root.path()).filePath(QStringLiteral("history/repository")),
+               QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
+    QVERIFY(log.waitForFinished(10000));
+    QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
 }
 
 QTEST_MAIN(TestMaterialHistory)

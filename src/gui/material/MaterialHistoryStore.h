@@ -65,6 +65,8 @@ namespace Material
         int added = 0;
         int removed = 0;
         int edited = 0;
+        QString snapshotPath;
+        QString snapshotSha256;
 
         bool isValid() const
         {
@@ -134,6 +136,8 @@ namespace Material
         HistoryRevision revision(const QString& id) const;
         /** The revision recorded just before @p id for the same file, if any. */
         HistoryRevision predecessor(const QString& id) const;
+        /** Validated encrypted KDBX snapshot bytes, or empty with an error. */
+        QByteArray snapshot(const QString& revisionId, QString* error = nullptr) const;
 
     signals:
         /**
@@ -152,7 +156,9 @@ namespace Material
 
         void load();
         bool ensureRepository();
-        bool commitTransaction(const HistoryRevision& revision, const QByteArray& fingerprint);
+        bool commitTransaction(const HistoryRevision& revision,
+                               const QByteArray& fingerprint,
+                               const QByteArray& encryptedSnapshot = {});
         bool migrateLegacy();
 
         /** Oldest first, which is the order the log is written in. */
