@@ -7,5 +7,9 @@ class TestMaterialHistory : public QObject
 private slots:
     void surfaceStateFiltersAndSelection();
     void routeAndActionInventory();
+    void gitStoreTransactionAndRestart();
+    void gitStoreFailureDoesNotAdvanceFingerprint();
+    void gitStoreMigratesLegacyOnce();
+    void gitStoreSerializesConcurrentWriters();
 };
 #endif

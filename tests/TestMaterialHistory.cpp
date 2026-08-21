@@ -2,6 +2,11 @@
 #include "gui/material/MaterialHistoryScreen.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
+#include "gui/material/MaterialHistoryStore.h"
+#include "core/Database.h"
+#include "core/Entry.h"
+#include "core/Group.h"
+#include "config-keepassx-tests.h"
 #include <QCheckBox>
 #include <QDateEdit>
 #include <QLineEdit>
@@ -9,6 +14,14 @@
 #include <QTest>
 #include <QToolButton>
 #include <QAbstractButton>
+#include <QDir>
+#include <QFile>
+#include <QProcess>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QStandardPaths>
+#include <QTemporaryDir>
+#include <future>
 
 using namespace Material;
 
@@ -75,6 +88,150 @@ void TestMaterialHistory::routeAndActionInventory()
     screen.searchBar()->setText(QStringLiteral("["));
     screen.searchBar()->lineEdit()->setAccessibleDescription(QStringLiteral("Invalid regular expression"));
     QVERIFY(screen.searchBar()->lineEdit()->accessibleDescription().contains(QStringLiteral("Invalid")));
+}
+
+void TestMaterialHistory::gitStoreTransactionAndRestart()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
+
+    auto db = QSharedPointer<Database>::create();
+    const QString encryptedPath = QDir(root.path()).filePath(QStringLiteral("private-name.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), encryptedPath));
+    db->setFilePath(encryptedPath);
+    auto* entry = new Entry;
+    entry->setGroup(db->rootGroup());
+    entry->setTitle(QStringLiteral("secret title that must not persist"));
+    entry->setPassword(QStringLiteral("secret password that must not persist"));
+
+    HistoryStore store(root.path(), gitExecutable);
+    QVERIFY(store.recordSave(db));
+    entry->setTitle(QStringLiteral("second private title"));
+    QVERIFY(store.recordSave(db));
+    QVERIFY(store.recordEvent(db, QStringLiteral("Restored an entry revision"), RevisionKind::Entry));
+    QCOMPARE(store.revisionsFor(db->filePath()).size(), 3);
+    QCOMPARE(store.revisions(0, 1).size(), 1);
+
+    const QString repository = QDir(root.path()).filePath(QStringLiteral("history/repository"));
+    QProcess log;
+    log.start(gitExecutable, {QStringLiteral("-C"), repository, QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
+    QVERIFY(log.waitForFinished(10000));
+    QCOMPARE(log.exitCode(), 0);
+    QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("3"));
+
+    const auto savedRevision = store.revisionsFor(db->filePath()).at(1);
+    QVERIFY(!savedRevision.snapshotPath.isEmpty());
+    QString snapshotError;
+    const QByteArray snapshot = store.snapshot(savedRevision.id, &snapshotError);
+    QVERIFY2(!snapshot.isEmpty(), qPrintable(snapshotError));
+    QFile encryptedSource(encryptedPath);
+    QVERIFY(encryptedSource.open(QIODevice::ReadOnly));
+    QCOMPARE(snapshot, encryptedSource.readAll());
+    QVERIFY(!snapshot.contains("secret password that must not persist"));
+    QVERIFY(store.revisionsFor(db->filePath()).at(0).snapshotPath.isEmpty());
+
+    QProcess gitShow;
+    gitShow.start(gitExecutable, {QStringLiteral("-C"), repository, QStringLiteral("show"), QStringLiteral("HEAD:%1").arg(savedRevision.snapshotPath)});
+    QVERIFY(gitShow.waitForFinished(10000));
+    QCOMPARE(gitShow.exitCode(), 0);
+    QCOMPARE(gitShow.readAllStandardOutput(), snapshot);
+
+    QFile state(QDir(repository).filePath(QStringLiteral("revisions.json")));
+    QVERIFY(state.open(QIODevice::ReadOnly));
+    const QByteArray bytes = state.readAll();
+    QVERIFY(!bytes.contains("private-name.kdbx"));
+    QVERIFY(!bytes.contains("secret title"));
+    QVERIFY(!bytes.contains("private title"));
+    QVERIFY(!bytes.contains("secret password"));
+
+    HistoryStore restarted(root.path(), gitExecutable);
+    QCOMPARE(restarted.revisionsFor(db->filePath()).size(), 3);
+    QCOMPARE(restarted.snapshot(savedRevision.id), snapshot);
+
+    QFile corrupt(QDir(repository).filePath(savedRevision.snapshotPath));
+    QVERIFY(corrupt.open(QIODevice::WriteOnly | QIODevice::Truncate));
+    corrupt.write("not-kdbx");
+    corrupt.close();
+    QVERIFY(restarted.snapshot(savedRevision.id, &snapshotError).isEmpty());
+    QVERIFY(!snapshotError.isEmpty());
+}
+
+void TestMaterialHistory::gitStoreFailureDoesNotAdvanceFingerprint()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    auto db = QSharedPointer<Database>::create();
+    db->setFilePath(QDir(root.path()).filePath(QStringLiteral("failure.kdbx")));
+    HistoryStore store(root.path(), QDir(root.path()).filePath(QStringLiteral("missing-git.exe")));
+    QSignalSpy failureSpy(&store, &HistoryStore::writeFailed);
+    QVERIFY(!store.recordSave(db));
+    QCOMPARE(failureSpy.count(), 1);
+    const QString fingerprintDirectory = QDir(root.path()).filePath(QStringLiteral("history/repository/fingerprints"));
+    QVERIFY(!QFileInfo::exists(fingerprintDirectory) || QDir(fingerprintDirectory).entryList(QDir::Files).isEmpty());
+    QVERIFY(store.revisions().isEmpty());
+}
+
+void TestMaterialHistory::gitStoreMigratesLegacyOnce()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY(!gitExecutable.isEmpty());
+    const QString history = QDir(root.path()).filePath(QStringLiteral("history"));
+    QVERIFY(QDir().mkpath(history));
+    QFile legacy(QDir(history).filePath(QStringLiteral("revisions.jsonl")));
+    QVERIFY(legacy.open(QIODevice::WriteOnly | QIODevice::Text));
+    QJsonObject record{{QStringLiteral("id"), QStringLiteral("legacy-1")},
+                       {QStringLiteral("time"), QStringLiteral("2026-08-21T12:00:00.000Z")},
+                       {QStringLiteral("path"), QStringLiteral("C:/private/location/vault.kdbx")},
+                       {QStringLiteral("label"), QStringLiteral("Legacy redacted save")},
+                       {QStringLiteral("kind"), QStringLiteral("settings")},
+                       {QStringLiteral("entries"), 4},
+                       {QStringLiteral("groups"), 2}};
+    legacy.write(QJsonDocument(record).toJson(QJsonDocument::Compact));
+    legacy.write("\n");
+    legacy.close();
+
+    HistoryStore first(root.path(), gitExecutable);
+    QCOMPARE(first.revisions().size(), 1);
+    QVERIFY(QFileInfo::exists(legacy.fileName()));
+    HistoryStore second(root.path(), gitExecutable);
+    QCOMPARE(second.revisions().size(), 1);
+
+    QFile migrated(QDir(history).filePath(QStringLiteral("repository/revisions.json")));
+    QVERIFY(migrated.open(QIODevice::ReadOnly));
+    QVERIFY(!migrated.readAll().contains("C:/private/location"));
+}
+
+void TestMaterialHistory::gitStoreSerializesConcurrentWriters()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY(!gitExecutable.isEmpty());
+    const auto write = [storage = root.path(), gitExecutable](const QString& name) {
+        auto db = QSharedPointer<Database>::create();
+        const QString path = QDir(storage).filePath(name + QStringLiteral(".kdbx"));
+        if (!QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path)) return false;
+        db->setFilePath(path);
+        HistoryStore store(storage, gitExecutable);
+        return store.recordSave(db);
+    };
+    auto first = std::async(std::launch::async, write, QStringLiteral("one"));
+    auto second = std::async(std::launch::async, write, QStringLiteral("two"));
+    QVERIFY(first.get());
+    QVERIFY(second.get());
+    HistoryStore readback(root.path(), gitExecutable);
+    QCOMPARE(readback.revisions().size(), 2);
+
+    QProcess log;
+    log.start(gitExecutable,
+              {QStringLiteral("-C"), QDir(root.path()).filePath(QStringLiteral("history/repository")),
+               QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
+    QVERIFY(log.waitForFinished(10000));
+    QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
 }
 
 QTEST_MAIN(TestMaterialHistory)

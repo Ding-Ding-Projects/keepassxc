@@ -57,7 +57,7 @@ namespace Material
          * years carries hundreds of revisions and each row is a widget, so the
          * rest are counted and reported rather than quietly dropped.
          */
-        constexpr int MaximumRows = 200;
+        constexpr int MaximumRows = 500;
         /**
          * How many of this window's own restores are remembered. They are a
          * report of what was done here, not a record anything else keeps, so
@@ -397,6 +397,9 @@ namespace Material
             Notify::success(tr("History exported"), tr("Written to %1.").arg(QDir::toNativeSeparators(fileName)));
         });
         connect(HistoryStore::instance(), &HistoryStore::revisionsChanged, this, &HistoryFeed::rebuild);
+        connect(HistoryStore::instance(), &HistoryStore::writeFailed, this, [](const QString& message) {
+            Notify::error(tr("Local history unavailable"), message);
+        });
     }
 
     HistoryFeed::~HistoryFeed() = default;
@@ -542,6 +545,8 @@ namespace Material
             if (m_databasePath.isEmpty()) {
                 meta = QStringLiteral("%1 · %2").arg(meta, recordedRevision.databaseName);
             }
+            meta += recordedRevision.snapshotPath.isEmpty() ? tr(" · encrypted snapshot unavailable")
+                                                            : tr(" · encrypted snapshot available");
 
             Change change;
             change.when = recordedRevision.timestamp;
@@ -935,6 +940,10 @@ namespace Material
         while (m_restores.size() > MaximumSessionRestores) {
             m_restores.removeFirst();
         }
+
+        // The durable ledger records only the event class and counts. Entry
+        // titles and restored field values stay inside the encrypted database.
+        HistoryStore::instance()->recordEvent(m_database.lock(), tr("Restored an entry revision"), RevisionKind::Entry);
 
         Notify::success(tr("Revision restored"),
                         tr("\"%1\" is back as it was on %2. Changed back: %3. The state it was in has been kept as a "

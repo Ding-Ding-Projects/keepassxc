@@ -56,6 +56,7 @@ namespace Material
         QString id;
         QDateTime timestamp;
         QString databaseName;
+        /** Opaque SHA-256 identity; never a filesystem path. */
         QString databasePath;
         QString label;
         RevisionKind kind = RevisionKind::Settings;
@@ -64,6 +65,8 @@ namespace Material
         int added = 0;
         int removed = 0;
         int edited = 0;
+        QString snapshotPath;
+        QString snapshotSha256;
 
         bool isValid() const
         {
@@ -74,20 +77,20 @@ namespace Material
     /**
      * The application's own record of the databases it saves.
      *
-     * An append-only log of one JSON object per line, kept under
-     * QStandardPaths::AppDataLocation - never inside the folder the user keeps
-     * their database in, and never touching a repository of theirs. Nothing is
-     * ever rewritten or deleted: correcting the record means appending to it.
+     * An isolated local Git repository under QStandardPaths::AppDataLocation,
+     * never inside a user database folder. Each event is one commit and no
+     * remote is configured. Restore records append like every other event;
+     * existing commits are never rewritten.
      *
-     * What is recorded is deliberately thin: when a save happened, which file
-     * it was, how many entries and groups it then held, and how many entries
+     * What is recorded is deliberately thin: when a save happened, an opaque
+     * database digest, how many entries and groups it then held, and how many entries
      * were added, removed or edited since the previous save. No titles, no
      * URLs, no passwords, no attachments. The per-entry fingerprints needed to
      * work out those three numbers live in a side cache of truncated hashes
-     * that is rewritten on every save and is not part of the log.
+     * that are committed atomically with the revision state.
      *
      * That thinness is the point rather than a gap to be closed later. This
-     * file sits in the clear on disk while the database it describes is
+     * repository sits in the clear on disk while the database it describes is
      * encrypted, so nothing that is worth encrypting may be written into it -
      * not an entry's contents, not a password, not a byte of an attachment.
      *
@@ -108,7 +111,10 @@ namespace Material
     public:
         static HistoryStore* instance();
 
-        /** Absolute path of the append-only log file. */
+        /** Test/diagnostic constructor. Production uses instance(). */
+        explicit HistoryStore(const QString& storageRoot = {}, const QString& gitExecutable = {});
+
+        /** Absolute path of the read-only legacy JSONL source, if present. */
         QString logPath() const;
 
         /**
@@ -117,15 +123,21 @@ namespace Material
          * no root group or the log could not be written.
          */
         bool recordSave(const QSharedPointer<Database>& db);
+        /** Record an already-completed redacted event such as restore/import/bulk. */
+        bool recordEvent(const QSharedPointer<Database>& db, const QString& redactedLabel, RevisionKind kind);
 
         /** Every recorded revision, newest first. */
         QVector<HistoryRevision> revisions() const;
+        /** Bounded newest-first page. */
+        QVector<HistoryRevision> revisions(int offset, int limit) const;
         /** The revisions of one database file, newest first. */
         QVector<HistoryRevision> revisionsFor(const QString& databasePath) const;
 
         HistoryRevision revision(const QString& id) const;
         /** The revision recorded just before @p id for the same file, if any. */
         HistoryRevision predecessor(const QString& id) const;
+        /** Validated encrypted KDBX snapshot bytes, or empty with an error. */
+        QByteArray snapshot(const QString& revisionId, QString* error = nullptr) const;
 
     signals:
         /**
@@ -134,19 +146,26 @@ namespace Material
          * every successful recordSave().
          */
         void revisionsChanged();
+        /** Persistence failed; the database operation itself must continue. */
+        void writeFailed(const QString& recoveryMessage);
 
     private:
-        HistoryStore();
-
         QString historyDirectory() const;
+        QString repositoryPath() const;
         QString fingerprintPath(const QString& databasePath) const;
 
         void load();
-        bool append(const HistoryRevision& revision);
+        bool ensureRepository();
+        bool commitTransaction(const HistoryRevision& revision,
+                               const QByteArray& fingerprint,
+                               const QByteArray& encryptedSnapshot = {});
+        bool migrateLegacy();
 
         /** Oldest first, which is the order the log is written in. */
         QVector<HistoryRevision> m_revisions;
         bool m_loaded = false;
+        QString m_storageRoot;
+        QString m_gitExecutable;
     };
 
 } // namespace Material

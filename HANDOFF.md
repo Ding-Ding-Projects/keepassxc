@@ -13,6 +13,25 @@ facts, and compact filter sizing. Destructive deletion is visibly unavailable be
 store is append-only and no super-confirmed delete route exists. The inventory route is implemented
 in source; captures, audits, comparisons, and diffs remain pending.
 
+The History save ledger now lives in an isolated Git repository beneath the stable application-data
+directory. Each successful save or Material restore appends a commit containing only redacted
+counts, labels, an opaque SHA-256 database identity, and truncated entry-state hashes; database
+paths, entry titles, passwords, TOTP data, attachments, and database contents are not stored. The
+revision list and fingerprint are replaced through unique `QSaveFile` temporary files with bounded
+retry and committed together, so a failed Git operation rolls the work tree back and cannot advance
+the in-memory fingerprint baseline. A repository-scoped `QLockFile` serializes migration and every
+write/index/commit transaction with a bounded three-second wait.
+After a successful database save, the store accepts only bytes carrying the real KDBX signatures,
+then commits those already-encrypted bytes under an opaque snapshot path with their SHA-256. Snapshot
+retrieval revalidates repository containment, database identity, signature, and hash; it is read-only
+and never overwrites a live database. Restore events are metadata-only and say that their encrypted
+snapshot is unavailable until the next database save.
+Git subprocesses have a ten-second deadline, use repository-local deterministic identity, ignore
+global/system Git configuration, and never configure a remote. Existing JSONL records are imported
+once only when the new repository is empty; a failed import leaves the legacy file untouched.
+History reads expose bounded pages (maximum 500 records per call). General discard/import/bulk event
+producers still need to call the redacted `recordEvent` seam as those operations migrate.
+
 The first Reports parity batch retains the GUI-thread `HealthChecker` and `DatabaseStats` walk while
 adding explicit empty/loading/populated/progress/warning/error states, real weak/reused/expired/
 excluded categories, bounded regex filtering, collapsible sections, selectable findings, and scoped
