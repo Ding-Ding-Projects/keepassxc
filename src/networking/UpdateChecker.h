@@ -21,6 +21,8 @@
 #include <QUrl>
 
 class QNetworkReply;
+class QSaveFile;
+class QCryptographicHash;
 
 class UpdateChecker : public QObject
 {
@@ -45,6 +47,8 @@ public:
     ~UpdateChecker() override;
 
     void checkForUpdates(bool manuallyRequested);
+    void downloadAvailableUpdate();
+    void cancelDownload();
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;
@@ -52,12 +56,15 @@ public:
     Candidate candidate() const;
     static bool transitionAllowed(State from, State to);
     static bool parseManifest(const QByteArray& bytes, Candidate& candidate, Failure& failure);
+    static bool verifyPackage(const QString& path, const Candidate& candidate, Failure& failure);
 
     static const QString ErrorVersion;
 
 signals:
     void updateCheckFinished(bool hasNewVersion, QString version, bool isManuallyRequested);
     void stateChanged(UpdateChecker::State state, UpdateChecker::Failure failure);
+    void downloadProgress(quint64 received, quint64 total);
+    void updatePackageReady(QString path);
 
 private slots:
     void fetchFinished();
@@ -65,6 +72,11 @@ private slots:
 
 private:
     QNetworkReply* m_reply;
+    QNetworkReply* m_downloadReply = nullptr;
+    QSaveFile* m_downloadFile = nullptr;
+    QCryptographicHash* m_downloadHash = nullptr;
+    quint64 m_downloadBytes = 0;
+    quint64 m_generation = 0;
     QByteArray m_bytesReceived;
     bool m_isManuallyRequested;
     State m_state = State::Idle;
@@ -72,6 +84,8 @@ private:
     Candidate m_candidate;
 
     void setState(State state, Failure failure = Failure::None);
+    void finishDownload(quint64 generation);
+    void failDownload(Failure failure);
 
     static UpdateChecker* m_instance;
 

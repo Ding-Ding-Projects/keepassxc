@@ -27,6 +27,16 @@
 #include <QJsonObject>
 #include <QNetworkReply>
 #include <QRegularExpression>
+#include <QCryptographicHash>
+#include <QDir>
+#include <QFile>
+#include <QSaveFile>
+#include <QStandardPaths>
+#include <QStorageInfo>
+#include <QSet>
+#include <QXmlStreamReader>
+
+#include <../minizip/unzip.h>
 
 namespace
 {
@@ -46,6 +56,7 @@ UpdateChecker::UpdateChecker(QObject* parent)
 
 UpdateChecker::~UpdateChecker()
 {
+    cancelDownload();
 }
 
 void UpdateChecker::checkForUpdates(bool manuallyRequested)
@@ -123,6 +134,131 @@ void UpdateChecker::fetchFinished()
     emit updateCheckFinished(hasNewVersion, version, m_isManuallyRequested);
 }
 
+void UpdateChecker::downloadAvailableUpdate()
+{
+    if (m_state != State::Available || m_downloadReply) {
+        return;
+    }
+    const QUrl packageUrl(m_candidate.packageUrl);
+    if (!packageUrl.isValid() || packageUrl.scheme() != QStringLiteral("https")) {
+        setState(State::Failed, Failure::MalformedManifest);
+        return;
+    }
+    const QString updateDirectory = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                                    + QStringLiteral("/updates");
+    if (!QDir().mkpath(updateDirectory)) {
+        setState(State::Failed, Failure::InsufficientStorage);
+        return;
+    }
+    QStorageInfo storage(updateDirectory);
+    if (!storage.isValid() || storage.bytesAvailable() < qint64(m_candidate.bytes + 64 * 1024 * 1024ULL)) {
+        setState(State::Failed, Failure::InsufficientStorage);
+        return;
+    }
+
+    const QString destination = QDir(updateDirectory).filePath(m_candidate.packageFile);
+    m_downloadFile = new QSaveFile(destination, this);
+    if (!m_downloadFile->open(QIODevice::WriteOnly)) {
+        failDownload(Failure::InsufficientStorage);
+        return;
+    }
+    m_downloadHash = new QCryptographicHash(QCryptographicHash::Sha256);
+    m_downloadBytes = 0;
+    const quint64 generation = ++m_generation;
+    QNetworkRequest request(packageUrl);
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    request.setTransferTimeout(30000);
+    m_downloadReply = getNetMgr()->get(request);
+    setState(State::Downloading);
+    connect(m_downloadReply, &QIODevice::readyRead, this, [this, generation] {
+        if (generation != m_generation || !m_downloadReply || !m_downloadFile) {
+            return;
+        }
+        const QByteArray chunk = m_downloadReply->readAll();
+        m_downloadBytes += quint64(chunk.size());
+        if (m_downloadBytes > m_candidate.bytes || m_downloadFile->write(chunk) != chunk.size()) {
+            m_downloadReply->abort();
+            return;
+        }
+        m_downloadHash->addData(chunk);
+        emit downloadProgress(m_downloadBytes, m_candidate.bytes);
+    });
+    connect(m_downloadReply, &QNetworkReply::finished, this, [this, generation] { finishDownload(generation); });
+}
+
+void UpdateChecker::cancelDownload()
+{
+    if (!m_downloadReply && !m_downloadFile) {
+        return;
+    }
+    ++m_generation;
+    if (m_downloadReply) {
+        m_downloadReply->abort();
+        m_downloadReply->deleteLater();
+        m_downloadReply = nullptr;
+    }
+    if (m_downloadFile) {
+        m_downloadFile->cancelWriting();
+        delete m_downloadFile;
+        m_downloadFile = nullptr;
+    }
+    delete m_downloadHash;
+    m_downloadHash = nullptr;
+    m_downloadBytes = 0;
+    if (m_state == State::Downloading) {
+        setState(State::Failed, Failure::Cancelled);
+    }
+}
+
+void UpdateChecker::finishDownload(quint64 generation)
+{
+    if (generation != m_generation || !m_downloadReply || !m_downloadFile || !m_downloadHash) {
+        return;
+    }
+    const bool networkOk = m_downloadReply->error() == QNetworkReply::NoError;
+    m_downloadReply->deleteLater();
+    m_downloadReply = nullptr;
+    if (!networkOk || m_downloadBytes != m_candidate.bytes) {
+        failDownload(networkOk ? Failure::ByteCountMismatch : Failure::Offline);
+        return;
+    }
+    const QString sha256 = QString::fromLatin1(m_downloadHash->result().toHex());
+    delete m_downloadHash;
+    m_downloadHash = nullptr;
+    if (sha256 != m_candidate.sha256) {
+        failDownload(Failure::Sha256Mismatch);
+        return;
+    }
+    const QString destination = m_downloadFile->fileName();
+    if (!m_downloadFile->commit()) {
+        failDownload(Failure::InsufficientStorage);
+        return;
+    }
+    delete m_downloadFile;
+    m_downloadFile = nullptr;
+    setState(State::Verifying);
+    Failure failure = Failure::None;
+    if (!verifyPackage(destination, m_candidate, failure)) {
+        QFile::remove(destination);
+        setState(State::Failed, failure);
+        return;
+    }
+    emit updatePackageReady(destination);
+}
+
+void UpdateChecker::failDownload(Failure failure)
+{
+    if (m_downloadFile) {
+        m_downloadFile->cancelWriting();
+        delete m_downloadFile;
+        m_downloadFile = nullptr;
+    }
+    delete m_downloadHash;
+    m_downloadHash = nullptr;
+    m_downloadBytes = 0;
+    setState(State::Failed, failure);
+}
+
 UpdateChecker::State UpdateChecker::state() const { return m_state; }
 UpdateChecker::Failure UpdateChecker::failure() const { return m_failure; }
 UpdateChecker::Candidate UpdateChecker::candidate() const { return m_candidate; }
@@ -176,6 +312,98 @@ bool UpdateChecker::parseManifest(const QByteArray& bytes, Candidate& candidate,
     const QUrl notes(candidate.notesUrl), package(candidate.packageUrl);
     if (!version.match(candidate.version).hasMatch()) { failure = Failure::InvalidVersion; return false; }
     if (!notes.isValid() || notes.scheme() != QStringLiteral("https") || !package.isValid() || package.scheme() != QStringLiteral("https") || candidate.packageFile.isEmpty() || candidate.packageFile.contains(QLatin1Char('/')) || candidate.packageFile.contains(QLatin1Char('\\')) || candidate.packageFile.contains(QStringLiteral("..")) || candidate.bytes == 0 || candidate.bytes > 1610612736ULL || !sha256.match(candidate.sha256).hasMatch() || !sha1.match(candidate.releasesSha1).hasMatch()) { failure = Failure::MalformedManifest; return false; }
+    failure = Failure::None;
+    return true;
+}
+
+bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidate, Failure& failure)
+{
+    QFile file(path);
+    if (!file.open(QIODevice::ReadOnly) || quint64(file.size()) != candidate.bytes) {
+        failure = Failure::ByteCountMismatch;
+        return false;
+    }
+    QCryptographicHash sha1(QCryptographicHash::Sha1);
+    while (!file.atEnd()) {
+        const QByteArray chunk = file.read(1024 * 1024);
+        if (chunk.isEmpty() && file.error() != QFile::NoError) {
+            failure = Failure::UnsafePackage;
+            return false;
+        }
+        sha1.addData(chunk);
+    }
+    if (QString::fromLatin1(sha1.result().toHex()) != candidate.releasesSha1) {
+        failure = Failure::ReleasesMismatch;
+        return false;
+    }
+
+    const QByteArray nativePath = QFile::encodeName(QFileInfo(path).absoluteFilePath());
+    unzFile archive = unzOpen64(nativePath.constData());
+    if (!archive) {
+        failure = Failure::UnsafePackage;
+        return false;
+    }
+    QSet<QString> normalizedEntries;
+    bool hasApplication = false;
+    QByteArray nuspec;
+    int result = unzGoToFirstFile(archive);
+    while (result == UNZ_OK) {
+        unz_file_info64 info{};
+        char nameBuffer[4096]{};
+        if (unzGetCurrentFileInfo64(archive, &info, nameBuffer, sizeof(nameBuffer), nullptr, 0, nullptr, 0) != UNZ_OK) {
+            unzClose(archive);
+            failure = Failure::UnsafePackage;
+            return false;
+        }
+        const QString entry = QString::fromUtf8(nameBuffer).replace(QLatin1Char('\\'), QLatin1Char('/'));
+        const QString normalized = entry.toLower();
+        if (entry.startsWith(QLatin1Char('/')) || entry.contains(QStringLiteral("../"))
+            || entry.startsWith(QStringLiteral("../")) || entry.contains(QLatin1Char(':'))
+            || normalizedEntries.contains(normalized)) {
+            unzClose(archive);
+            failure = Failure::UnsafePackage;
+            return false;
+        }
+        normalizedEntries.insert(normalized);
+        hasApplication = hasApplication || normalized == QStringLiteral("lib/net45/keepassxc.exe");
+        if (normalized.endsWith(QStringLiteral(".nuspec"))) {
+            if (info.uncompressed_size > 64 * 1024 || unzOpenCurrentFile(archive) != UNZ_OK) {
+                unzClose(archive);
+                failure = Failure::UnsafePackage;
+                return false;
+            }
+            nuspec.resize(qsizetype(info.uncompressed_size));
+            const int read = unzReadCurrentFile(archive, nuspec.data(), unsigned(nuspec.size()));
+            unzCloseCurrentFile(archive);
+            if (read != nuspec.size()) {
+                unzClose(archive);
+                failure = Failure::UnsafePackage;
+                return false;
+            }
+        }
+        result = unzGoToNextFile(archive);
+    }
+    unzClose(archive);
+    if (result != UNZ_END_OF_LIST_OF_FILE || !hasApplication || nuspec.isEmpty()) {
+        failure = Failure::UnsafePackage;
+        return false;
+    }
+
+    QString packageId;
+    QString packageVersion;
+    QXmlStreamReader xml(nuspec);
+    while (!xml.atEnd()) {
+        xml.readNext();
+        if (xml.isStartElement() && xml.name() == QStringLiteral("id")) {
+            packageId = xml.readElementText();
+        } else if (xml.isStartElement() && xml.name() == QStringLiteral("version")) {
+            packageVersion = xml.readElementText();
+        }
+    }
+    if (xml.hasError() || packageId != QStringLiteral("KeePassXC.Material") || packageVersion != candidate.version) {
+        failure = Failure::PackageIdentityMismatch;
+        return false;
+    }
     failure = Failure::None;
     return true;
 }

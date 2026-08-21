@@ -29,6 +29,7 @@ private slots:
     void testCompareVersion();
     void testStateTransitions();
     void testManifestContract();
+    void testPackageContract();
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H

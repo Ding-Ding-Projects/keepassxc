@@ -20,6 +20,35 @@
 #include "networking/UpdateChecker.h"
 
 #include <QTest>
+#include <QCryptographicHash>
+#include <QFile>
+#include <QTemporaryDir>
+
+#include <../minizip/zip.h>
+
+namespace
+{
+    bool addZipEntry(zipFile archive, const QByteArray& name, const QByteArray& data)
+    {
+        if (zipOpenNewFileInZip64(archive, name.constData(), nullptr, nullptr, 0, nullptr, 0, nullptr,
+                                  Z_DEFLATED, Z_BEST_COMPRESSION, 1) != ZIP_OK) {
+            return false;
+        }
+        const bool written = zipWriteInFileInZip(archive, data.constData(), unsigned(data.size())) == ZIP_OK;
+        return zipCloseFileInZip(archive) == ZIP_OK && written;
+    }
+
+    bool createPackage(const QString& path, bool traversal = false)
+    {
+        const QByteArray native = QFile::encodeName(path);
+        zipFile archive = zipOpen64(native.constData(), APPEND_STATUS_CREATE);
+        if (!archive) return false;
+        const QByteArray nuspec = R"(<?xml version="1.0"?><package><metadata><id>KeePassXC.Material</id><version>2.8.1</version></metadata></package>)";
+        const bool ok = addZipEntry(archive, "KeePassXC.Material.nuspec", nuspec)
+                        && addZipEntry(archive, traversal ? "../escape.exe" : "lib/net45/KeePassXC.exe", "MZtest");
+        return zipClose(archive, nullptr) == ZIP_OK && ok;
+    }
+}
 
 QTEST_GUILESS_MAIN(TestUpdateCheck)
 
@@ -111,4 +140,35 @@ void TestUpdateCheck::testManifestContract()
     QByteArray oversized(64 * 1024 + 1, 'x');
     QVERIFY(!UpdateChecker::parseManifest(oversized, candidate, failure));
     QCOMPARE(failure, UpdateChecker::Failure::OversizedManifest);
+}
+
+void TestUpdateCheck::testPackageContract()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString validPath = directory.filePath(QStringLiteral("valid.nupkg"));
+    QVERIFY(createPackage(validPath));
+    QFile valid(validPath);
+    QVERIFY(valid.open(QIODevice::ReadOnly));
+    const QByteArray bytes = valid.readAll();
+    UpdateChecker::Candidate candidate;
+    candidate.version = QStringLiteral("2.8.1");
+    candidate.bytes = quint64(bytes.size());
+    candidate.releasesSha1 = QString::fromLatin1(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1).toHex());
+    UpdateChecker::Failure failure = UpdateChecker::Failure::None;
+    QVERIFY(UpdateChecker::verifyPackage(validPath, candidate, failure));
+
+    candidate.releasesSha1.fill(QLatin1Char('0'));
+    QVERIFY(!UpdateChecker::verifyPackage(validPath, candidate, failure));
+    QCOMPARE(failure, UpdateChecker::Failure::ReleasesMismatch);
+
+    const QString unsafePath = directory.filePath(QStringLiteral("unsafe.nupkg"));
+    QVERIFY(createPackage(unsafePath, true));
+    QFile unsafe(unsafePath);
+    QVERIFY(unsafe.open(QIODevice::ReadOnly));
+    const QByteArray unsafeBytes = unsafe.readAll();
+    candidate.bytes = quint64(unsafeBytes.size());
+    candidate.releasesSha1 = QString::fromLatin1(QCryptographicHash::hash(unsafeBytes, QCryptographicHash::Sha1).toHex());
+    QVERIFY(!UpdateChecker::verifyPackage(unsafePath, candidate, failure));
+    QCOMPARE(failure, UpdateChecker::Failure::UnsafePackage);
 }
