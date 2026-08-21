@@ -17,6 +17,7 @@
 - Release: Pass the verified package version and matching tag explicitly into the publication step.
 - Build: Provision and verify the pinned Qt 6.8.3 MSVC x64 toolchain before the Squirrel package build.
 - Packaging: Build only production targets with tests disabled when creating the Squirrel installer.
+- Release: Let each workflow run reach its own package or publication verdict instead of replacing pending runs by ref.
 - Interface: Apply all five Material window classes with exact rail, group-pane, and detail widths; compact navigation now has a searchable More menu, and hidden vault panes retain keyboard-accessible group and detail routes.
 - Interface: Bind independent full regex builders to Compact More and the narrow vault group scope, including per-field flags, validation, and focus restoration.
 
