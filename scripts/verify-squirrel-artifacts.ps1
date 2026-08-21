@@ -12,6 +12,8 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+$securityModule = Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1'
+if (Test-Path -LiteralPath $securityModule) { Import-Module $securityModule -ErrorAction Stop }
 $dir = [IO.Path]::GetFullPath($ArtifactDirectory)
 $setup = Join-Path $dir 'Setup.exe'
 $releases = Join-Path $dir 'RELEASES'
