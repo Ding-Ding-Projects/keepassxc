@@ -10,6 +10,7 @@ class TestMaterialTabs : public QObject
 private slots:
     void persistenceIdentity();
     void atomicReconciliation();
+    void searchableOverflow();
 };
 
 #endif

@@ -140,6 +140,7 @@ set(gui_SOURCES
         gui/material/MaterialSwitch.cpp
         gui/material/MaterialTabStrip.cpp
         gui/material/MaterialTabDescriptor.cpp
+        gui/material/MaterialTabOverflow.cpp
         gui/material/MaterialTheme.cpp
         gui/material/MaterialTopAppBar.cpp
         gui/material/MaterialVaultScreen.cpp

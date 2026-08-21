@@ -21,6 +21,7 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
+#include "MaterialTabOverflow.h"
 
 #include <QAction>
 #include <QContextMenuEvent>
@@ -29,6 +30,7 @@
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
+#include <QSet>
 
 namespace Material
 {
@@ -108,7 +110,7 @@ namespace Material
         m_searchButton->setSymbolSize(19);
         m_searchButton->setToolTip(tr("Search open databases"));
         m_searchButton->setAccessibleName(m_searchButton->toolTip());
-        connect(m_searchButton, &QAbstractButton::clicked, this, &TabStrip::searchRequested);
+        connect(m_searchButton, &QAbstractButton::clicked, this, &TabStrip::openOverflow);
 
         m_addButton = new IconButton(QStringLiteral("add"), this);
         m_addButton->setDiameter(ControlSize);
@@ -400,31 +402,20 @@ namespace Material
                + OverflowGap + badgeWidthFor(hidden);
     }
 
-    void TabStrip::showOverflowMenu()
+    void TabStrip::openOverflow()
     {
-        QMenu menu(this);
-        menu.setFont(theme()->font(TypeRole::BodyMedium));
-        for (int i = 0; i < m_tabs.size(); ++i) {
-            const Tab& tab = m_tabs.at(i);
-            if (tab.visible) {
-                continue;
-            }
-            QAction* action = menu.addAction(Icons::symbol(tab.symbol), tab.label);
-            action->setData(tab.id);
+        if (!m_overflow) {
+            m_overflow = new TabOverflow(window());
+            connect(m_overflow, &TabOverflow::tabActivated, this, [this](const QString& id) {
+                setCurrentTab(id);
+                emit tabSelected(id);
+            });
+            connect(m_overflow, &TabOverflow::tabPinRequested, this, &TabStrip::tabPinRequested);
         }
-        if (menu.isEmpty()) {
-            return;
-        }
-
-        const QPoint origin(m_overflowRect.x(), m_overflowRect.bottom() + 2);
-        const QAction* chosen = menu.exec(mapToGlobal(origin));
-        if (!chosen) {
-            return;
-        }
-
-        const QString id = chosen->data().toString();
-        setCurrentTab(id);
-        emit tabSelected(id);
+        QSet<QString> hidden;
+        for (const auto& tab : m_tabs) if (!tab.visible) hidden.insert(tab.id);
+        m_overflow->setTabs(tabs(), currentTab(), hidden);
+        m_overflow->openOverlay();
     }
 
     void TabStrip::paintEvent(QPaintEvent* event)
@@ -558,7 +549,7 @@ namespace Material
         const QPoint pos = event->position().toPoint();
         if (!m_overflowRect.isEmpty() && m_overflowRect.contains(pos)) {
             event->accept();
-            showOverflowMenu();
+            openOverflow();
             return;
         }
 

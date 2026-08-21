@@ -958,7 +958,6 @@ MainWindow::MainWindow()
         }
     });
     connect(tabStrip, &Material::TabStrip::newTabRequested, m_ui->actionDatabaseOpen, &QAction::trigger);
-    connect(tabStrip, &Material::TabStrip::searchRequested, this, &MainWindow::focusSearchWidget);
 
     auto* appBar = materialShell->appBar();
     connect(appBar, &Material::TopAppBar::saveRequested, m_ui->actionDatabaseSave, &QAction::trigger);

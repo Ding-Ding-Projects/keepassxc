@@ -20,6 +20,7 @@
 
 #include <QList>
 #include <QRect>
+#include <QPointer>
 #include <QString>
 #include <QWidget>
 
@@ -30,6 +31,7 @@ class QContextMenuEvent;
 namespace Material
 {
     class IconButton;
+    class TabOverflow;
 
     /**
      * The 48px database tab strip below the app bar.
@@ -100,7 +102,7 @@ namespace Material
         int indexOf(const QString& id) const;
         int indexAt(const QPoint& pos) const;
         void relayout();
-        void showOverflowMenu();
+        void openOverflow();
         /** Width of the overflow chip when it stands for @p hidden tabs. */
         int overflowWidth(int hidden) const;
 
@@ -111,6 +113,7 @@ namespace Material
         QRect m_overflowRect;
         IconButton* m_searchButton = nullptr;
         IconButton* m_addButton = nullptr;
+        QPointer<TabOverflow> m_overflow;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
         int m_pressedIndex = -1;
