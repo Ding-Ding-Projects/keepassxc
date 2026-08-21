@@ -23,4 +23,5 @@
 - [x] Handle Squirrel install, updated, uninstall, obsolete, and first-run process arguments before ordinary UI startup.
 - [ ] Extend lifecycle handling beyond shortcuts to file associations and browser registration refresh.
 - [ ] Replace the existing update checker with staged Squirrel states and user-controlled restart.
+- [x] Replace upstream release discovery with a bounded, versioned fork-owned Squirrel manifest and typed state/failure model.
 - [ ] Prove update, deferred restart, invalid package rejection, rollback, and uninstall.

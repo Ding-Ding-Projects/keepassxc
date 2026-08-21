@@ -18,6 +18,7 @@
 #ifndef KEEPASSXC_UPDATECHECK_H
 #define KEEPASSXC_UPDATECHECK_H
 #include <QObject>
+#include <QUrl>
 
 class QNetworkReply;
 
@@ -25,17 +26,38 @@ class UpdateChecker : public QObject
 {
     Q_OBJECT
 public:
+    enum class State { Disabled, NotSquirrelInstalled, Idle, Checking, NoUpdate, Available, Downloading, Verifying, Applying, ReadyToRestart, Deferred, Restarting, Failed };
+    Q_ENUM(State)
+    enum class Failure { None, Offline, Timeout, RedirectRejected, OversizedManifest, MalformedManifest, PackageIdentityMismatch, ArchitectureMismatch, InvalidVersion, InsufficientStorage, Cancelled, ByteCountMismatch, Sha256Mismatch, ReleasesMismatch, UnsafePackage, UpdaterMissing, UpdaterStartFailed, UpdaterApplyFailed, AppliedVersionMissing, RestartRefused, RestartFailed };
+    Q_ENUM(Failure)
+
+    struct Candidate {
+        QString version;
+        QString notesUrl;
+        QString packageUrl;
+        QString packageFile;
+        QString sha256;
+        QString releasesSha1;
+        quint64 bytes = 0;
+    };
+
     UpdateChecker(QObject* parent = nullptr);
     ~UpdateChecker() override;
 
     void checkForUpdates(bool manuallyRequested);
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
+    State state() const;
+    Failure failure() const;
+    Candidate candidate() const;
+    static bool transitionAllowed(State from, State to);
+    static bool parseManifest(const QByteArray& bytes, Candidate& candidate, Failure& failure);
 
     static const QString ErrorVersion;
 
 signals:
     void updateCheckFinished(bool hasNewVersion, QString version, bool isManuallyRequested);
+    void stateChanged(UpdateChecker::State state, UpdateChecker::Failure failure);
 
 private slots:
     void fetchFinished();
@@ -45,6 +67,11 @@ private:
     QNetworkReply* m_reply;
     QByteArray m_bytesReceived;
     bool m_isManuallyRequested;
+    State m_state = State::Idle;
+    Failure m_failure = Failure::None;
+    Candidate m_candidate;
+
+    void setState(State state, Failure failure = Failure::None);
 
     static UpdateChecker* m_instance;
 

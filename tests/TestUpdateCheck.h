@@ -27,6 +27,8 @@ class TestUpdateCheck : public QObject
 private slots:
     void initTestCase();
     void testCompareVersion();
+    void testStateTransitions();
+    void testManifestContract();
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H

@@ -60,3 +60,55 @@ void TestUpdateCheck::testCompareVersion()
     QCOMPARE(UpdateChecker::compareVersions(QString("2.4.0"), QString("invalid")), false);
     QCOMPARE(UpdateChecker::compareVersions(QString("2.4.0"), QString("")), false);
 }
+
+void TestUpdateCheck::testStateTransitions()
+{
+    using State = UpdateChecker::State;
+    QVERIFY(UpdateChecker::transitionAllowed(State::Idle, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Checking, State::Available));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Available, State::Downloading));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Downloading, State::Verifying));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Verifying, State::Applying));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Applying, State::ReadyToRestart));
+    QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Deferred));
+    QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Restarting));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Failed, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Applying));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::ReadyToRestart));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Downloading));
+}
+
+void TestUpdateCheck::testManifestContract()
+{
+    const QByteArray valid = R"({
+        "schemaVersion": 1,
+        "packageId": "KeePassXC.Material",
+        "architecture": "x64",
+        "version": "2.8.1",
+        "notesUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.1",
+        "packageUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.1/KeePassXC.Material-2.8.1-full.nupkg",
+        "packageFile": "KeePassXC.Material-2.8.1-full.nupkg",
+        "bytes": 72320747,
+        "sha256": "35b271ebbf16fad19c43afb0861408b0ef09b3cba281fa73c60629365aa843f7",
+        "releasesSha1": "0123456789abcdef0123456789abcdef01234567"
+    })";
+    UpdateChecker::Candidate candidate;
+    UpdateChecker::Failure failure = UpdateChecker::Failure::None;
+    QVERIFY(UpdateChecker::parseManifest(valid, candidate, failure));
+    QCOMPARE(candidate.version, QStringLiteral("2.8.1"));
+    QCOMPARE(candidate.bytes, quint64(72320747));
+
+    QByteArray wrongIdentity = valid;
+    wrongIdentity.replace("KeePassXC.Material", "Other.Package");
+    QVERIFY(!UpdateChecker::parseManifest(wrongIdentity, candidate, failure));
+    QCOMPARE(failure, UpdateChecker::Failure::PackageIdentityMismatch);
+
+    QByteArray traversal = valid;
+    traversal.replace("KeePassXC.Material-2.8.1-full.nupkg", "../payload.nupkg");
+    QVERIFY(!UpdateChecker::parseManifest(traversal, candidate, failure));
+    QCOMPARE(failure, UpdateChecker::Failure::MalformedManifest);
+
+    QByteArray oversized(64 * 1024 + 1, 'x');
+    QVERIFY(!UpdateChecker::parseManifest(oversized, candidate, failure));
+    QCOMPARE(failure, UpdateChecker::Failure::OversizedManifest);
+}
