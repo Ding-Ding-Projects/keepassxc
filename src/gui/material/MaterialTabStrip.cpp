@@ -24,9 +24,11 @@
 #include "MaterialTabOverflow.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QContextMenuEvent>
 #include <QFontMetrics>
 #include <QMenu>
+#include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPainterPath>
@@ -100,6 +102,8 @@ namespace Material
     {
         setFixedHeight(Layout::TabStripHeight);
         setMouseTracking(true);
+        setFocusPolicy(Qt::StrongFocus);
+        setAccessibleName(tr("Open database tabs"));
 
         // The trailing controls are pinned as well as sized: ButtonBase fixes a
         // minimum width from its label metrics on construction, which otherwise
@@ -166,6 +170,9 @@ namespace Material
 
         m_hoverIndex = -1;
         m_pressedIndex = -1;
+        m_focusIndex = -1;
+        m_dragTarget = -1;
+        m_dragging = false;
         relayout();
         update();
     }
@@ -185,6 +192,7 @@ namespace Material
     void TabStrip::setTabs(const QList<TabDescriptor>& descriptors, const QString& currentRuntimeId)
     {
         const QString hoveredId = m_hoverIndex >= 0 && m_hoverIndex < m_tabs.size() ? m_tabs.at(m_hoverIndex).id : QString();
+        const QString focusedId = m_focusIndex >= 0 && m_focusIndex < m_tabs.size() ? m_tabs.at(m_focusIndex).id : QString();
         QList<Tab> reconciled;
         reconciled.reserve(descriptors.size());
         for (const auto& descriptor : descriptors) {
@@ -202,7 +210,11 @@ namespace Material
         m_currentIndex = indexOf(currentRuntimeId);
         if (m_currentIndex < 0 && !m_tabs.isEmpty()) m_currentIndex = 0;
         m_hoverIndex = indexOf(hoveredId);
+        m_focusIndex = indexOf(focusedId);
+        if (m_focusIndex < 0) m_focusIndex = m_currentIndex;
         m_pressedIndex = -1;
+        m_dragTarget = -1;
+        m_dragging = false;
         m_pressedClose = false;
         relayout();
         update();
@@ -446,6 +458,11 @@ namespace Material
             } else if (i == m_hoverIndex) {
                 painter.fillPath(fillPath, hoverFill);
             }
+            if (hasFocus() && i == m_focusIndex) {
+                painter.setPen(QPen(theme()->color(Role::Primary), 2));
+                painter.setBrush(Qt::NoBrush);
+                painter.drawRoundedRect(tab.rect.adjusted(2, 2, -2, -2), Shape::Small, Shape::Small);
+            }
 
             // Only the active tab is outlined; the rest are borderless.
             if (active) {
@@ -531,6 +548,13 @@ namespace Material
             painter.setPen(theme()->color(Role::OnSecondaryContainer));
             painter.drawText(badge, Qt::AlignCenter, count);
         }
+
+        if (m_dragging && m_dragTarget >= 0 && m_dragTarget < m_tabs.size()
+            && m_tabs.at(m_dragTarget).visible) {
+            const QRect target = m_tabs.at(m_dragTarget).rect;
+            const int x = m_dragTarget > m_pressedIndex ? target.right() : target.left();
+            painter.fillRect(QRect(x - 1, target.top() + 3, 3, target.height() - 6), theme()->color(Role::Primary));
+        }
     }
 
     void TabStrip::resizeEvent(QResizeEvent* event)
@@ -556,6 +580,13 @@ namespace Material
         const int index = indexAt(pos);
         m_pressedIndex = index;
         m_pressedClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
+        m_pressPosition = pos;
+        m_dragTarget = -1;
+        m_dragging = false;
+        if (index >= 0) {
+            m_focusIndex = index;
+            setFocus(Qt::MouseFocusReason);
+        }
 
         if (index >= 0 && !m_pressedClose && index != m_currentIndex) {
             m_currentIndex = index;
@@ -571,8 +602,26 @@ namespace Material
     {
         const int pressed = m_pressedIndex;
         const bool wasClose = m_pressedClose;
+        const bool wasDragging = m_dragging;
+        const int dragTarget = m_dragTarget;
         m_pressedIndex = -1;
         m_pressedClose = false;
+        m_dragging = false;
+        m_dragTarget = -1;
+
+        if (event->button() == Qt::LeftButton && wasDragging && pressed >= 0 && dragTarget >= 0
+            && pressed < m_tabs.size() && dragTarget < m_tabs.size() && pressed != dragTarget) {
+            const QString before = dragTarget > pressed
+                                       ? (dragTarget + 1 < m_tabs.size()
+                                              && m_tabs.at(dragTarget + 1).pinned == m_tabs.at(pressed).pinned
+                                              ? m_tabs.at(dragTarget + 1).id
+                                              : QString())
+                                       : m_tabs.at(dragTarget).id;
+            emit tabMoveRequested(m_tabs.at(pressed).id, before);
+            update();
+            event->accept();
+            return;
+        }
 
         if (event->button() == Qt::LeftButton && wasClose && pressed >= 0 && pressed < m_tabs.size()
             && m_tabs.at(pressed).closeRect.contains(event->position().toPoint())) {
@@ -589,6 +638,14 @@ namespace Material
         const int index = indexAt(pos);
         const bool overClose = index >= 0 && m_tabs.at(index).closeRect.contains(pos);
         const bool overOverflow = !m_overflowRect.isEmpty() && m_overflowRect.contains(pos);
+        if (m_pressedIndex >= 0 && !m_pressedClose && (event->buttons() & Qt::LeftButton)
+            && (m_dragging || (pos - m_pressPosition).manhattanLength() >= QApplication::startDragDistance())) {
+            m_dragging = true;
+            if (index >= 0 && index < m_tabs.size()
+                && m_tabs.at(index).pinned == m_tabs.at(m_pressedIndex).pinned) {
+                m_dragTarget = index;
+            }
+        }
         if (index != m_hoverIndex || overClose != m_hoverClose || overOverflow != m_overflowHovered) {
             m_hoverIndex = index;
             m_hoverClose = overClose;
@@ -612,6 +669,51 @@ namespace Material
             update();
         }
         QWidget::leaveEvent(event);
+    }
+
+    void TabStrip::keyPressEvent(QKeyEvent* event)
+    {
+        if (m_tabs.isEmpty()) {
+            QWidget::keyPressEvent(event);
+            return;
+        }
+        if (m_focusIndex < 0 || m_focusIndex >= m_tabs.size()) m_focusIndex = qMax(0, m_currentIndex);
+        const bool move = event->modifiers().testFlag(Qt::ControlModifier)
+                          && event->modifiers().testFlag(Qt::ShiftModifier);
+        const int direction = event->key() == Qt::Key_Left ? -1 : event->key() == Qt::Key_Right ? 1 : 0;
+        if (direction != 0) {
+            const int target = m_focusIndex + direction;
+            if (target >= 0 && target < m_tabs.size() && m_tabs.at(target).pinned == m_tabs.at(m_focusIndex).pinned) {
+                if (move) {
+                    const QString before = direction < 0
+                                               ? m_tabs.at(target).id
+                                               : (target + 1 < m_tabs.size()
+                                                      && m_tabs.at(target + 1).pinned == m_tabs.at(m_focusIndex).pinned
+                                                      ? m_tabs.at(target + 1).id
+                                                      : QString());
+                    emit tabMoveRequested(m_tabs.at(m_focusIndex).id, before);
+                } else {
+                    m_focusIndex = target;
+                    update();
+                }
+            }
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
+            setCurrentTab(m_tabs.at(m_focusIndex).id);
+            emit tabSelected(m_tabs.at(m_focusIndex).id);
+            event->accept();
+            return;
+        }
+        if (event->key() == Qt::Key_Escape && m_dragging) {
+            m_dragging = false;
+            m_dragTarget = -1;
+            update();
+            event->accept();
+            return;
+        }
+        QWidget::keyPressEvent(event);
     }
 
     void TabStrip::contextMenuEvent(QContextMenuEvent* event)

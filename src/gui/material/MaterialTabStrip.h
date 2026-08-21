@@ -27,6 +27,7 @@
 #include "MaterialTabDescriptor.h"
 
 class QContextMenuEvent;
+class QKeyEvent;
 
 namespace Material
 {
@@ -85,6 +86,7 @@ namespace Material
         void mouseMoveEvent(QMouseEvent* event) override;
         void leaveEvent(QEvent* event) override;
         void contextMenuEvent(QContextMenuEvent* event) override;
+        void keyPressEvent(QKeyEvent* event) override;
 
     private:
         struct Tab
@@ -118,6 +120,10 @@ namespace Material
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
         int m_pressedIndex = -1;
+        int m_focusIndex = -1;
+        int m_dragTarget = -1;
+        QPoint m_pressPosition;
+        bool m_dragging = false;
         int m_hiddenCount = 0;
         bool m_pressedClose = false;
         bool m_hoverClose = false;
