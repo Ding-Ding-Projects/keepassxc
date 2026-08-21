@@ -30,10 +30,31 @@ void TestMaterialChangelog::routeActionsDatesAndFiltering()
     ChangelogScreen screen;
     QCOMPARE(screen.searchBar()->searchId(), QStringLiteral("changelog.entries"));
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("changelog.entries")), screen.searchBar());
+    ChangelogFeed feed(&screen);
+    QVERIFY(feed.releases().size() > 10);
+    for (const auto& release : feed.releases()) {
+        if (release.date.isEmpty()) {
+            QVERIFY(!release.commitAvailable);
+        } else {
+            QVERIFY2(release.commitAvailable, qPrintable(QStringLiteral("Missing provenance for %1").arg(release.version)));
+            QCOMPARE(release.commitSha.size(), 40);
+            QVERIFY(release.commitUrl.endsWith(release.commitSha));
+        }
+    }
     const QStringList actions{QStringLiteral("changelogCopyFiltered")};
     for (const auto& action : actions) QVERIFY(screen.findChild<QAbstractButton*>(action));
     QVERIFY(screen.findChild<QDateEdit*>(QStringLiteral("changelogFromDate")));
     QVERIFY(screen.findChild<QDateEdit*>(QStringLiteral("changelogToDate")));
+    const QList<ChangelogScreen::State> states{ChangelogScreen::State::Empty, ChangelogScreen::State::Loading,
+        ChangelogScreen::State::Populated, ChangelogScreen::State::Progress, ChangelogScreen::State::Warning,
+        ChangelogScreen::State::Error};
+    for (const auto state : states) { screen.setState(state, QStringLiteral("state")); QCOMPARE(screen.state(), state); }
+    const QList<int> widths{599, 600, 839, 840, 1199, 1200, 1439, 1440};
+    for (const int width : widths) {
+        screen.resize(width, 860); screen.show(); QCoreApplication::processEvents();
+        QVERIFY(screen.searchBar()->geometry().right() <= screen.width());
+        QVERIFY(screen.findChild<QDateEdit*>(QStringLiteral("changelogToDate"))->geometry().right() <= screen.width());
+    }
 
     Release first; first.version = QStringLiteral("2.0.0"); first.date = QStringLiteral("2026-08-20"); first.items.append({QStringLiteral("Added"), QStringLiteral("Alpha markdown **bold**"), PillKind::Good});
     Release second; second.version = QStringLiteral("1.0.0"); second.date = QStringLiteral("2024-01-01"); second.items.append({QStringLiteral("Fixed"), QStringLiteral("Beta"), PillKind::Bad});

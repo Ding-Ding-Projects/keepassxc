@@ -29,14 +29,21 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QHash>
 #include <QApplication>
 #include <QClipboard>
+
+int qInitResources_changelog();
 
 namespace Material
 {
     namespace
     {
         const QString ChangelogResource = QStringLiteral(":/docs/CHANGELOG.md");
+        const QString ProvenanceResource = QStringLiteral(":/docs/changelog-provenance.json");
         const QString ExportDirectoryRole = QStringLiteral("changelog");
 
         /** `## 2.7.12 (2026-03-10)` - the version and whatever is in the brackets. */
@@ -84,6 +91,7 @@ namespace Material
         , m_screen(screen)
     {
         Q_ASSERT(m_screen);
+        ::qInitResources_changelog();
 
         // The design keeps the changelog header to one row: title and Export,
         // then the filter row. There is no blurb between them.
@@ -104,6 +112,22 @@ namespace Material
                                      "list here."),
                                   PillKind::Off});
             m_releases.append(missing);
+        }
+
+        QFile provenance(ProvenanceResource);
+        if (provenance.open(QIODevice::ReadOnly)) {
+            QHash<QString, QJsonObject> records;
+            for (const auto& value : QJsonDocument::fromJson(provenance.readAll()).object().value(QStringLiteral("records")).toArray()) {
+                const auto object = value.toObject();
+                records.insert(object.value(QStringLiteral("version")).toString(), object);
+            }
+            for (auto& release : m_releases) {
+                const auto record = records.value(release.version);
+                release.commitSha = record.value(QStringLiteral("sha")).toString();
+                release.commitUrl = record.value(QStringLiteral("url")).toString();
+                release.commitAvailable = record.value(QStringLiteral("released")).toBool()
+                                          && release.commitSha.size() == 40 && !release.commitUrl.isEmpty();
+            }
         }
 
         m_screen->setReleases(m_releases);

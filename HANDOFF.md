@@ -16,10 +16,13 @@ in source; captures, audits, comparisons, and diffs remain pending.
 The native Changelog destination parses every release present in the bundled authoritative
 `CHANGELOG.md`, renders item Markdown through Qt's isolated `QTextDocument` renderer, composes
 plain-text or bounded regex search with locale/ISO calendar ranges and presets, and copies or exports
-the exact filtered view with its range and completion-commit field. The authoritative file contains
-no completion SHAs, so cards and exports say that provenance is unavailable rather than inventing a
-nearby commit. The source route is implemented; installed-artifact captures and visual audits remain
-pending.
+the exact filtered view with its range and completion-commit field. A committed generated catalog
+maps all 54 released headings to the exact local tag commit and forge URL; the pending 2.8.0 entry is
+the only explicit exemption. The build guard regenerates from real refs and fails on a missing tag,
+invalid SHA, missing commit object, omitted release, or byte drift. Release links use an interactive
+allowlisted Markdown browser, and explicit state/progress controls plus five breakpoint layouts are
+covered by focused tests. The source route is implemented; installed-artifact captures and visual
+audits remain pending.
 
 The History save ledger now lives in an isolated Git repository beneath the stable application-data
 directory. Each successful save or Material restore appends a commit containing only redacted

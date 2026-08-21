@@ -31,8 +31,11 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QTextDocument>
+#include <QTextBrowser>
+#include <QProgressBar>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QResizeEvent>
 #include <QVBoxLayout>
 
 namespace Material
@@ -120,6 +123,17 @@ namespace Material
                 QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Minimum);
                 policy.setHeightForWidth(true);
                 setSizePolicy(policy);
+                m_browser = new QTextBrowser(this);
+                m_browser->setFrameShape(QFrame::NoFrame);
+                m_browser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                m_browser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+                m_browser->setOpenLinks(false);
+                m_browser->setOpenExternalLinks(false);
+                m_browser->document()->setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
+                m_browser->setAccessibleName(ChangelogScreen::tr("Rendered changelog item: %1").arg(m_item.text));
+                QObject::connect(m_browser, &QTextBrowser::anchorClicked, m_browser, [](const QUrl& url) {
+                    if (url.scheme() == QLatin1String("https") && url.host() == QLatin1String("github.com")) QDesktopServices::openUrl(url);
+                });
             }
 
             bool hasHeightForWidth() const override
@@ -173,15 +187,10 @@ namespace Material
 
                 const QRect textRect(
                     TagWidth + TagGap, ItemPaddingY, qMax(1, width() - TagWidth - TagGap), height() - ItemPaddingY * 2);
-                painter.save();
-                painter.translate(textRect.topLeft());
-                QTextDocument document;
-                document.setDefaultFont(theme()->font(TypeRole::BodySmall));
-                document.setDefaultStyleSheet(QStringLiteral("body { color: %1; }").arg(theme()->hex(Role::OnSurface)));
-                document.setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
-                document.setTextWidth(textRect.width());
-                document.drawContents(&painter, QRectF(0, 0, textRect.width(), textRect.height()));
-                painter.restore();
+                m_browser->setGeometry(textRect);
+                m_browser->document()->setDefaultFont(theme()->font(TypeRole::BodySmall));
+                m_browser->document()->setDefaultStyleSheet(QStringLiteral("body { color: %1; margin: 0; }").arg(theme()->hex(Role::OnSurface)));
+                m_browser->document()->setTextWidth(textRect.width());
             }
 
         private:
@@ -191,6 +200,7 @@ namespace Material
             }
 
             ChangeItem m_item;
+            QTextBrowser* m_browser = nullptr;
         };
 
         /**
@@ -350,6 +360,7 @@ namespace Material
         m_countLabel = new QLabel();
 
         auto filterRow = new QHBoxLayout();
+        m_filterLayout = filterRow;
         filterRow->setContentsMargins(0, 0, 0, 0);
         filterRow->setSpacing(RowSpacing);
         filterRow->addWidget(searchBar());
@@ -359,6 +370,7 @@ namespace Material
         contentLayout()->addLayout(filterRow);
 
         auto dates = new QHBoxLayout;
+        m_dateLayout = dates;
         m_datePreset = new QComboBox;
         m_datePreset->setObjectName(QStringLiteral("changelogDatePreset"));
         m_datePreset->setAccessibleName(tr("Changelog date preset"));
@@ -389,6 +401,11 @@ namespace Material
         m_stateLabel->setObjectName(QStringLiteral("changelogState"));
         m_stateLabel->setAccessibleName(tr("Changelog state"));
         contentLayout()->addWidget(m_stateLabel);
+        m_progress = new QProgressBar;
+        m_progress->setObjectName(QStringLiteral("changelogProgress"));
+        m_progress->setAccessibleName(tr("Changelog progress"));
+        m_progress->hide();
+        contentLayout()->addWidget(m_progress);
 
         auto list = new QWidget();
         list->setMaximumWidth(ListWidth);
@@ -400,9 +417,26 @@ namespace Material
 
         connect(theme(), &Theme::changed, this, &ChangelogScreen::rebuild);
         rebuild();
+        setState(State::Loading, tr("Loading bundled changelog…"));
     }
 
     ChangelogScreen::~ChangelogScreen() = default;
+
+    void ChangelogScreen::resizeEvent(QResizeEvent* event)
+    {
+        Screen::resizeEvent(event);
+        const int widthClass = event->size().width();
+        const bool compact = widthClass < 600;
+        m_filterLayout->setDirection(compact ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
+        m_dateLayout->setDirection(compact ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
+        const int fieldWidth = compact ? qMax(220, widthClass - 48)
+                             : widthClass < 840 ? 420
+                             : widthClass < 1200 ? 520
+                             : widthClass < 1440 ? 620 : 720;
+        searchBar()->setMaximumWidth(fieldWidth);
+        m_fromDate->setMaximumWidth(compact ? fieldWidth : 220);
+        m_toDate->setMaximumWidth(compact ? fieldWidth : 220);
+    }
 
     void ChangelogScreen::setReleases(const QVector<Release>& releases)
     {
@@ -429,9 +463,20 @@ namespace Material
         // The chip and the count sit in the same row and describe the same set,
         // so the range is taken from the cards that were actually added.
         updateDateRange(dates);
-        m_stateLabel->setText(shown == 0 ? tr("No release matches the active search and date range.")
-                                         : tr("Bundled changelog loaded: %n release(s) shown.", "", shown));
+        setState(shown == 0 ? State::Empty : State::Populated,
+                 shown == 0 ? tr("No release matches the active search and date range.")
+                            : tr("Bundled changelog loaded: %n release(s) shown.", "", shown));
     }
+
+    void ChangelogScreen::setState(State state, const QString& message, int progress)
+    {
+        m_state = state;
+        m_stateLabel->setText(message);
+        const bool active = state == State::Loading || state == State::Progress;
+        m_progress->setVisible(active);
+        if (active) { m_progress->setRange(0, progress < 0 ? 0 : 100); if (progress >= 0) m_progress->setValue(qBound(0, progress, 100)); }
+    }
+    ChangelogScreen::State ChangelogScreen::state() const { return m_state; }
 
     QDate ChangelogScreen::fromDate() const { return m_fromDate->date(); }
     QDate ChangelogScreen::toDate() const { return m_toDate->date(); }

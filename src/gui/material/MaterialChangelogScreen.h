@@ -30,6 +30,9 @@ class QLabel;
 class QVBoxLayout;
 class QDateEdit;
 class QComboBox;
+class QProgressBar;
+class QBoxLayout;
+class QResizeEvent;
 
 namespace Material
 {
@@ -69,6 +72,7 @@ namespace Material
         Q_OBJECT
 
     public:
+        enum class State { Empty, Loading, Populated, Progress, Warning, Error };
         explicit ChangelogScreen(QWidget* parent = nullptr);
         ~ChangelogScreen() override;
 
@@ -76,10 +80,15 @@ namespace Material
         QVector<Release> filteredReleases() const;
         QDate fromDate() const;
         QDate toDate() const;
+        void setState(State state, const QString& message, int progress = -1);
+        State state() const;
 
     signals:
         void exportRequested();
         void copyRequested();
+
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void rebuild();
@@ -95,6 +104,10 @@ namespace Material
         QDateEdit* m_toDate = nullptr;
         QComboBox* m_datePreset = nullptr;
         QLabel* m_stateLabel = nullptr;
+        QProgressBar* m_progress = nullptr;
+        State m_state = State::Loading;
+        QBoxLayout* m_filterLayout = nullptr;
+        QBoxLayout* m_dateLayout = nullptr;
     };
 
 } // namespace Material
