@@ -119,7 +119,8 @@ void TestUpdateCheck::testManifestContract()
         "packageFile": "KeePassXC.Material-2.8.1-full.nupkg",
         "bytes": 72320747,
         "sha256": "35b271ebbf16fad19c43afb0861408b0ef09b3cba281fa73c60629365aa843f7",
-        "releasesSha1": "0123456789abcdef0123456789abcdef01234567"
+        "releasesSha1": "0123456789abcdef0123456789abcdef01234567",
+        "executableSha256": "8a291e5160cc6e31c5a8aa49f20c8f214529be8790f204fcfcd84beea1c52a1a"
     })";
     UpdateChecker::Candidate candidate;
     UpdateChecker::Failure failure = UpdateChecker::Failure::None;
@@ -155,6 +156,8 @@ void TestUpdateCheck::testPackageContract()
     candidate.version = QStringLiteral("2.8.1");
     candidate.bytes = quint64(bytes.size());
     candidate.releasesSha1 = QString::fromLatin1(QCryptographicHash::hash(bytes, QCryptographicHash::Sha1).toHex());
+    candidate.executableSha256 = QString::fromLatin1(
+        QCryptographicHash::hash(QByteArrayLiteral("MZtest"), QCryptographicHash::Sha256).toHex());
     UpdateChecker::Failure failure = UpdateChecker::Failure::None;
     QVERIFY(UpdateChecker::verifyPackage(validPath, candidate, failure));
 

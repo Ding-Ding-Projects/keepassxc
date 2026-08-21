@@ -35,6 +35,9 @@
 #include <QStorageInfo>
 #include <QSet>
 #include <QXmlStreamReader>
+#include <QProcess>
+#include <QCoreApplication>
+#include <QUuid>
 
 #include <../minizip/unzip.h>
 
@@ -259,6 +262,102 @@ void UpdateChecker::failDownload(Failure failure)
     setState(State::Failed, failure);
 }
 
+void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)
+{
+    if (m_state != State::Verifying || m_applyProcess) {
+        return;
+    }
+    const QString appDirectory = QDir::cleanPath(QCoreApplication::applicationDirPath());
+    const QFileInfo appDirectoryInfo(appDirectory);
+    static const QRegularExpression appDirectoryPattern(
+        QStringLiteral("^app-\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$"));
+    if (!appDirectoryPattern.match(appDirectoryInfo.fileName()).hasMatch()) {
+        setState(State::Failed, Failure::UpdaterMissing);
+        return;
+    }
+    QDir packageRoot = appDirectoryInfo.dir();
+    const QString updaterPath = packageRoot.filePath(QStringLiteral("Update.exe"));
+    const QFileInfo updaterInfo(updaterPath);
+    if (!updaterInfo.isFile() || updaterInfo.isSymLink()
+        || QDir::cleanPath(updaterInfo.canonicalFilePath()) != QDir::cleanPath(updaterInfo.absoluteFilePath())) {
+        setState(State::Failed, Failure::UpdaterMissing);
+        return;
+    }
+
+    const QString feedPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+                             + QStringLiteral("/updates/verified-feed-")
+                             + QUuid::createUuid().toString(QUuid::WithoutBraces);
+    QDir feed;
+    if (!feed.mkpath(feedPath)) {
+        setState(State::Failed, Failure::InsufficientStorage);
+        return;
+    }
+    const QString feedPackage = QDir(feedPath).filePath(m_candidate.packageFile);
+    if (!QFile::copy(packagePath, feedPackage)) {
+        QDir(feedPath).removeRecursively();
+        setState(State::Failed, Failure::InsufficientStorage);
+        return;
+    }
+    QSaveFile releases(QDir(feedPath).filePath(QStringLiteral("RELEASES")));
+    if (!releases.open(QIODevice::WriteOnly)
+        || releases.write(QStringLiteral("%1 %2 %3\n")
+                              .arg(m_candidate.releasesSha1, m_candidate.packageFile)
+                              .arg(m_candidate.bytes)
+                              .toUtf8()) <= 0
+        || !releases.commit()) {
+        QDir(feedPath).removeRecursively();
+        setState(State::Failed, Failure::UnsafePackage);
+        return;
+    }
+
+    m_applyProcess = new QProcess(this);
+    m_applyProcess->setProgram(updaterPath);
+    m_applyProcess->setArguments({QStringLiteral("--update"), QDir::toNativeSeparators(feedPath)});
+    m_applyProcess->setWorkingDirectory(packageRoot.absolutePath());
+    connect(m_applyProcess, &QProcess::errorOccurred, this, [this, feedPath](QProcess::ProcessError error) {
+        if (error == QProcess::FailedToStart && m_applyProcess) {
+            m_applyProcess->deleteLater();
+            m_applyProcess = nullptr;
+            QDir(feedPath).removeRecursively();
+            setState(State::Failed, Failure::UpdaterStartFailed);
+        }
+    });
+    connect(m_applyProcess,
+            qOverload<int, QProcess::ExitStatus>(&QProcess::finished),
+            this,
+            [this, feedPath, packageRoot](int exitCode, QProcess::ExitStatus status) {
+                if (!m_applyProcess) {
+                    return;
+                }
+                m_applyProcess->deleteLater();
+                m_applyProcess = nullptr;
+                QDir(feedPath).removeRecursively();
+                if (status != QProcess::NormalExit || exitCode != 0) {
+                    setState(State::Failed, Failure::UpdaterApplyFailed);
+                    return;
+                }
+                const QString installedExe = packageRoot.filePath(
+                    QStringLiteral("app-%1/KeePassXC.exe").arg(m_candidate.version));
+                QFile installed(installedExe);
+                if (!installed.open(QIODevice::ReadOnly)) {
+                    setState(State::Failed, Failure::AppliedVersionMissing);
+                    return;
+                }
+                QCryptographicHash hash(QCryptographicHash::Sha256);
+                while (!installed.atEnd()) {
+                    hash.addData(installed.read(1024 * 1024));
+                }
+                if (QString::fromLatin1(hash.result().toHex()) != m_candidate.executableSha256) {
+                    setState(State::Failed, Failure::AppliedVersionMissing);
+                    return;
+                }
+                setState(State::ReadyToRestart);
+                emit updateReadyToRestart(m_candidate.version);
+            });
+    setState(State::Applying);
+    m_applyProcess->start();
+}
+
 UpdateChecker::State UpdateChecker::state() const { return m_state; }
 UpdateChecker::Failure UpdateChecker::failure() const { return m_failure; }
 UpdateChecker::Candidate UpdateChecker::candidate() const { return m_candidate; }
@@ -305,13 +404,14 @@ bool UpdateChecker::parseManifest(const QByteArray& bytes, Candidate& candidate,
     candidate.packageFile = object.value(QStringLiteral("packageFile")).toString();
     candidate.sha256 = object.value(QStringLiteral("sha256")).toString().toLower();
     candidate.releasesSha1 = object.value(QStringLiteral("releasesSha1")).toString().toLower();
+    candidate.executableSha256 = object.value(QStringLiteral("executableSha256")).toString().toLower();
     candidate.bytes = object.value(QStringLiteral("bytes")).toVariant().toULongLong();
     static const QRegularExpression version(QStringLiteral("^\\d+\\.\\d+\\.\\d+$"));
     static const QRegularExpression sha256(QStringLiteral("^[0-9a-f]{64}$"));
     static const QRegularExpression sha1(QStringLiteral("^[0-9a-f]{40}$"));
     const QUrl notes(candidate.notesUrl), package(candidate.packageUrl);
     if (!version.match(candidate.version).hasMatch()) { failure = Failure::InvalidVersion; return false; }
-    if (!notes.isValid() || notes.scheme() != QStringLiteral("https") || !package.isValid() || package.scheme() != QStringLiteral("https") || candidate.packageFile.isEmpty() || candidate.packageFile.contains(QLatin1Char('/')) || candidate.packageFile.contains(QLatin1Char('\\')) || candidate.packageFile.contains(QStringLiteral("..")) || candidate.bytes == 0 || candidate.bytes > 1610612736ULL || !sha256.match(candidate.sha256).hasMatch() || !sha1.match(candidate.releasesSha1).hasMatch()) { failure = Failure::MalformedManifest; return false; }
+    if (!notes.isValid() || notes.scheme() != QStringLiteral("https") || !package.isValid() || package.scheme() != QStringLiteral("https") || candidate.packageFile.isEmpty() || candidate.packageFile.contains(QLatin1Char('/')) || candidate.packageFile.contains(QLatin1Char('\\')) || candidate.packageFile.contains(QStringLiteral("..")) || candidate.bytes == 0 || candidate.bytes > 1610612736ULL || !sha256.match(candidate.sha256).hasMatch() || !sha256.match(candidate.executableSha256).hasMatch() || !sha1.match(candidate.releasesSha1).hasMatch()) { failure = Failure::MalformedManifest; return false; }
     failure = Failure::None;
     return true;
 }
@@ -345,6 +445,7 @@ bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidat
     }
     QSet<QString> normalizedEntries;
     bool hasApplication = false;
+    QString applicationSha256;
     QByteArray nuspec;
     int result = unzGoToFirstFile(archive);
     while (result == UNZ_OK) {
@@ -365,7 +466,27 @@ bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidat
             return false;
         }
         normalizedEntries.insert(normalized);
-        hasApplication = hasApplication || normalized == QStringLiteral("lib/net45/keepassxc.exe");
+        if (normalized == QStringLiteral("lib/net45/keepassxc.exe")) {
+            hasApplication = true;
+            if (unzOpenCurrentFile(archive) != UNZ_OK) {
+                unzClose(archive);
+                failure = Failure::UnsafePackage;
+                return false;
+            }
+            QCryptographicHash applicationHash(QCryptographicHash::Sha256);
+            QByteArray buffer(1024 * 1024, Qt::Uninitialized);
+            int read = 0;
+            while ((read = unzReadCurrentFile(archive, buffer.data(), unsigned(buffer.size()))) > 0) {
+                applicationHash.addData(buffer.constData(), read);
+            }
+            unzCloseCurrentFile(archive);
+            if (read < 0) {
+                unzClose(archive);
+                failure = Failure::UnsafePackage;
+                return false;
+            }
+            applicationSha256 = QString::fromLatin1(applicationHash.result().toHex());
+        }
         if (normalized.endsWith(QStringLiteral(".nuspec"))) {
             if (info.uncompressed_size > 64 * 1024 || unzOpenCurrentFile(archive) != UNZ_OK) {
                 unzClose(archive);
@@ -384,7 +505,8 @@ bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidat
         result = unzGoToNextFile(archive);
     }
     unzClose(archive);
-    if (result != UNZ_END_OF_LIST_OF_FILE || !hasApplication || nuspec.isEmpty()) {
+    if (result != UNZ_END_OF_LIST_OF_FILE || !hasApplication || nuspec.isEmpty()
+        || applicationSha256 != candidate.executableSha256) {
         failure = Failure::UnsafePackage;
         return false;
     }

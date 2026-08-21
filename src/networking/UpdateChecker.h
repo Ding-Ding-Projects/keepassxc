@@ -23,6 +23,7 @@
 class QNetworkReply;
 class QSaveFile;
 class QCryptographicHash;
+class QProcess;
 
 class UpdateChecker : public QObject
 {
@@ -40,6 +41,7 @@ public:
         QString packageFile;
         QString sha256;
         QString releasesSha1;
+        QString executableSha256;
         quint64 bytes = 0;
     };
 
@@ -49,6 +51,7 @@ public:
     void checkForUpdates(bool manuallyRequested);
     void downloadAvailableUpdate();
     void cancelDownload();
+    void applyVerifiedUpdate(const QString& packagePath);
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;
@@ -65,6 +68,7 @@ signals:
     void stateChanged(UpdateChecker::State state, UpdateChecker::Failure failure);
     void downloadProgress(quint64 received, quint64 total);
     void updatePackageReady(QString path);
+    void updateReadyToRestart(QString version);
 
 private slots:
     void fetchFinished();
@@ -75,6 +79,7 @@ private:
     QNetworkReply* m_downloadReply = nullptr;
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;
+    QProcess* m_applyProcess = nullptr;
     quint64 m_downloadBytes = 0;
     quint64 m_generation = 0;
     QByteArray m_bytesReceived;

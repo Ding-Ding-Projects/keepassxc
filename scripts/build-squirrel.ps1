@@ -3,7 +3,8 @@ param(
     [Alias('s')][switch]$Silent,
     [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '2.8.0',
     [string]$StageDirectory = 'stage\app',
-    [string]$ArtifactDirectory = 'dist\squirrel-windows'
+    [string]$ArtifactDirectory = 'dist\squirrel-windows',
+    [string]$ReleaseBaseUrl
 )
 
 $ErrorActionPreference = 'Stop'
@@ -55,6 +56,25 @@ $provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Versio
 $provenancePath = Join-Path $output 'build-provenance.json'
 $provenance | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $provenancePath -Encoding UTF8
 & (Join-Path $PSScriptRoot 'verify-squirrel-artifacts.ps1') -ArtifactDirectory $output -ProvenancePath $provenancePath -ExpectedCommit $commit -ExpectedVersion $Version -ExpectedPackageId 'KeePassXC.Material' -ExpectedArchitecture x64 -RequiredPackageEntry 'lib/net45/KeePassXC.exe' -OutputPath (Join-Path $output 'artifact-receipt.json')
+$receipt = Get-Content -Raw -LiteralPath (Join-Path $output 'artifact-receipt.json') | ConvertFrom-Json
+$fullPackage = $receipt.fullPackages | Select-Object -First 1
+$releaseRow = Get-Content -LiteralPath (Join-Path $output 'RELEASES') | Where-Object { $_ -match [regex]::Escape($fullPackage.name) } | Select-Object -First 1
+if (-not $releaseRow -or $releaseRow -notmatch '^([0-9a-fA-F]{40})\s+') { throw 'The verified full package has no canonical RELEASES SHA-1 row.' }
+if (-not $ReleaseBaseUrl) { $ReleaseBaseUrl = "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v$Version" }
+$manifestOutput = [ordered]@{
+    schemaVersion = 1
+    packageId = 'KeePassXC.Material'
+    architecture = 'x64'
+    version = $Version
+    notesUrl = "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v$Version"
+    packageUrl = "$($ReleaseBaseUrl.TrimEnd('/'))/$($fullPackage.name)"
+    packageFile = $fullPackage.name
+    bytes = [int64]$fullPackage.bytes
+    sha256 = $fullPackage.sha256
+    releasesSha1 = $Matches[1].ToLowerInvariant()
+    executableSha256 = $provenance.stagedExecutable.sha256
+}
+$manifestOutput | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $output 'update-manifest-v1.json') -Encoding UTF8
 Write-Host 'Unsigned Squirrel.Windows artifacts were built successfully.'
 Write-Host 'They may trigger Unknown Publisher or SmartScreen warnings.'
 Get-ChildItem $output -File | Select-Object Name,Length,@{Name='SHA256';Expression={Get-Sha256 $_.FullName}}
