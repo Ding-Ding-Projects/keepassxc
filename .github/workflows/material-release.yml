@@ -17,6 +17,8 @@ jobs:
     name: Package unsigned Windows x64 installer
     runs-on: windows-2022
     timeout-minutes: 180
+    outputs:
+      package-version: ${{ steps.package_version.outputs.value }}
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -25,9 +27,18 @@ jobs:
         shell: powershell
         run: powershell.exe -NoProfile -ExecutionPolicy Bypass -File scripts/check-squirrel-only-packaging.ps1
 
+      - name: Resolve the monotonic package version
+        id: package_version
+        shell: powershell
+        run: |
+          $patch = ([int64]'${{ github.run_number }}' * 100) + [int64]'${{ github.run_attempt }}'
+          $packageVersion = "2.8.$patch"
+          "value=$packageVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
+          Write-Host "Package version: $packageVersion"
+
       - name: Build the unsigned Squirrel.Windows installer
         shell: cmd
-        run: build-installer.bat /s
+        run: build-installer.bat /s -Version ${{ steps.package_version.outputs.value }}
 
       - name: Collect required Squirrel.Windows artifacts
         shell: powershell
@@ -96,12 +107,13 @@ jobs:
       - name: Compose release notes
         shell: bash
         env:
-          RELEASE_TAG: v0.0.${{ github.run_number }}.${{ github.run_attempt }}
+          PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}
+          RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}
         run: |
           set -euo pipefail
           echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
           cat > release-notes.md <<EOF
-          Automated unsigned Windows x64 build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`.
+          KeePassXC Material ${PACKAGE_VERSION} is an automated unsigned Windows x64 build of \`${GITHUB_SHA}\` from \`${GITHUB_REF_NAME}\`.
 
           This release uses Squirrel.Windows exclusively. \`Setup.exe\` may trigger Windows Unknown Publisher or SmartScreen warnings because code signing is permanently disabled.
 
@@ -122,7 +134,7 @@ jobs:
           assets=(artifacts/Setup.exe artifacts/RELEASES artifacts/*.nupkg artifacts/artifact-receipt.json artifacts/build-provenance.json artifacts/update-manifest-v1.json)
           gh release create "${RELEASE_TAG}" \
             --target "${GITHUB_SHA}" \
-            --title "KeePassXC Material ${RELEASE_TAG}" \
+            --title "KeePassXC Material ${PACKAGE_VERSION}" \
             --notes-file release-notes.md \
             --draft=false \
             --prerelease=false \

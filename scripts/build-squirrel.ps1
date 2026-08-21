@@ -13,7 +13,7 @@ $stage = [IO.Path]::GetFullPath((Join-Path $root $StageDirectory))
 $output = [IO.Path]::GetFullPath((Join-Path $root $ArtifactDirectory))
 $scratch = [IO.Path]::GetFullPath((Join-Path $root 'stage\squirrel'))
 function Get-Sha256([string]$Path) { $s=[IO.File]::OpenRead($Path); try {$h=[Security.Cryptography.SHA256]::Create(); try {return ([BitConverter]::ToString($h.ComputeHash($s))).Replace('-','').ToLowerInvariant()} finally {$h.Dispose()}} finally {$s.Dispose()} }
-& (Join-Path $PSScriptRoot 'build-windows.ps1') -Silent -InstallDirectory $StageDirectory
+& (Join-Path $PSScriptRoot 'build-windows.ps1') -Silent -Version $Version -InstallDirectory $StageDirectory
 & (Join-Path $PSScriptRoot 'download-dependencies.ps1') -Silent | Out-Null
 $manifest = Get-Content -Raw -LiteralPath (Join-Path $root 'packaging\squirrel\toolchain.json') | ConvertFrom-Json
 $toolRoot = Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain'

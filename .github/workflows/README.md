@@ -20,4 +20,6 @@ Code signing is permanently disabled. The verifier requires `Setup.exe` to repor
 
 GitHub Actions performs building, packaging, evidence collection, and publication only. It runs no tests or lint and makes no quality verdict; local verification is reported separately.
 
-The release job uses the first available token in this order: `RELEASE_TOKEN`, `ORG_TOKEN`, then the built-in workflow token. No token is printed. Release tags use the monotonic `v0.0.<run_number>.<run_attempt>` form and are never recycled.
+The package job derives one semantic version for the whole run: `2.8.<run_number * 100 + run_attempt>`. That exact value is passed through `build-installer.bat` and the native CMake `OVERRIDE_VERSION`, then reused by the executable, full package, `RELEASES`, update manifest, release tag, and title. The arithmetic is monotonic across normal runs and reruns, and every value remains a three-part semantic version.
+
+The release job uses the first available token in this order: `RELEASE_TOKEN`, `ORG_TOKEN`, then the built-in workflow token. No token is printed. Release tags use `v<package-version>` and are never recycled.

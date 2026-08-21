@@ -732,7 +732,7 @@ class Build(Command):
         if not installer.is_file():
             raise Error('Squirrel installer entry point not found: %s', installer)
         logger.info('Building the unsigned Squirrel.Windows package through build-installer.bat...')
-        _run(['cmd.exe', '/d', '/c', str(installer), '/s', version], cwd=src_dir, capture_output=False)
+        _run(['cmd.exe', '/d', '/c', str(installer), '/s', '-Version', version], cwd=src_dir, capture_output=False)
 
         squirrel_output = src_dir / 'dist' / 'squirrel-windows'
         required = ['Setup.exe', 'RELEASES', 'artifact-receipt.json', 'build-provenance.json']

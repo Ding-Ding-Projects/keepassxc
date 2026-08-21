@@ -6,6 +6,7 @@
 
 - Build: Enforce the Windows-only source boundary and remove the remaining macOS translation and Unix package-helper registrations.
 - Packaging: Make the verified unsigned Squirrel.Windows artifacts the sole Windows installer and release path.
+- Packaging: Propagate one monotonic three-part version through the native executable, Squirrel feed, update manifest, and release.
 
 ## 2.7.12 (2026-03-10)
 
