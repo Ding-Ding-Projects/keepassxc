@@ -22,6 +22,7 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
+#include "MaterialSearchRegistry.h"
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -131,7 +132,10 @@ namespace Material
         connect(m_lineEdit, &QLineEdit::textChanged, this, &SearchBar::textChanged);
         connect(m_lineEdit, &QLineEdit::returnPressed, this, &SearchBar::returnPressed);
         connect(m_regexChip, &Chip::toggled, this, &SearchBar::regexToggled);
-        connect(m_builderButton, &IconButton::clicked, this, &SearchBar::builderRequested);
+        connect(m_builderButton, &IconButton::clicked, this, [this] {
+            SearchRegistry::instance()->setCurrent(this);
+            emit builderRequested();
+        });
         connect(theme(), &Theme::changed, this, &SearchBar::applyTheme);
 
         // The focus ring belongs to the pill, so repaint whenever the input
@@ -140,6 +144,9 @@ namespace Material
             if (previous == m_lineEdit || current == m_lineEdit) {
                 update();
             }
+            if (current == m_lineEdit) {
+                SearchRegistry::instance()->setCurrent(this);
+            }
         });
 
         setFocusProxy(m_lineEdit);
@@ -147,7 +154,10 @@ namespace Material
         applyTheme();
     }
 
-    SearchBar::~SearchBar() = default;
+    SearchBar::~SearchBar()
+    {
+        SearchRegistry::instance()->unregisterBar(this);
+    }
 
     SearchBar::Variant SearchBar::variant() const
     {
@@ -188,6 +198,21 @@ namespace Material
     {
         return m_lineEdit->placeholderText();
     }
+
+    bool SearchBar::setIdentity(const QString& id, const QString& label)
+    {
+        if (id.isEmpty() || label.isEmpty()) return false;
+        SearchRegistry::instance()->unregisterBar(this);
+        m_searchId = id;
+        m_searchLabel = label;
+        setAccessibleName(label);
+        return SearchRegistry::instance()->registerBar(this);
+    }
+
+    QString SearchBar::searchId() const { return m_searchId; }
+    QString SearchBar::searchLabel() const { return m_searchLabel; }
+    QString SearchBar::regexFlags() const { return m_regexFlags; }
+    void SearchBar::setRegexFlags(const QString& flags) { m_regexFlags = flags; }
 
     bool SearchBar::isRegexEnabled() const
     {

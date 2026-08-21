@@ -68,6 +68,11 @@ namespace Material
 
         void setPlaceholder(const QString& placeholder);
         QString placeholder() const;
+        bool setIdentity(const QString& id, const QString& label);
+        QString searchId() const;
+        QString searchLabel() const;
+        QString regexFlags() const;
+        void setRegexFlags(const QString& flags);
 
         bool isRegexEnabled() const;
         void setRegexEnabled(bool enabled);
@@ -102,6 +107,9 @@ namespace Material
         IconButton* m_builderButton = nullptr;
         Variant m_variant = Variant::Prominent;
         bool m_showRegexControls = true;
+        QString m_searchId;
+        QString m_searchLabel;
+        QString m_regexFlags = QStringLiteral("i");
     };
 
 } // namespace Material

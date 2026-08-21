@@ -34,7 +34,6 @@ class Entry;
 
 namespace Material
 {
-    class RegexBuilder;
 
     /**
      * What fills the version history destination.
@@ -171,9 +170,6 @@ namespace Material
         void showSaveDiff(const QString& logId);
         void applyRestore(const Origin& origin);
 
-        /** Put the search box's pattern in front of the regex builder. */
-        void openRegexBuilder();
-
         /**
          * The revision @p origin names, or nullptr once it is gone.
          *
@@ -198,8 +194,6 @@ namespace Material
         QVector<Change> m_changes;
         QHash<QString, Origin> m_origins;
         QVector<Restored> m_restores;
-        /** Built on the first press of the search bar's regex button. */
-        QPointer<RegexBuilder> m_regexBuilder;
     };
 
 } // namespace Material

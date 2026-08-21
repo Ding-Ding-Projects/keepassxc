@@ -411,6 +411,7 @@ namespace Material
         setHeadline(tr("Database reports"));
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search this surface"));
+        searchBar()->setIdentity(QStringLiteral("reports.findings"), tr("Report findings search"));
         searchBar()->setFixedWidth(SearchWidth);
 
         m_statGrid = new QGridLayout();

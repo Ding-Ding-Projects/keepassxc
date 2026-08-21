@@ -20,7 +20,6 @@
 #include "MaterialDialog.h"
 #include "MaterialHistoryStore.h"
 #include "MaterialNotifier.h"
-#include "MaterialRegexBuilder.h"
 #include "MaterialSearchBar.h"
 
 #include "core/Clock.h"
@@ -371,7 +370,6 @@ namespace Material
         });
         // The design draws the search field with the regex button beside it, so
         // the box holds a pattern and the button opens the builder for it.
-        connect(m_screen->searchBar(), &SearchBar::builderRequested, this, &HistoryFeed::openRegexBuilder);
         connect(m_screen, &HistoryScreen::filterChanged, this, &HistoryFeed::refresh);
 
         connect(m_screen, &HistoryScreen::diffRequested, this, &HistoryFeed::showDiff);
@@ -655,25 +653,6 @@ namespace Material
             *owner = entry;
         }
         return origin.revision.data();
-    }
-
-    void HistoryFeed::openRegexBuilder()
-    {
-        if (!m_regexBuilder) {
-            // Built on first use: a screen has no window to hang an overlay off
-            // until it has been put in one.
-            m_regexBuilder = new RegexBuilder(m_screen->window());
-            connect(m_regexBuilder, &RegexBuilder::patternApplied, this, [this](const QString& pattern) {
-                // Applied through the search box, so what filters the list is
-                // what the box shows.
-                m_screen->searchBar()->setText(pattern);
-            });
-            connect(m_regexBuilder, &RegexBuilder::patternCopied, this, [](const QString& pattern) {
-                clipboard()->setText(pattern);
-            });
-        }
-        m_regexBuilder->setPattern(m_screen->searchBar()->text());
-        m_regexBuilder->openOverlay();
     }
 
     void HistoryFeed::showDiff(const QString& id)

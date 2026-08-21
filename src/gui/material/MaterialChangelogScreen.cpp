@@ -288,6 +288,7 @@ namespace Material
 
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search changelog text"));
+        searchBar()->setIdentity(QStringLiteral("changelog.entries"), tr("Changelog search"));
         searchBar()->setMaximumWidth(SearchMaximumWidth);
         searchBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         connect(searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {

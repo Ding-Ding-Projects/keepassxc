@@ -241,6 +241,7 @@ namespace Material
         m_search = new SearchBar(SearchBar::Variant::Surface, m_content);
         m_search->setFixedWidth(PageSearchWidth);
         m_search->setPlaceholder(tr("Search this surface"));
+        m_search->setIdentity(QStringLiteral("sheet.%1").arg(m_id), tr("%1 search").arg(m_title));
 
         auto* header = new QHBoxLayout;
         header->setContentsMargins(0, 0, 0, 0);

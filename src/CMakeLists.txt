@@ -126,6 +126,7 @@ set(gui_SOURCES
         gui/material/MaterialReportsScreen.cpp
         gui/material/MaterialScreen.cpp
         gui/material/MaterialSearchBar.cpp
+        gui/material/MaterialSearchRegistry.cpp
         gui/material/MaterialSegmentedButton.cpp
         gui/material/MaterialSettingsHub.cpp
         gui/material/MaterialSettingsScreen.cpp

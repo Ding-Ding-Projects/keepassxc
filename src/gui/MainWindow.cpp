@@ -26,6 +26,7 @@
 #include <QFontDialog>
 #include <QFontInfo>
 #include <QList>
+#include <QLineEdit>
 #include <QLocale>
 #include <QMimeData>
 #include <QShortcut>
@@ -73,6 +74,7 @@
 #include "gui/material/MaterialReportsFeed.h"
 #include "gui/material/MaterialReportsScreen.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSettingsHub.h"
 #include "gui/material/MaterialSettingsScreen.h"
 #include "gui/material/MaterialSheetCatalogue.h"
@@ -900,25 +902,29 @@ MainWindow::MainWindow()
     new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
 
     auto* regexBuilder = new Material::RegexBuilder(this);
-    auto openBuilderFor = [this, regexBuilder](Material::SearchBar* bar) {
-        m_builderTarget = bar;
+    auto openBuilderFor = [regexBuilder](Material::SearchBar* bar) {
+        Material::SearchRegistry::instance()->setCurrent(bar);
+        if (bar) {
+            regexBuilder->setPattern(bar->text());
+            regexBuilder->setFlags(bar->regexFlags());
+        }
         regexBuilder->openOverlay();
     };
     connect(appBar, &Material::TopAppBar::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
-    // A pattern belongs to whichever search bar asked for the builder. Only a
-    // request that came from nowhere in particular - the app bar, the palette,
-    // the shortcut - falls through to searching the vault.
-    connect(regexBuilder, &Material::RegexBuilder::patternApplied, this, [this](const QString& pattern) {
-        if (m_builderTarget) {
-            m_builderTarget->setText(pattern);
+    connect(Material::SearchRegistry::instance(),
+            &Material::SearchRegistry::builderRequested,
+            this,
+            openBuilderFor);
+    connect(regexBuilder, &Material::RegexBuilder::patternApplied, this, [regexBuilder](const QString& pattern) {
+        auto* target = Material::SearchRegistry::instance()->current();
+        if (!target) {
+            Material::Notify::warning(tr("No search field is selected. The pattern was not applied."));
             return;
         }
-        if (auto* dbWidget = m_ui->tabWidget->currentDatabaseWidget()) {
-            if (shell()) {
-                shell()->setCurrentDestination(QStringLiteral("vault"));
-            }
-            dbWidget->search(pattern);
-        }
+        target->setRegexFlags(regexBuilder->flags());
+        target->setRegexEnabled(true);
+        target->setText(pattern);
+        target->lineEdit()->setFocus(Qt::OtherFocusReason);
     });
     connect(regexBuilder, &Material::RegexBuilder::patternCopied, this, [](const QString& pattern) {
         clipboard()->setText(pattern);
@@ -930,21 +936,8 @@ MainWindow::MainWindow()
 
     // The settings hub asks the window for the three things it cannot do
     // itself: the font chooser, the real integration pages and the builder.
-    connect(settingsHub, &Material::SettingsHub::builderRequested, this, openBuilderFor);
     // The Appearance destination is the same screen the hub used to embed, so
     // it asks the window for the same three things.
-    // Every surface that carries a builder button routes it the same way, so
-    // the pattern lands back in the field it was launched from.
-    for (auto* screen : {static_cast<Material::Screen*>(appearanceScreen),
-                         static_cast<Material::Screen*>(reportsScreen),
-                         static_cast<Material::Screen*>(historyScreen),
-                         static_cast<Material::Screen*>(changelogScreen)}) {
-        if (auto* search = screen->searchBar()) {
-            connect(search, &Material::SearchBar::builderRequested, this, [openBuilderFor, search] {
-                openBuilderFor(search);
-            });
-        }
-    }
     connect(appearanceScreen, &Material::SettingsScreen::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
     connect(settingsHub, &Material::SettingsHub::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
 

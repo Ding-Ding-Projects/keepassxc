@@ -44,7 +44,6 @@ namespace Material
     class EntryDelegate;
     class EntryDetail;
     class ExtendedFab;
-    class RegexBuilder;
     class SearchBar;
     class SegmentedButton;
     class VaultSidebar;
@@ -241,7 +240,6 @@ namespace Material
         QLabel* m_emptyGlyph = nullptr;
         QLabel* m_emptyLabel = nullptr;
         ExtendedFab* m_fab = nullptr;
-        RegexBuilder* m_regexBuilder = nullptr;
 
         EntryListModel* m_entryModel = nullptr;
         GroupTreeModel* m_groupModel = nullptr;

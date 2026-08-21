@@ -23,7 +23,6 @@
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
 #include "MaterialNotifier.h"
-#include "MaterialRegexBuilder.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialTheme.h"
@@ -533,16 +532,6 @@ namespace Material
         m_panes = buildPanes();
         m_stack->addWidget(m_panes);
 
-        m_regexBuilder = new RegexBuilder(this);
-        connect(m_regexBuilder, &RegexBuilder::patternApplied, this, [this](const QString& pattern) {
-            m_searchBar->setRegexEnabled(true);
-            m_searchBar->setText(pattern);
-            runSearch();
-        });
-        connect(m_regexBuilder, &RegexBuilder::patternCopied, this, [](const QString& pattern) {
-            clipboard()->setText(pattern);
-        });
-
         connect(theme(), &Theme::changed, this, &VaultScreen::applyTheme);
         applyTheme();
         updateResultLine();
@@ -656,6 +645,7 @@ namespace Material
 
         m_searchBar = new SearchBar(SearchBar::Variant::Prominent, header);
         m_searchBar->setPlaceholder(tr("Search entries — title, username, URL, notes"));
+        m_searchBar->setIdentity(QStringLiteral("vault.entries"), tr("Vault entry search"));
         headerLayout->addWidget(m_searchBar);
 
         auto* summaryRow = new QWidget(header);
@@ -734,11 +724,6 @@ namespace Material
         connect(m_searchBar, &SearchBar::textChanged, this, [this] { runSearch(); });
         connect(m_searchBar, &SearchBar::regexToggled, this, [this] { runSearch(); });
         connect(m_searchBar, &SearchBar::returnPressed, this, [this] { runSearch(); });
-        connect(m_searchBar, &SearchBar::builderRequested, this, [this] {
-            m_regexBuilder->setPattern(m_searchBar->text());
-            m_regexBuilder->openOverlay();
-        });
-
         connect(m_sortControl, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
             if (id == QLatin1String("modified")) {
                 m_entryModel->setSortKey(EntryListModel::SortKey::Modified);

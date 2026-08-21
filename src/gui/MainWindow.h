@@ -191,7 +191,6 @@ private:
      * came from the app bar, the palette or the shortcut, which have no field
      * of their own and search the vault instead.
      */
-    QPointer<Material::SearchBar> m_builderTarget;
     QPointer<QAction> m_clearHistoryAction;
     QPointer<QAction> m_searchWidgetAction;
     QPointer<QMenu> m_entryContextMenu;

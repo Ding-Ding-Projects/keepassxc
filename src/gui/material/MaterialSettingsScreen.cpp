@@ -482,6 +482,7 @@ namespace Material
         setSearchVisible(true);
         if (auto* search = searchBar()) {
             search->setPlaceholder(tr("Search every setting"));
+            search->setIdentity(QStringLiteral("appearance.settings"), tr("Appearance settings search"));
             search->setMaximumWidth(380);
             connect(search, &SearchBar::textChanged, this, &SettingsScreen::applyFilter);
         }

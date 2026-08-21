@@ -223,6 +223,7 @@ namespace Material
 
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search this surface"));
+        searchBar()->setIdentity(QStringLiteral("history.revisions"), tr("History revision search"));
         searchBar()->setMaximumWidth(SearchMaximumWidth);
         searchBar()->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 

@@ -348,6 +348,9 @@ namespace Material
     void SettingsHub::buildOverview()
     {
         m_overview = new SettingsScreen;
+        if (m_overview->searchBar()) {
+            m_overview->searchBar()->setIdentity(QStringLiteral("settings.overview"), tr("Settings overview search"));
+        }
         connect(m_overview, &SettingsScreen::interfaceFontRequested, this, &SettingsHub::interfaceFontRequested);
         connect(m_overview, &SettingsScreen::integrationActivated, this, &SettingsHub::integrationActivated);
         if (auto* search = m_overview->searchBar()) {
