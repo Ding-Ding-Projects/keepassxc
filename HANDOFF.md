@@ -13,6 +13,14 @@ facts, and compact filter sizing. Destructive deletion is visibly unavailable be
 store is append-only and no super-confirmed delete route exists. The inventory route is implemented
 in source; captures, audits, comparisons, and diffs remain pending.
 
+The native Changelog destination parses every release present in the bundled authoritative
+`CHANGELOG.md`, renders item Markdown through Qt's isolated `QTextDocument` renderer, composes
+plain-text or bounded regex search with locale/ISO calendar ranges and presets, and copies or exports
+the exact filtered view with its range and completion-commit field. The authoritative file contains
+no completion SHAs, so cards and exports say that provenance is unavailable rather than inventing a
+nearby commit. The source route is implemented; installed-artifact captures and visual audits remain
+pending.
+
 The History save ledger now lives in an isolated Git repository beneath the stable application-data
 directory. Each successful save or Material restore appends a commit containing only redacted
 counts, labels, an opaque SHA-256 database identity, and truncated entry-state hashes; database

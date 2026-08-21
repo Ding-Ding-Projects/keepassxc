@@ -24,9 +24,12 @@
 #include <QString>
 #include <QStringList>
 #include <QVector>
+#include <QDate>
 
 class QLabel;
 class QVBoxLayout;
+class QDateEdit;
+class QComboBox;
 
 namespace Material
 {
@@ -48,6 +51,9 @@ namespace Material
         QString date;
         QString status;
         PillKind statusTint = PillKind::Value;
+        QString commitSha;
+        QString commitUrl;
+        bool commitAvailable = false;
         QVector<ChangeItem> items;
     };
 
@@ -67,9 +73,13 @@ namespace Material
         ~ChangelogScreen() override;
 
         void setReleases(const QVector<Release>& releases);
+        QVector<Release> filteredReleases() const;
+        QDate fromDate() const;
+        QDate toDate() const;
 
     signals:
         void exportRequested();
+        void copyRequested();
 
     private:
         void rebuild();
@@ -81,6 +91,10 @@ namespace Material
         QLabel* m_countLabel = nullptr;
         QVector<Release> m_releases;
         QString m_query;
+        QDateEdit* m_fromDate = nullptr;
+        QDateEdit* m_toDate = nullptr;
+        QComboBox* m_datePreset = nullptr;
+        QLabel* m_stateLabel = nullptr;
     };
 
 } // namespace Material

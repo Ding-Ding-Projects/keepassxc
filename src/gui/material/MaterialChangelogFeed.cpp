@@ -29,6 +29,8 @@
 #include <QRegularExpression>
 #include <QStringList>
 #include <QTextStream>
+#include <QApplication>
+#include <QClipboard>
 
 namespace Material
 {
@@ -106,6 +108,10 @@ namespace Material
 
         m_screen->setReleases(m_releases);
         connect(m_screen, &ChangelogScreen::exportRequested, this, &ChangelogFeed::exportMarkdown);
+        connect(m_screen, &ChangelogScreen::copyRequested, this, [this] {
+            QApplication::clipboard()->setText(markdown());
+            Notify::success(tr("Changelog copied"), tr("The filtered changelog was copied as Markdown."));
+        });
     }
 
     ChangelogFeed::~ChangelogFeed() = default;
@@ -210,30 +216,7 @@ namespace Material
 
     QVector<Release> ChangelogFeed::filtered() const
     {
-        // The same rule the screen filters by, so an export matches what is shown.
-        const QString query = m_screen->searchBar()->text().trimmed();
-        if (query.isEmpty()) {
-            return m_releases;
-        }
-
-        QVector<Release> shown;
-        for (const Release& release : m_releases) {
-            if (release.version.contains(query, Qt::CaseInsensitive)) {
-                shown.append(release);
-                continue;
-            }
-            Release trimmed = release;
-            trimmed.items.clear();
-            for (const ChangeItem& item : release.items) {
-                if (matches(item, query)) {
-                    trimmed.items.append(item);
-                }
-            }
-            if (!trimmed.items.isEmpty()) {
-                shown.append(trimmed);
-            }
-        }
-        return shown;
+        return m_screen->filteredReleases();
     }
 
     QString ChangelogFeed::markdown() const
@@ -250,6 +233,8 @@ namespace Material
             out << "- " << tr("Filter") << ": `" << query << "`\n";
         }
         out << "- " << tr("Releases") << ": " << shown.size() << " / " << m_releases.size() << "\n\n";
+        out << "- " << tr("Date range") << ": " << m_screen->fromDate().toString(Qt::ISODate)
+            << " .. " << m_screen->toDate().toString(Qt::ISODate) << "\n\n";
 
         if (shown.isEmpty()) {
             out << tr("No release matches the active filter.") << "\n";
@@ -265,6 +250,9 @@ namespace Material
                 out << " - " << release.status;
             }
             out << "\n\n";
+            out << "- " << tr("Completion commit") << ": "
+                << (release.commitAvailable ? QStringLiteral("[%1](%2)").arg(release.commitSha, release.commitUrl)
+                                            : tr("Unavailable in the bundled authoritative changelog")) << "\n";
             for (const ChangeItem& item : release.items) {
                 out << "- **" << item.tag << "** " << item.text << "\n";
             }

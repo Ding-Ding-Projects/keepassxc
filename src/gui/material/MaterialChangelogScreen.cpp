@@ -21,10 +21,18 @@
 #include "MaterialCard.h"
 #include "MaterialElevation.h"
 #include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QDateEdit>
+#include <QComboBox>
+#include <QLocale>
+#include <QLineEdit>
 #include <QPainter>
+#include <QTextDocument>
+#include <QDesktopServices>
+#include <QUrl>
 #include <QVBoxLayout>
 
 namespace Material
@@ -88,6 +96,19 @@ namespace Material
             return item.tag.contains(query, Qt::CaseInsensitive) || item.text.contains(query, Qt::CaseInsensitive);
         }
 
+        class FlexibleDateEdit : public QDateEdit
+        {
+        public:
+            using QDateEdit::QDateEdit;
+        protected:
+            QDateTime dateTimeFromText(const QString& text) const override
+            {
+                const QDate iso = QDate::fromString(text.trimmed(), Qt::ISODate);
+                const QDate parsed = iso.isValid() ? iso : locale().toDate(text.trimmed(), QLocale::ShortFormat);
+                return parsed.isValid() ? QDateTime(parsed, QTime(0, 0)) : QDateTime();
+            }
+        };
+
         /** One change: a fixed width tag pill and the wrapping description. */
         class ChangeRow : public QWidget
         {
@@ -108,10 +129,12 @@ namespace Material
 
             int heightForWidth(int width) const override
             {
-                const QFontMetrics metrics(theme()->font(TypeRole::BodySmall));
                 const int textWidth = qMax(1, width - TagWidth - TagGap);
-                const int textHeight =
-                    metrics.boundingRect(QRect(0, 0, textWidth, 0), Qt::TextWordWrap, m_item.text).height();
+                QTextDocument document;
+                document.setDefaultFont(theme()->font(TypeRole::BodySmall));
+                document.setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
+                document.setTextWidth(textWidth);
+                const int textHeight = qCeil(document.size().height());
                 return qMax(textHeight, tagHeight()) + ItemPaddingY * 2;
             }
 
@@ -150,9 +173,15 @@ namespace Material
 
                 const QRect textRect(
                     TagWidth + TagGap, ItemPaddingY, qMax(1, width() - TagWidth - TagGap), height() - ItemPaddingY * 2);
-                painter.setFont(theme()->font(TypeRole::BodySmall));
-                painter.setPen(theme()->color(Role::OnSurface));
-                painter.drawText(textRect, Qt::AlignLeft | Qt::AlignTop | Qt::TextWordWrap, m_item.text);
+                painter.save();
+                painter.translate(textRect.topLeft());
+                QTextDocument document;
+                document.setDefaultFont(theme()->font(TypeRole::BodySmall));
+                document.setDefaultStyleSheet(QStringLiteral("body { color: %1; }").arg(theme()->hex(Role::OnSurface)));
+                document.setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
+                document.setTextWidth(textRect.width());
+                document.drawContents(&painter, QRectF(0, 0, textRect.width(), textRect.height()));
+                painter.restore();
             }
 
         private:
@@ -266,6 +295,20 @@ namespace Material
             tint(date, Role::OnSurfaceVariant);
             head->addWidget(date);
 
+            auto commit = new QLabel;
+            commit->setObjectName(QStringLiteral("changelogCommit_%1").arg(release.version));
+            commit->setTextFormat(Qt::RichText);
+            commit->setOpenExternalLinks(false);
+            if (release.commitAvailable) {
+                commit->setText(QStringLiteral("<a href=\"%1\">%2</a>").arg(release.commitUrl.toHtmlEscaped(), release.commitSha.left(12).toHtmlEscaped()));
+                commit->setAccessibleName(ChangelogScreen::tr("Open completion commit %1").arg(release.commitSha));
+                QObject::connect(commit, &QLabel::linkActivated, commit, [](const QString& link) { QDesktopServices::openUrl(QUrl(link)); });
+            } else {
+                commit->setText(ChangelogScreen::tr("Completion commit unavailable"));
+                commit->setAccessibleName(commit->text());
+            }
+            card->contentLayout()->addWidget(commit);
+
             card->contentLayout()->addLayout(head);
             card->contentLayout()->addSpacing(HeadSpacing);
 
@@ -285,6 +328,10 @@ namespace Material
         exportButton->setSymbolSize(ExportSymbolSize);
         connect(exportButton, &QAbstractButton::clicked, this, &ChangelogScreen::exportRequested);
         addHeaderWidget(exportButton);
+        auto copyButton = new OutlinedButton(QStringLiteral("content_copy"), tr("Copy filtered"));
+        copyButton->setObjectName(QStringLiteral("changelogCopyFiltered"));
+        connect(copyButton, &QAbstractButton::clicked, this, &ChangelogScreen::copyRequested);
+        addHeaderWidget(copyButton);
 
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search changelog text"));
@@ -295,6 +342,7 @@ namespace Material
             m_query = text.trimmed();
             rebuild();
         });
+        connect(searchBar(), &SearchBar::regexToggled, this, &ChangelogScreen::rebuild);
 
         m_dateChip = new Chip(QStringLiteral("calendar_month"), QString(), Chip::Kind::Assist);
         // The design lines the chip up with the search bar beside it.
@@ -309,6 +357,38 @@ namespace Material
         filterRow->addWidget(m_countLabel);
         filterRow->addStretch(1);
         contentLayout()->addLayout(filterRow);
+
+        auto dates = new QHBoxLayout;
+        m_datePreset = new QComboBox;
+        m_datePreset->setObjectName(QStringLiteral("changelogDatePreset"));
+        m_datePreset->setAccessibleName(tr("Changelog date preset"));
+        m_datePreset->addItem(tr("All dates"), QStringLiteral("all"));
+        m_datePreset->addItem(tr("Last year"), QStringLiteral("365"));
+        m_datePreset->addItem(tr("Last 5 years"), QStringLiteral("1825"));
+        m_fromDate = new FlexibleDateEdit;
+        m_fromDate->setObjectName(QStringLiteral("changelogFromDate"));
+        m_fromDate->setCalendarPopup(true);
+        m_fromDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
+        m_fromDate->setMinimumDate(QDate(1970, 1, 1));
+        m_fromDate->setSpecialValueText(tr("Any start date"));
+        m_fromDate->setDate(m_fromDate->minimumDate());
+        m_toDate = new FlexibleDateEdit(QDate::currentDate());
+        m_toDate->setObjectName(QStringLiteral("changelogToDate"));
+        m_toDate->setCalendarPopup(true);
+        m_toDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
+        dates->addWidget(m_datePreset); dates->addWidget(m_fromDate); dates->addWidget(m_toDate); dates->addStretch(1);
+        contentLayout()->addLayout(dates);
+        connect(m_datePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
+            const QString value = m_datePreset->itemData(index).toString();
+            m_fromDate->setDate(value == QLatin1String("all") ? m_fromDate->minimumDate() : QDate::currentDate().addDays(-value.toInt()));
+            m_toDate->setDate(QDate::currentDate()); rebuild();
+        });
+        connect(m_fromDate, &QDateEdit::dateChanged, this, &ChangelogScreen::rebuild);
+        connect(m_toDate, &QDateEdit::dateChanged, this, &ChangelogScreen::rebuild);
+        m_stateLabel = new QLabel;
+        m_stateLabel->setObjectName(QStringLiteral("changelogState"));
+        m_stateLabel->setAccessibleName(tr("Changelog state"));
+        contentLayout()->addWidget(m_stateLabel);
 
         auto list = new QWidget();
         list->setMaximumWidth(ListWidth);
@@ -336,19 +416,8 @@ namespace Material
 
         int shown = 0;
         QStringList dates;
-        for (const auto& release : m_releases) {
-            QVector<ChangeItem> items = release.items;
-            if (!m_query.isEmpty() && !release.version.contains(m_query, Qt::CaseInsensitive)) {
-                items.clear();
-                for (const auto& item : release.items) {
-                    if (matches(item, m_query)) {
-                        items.append(item);
-                    }
-                }
-                if (items.isEmpty()) {
-                    continue;
-                }
-            }
+        for (const auto& release : filteredReleases()) {
+            const QVector<ChangeItem> items = release.items;
             m_releaseLayout->addWidget(buildReleaseCard(release, items));
             dates.append(release.date);
             ++shown;
@@ -360,6 +429,40 @@ namespace Material
         // The chip and the count sit in the same row and describe the same set,
         // so the range is taken from the cards that were actually added.
         updateDateRange(dates);
+        m_stateLabel->setText(shown == 0 ? tr("No release matches the active search and date range.")
+                                         : tr("Bundled changelog loaded: %n release(s) shown.", "", shown));
+    }
+
+    QDate ChangelogScreen::fromDate() const { return m_fromDate->date(); }
+    QDate ChangelogScreen::toDate() const { return m_toDate->date(); }
+
+    QVector<Release> ChangelogScreen::filteredReleases() const
+    {
+        QVector<Release> shown;
+        bool valid = true;
+        if (searchBar()->isRegexEnabled() && !m_query.isEmpty()) {
+            const auto check = runBounded(m_query, optionsForFlags(searchBar()->regexFlags()), QString());
+            valid = check.compiled && !check.blocked && !check.timedOut;
+            searchBar()->lineEdit()->setAccessibleDescription(valid ? tr("Changelog filter is valid") : tr("Invalid regular expression: %1").arg(check.error));
+        }
+        if (!valid) return shown;
+        const auto textMatches = [this](const QString& text) {
+            if (m_query.isEmpty()) return true;
+            if (!searchBar()->isRegexEnabled()) return text.contains(m_query, Qt::CaseInsensitive);
+            return !runBounded(m_query, optionsForFlags(searchBar()->regexFlags()), text).matches.isEmpty();
+        };
+        for (const auto& release : m_releases) {
+            const QDate date = QDate::fromString(release.date, Qt::ISODate);
+            if (date.isValid() && (date < fromDate() || date > toDate())) continue;
+            Release filtered = release;
+            if (!m_query.isEmpty() && !textMatches(release.version) && !textMatches(release.commitSha)) {
+                filtered.items.clear();
+                for (const auto& item : release.items) if (textMatches(item.tag) || textMatches(item.text)) filtered.items.append(item);
+                if (filtered.items.isEmpty()) continue;
+            }
+            shown.append(filtered);
+        }
+        return shown;
     }
 
     void ChangelogScreen::updateDateRange(const QStringList& dates)

@@ -22,6 +22,7 @@
 - [x] Register command-palette and notification-history searches and make both consumers mode/flag aware.
 - [ ] Migrate every remaining dialog and auxiliary surface to the shared component system.
 - [x] Add the first native History parity batch without changing append-only restore semantics.
+- [x] Add the first native Changelog parity batch with bundled release coverage, composed date/regex filtering, rendered Markdown, and truthful commit provenance.
 - [x] Replace the plaintext History save log with an isolated local Git ledger and atomic redacted fingerprint transactions.
 - [x] Serialize local History writers and preserve validated encrypted KDBX snapshots in the same append-only commits.
 - [x] Add the first native Reports parity batch with truthful states, real category data, selection/export, regex filtering, accessibility, and responsive reflow.
