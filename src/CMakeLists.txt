@@ -98,6 +98,7 @@ set(core_SOURCES
 
 set(gui_SOURCES
         gui/styles/StateColorPalette.cpp
+        platform/SquirrelLifecycle.cpp
         gui/material/MaterialBreakpoints.cpp
         gui/material/MaterialButtons.cpp
         gui/material/MaterialCard.cpp

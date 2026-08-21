@@ -182,6 +182,9 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testsquirrellifecycle SOURCES TestSquirrelLifecycle.cpp
+        LIBS ${TEST_LIBRARIES})
+
 add_unit_test(NAME testdimsum SOURCES TestDimSum.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 # The card is a widget, so the test needs a QApplication. Offscreen keeps it

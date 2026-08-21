@@ -31,6 +31,7 @@
 #include "gui/MessageBox.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/osutils/OSUtils.h"
+#include "platform/SquirrelLifecycle.h"
 
 #if defined(WITH_ASAN) && defined(WITH_LSAN)
 #include <sanitizer/lsan_interface.h>
@@ -73,6 +74,10 @@ int main(int argc, char** argv)
     Application::setApplicationVersion(KEEPASSXC_VERSION);
     app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
 
+    if (const auto lifecycleExit = SquirrelLifecycle::handle(app.arguments(), QCoreApplication::applicationDirPath())) {
+        return *lifecycleExit;
+    }
+
     // HACK: Prevent long-running threads from deadlocking the program with only 1 CPU
     // See https://github.com/keepassxreboot/keepassxc/issues/10391
     // HACK: increased to a minimum of 3 threads
@@ -95,6 +100,7 @@ int main(int argc, char** argv)
     QCommandLineOption allowScreenCaptureOption("allow-screencapture",
                                                 QObject::tr("allow screenshots and app recording (Windows/macOS)"));
     QCommandLineOption startMinimized("minimized", QObject::tr("start minimized to the system tray"));
+    QCommandLineOption squirrelFirstRun("squirrel-firstrun");
 
     QCommandLineOption helpOption = parser.addHelpOption();
     QCommandLineOption versionOption = parser.addVersionOption();
@@ -107,6 +113,7 @@ int main(int argc, char** argv)
     parser.addOption(debugInfoOption);
     parser.addOption(allowScreenCaptureOption);
     parser.addOption(startMinimized);
+    parser.addOption(squirrelFirstRun);
 
     parser.process(app);
 
