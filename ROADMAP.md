@@ -11,7 +11,7 @@
 ## Material UI rewrite
 
 - [x] Add the five responsive window-size classes and exact boundary tests.
-- [ ] Integrate responsive navigation, compact bottom navigation, and pane alternatives.
+- [x] Integrate responsive navigation, searchable compact bottom navigation, group-scope fallback, and an accessible narrow-layout detail sheet.
 - [ ] Complete search registry, tab overflow, regex safety, appearance overrides, generated voice strings, and external-editor integration.
 - [x] Add shared regex limits, high-risk shape refusal, zero-width safety, sample/match caps, and explicit result states.
 - [x] Add stable hashed tab persistence identities, descriptor reconciliation, preferred order keys, and pin-state foundations.

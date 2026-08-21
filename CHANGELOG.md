@@ -5,6 +5,7 @@
 ### Changes
 
 - Build: Enforce the Windows-only source boundary and remove the remaining macOS translation and Unix package-helper registrations.
+- Interface: Apply all five Material window classes with exact rail, group-pane, and detail widths; compact navigation now has a searchable More menu, and hidden vault panes retain keyboard-accessible group and detail routes.
 
 ## 2.7.12 (2026-03-10)
 

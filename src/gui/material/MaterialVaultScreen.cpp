@@ -23,6 +23,7 @@
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
 #include "MaterialNotifier.h"
+#include "MaterialOverlay.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialTheme.h"
@@ -54,14 +55,20 @@
 #include <QLabel>
 #include <QLineEdit>
 #include <QListView>
+#include <QMenu>
 #include <QPainter>
+#include <QPersistentModelIndex>
 #include <QRegularExpression>
 #include <QResizeEvent>
 #include <QScopedValueRollback>
 #include <QStackedWidget>
 #include <QTimer>
+#include <QToolButton>
 #include <QUrl>
 #include <QVBoxLayout>
+#include <QWidgetAction>
+
+#include <functional>
 
 namespace Material
 {
@@ -531,6 +538,7 @@ namespace Material
 
         m_panes = buildPanes();
         m_stack->addWidget(m_panes);
+        applyBreakpoint();
 
         connect(theme(), &Theme::changed, this, &VaultScreen::applyTheme);
         applyTheme();
@@ -603,31 +611,61 @@ namespace Material
             QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(path).absolutePath()));
         });
 
-        connect(m_detail, &EntryDetail::copyRequested, this, &VaultScreen::copyField);
-        connect(m_detail, &EntryDetail::autoTypeRequested, this, [this] {
+        connectDetailActions(m_detail);
+
+        m_detailOverlay = new Overlay(this);
+        m_detailOverlay->setObjectName(QStringLiteral("materialVaultDetailOverlay"));
+        m_detailOverlay->setSheetWidth(520);
+        auto* sheet = new QWidget;
+        sheet->setObjectName(QStringLiteral("materialVaultDetailSheet"));
+        sheet->setAccessibleName(tr("Entry details"));
+        auto* sheetLayout = new QVBoxLayout(sheet);
+        sheetLayout->setContentsMargins(12, 12, 12, 12);
+        auto* close = new QToolButton(sheet);
+        close->setText(tr("Close entry details"));
+        close->setAccessibleName(close->text());
+        connect(close, &QToolButton::clicked, m_detailOverlay, &Overlay::closeOverlay);
+        sheetLayout->addWidget(close, 0, Qt::AlignRight);
+        m_sheetDetail = new EntryDetail(sheet);
+        m_sheetDetail->setMinimumWidth(0);
+        m_sheetDetail->setMaximumWidth(QWIDGETSIZE_MAX);
+        connectDetailActions(m_sheetDetail);
+        sheetLayout->addWidget(m_sheetDetail, 1);
+        m_detailOverlay->setSheetWidget(sheet);
+        connect(m_detailOverlay, &Overlay::closed, this, [this] {
+            if (m_detailSheetButton && m_detailSheetButton->isVisible()) {
+                m_detailSheetButton->setFocus(Qt::PopupFocusReason);
+            }
+        });
+
+        return panes;
+    }
+
+    void VaultScreen::connectDetailActions(EntryDetail* detail)
+    {
+        connect(detail, &EntryDetail::copyRequested, this, &VaultScreen::copyField);
+        connect(detail, &EntryDetail::autoTypeRequested, this, [this] {
             if (m_dbWidget) {
                 m_dbWidget->performAutoType();
             }
         });
-        connect(m_detail, &EntryDetail::editRequested, this, [this] {
+        connect(detail, &EntryDetail::editRequested, this, [this] {
             if (m_dbWidget) {
                 m_dbWidget->switchToEntryEdit();
             }
         });
-        connect(m_detail, &EntryDetail::deleteRequested, this, [this] {
+        connect(detail, &EntryDetail::deleteRequested, this, [this] {
             if (m_dbWidget) {
                 m_dbWidget->deleteSelectedEntries();
             }
         });
-        connect(m_detail, &EntryDetail::historyRequested, this, [this] {
+        connect(detail, &EntryDetail::historyRequested, this, [this] {
             openEntryEditor(m_dbWidget, EditEntryWidget::Page::History);
         });
-        connect(m_detail, &EntryDetail::attachmentActivated, this, [this](const QString&) {
+        connect(detail, &EntryDetail::attachmentActivated, this, [this](const QString&) {
             openEntryEditor(m_dbWidget, EditEntryWidget::Page::Advanced);
         });
-        connect(m_detail, &EntryDetail::favouriteToggled, this, &VaultScreen::toggleFavourite);
-
-        return panes;
+        connect(detail, &EntryDetail::favouriteToggled, this, &VaultScreen::toggleFavourite);
     }
 
     QWidget* VaultScreen::buildCentreColumn()
@@ -655,6 +693,24 @@ namespace Material
 
         m_resultLabel = new QLabel(summaryRow);
         summaryLayout->addWidget(m_resultLabel, 1);
+
+        m_groupScopeButton = new QToolButton(summaryRow);
+        m_groupScopeButton->setObjectName(QStringLiteral("materialVaultGroupScope"));
+        m_groupScopeButton->setText(tr("Groups"));
+        m_groupScopeButton->setAccessibleName(tr("Choose a vault group"));
+        m_groupScopeButton->setPopupMode(QToolButton::InstantPopup);
+        m_groupScopeMenu = new QMenu(m_groupScopeButton);
+        m_groupScopeMenu->setAccessibleName(tr("Vault groups"));
+        m_groupScopeButton->setMenu(m_groupScopeMenu);
+        connect(m_groupScopeMenu, &QMenu::aboutToShow, this, &VaultScreen::rebuildGroupScopeMenu);
+        summaryLayout->addWidget(m_groupScopeButton, 0);
+
+        m_detailSheetButton = new QToolButton(summaryRow);
+        m_detailSheetButton->setObjectName(QStringLiteral("materialVaultDetailSheetButton"));
+        m_detailSheetButton->setText(tr("Details"));
+        m_detailSheetButton->setAccessibleName(tr("Open entry details"));
+        connect(m_detailSheetButton, &QToolButton::clicked, this, &VaultScreen::openDetailSheet);
+        summaryLayout->addWidget(m_detailSheetButton, 0);
 
         m_sortControl = new SegmentedButton(summaryRow);
         // The result row's sort strip is a chip-height control, not a button.
@@ -795,6 +851,122 @@ namespace Material
         return m_dbWidget;
     }
 
+    Breakpoint VaultScreen::breakpoint() const
+    {
+        return m_breakpoint;
+    }
+
+    bool VaultScreen::groupPaneVisible() const
+    {
+        return m_sidebar && m_sidebar->isVisible();
+    }
+
+    bool VaultScreen::detailPaneInline() const
+    {
+        return m_detail && m_detail->isVisible();
+    }
+
+    QToolButton* VaultScreen::groupScopeButton() const
+    {
+        return m_groupScopeButton;
+    }
+
+    QToolButton* VaultScreen::detailSheetButton() const
+    {
+        return m_detailSheetButton;
+    }
+
+    void VaultScreen::setBreakpoint(Breakpoint breakpoint)
+    {
+        if (m_breakpoint == breakpoint) {
+            return;
+        }
+        m_breakpoint = breakpoint;
+        applyBreakpoint();
+    }
+
+    void VaultScreen::applyBreakpoint()
+    {
+        const bool showGroups = hasGroupPane(m_breakpoint);
+        const bool inlineDetail = hasInlineDetail(m_breakpoint);
+        m_sidebar->setVisible(showGroups);
+        if (showGroups) {
+            m_sidebar->setFixedWidth(m_breakpoint == Breakpoint::ExtraLarge ? 250 : 216);
+        }
+        m_groupScopeButton->setVisible(!showGroups);
+        m_detail->setVisible(inlineDetail);
+        if (inlineDetail) {
+            m_detail->setFixedWidth(detailWidth(m_breakpoint));
+            if (m_detailOverlay->isOpen()) {
+                m_detailOverlay->closeOverlay();
+            }
+        }
+        m_detailSheetButton->setVisible(!inlineDetail);
+        m_detailSheetButton->setEnabled(m_dbWidget && m_dbWidget->currentSelectedEntry());
+        updateFabGeometry();
+    }
+
+    void VaultScreen::openDetailSheet()
+    {
+        if (hasInlineDetail(m_breakpoint) || !m_dbWidget || !m_dbWidget->currentSelectedEntry()) {
+            return;
+        }
+        updateDetail();
+        m_detailOverlay->openOverlay();
+    }
+
+    void VaultScreen::rebuildGroupScopeMenu()
+    {
+        m_groupScopeMenu->clear();
+        m_groupScopeActions.clear();
+        m_groupScopeSearch = new QLineEdit(m_groupScopeMenu);
+        m_groupScopeSearch->setObjectName(QStringLiteral("materialVaultGroupScopeSearch"));
+        m_groupScopeSearch->setPlaceholderText(tr("Search groups"));
+        m_groupScopeSearch->setAccessibleName(tr("Search vault groups"));
+        connect(m_groupScopeSearch, &QLineEdit::textChanged, this, &VaultScreen::filterGroupScopeMenu);
+        auto* searchAction = new QWidgetAction(m_groupScopeMenu);
+        searchAction->setDefaultWidget(m_groupScopeSearch);
+        m_groupScopeMenu->addAction(searchAction);
+        m_groupScopeMenu->addSeparator();
+
+        std::function<void(const QModelIndex&, int)> append = [&](const QModelIndex& parent, int depth) {
+            for (int row = 0; row < m_groupModel->rowCount(parent); ++row) {
+                const QModelIndex index = m_groupModel->index(row, 0, parent);
+                Group* group = m_groupModel->groupFromIndex(index);
+                if (!group) {
+                    continue;
+                }
+                auto* action = m_groupScopeMenu->addAction(QString(depth * 2, QLatin1Char(' ')) + group->name());
+                action->setCheckable(true);
+                action->setChecked(m_dbWidget && m_dbWidget->currentGroup() == group);
+                action->setStatusTip(action->isChecked() ? tr("Current group") : QString());
+                const QPersistentModelIndex persistent(index);
+                connect(action, &QAction::triggered, this, [this, persistent] {
+                    if (!persistent.isValid() || !m_dbWidget) {
+                        return;
+                    }
+                    Group* selected = m_groupModel->groupFromIndex(persistent);
+                    if (selected) {
+                        m_dbWidget->groupView()->setCurrentGroup(selected);
+                        m_groupScopeButton->setText(selected->name());
+                    }
+                });
+                m_groupScopeActions.append(action);
+                append(index, depth + 1);
+            }
+        };
+        append(QModelIndex(), 0);
+        m_groupScopeSearch->setFocus(Qt::PopupFocusReason);
+    }
+
+    void VaultScreen::filterGroupScopeMenu(const QString& query)
+    {
+        const QString needle = query.trimmed();
+        for (auto* action : m_groupScopeActions) {
+            action->setVisible(needle.isEmpty() || action->text().trimmed().contains(needle, Qt::CaseInsensitive));
+        }
+    }
+
     void VaultScreen::setHostWidget(QStackedWidget* host, DatabaseTabWidget* tabs)
     {
         if (m_host == host && m_tabs == tabs) {
@@ -872,6 +1044,7 @@ namespace Material
             m_groupModel->setSourceModel(nullptr);
             m_sidebar->setTags({});
             m_detail->clear();
+            m_sheetDetail->clear();
             updateResultLine();
             updateVisiblePage();
             return;
@@ -911,6 +1084,7 @@ namespace Material
         });
         m_databaseConnections << connect(dbWidget, &DatabaseWidget::databaseLocked, this, [this] {
             m_detail->clear();
+            m_sheetDetail->clear();
             updateVisiblePage();
         });
         m_databaseConnections << connect(dbWidget, &DatabaseWidget::databaseModified, this, [this] {
@@ -1055,6 +1229,8 @@ namespace Material
         Entry* entry = m_dbWidget && !m_dbWidget->isLocked() ? m_dbWidget->currentSelectedEntry() : nullptr;
         if (!entry) {
             m_detail->clear();
+            m_sheetDetail->clear();
+            m_detailSheetButton->setEnabled(false);
             m_totpStep = -1;
             updateTotpTimer();
             return;
@@ -1111,6 +1287,8 @@ namespace Material
                                   : tr("No previous versions");
 
         m_detail->setEntryData(data);
+        m_sheetDetail->setEntryData(data);
+        m_detailSheetButton->setEnabled(true);
         updateTotpTimer();
     }
 
@@ -1123,9 +1301,11 @@ namespace Material
         // it is handed, so the reveal is put back the way the user left it -
         // this is not a new selection, where hiding the password is the point.
         const bool revealed = m_detail->isPasswordVisible();
+        const bool sheetRevealed = m_sheetDetail->isPasswordVisible();
         updateDetail();
         if (m_totpStep >= 0) {
             m_detail->setPasswordVisible(revealed);
+            m_sheetDetail->setPasswordVisible(sheetRevealed);
         }
     }
 

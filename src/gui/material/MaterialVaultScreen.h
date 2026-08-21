@@ -19,6 +19,7 @@
 #define KEEPASSXC_MATERIALVAULTSCREEN_H
 
 #include "MaterialTheme.h"
+#include "MaterialBreakpoints.h"
 
 #include <QHash>
 #include <QIdentityProxyModel>
@@ -38,12 +39,17 @@ class QLabel;
 class QListView;
 class QStackedWidget;
 class QTimer;
+class QToolButton;
+class QMenu;
+class QLineEdit;
+class QAction;
 
 namespace Material
 {
     class EntryDelegate;
     class EntryDetail;
     class ExtendedFab;
+    class Overlay;
     class SearchBar;
     class SegmentedButton;
     class VaultSidebar;
@@ -177,10 +183,17 @@ namespace Material
 
         /** The database the panes are currently bound to; may be nullptr. */
         DatabaseWidget* databaseWidget() const;
+        Breakpoint breakpoint() const;
+        bool groupPaneVisible() const;
+        bool detailPaneInline() const;
+        QToolButton* groupScopeButton() const;
+        QToolButton* detailSheetButton() const;
 
     public slots:
         void setDatabaseWidget(DatabaseWidget* dbWidget);
         void focusSearch();
+        void setBreakpoint(Material::Breakpoint breakpoint);
+        void openDetailSheet();
 
     protected:
         bool eventFilter(QObject* watched, QEvent* event) override;
@@ -195,6 +208,10 @@ namespace Material
         /** Stylesheet of the result line; error red while the pattern is broken. */
         QString resultLineStyle() const;
         void updateFabGeometry();
+        void applyBreakpoint();
+        void rebuildGroupScopeMenu();
+        void filterGroupScopeMenu(const QString& query);
+        void connectDetailActions(EntryDetail* detail);
         void updateVisiblePage();
         void updateResultLine();
         void updateTags();
@@ -230,7 +247,14 @@ namespace Material
 
         VaultSidebar* m_sidebar = nullptr;
         EntryDetail* m_detail = nullptr;
+        EntryDetail* m_sheetDetail = nullptr;
+        Overlay* m_detailOverlay = nullptr;
         SearchBar* m_searchBar = nullptr;
+        QToolButton* m_groupScopeButton = nullptr;
+        QToolButton* m_detailSheetButton = nullptr;
+        QMenu* m_groupScopeMenu = nullptr;
+        QLineEdit* m_groupScopeSearch = nullptr;
+        QList<QAction*> m_groupScopeActions;
         SegmentedButton* m_sortControl = nullptr;
         QLabel* m_resultLabel = nullptr;
         QWidget* m_centre = nullptr;
@@ -254,6 +278,7 @@ namespace Material
         bool m_syncingSearch = false;
         /** The regex chip is on and the pattern does not compile. */
         bool m_regexInvalid = false;
+        Breakpoint m_breakpoint = Breakpoint::ExtraLarge;
     };
 
 } // namespace Material

@@ -6,6 +6,14 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The native shell now applies all five logical-width classes to real vault geometry. Large and Extra
+Large use their exact group/detail widths; Expanded moves group selection into a searchable scope
+menu; Medium and Compact replace inline details with an accessible overlay opened from the list
+header. Compact navigation keeps the first five destinations in a 76 px bottom bar and the rest in
+a searchable More menu, with current-state and focus handoff when the rail is hidden. A clean MSVC
+and Qt 6.8.3 build produced the staged executable, and the focused breakpoint and shell tests pass.
+No built-artifact visual capture has run yet, so this is source-line and local-test evidence only.
+
 The first real Squirrel candidate was produced from commit `a98ef19842595a638e07ff4e59fbfdc418be21c8`:
 `Setup.exe` was 73,158,144 bytes and reported `NotSigned`; the full package was 72,320,747 bytes.
 The deterministic artifact verifier passed. Installation, launch, update, rollback, and uninstall

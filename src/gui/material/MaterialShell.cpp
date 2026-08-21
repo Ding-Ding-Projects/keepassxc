@@ -25,15 +25,18 @@
 #include "MaterialTopAppBar.h"
 
 #include <QAction>
+#include <QApplication>
 #include <QCoreApplication>
 #include <QHBoxLayout>
 #include <QLayout>
 #include <QMenu>
+#include <QLineEdit>
 #include <QPainter>
 #include <QStackedWidget>
 #include <QToolButton>
 #include <QVBoxLayout>
 #include <QResizeEvent>
+#include <QWidgetAction>
 
 namespace Material
 {
@@ -87,14 +90,29 @@ namespace Material
         m_bottomLayout->setContentsMargins(4, 4, 4, 4);
         m_bottomLayout->setSpacing(2);
         m_moreMenu = new QMenu(m_bottomBar);
+        m_moreMenu->setAccessibleName(tr("More destinations"));
+        m_moreSearch = new QLineEdit(m_moreMenu);
+        m_moreSearch->setObjectName(QStringLiteral("materialBottomNavigationMoreSearch"));
+        m_moreSearch->setPlaceholderText(tr("Search destinations"));
+        m_moreSearch->setAccessibleName(tr("Search more destinations"));
+        m_moreSearchAction = new QWidgetAction(m_moreMenu);
+        m_moreSearchAction->setDefaultWidget(m_moreSearch);
+        m_moreMenu->addAction(m_moreSearchAction);
+        connect(m_moreSearch, &QLineEdit::textChanged, this, &Shell::filterMoreDestinations);
+        connect(m_moreMenu, &QMenu::aboutToShow, this, [this] {
+            m_moreSearch->clear();
+            m_moreSearch->setFocus(Qt::PopupFocusReason);
+        });
         m_moreButton = new QToolButton(m_bottomBar);
         m_moreButton->setObjectName(QStringLiteral("materialBottomNavigationMore"));
+        m_moreButton->setMinimumSize(48, 48);
         m_moreButton->setText(tr("More"));
         m_moreButton->setIcon(Icons::symbol(QStringLiteral("more_horiz")));
         m_moreButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
         m_moreButton->setPopupMode(QToolButton::InstantPopup);
         m_moreButton->setMenu(m_moreMenu);
         m_moreButton->setAccessibleName(tr("More destinations"));
+        m_moreButton->setCheckable(true);
         m_bottomLayout->addWidget(m_moreButton, 1);
         outer->addWidget(m_bottomBar);
 
@@ -226,13 +244,18 @@ namespace Material
         if (m_order.size() <= 5) {
             auto* button = new QToolButton(m_bottomBar);
             button->setDefaultAction(command);
+            button->setObjectName(QStringLiteral("materialBottomDestination_") + id);
+            button->setMinimumSize(48, 48);
             button->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
             button->setAutoRaise(true);
+            button->setCheckable(true);
             button->setProperty("destinationId", id);
             button->setAccessibleName(label);
+            m_bottomButtons.insert(id, button);
             m_bottomLayout->insertWidget(m_bottomLayout->count() - 1, button, 1);
         } else {
             m_moreMenu->addAction(command);
+            m_moreDestinationActions.append(command);
         }
 
         if (m_current.isEmpty()) {
@@ -241,6 +264,7 @@ namespace Material
             m_rail->setCurrentDestination(id);
             emit destinationChanged(id);
         }
+        updateCompactSelection();
     }
 
     QString Shell::currentDestination() const
@@ -267,6 +291,7 @@ namespace Material
         m_current = id;
         m_rail->setCurrentDestination(id);
         m_stack->setCurrentWidget(m_pages.value(id));
+        updateCompactSelection();
         emit destinationChanged(id);
     }
 
@@ -286,14 +311,63 @@ namespace Material
     void Shell::applyBreakpoint(Breakpoint breakpoint)
     {
         const bool changed = m_breakpoint != breakpoint;
+        const bool wasCompact = !hasRail(m_breakpoint);
+        QWidget* focused = QApplication::focusWidget();
+        const bool navigationHadFocus = focused
+                                        && (focused == m_rail || m_rail->isAncestorOf(focused)
+                                            || focused == m_moreButton || m_bottomBar->isAncestorOf(focused));
         m_breakpoint = breakpoint;
         const bool railVisible = hasRail(breakpoint);
         m_rail->setVisible(railVisible);
         m_rail->setFixedWidth(railWidth(breakpoint));
         m_rail->setIconsOnly(breakpoint == Breakpoint::Medium);
         m_bottomBar->setVisible(!railVisible);
+        updateCompactSelection();
+        if (changed && wasCompact != !railVisible) {
+            handOffNavigationFocus(!railVisible, navigationHadFocus);
+        }
         if (changed) {
             emit breakpointChanged(breakpoint);
+        }
+    }
+
+    void Shell::updateCompactSelection()
+    {
+        for (auto it = m_bottomButtons.cbegin(); it != m_bottomButtons.cend(); ++it) {
+            const bool current = it.key() == m_current;
+            it.value()->setChecked(current);
+            it.value()->setAccessibleDescription(current ? tr("Current destination") : QString());
+        }
+        const bool currentInMore = !m_current.isEmpty() && !m_bottomButtons.contains(m_current);
+        m_moreButton->setChecked(currentInMore);
+        m_moreButton->setAccessibleDescription(currentInMore ? tr("Current destination is in More") : QString());
+        for (auto* action : m_moreDestinationActions) {
+            action->setCheckable(true);
+            action->setChecked(action->objectName() == QStringLiteral("materialDestination_") + m_current);
+        }
+    }
+
+    void Shell::filterMoreDestinations(const QString& query)
+    {
+        const QString needle = query.trimmed();
+        for (auto* action : m_moreDestinationActions) {
+            action->setVisible(needle.isEmpty() || action->text().contains(needle, Qt::CaseInsensitive));
+        }
+    }
+
+    void Shell::handOffNavigationFocus(bool compact, bool navigationHadFocus)
+    {
+        if (!navigationHadFocus) {
+            return;
+        }
+        if (compact) {
+            if (auto* button = m_bottomButtons.value(m_current)) {
+                button->setFocus(Qt::OtherFocusReason);
+            } else {
+                m_moreButton->setFocus(Qt::OtherFocusReason);
+            }
+        } else {
+            m_rail->setFocus(Qt::OtherFocusReason);
         }
     }
 

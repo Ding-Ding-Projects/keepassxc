@@ -31,6 +31,8 @@ class QStackedWidget;
 class QHBoxLayout;
 class QToolButton;
 class QResizeEvent;
+class QLineEdit;
+class QWidgetAction;
 
 namespace Material
 {
@@ -158,6 +160,9 @@ namespace Material
          */
         void retintCommands();
         void applyBreakpoint(Breakpoint breakpoint);
+        void updateCompactSelection();
+        void filterMoreDestinations(const QString& query);
+        void handOffNavigationFocus(bool compact, bool navigationHadFocus);
 
         NavigationRail* m_rail = nullptr;
         TopAppBar* m_appBar = nullptr;
@@ -181,6 +186,10 @@ namespace Material
         QHBoxLayout* m_bottomLayout = nullptr;
         QToolButton* m_moreButton = nullptr;
         QMenu* m_moreMenu = nullptr;
+        QLineEdit* m_moreSearch = nullptr;
+        QWidgetAction* m_moreSearchAction = nullptr;
+        QList<QAction*> m_moreDestinationActions;
+        QHash<QString, QToolButton*> m_bottomButtons;
         Breakpoint m_breakpoint = Breakpoint::Compact;
     };
 
