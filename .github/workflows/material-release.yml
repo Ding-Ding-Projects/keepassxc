@@ -31,8 +31,12 @@ jobs:
         id: package_version
         shell: powershell
         run: |
-          $patch = ([int64]'${{ github.run_number }}' * 100) + [int64]'${{ github.run_attempt }}'
-          $packageVersion = "2.8.$patch"
+          $ordinal = ([int64]'${{ github.run_number }}' * 100) + [int64]'${{ github.run_attempt }}'
+          $patch = $ordinal % 65536
+          $minorOrdinal = 8 + [Math]::Floor($ordinal / 65536)
+          $minor = $minorOrdinal % 65536
+          $major = 2 + [Math]::Floor($minorOrdinal / 65536)
+          $packageVersion = "$major.$minor.$patch"
           "value=$packageVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           Write-Host "Package version: $packageVersion"
 

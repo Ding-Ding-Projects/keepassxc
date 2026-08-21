@@ -1,5 +1,5 @@
 [CmdletBinding()]
-param([switch]$ProbeLegacyInstaller)
+param([switch]$ProbeLegacyInstaller, [switch]$ProbeExecutableVersionMismatch)
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
@@ -34,23 +34,25 @@ foreach ($relative in $sources) {
 }
 
 $requiredText = @{
-    'build-installer.bat' = 'scripts\build-squirrel.ps1'
-    '.github\workflows\material-release.yml' = 'build-installer.bat /s -Version ${{ steps.package_version.outputs.value }}'
-    'scripts\build-squirrel.ps1' = "build-windows.ps1') -Silent -Version `$Version"
-    'scripts\build-windows.ps1' = '"-DOVERRIDE_VERSION=$Version"'
-    'release-tool.py' = "'/s', '-Version', version"
-    'scripts\verify-squirrel-artifacts.ps1' = 'Setup.exe must be unsigned'
+    'build-installer.bat' = @('scripts\build-squirrel.ps1')
+    '.github\workflows\material-release.yml' = @('build-installer.bat /s -Version ${{ steps.package_version.outputs.value }}')
+    'scripts\build-squirrel.ps1' = @("build-windows.ps1') -Silent -Version `$Version")
+    'scripts\build-windows.ps1' = @('"-DOVERRIDE_VERSION=$Version"')
+    'release-tool.py' = @("'/s', '-Version', version")
+    'scripts\verify-squirrel-artifacts.ps1' = @('Setup.exe must be unsigned', 'Assert-KpxcExecutableVersion')
 }
 foreach ($relative in $requiredText.Keys) {
     $text = Get-Content -Raw -LiteralPath (Join-Path $root $relative)
-    if (-not $text.Contains($requiredText[$relative])) {
-        throw "Squirrel-only contract is missing '$($requiredText[$relative])' from $relative"
+    foreach ($needle in $requiredText[$relative]) {
+        if (-not $text.Contains($needle)) {
+            throw "Squirrel-only contract is missing '$needle' from $relative"
+        }
     }
 }
 
 $workflow = Get-Content -Raw -LiteralPath (Join-Path $root '.github\workflows\material-release.yml')
 $workflowVersionContract = @(
-    '$packageVersion = "2.8.$patch"',
+    '$packageVersion = "$major.$minor.$patch"',
     'package-version: ${{ steps.package_version.outputs.value }}',
     'PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}',
     'RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}',
@@ -60,6 +62,18 @@ foreach ($needle in $workflowVersionContract) {
     if (-not $workflow.Contains($needle)) {
         throw "Monotonic package version contract is missing from the workflow: $needle"
     }
+}
+
+$cmake = Get-Content -Raw -LiteralPath (Join-Path $root 'CMakeLists.txt')
+foreach ($needle in @('set(KEEPASSXC_VERSION_MAJOR "${CMAKE_MATCH_1}")',
+                       'set(KEEPASSXC_VERSION_MINOR "${CMAKE_MATCH_2}")',
+                       'set(KEEPASSXC_VERSION_PATCH "${CMAKE_MATCH_3}")')) {
+    if (-not $cmake.Contains($needle)) { throw "Native executable version propagation is missing: $needle" }
+}
+
+if ($ProbeExecutableVersionMismatch) {
+    . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
+    Assert-KpxcExecutableVersion -FileVersion '2.8.0.0' -ProductVersion '2.8.0.0' -ExpectedVersion '2.8.1'
 }
 
 if ($ProbeLegacyInstaller) {
