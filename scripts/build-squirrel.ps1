@@ -36,6 +36,20 @@ $package = Get-ChildItem $scratch -Filter "KeePassXC.Material.$Version.nupkg" | 
 if (-not $package) { throw 'NuGet did not produce the expected application package.' }
 & $squirrelExe --releasify $package.FullName --releaseDir $output --no-msi
 if ($LASTEXITCODE -ne 0) { throw "Squirrel releasify failed with exit $LASTEXITCODE." }
+$deadline = [DateTime]::UtcNow.AddMinutes(2)
+$lastSizes = ''
+$stableObservations = 0
+do {
+    $setupCandidate = Join-Path $output 'Setup.exe'
+    $releasesCandidate = Join-Path $output 'RELEASES'
+    $fullCandidate = @(Get-ChildItem -LiteralPath $output -Filter '*-full.nupkg' -ErrorAction SilentlyContinue)
+    if ((Test-Path $setupCandidate) -and (Test-Path $releasesCandidate) -and $fullCandidate.Count -eq 1) {
+        $sizes = "$(Get-Item $setupCandidate | Select-Object -ExpandProperty Length):$((Get-Item $releasesCandidate).Length):$($fullCandidate[0].Length)"
+        if ($sizes -eq $lastSizes) { ++$stableObservations } else { $stableObservations = 0; $lastSizes = $sizes }
+    }
+    if ($stableObservations -lt 2) { Start-Sleep -Milliseconds 500 }
+} while ($stableObservations -lt 2 -and [DateTime]::UtcNow -lt $deadline)
+if ($stableObservations -lt 2) { throw 'Squirrel did not produce a size-stable Setup.exe, RELEASES, and full package within two minutes.' }
 $commit = (& git -C $root rev-parse HEAD).Trim()
 $provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Version; architecture='x64'; packageId='KeePassXC.Material'; packagingTool=@{name='squirrel.windows';version=$manifest.squirrelWindows.version;maintenanceStatus=$manifest.squirrelWindows.maintenanceStatus}; stagedExecutable=@{path=$appExe;sha256=(Get-Sha256 $appExe)}; generatedAtUtc=[DateTime]::UtcNow.ToString('o') }
 $provenancePath = Join-Path $output 'build-provenance.json'

@@ -6,6 +6,11 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The first real Squirrel candidate was produced from commit `a98ef19842595a638e07ff4e59fbfdc418be21c8`:
+`Setup.exe` was 73,158,144 bytes and reported `NotSigned`; the full package was 72,320,747 bytes.
+The deterministic artifact verifier passed. Installation, launch, update, rollback, and uninstall
+remain unverified, so WiX has deliberately not been removed yet.
+
 Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
 33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
