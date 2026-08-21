@@ -23,7 +23,16 @@
 #include "MaterialSearchBar.h"
 
 #include <QHBoxLayout>
+#include <QCheckBox>
+#include <QComboBox>
+#include <QDateEdit>
+#include <QLabel>
+#include <QLineEdit>
+#include <QLocale>
 #include <QPainter>
+#include <QProgressBar>
+#include <QResizeEvent>
+#include <QToolButton>
 #include <QVBoxLayout>
 
 namespace Material
@@ -45,6 +54,20 @@ namespace Material
         constexpr int RecentDays = 30;
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
+
+        class FlexibleDateEdit : public QDateEdit
+        {
+        public:
+            using QDateEdit::QDateEdit;
+
+        protected:
+            QDateTime dateTimeFromText(const QString& text) const override
+            {
+                const QDate iso = QDate::fromString(text.trimmed(), Qt::ISODate);
+                const QDate parsed = iso.isValid() ? iso : locale().toDate(text.trimmed(), QLocale::ShortFormat);
+                return parsed.isValid() ? QDateTime(parsed, QTime(0, 0)) : QDateTime();
+            }
+        };
 
         /** The fill of the glyph circle, one container role per tint. */
         QColor tintContainer(RevisionTint tint)
@@ -132,18 +155,28 @@ namespace Material
                 auto layout = new QHBoxLayout(this);
                 layout->setContentsMargins(RowPaddingX, RowPaddingY, RowPaddingX, RowPaddingY);
                 layout->setSpacing(ActionGap);
+                m_select = new QCheckBox(this);
+                m_select->setAccessibleName(HistoryScreen::tr("Select revision: %1").arg(revision.label));
+                m_select->setObjectName(QStringLiteral("historySelect_%1").arg(revision.id));
+                m_select->setEnabled(!revision.id.isEmpty());
+                layout->addWidget(m_select);
                 layout->addStretch(1);
+                setAccessibleName(HistoryScreen::tr("%1. %2").arg(revision.label, revision.meta));
 
                 // Each action is drawn only where it can do its job: a save
                 // record can be compared but not put back, and the lines the
                 // screen shows when there is nothing to list can do neither.
                 if (m_revision.canDiff) {
                     m_diff = new DiffButton(diffText, this);
+                    m_diff->setObjectName(QStringLiteral("historyDiff_%1").arg(revision.id));
+                    m_diff->setAccessibleName(HistoryScreen::tr("Compare revision: %1").arg(revision.label));
                     m_diff->setFixedHeight(ActionHeight);
                     layout->addWidget(m_diff);
                 }
                 if (m_revision.canRestore) {
                     m_restore = new TonalButton(QStringLiteral("restore"), restoreText, this);
+                    m_restore->setObjectName(QStringLiteral("historyRestore_%1").arg(revision.id));
+                    m_restore->setAccessibleName(HistoryScreen::tr("Restore revision: %1").arg(revision.label));
                     m_restore->setFixedHeight(ActionHeight);
                     layout->addWidget(m_restore);
                 }
@@ -160,6 +193,7 @@ namespace Material
             {
                 return m_restore;
             }
+            QCheckBox* selection() const { return m_select; }
 
         protected:
             void paintEvent(QPaintEvent* event) override
@@ -210,6 +244,7 @@ namespace Material
             Revision m_revision;
             ButtonBase* m_diff = nullptr;
             ButtonBase* m_restore = nullptr;
+            QCheckBox* m_select = nullptr;
         };
     } // namespace
 
@@ -238,32 +273,85 @@ namespace Material
         m_entriesChip = filterChip(QStringLiteral("filter_list"), tr("Entries"));
         m_settingsChip = filterChip(QString(), tr("Settings"));
         m_recentChip = filterChip(QStringLiteral("calendar_month"), tr("Last %n day(s)", "", RecentDays));
+        m_restoreChip = filterChip(QStringLiteral("restore"), tr("Restored"));
+        m_entriesChip->setObjectName(QStringLiteral("historyAction_entry"));
+        m_settingsChip->setObjectName(QStringLiteral("historyAction_settings"));
+        m_restoreChip->setObjectName(QStringLiteral("historyAction_restore"));
 
-        // Entries and Settings are two halves of one question, so pressing one
-        // releases the other instead of leaving an empty intersection.
-        connect(m_entriesChip, &QAbstractButton::toggled, this, [this](bool on) {
-            if (on) {
-                m_settingsChip->setChecked(false);
-            }
-            emit filterChanged();
-        });
-        connect(m_settingsChip, &QAbstractButton::toggled, this, [this](bool on) {
-            if (on) {
-                m_entriesChip->setChecked(false);
-            }
-            emit filterChanged();
-        });
+        connect(m_entriesChip, &QAbstractButton::toggled, this, &HistoryScreen::filterChanged);
+        connect(m_settingsChip, &QAbstractButton::toggled, this, &HistoryScreen::filterChanged);
+        connect(m_restoreChip, &QAbstractButton::toggled, this, &HistoryScreen::filterChanged);
         connect(m_recentChip, &QAbstractButton::toggled, this, &HistoryScreen::filterChanged);
 
-        auto filterRow = new QHBoxLayout();
+        m_filterPanel = new QWidget;
+        m_filterPanel->setObjectName(QStringLiteral("historyFilters"));
+        auto filterRow = new QHBoxLayout(m_filterPanel);
         filterRow->setContentsMargins(0, 0, 0, 0);
         filterRow->setSpacing(RowSpacing);
         filterRow->addWidget(searchBar());
         filterRow->addWidget(m_entriesChip);
         filterRow->addWidget(m_settingsChip);
         filterRow->addWidget(m_recentChip);
+        filterRow->addWidget(m_restoreChip);
         filterRow->addStretch(1);
-        contentLayout()->addLayout(filterRow);
+        contentLayout()->addWidget(m_filterPanel);
+
+        auto* dates = new QHBoxLayout;
+        m_datePreset = new QComboBox;
+        m_datePreset->setObjectName(QStringLiteral("historyDatePreset"));
+        m_datePreset->setAccessibleName(tr("History date preset"));
+        m_datePreset->addItem(tr("All dates"), QStringLiteral("all"));
+        m_datePreset->addItem(tr("Last 7 days"), QStringLiteral("7"));
+        m_datePreset->addItem(tr("Last 30 days"), QStringLiteral("30"));
+        m_fromDate = new FlexibleDateEdit;
+        m_fromDate->setObjectName(QStringLiteral("historyFromDate"));
+        m_fromDate->setAccessibleName(tr("History start date; locale or ISO date"));
+        m_fromDate->setCalendarPopup(true);
+        m_fromDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
+        m_fromDate->setSpecialValueText(tr("Any start date"));
+        m_fromDate->setMinimumDate(QDate(1970, 1, 1));
+        m_fromDate->setDate(m_fromDate->minimumDate());
+        m_toDate = new FlexibleDateEdit(QDate::currentDate());
+        m_toDate->setObjectName(QStringLiteral("historyToDate"));
+        m_toDate->setAccessibleName(tr("History end date; locale or ISO date"));
+        m_toDate->setCalendarPopup(true);
+        m_toDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
+        dates->addWidget(m_datePreset);
+        dates->addWidget(m_fromDate);
+        dates->addWidget(m_toDate);
+        contentLayout()->addLayout(dates);
+        connect(m_datePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
+            const QString value = m_datePreset->itemData(index).toString();
+            m_fromDate->setDate(value == QLatin1String("all") ? m_fromDate->minimumDate()
+                                                               : QDate::currentDate().addDays(-value.toInt()));
+            m_toDate->setDate(QDate::currentDate());
+            emit filterChanged();
+        });
+        connect(m_fromDate, &QDateEdit::dateChanged, this, &HistoryScreen::filterChanged);
+        connect(m_toDate, &QDateEdit::dateChanged, this, &HistoryScreen::filterChanged);
+
+        m_stateLabel = new QLabel;
+        m_stateLabel->setObjectName(QStringLiteral("historyState"));
+        m_stateLabel->setAccessibleName(tr("History state"));
+        m_progress = new QProgressBar;
+        m_progress->setObjectName(QStringLiteral("historyProgress"));
+        m_progress->setAccessibleName(tr("History progress"));
+        m_progress->hide();
+        contentLayout()->addWidget(m_stateLabel);
+        contentLayout()->addWidget(m_progress);
+
+        m_exportSelected = new QToolButton;
+        m_exportSelected->setObjectName(QStringLiteral("historyExportSelected"));
+        m_exportSelected->setAccessibleName(tr("Export selected history revisions"));
+        m_exportSelected->setEnabled(false);
+        connect(m_exportSelected, &QToolButton::clicked, this, [this] { emit exportRequested(selectedRevisionIds()); });
+        insertHeaderWidget(0, m_exportSelected);
+        m_deleteUnavailable = new QToolButton;
+        m_deleteUnavailable->setText(tr("Delete unavailable"));
+        m_deleteUnavailable->setEnabled(false);
+        m_deleteUnavailable->setToolTip(tr("History is append-only; deletion is not supported."));
+        m_deleteUnavailable->setAccessibleName(tr("Delete history unavailable: history is append-only"));
+        insertHeaderWidget(1, m_deleteUnavailable);
 
         auto list = new QWidget();
         list->setMaximumWidth(ListWidth);
@@ -274,6 +362,7 @@ namespace Material
         contentLayout()->addStretch(1);
 
         connect(theme(), &Theme::changed, this, &HistoryScreen::rebuild);
+        setState(State::Empty, tr("Nothing recorded yet."));
     }
 
     HistoryScreen::~HistoryScreen() = default;
@@ -305,11 +394,73 @@ namespace Material
         return RecentDays;
     }
 
+    QDate HistoryScreen::fromDate() const { return m_fromDate->date(); }
+    QDate HistoryScreen::toDate() const { return m_toDate->date(); }
+
+    QStringList HistoryScreen::actionFilters() const
+    {
+        QStringList actions;
+        if (m_entriesChip->isChecked()) actions << QStringLiteral("entry");
+        if (m_settingsChip->isChecked()) actions << QStringLiteral("settings");
+        if (m_restoreChip->isChecked()) actions << QStringLiteral("restore");
+        return actions;
+    }
+
+    void HistoryScreen::setActionCounts(const QHash<QString, int>& counts)
+    {
+        m_entriesChip->setText(tr("Entries (%1)").arg(counts.value(QStringLiteral("entry"))));
+        m_settingsChip->setText(tr("Settings (%1)").arg(counts.value(QStringLiteral("settings"))));
+        m_restoreChip->setText(tr("Restored (%1)").arg(counts.value(QStringLiteral("restore"))));
+    }
+
+    void HistoryScreen::setState(State state, const QString& message, int progress)
+    {
+        m_state = state;
+        m_stateLabel->setText(message);
+        m_stateLabel->setVisible(!message.isEmpty());
+        const bool show = state == State::Loading || state == State::Progress;
+        m_progress->setVisible(show);
+        if (show) {
+            m_progress->setRange(0, progress < 0 ? 0 : 100);
+            if (progress >= 0) m_progress->setValue(qBound(0, progress, 100));
+        }
+    }
+
+    HistoryScreen::State HistoryScreen::state() const { return m_state; }
+
+    QStringList HistoryScreen::selectedRevisionIds() const
+    {
+        QStringList ids(m_selectedIds.cbegin(), m_selectedIds.cend());
+        ids.sort();
+        return ids;
+    }
+
+    void HistoryScreen::updateSelectionActions()
+    {
+        m_exportSelected->setEnabled(!m_selectedIds.isEmpty());
+        m_exportSelected->setText(tr("Export %n selected revision(s)", "", m_selectedIds.size()));
+    }
+
+    void HistoryScreen::applyResponsiveLayout()
+    {
+        const bool compact = width() < 840;
+        m_filterPanel->setMaximumWidth(compact ? width() : ListWidth);
+        searchBar()->setMaximumWidth(compact ? qMax(220, width() - 40) : SearchMaximumWidth);
+    }
+
+    void HistoryScreen::resizeEvent(QResizeEvent* event)
+    {
+        Screen::resizeEvent(event);
+        applyResponsiveLayout();
+    }
+
     void HistoryScreen::rebuild()
     {
         clearLayout(m_revisionLayout);
+        m_selectedIds.clear();
         for (const auto& revision : m_revisions) {
             auto row = new RevisionRow(revision, tr("Diff"), tr("Restore"));
+            row->setObjectName(QStringLiteral("historyRevision_%1").arg(revision.id));
             const QString id = revision.id;
             if (row->diffButton()) {
                 connect(row->diffButton(), &QAbstractButton::clicked, this, [this, id] { emit diffRequested(id); });
@@ -318,8 +469,13 @@ namespace Material
                 connect(
                     row->restoreButton(), &QAbstractButton::clicked, this, [this, id] { emit restoreRequested(id); });
             }
+            connect(row->selection(), &QCheckBox::toggled, this, [this, id](bool checked) {
+                if (checked) m_selectedIds.insert(id); else m_selectedIds.remove(id);
+                updateSelectionActions();
+            });
             m_revisionLayout->addWidget(row);
         }
+        updateSelectionActions();
     }
 
 } // namespace Material

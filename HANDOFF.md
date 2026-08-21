@@ -6,6 +6,13 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The first History parity batch preserves guarded revision pointers and restore-as-new-revision while
+adding explicit states, a locale date range with calendar and presets, counted entry/settings/
+restore filters, bounded report-local regex, selection and scoped Markdown export, accessible row
+facts, and compact filter sizing. Destructive deletion is visibly unavailable because the current
+store is append-only and no super-confirmed delete route exists. The inventory route is implemented
+in source; captures, audits, comparisons, and diffs remain pending.
+
 The first Reports parity batch retains the GUI-thread `HealthChecker` and `DatabaseStats` walk while
 adding explicit empty/loading/populated/progress/warning/error states, real weak/reused/expired/
 excluded categories, bounded regex filtering, collapsible sections, selectable findings, and scoped

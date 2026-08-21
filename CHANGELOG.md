@@ -5,6 +5,7 @@
 ### Changes
 
 - Build: Enforce the Windows-only source boundary and remove the remaining macOS translation and Unix package-helper registrations.
+- Interface: Add truthful History states, locale/ISO calendar range controls, counted multi-action filters, bounded regex search, revision selection/export, append-only deletion disclosure, accessibility, and responsive filtering.
 - Interface: Give Reports explicit states, real category filtering, independent bounded regex search, collapsible sections, selectable findings with scoped export, accessible row facts, and responsive reflow.
 - Interface: Replace the old two-section Reports layout with six independently expandable real-data cards for breached, weak, reused, expired, healthy, and statistics.
 - Interface: Remove the superseded hidden Password Health and Statistics widget tree so only the six canonical report cards are constructed.
