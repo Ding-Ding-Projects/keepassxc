@@ -41,8 +41,9 @@ namespace Material
      * label and a close glyph; the active tab is painted in the surface colour
      * of the content below it so the two read as one sheet. Tabs that no longer
      * fit collapse into a trailing overflow chip that carries their count and
-     * opens a menu of the hidden tabs - selecting one from that menu behaves
-     * exactly like clicking the tab. Search and add buttons close out the row.
+     * opens the searchable all-tabs overlay - selecting one from that overlay
+     * behaves exactly like clicking the tab. Search and add buttons close out
+     * the row.
      */
     class TabStrip : public QWidget
     {
@@ -106,6 +107,8 @@ namespace Material
         int indexAt(const QPoint& pos) const;
         void relayout();
         void openOverflow();
+        void resetPointerInteraction();
+        void updateDragInsertion(const QPoint& pos);
         /** Width of the overflow chip when it stands for @p hidden tabs. */
         int overflowWidth(int hidden) const;
 
@@ -119,9 +122,12 @@ namespace Material
         QPointer<TabOverflow> m_overflow;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
-        int m_pressedIndex = -1;
-        int m_focusIndex = -1;
-        int m_dragTarget = -1;
+        QString m_focusId;
+        QString m_pressedId;
+        QString m_dragSourceId;
+        QString m_dragBeforeId;
+        int m_dragIndicatorX = -1;
+        bool m_dragDropValid = false;
         QPoint m_pressPosition;
         bool m_dragging = false;
         int m_hiddenCount = 0;
