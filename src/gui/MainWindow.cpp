@@ -95,7 +95,6 @@
 #include "keys/drivers/YubiKey.h"
 
 #ifdef KPXC_FEATURE_UPDATES
-#include "gui/UpdateCheckDialog.h"
 #include "networking/UpdateChecker.h"
 #endif
 

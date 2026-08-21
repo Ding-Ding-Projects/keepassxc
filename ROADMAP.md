@@ -26,6 +26,7 @@
 - [ ] Extend lifecycle handling beyond shortcuts to file associations and browser registration refresh.
 - [ ] Replace the existing update checker with staged Squirrel states and user-controlled restart.
 - [x] Wire non-blocking download/apply progress, persistent ready actions, deferred restart, and Squirrel process-start relaunch.
+- [x] Remove the superseded modal update dialog after the non-blocking flow passed the full local suite.
 - [x] Replace upstream release discovery with a bounded, versioned fork-owned Squirrel manifest and typed state/failure model.
 - [x] Stream full packages with storage preflight, atomic finalization, SHA-256/SHA-1 validation, and bounded NuGet structure checks.
 - [x] Generate the versioned update manifest from verified release bytes and apply only through a verified local Squirrel feed.
