@@ -8,6 +8,7 @@
 - Packaging: Make the verified unsigned Squirrel.Windows artifacts the sole Windows installer and release path.
 - Packaging: Propagate one monotonic three-part version through the native executable, Squirrel feed, update manifest, and release.
 - Packaging: Verify that the packaged executable FileVersion and ProductVersion match the release version.
+- Build: Provision and verify the pinned Qt 6.8.3 MSVC x64 toolchain before the Squirrel package build.
 
 ## 2.7.12 (2026-03-10)
 
