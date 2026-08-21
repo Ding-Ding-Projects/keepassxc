@@ -459,3 +459,34 @@ void Application::restart()
 
     exit(RESTART_EXITCODE);
 }
+
+bool Application::restart(const std::function<bool()>& launcher)
+{
+    if (!launcher) {
+        return false;
+    }
+
+    // The new Squirrel version must not race the current process's
+    // single-instance listener. Release it before starting Update.exe.
+    m_lockServer.close();
+    if (m_lockFile) {
+        m_lockFile->unlock();
+    }
+
+    if (launcher()) {
+        exit(EXIT_SUCCESS);
+        return true;
+    }
+
+    // A refused handoff leaves this process alive. Restore the protection it
+    // held before the attempt so a failed restart cannot disable single-instance mode.
+    bool lockRestored = true;
+    if (m_lockFile) {
+        lockRestored = m_lockFile->tryLock();
+    }
+    const bool listenerRestored = m_lockServer.listen(m_socketName);
+    if (!lockRestored || !listenerRestored) {
+        qWarning() << "Could not fully restore the single-instance lock after a failed restart handoff.";
+    }
+    return false;
+}

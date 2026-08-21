@@ -11,6 +11,7 @@ private slots:
     void registrationAndOwnership();
     void duplicateIdentityRejected();
     void existingConsumerSurfacesRegister();
+    void storedNotificationActionsCanBeReplacedSafely();
 };
 
 #endif

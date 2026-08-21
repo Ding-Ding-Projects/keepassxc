@@ -83,4 +83,53 @@ void TestMaterialSearchRegistry::existingConsumerSurfacesRegister()
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("notification-centre.history")), nullptr);
 }
 
+void TestMaterialSearchRegistry::storedNotificationActionsCanBeReplacedSafely()
+{
+    QWidget host;
+    auto* centre = new NotificationCentre(&host);
+    int restarts = 0;
+    auto* context = new QObject;
+    const auto id = centre->record(SeverityLevel::Warning,
+                                   QStringLiteral("Update ready"),
+                                   QStringLiteral("Current 2.8.0; available 2.8.1"),
+                                   {{QStringLiteral("Restart"), [&] { ++restarts; }, context},
+                                    {QStringLiteral("Later"), [] {}, context}});
+    centre->updateEntry(id,
+                        QStringLiteral("Update deferred"),
+                        QStringLiteral("Current 2.8.0; available 2.8.1"),
+                        SeverityLevel::Warning,
+                        {{QStringLiteral("Restart"), [&] { ++restarts; }, context}});
+    centre->openOverlay();
+    QApplication::processEvents();
+
+    QAbstractButton* restart = nullptr;
+    QAbstractButton* later = nullptr;
+    for (auto* button : centre->findChildren<QAbstractButton*>()) {
+        if (button->text() == QStringLiteral("Restart")) {
+            restart = button;
+        } else if (button->text() == QStringLiteral("Later")) {
+            later = button;
+        }
+    }
+    QVERIFY(restart);
+    QVERIFY(!later);
+    restart->click();
+    QCOMPARE(restarts, 1);
+
+    delete context;
+    centre->updateEntry(id,
+                        QStringLiteral("Update deferred"),
+                        QStringLiteral("Current 2.8.0; available 2.8.1"),
+                        SeverityLevel::Warning,
+                        centre->notifications().constFirst().actions);
+    QApplication::processEvents();
+    restart = nullptr;
+    for (auto* button : centre->findChildren<QAbstractButton*>()) {
+        if (button->text() == QStringLiteral("Restart")) {
+            restart = button;
+        }
+    }
+    QVERIFY(!restart);
+}
+
 QTEST_MAIN(TestMaterialSearchRegistry)

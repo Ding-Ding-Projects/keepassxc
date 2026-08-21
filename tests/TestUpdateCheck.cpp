@@ -176,3 +176,47 @@ void TestUpdateCheck::testPackageContract()
     QVERIFY(!UpdateChecker::verifyPackage(unsafePath, candidate, failure));
     QCOMPARE(failure, UpdateChecker::Failure::UnsafePackage);
 }
+
+void TestUpdateCheck::testRestartCommandContract()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    const QString root = directory.filePath(QStringLiteral("KeePassXC.Material"));
+    const QString appDirectory = QDir(root).filePath(QStringLiteral("app-2.8.1"));
+    QVERIFY(QDir().mkpath(appDirectory));
+    QFile updater(QDir(root).filePath(QStringLiteral("Update.exe")));
+    QVERIFY(updater.open(QIODevice::WriteOnly));
+    QVERIFY(updater.write("MZtest") > 0);
+    updater.close();
+
+    QString program;
+    QStringList arguments;
+    QString workingDirectory;
+    QVERIFY(UpdateChecker::restartCommand(appDirectory, program, arguments, workingDirectory));
+    QCOMPARE(QDir::cleanPath(program), QDir::cleanPath(updater.fileName()));
+    QCOMPARE(arguments, QStringList({QStringLiteral("--processStart"), QStringLiteral("KeePassXC.exe")}));
+    QCOMPARE(QDir::cleanPath(workingDirectory), QDir::cleanPath(root));
+
+    QString launchedProgram;
+    QStringList launchedArguments;
+    QString launchedWorkingDirectory;
+    UpdateChecker::setRestartLauncherForTests(
+        [&](const QString& executable, const QStringList& args, const QString& cwd) {
+            launchedProgram = executable;
+            launchedArguments = args;
+            launchedWorkingDirectory = cwd;
+            return true;
+        });
+    QVERIFY(UpdateChecker::launchRestartCommand(program, arguments, workingDirectory));
+    UpdateChecker::resetRestartLauncherForTests();
+    QCOMPARE(launchedProgram, program);
+    QCOMPARE(launchedArguments, arguments);
+    QCOMPARE(launchedWorkingDirectory, workingDirectory);
+
+    QVERIFY(!UpdateChecker::restartCommand(QDir(root).filePath(QStringLiteral("portable")),
+                                           program,
+                                           arguments,
+                                           workingDirectory));
+    QVERIFY(QFile::remove(updater.fileName()));
+    QVERIFY(!UpdateChecker::restartCommand(appDirectory, program, arguments, workingDirectory));
+}

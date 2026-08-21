@@ -214,12 +214,28 @@ namespace Material
 
     void NotificationCentre::updateEntry(quint64 id, const QString& body, SeverityLevel severity)
     {
+        for (const auto& entry : m_items) {
+            if (entry.id == id) {
+                updateEntry(id, entry.title, body, severity, entry.actions);
+                return;
+            }
+        }
+    }
+
+    void NotificationCentre::updateEntry(quint64 id,
+                                         const QString& title,
+                                         const QString& body,
+                                         SeverityLevel severity,
+                                         const QList<NotificationAction>& actions)
+    {
         for (auto& entry : m_items) {
             if (entry.id != id) {
                 continue;
             }
+            entry.title = title;
             entry.body = body;
             entry.severity = severity;
+            entry.actions = actions;
             entry.timestamp = QDateTime::currentDateTime();
             if (isOpen()) {
                 rebuild();

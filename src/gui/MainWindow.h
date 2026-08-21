@@ -117,6 +117,8 @@ private slots:
     void performUpdateCheck();
     void showUpdateCheckDialog();
     void restartForUpdate();
+    void deferUpdateForLater();
+    void showUpdateReadyNotification(bool replaceExisting = false);
     void focusWindowChanged(QWindow* focusWindow);
     void openDonateUrl();
     void openBugReportUrl();
@@ -214,6 +216,8 @@ private:
     bool m_appExitCalled = false;
     bool m_appExiting = false;
     bool m_restartRequested = false;
+    bool m_squirrelRestartRequested = false;
+    quint64 m_updateNotificationId = 0;
     QSet<QString> m_sessionPinnedTabs;
     bool m_contextMenuFocusLock = false;
     bool m_showToolbarSeparator = false;

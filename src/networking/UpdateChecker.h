@@ -20,6 +20,8 @@
 #include <QObject>
 #include <QUrl>
 
+#include <functional>
+
 class QNetworkReply;
 class QSaveFile;
 class QCryptographicHash;
@@ -45,6 +47,8 @@ public:
         quint64 bytes = 0;
     };
 
+    using RestartLauncher = std::function<bool(const QString&, const QStringList&, const QString&)>;
+
     UpdateChecker(QObject* parent = nullptr);
     ~UpdateChecker() override;
 
@@ -55,6 +59,15 @@ public:
     void deferUpdate();
     bool canRestartThroughSquirrel() const;
     bool launchUpdatedVersion();
+    static bool restartCommand(const QString& applicationDirectory,
+                               QString& program,
+                               QStringList& arguments,
+                               QString& workingDirectory);
+    static bool launchRestartCommand(const QString& program,
+                                     const QStringList& arguments,
+                                     const QString& workingDirectory);
+    static void setRestartLauncherForTests(RestartLauncher launcher);
+    static void resetRestartLauncherForTests();
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;
@@ -96,6 +109,7 @@ private:
     void failDownload(Failure failure);
 
     static UpdateChecker* m_instance;
+    static RestartLauncher m_restartLauncher;
 
     Q_DISABLE_COPY(UpdateChecker)
 };

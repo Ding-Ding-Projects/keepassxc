@@ -30,6 +30,7 @@ private slots:
     void testStateTransitions();
     void testManifestContract();
     void testPackageContract();
+    void testRestartCommandContract();
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H
