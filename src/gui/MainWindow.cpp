@@ -1827,6 +1827,7 @@ void MainWindow::chooseInterfaceFont()
     // The size is kept as the offset the rest of the application already
     // understands, so the slider in settings and this dialog agree.
     config()->set(Config::GUI_FontFamily, chosen.family());
+    config()->set(Config::GUI_FontWeight, static_cast<int>(chosen.weight()));
     const int original = QFontInfo(QApplication::font()).pointSize();
     config()->set(Config::GUI_FontSizeOffset,
                   qBound(-2, chosen.pointSize() - original + config()->get(Config::GUI_FontSizeOffset).toInt(), 4));

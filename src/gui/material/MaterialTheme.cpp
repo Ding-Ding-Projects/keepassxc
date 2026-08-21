@@ -342,6 +342,25 @@ namespace Material
         emit changed();
     }
 
+    QString Theme::configuredMode() const
+    {
+        return m_configuredMode;
+    }
+
+    void Theme::setConfiguredMode(const QString& mode)
+    {
+        const QString value = mode == QLatin1String("light") || mode == QLatin1String("dark")
+                                  ? mode
+                                  : QStringLiteral("auto");
+        if (value == m_configuredMode) {
+            return;
+        }
+        m_configuredMode = value;
+        config()->set(Config::GUI_ApplicationTheme, value);
+        resolveMode();
+        emit changed();
+    }
+
     void Theme::setDensity(Density density)
     {
         if (density == m_density) {
@@ -380,16 +399,15 @@ namespace Material
 
     QString Theme::uiFamily()
     {
-        static const QString family = [] {
-            const auto families = QFontDatabase::families();
-            for (const auto& candidate : {QStringLiteral("Roboto"), QStringLiteral("Roboto Flex")}) {
-                if (families.contains(candidate)) {
-                    return candidate;
-                }
-            }
-            return QApplication::font().family();
-        }();
-        return family;
+        const QString configured = config()->get(Config::GUI_FontFamily).toString();
+        const auto families = QFontDatabase::families();
+        if (!configured.isEmpty() && families.contains(configured)) {
+            return configured;
+        }
+        for (const auto& candidate : {QStringLiteral("Roboto"), QStringLiteral("Roboto Flex")}) {
+            if (families.contains(candidate)) return candidate;
+        }
+        return QApplication::font().family();
     }
 
     QString Theme::monoFamily()
@@ -422,26 +440,24 @@ namespace Material
         };
 
         QFont f(uiFamily());
+        const auto configuredWeight = static_cast<QFont::Weight>(qBound(100, config()->get(Config::GUI_FontWeight).toInt(), 900));
+        f.setWeight(configuredWeight);
         switch (role) {
         case TypeRole::DisplaySmall:
             f.setPointSize(scaled(44));
-            f.setWeight(QFont::Light);
+            f.setWeight(static_cast<QFont::Weight>(qMax(100, static_cast<int>(configuredWeight) - 100)));
             break;
         case TypeRole::HeadlineSmall:
             f.setPointSize(scaled(28));
-            f.setWeight(QFont::Normal);
             break;
         case TypeRole::TitleLarge:
             f.setPointSize(scaled(22));
-            f.setWeight(QFont::Normal);
             break;
         case TypeRole::TitleMedium:
             f.setPointSize(scaled(18));
-            f.setWeight(QFont::Normal);
             break;
         case TypeRole::TitleSmall:
             f.setPointSize(scaled(17));
-            f.setWeight(QFont::Normal);
             break;
         case TypeRole::BodyLarge:
             f.setPointSize(scaled(15));
@@ -451,18 +467,18 @@ namespace Material
             break;
         case TypeRole::LabelLarge:
             f.setPointSize(scaled(14));
-            f.setWeight(QFont::Medium);
+            f.setWeight(static_cast<QFont::Weight>(qMin(900, static_cast<int>(configuredWeight) + 100)));
             break;
         case TypeRole::BodySmall:
             f.setPointSize(scaled(13));
             break;
         case TypeRole::LabelMedium:
             f.setPointSize(scaled(12));
-            f.setWeight(QFont::Medium);
+            f.setWeight(static_cast<QFont::Weight>(qMin(900, static_cast<int>(configuredWeight) + 100)));
             break;
         case TypeRole::LabelSmall:
             f.setPointSize(scaled(11));
-            f.setWeight(QFont::Medium);
+            f.setWeight(static_cast<QFont::Weight>(qMin(900, static_cast<int>(configuredWeight) + 100)));
             break;
         case TypeRole::Mono:
             f.setFamily(monoFamily());

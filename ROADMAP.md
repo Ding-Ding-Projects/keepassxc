@@ -21,6 +21,7 @@
 - [x] Centralize existing material search ownership and remove private Vault/History regex builders.
 - [x] Register command-palette and notification-history searches and make both consumers mode/flag aware.
 - [ ] Migrate every remaining dialog and auxiliary surface to the shared component system.
+- [x] Add the first native Appearance parity batch with typography persistence, element overrides, regex filtering, keyboard controls, and narrow reflow.
 - [ ] Complete deterministic reference-versus-built parity evidence for every design surface.
 
 ## Installer and updater

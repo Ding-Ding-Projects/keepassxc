@@ -231,8 +231,10 @@ void Application::applyFontSize()
     }
 
     // Adjust application wide default font size
-    auto newSize = g_OriginalFontSize + qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 4);
+    const qreal scale = qBound(0.85, config()->get(Config::GUI_FontScale).toDouble(), 1.4);
+    auto newSize = qMax(1, qRound((g_OriginalFontSize + qBound(-2, config()->get(Config::GUI_FontSizeOffset).toInt(), 4)) * scale));
     font.setPointSize(newSize);
+    font.setWeight(static_cast<QFont::Weight>(qBound(100, config()->get(Config::GUI_FontWeight).toInt(), 900)));
 
     // The interface font row in settings writes a family here. Empty leaves
     // the platform default alone, which is what a fresh profile gets.

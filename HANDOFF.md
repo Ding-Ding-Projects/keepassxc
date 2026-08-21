@@ -6,6 +6,13 @@
 > the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
 > updater replacement remain unfinished and must not be reported as shipped.
 
+The first Appearance parity batch now exposes Auto/Light/Dark, seed, density, installed font
+family, 85–140% scale, weight, a live CJK-safe preview, sparse per-element overrides, and a
+continuous alpha-aware colour dialog. Appearance search is independently registered and now honors
+plain text or bounded regex state. Cards reflow to one column below 840 logical pixels. The parity
+inventory records the real Material-shell destination route as implemented in source, while raw
+captures, audits, comparisons, and diffs remain explicitly pending.
+
 The native shell now applies all five logical-width classes to real vault geometry. Large and Extra
 Large use their exact group/detail widths; Expanded moves group selection into a searchable scope
 menu; Medium and Compact replace inline details with an accessible overlay opened from the list

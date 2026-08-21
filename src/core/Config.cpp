@@ -134,6 +134,9 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     // Empty means "whatever the platform picked", which is the default the
     // interface font row reports until someone chooses something else.
     {Config::GUI_FontFamily, {QS("GUI/FontFamily"), Local, QS("")}},
+    {Config::GUI_FontScale, {QS("GUI/FontScale"), Local, 1.0}},
+    {Config::GUI_FontWeight, {QS("GUI/FontWeight"), Local, 400}},
+    {Config::GUI_ElementOverrides, {QS("GUI/ElementOverrides"), Local, QS("{}")}},
     {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},
     {Config::GUI_VoiceLanguage, {QS("GUI/VoiceLanguage"), Roaming, QS("English")}},
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},

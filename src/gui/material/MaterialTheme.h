@@ -259,6 +259,8 @@ namespace Material
         void setSeed(Seed seed);
         void setMode(Mode mode);
         void setDensity(Density density);
+        QString configuredMode() const;
+        void setConfiguredMode(const QString& mode);
 
         /** List row height for the active density: 40, 52 or 64 logical px. */
         int rowHeight() const;

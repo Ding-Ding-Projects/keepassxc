@@ -28,6 +28,10 @@
 
 class QLabel;
 class QSlider;
+class QComboBox;
+class QPushButton;
+class QGridLayout;
+class QResizeEvent;
 
 namespace Material
 {
@@ -125,6 +129,9 @@ namespace Material
         explicit SettingsScreen(QWidget* parent = nullptr);
         ~SettingsScreen() override;
 
+    protected:
+        void resizeEvent(QResizeEvent* event) override;
+
     signals:
         /** The interface font row was activated; the host opens the font dialog. */
         void interfaceFontRequested();
@@ -140,6 +147,8 @@ namespace Material
         };
 
         Card* createAppearanceCard();
+        Card* createTypographyCard();
+        Card* createOverridesCard();
         Card* createLanguageCard();
         Card* createBehaviourCard();
         Card* createIntegrationsCard();
@@ -147,6 +156,9 @@ namespace Material
         void applyFilter(const QString& text);
         /** Pull the controls back in line with the theme after it changed. */
         void refreshFromTheme();
+        void applyResponsiveGrid();
+        void applyCurrentOverride();
+        QWidget* overrideTarget(const QString& key) const;
         /** Re-render the preview message from the pending slider positions. */
         void updateVoicePreview();
         /** Write the two humour sliders back into the configuration. */
@@ -161,6 +173,21 @@ namespace Material
         SegmentedButton* m_languageSegment = nullptr;
         QList<SeedSwatch*> m_swatches;
         OutlinedButton* m_fontRowButton = nullptr;
+        QComboBox* m_fontFamily = nullptr;
+        QComboBox* m_fontWeight = nullptr;
+        QSlider* m_fontScale = nullptr;
+        QLabel* m_fontScaleValue = nullptr;
+        QLabel* m_fontPreview = nullptr;
+        QComboBox* m_overrideElement = nullptr;
+        QSlider* m_overrideHeight = nullptr;
+        QSlider* m_overrideRadius = nullptr;
+        QSlider* m_overrideFontSize = nullptr;
+        QSlider* m_overrideSpacing = nullptr;
+        QPushButton* m_overrideColor = nullptr;
+        QPushButton* m_overrideReset = nullptr;
+        QLabel* m_overridePreview = nullptr;
+        QGridLayout* m_grid = nullptr;
+        QWidget* m_gridHost = nullptr;
         QSlider* m_englishFunnySlider = nullptr;
         QLabel* m_englishFunnyValue = nullptr;
         QSlider* m_cantoneseFunnySlider = nullptr;

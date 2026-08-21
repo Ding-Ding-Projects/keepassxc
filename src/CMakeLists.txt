@@ -109,6 +109,7 @@ set(gui_SOURCES
         gui/material/MaterialDialog.cpp
         gui/material/MaterialDimSum.cpp
         gui/material/MaterialElevation.cpp
+        gui/material/MaterialElementOverrides.cpp
         gui/material/MaterialEntryDelegate.cpp
         gui/material/MaterialEntryDetail.cpp
         gui/material/MaterialGeneratorSheet.cpp
