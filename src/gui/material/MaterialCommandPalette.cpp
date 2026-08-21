@@ -21,6 +21,7 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
+#include "MaterialSearchBar.h"
 
 #include <QAction>
 #include <QEvent>
@@ -29,6 +30,7 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
+#include <QRegularExpression>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -327,8 +329,8 @@ namespace Material
 
         connect(theme(), &Theme::changed, this, &CommandPalette::applyTheme);
         connect(this, &Overlay::opened, this, [this] {
-            m_searchEdit->setFocus(Qt::PopupFocusReason);
-            m_searchEdit->selectAll();
+            m_searchEdit->lineEdit()->setFocus(Qt::PopupFocusReason);
+            m_searchEdit->lineEdit()->selectAll();
         });
         applyTheme();
     }
@@ -373,21 +375,12 @@ namespace Material
 
         // The search field is the header: there is no headline over it and no
         // filled pill around it.
-        m_searchEdit = new QLineEdit(header);
-        m_searchEdit->setFrame(false);
-        m_searchEdit->setPlaceholderText(tr("Search every action, setting and shortcut"));
-        connect(m_searchEdit, &QLineEdit::textChanged, this, &CommandPalette::applyFilter);
-        m_searchEdit->installEventFilter(this);
+        m_searchEdit = new SearchBar(SearchBar::Variant::Surface, header);
+        m_searchEdit->setPlaceholder(tr("Search every action, setting and shortcut"));
+        m_searchEdit->setIdentity(QStringLiteral("command-palette.commands"), tr("Command palette search"));
+        connect(m_searchEdit, &SearchBar::textChanged, this, &CommandPalette::applyFilter);
+        m_searchEdit->lineEdit()->installEventFilter(this);
         headerLayout->addWidget(m_searchEdit, 1);
-
-        auto* builder = new IconButton(QStringLiteral("regular_expression"), header);
-        builder->setDiameter(HeaderButtonSize);
-        builder->setToolTip(tr("Regex builder"));
-        connect(builder, &IconButton::clicked, this, [this] {
-            closeOverlay();
-            emit regexRequested();
-        });
-        headerLayout->addWidget(builder);
 
         auto* close = new IconButton(QStringLiteral("close"), header);
         close->setDiameter(HeaderButtonSize);
@@ -502,6 +495,15 @@ namespace Material
         clearRows();
 
         const QStringList tokens = query.toLower().split(QLatin1Char(' '), Qt::SkipEmptyParts);
+        QRegularExpression expression;
+        if (m_searchEdit->isRegexEnabled() && !query.isEmpty()) {
+            QRegularExpression::PatternOptions options = QRegularExpression::UseUnicodePropertiesOption;
+            const QString flags = m_searchEdit->regexFlags();
+            if (flags.contains(QLatin1Char('i'))) options |= QRegularExpression::CaseInsensitiveOption;
+            if (flags.contains(QLatin1Char('m'))) options |= QRegularExpression::MultilineOption;
+            if (flags.contains(QLatin1Char('s'))) options |= QRegularExpression::DotMatchesEverythingOption;
+            expression = QRegularExpression(query, options);
+        }
 
         QString group;
         for (int i = 0; i < m_commands.size(); ++i) {
@@ -510,10 +512,14 @@ namespace Material
                 continue;
             }
             bool matched = true;
-            for (const QString& token : tokens) {
-                if (!command.haystack.contains(token)) {
-                    matched = false;
-                    break;
+            if (m_searchEdit->isRegexEnabled() && !query.isEmpty()) {
+                matched = expression.isValid() && expression.match(command.haystack).hasMatch();
+            } else {
+                for (const QString& token : tokens) {
+                    if (!command.haystack.contains(token)) {
+                        matched = false;
+                        break;
+                    }
                 }
             }
             if (!matched) {
@@ -632,7 +638,7 @@ namespace Material
 
     bool CommandPalette::eventFilter(QObject* watched, QEvent* event)
     {
-        if (m_searchEdit && watched == m_searchEdit && event->type() == QEvent::KeyPress) {
+        if (m_searchEdit && watched == m_searchEdit->lineEdit() && event->type() == QEvent::KeyPress) {
             auto* keyEvent = static_cast<QKeyEvent*>(event);
             switch (keyEvent->key()) {
             case Qt::Key_Down:
@@ -680,16 +686,16 @@ namespace Material
         }
 
         // A bare input, the way the design's header row draws it.
-        m_searchEdit->setFont(theme()->font(TypeRole::TitleSmall));
-        m_searchEdit->setStyleSheet(QStringLiteral("QLineEdit{border:none;background:transparent;padding:0;"
+        m_searchEdit->lineEdit()->setFont(theme()->font(TypeRole::TitleSmall));
+        m_searchEdit->lineEdit()->setStyleSheet(QStringLiteral("QLineEdit{border:none;background:transparent;padding:0;"
                                                    "color:%1;selection-background-color:%2;selection-color:%3;}")
                                         .arg(theme()->hex(Role::OnSurface),
                                              theme()->hex(Role::SecondaryContainer),
                                              theme()->hex(Role::OnSecondaryContainer)));
-        QPalette editPalette = m_searchEdit->palette();
+        QPalette editPalette = m_searchEdit->lineEdit()->palette();
         editPalette.setColor(QPalette::Text, theme()->color(Role::OnSurface));
         editPalette.setColor(QPalette::PlaceholderText, theme()->color(Role::OnSurfaceVariant));
-        m_searchEdit->setPalette(editPalette);
+        m_searchEdit->lineEdit()->setPalette(editPalette);
 
         update();
     }

@@ -22,6 +22,7 @@
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
 #include "MaterialTopAppBar.h"
+#include "MaterialSearchBar.h"
 
 #include <QEvent>
 #include <QHBoxLayout>
@@ -30,6 +31,7 @@
 #include <QPainter>
 #include <QRegion>
 #include <QResizeEvent>
+#include <QRegularExpression>
 #include <QScrollArea>
 #include <QShowEvent>
 #include <QVBoxLayout>
@@ -317,6 +319,14 @@ namespace Material
         layout->setSpacing(0);
         layout->addWidget(buildHeader());
 
+        m_search = new SearchBar(SearchBar::Variant::Surface, m_sheet);
+        m_search->setIdentity(QStringLiteral("notification-centre.history"), tr("Notification history search"));
+        m_search->setPlaceholder(tr("Search notification titles, messages and severity"));
+        m_search->setContentsMargins(RowHorizontalPadding, 0, RowHorizontalPadding, HeaderBottomPadding);
+        connect(m_search, &SearchBar::textChanged, this, [this] { rebuild(); });
+        connect(m_search, &SearchBar::regexToggled, this, [this] { rebuild(); });
+        layout->addWidget(m_search);
+
         auto* list = new QWidget;
         m_listLayout = new QVBoxLayout(list);
         m_listLayout->setContentsMargins(0, 0, 0, 0);
@@ -435,13 +445,34 @@ namespace Material
     {
         clearList();
 
+        const QString query = m_search ? m_search->text() : QString();
+        QRegularExpression expression;
+        if (m_search && m_search->isRegexEnabled() && !query.isEmpty()) {
+            QRegularExpression::PatternOptions options = QRegularExpression::UseUnicodePropertiesOption;
+            const QString flags = m_search->regexFlags();
+            if (flags.contains(QLatin1Char('i'))) options |= QRegularExpression::CaseInsensitiveOption;
+            if (flags.contains(QLatin1Char('m'))) options |= QRegularExpression::MultilineOption;
+            if (flags.contains(QLatin1Char('s'))) options |= QRegularExpression::DotMatchesEverythingOption;
+            expression = QRegularExpression(query, options);
+        }
+        int matches = 0;
         for (const auto& entry : m_items) {
+            const QString haystack = QStringLiteral("%1\n%2\n%3")
+                                         .arg(severityName(entry.severity), entry.title, entry.body);
+            const bool matched = query.isEmpty()
+                                 || (m_search->isRegexEnabled()
+                                         ? expression.isValid() && expression.match(haystack).hasMatch()
+                                         : haystack.contains(query, Qt::CaseInsensitive));
+            if (!matched) {
+                continue;
+            }
             m_listLayout->addWidget(buildRow(entry));
+            ++matches;
         }
         m_listLayout->addStretch(1);
 
-        m_emptyState->setVisible(m_items.isEmpty());
-        m_scroll->setVisible(!m_items.isEmpty());
+        m_emptyState->setVisible(matches == 0);
+        m_scroll->setVisible(matches > 0);
 
         m_clearButton->setEnabled(!m_items.isEmpty());
 

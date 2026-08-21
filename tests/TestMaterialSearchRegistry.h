@@ -10,6 +10,7 @@ class TestMaterialSearchRegistry : public QObject
 private slots:
     void registrationAndOwnership();
     void duplicateIdentityRejected();
+    void existingConsumerSurfacesRegister();
 };
 
 #endif

@@ -931,8 +931,6 @@ MainWindow::MainWindow()
         // Every copy in the design says the same thing about the clipboard.
         Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
     });
-    // The palette's own header button hands over to the builder.
-    connect(commandPalette, &Material::CommandPalette::regexRequested, this, [openBuilderFor] { openBuilderFor(nullptr); });
 
     // The settings hub asks the window for the three things it cannot do
     // itself: the font chooser, the real integration pages and the builder.

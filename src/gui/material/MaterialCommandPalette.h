@@ -26,13 +26,13 @@
 
 class QAction;
 class QLabel;
-class QLineEdit;
 class QScrollArea;
 class QVBoxLayout;
 class QWidget;
 
 namespace Material
 {
+    class SearchBar;
     /**
      * The menu an action lives in, e.g. "Database" or "Database ▸ Export".
      * Empty when the action is not on a menu at all. Shared with the settings
@@ -85,11 +85,6 @@ namespace Material
     signals:
         /** @p action was chosen from the list; it has already been triggered. */
         void commandTriggered(QAction* action);
-        /**
-         * The header's regex button was pressed and the palette has closed.
-         * The host opens the regex builder - the palette does not own it.
-         */
-        void regexRequested();
 
     protected:
         /** The action tree changes with the database state, so it is re-walked. */
@@ -120,7 +115,7 @@ namespace Material
         void applyTheme();
 
         QWidget* m_sheet = nullptr;
-        QLineEdit* m_searchEdit = nullptr;
+        SearchBar* m_searchEdit = nullptr;
         QScrollArea* m_scroll = nullptr;
         QVBoxLayout* m_listLayout = nullptr;
         QLabel* m_emptyLabel = nullptr;

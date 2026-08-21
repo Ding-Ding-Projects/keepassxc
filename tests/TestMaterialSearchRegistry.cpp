@@ -2,6 +2,8 @@
 
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
+#include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialNotificationCentre.h"
 
 #include <QApplication>
 #include <QLineEdit>
@@ -48,6 +50,19 @@ void TestMaterialSearchRegistry::duplicateIdentityRejected()
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("test.registry.duplicate")), &first);
     QVERIFY(!second.setIdentity(QString(), QStringLiteral("Missing ID")));
     QVERIFY(!second.setIdentity(QStringLiteral("missing-label"), QString()));
+}
+
+void TestMaterialSearchRegistry::existingConsumerSurfacesRegister()
+{
+    QWidget host;
+    auto* palette = new CommandPalette(&host);
+    auto* centre = new NotificationCentre(&host);
+    QVERIFY(SearchRegistry::instance()->bar(QStringLiteral("command-palette.commands")));
+    QVERIFY(SearchRegistry::instance()->bar(QStringLiteral("notification-centre.history")));
+    delete palette;
+    delete centre;
+    QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("command-palette.commands")), nullptr);
+    QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("notification-centre.history")), nullptr);
 }
 
 QTEST_MAIN(TestMaterialSearchRegistry)

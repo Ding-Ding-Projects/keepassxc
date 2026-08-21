@@ -33,6 +33,7 @@ class QVBoxLayout;
 namespace Material
 {
     class ButtonBase;
+    class SearchBar;
     class TopAppBar;
 
     /** One line of the notification history. */
@@ -130,6 +131,7 @@ namespace Material
         QWidget* m_sheet = nullptr;
         QLabel* m_headline = nullptr;
         ButtonBase* m_clearButton = nullptr;
+        SearchBar* m_search = nullptr;
         QScrollArea* m_scroll = nullptr;
         QVBoxLayout* m_listLayout = nullptr;
         QWidget* m_emptyState = nullptr;
