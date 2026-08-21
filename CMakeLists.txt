@@ -19,6 +19,9 @@ cmake_minimum_required(VERSION 3.16.0)
 project(KeePassXC)
 set(APP_ID "org.keepassxc.${PROJECT_NAME}")
 
+include(cmake/WindowsOnlyPlatformGuard.cmake)
+kpxc_enforce_windows_only_scope()
+
 # This fork deliberately supports Windows only. Keep these checks before any
 # dependency probing so unsupported hosts fail with a precise diagnosis.
 if(NOT WIN32)

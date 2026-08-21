@@ -1,7 +1,10 @@
 # Changelog
 
 ## 2.8.0 (Pending)
-* Placeholder for future release notes
+
+### Changes
+
+- Build: Enforce the Windows-only source boundary and remove the remaining macOS translation and Unix package-helper registrations.
 
 ## 2.7.12 (2026-03-10)
 
