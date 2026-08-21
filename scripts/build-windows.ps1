@@ -1,6 +1,7 @@
 [CmdletBinding()]
 param(
     [Alias('s')][switch]$Silent,
+    [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '2.8.0',
     [string]$BuildDirectory = 'build-windows',
     [string]$InstallDirectory = 'stage\app'
 )
@@ -47,7 +48,7 @@ $qtRoot = $env:QT_ROOT_DIR
 if (-not $qtRoot) { throw 'QT_ROOT_DIR must identify the pinned Qt 6.8.3 MSVC x64 installation.' }
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 Phase "Configuring $build."
-Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release','-DWITH_TESTS=ON','-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot")
+Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version",'-DWITH_TESTS=ON','-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot")
 Phase 'Building the native application.'
 Invoke-Native cmake @('--build',$build,'--parallel')
 Phase "Installing to $stage."
