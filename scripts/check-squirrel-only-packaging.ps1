@@ -4,7 +4,8 @@ param(
     [switch]$ProbeExecutableVersionMismatch,
     [switch]$ProbeQtBootstrapMissing,
     [switch]$ProbeReleaseVersionEnvMissing,
-    [switch]$ProbeProductionBuildScopeMissing
+    [switch]$ProbeProductionBuildScopeMissing,
+    [switch]$ProbeSharedReleaseConcurrency
 )
 
 $ErrorActionPreference = 'Stop'
@@ -57,6 +58,26 @@ foreach ($relative in $requiredText.Keys) {
 }
 
 $workflow = Get-Content -Raw -LiteralPath (Join-Path $root '.github\workflows\material-release.yml')
+if ($ProbeSharedReleaseConcurrency) {
+    $sharedConcurrency = @'
+concurrency:
+  group: material-squirrel-release-${{ github.ref }}
+  cancel-in-progress: false
+
+'@
+    $workflow = $sharedConcurrency + $workflow
+}
+$cancelEnabled = [regex]::IsMatch($workflow, '(?mi)^\s*cancel-in-progress:\s*true\s*$')
+if ($cancelEnabled) {
+    throw 'Release workflow must never cancel an earlier run in progress.'
+}
+$concurrencyGroups = [regex]::Matches($workflow, '(?mi)^\s*group:\s*(?<value>.+?)\s*$')
+foreach ($group in $concurrencyGroups) {
+    $value = $group.Groups['value'].Value
+    if ($value.Contains('github.ref') -or -not $value.Contains('github.run_id')) {
+        throw "Release workflow concurrency can replace pending runs unless it is unique per run id: $value"
+    }
+}
 $workflowVersionContract = @(
     '$packageVersion = "$major.$minor.$patch"',
     'package-version: ${{ steps.package_version.outputs.value }}',

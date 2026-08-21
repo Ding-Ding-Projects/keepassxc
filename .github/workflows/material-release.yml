@@ -8,10 +8,6 @@ on:
 permissions:
   contents: read
 
-concurrency:
-  group: material-squirrel-release-${{ github.ref }}
-  cancel-in-progress: false
-
 jobs:
   package-windows:
     name: Package unsigned Windows x64 installer
