@@ -194,6 +194,9 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testmaterialregexsafety SOURCES TestMaterialRegexSafety.cpp
+        LIBS ${TEST_LIBRARIES})
+
 add_unit_test(NAME testsquirrellifecycle SOURCES TestSquirrelLifecycle.cpp
         LIBS ${TEST_LIBRARIES})
 

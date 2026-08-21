@@ -22,6 +22,7 @@
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
 #include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 
 #include <QAction>
 #include <QEvent>
@@ -30,7 +31,6 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
-#include <QRegularExpression>
 #include <QMenu>
 #include <QMouseEvent>
 #include <QPainter>
@@ -495,15 +495,6 @@ namespace Material
         clearRows();
 
         const QStringList tokens = query.toLower().split(QLatin1Char(' '), Qt::SkipEmptyParts);
-        QRegularExpression expression;
-        if (m_searchEdit->isRegexEnabled() && !query.isEmpty()) {
-            QRegularExpression::PatternOptions options = QRegularExpression::UseUnicodePropertiesOption;
-            const QString flags = m_searchEdit->regexFlags();
-            if (flags.contains(QLatin1Char('i'))) options |= QRegularExpression::CaseInsensitiveOption;
-            if (flags.contains(QLatin1Char('m'))) options |= QRegularExpression::MultilineOption;
-            if (flags.contains(QLatin1Char('s'))) options |= QRegularExpression::DotMatchesEverythingOption;
-            expression = QRegularExpression(query, options);
-        }
 
         QString group;
         for (int i = 0; i < m_commands.size(); ++i) {
@@ -513,7 +504,8 @@ namespace Material
             }
             bool matched = true;
             if (m_searchEdit->isRegexEnabled() && !query.isEmpty()) {
-                matched = expression.isValid() && expression.match(command.haystack).hasMatch();
+                const auto run = runBounded(query, optionsForFlags(m_searchEdit->regexFlags()), command.haystack);
+                matched = run.compiled && !run.blocked && !run.timedOut && !run.matches.isEmpty();
             } else {
                 for (const QString& token : tokens) {
                     if (!command.haystack.contains(token)) {

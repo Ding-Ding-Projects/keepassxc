@@ -23,6 +23,7 @@
 #include "MaterialTheme.h"
 #include "MaterialTopAppBar.h"
 #include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 
 #include <QEvent>
 #include <QHBoxLayout>
@@ -31,7 +32,6 @@
 #include <QPainter>
 #include <QRegion>
 #include <QResizeEvent>
-#include <QRegularExpression>
 #include <QScrollArea>
 #include <QShowEvent>
 #include <QVBoxLayout>
@@ -460,23 +460,15 @@ namespace Material
         clearList();
 
         const QString query = m_search ? m_search->text() : QString();
-        QRegularExpression expression;
-        if (m_search && m_search->isRegexEnabled() && !query.isEmpty()) {
-            QRegularExpression::PatternOptions options = QRegularExpression::UseUnicodePropertiesOption;
-            const QString flags = m_search->regexFlags();
-            if (flags.contains(QLatin1Char('i'))) options |= QRegularExpression::CaseInsensitiveOption;
-            if (flags.contains(QLatin1Char('m'))) options |= QRegularExpression::MultilineOption;
-            if (flags.contains(QLatin1Char('s'))) options |= QRegularExpression::DotMatchesEverythingOption;
-            expression = QRegularExpression(query, options);
-        }
         int matches = 0;
         for (const auto& entry : m_items) {
             const QString haystack = QStringLiteral("%1\n%2\n%3")
                                          .arg(severityName(entry.severity), entry.title, entry.body);
-            const bool matched = query.isEmpty()
-                                 || (m_search->isRegexEnabled()
-                                         ? expression.isValid() && expression.match(haystack).hasMatch()
-                                         : haystack.contains(query, Qt::CaseInsensitive));
+            bool matched = query.isEmpty() || haystack.contains(query, Qt::CaseInsensitive);
+            if (m_search->isRegexEnabled() && !query.isEmpty()) {
+                const auto run = runBounded(query, optionsForFlags(m_search->regexFlags()), haystack);
+                matched = run.compiled && !run.blocked && !run.timedOut && !run.matches.isEmpty();
+            }
             if (!matched) {
                 continue;
             }
