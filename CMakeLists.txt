@@ -19,6 +19,24 @@ cmake_minimum_required(VERSION 3.16.0)
 project(KeePassXC)
 set(APP_ID "org.keepassxc.${PROJECT_NAME}")
 
+# This fork deliberately supports Windows only. Keep these checks before any
+# dependency probing so unsupported hosts fail with a precise diagnosis.
+if(NOT WIN32)
+    message(FATAL_ERROR
+        "This KeePassXC fork supports 64-bit Windows 10 and Windows 11 only. "
+        "Configure it with MSVC and the x64-windows vcpkg triplet.")
+endif()
+
+if(NOT MSVC)
+    message(FATAL_ERROR
+        "This KeePassXC fork requires the Microsoft Visual C++ toolchain. "
+        "MinGW, GCC, and non-MSVC Clang configurations are unsupported.")
+endif()
+
+if(NOT CMAKE_SIZEOF_VOID_P EQUAL 8)
+    message(FATAL_ERROR "This KeePassXC fork supports x64 builds only.")
+endif()
+
 # Version Number
 set(KEEPASSXC_VERSION_MAJOR "2")
 set(KEEPASSXC_VERSION_MINOR "8")
@@ -32,7 +50,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 include(CMakeToolsHelpers OPTIONAL) # Support Visual Studio Code
 include(FeatureSummary)
-include(KPXCMacDeployHelpers)
 include(CLangFormat)
 
 include(CompilerFlags)
@@ -46,7 +63,6 @@ option(WITH_GUI_TESTS "Enable building of GUI tests" OFF)
 option(WITH_WARN_DEPRECATED "Development only: warn about deprecated methods, including Qt." OFF)
 option(WITH_ASAN "Enable address sanitizer checks" OFF)
 option(WITH_COVERAGE "Use to build with coverage tests (GCC only)." OFF)
-option(WITH_APP_BUNDLE "Enable Application Bundle for macOS" ON)
 option(WITH_CCACHE "Use ccache for build" OFF)
 
 # Advanced Features Control
@@ -137,53 +153,6 @@ set_property(CACHE KEEPASSXC_DIST_TYPE PROPERTY STRINGS Native)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
-
-# Compiler Features
-if(APPLE)
-    # Perform the platform checks before applying the stricter compiler flags.
-    # Otherwise the kSecAccessControlTouchIDCurrentSet deprecation warning will result in an error.
-    try_compile(XC_APPLE_COMPILER_SUPPORT_BIOMETRY
-       ${CMAKE_CURRENT_BINARY_DIR}/macos-trycompile/
-       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler-checks/macos/control_biometry_support.mm)
-    message(STATUS "Biometry compiler support: ${XC_APPLE_COMPILER_SUPPORT_BIOMETRY}")
-
-    try_compile(XC_APPLE_COMPILER_SUPPORT_TOUCH_ID
-       ${CMAKE_CURRENT_BINARY_DIR}/macos-trycompile/
-       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler-checks/macos/control_touch_id_support.mm)
-    message(STATUS "Touch ID compiler support: ${XC_APPLE_COMPILER_SUPPORT_TOUCH_ID}")
-
-    try_compile(XC_APPLE_COMPILER_SUPPORT_WATCH
-       ${CMAKE_CURRENT_BINARY_DIR}/macos-trycompile/
-       ${CMAKE_CURRENT_SOURCE_DIR}/cmake/compiler-checks/macos/control_watch_support.mm)
-    message(STATUS "Apple watch compiler support: ${XC_APPLE_COMPILER_SUPPORT_WATCH}")
-
-    try_compile(HAVE_PT_DENY_ATTACH
-	   ${CMAKE_BINARY_DIR}/macos-trycompile/
-	   ${CMAKE_SOURCE_DIR}/cmake/compiler-checks/ptrace_deny_attach.cpp)
-endif()
-
-if(UNIX)
-    check_cxx_source_compiles("#include <sys/prctl.h>
-    int main() { prctl(PR_SET_DUMPABLE, 0); return 0; }"
-            HAVE_PR_SET_DUMPABLE)
-
-    check_cxx_source_compiles("#include <malloc.h>
-    int main() { return 0; }"
-            HAVE_MALLOC_H)
-
-    check_cxx_source_compiles("#include <malloc.h>
-    int main() { malloc_usable_size(NULL); return 0; }"
-            HAVE_MALLOC_USABLE_SIZE)
-
-    check_cxx_source_compiles("#include <sys/resource.h>
-    int main() {
-      struct rlimit limit;
-      limit.rlim_cur = 0;
-      limit.rlim_max = 0;
-      setrlimit(RLIMIT_CORE, &limit);
-      return 0;
-    }" HAVE_RLIMIT_CORE)
-endif()
 
 # ccache support
 if(WITH_CCACHE)
@@ -284,10 +253,6 @@ if(CXX_HAS_fsized_deallocation)
     unset(CMAKE_REQUIRED_FLAGS)
 endif()
 
-if(APPLE AND CMAKE_COMPILER_IS_CLANGXX)
-    add_gcc_compiler_cxxflags("-stdlib=libc++")
-endif()
-
 if(WITH_WARN_DEPRECATED)
     add_definitions(-DQT_DEPRECATED_WARNINGS)
 else()
@@ -340,32 +305,12 @@ if(WIN32)
     endif()
 endif()
 
-if(WIN32)
-    set(PROGNAME KeePassXC)
-    set(CLI_INSTALL_DIR ".")
-    set(PROXY_INSTALL_DIR ".")
-    set(BIN_INSTALL_DIR ".")
-    set(PLUGIN_INSTALL_DIR ".")
-    set(DATA_INSTALL_DIR "share")
-elseif(APPLE AND WITH_APP_BUNDLE)
-    set(PROGNAME KeePassXC)
-    set(BUNDLE_INSTALL_DIR "${PROGNAME}.app/Contents")
-    set(CMAKE_INSTALL_MANDIR "${BUNDLE_INSTALL_DIR}/Resources/man")
-    set(CLI_INSTALL_DIR "${BUNDLE_INSTALL_DIR}/MacOS")
-    set(PROXY_INSTALL_DIR "${BUNDLE_INSTALL_DIR}/MacOS")
-    set(BIN_INSTALL_DIR "${BUNDLE_INSTALL_DIR}/MacOS")
-    set(PLUGIN_INSTALL_DIR "${BUNDLE_INSTALL_DIR}/PlugIns")
-    set(DATA_INSTALL_DIR "${BUNDLE_INSTALL_DIR}/Resources")
-    add_definitions(-DWITH_APP_BUNDLE)
-else()
-    include(GNUInstallDirs)
-    set(PROGNAME keepassxc)
-    set(CLI_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
-    set(PROXY_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
-    set(BIN_INSTALL_DIR "${CMAKE_INSTALL_BINDIR}")
-    set(PLUGIN_INSTALL_DIR "${CMAKE_INSTALL_LIBDIR}/keepassxc")
-    set(DATA_INSTALL_DIR "${CMAKE_INSTALL_DATADIR}/keepassxc")
-endif()
+set(PROGNAME KeePassXC)
+set(CLI_INSTALL_DIR ".")
+set(PROXY_INSTALL_DIR ".")
+set(BIN_INSTALL_DIR ".")
+set(PLUGIN_INSTALL_DIR ".")
+set(DATA_INSTALL_DIR "share")
 
 if(WITH_COVERAGE)
     # Include code coverage, use with -DCMAKE_BUILD_TYPE=Debug
@@ -397,15 +342,7 @@ endif()
 
 # Find Qt
 set(QT_COMPONENTS Core Network Concurrent Gui Svg Widgets Test LinguistTools)
-if(APPLE)
-    find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED HINTS
-            /usr/local/opt/qt/lib/cmake
-            /usr/local/Cellar/qt/*/lib/cmake
-            /opt/homebrew/opt/qt/lib/cmake
-            ENV PATH)
-else()
-    find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED)
-endif()
+find_package(Qt6 COMPONENTS ${QT_COMPONENTS} REQUIRED)
 
 # Minimum Qt version check
 if(Qt6Core_VERSION VERSION_LESS "6.2.4")
@@ -426,24 +363,13 @@ endif()
 
 get_filename_component(Qt6_PREFIX ${Qt6_DIR}/../../.. REALPATH)
 
-if(APPLE)
-    set(CMAKE_MACOSX_RPATH TRUE)
-    find_program(MACDEPLOYQT_EXE macdeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt/bin ENV PATH)
-    if(NOT MACDEPLOYQT_EXE)
-        message(FATAL_ERROR "macdeployqt is required to build on macOS")
-    endif()
-    message(STATUS "Using macdeployqt: ${MACDEPLOYQT_EXE}")
-    set(MACDEPLOYQT_EXTRA_BINARIES "")
-elseif(WIN32)
-    find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt/bin ENV PATH)
-    if(NOT WINDEPLOYQT_EXE)
-        message(FATAL_ERROR "windeployqt is required to build on Windows")
-    endif()
-    message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
-    # Where Qt's own runtime DLLs live. The test targets put this on PATH so a
-    # ctest run does not depend on the developer having Qt on PATH already.
-    get_filename_component(QT_BIN_DIR "${WINDEPLOYQT_EXE}" DIRECTORY)
+find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt/bin ENV PATH)
+if(NOT WINDEPLOYQT_EXE)
+    message(FATAL_ERROR "windeployqt is required to build on Windows")
 endif()
+message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+# Where Qt's own runtime DLLs live. Test targets prepend this directory to PATH.
+get_filename_component(QT_BIN_DIR "${WINDEPLOYQT_EXE}" DIRECTORY)
 
 # Find Botan
 find_package(Botan REQUIRED)

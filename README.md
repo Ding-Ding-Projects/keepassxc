@@ -1,5 +1,13 @@
 # <img src="https://keepassxc.org/assets/img/keepassxc.svg" width="40" height="40"/> KeePassXC — Material
 
+> **Installer transition:** this fork now targets unsigned Squirrel.Windows packages as its sole
+> supported installation and update format. The generated executables are intentionally unsigned
+> and may display Unknown Publisher or SmartScreen warnings.
+
+Run `build.bat` for the native application, `build-installer.bat` for verified `Setup.exe`,
+`RELEASES`, and full-package output, or `download-dependencies.bat` to prepare the pinned user-scoped
+toolchain. Each accepts `/s` or `--silent`.
+
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 

@@ -37,5 +37,6 @@ vcpkg_installed*/
 /.ci-vcpkg-archives/
 /stage/
 /artifacts/
+/dist/
 
 __pycache__/

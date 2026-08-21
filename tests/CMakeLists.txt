@@ -164,6 +164,9 @@ add_unit_test(NAME testconfig SOURCES TestConfig.cpp
 add_unit_test(NAME testmaterialvoice SOURCES TestMaterialVoice.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 
+add_unit_test(NAME testmaterialbreakpoints SOURCES TestMaterialBreakpoints.cpp
+        LIBS ${TEST_LIBRARIES})
+
 add_unit_test(NAME testdimsum SOURCES TestDimSum.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 # The card is a widget, so the test needs a QApplication. Offscreen keeps it

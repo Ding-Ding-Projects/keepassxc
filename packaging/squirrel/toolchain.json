@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "architecture": "x64",
+  "qtVersion": "6.8.3",
+  "vcpkgBaselineSource": "vcpkg.json",
+  "nuget": {
+    "version": "6.11.1",
+    "url": "https://dist.nuget.org/win-x86-commandline/v6.11.1/nuget.exe",
+    "sha256": "c0ddc9cb0633c4607da7e8028eb4f91248c8b74e45a68b0c79fcfa7d78c2a481"
+  },
+  "squirrelWindows": {
+    "packageId": "squirrel.windows",
+    "version": "2.0.1",
+    "source": "https://api.nuget.org/v3/index.json",
+    "maintenanceStatus": "legacy-upstream",
+    "squirrelExeSha256": "76359cd4b0349a83337b941332ad042c90351c2bb0a4628307740324c97984cc"
+  }
+}

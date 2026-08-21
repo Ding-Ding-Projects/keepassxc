@@ -1,5 +1,11 @@
 # Handoff — closing the gap between the Material UI and the design
 
+> **Current direction (2026-08-21):** the fork is becoming a 64-bit Windows-only application with
+> unsigned Squirrel.Windows installation and updates. Root build scripts, pinned packaging metadata,
+> an artifact verifier, a hard CMake platform boundary, and the responsive breakpoint model are in
+> the current working change. The full UI migration, old-WiX removal, installed-artifact proof, and
+> updater replacement remain unfinished and must not be reported as shipped.
+
 Branch `claude/ui-design-verification-ygrhj7`, [PR #6](https://github.com/Ding-Ding-Projects/keepassxc/pull/6).
 33 commits off `develop` at `0dd3d702`, 195 files, +11 451 / −2 005.
 
