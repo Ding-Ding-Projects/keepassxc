@@ -6,8 +6,10 @@
 #include "core/Entry.h"
 #include "core/Group.h"
 #include "format/KeePass2.h"
+#include "format/KeePass2Reader.h"
 
 #include <QCryptographicHash>
+#include <QBuffer>
 #include <QDir>
 #include <QDebug>
 #include <QFile>
@@ -23,6 +25,8 @@
 #include <QThread>
 #include <QtEndian>
 #include <QUuid>
+
+#include <algorithm>
 
 namespace Material
 {
@@ -189,6 +193,44 @@ namespace Material
     QString HistoryStore::repositoryPath() const { return QDir(historyDirectory()).filePath(QStringLiteral("repository")); }
     QString HistoryStore::logPath() const { return QDir(historyDirectory()).filePath(QStringLiteral("revisions.jsonl")); }
     QString HistoryStore::fingerprintPath(const QString& path) const { const QString id = path.size() == 64 ? path : databaseId(path); return QDir(repositoryPath()).filePath(QDir(FingerprintsName).filePath(id + QStringLiteral(".json"))); }
+    QString HistoryStore::databaseRepositoryPath(const QString& path) const
+    {
+        const QString id = path.size() == 64 ? path : databaseId(path);
+        return QDir(historyDirectory()).filePath(QStringLiteral("databases/%1/repository").arg(id));
+    }
+
+    bool HistoryStore::commitDatabaseRepository(const HistoryRevision& revision, const QByteArray& encryptedSnapshot)
+    {
+        if (encryptedSnapshot.isEmpty() || revision.databasePath.size() != 64) return false;
+        const QString repo = databaseRepositoryPath(revision.databasePath);
+        if (!QDir().mkpath(repo) || m_gitExecutable.isEmpty()) return false;
+        QLockFile lock(QDir(repo).filePath(QStringLiteral("repository.lock")));
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs)) return false;
+        if (!QFileInfo::exists(QDir(repo).filePath(QStringLiteral(".git")))) {
+            if (!git(m_gitExecutable, repo, {QStringLiteral("init"), QStringLiteral("--quiet")}).ok()) return false;
+            if (!git(m_gitExecutable, repo, {QStringLiteral("config"), QStringLiteral("user.name"), QStringLiteral("KeePassXC History")}).ok()) return false;
+            if (!git(m_gitExecutable, repo, {QStringLiteral("config"), QStringLiteral("user.email"), QStringLiteral("history@localhost")}).ok()) return false;
+        }
+        const QString snapshotName = QStringLiteral("snapshots/%1.kdbx").arg(revision.id);
+        const QString metadataName = QStringLiteral("revisions/%1.json").arg(revision.id);
+        if (!atomicReplace(QDir(repo).filePath(snapshotName), encryptedSnapshot)
+            || !atomicReplace(QDir(repo).filePath(metadataName), QJsonDocument(toJson(revision)).toJson(QJsonDocument::Compact))) {
+            return false;
+        }
+        const auto add = git(m_gitExecutable,
+                             repo,
+                             {QStringLiteral("add"), QStringLiteral("--"), snapshotName, metadataName});
+        const auto commit = add.ok()
+                                ? git(m_gitExecutable,
+                                      repo,
+                                      {QStringLiteral("commit"),
+                                       QStringLiteral("--quiet"),
+                                       QStringLiteral("-m"),
+                                       QStringLiteral("Record encrypted database revision %1").arg(revision.id)})
+                                : ProcessResult{};
+        return commit.ok();
+    }
 
     bool HistoryStore::ensureRepository()
     {
@@ -314,7 +356,11 @@ namespace Material
                 encryptedSnapshot.clear();
             }
         }
-        if (!commitTransaction(r, fingerprintJson(current), encryptedSnapshot)) { emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage.")); return false; }
+        if (!commitTransaction(r, fingerprintJson(current), encryptedSnapshot)
+            || !commitDatabaseRepository(r, encryptedSnapshot)) {
+            emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage."));
+            return false;
+        }
         return true;
     }
 
@@ -392,5 +438,56 @@ namespace Material
         if (byteDigest(bytes) != value.snapshotSha256) return fail(tr("The encrypted snapshot hash does not match its revision."));
         if (error) error->clear();
         return bytes;
+    }
+
+    int HistoryStore::restoreDeletedEntries(const QString& revisionId,
+                                            const QSharedPointer<Database>& database,
+                                            QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return 0;
+        };
+        if (!database || !database->rootGroup() || !database->key()) {
+            return fail(tr("The current database is not unlocked."));
+        }
+        const HistoryRevision previous = predecessor(revisionId);
+        if (!previous.isValid()) return fail(tr("No earlier encrypted snapshot is available."));
+        QString snapshotError;
+        const QByteArray bytes = snapshot(previous.id, &snapshotError);
+        if (bytes.isEmpty()) return fail(snapshotError);
+
+        QBuffer buffer;
+        buffer.setData(bytes);
+        if (!buffer.open(QIODevice::ReadOnly)) return fail(tr("The encrypted snapshot could not be opened."));
+        auto snapshotDatabase = QSharedPointer<Database>::create();
+        KeePass2Reader reader;
+        reader.readDatabase(&buffer, database->key(), snapshotDatabase.data());
+        if (reader.hasError()) {
+            return fail(tr("The encrypted snapshot could not be unlocked with the current database key."));
+        }
+
+        int restored = 0;
+        QList<DeletedObject> deletedObjects = database->deletedObjects();
+        for (Entry* oldEntry : snapshotDatabase->rootGroup()->entriesRecursive(false)) {
+            if (!oldEntry || oldEntry->isRecycled() || database->rootGroup()->findEntryByUuid(oldEntry->uuid())) continue;
+            Group* target = oldEntry->group()
+                                ? database->rootGroup()->findGroupByUuid(oldEntry->group()->uuid())
+                                : nullptr;
+            if (!target || target->isRecycled()) target = database->rootGroup();
+            oldEntry->clone(Entry::CloneIncludeHistory)->setGroup(target);
+            deletedObjects.erase(std::remove_if(deletedObjects.begin(),
+                                                deletedObjects.end(),
+                                                [oldEntry](const DeletedObject& value) {
+                                                    return value.uuid == oldEntry->uuid();
+                                                }),
+                                 deletedObjects.end());
+            ++restored;
+        }
+        database->setDeletedObjects(deletedObjects);
+        if (restored == 0) return fail(tr("No deleted entries were found in the previous snapshot."));
+        recordEvent(database, tr("Restored deleted entries from encrypted history"), RevisionKind::Entry);
+        if (error) error->clear();
+        return restored;
     }
 }

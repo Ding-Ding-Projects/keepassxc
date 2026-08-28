@@ -1,24 +1,31 @@
 # Handoff — Windows-native Material rewrite and Squirrel distribution
 
-Last verified: 2026-08-21
+Last verified: 2026-08-28
 
 ## Current task update
 
+- New-entry TOTP now stays synchronized with the editor-owned attributes working copy. The attributes model is never rebound to the transient unsaved entry, and an open TOTP dialog closes when that entry is destroyed.
+- Squirrel packaging marks only the main GUI and its generated execution stub as aware. The CLI, browser proxy, and bundled Visual C++ redistributable are no longer launched as installation hooks.
+- Repeated automatic update failures produce one notification until the state changes or the user explicitly retries.
+- Settings wheel gestures scroll from the content area, the scrollbar remains inside the page, screen-capture affinity changes preserve window state, and Windows Hello quick unlock is user-triggered rather than automatic on file open.
+- Passkey import now provides a model-backed searchable entry picker suitable for groups containing at least 1,000 entries.
+- Every database gets an isolated encrypted local Git repository under application data. A saved deletion can restore missing entries from the preceding encrypted KDBX snapshot without overwriting current entries; the restore is appended as another history event.
+- The fork default branch is `main`. Upstream and Transifex resources that are genuinely named `develop` remain unchanged.
 - The entry editor now exposes direct TOTP setup only while creating an unsaved entry; the existing TOTP dialog validates and stores the secret on that disposable in-memory entry before its final save. Existing-entry edit sessions keep the established selected-entry action so editor Cancel semantics are unchanged.
 - TOTP and passkey attributes coexist on one entry and survive a real KDBX round trip.
 - Browser startup repairs the otherwise unusable state where browser integration and automatic extension setup are enabled but Chrome-family, Firefox-family, and Edge native-messaging registrations are all absent.
 - The development-snapshot startup warning and its obsolete settings control/config key are removed. Other actionable error and user-triggered completion notifications remain.
 - Tagged CMake configuration now accepts an exact semantic version with one optional leading `v` and normalizes it before the strict version check.
-- Focused verification at the task tree: `testbrowser` passed in 0.22 seconds and `testpasskeys` passed in 0.26 seconds. `testgui`, `testbrowser`, and `testpasskeys` all compiled successfully. The isolated `testAddEntry` run crashed before entering the test body with access violation `0xc0000005` in `AutoTypeExecutor::~AutoTypeExecutor`; GUI runtime verification is therefore blocked by that unrelated harness teardown crash rather than reported as passed.
+- Focused verification at the task tree: `testmaterialhistory`, `testmaterialshellresponsive`, `testpasskeys`, and `testupdatecheck` passed together in 3.71 seconds. The new GUI cases compiled, but the isolated `testAddEntry` process crashed before entering the test body with the pre-existing access violation in `AutoTypeExecutor::~AutoTypeExecutor`; they are not reported as runtime passes. A real unsigned Squirrel package was rebuilt and its verifier proved that only `KeePassXC.exe` and its exact generated execution stub are Squirrel-aware. The cheap Lowlevel persistent HTTP endpoint was unavailable, so no installed-artifact screenshot claim is made.
 
 ## Closeout handoff — 2026-08-21
 
 - The preserved Settings checkpoint from `f27d787934fd11667cb0cd017390c95531da27f6` is integrated during this closeout. Its source changes include truthful persisted/default provenance, independent bounded per-page search, keyboard-operable rows, compact page selection, a dialog-emoji preference, bounded local personal-vocabulary loading/reset, and redacted Settings history events.
 - Focused Settings compilation, runtime interaction, design-parity evidence, and negative completeness tests were not completed during this closeout. The work remains explicitly incomplete rather than being treated as verified by the merge.
-- Installer Visual C++ prerequisite detection is tracked in [issue #8](https://github.com/Ding-Ding-Projects/keepassxc/issues/8).
-- Unsolicited main-window minimizing is tracked in [issue #9](https://github.com/Ding-Ding-Projects/keepassxc/issues/9).
+- Installer Visual C++ prerequisite handling from issue #8 is repaired by preventing Squirrel from executing the bundled redistributable as an install hook.
+- The capture-related unsolicited main-window minimizing from issue #9 is repaired by preserving state around display-affinity changes and excluding transient popup windows.
 - Unconditional Material Design 3 and legacy-style-route removal are tracked in [issue #10](https://github.com/Ding-Ding-Projects/keepassxc/issues/10).
-- Per-database embedded Git history is tracked in [issue #11](https://github.com/Ding-Ding-Projects/keepassxc/issues/11).
+- Per-database local Git history from issue #11 now has isolated repositories, encrypted snapshots, and deleted-entry restoration.
 - The fail-closed per-surface feature inventory and remaining implementation are tracked in [issue #12](https://github.com/Ding-Ding-Projects/keepassxc/issues/12).
 
 ## Current repository state
@@ -29,7 +36,7 @@ supported installer and update format; CPack, WiX, MSI, NSIS, and portable-ZIP r
 removed. Code signing is permanently disabled, so setup and update executables must report
 `NotSigned` and may trigger Unknown Publisher or SmartScreen warnings.
 
-The default branch is `develop`. Its exact pushed closeout commit and ancestry proof are recorded in
+The default branch is `main`. Its exact pushed closeout commit and ancestry proof are recorded in
 issue #7. The incomplete Settings checkpoint is no longer a branch-only change: its source commit
 `f27d787934fd11667cb0cd017390c95531da27f6` is integrated while its missing verification remains
 open in issue #12. No stash contains task work.
@@ -100,7 +107,7 @@ focused MSVC/Qt 6.8.3 builds on the commits that introduced them; the full suite
 | Test source | Functions | Last focused result |
 | --- | ---: | --- |
 | `tests/TestMaterialBreakpoints.cpp` | 2 | Green; breakpoint probe red then green |
-| `tests/TestMaterialShellResponsive.cpp` | 4 | Green; fallback-registration probe red then green |
+| `tests/TestMaterialShellResponsive.cpp` | 5 | Green; includes settings content-wheel and scrollbar containment |
 | `tests/TestMaterialSearchRegistry.cpp` | 4 | Green |
 | `tests/TestMaterialRegexSafety.cpp` | 3 | Green |
 | `tests/TestMaterialTabs.cpp` | 3 | Green |
@@ -108,7 +115,7 @@ focused MSVC/Qt 6.8.3 builds on the commits that introduced them; the full suite
 | `tests/TestSquirrelLifecycle.cpp` | 8 | Green; spoof/ownership probes red then green |
 | `tests/TestMaterialAppearance.cpp` | 5 | Green; Config-registration probe red then green |
 | `tests/TestMaterialReports.cpp` | 2 | Green; card/legacy-widget probes red then green |
-| `tests/TestMaterialHistory.cpp` | 6 | Green; real Git/KDBX/concurrent-writer integration |
+| `tests/TestMaterialHistory.cpp` | 7 | Green; real Git/KDBX/concurrent-writer and deleted-entry restore integration |
 | `tests/TestMaterialChangelog.cpp` | 2 | Green; provenance/control probes red then green |
 
 The latest local production-only Squirrel proof was version 2.8.5. `Setup.exe` SHA-256 is
@@ -124,7 +131,7 @@ provenance, and update metadata. No delta was published because no verified prio
 package was supplied.
 
 Several newer `Material Squirrel Build and Release` runs are still in progress. This handoff does not
-assert a green remote result. The next owner must inspect the newest run for current `develop` and
+assert a green remote result. The next owner must inspect the newest run for current `main` and
 verify its release target and attached assets.
 
 ## Preserved incomplete Settings checkpoint
@@ -165,9 +172,9 @@ every dialog, five-width geometry checks, and the Settings parity route.
 
 ## Next safe actions
 
-1. Continue from `origin/codex/settings-parity`, reconcile with current `develop`, add focused
+1. Continue from `origin/codex/settings-parity`, reconcile with current `main`, add focused
    Settings coverage, and merge only after it passes.
-2. Inspect the newest release workflow for `origin/develop`; if terminal, record its exact conclusion,
+2. Inspect the newest release workflow for `origin/main`; if terminal, record its exact conclusion,
    tag, target commit, artifact names, sizes, and hashes.
 3. Continue one referenced destination at a time, keeping a parity row source-implemented but
    unverified until installed-artifact evidence is complete.

@@ -217,6 +217,7 @@ private:
     bool m_appExiting = false;
     bool m_restartRequested = false;
     bool m_squirrelRestartRequested = false;
+    bool m_updateFailureNotified = false;
     quint64 m_updateNotificationId = 0;
     QSet<QString> m_sessionPinnedTabs;
     bool m_contextMenuFocusLock = false;

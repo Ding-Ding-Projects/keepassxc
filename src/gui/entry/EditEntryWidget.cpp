@@ -41,6 +41,7 @@
 #include "core/Metadata.h"
 #include "core/PasswordGenerator.h"
 #include "core/TimeDelta.h"
+#include "core/Totp.h"
 #include "gui/PasswordWidget.h"
 #include "gui/TotpSetupDialog.h"
 #ifdef KPXC_FEATURE_SSHAGENT
@@ -935,7 +936,22 @@ void EditEntryWidget::generatePrivateKey()
 void EditEntryWidget::updateTotp()
 {
     if (m_entry) {
-        m_attributesModel->setEntryAttributes(m_entry->attributes());
+        // The attributes model must remain attached to the editor-owned working
+        // copy. Rebinding it to the transient Entry leaves the advanced editor
+        // with two owners and can dereference the entry after a cancelled create.
+        const auto source = m_entry->attributes();
+        const QList<QString> totpKeys{
+            Totp::ATTRIBUTE_OTP,
+            Totp::ATTRIBUTE_SEED,
+            Totp::ATTRIBUTE_SETTINGS,
+        };
+        for (const auto& key : totpKeys) {
+            if (source->contains(key)) {
+                m_entryAttributes->set(key, source->value(key), source->isProtected(key));
+            } else if (m_entryAttributes->contains(key)) {
+                m_entryAttributes->remove(key);
+            }
+        }
         m_mainUi->setupTotpButton->setText(m_entry->hasTotp() ? tr("Edit TOTP...") : tr("Set up TOTP..."));
     }
 }
@@ -1086,7 +1102,6 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
     m_mainUi->totpLabel->setVisible(m_create && !m_history);
     m_mainUi->setupTotpButton->setVisible(m_create && !m_history);
     m_mainUi->setupTotpButton->setEnabled(m_create && !m_history);
-    updateTotp();
 
     QList<QString> commonUsernames = m_db->commonUsernames();
     m_usernameCompleterModel->setStringList(commonUsernames);
@@ -1099,6 +1114,7 @@ void EditEntryWidget::setForms(Entry* entry, bool restore)
 
     m_advancedUi->attachmentsWidget->linkAttachments(m_attachments.data());
     m_entryAttributes->copyCustomKeysFrom(entry->attributes());
+    updateTotp();
 
     if (m_attributesModel->rowCount() != 0) {
         m_advancedUi->attributesView->setCurrentIndex(m_attributesModel->index(0, 0));

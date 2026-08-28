@@ -11,5 +11,6 @@ private slots:
     void gitStoreFailureDoesNotAdvanceFingerprint();
     void gitStoreMigratesLegacyOnce();
     void gitStoreSerializesConcurrentWriters();
+    void restoresDeletedEntryFromPerDatabaseRepository();
 };
 #endif

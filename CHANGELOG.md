@@ -1,5 +1,14 @@
 # Changelog
 
+- Entries: Repair new-entry ownership so TOTP setup, cancellation, and repeated creation cannot crash or lose custom attributes.
+- History: Give each database an isolated encrypted local Git repository and restore permanently deleted entries from the preceding KDBX snapshot.
+- Installation: Mark only the main GUI as Squirrel-aware so setup never launches the bundled Visual C++ redistributable or helper executables as install hooks.
+- Updates: Report one persistent failure notification per failed attempt instead of stacking the same message on every background interval.
+- Settings: Keep scrollbars inside the viewport and route wheel gestures from settings content without requiring pointer hover over the bar.
+- Passkeys: Add a bounded searchable entry picker for large groups during passkey import.
+- Unlock: Keep Windows Hello quick unlock explicit; opening a database file starts at its own password and key form.
+- Capture: Preserve window visibility, geometry, and state when screen-capture affinity changes.
+- Repository: Rename the fork's default branch from `develop` to `main` while retaining real upstream and Transifex `develop` resources.
 - Entries: Add an in-form TOTP setup action for new entries and preserve TOTP alongside passkey credentials.
 - Browser: Repair missing native-messaging registrations when browser integration and automatic extension setup remain enabled.
 - Interface: Remove the persistent development-snapshot warning and its obsolete suppression setting.

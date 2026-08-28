@@ -7,12 +7,15 @@
 #include "gui/material/MaterialVaultSidebar.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
+#include "gui/material/MaterialSpecSheet.h"
 
 #include <QApplication>
 #include <QMenu>
 #include <QLineEdit>
 #include <QSignalSpy>
 #include <QToolButton>
+#include <QScrollBar>
+#include <QWheelEvent>
 #include <QTest>
 
 using namespace Material;
@@ -247,6 +250,42 @@ void TestMaterialShellResponsive::appliesVaultPaneContract()
     QVERIFY(!vault.detailPaneInline());
     QVERIFY(vault.groupScopeButton()->isVisible());
     QVERIFY(vault.detailSheetButton()->isVisible());
+}
+
+void TestMaterialShellResponsive::settingsPageScrollsFromContentAndContainsScrollbar()
+{
+    SpecSheetPage page(QStringLiteral("general"), QStringLiteral("General"));
+    for (int index = 0; index < 24; ++index) {
+        page.addRow(QStringLiteral("Section"),
+                    QStringLiteral("settings"),
+                    QStringLiteral("Setting %1").arg(index),
+                    QStringLiteral("Description"),
+                    PillKind::Value,
+                    QString::number(index));
+    }
+    page.resize(520, 360);
+    page.show();
+    QApplication::processEvents();
+
+    auto* bar = page.verticalScrollBar();
+    QVERIFY(bar->maximum() > 0);
+    const int before = bar->value();
+    auto* row = page.rows().at(12);
+    const QPoint local = row->rect().center();
+    QWheelEvent wheel(local,
+                      row->mapToGlobal(local),
+                      QPoint(),
+                      QPoint(0, -120),
+                      Qt::NoButton,
+                      Qt::NoModifier,
+                      Qt::ScrollUpdate,
+                      false);
+    QCoreApplication::sendEvent(row, &wheel);
+    QVERIFY(bar->value() > before);
+
+    const QRect barGeometry(bar->mapTo(&page, QPoint()), bar->size());
+    QVERIFY(page.rect().contains(barGeometry.topLeft()));
+    QVERIFY(page.rect().contains(barGeometry.bottomRight()));
 }
 
 QTEST_MAIN(TestMaterialShellResponsive)

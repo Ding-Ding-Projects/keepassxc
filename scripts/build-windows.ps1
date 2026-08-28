@@ -46,7 +46,20 @@ Invoke-Native git @('-C',$vcpkgRoot,'checkout','--force',$baseline)
 if (-not (Test-Path (Join-Path $vcpkgRoot 'vcpkg.exe'))) { Invoke-Native (Join-Path $vcpkgRoot 'bootstrap-vcpkg.bat') @('-disableMetrics') }
 
 $qtRoot = $env:QT_ROOT_DIR
-if (-not $qtRoot) { throw 'QT_ROOT_DIR must identify the pinned Qt 6.8.3 MSVC x64 installation.' }
+if (-not $qtRoot) {
+    $qtCandidates = @(
+        (Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\Qt\6.8.3\msvc2022_64'),
+        (Join-Path $env:LOCALAPPDATA 'material-virtualbox-toolchain\Qt\6.8.3\msvc2022_64'),
+        'C:\Qt\6.8.3\msvc2022_64'
+    )
+    $qtRoot = $qtCandidates | Where-Object {
+        Test-Path -LiteralPath (Join-Path $_ 'bin\qmake.exe') -PathType Leaf
+    } | Select-Object -First 1
+}
+if (-not $qtRoot) { throw 'The pinned Qt 6.8.3 MSVC x64 installation could not be found in QT_ROOT_DIR or a supported user-scoped toolchain location.' }
+$qtRoot = [IO.Path]::GetFullPath($qtRoot)
+$qtVersion = (& (Join-Path $qtRoot 'bin\qmake.exe') -query QT_VERSION).Trim()
+if ($LASTEXITCODE -ne 0 -or $qtVersion -ne '6.8.3') { throw "Expected Qt 6.8.3 at $qtRoot; qmake reported '$qtVersion'." }
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."

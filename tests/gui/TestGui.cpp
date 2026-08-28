@@ -37,6 +37,7 @@
 
 #include "config-keepassx-tests.h"
 #include "core/PasswordHealth.h"
+#include "core/EntryAttributes.h"
 #include "core/Tools.h"
 #include "crypto/Crypto.h"
 #include "gui/ActionCollection.h"
@@ -58,7 +59,11 @@
 #include "gui/dbsettings/DatabaseSettingsDialog.h"
 #include "gui/dbsettings/DatabaseSettingsWidgetEncryption.h"
 #include "gui/entry/EditEntryWidget.h"
+#include "gui/entry/EntryAttributesModel.h"
 #include "gui/entry/EntryView.h"
+#include "gui/material/MaterialVaultScreen.h"
+#include "gui/material/MaterialSearchBar.h"
+#include "gui/passkeys/PasskeyImportDialog.h"
 #include "gui/group/EditGroupWidget.h"
 #include "gui/group/GroupModel.h"
 #include "gui/group/GroupView.h"
@@ -834,12 +839,28 @@ void TestGui::testAddEntry()
     QVERIFY(entryNewWidget->isVisible());
     QVERIFY(entryNewWidget->isEnabled());
 
-    // Click the new entry button and check that we enter edit mode
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    // Click the Material vault action and check that it drives the same owned
+    // new-entry path as the classic toolbar action.
+    auto* vault = m_mainWindow->findChild<Material::VaultScreen*>(QStringLiteral("materialVaultScreen"));
+    QVERIFY(vault);
+    QAbstractButton* materialNewEntry = nullptr;
+    for (auto* button : vault->findChildren<QAbstractButton*>()) {
+        if (button->text() == QStringLiteral("New entry")) {
+            materialNewEntry = button;
+            break;
+        }
+    }
+    QVERIFY(materialNewEntry);
+    QVERIFY(materialNewEntry->isVisible());
+    QTest::mouseClick(materialNewEntry, Qt::LeftButton);
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::EditEntryMode);
 
     // Add entry "test" and confirm added
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
+    auto* attributesModel = editEntryWidget->findChild<EntryAttributesModel*>();
+    QVERIFY(attributesModel);
+    QCOMPARE(attributesModel->entryAttributes()->parent(), editEntryWidget);
+    QVERIFY(attributesModel->entryAttributes() != editEntryWidget->currentEntry()->attributes());
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
     QTest::keyClicks(titleEdit, "test");
     auto* usernameComboBox = editEntryWidget->findChild<QComboBox*>("usernameComboBox");
@@ -858,6 +879,8 @@ void TestGui::testAddEntry()
     QTest::mouseClick(setupTotpButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     QTRY_VERIFY(setupTotpDialog.isNull());
     QCOMPARE(setupTotpButton->text(), QString("Edit TOTP..."));
+    QCOMPARE(attributesModel->entryAttributes()->parent(), editEntryWidget);
+    QVERIFY(attributesModel->entryAttributes() != editEntryWidget->currentEntry()->attributes());
     auto* editEntryWidgetButtonBox = editEntryWidget->findChild<QDialogButtonBox*>("buttonBox");
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
@@ -874,6 +897,17 @@ void TestGui::testAddEntry()
 
     // Then the status bar label should be updated with incremented number of entries.
     checkStatusBarText("2 Ent");
+
+    // Cancelling an entry while its TOTP sheet is open must close the sheet
+    // before DatabaseWidget releases the transient Entry.
+    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    QTest::mouseClick(setupTotpButton, Qt::LeftButton);
+    QPointer<TotpSetupDialog> abandonedTotp = editEntryWidget->findChild<TotpSetupDialog*>("TotpSetupDialog");
+    QTRY_VERIFY(abandonedTotp);
+    MessageBox::setNextAnswer(MessageBox::Discard);
+    QVERIFY(QMetaObject::invokeMethod(editEntryWidget, "cancel", Qt::DirectConnection));
+    QTRY_VERIFY(abandonedTotp.isNull());
+    QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::ViewMode);
 
     // Add entry "something 2"
     QTest::mouseClick(entryNewWidget, Qt::LeftButton);
@@ -904,6 +938,60 @@ void TestGui::testAddEntry()
 
     // Confirm no changed entry count
     QTRY_COMPARE(entryView->model()->rowCount(), 3);
+}
+
+void TestGui::testScreenCaptureStatePreserved()
+{
+    m_mainWindow->showNormal();
+    QApplication::processEvents();
+    const auto state = m_mainWindow->windowState();
+    const auto geometry = m_mainWindow->geometry();
+    QVERIFY(m_mainWindow->isVisible());
+
+    m_mainWindow->setAllowScreenCapture(true);
+    QApplication::processEvents();
+    QVERIFY(m_mainWindow->isVisible());
+    QCOMPARE(m_mainWindow->windowState(), state);
+    QCOMPARE(m_mainWindow->geometry(), geometry);
+
+    m_mainWindow->setAllowScreenCapture(false);
+    QApplication::processEvents();
+    QVERIFY(m_mainWindow->isVisible());
+    QCOMPARE(m_mainWindow->windowState(), state);
+    QCOMPARE(m_mainWindow->geometry(), geometry);
+}
+
+void TestGui::testPasskeyImportEntrySearchScales()
+{
+    Group* group = m_db->rootGroup();
+    QUuid expected;
+    for (int index = 0; index < 1000; ++index) {
+        auto* entry = new Entry;
+        entry->setTitle(QStringLiteral("Search scale entry %1").arg(index, 4, 10, QLatin1Char('0')));
+        entry->setGroup(group);
+        if (index == 999) expected = entry->uuid();
+    }
+
+    PasskeyImportDialog dialog(m_mainWindow.data());
+    dialog.setInfo(QStringLiteral("example.test"),
+                   QStringLiteral("person"),
+                   m_db,
+                   false);
+    auto* groups = dialog.findChild<QComboBox*>(QStringLiteral("selectGroupComboBox"));
+    QVERIFY(groups);
+    const int rootIndex = groups->findData(group->uuid());
+    QVERIFY(rootIndex >= 0);
+    groups->setCurrentIndex(rootIndex);
+
+    auto* search = dialog.findChild<Material::SearchBar*>(QStringLiteral("passkeyEntrySearch"));
+    auto* entries = dialog.findChild<QComboBox*>(QStringLiteral("selectEntryComboBox"));
+    QVERIFY(search);
+    QVERIFY(entries);
+    QCOMPARE(entries->count(), 1001);
+    search->setText(QStringLiteral("0999"));
+    QCOMPARE(entries->count(), 1);
+    QCOMPARE(entries->currentData().value<QUuid>(), expected);
+    QVERIFY(search->lineEdit()->accessibleDescription().contains(QStringLiteral("1")));
 }
 
 void TestGui::testPasswordEntryEntropy_data()

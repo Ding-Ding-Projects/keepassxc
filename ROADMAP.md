@@ -2,6 +2,7 @@
 
 ## Windows-only foundation
 
+- [x] Rename the fork default branch to `main` without changing upstream or Transifex resource names.
 - [x] Repair empty browser native-messaging registrations when automatic extension setup is enabled.
 - [x] Reject non-Windows, non-MSVC, and non-x64 configurations at CMake configure time.
 - [x] Add pinned root dependency, native build, and Squirrel.Windows installer entry points.
@@ -11,6 +12,12 @@
 
 ## Material UI rewrite
 
+- [x] Repair the new-entry crash and keep TOTP changes on the editor-owned attributes working copy.
+- [x] Keep screen-capture permission changes from minimizing or hiding the application.
+- [x] Make settings wheel scrolling work over content and contain the scrollbar at narrow sizes.
+- [x] Add searchable passkey-import entry selection for groups with large entry counts.
+- [x] Make Windows Hello quick unlock an explicit action instead of an automatic file-open prompt.
+- [x] Create an encrypted local Git repository per database and restore deleted entries from saved KDBX snapshots.
 - [x] Add direct TOTP setup to the entry editor and preserve TOTP alongside passkey credentials.
 - [x] Remove the development-snapshot startup notification and its dead suppression control.
 - [ ] Complete Settings destination parity; the current checkpoint adds real provenance/search/persistence foundations but still lacks focused compiled verification and the full canonical tab/anatomy migration.
@@ -36,6 +43,8 @@
 
 ## Installer and updater
 
+- [x] Prevent Squirrel from launching helper executables and the bundled Visual C++ redistributable as install hooks.
+- [x] Deduplicate repeated background update-failure notifications until state changes or the user retries.
 - [x] Build and byte-verify a real unsigned `Setup.exe`, `RELEASES`, and full `.nupkg` from the native staged tree.
 - [ ] Prove clean Squirrel installation and launch in an isolated Windows account or virtual machine.
 - [x] Handle Squirrel install, updated, uninstall, obsolete, and first-run process arguments before ordinary UI startup.

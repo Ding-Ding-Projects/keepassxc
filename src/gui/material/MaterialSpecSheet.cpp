@@ -33,8 +33,11 @@
 #include <QVBoxLayout>
 #include <QLineEdit>
 #include <QComboBox>
+#include <QAbstractSpinBox>
 #include <QResizeEvent>
 #include <QKeyEvent>
+#include <QScrollBar>
+#include <QWheelEvent>
 
 namespace Material
 {
@@ -264,6 +267,10 @@ namespace Material
         setFrameShape(QFrame::NoFrame);
         setWidgetResizable(true);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        // Keep the bar inside the painted settings surface at narrow widths
+        // and high display scales instead of letting its trailing edge clip.
+        setViewportMargins(0, 0, 4, 0);
         viewport()->setAutoFillBackground(false);
 
         m_content = new QWidget(this);
@@ -321,6 +328,7 @@ namespace Material
 
         m_content->setMaximumWidth(PageMaxWidth + 52);
         setWidget(m_content);
+        watchWheelEvents(m_content);
 
         connect(m_search, &SearchBar::textChanged, this, [this](const QString& text) {
             applyFilter(text);
@@ -372,6 +380,46 @@ namespace Material
 
     SpecSheetPage::~SpecSheetPage() = default;
 
+    void SpecSheetPage::watchWheelEvents(QWidget* root)
+    {
+        if (!root) {
+            return;
+        }
+        root->installEventFilter(this);
+        for (auto* child : root->findChildren<QWidget*>()) {
+            child->installEventFilter(this);
+        }
+    }
+
+    bool SpecSheetPage::eventFilter(QObject* watched, QEvent* event)
+    {
+        if (event->type() != QEvent::Wheel || !m_content) {
+            return QScrollArea::eventFilter(watched, event);
+        }
+
+        // Native value controls retain their own wheel behavior. Everywhere
+        // else on the settings content, the gesture belongs to this page.
+        for (QObject* current = watched; current && current != m_content; current = current->parent()) {
+            if (qobject_cast<QAbstractSpinBox*>(current) || qobject_cast<QComboBox*>(current)
+                || (current != this && qobject_cast<QAbstractScrollArea*>(current))) {
+                return QScrollArea::eventFilter(watched, event);
+            }
+        }
+
+        auto* wheel = static_cast<QWheelEvent*>(event);
+        int delta = wheel->pixelDelta().y();
+        if (delta == 0) {
+            delta = wheel->angleDelta().y();
+        }
+        if (delta != 0) {
+            auto* bar = verticalScrollBar();
+            bar->setValue(bar->value() - delta);
+            wheel->accept();
+            return true;
+        }
+        return QScrollArea::eventFilter(watched, event);
+    }
+
     QString SpecSheetPage::id() const
     {
         return m_id;
@@ -414,6 +462,7 @@ namespace Material
         row->setProperty(HaystackProperty,
                          QStringLiteral("%1 %2 %3 %4").arg(section, label, sub, controlText).toLower());
         card->contentLayout()->addWidget(row);
+        watchWheelEvents(card);
 
         m_rows.insert(key, row);
         m_rowOrder.append(row);

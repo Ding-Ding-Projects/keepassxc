@@ -6,6 +6,7 @@
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "keys/PasswordKey.h"
 #include "config-keepassx-tests.h"
 #include <QCheckBox>
 #include <QDateEdit>
@@ -138,6 +139,19 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
     QCOMPARE(gitShow.exitCode(), 0);
     QCOMPARE(gitShow.readAllStandardOutput(), snapshot);
 
+    const QString databaseRepository = store.databaseRepositoryPath(db->filePath());
+    QVERIFY(QFileInfo::exists(QDir(databaseRepository).filePath(QStringLiteral(".git"))));
+    QProcess databaseLog;
+    databaseLog.start(gitExecutable,
+                      {QStringLiteral("-C"),
+                       databaseRepository,
+                       QStringLiteral("rev-list"),
+                       QStringLiteral("--count"),
+                       QStringLiteral("HEAD")});
+    QVERIFY(databaseLog.waitForFinished(10000));
+    QCOMPARE(databaseLog.exitCode(), 0);
+    QCOMPARE(QString::fromUtf8(databaseLog.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
+
     QFile state(QDir(repository).filePath(QStringLiteral("revisions.json")));
     QVERIFY(state.open(QIODevice::ReadOnly));
     const QByteArray bytes = state.readAll();
@@ -232,6 +246,42 @@ void TestMaterialHistory::gitStoreSerializesConcurrentWriters()
                QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
     QVERIFY(log.waitForFinished(10000));
     QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
+}
+
+void TestMaterialHistory::restoresDeletedEntryFromPerDatabaseRepository()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY(!gitExecutable.isEmpty());
+    const QString path = QDir(root.path()).filePath(QStringLiteral("restore.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path));
+
+    auto key = QSharedPointer<CompositeKey>::create();
+    key->addKey(QSharedPointer<PasswordKey>::create(QStringLiteral("a")));
+    auto database = QSharedPointer<Database>::create();
+    QString openError;
+    QVERIFY2(database->open(path, key, &openError), qPrintable(openError));
+    Entry* entry = database->rootGroup()->entriesRecursive(false).value(0);
+    QVERIFY(entry);
+    const QUuid deletedUuid = entry->uuid();
+
+    HistoryStore store(root.path(), gitExecutable);
+    QVERIFY(store.recordSave(database));
+    entry->group()->removeEntry(entry);
+    delete entry;
+    database->addDeletedObject(deletedUuid);
+    QString saveError;
+    QVERIFY2(database->saveAs(path, Database::Atomic, {}, &saveError), qPrintable(saveError));
+    QVERIFY(store.recordSave(database));
+    const HistoryRevision deletion = store.revisionsFor(path).value(0);
+    QCOMPARE(deletion.removed, 1);
+
+    QString restoreError;
+    QCOMPARE(store.restoreDeletedEntries(deletion.id, database, &restoreError), 1);
+    QVERIFY2(restoreError.isEmpty(), qPrintable(restoreError));
+    QVERIFY(database->rootGroup()->findEntryByUuid(deletedUuid));
+    QVERIFY(!database->containsDeletedObject(deletedUuid));
 }
 
 QTEST_MAIN(TestMaterialHistory)

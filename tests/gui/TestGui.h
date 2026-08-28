@@ -48,6 +48,8 @@ private slots:
     void testEditEntry();
     void testSearchEditEntry();
     void testAddEntry();
+    void testScreenCaptureStatePreserved();
+    void testPasskeyImportEntrySearchScales();
     void testPasswordEntryEntropy();
     void testPasswordEntryEntropy_data();
     void testDicewareEntryEntropy();

@@ -15,7 +15,7 @@ strip, because those belong to the shell.
 
 **These files were written into this design project, not into the KeePassXC
 working copy.** The repository was mounted read-only for the session that
-produced them, so nothing here has touched `develop`, no branch was created and
+produced them, so nothing here has touched `main`, no branch was created and
 no commit was made. Landing them is a deliberate act by whoever picks this up —
 which is the right default for a password manager, but it does mean step 1 is
 manual.
@@ -47,7 +47,7 @@ To land it, from the root of a KeePassXC checkout, with this project unpacked
 alongside it:
 
 ```sh
-git switch -c feature/material-expressive develop
+git switch -c feature/material-expressive main
 
 # The ten new classes. Nothing is overwritten: none of these exist in the fork.
 cp -n ../keepassxc-material-design-3-rebuild/handoff/src/gui/material/*.{h,cpp} \

@@ -16,7 +16,7 @@ things that must happen before anything compiles.
 
 These files were written into the design project, **not** into the KeePassXC
 working copy — the repository was mounted read-only. No branch, no commit, no
-change to `develop`. Landing them is a deliberate act; see §0.
+change to `main`. Landing them is a deliberate act; see §0.
 
 The headers are complete and are meant to be read. The `.cpp` files are
 skeletons: real signatures, real constants, real error paths, with `TODO`

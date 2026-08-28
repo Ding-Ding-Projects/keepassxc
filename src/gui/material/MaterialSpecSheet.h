@@ -150,9 +150,13 @@ namespace Material
         /** The search bar's builder button was pressed. */
         void builderRequested();
 
+    protected:
+        bool eventFilter(QObject* watched, QEvent* event) override;
+
     private:
         Card* ensureSection(const QString& title);
         void applyFilter(const QString& text);
+        void watchWheelEvents(QWidget* root);
 
         QString m_id;
         QString m_title;

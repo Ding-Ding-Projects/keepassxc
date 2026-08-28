@@ -1026,7 +1026,7 @@ class I18N(Command):
     def derive_resource_name(self, override_resource=None, *, cwd):
         if override_resource:
             res = override_resource
-        elif _git_branches_related('develop', 'HEAD', cwd=cwd):
+        elif _git_branches_related('main', 'HEAD', cwd=cwd):
             logger.info('Branch derives from develop, using ' + fmt.bold('"develop"') + ' resource.')
             res = 'develop'
         else:

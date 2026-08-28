@@ -20,6 +20,7 @@
 #define KEEPASSX_SETUPTOTPDIALOG_H
 
 #include <QDialog>
+#include <QPointer>
 
 #include "core/Database.h"
 #include "gui/DatabaseWidget.h"
@@ -47,7 +48,7 @@ private slots:
 
 private:
     QScopedPointer<Ui::TotpSetupDialog> m_ui;
-    Entry* m_entry;
+    QPointer<Entry> m_entry;
 };
 
 #endif // KEEPASSX_SETUPTOTPDIALOG_H

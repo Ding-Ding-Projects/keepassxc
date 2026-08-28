@@ -30,6 +30,7 @@ class EntryAttributesModel : public QAbstractListModel
 public:
     explicit EntryAttributesModel(QObject* parent = nullptr);
     void setEntryAttributes(EntryAttributes* entryAttributes);
+    EntryAttributes* entryAttributes() const;
     int rowCount(const QModelIndex& parent = QModelIndex()) const override;
     int columnCount(const QModelIndex& parent = QModelIndex()) const override;
     QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const override;

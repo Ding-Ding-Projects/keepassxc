@@ -360,14 +360,11 @@ namespace Material
         Q_ASSERT(m_screen);
 
         m_screen->setSupportingText(
-            tr("Two records are merged here, newest first. The database's own per-entry revisions keep the previous "
-               "values in full, so those rows can be compared with the entry as it stands and put back; they are the "
-               "same revisions the entry editor's History tab lists. The other record is the append-only save log "
-               "KeePassXC keeps in the application's data folder, never inside your database folder: it holds no "
-               "contents at all, only when a save happened and how many entries and groups it then had, so its rows "
-               "can be compared but not restored. Restores made in this window are listed for as long as the database "
-               "they were made in stays unlocked, because nothing in the database or the log marks a revision as a "
-               "restore."));
+            tr("Two records are merged here, newest first. Per-entry revisions restore field edits. Each successful "
+               "save is also committed as an encrypted KDBX snapshot in an isolated local Git repository for that "
+               "database, never inside the database folder. A save that removed entries can restore only the entries "
+               "missing from the current database; existing entries are not overwritten. Every restore is appended as "
+               "a new history event."));
 
         connect(m_screen->searchBar(), &SearchBar::textChanged, this, [this](const QString& text) {
             m_query = text.trimmed();
@@ -558,10 +555,9 @@ namespace Material
             change.row.label = recordedRevision.label;
             change.row.meta = meta;
             change.row.tint = tintFor(recordedRevision);
-            // The log keeps counts, not contents: something to compare against
-            // the save before it, nothing to put back.
             change.row.canDiff = true;
-            change.row.canRestore = false;
+            change.row.canRestore = recordedRevision.removed > 0 && !recordedRevision.snapshotPath.isEmpty()
+                                    && !m_database.isNull();
             change.row.action = recordedRevision.kind == RevisionKind::Settings ? QStringLiteral("settings")
                                                                                 : QStringLiteral("entry");
             change.row.timestamp = change.when;
@@ -809,6 +805,32 @@ namespace Material
     void HistoryFeed::restoreRevision(const QString& id)
     {
         const Origin origin = m_origins.value(id);
+        if (origin.kind == Origin::Kind::SaveLog) {
+            const auto database = m_database.lock();
+            const HistoryRevision revision = HistoryStore::instance()->revision(origin.logId);
+            if (!database || !revision.isValid() || revision.removed <= 0) {
+                Notify::warning(tr("Nothing restored"), tr("That deleted-entry revision is no longer available."));
+                return;
+            }
+            auto confirm = Dialog::confirm(
+                m_screen->window(),
+                tr("Restore deleted entries?"),
+                tr("Restore entries missing after this save from the preceding encrypted snapshot. Existing entries "
+                   "will not be overwritten, and the restore will be recorded as a new local revision."),
+                tr("Restore"));
+            connect(confirm, &Dialog::accepted, this, [this, id] {
+                QString error;
+                const int restored = HistoryStore::instance()->restoreDeletedEntries(id, m_database.lock(), &error);
+                if (restored <= 0) {
+                    Notify::error(tr("Restore failed"), error);
+                    return;
+                }
+                Notify::success(tr("Deleted entries restored"), tr("%n entry(s) restored from encrypted local history.", "", restored));
+                rebuild();
+            });
+            confirm->openOverlay();
+            return;
+        }
         if (origin.kind != Origin::Kind::EntryRevision) {
             // The screen draws no Restore on the other rows, so arriving here
             // means the list moved under the click. Do nothing rather than act

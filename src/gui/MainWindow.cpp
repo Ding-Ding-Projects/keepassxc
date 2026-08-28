@@ -632,14 +632,21 @@ MainWindow::MainWindow()
             Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Checking for updates…"), -1);
             break;
         case UpdateChecker::State::Available:
+            m_updateFailureNotified = false;
             updateCheck()->downloadAvailableUpdate();
             break;
         case UpdateChecker::State::NoUpdate:
+            m_updateFailureNotified = false;
             Material::Notify::endProgress(QStringLiteral("squirrel-update"));
             break;
         case UpdateChecker::State::Failed:
             Material::Notify::endProgress(QStringLiteral("squirrel-update"));
-            Material::Notify::error(tr("Update failed"), tr("The update could not be completed. Open the notification history for the recorded state."));
+            if (!m_updateFailureNotified) {
+                m_updateFailureNotified = true;
+                Material::Notify::error(
+                    tr("Update failed"),
+                    tr("The update could not be completed. Open the notification history for the recorded state."));
+            }
             break;
         default:
             break;
@@ -1117,6 +1124,13 @@ MainWindow::MainWindow()
             return;
         }
         dbWidget->setProperty(watchedProperty, true);
+        const auto database = dbWidget->database();
+        if (database && !database->filePath().isEmpty()
+            && Material::HistoryStore::instance()->revisionsFor(database->filePath()).isEmpty()) {
+            // Capture the encrypted file before the first edit in this session,
+            // so a delete followed by Save always has a recoverable predecessor.
+            Material::HistoryStore::instance()->recordSave(database);
+        }
         connect(dbWidget, &DatabaseWidget::databaseSaved, this, [dbWidget] {
             Material::HistoryStore::instance()->recordSave(dbWidget->database());
         });
@@ -1644,6 +1658,8 @@ void MainWindow::performUpdateCheck()
 void MainWindow::showUpdateCheckDialog()
 {
 #ifdef KPXC_FEATURE_UPDATES
+    // A user-requested retry is a new attempt and may report its result once.
+    m_updateFailureNotified = false;
     updateCheck()->checkForUpdates(true);
 #endif
 }
@@ -2403,15 +2419,29 @@ void MainWindow::applySettingsChanges()
 
 void MainWindow::setAllowScreenCapture(bool state)
 {
+    const Qt::WindowStates originalState = windowState();
+    const bool wasVisible = isVisible();
     m_allowScreenCapture = state;
     for (auto window : qApp->topLevelWindows()) {
-        if (window->isVisible()) {
+        if (window->isVisible() && (window->type() == Qt::Window || window->type() == Qt::Dialog)) {
             osUtils->setPreventScreenCapture(window, !m_allowScreenCapture);
         }
     }
     m_ui->actionAllowScreenCapture->blockSignals(true);
     m_ui->actionAllowScreenCapture->setChecked(m_allowScreenCapture);
     m_ui->actionAllowScreenCapture->blockSignals(false);
+
+    // Changing capture affinity must never change application visibility or
+    // window state. Restore defensively because platform capture APIs and
+    // transient menu windows can otherwise provoke a state transition.
+    if (windowState() != originalState) {
+        setWindowState(originalState);
+    }
+    if (wasVisible && !isVisible()) {
+        QMainWindow::show();
+    } else if (!wasVisible && isVisible()) {
+        QMainWindow::hide();
+    }
 }
 
 void MainWindow::focusWindowChanged(QWindow* window)

@@ -22,8 +22,14 @@
 #include "browser/BrowserService.h"
 #include "core/Metadata.h"
 #include "gui/MainWindow.h"
+#include "gui/material/MaterialSearchBar.h"
 #include <QCloseEvent>
 #include <QFileInfo>
+#include <QGridLayout>
+#include <QLineEdit>
+#include <QSortFilterProxyModel>
+#include <QStandardItemModel>
+#include <QVBoxLayout>
 
 PasskeyImportDialog::PasskeyImportDialog(QWidget* parent)
     : QDialog(parent)
@@ -32,6 +38,42 @@ PasskeyImportDialog::PasskeyImportDialog(QWidget* parent)
     setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
 
     m_ui->setupUi(this);
+
+    // A vault group can contain thousands of entries. Keep one source model
+    // and filter it through the dialog's own search field instead of forcing
+    // the user to scan an unbounded combo box.
+    m_entrySourceModel = new QStandardItemModel(this);
+    m_entryFilterModel = new QSortFilterProxyModel(this);
+    m_entryFilterModel->setSourceModel(m_entrySourceModel);
+    m_entryFilterModel->setFilterCaseSensitivity(Qt::CaseInsensitive);
+    m_entryFilterModel->setFilterKeyColumn(0);
+    m_ui->selectEntryComboBox->setModel(m_entryFilterModel);
+
+    m_entrySearch = new Material::SearchBar(Material::SearchBar::Variant::Surface, m_ui->groupBox);
+    m_entrySearch->setObjectName(QStringLiteral("passkeyEntrySearch"));
+    m_entrySearch->setPlaceholder(tr("Search entries in this group"));
+    m_entrySearch->setIdentity(QStringLiteral("passkeys.import.entries"), tr("Passkey entry search"));
+    m_entrySearch->lineEdit()->setAccessibleName(tr("Search entries in this group"));
+    auto* entryCell = new QWidget(m_ui->groupBox);
+    auto* entryCellLayout = new QVBoxLayout(entryCell);
+    entryCellLayout->setContentsMargins(0, 0, 0, 0);
+    entryCellLayout->setSpacing(6);
+    entryCellLayout->addWidget(m_entrySearch);
+    entryCellLayout->addWidget(m_ui->selectEntryComboBox);
+    if (auto* grid = qobject_cast<QGridLayout*>(m_ui->groupBox->layout())) {
+        grid->removeWidget(m_ui->selectEntryComboBox);
+        grid->addWidget(entryCell, 2, 1);
+    }
+    connect(m_entrySearch, &Material::SearchBar::textChanged, this, [this](const QString& text) {
+        m_entryFilterModel->setFilterFixedString(text.trimmed());
+        if (m_entryFilterModel->rowCount() > 0) {
+            m_ui->selectEntryComboBox->setCurrentIndex(0);
+        } else {
+            m_selectedEntryUuid = {};
+        }
+        m_entrySearch->lineEdit()->setAccessibleDescription(
+            tr("%1 entries match").arg(m_entryFilterModel->rowCount()));
+    });
 
     connect(this, SIGNAL(updateGroups()), this, SLOT(addGroups()));
     connect(this, SIGNAL(updateEntries()), this, SLOT(addEntries()));
@@ -138,8 +180,10 @@ void PasskeyImportDialog::addEntries()
         return;
     }
 
-    m_ui->selectEntryComboBox->clear();
-    m_ui->selectEntryComboBox->addItem(tr("Create new entry"), {});
+    m_entrySourceModel->clear();
+    auto* createItem = new QStandardItem(tr("Create new entry"));
+    createItem->setData(QVariant(), Qt::UserRole);
+    m_entrySourceModel->appendRow(createItem);
 
     const auto group = m_selectedDatabase->rootGroup()->findGroupByUuid(m_selectedGroupUuid);
     if (!group) {
@@ -162,8 +206,13 @@ void PasskeyImportDialog::addEntries()
 
     // Add sorted entries to the combobox
     for (const auto& pair : entries) {
-        m_ui->selectEntryComboBox->addItem(pair.first, pair.second);
+        auto* item = new QStandardItem(pair.first);
+        item->setData(pair.second, Qt::UserRole);
+        m_entrySourceModel->appendRow(item);
     }
+    m_entryFilterModel->invalidate();
+    m_entrySearch->setText(QString());
+    m_ui->selectEntryComboBox->setCurrentIndex(0);
 }
 
 void PasskeyImportDialog::addGroups()

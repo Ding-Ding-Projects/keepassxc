@@ -47,10 +47,8 @@ namespace Material
      * added or deleted, that a group appeared, that a save changed nothing an
      * entry would know about.
      *
-     * The rows a source cannot back up are drawn without the action in
-     * question rather than with one that explains itself: a save record offers
-     * Diff and no Restore, and the lines shown when there is nothing to list
-     * offer neither.
+     * Save records with removed entries offer restoration from the preceding
+     * encrypted snapshot. Records without a recoverable subject omit Restore.
      */
     class HistoryFeed : public QObject
     {

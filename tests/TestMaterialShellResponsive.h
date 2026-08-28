@@ -12,6 +12,7 @@ private slots:
     void emitsOnlyOnBreakpointTransitions();
     void appliesVaultPaneContract();
     void fallbackSearchesAreIndependentAndRestoreFocus();
+    void settingsPageScrollsFromContentAndContainsScrollbar();
 };
 
 #endif // KEEPASSXC_TESTMATERIALSHELLRESPONSIVE_H

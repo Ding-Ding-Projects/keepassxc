@@ -27,6 +27,11 @@ BEGIN
             VALUE "OriginalFilename", PRODUCT_ORIGINAL_FILENAME
             VALUE "ProductName", PRODUCT_BUNDLE
             VALUE "ProductVersion", PRODUCT_VERSION_RESOURCE_STR
+            // Squirrel launches every executable in a package when none is
+            // marked aware. Mark only the main GUI target, which owns this
+            // resource, so CLI helpers and vc_redist.x64.exe are never run as
+            // install hooks.
+            VALUE "SquirrelAwareVersion", "1"
         END
     END
     BLOCK "VarFileInfo"

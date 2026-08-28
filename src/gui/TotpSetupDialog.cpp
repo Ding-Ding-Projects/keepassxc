@@ -36,6 +36,9 @@ TotpSetupDialog::TotpSetupDialog(QWidget* parent, Entry* entry)
     connect(m_ui->buttonBox, SIGNAL(rejected()), SLOT(close()));
     connect(m_ui->buttonBox, SIGNAL(accepted()), SLOT(saveSettings()));
     connect(m_ui->radioCustom, SIGNAL(toggled(bool)), SLOT(toggleCustom(bool)));
+    if (m_entry) {
+        connect(m_entry, &QObject::destroyed, this, &QDialog::close);
+    }
 
     init();
 }
@@ -44,6 +47,10 @@ TotpSetupDialog::~TotpSetupDialog() = default;
 
 void TotpSetupDialog::saveSettings()
 {
+    if (!m_entry) {
+        close();
+        return;
+    }
     // Secret key sanity check
     // Convert user input to all uppercase and remove '='
     auto key = m_ui->seedEdit->text().toUpper().remove(" ").remove("=").trimmed().toLatin1();
@@ -109,6 +116,11 @@ void TotpSetupDialog::init()
     }
     m_ui->algorithmComboBox->setCurrentIndex(0);
     m_ui->invalidKeyLabel->setVisible(false);
+
+    if (!m_entry) {
+        close();
+        return;
+    }
 
     // Read entry totp settings
     auto settings = m_entry->totpSettings();

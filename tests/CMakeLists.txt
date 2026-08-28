@@ -230,6 +230,12 @@ if(WIN32)
             VERBATIM)
 endif()
 
+if(WIN32)
+    add_test(NAME testrepaircontracts
+            COMMAND powershell.exe -NoProfile -ExecutionPolicy Bypass
+                    -File "${CMAKE_SOURCE_DIR}/scripts/check-repair-contracts.ps1" -SelfTest)
+endif()
+
 add_unit_test(NAME testmaterialsearchregistry SOURCES TestMaterialSearchRegistry.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialsearchregistry PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")

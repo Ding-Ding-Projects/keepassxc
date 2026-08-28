@@ -102,8 +102,8 @@ This will make the new strings available for translation in Transifex.
 
 The Branch Strategy is based on [git-flow-lite](http://nvie.com/posts/a-successful-git-branching-model/).
 
-* **develop** – points to the development of the next release, contains tested and reviewed code
-* **feature/**[name] – points to a branch with a new feature, one which is candidate for merge into develop (subject to rebase)
+* **main** – this fork's default branch and next-release integration line, containing reviewed code
+* **feature/**[name] – points to a branch with a new feature, one which is a candidate for merge into main (subject to rebase)
 * **fix/**[name] – points to a branch with a fix for a particular issue ID
 
 Note: The **latest** tag is used to point to the most recent stable release.

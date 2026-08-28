@@ -75,7 +75,7 @@ NOTE: On Windows, you will be prompted to authenticate to Windows Hello after un
 .Windows Hello example
 image::quick_unlock_windows_hello.png[]
 
-When your database is locked, you will see the following unlock dialog. Simply press kbd:[Enter] or click on _Unlock Database_ to initiate the biometric authentication process. If you are using a hardware key (e.g. YubiKey), it must be connected to your computer to complete the unlock.
+Opening a database file always starts at its password, key file, and hardware-key form. When Quick Unlock has previously been enrolled for that database, its separate _Unlock Database_ action initiates biometric authentication. KeePassXC never opens Windows Hello merely because a `.kdbx` file was selected.
 
 .Quick Unlock
 image::quick_unlock.png[]
@@ -163,6 +163,8 @@ To delete an entry, perform the following steps:
 NOTE: You can disable the recycle bin within the Database Settings. If the recycle bin is disabled then deleted entries will be permanently removed from the database.
 
 3. To permanently delete the entry, navigate to the Recycle Bin, select the entry you want to delete and press the kbd:[Del] button on your keyboard.
+
+Each successful save is also preserved as an encrypted KDBX snapshot in an isolated local Git repository under KeePassXC's application-data folder, with one repository per database identity. A History row that records removed entries offers _Restore_ and imports only entries missing from the current database; existing entries are never overwritten. The restore itself is appended as a new revision, and the database must be saved to make the restored entries permanent. The repository is never created beside the user's database file and has no remote.
 
 // tag::advanced[]
 ==== Clone an Entry

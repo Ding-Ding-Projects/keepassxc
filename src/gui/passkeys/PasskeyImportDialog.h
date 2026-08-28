@@ -23,6 +23,13 @@
 #include <QDialog>
 #include <QUuid>
 
+class QSortFilterProxyModel;
+class QStandardItemModel;
+namespace Material
+{
+    class SearchBar;
+}
+
 namespace Ui
 {
     class PasskeyImportDialog;
@@ -65,6 +72,9 @@ private slots:
 
 private:
     QScopedPointer<Ui::PasskeyImportDialog> m_ui;
+    QStandardItemModel* m_entrySourceModel = nullptr;
+    QSortFilterProxyModel* m_entryFilterModel = nullptr;
+    Material::SearchBar* m_entrySearch = nullptr;
     QSharedPointer<Database> m_selectedDatabase;
     QUuid m_selectedDatabaseUuid;
     QUuid m_selectedEntryUuid;

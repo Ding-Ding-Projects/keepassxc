@@ -81,11 +81,9 @@ void DatabaseOpenDialog::showEvent(QShowEvent* event)
 
     GuiTools::centerWidgetOnActiveScreen(this);
 
-    QTimer::singleShot(100, this, [this] {
-        if (m_view->isOnQuickUnlockScreen() && !m_view->unlockingDatabase()) {
-            m_view->triggerQuickUnlock();
-        }
-    });
+    // Quick Unlock remains available as an explicit button, but opening a
+    // database file must not summon a biometric prompt on its own. The file's
+    // normal password/key challenge is the default interaction.
 }
 
 void DatabaseOpenDialog::selectTabOffset(int offset)

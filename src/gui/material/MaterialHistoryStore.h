@@ -94,15 +94,11 @@ namespace Material
      * encrypted, so nothing that is worth encrypting may be written into it -
      * not an entry's contents, not a password, not a byte of an attachment.
      *
-     * It follows that the store can describe a save but cannot put one back.
-     * Restoring is the job of the database's own per-entry revisions,
-     * Entry::historyItems(), which hold the previous values in full and only
-     * ever exist in memory; HistoryFeed merges both records into the version
-     * history destination and lets each offer only what it can keep. What the
-     * log is uniquely good for is what those revisions cannot describe: that a
-     * save happened at all, that entries appeared or were deleted outright,
-     * that a group came or went, that a save changed nothing an entry knows
-     * about.
+     * Each save also keeps the encrypted KDBX bytes in that database's own
+     * isolated local repository. History can therefore restore entries that
+     * disappeared between two saves without exposing plaintext or overwriting
+     * entries that still exist. Per-entry revisions remain the finer-grained
+     * route for restoring field edits.
      */
     class HistoryStore : public QObject
     {
@@ -140,6 +136,17 @@ namespace Material
         /** Validated encrypted KDBX snapshot bytes, or empty with an error. */
         QByteArray snapshot(const QString& revisionId, QString* error = nullptr) const;
 
+        /**
+         * Restore entries that disappeared in @p revisionId from its previous
+         * encrypted KDBX snapshot. Existing entries are never overwritten.
+         */
+        int restoreDeletedEntries(const QString& revisionId,
+                                  const QSharedPointer<Database>& database,
+                                  QString* error = nullptr);
+
+        /** Isolated local Git repository for one database identity. */
+        QString databaseRepositoryPath(const QString& databasePath) const;
+
     signals:
         /**
          * A revision was appended. The navigation rail counts revisions from
@@ -161,6 +168,7 @@ namespace Material
                                const QByteArray& fingerprint,
                                const QByteArray& encryptedSnapshot = {});
         bool migrateLegacy();
+        bool commitDatabaseRepository(const HistoryRevision& revision, const QByteArray& encryptedSnapshot);
 
         /** Oldest first, which is the order the log is written in. */
         QVector<HistoryRevision> m_revisions;

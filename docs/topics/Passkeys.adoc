@@ -95,7 +95,7 @@ When right-clicking an entry, a separate menu item for _Import Passkey_ is shown
 .Import Passkey to an Entry
 image::passkeys_import_passkey_to_entry.png[,50%]
 
-After selecting a passkey file to import, a separate dialog is shown where you can select which database, group, and entry to target. By default, the group is set to _Imported Passkeys_. The default action is to create a new entry that contains the imported passkey.
+After selecting a passkey file to import, a separate dialog is shown where you can select which database, group, and entry to target. By default, the group is set to _Imported Passkeys_. The default action is to create a new entry that contains the imported passkey. The entry picker has its own search field and filters the selected group's model without copying entry contents, so groups containing 1,000 or more entries remain practical to navigate.
 
 .Passkey import dialog
 image::passkeys_import_dialog.png[,65%]

@@ -60,6 +60,11 @@ void EntryAttributesModel::setEntryAttributes(EntryAttributes* entryAttributes)
     endResetModel();
 }
 
+EntryAttributes* EntryAttributesModel::entryAttributes() const
+{
+    return m_entryAttributes;
+}
+
 int EntryAttributesModel::rowCount(const QModelIndex& parent) const
 {
     if (!m_entryAttributes || parent.isValid()) {

@@ -46,6 +46,7 @@ Add-Type -AssemblyName System.IO.Compression.FileSystem
 $zip = [IO.Compression.ZipFile]::OpenRead($full[0].FullName)
 $packagedExecutable = $null
 $versionInfo = $null
+$squirrelAwareExecutables = @()
 try {
     $seen = @{}
     foreach ($item in $zip.Entries) {
@@ -55,6 +56,25 @@ try {
         $seen[$normalized] = $true
     }
     if (-not $seen.ContainsKey($RequiredPackageEntry.ToLowerInvariant())) { throw "Required package entry is missing: $RequiredPackageEntry" }
+    $executables = @($zip.Entries | Where-Object { $_.FullName.EndsWith('.exe', [StringComparison]::OrdinalIgnoreCase) })
+    foreach ($executable in $executables) {
+        $stream = $executable.Open()
+        $memory = New-Object IO.MemoryStream
+        try { $stream.CopyTo($memory); $resourceText = [Text.Encoding]::Unicode.GetString($memory.ToArray()) }
+        finally { $memory.Dispose(); $stream.Dispose() }
+        $aware = $resourceText.IndexOf('SquirrelAwareVersion', [StringComparison]::Ordinal) -ge 0
+        if ($aware) {
+            $squirrelAwareExecutables += $executable.FullName.Replace('\','/')
+        }
+    }
+    $requiredStub = $RequiredPackageEntry -replace '(?i)\.exe$', '_ExecutionStub.exe'
+    $unexpectedAware = @($squirrelAwareExecutables | Where-Object {
+        -not $_.Equals($RequiredPackageEntry, [StringComparison]::OrdinalIgnoreCase) -and
+        -not $_.Equals($requiredStub, [StringComparison]::OrdinalIgnoreCase)
+    })
+    if (-not ($squirrelAwareExecutables -contains $RequiredPackageEntry) -or $unexpectedAware.Count -gt 0) {
+        throw "Only $RequiredPackageEntry and its exact generated execution stub may be Squirrel-aware; found '$($squirrelAwareExecutables -join ', ')'."
+    }
     $entry = $zip.Entries | Where-Object { $_.FullName.Replace('\','/').Equals($RequiredPackageEntry, [StringComparison]::OrdinalIgnoreCase) } | Select-Object -First 1
     if (-not $entry) { throw "Required package entry cannot be opened: $RequiredPackageEntry" }
     $packagedExecutable = Join-Path ([IO.Path]::GetTempPath()) ("keepassxc-version-{0}.exe" -f [Guid]::NewGuid().ToString('N'))
@@ -77,7 +97,7 @@ $receipt = [ordered]@{
     fullPackages = @($full | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-HashHex $_.FullName 'SHA256')} })
     deltaPackages = @($delta | ForEach-Object { @{name=$_.Name;bytes=$_.Length;sha256=(Get-HashHex $_.FullName 'SHA256')} })
     requiredPackageEntry = $RequiredPackageEntry
-    packagedExecutable = @{ path=$RequiredPackageEntry; fileVersion=$versionInfo.FileVersion; productVersion=$versionInfo.ProductVersion }
+    packagedExecutable = @{ path=$RequiredPackageEntry; fileVersion=$versionInfo.FileVersion; productVersion=$versionInfo.ProductVersion; squirrelAware=$true }
 }
 $receipt | ConvertTo-Json -Depth 7 | Set-Content -LiteralPath $OutputPath -Encoding UTF8
 Write-Host "Verified unsigned Squirrel artifacts. Receipt: $OutputPath"

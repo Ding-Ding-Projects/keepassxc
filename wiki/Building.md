@@ -10,7 +10,7 @@
 | Compiler | MSVC (Visual Studio 2022 or newer), GCC, or Clang with C++17 |
 | asciidoctor | 2.0.26 — only for the offline documentation target |
 
-Native dependencies are declared in [`vcpkg.json`](https://github.com/Ding-Ding-Projects/keepassxc/blob/develop/vcpkg.json): Botan 3, minizip, libqrencode, zlib, readline.
+Native dependencies are declared in [`vcpkg.json`](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/vcpkg.json): Botan 3, minizip, libqrencode, zlib, readline.
 
 ## Dependencies
 
