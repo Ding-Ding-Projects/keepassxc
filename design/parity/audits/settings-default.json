@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "rowId": "settings-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "page list",
+      "status": "deviates",
+      "finding": "Built lists 8 pages plus Classic editor; reference lists 11 (Password generator, Interface, History & backups, External tools, Advanced are missing as pages)."
+    },
+    {
+      "primitive": "setting rows",
+      "status": "conforms",
+      "finding": "Icon, label, description, control and provenance line; provenance exceeds the reference."
+    },
+    {
+      "primitive": "switches",
+      "status": "conforms",
+      "finding": "M3 switch anatomy; built uses On/Off chips where the reference uses switches (minor)."
+    },
+    {
+      "primitive": "search bar",
+      "status": "conforms",
+      "finding": "Per-page search with regex chip and cross-page match statement."
+    },
+    {
+      "primitive": "typography",
+      "status": "conforms",
+      "finding": "Title/body scale matches."
+    }
+  ],
+  "defects": [
+    {
+      "id": "settings-default-1",
+      "severity": "medium",
+      "summary": "Three reference settings pages are not separate pages"
+    },
+    {
+      "id": "settings-default-2",
+      "severity": "low",
+      "summary": "On/Off chips instead of switches on some rows"
+    }
+  ],
+  "deviations": []
+}

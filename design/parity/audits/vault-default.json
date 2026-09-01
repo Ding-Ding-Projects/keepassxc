@@ -1,0 +1,63 @@
+{
+  "schemaVersion": 1,
+  "rowId": "vault-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "group pane",
+      "status": "deviates",
+      "finding": "Groups list matches, but the reference shows per-group counts, Cantonese sublabels and a group filter field; built shows counts only and no filter field."
+    },
+    {
+      "primitive": "entry list",
+      "status": "nonconforming",
+      "finding": "Selecting the root group lists no entries in the built app; the reference lists every entry recursively with health dots, tag chips and relative dates."
+    },
+    {
+      "primitive": "filter chips",
+      "status": "deviates",
+      "finding": "Title/Modified/Health segmented control conforms; the Breached/Weak/Reused/Healthy health chips are absent."
+    },
+    {
+      "primitive": "detail pane",
+      "status": "deviates",
+      "finding": "Built pane is a plain form; the reference is a card with a health banner, copyable field rows, custom fields, notes and attachments."
+    },
+    {
+      "primitive": "floating action button",
+      "status": "conforms",
+      "finding": "Extended FAB 'New entry' matches."
+    },
+    {
+      "primitive": "search bar",
+      "status": "conforms",
+      "finding": "Search field with regex chip and builder affordance."
+    }
+  ],
+  "defects": [
+    {
+      "id": "vault-default-1",
+      "severity": "high",
+      "summary": "Root group selection lists no entries (reference lists recursively)"
+    },
+    {
+      "id": "vault-default-2",
+      "severity": "medium",
+      "summary": "Health chips and group filter field missing"
+    },
+    {
+      "id": "vault-default-3",
+      "severity": "medium",
+      "summary": "Detail pane lacks the reference card anatomy with per-field copy actions"
+    }
+  ],
+  "deviations": [
+    {
+      "reason": "The fixture root group is named 'Passwords' by keepassxc-cli db-create; the reference names it 'Personal'. Data, not chrome.",
+      "approval": "recorded 2026-09-01 in issue #12"
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+{
+  "schemaVersion": 1,
+  "rowId": "reports-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "summary tiles",
+      "status": "nonconforming",
+      "finding": "Reference: Health score / Breached / Needs work / Healthy tiles in tonal containers; built: Healthy / Weak or short / Found in breaches / Passkeys stored with different counts and colours."
+    },
+    {
+      "primitive": "finding sections",
+      "status": "nonconforming",
+      "finding": "Reference expands each finding into entry rows with URL and a Fix action; built shows count chips and a text notice only."
+    },
+    {
+      "primitive": "search bar",
+      "status": "conforms",
+      "finding": "Search with regex chip present."
+    },
+    {
+      "primitive": "export action",
+      "status": "conforms",
+      "finding": "Export Markdown action present (placement differs)."
+    },
+    {
+      "primitive": "page header",
+      "status": "deviates",
+      "finding": "Built adds a 'Database reports' headline, 'Detailed reports' button and findings dropdown not in the reference."
+    }
+  ],
+  "defects": [
+    {
+      "id": "reports-default-1",
+      "severity": "high",
+      "summary": "Summary tile set and finding-row anatomy differ from the reference"
+    },
+    {
+      "id": "reports-default-2",
+      "severity": "medium",
+      "summary": "Header controls not in the reference"
+    }
+  ],
+  "deviations": []
+}

@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
-  "capturedAt": "2026-09-01T21:25:34.604Z",
+  "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+  "capturedAt": "2026-09-01T21:30:26.921Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/changelog-default",
     "png": "reference.png",
@@ -53,15 +53,15 @@
     "png": "built.png",
     "sha256": "50fe0c033555e509fb157d9cb8f190f5f2b33f83948ab94e7356b4f46f61e0e6",
     "bytes": 93258,
-    "pid": 29408,
-    "hwnd": 31328242,
+    "pid": 18248,
+    "hwnd": 4393404,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "changelog",
       "devicePixelRatio": 1,
-      "hwnd": "31328242",
+      "hwnd": "4393404",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -91,7 +91,7 @@
     "png": "comparison.png",
     "sha256": "47172ee2ded289d1278345fe52eeffbbd1b8122211a712a67a325e05cde0ec4c",
     "diff": "diff.json",
-    "diffSha256": "c8557c3d8d419aead62462e5a0ccc6ab77e6ec49b4ea09f59db9106a30ed3c8c",
+    "diffSha256": "29cf3ddb9ed6b80fbfdaeb65c7fd126f7846fdbf931270510d783dc8479392ec",
     "mismatchRatio": 0.08316763565891473,
     "sizeMismatch": false
   }

@@ -8,7 +8,7 @@
       "referenceSha256": "113d6cc0cb02aa1890443b5993039a8669bcdfcb59fcf5f6451b628b6120fa3d",
       "referenceRoute": "/reference/appearance-default",
       "builtRoute": "kpxc://capture/appearance?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
-      "builtRouteStatus": "implemented-source-unverified",
+      "builtRouteStatus": "implemented-captured",
       "screen": "appearance",
       "state": "default",
       "tuple": {
@@ -32,24 +32,25 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/appearance-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "5ea7b718499c1995557659a9a64a52a080c653924cbcd386217ff53142fd0b4b"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/appearance-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "b600f4105ccf87fb9b1f8c307c6bb56fe329bc395723930f3ad73f017fc79aac",
         "builtRaw": "design/parity/evidence/appearance-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "92341368f99f68c9a7baa087bca7661aa523c39c997bf66391e4bcdf55be44ee",
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "f803fe78295e97b1664001fdaf8a63dc5736c13f4a6ca59afbfc76533f9dd703",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "c8fcff4fd88b33d046c79a8fdecb3c3e7aab55a8731baffe90ae2616f3170e48",
+        "mismatchRatio": 0.11217441860465116
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
       "id": "changelog-default",
@@ -57,7 +58,7 @@
       "referenceSha256": "b22d21323d92053e95f2650770a8ae7593ffad79f1e3681ddc49647ee838638e",
       "referenceRoute": "/reference/changelog-default",
       "builtRoute": "kpxc://capture/changelog?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
-      "builtRouteStatus": "implemented-source-unverified",
+      "builtRouteStatus": "implemented-captured",
       "screen": "changelog",
       "state": "default",
       "tuple": {
@@ -81,24 +82,25 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/changelog-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "9f4e5a1e65e83fae61a9956e6be2586d6c08b8a72826ab6d5ba636da6c558089"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/changelog-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "392352e3cec98a4ceef0f28db80429bc1c577083b4519bf2a1f1623c0b23d32f",
         "builtRaw": "design/parity/evidence/changelog-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "50fe0c033555e509fb157d9cb8f190f5f2b33f83948ab94e7356b4f46f61e0e6",
         "comparison": "design/parity/evidence/changelog-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "47172ee2ded289d1278345fe52eeffbbd1b8122211a712a67a325e05cde0ec4c",
         "diff": "design/parity/evidence/changelog-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "29cf3ddb9ed6b80fbfdaeb65c7fd126f7846fdbf931270510d783dc8479392ec",
+        "mismatchRatio": 0.08316763565891473
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
       "id": "history-default",
@@ -106,7 +108,7 @@
       "referenceSha256": "962c5fb1f779e192e3d837b38e9c0aad78bed574bd99de3ad9b6f142e6a776c8",
       "referenceRoute": "/reference/history-default",
       "builtRoute": "kpxc://capture/history?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
-      "builtRouteStatus": "implemented-source-unverified",
+      "builtRouteStatus": "implemented-captured",
       "screen": "history",
       "state": "default",
       "tuple": {
@@ -130,24 +132,30 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/history-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "00036cb119af5cf9eb8f632079474490779b638f2f6b8fd956d7beed7f0cc482"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/history-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "493416b3f99c11c1a1c5bd3638668e4e8878996763f6650f99d9066424252529",
         "builtRaw": "design/parity/evidence/history-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "9f5cb2930a24931f43f1fe01257c9f17d529b61f085de2273c3fd3c2010261d5",
         "comparison": "design/parity/evidence/history-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "4b5a75f1c7174d57ac2bf09af04c6f1b9243c65de877c5d42d0c2951e0a70c0b",
         "diff": "design/parity/evidence/history-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "9ff533b2be1a86285f5807d7121b2afa39d9c31940c0a94a4368d536152a94b7",
+        "mismatchRatio": 0.07907073643410853
       },
-      "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending"
+      "deviations": [
+        {
+          "reason": "The fixture database has one history revision (the first save); the reference shows an authored eight-revision timeline. Data, not chrome.",
+          "approval": "recorded 2026-09-01 in issue #12"
+        }
+      ],
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
       "id": "shell-default",
@@ -178,25 +186,26 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/shell-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "3032906f442ff2df4163c8d56bcb15727014a80f1d921d92658a07a07da5d0a3"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/shell-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
         "builtRaw": "design/parity/evidence/shell-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "9f77cf7cbd3d6d9b8d87fc65a6e0c3c5b2525f94e5eecdfa0c716e6b2011c220",
         "comparison": "design/parity/evidence/shell-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "ca1353cddd26df5fa0d25e45d9e2f470b6287770a878a5ed9d5a4e1585fba60f",
         "diff": "design/parity/evidence/shell-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "59f5f8822a68265bcf22febe68226d82135c513b06782b950e0ce0d8d97fda7e",
+        "mismatchRatio": 0.08593976449275362
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending",
-      "builtRouteStatus": "implemented-source-unverified"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
+      "builtRouteStatus": "implemented-captured"
     },
     {
       "id": "regex-builder-default",
@@ -227,25 +236,26 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/regex-builder-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "70512880ebfebe96596cb835579f470a231108338004c07cb778abf391255f0f"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
         "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "54340a567774a462096778e85ade1d96bf86b848a0e12051f31d3ad278803318",
         "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "d2699bec6251ee4c5d3640de65da3a748fb1ff3f67ffed8c2f1b9c6fad2fa76c",
         "diff": "design/parity/evidence/regex-builder-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "0ea9ef5df526b7eec04e1e0b4f9dc7d365a3afde4af56f679efa90f2263cf473",
+        "mismatchRatio": 0.3200667735042735
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending",
-      "builtRouteStatus": "implemented-source-unverified"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
+      "builtRouteStatus": "implemented-captured"
     },
     {
       "id": "reports-default",
@@ -253,7 +263,7 @@
       "referenceSha256": "88a235a08bb2d844f51d8f716b834b57e5454768701ba9e4b724725cd084da6d",
       "referenceRoute": "/reference/reports-default",
       "builtRoute": "kpxc://capture/reports?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
-      "builtRouteStatus": "implemented-source-unverified",
+      "builtRouteStatus": "implemented-captured",
       "screen": "reports",
       "state": "default",
       "tuple": {
@@ -277,24 +287,25 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/reports-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "524139af991a2f1437a083ec0adc9915d0c4284e2a129837245d7180f1dae39f"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/reports-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "8265bc8dfe88182222c5ba2e6e5a14c6ebe6c9a42f27a88ad99f1f696d3314e6",
         "builtRaw": "design/parity/evidence/reports-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "661453f05e7a7372aea4392538591584e6a153a3d82e3ca18b9b6baa862db27d",
         "comparison": "design/parity/evidence/reports-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "47035abfea228f53b36980303aa17bf5a62d50a85ebf55ae8877b0e85c74ff0c",
         "diff": "design/parity/evidence/reports-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "f9b3b5820d9767ddafbcfd864cf4c5100961dbb73987bca7ecc16500e0329888",
+        "mismatchRatio": 0.10383236434108527
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
       "id": "settings-default",
@@ -325,25 +336,26 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/settings-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "cfbcb2cd4744c7ef94d87f6896a7a9b94564a7d3248a1a6654e6beb2ffbfcd2a"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/settings-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "a07adfb47dfca3a1f5681b6884066555ff8d7555e2b41abad669ba7e8bff0c5f",
         "builtRaw": "design/parity/evidence/settings-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "0aefda1a266b5fda7e486a26b240c510fca5403590d5c0e5ec20ef082b7c07d4",
         "comparison": "design/parity/evidence/settings-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "12b1a2e45289d033714ebe2528e10ff69f1e8169c8acab4244e524229d568669",
         "diff": "design/parity/evidence/settings-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "8c06cfc469a1196eb2d18cd706d75ccb18381e33a6c050130ee40316802ae127",
+        "mismatchRatio": 0.05601471656976744
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending",
-      "builtRouteStatus": "implemented-source-unverified"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
+      "builtRouteStatus": "implemented-captured"
     },
     {
       "id": "sheet-editor-default",
@@ -374,25 +386,26 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/sheet-editor-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "7c26bc8004a0fe00130b532d7bf2cf8b5ae55b277fe4cb3f652506aa5f57541c"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/sheet-editor-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "47c4896ece7a3e5c105ea0a060d3956cfbd25865bef7459679a01b479c752edb",
         "builtRaw": "design/parity/evidence/sheet-editor-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "0c469dc07104ddd2db6458a4e8783b7f5f80bea497b7849f007af9055f75e48a",
         "comparison": "design/parity/evidence/sheet-editor-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "7fbaf0a550f5bb1bbf78b7950243b4da30ce857e304507e5af918db533975eb4",
         "diff": "design/parity/evidence/sheet-editor-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "733842205379647fb4c79e1b60d7767fd26c6df4acab149385c346141db1945f",
+        "mismatchRatio": 0.04819858284883721
       },
       "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending",
-      "builtRouteStatus": "implemented-source-unverified"
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
+      "builtRouteStatus": "implemented-captured"
     },
     {
       "id": "vault-default",
@@ -423,25 +436,31 @@
         "languageMode": "both"
       },
       "audit": {
-        "status": "pending",
+        "status": "complete",
         "path": "design/parity/audits/vault-default.json",
-        "reason": "Built-artifact review has not run."
+        "sha256": "8f38d86d1f6a3207ffac72b56c5d594c46230c38ef3746695bc43efeda921657"
       },
       "evidence": {
-        "status": "pending",
+        "status": "complete",
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
-        "referenceRawSha256": "pending",
+        "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "pending",
+        "builtRawSha256": "f588d5ee5850d2c9d485810353f4ecdf55a5251fef79b3a113318b268c977979",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "pending",
+        "comparisonSha256": "fac58499e43fb6b3eeac8b20cc54e82a6ecefc306c368fe7bd0388d7f4cb32bc",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "pending"
+        "diffSha256": "1f62b9a1dd435971aa51679d55365856f9958b513ddb9de0c9aadf482686c1cb",
+        "mismatchRatio": 0.08558704780361757
       },
-      "deviations": [],
-      "sourceCommit": "pending",
-      "captureTool": "pending",
-      "builtRouteStatus": "implemented-source-unverified"
+      "deviations": [
+        {
+          "reason": "The fixture root group is named 'Passwords' by keepassxc-cli db-create; the reference names it 'Personal'. Data, not chrome.",
+          "approval": "recorded 2026-09-01 in issue #12"
+        }
+      ],
+      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
+      "builtRouteStatus": "implemented-captured"
     }
   ]
 }

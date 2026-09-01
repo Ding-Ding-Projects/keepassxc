@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "rowId": "sheet-editor-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "page navigation",
+      "status": "conforms",
+      "finding": "Nine-page list with icons matches."
+    },
+    {
+      "primitive": "field rows",
+      "status": "deviates",
+      "finding": "Reference documents each field with a description column; built shows field rows with live values from the fixture entry."
+    },
+    {
+      "primitive": "search bar",
+      "status": "conforms",
+      "finding": "Per-sheet search with regex chip."
+    },
+    {
+      "primitive": "cards",
+      "status": "conforms",
+      "finding": "Fields and One-time passwords cards with M3 outline."
+    }
+  ],
+  "defects": [
+    {
+      "id": "sheet-editor-default-1",
+      "severity": "low",
+      "summary": "Field row anatomy differs (documentation table vs live values)"
+    }
+  ],
+  "deviations": []
+}

@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "rowId": "changelog-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "version cards",
+      "status": "deviates",
+      "finding": "Reference: one card per version with date chip, code name and category chips (ADDED/FIXED/CHANGED); built: rows with a generic 'Changed' chip and no code name."
+    },
+    {
+      "primitive": "date presets",
+      "status": "deviates",
+      "finding": "Reference uses chips (All time / 90 days / year / 2 years); built uses three dropdowns."
+    },
+    {
+      "primitive": "search bar",
+      "status": "conforms",
+      "finding": "Search with regex chip."
+    },
+    {
+      "primitive": "export",
+      "status": "conforms",
+      "finding": "Export Markdown and copy actions present."
+    },
+    {
+      "primitive": "provenance notice",
+      "status": "conforms",
+      "finding": "Built states 'Completion commit unavailable' for the pending release honestly."
+    }
+  ],
+  "defects": [
+    {
+      "id": "changelog-default-1",
+      "severity": "medium",
+      "summary": "Version card anatomy: category chips and code names missing; date presets are dropdowns"
+    }
+  ],
+  "deviations": []
+}

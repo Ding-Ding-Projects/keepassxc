@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "rowId": "regex-builder-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "overlay sizing",
+      "status": "nonconforming",
+      "finding": "Built overlay is a centred ~600 px dialog; the reference is a 1000 px sheet."
+    },
+    {
+      "primitive": "workbench tabs",
+      "status": "nonconforming",
+      "finding": "Matches / Explain / Replace / Export / Cheat sheet tabs are absent."
+    },
+    {
+      "primitive": "dialect switch",
+      "status": "nonconforming",
+      "finding": "ECMAScript / QRegularExpression / Both segmented control absent; built states a single engine."
+    },
+    {
+      "primitive": "pattern library",
+      "status": "nonconforming",
+      "finding": "Searchable preset library absent."
+    },
+    {
+      "primitive": "token blocks",
+      "status": "deviates",
+      "finding": "Guided token chips exist but the reference's token-block editor with drag-to-reorder is absent."
+    },
+    {
+      "primitive": "flags",
+      "status": "conforms",
+      "finding": "Flag chips present."
+    },
+    {
+      "primitive": "sample and matches",
+      "status": "conforms",
+      "finding": "Sample text and match/capture list present."
+    }
+  ],
+  "defects": [
+    {
+      "id": "regex-builder-default-1",
+      "severity": "high",
+      "summary": "Builder lacks the reference workbench: tabs, dialect switch, pattern library, token blocks, explain/replace/export"
+    }
+  ],
+  "deviations": []
+}

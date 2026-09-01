@@ -1,0 +1,58 @@
+{
+  "schemaVersion": 1,
+  "rowId": "shell-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "navigation rail",
+      "status": "conforms",
+      "finding": "Painted M3 rail with ten destinations, sublabels, theme toggle and lock; matches the reference anatomy."
+    },
+    {
+      "primitive": "top app bar",
+      "status": "deviates",
+      "finding": "Built bar shows the database title and KDBX metadata; the reference shows the destination title, a global search field and an Inspect action."
+    },
+    {
+      "primitive": "tab strip",
+      "status": "conforms",
+      "finding": "Material tab strip with pin partition, overflow and search; the fixture opens one database so pinned tabs and +N overflow are not exercised."
+    },
+    {
+      "primitive": "status bar",
+      "status": "nonconforming",
+      "finding": "A legacy QStatusBar ('0 Entries') remains under the shell, adding 29 px and using non-Material chrome."
+    },
+    {
+      "primitive": "window chrome",
+      "status": "nonconforming",
+      "finding": "The window keeps the OS caption bar (DWM attributes only); Windows desktop apps are required to use a frameless custom Material title bar."
+    },
+    {
+      "primitive": "elevation and shape",
+      "status": "conforms",
+      "finding": "Surface containers, corner radii and outline variants resolve through the theme."
+    }
+  ],
+  "defects": [
+    {
+      "id": "shell-default-1",
+      "severity": "high",
+      "summary": "Legacy status bar under the shell"
+    },
+    {
+      "id": "shell-default-2",
+      "severity": "high",
+      "summary": "OS caption instead of a frameless Material title bar"
+    },
+    {
+      "id": "shell-default-3",
+      "severity": "medium",
+      "summary": "App bar shows database metadata instead of destination title, search and Inspect"
+    }
+  ],
+  "deviations": []
+}

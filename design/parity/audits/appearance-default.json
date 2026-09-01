@@ -1,0 +1,53 @@
+{
+  "schemaVersion": 1,
+  "rowId": "appearance-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "section layout",
+      "status": "deviates",
+      "finding": "Reference lays out five sections in columns; built stacks cards in two columns with different grouping."
+    },
+    {
+      "primitive": "seed palette",
+      "status": "conforms",
+      "finding": "Four seed swatches with selection ring."
+    },
+    {
+      "primitive": "density",
+      "status": "conforms",
+      "finding": "Segmented control matches."
+    },
+    {
+      "primitive": "typography controls",
+      "status": "deviates",
+      "finding": "Built uses a family combobox and weight combobox; the reference lists families inline with samples and a weight segmented control."
+    },
+    {
+      "primitive": "language and funny sliders",
+      "status": "conforms",
+      "finding": "Three-way language control and two sliders with live sample."
+    },
+    {
+      "primitive": "element overrides",
+      "status": "deviates",
+      "finding": "Built shows unlabeled sliders; the reference has no such control on this row and the override editor is per element."
+    }
+  ],
+  "defects": [
+    {
+      "id": "appearance-default-1",
+      "severity": "medium",
+      "summary": "Section layout and typography control anatomy differ"
+    },
+    {
+      "id": "appearance-default-2",
+      "severity": "low",
+      "summary": "Unlabeled override sliders"
+    }
+  ],
+  "deviations": []
+}

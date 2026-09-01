@@ -1,0 +1,43 @@
+{
+  "schemaVersion": 1,
+  "rowId": "history-default",
+  "status": "complete",
+  "reviewedOn": "2026-09-01",
+  "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
+  "verdict": "defects-open",
+  "primitives": [
+    {
+      "primitive": "append-only banner",
+      "status": "nonconforming",
+      "finding": "Reference shows the append-only explanation banner; built has a long paragraph under the title instead."
+    },
+    {
+      "primitive": "timeline",
+      "status": "deviates",
+      "finding": "Reference: kind badges (EDIT/SETTINGS/RESTORE/CREATE), hash, metadata line; built: single row with icon and text. Fixture has one revision."
+    },
+    {
+      "primitive": "filter chips",
+      "status": "conforms",
+      "finding": "All/Created/Edited/Deleted/Restored/Settings chips present; built adds date pickers."
+    },
+    {
+      "primitive": "detail pane",
+      "status": "deviates",
+      "finding": "Reference shows a detail card with diff and Restore action; built exposes a Diff button per row."
+    }
+  ],
+  "defects": [
+    {
+      "id": "history-default-1",
+      "severity": "medium",
+      "summary": "Timeline kind badges and detail card differ from the reference"
+    }
+  ],
+  "deviations": [
+    {
+      "reason": "The fixture database has one history revision (the first save); the reference shows an authored eight-revision timeline. Data, not chrome.",
+      "approval": "recorded 2026-09-01 in issue #12"
+    }
+  ]
+}

@@ -61,6 +61,20 @@ function cheap(tool, params) {
   return result;
 }
 
+function countBlackBottomRows(png) {
+  let rows = 0;
+  for (let y = png.height - 1; y >= 0; y -= 1) {
+    let allBlack = true;
+    for (let x = 0; x < png.width; x += 7) {
+      const i = (y * png.width + x) * 4;
+      if (png.data[i] > 8 || png.data[i + 1] > 8 || png.data[i + 2] > 8) { allBlack = false; break; }
+    }
+    if (!allBlack) break;
+    rows += 1;
+  }
+  return rows;
+}
+
 function gitHead() {
   const git = spawnSync('git', ['-C', repoRoot, 'rev-parse', 'HEAD'], { encoding: 'utf8' });
   return git.stdout.trim();
@@ -141,7 +155,18 @@ async function captureBuilt(row, outDir, receipt) {
     if (!target) throw new Error(`No top-level window for pid ${launch.pid} on ${desktopName}`);
     const png = join(outDir, 'built.png');
     await rm(png, { force: true });
-    cheap('screenshot', { hwnd: target.handle, output_path: png, client_only: true });
+    // PrintWindow returns black for any region the window has not painted yet,
+    // which happens on the tallest windows right after the final resize. Capture
+    // until the bottom rows are painted, up to a bounded number of attempts.
+    let attempts = 0;
+    let blackRows = -1;
+    do {
+      cheap('screenshot', { hwnd: target.handle, output_path: png, client_only: true });
+      blackRows = countBlackBottomRows(PNG.sync.read(await readFile(png)));
+      attempts += 1;
+      if (blackRows > 0) await sleep(900);
+    } while (blackRows > 0 && attempts < 6);
+    if (blackRows > 0) throw new Error(`${row.id}: ${blackRows} unpainted rows remain after ${attempts} captures`);
     // Destination rows are compared against the design's destination content
     // alone, so crop the client capture to the rectangle the route reported.
     const wholeShell = row.screen === 'shell' || row.screen === 'regex-builder';
