@@ -137,6 +137,8 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_FontScale, {QS("GUI/FontScale"), Local, 1.0}},
     {Config::GUI_FontWeight, {QS("GUI/FontWeight"), Local, 400}},
     {Config::GUI_ElementOverrides, {QS("GUI/ElementOverrides"), Local, QS("{}")}},
+    // Retired: the dim sum surprise has no opt-out. The key stays registered so
+    // an old profile still parses; nothing reads it.
     {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},
     {Config::GUI_VoiceLanguage, {QS("GUI/VoiceLanguage"), Roaming, QS("English")}},
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},

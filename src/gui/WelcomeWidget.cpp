@@ -25,6 +25,9 @@
 #include "gui/Icons.h"
 #include "gui/material/MaterialTheme.h"
 
+#include <QDateTime>
+#include <QLabel>
+
 WelcomeWidget::WelcomeWidget(QWidget* parent)
     : QWidget(parent)
     , m_ui(new Ui::WelcomeWidget())
@@ -33,6 +36,31 @@ WelcomeWidget::WelcomeWidget(QWidget* parent)
 
     m_ui->welcomeLabel->setText(tr("Welcome to KeePassXC %1").arg(KEEPASSXC_VERSION));
     m_ui->welcomeLabel->setFont(theme()->font(Material::TypeRole::HeadlineSmall));
+
+    // The running version and the exact moment that version was last updated,
+    // shown on the first screen before any navigation. The moment is the
+    // committer date of the built revision converted to the user's local
+    // time with seconds and a labelled zone; when the build carried no Git
+    // metadata the line says so instead of inventing a time.
+    auto* provenance = new QLabel(this);
+    provenance->setObjectName(QStringLiteral("versionProvenanceLabel"));
+    provenance->setAlignment(Qt::AlignCenter);
+    provenance->setWordWrap(true);
+    provenance->setFont(theme()->font(Material::TypeRole::BodySmall));
+    provenance->setTextInteractionFlags(Qt::TextSelectableByMouse);
+    const QDateTime committed = QDateTime::fromString(QString::fromLatin1(KEEPASSXC_COMMIT_DATE), Qt::ISODate);
+    QString updated;
+    if (committed.isValid()) {
+        const QDateTime local = committed.toLocalTime();
+        updated = tr("updated %1 %2").arg(local.toString(QStringLiteral("yyyy-MM-dd HH:mm:ss")), local.timeZoneAbbreviation());
+    } else {
+        updated = tr("updated-at time unavailable: the build carried no Git commit date");
+    }
+    const QString head = QString::fromLatin1(KEEPASSXC_GIT_HEAD);
+    const QString revision = head.isEmpty() ? tr("revision unavailable") : tr("revision %1").arg(head);
+    provenance->setText(tr("Version %1 · %2 · %3").arg(QString::fromLatin1(KEEPASSXC_VERSION), revision, updated));
+    provenance->setAccessibleName(tr("Running version and update time"));
+    m_ui->verticalLayout->insertWidget(m_ui->verticalLayout->indexOf(m_ui->welcomeLabel) + 1, provenance);
 
     m_ui->iconLabel->setPixmap(icons()->applicationIcon().pixmap(64));
 

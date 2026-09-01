@@ -71,6 +71,14 @@ int main(int argc, char** argv)
 #if defined(Q_OS_WIN)
     QGuiApplication::setHighDpiScaleFactorRoundingPolicy(Qt::HighDpiScaleFactorRoundingPolicy::PassThrough);
 #endif
+    // A display-scale override for capture matrices has to reach Qt before the
+    // application object exists, so it is read from the raw arguments here.
+    for (int i = 1; i + 1 < argc; ++i) {
+        if (qstrcmp(argv[i], "--capture-scale") == 0) {
+            qputenv("QT_SCALE_FACTOR", argv[i + 1]);
+            qputenv("QT_ENABLE_HIGHDPI_SCALING", "0");
+        }
+    }
     Application app(argc, argv);
     // don't set organizationName as that changes the return value of
     // QStandardPaths::writableLocation(QDesktopServices::DataLocation)
@@ -113,6 +121,9 @@ int main(int argc, char** argv)
     QCommandLineOption captureReceiptOption(
         "capture-receipt", QObject::tr("write a JSON readiness receipt for the capture route"), "path");
 
+    QCommandLineOption captureScaleOption(
+        "capture-scale", QObject::tr("display scale factor for a capture route, e.g. 1.25"), "factor");
+
     QCommandLineOption helpOption = parser.addHelpOption();
     QCommandLineOption versionOption = parser.addVersionOption();
     QCommandLineOption debugInfoOption(QStringList() << "debug-info", QObject::tr("Displays debugging information."));
@@ -126,6 +137,7 @@ int main(int argc, char** argv)
     parser.addOption(startMinimized);
     parser.addOption(captureRouteOption);
     parser.addOption(captureReceiptOption);
+    parser.addOption(captureScaleOption);
 
     parser.process(applicationArguments);
 

@@ -4,6 +4,9 @@
 #define KEEPASSX_CONFIG_KEEPASSX_H
 
 #define KEEPASSXC_VERSION "@KEEPASSXC_VERSION@"
+/** ISO-8601 committer date of the built revision, or empty when unknown. */
+#define KEEPASSXC_COMMIT_DATE "@GIT_COMMIT_DATE@"
+#define KEEPASSXC_GIT_HEAD "@GIT_HEAD@"
 
 #define KEEPASSX_SOURCE_DIR "@CMAKE_SOURCE_DIR@"
 #define KEEPASSX_BINARY_DIR "@CMAKE_BINARY_DIR@"

@@ -165,12 +165,17 @@ namespace Material
             const int width = 2 * SegmentPadding + glyph + metrics.horizontalAdvance(segment.label);
             widest = qMax(widest, width);
         }
-        return {qMax(widest, MinSegmentWidth) * count(), Layout::ButtonHeight};
+        const int height = minimumHeight() == maximumHeight() ? minimumHeight() : Layout::ButtonHeight;
+        return {qMax(widest, MinSegmentWidth) * count(), height};
     }
 
     QSize SegmentedButton::minimumSizeHint() const
     {
-        return {MinSegmentWidth * qMax(1, count()), Layout::ButtonHeight};
+        // A host that pins the control to chip height (the vault's sort strip)
+        // gets a minimum that agrees with it, so the layout probe never reports
+        // a control squeezed below a hint it was told to ignore.
+        const int height = minimumHeight() == maximumHeight() ? minimumHeight() : Layout::ButtonHeight;
+        return {MinSegmentWidth * qMax(1, count()), height};
     }
 
     void SegmentedButton::resizeEvent(QResizeEvent* event)

@@ -23,6 +23,8 @@
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPainter>
+#include <QResizeEvent>
+#include <QScopedValueRollback>
 #include <QScrollArea>
 #include <QVBoxLayout>
 
@@ -51,6 +53,7 @@ namespace Material
 
         m_header = new QWidget(this);
         auto headerColumn = new QVBoxLayout(m_header);
+        m_headerColumn = headerColumn;
         headerColumn->setContentsMargins(SidePadding, TopPadding, SidePadding, 0);
         headerColumn->setSpacing(6);
 
@@ -70,6 +73,15 @@ namespace Material
         m_headerLayout->addWidget(m_searchBar);
 
         headerColumn->addLayout(m_headerLayout);
+
+        // The two overflow rows the headline row spills into at narrow widths.
+        m_headerWrapRow = new QHBoxLayout();
+        m_headerWrapRow->setContentsMargins(0, 0, 0, 0);
+        m_headerWrapRow->setSpacing(HeadlineSpacing);
+        headerColumn->addLayout(m_headerWrapRow);
+        m_headerSearchRow = new QHBoxLayout();
+        m_headerSearchRow->setContentsMargins(0, 0, 0, 0);
+        headerColumn->addLayout(m_headerSearchRow);
 
         m_supportingLabel = new QLabel(m_header);
         m_supportingLabel->setWordWrap(true);
@@ -153,12 +165,109 @@ namespace Material
 
     void Screen::insertHeaderWidget(int index, QWidget* widget)
     {
-        m_headerLayout->insertWidget(FirstTrailingItem + qBound(0, index, headerWidgetCount()), widget);
+        const int trailingIndex = qBound(0, index, m_trailing.size());
+        m_trailing.insert(trailingIndex, widget);
+        m_headerLayout->insertWidget(FirstTrailingItem + trailingIndex, widget);
+        relayoutHeader();
     }
 
     int Screen::headerWidgetCount() const
     {
-        return qMax(0, m_headerLayout->count() - FirstTrailingItem);
+        // The search bar counts while it lives in one of the header rows.
+        const bool searchInHeader = m_searchBar && m_searchBar->parentWidget() == m_header && !m_searchBar->isHidden();
+        return m_trailing.size() + (searchInHeader ? 1 : 0);
+    }
+
+    QList<QWidget*> Screen::trailingWidgets() const
+    {
+        QList<QWidget*> visible;
+        for (QWidget* widget : m_trailing) {
+            if (widget && !widget->isHidden()) {
+                visible << widget;
+            }
+        }
+        return visible;
+    }
+
+    void Screen::resizeEvent(QResizeEvent* event)
+    {
+        QWidget::resizeEvent(event);
+        relayoutHeader();
+    }
+
+    void Screen::relayoutHeader()
+    {
+        if (m_relayoutingHeader || !m_headerColumn || m_header->isHidden()) {
+            return;
+        }
+        QScopedValueRollback<bool> guard(m_relayoutingHeader, true);
+
+        const bool searchHere = m_searchBar && m_searchBar->parentWidget() == m_header && !m_searchBar->isHidden();
+        const QList<QWidget*> trailing = trailingWidgets();
+        const int available = m_header->width() - m_headerColumn->contentsMargins().left()
+                              - m_headerColumn->contentsMargins().right();
+        int inlineWidth = m_headlineLabel->sizeHint().width();
+        int trailingWidth = 0;
+        for (QWidget* widget : trailing) {
+            inlineWidth += HeadlineSpacing + widget->sizeHint().width();
+            trailingWidth += (trailingWidth ? HeadlineSpacing : 0) + widget->sizeHint().width();
+        }
+        const int searchWidth = searchHere ? HeadlineSpacing + m_searchBar->minimumWidth() : 0;
+        inlineWidth += searchWidth;
+
+        enum class Mode
+        {
+            Inline,
+            Wrapped,
+            ThreeRows
+        };
+        Mode mode = Mode::Inline;
+        if (available > 0 && inlineWidth > available) {
+            mode = trailingWidth + searchWidth > available ? Mode::ThreeRows : Mode::Wrapped;
+        }
+
+        // Take every trailing widget and the search bar out of whichever row
+        // holds it, then put them back where the mode says.
+        for (QWidget* widget : m_trailing) {
+            m_headerLayout->removeWidget(widget);
+            m_headerWrapRow->removeWidget(widget);
+        }
+        if (m_searchBar) {
+            m_headerLayout->removeWidget(m_searchBar);
+            m_headerWrapRow->removeWidget(m_searchBar);
+            m_headerSearchRow->removeWidget(m_searchBar);
+        }
+        while (m_headerWrapRow->count()) {
+            delete m_headerWrapRow->takeAt(0);
+        }
+        while (m_headerSearchRow->count()) {
+            delete m_headerSearchRow->takeAt(0);
+        }
+
+        if (mode == Mode::Inline) {
+            for (QWidget* widget : m_trailing) {
+                m_headerLayout->addWidget(widget);
+            }
+            if (searchHere) {
+                m_headerLayout->addWidget(m_searchBar);
+            }
+        } else {
+            for (QWidget* widget : m_trailing) {
+                m_headerWrapRow->addWidget(widget);
+            }
+            m_headerWrapRow->addStretch(1);
+            if (searchHere) {
+                if (mode == Mode::Wrapped) {
+                    m_headerWrapRow->addWidget(m_searchBar);
+                } else {
+                    m_headerSearchRow->addWidget(m_searchBar, 1);
+                }
+            }
+        }
+        m_header->setProperty("headerMode",
+                              mode == Mode::Inline    ? QStringLiteral("inline")
+                              : mode == Mode::Wrapped ? QStringLiteral("wrapped")
+                                                      : QStringLiteral("three-rows"));
     }
 
     QVBoxLayout* Screen::contentLayout() const

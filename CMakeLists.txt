@@ -109,7 +109,18 @@ if(GIT_HEAD STREQUAL "" AND NOT GIT_HEAD_OVERRIDE STREQUAL "")
 elseif(EXISTS ${CMAKE_SOURCE_DIR}/.gitrev)
     file(READ ${CMAKE_SOURCE_DIR}/.gitrev GIT_HEAD)
 endif()
-message(STATUS "Found Git HEAD Revision: ${GIT_HEAD}\n")
+# The committed date of the built revision is the honest "updated at" of this
+# exact version: it is bound to the source commit, not to launch time or a file
+# timestamp. Missing Git leaves it empty and the interface says so.
+execute_process(COMMAND git show -s --format=%cI HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_DATE
+        ERROR_QUIET)
+string(STRIP "${GIT_COMMIT_DATE}" GIT_COMMIT_DATE)
+if(NOT GIT_COMMIT_DATE MATCHES "^[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]T")
+    set(GIT_COMMIT_DATE "")
+endif()
+message(STATUS "Found Git HEAD Revision: ${GIT_HEAD} committed ${GIT_COMMIT_DATE}\n")
 
 # KeePassXC Versioning and Build Type
 set(OVERRIDE_VERSION "" CACHE STRING "Override the KeePassXC Version for Snapshot builds")

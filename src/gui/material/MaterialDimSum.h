@@ -42,7 +42,7 @@ namespace Material
      * nothing else: it never gates startup, never takes focus, never blocks a
      * click, and it stands down entirely on a first run, on an error path,
      * during an update, while a dialog is open, while the desktop is quiet, and
-     * whenever GUI_DimSumSurprise is off.
+     * during a capture route. There is no opt-out; one launch in ten draws it.
      *
      * Everything it draws is bundled in `:/dimsum`; nothing is fetched.
      */

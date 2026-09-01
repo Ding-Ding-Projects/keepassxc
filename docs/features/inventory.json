@@ -18,6 +18,9 @@
       "test": {
         "file": "tests/TestMaterialVoice.cpp",
         "anchor": "^void TestMaterialVoice::"
+      },
+      "article": {
+        "file": "docs/features/messaging/language-modes.md"
       }
     },
     {
@@ -36,6 +39,9 @@
       "test": {
         "file": "tests/TestMaterialVoice.cpp",
         "anchor": "^void TestMaterialVoice::"
+      },
+      "article": {
+        "file": "docs/features/messaging/funny-level-english.md"
       }
     },
     {
@@ -54,6 +60,9 @@
       "test": {
         "file": "tests/TestMaterialVoice.cpp",
         "anchor": "^void TestMaterialVoice::"
+      },
+      "article": {
+        "file": "docs/features/messaging/funny-level-cantonese.md"
       }
     },
     {
@@ -108,17 +117,23 @@
       "surface": "app",
       "title": "Dim sum surprise (10 %, no opt-out)",
       "status": "partial",
-      "note": "Ships at 1 % with an opt-out; canonical is 10 % with no opt-out and public catalog photos",
+      "note": "Ten percent draw with no opt-out; public-catalog photos and release code name pending",
       "implementation": {
         "file": "src/gui/material/MaterialDimSum.h",
         "anchor": "^\\s*class DimSum$"
+      },
+      "article": {
+        "file": "docs/features/messaging/dim-sum-surprise.md"
       }
     },
     {
       "id": "release-code-name",
       "surface": "app",
       "title": "Dim sum release code name",
-      "status": "missing"
+      "status": "missing",
+      "article": {
+        "file": "docs/features/delivery/release-code-name.md"
+      }
     },
     {
       "id": "personal-vocabulary-upload",
@@ -129,6 +144,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialSettingsHub.cpp",
         "anchor": "^\\s*config\\(\\)->set\\(Config::GUI_PersonalVocabularyCache,$"
+      },
+      "article": {
+        "file": "docs/features/records/personal-vocabulary-upload.md"
       }
     },
     {
@@ -144,6 +162,9 @@
       "test": {
         "file": "tests/TestMaterialRegexSafety.cpp",
         "anchor": "^void TestMaterialRegexSafety::"
+      },
+      "article": {
+        "file": "docs/features/search/regex-builder.md"
       }
     },
     {
@@ -159,6 +180,9 @@
       "test": {
         "file": "tests/TestMaterialSearchRegistry.cpp",
         "anchor": "^void TestMaterialSearchRegistry::"
+      },
+      "article": {
+        "file": "docs/features/search/search-bar-every-surface.md"
       }
     },
     {
@@ -193,6 +217,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialNotifier.h",
         "anchor": "^\\s*void progress\\(const QString& id, const QString& text, int percent\\);$"
+      },
+      "article": {
+        "file": "docs/features/messaging/notifications.md"
       }
     },
     {
@@ -204,6 +231,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialNotificationCentre.h",
         "anchor": "^\\s*class NotificationCentre\\b"
+      },
+      "article": {
+        "file": "docs/features/messaging/notification-centre.md"
       }
     },
     {
@@ -230,6 +260,9 @@
       "test": {
         "file": "tests/TestMaterialAppearance.cpp",
         "anchor": "^void TestMaterialAppearance::"
+      },
+      "article": {
+        "file": "docs/features/design/material-3-appearance.md"
       }
     },
     {
@@ -285,6 +318,9 @@
       "test": {
         "file": "tests/TestMaterialTabs.cpp",
         "anchor": "^void TestMaterialTabs::"
+      },
+      "article": {
+        "file": "docs/features/navigation/tabs.md"
       }
     },
     {
@@ -380,10 +416,13 @@
       "surface": "app",
       "title": "Command palette (Ctrl+Shift+F)",
       "status": "partial",
-      "note": "Bound to Ctrl+Shift+P; canonical is Ctrl+Shift+F with rich inline controls and teleport",
+      "note": "Bound to Ctrl+Shift+F; rich inline controls and exact-element teleport pending",
       "implementation": {
         "file": "src/gui/material/MaterialCommandPalette.h",
         "anchor": "^\\s*class CommandPalette\\b"
+      },
+      "article": {
+        "file": "docs/features/navigation/command-palette.md"
       }
     },
     {
@@ -423,6 +462,9 @@
       "test": {
         "file": "tests/TestMaterialHistory.cpp",
         "anchor": "^void TestMaterialHistory::"
+      },
+      "article": {
+        "file": "docs/features/records/local-history.md"
       }
     },
     {
@@ -434,6 +476,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialHistoryScreen.h",
         "anchor": "^\\s*class HistoryScreen\\b"
+      },
+      "article": {
+        "file": "docs/features/records/history-panel-filters.md"
       }
     },
     {
@@ -449,6 +494,9 @@
       "test": {
         "file": "tests/TestMaterialChangelog.cpp",
         "anchor": "^void TestMaterialChangelog::"
+      },
+      "article": {
+        "file": "docs/features/records/changelog-viewer.md"
       }
     },
     {
@@ -460,6 +508,9 @@
       "implementation": {
         "file": "scripts/generate-changelog-provenance.mjs",
         "anchor": "^\\s*(const|function|export) "
+      },
+      "article": {
+        "file": "docs/features/records/changelog-commit-links.md"
       }
     },
     {
@@ -471,6 +522,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialVaultScreen.cpp",
         "anchor": "^\\s*void VaultScreen::"
+      },
+      "article": {
+        "file": "docs/features/navigation/external-editor.md"
       }
     },
     {
@@ -501,7 +555,15 @@
       "id": "in-app-version-provenance",
       "surface": "app",
       "title": "Front-screen version and updated-at provenance",
-      "status": "missing"
+      "status": "partial",
+      "note": "Welcome-screen line implemented; focused test, interaction record and capture pending",
+      "implementation": {
+        "file": "src/gui/WelcomeWidget.cpp",
+        "anchor": "^\\s*provenance->setObjectName\\(QStringLiteral\\(\"versionProvenanceLabel\"\\)\\);$"
+      },
+      "article": {
+        "file": "docs/features/delivery/in-app-version-provenance.md"
+      }
     },
     {
       "id": "frameless-material-title-bar",
@@ -647,7 +709,18 @@
       "id": "clipping-matrix",
       "surface": "app",
       "title": "Clipping matrix evidence",
-      "status": "missing"
+      "status": "partial",
+      "article": {
+        "file": "docs/features/design/clipping-matrix.md"
+      },
+      "note": "Quick matrix captured; full width/language/theme/scale matrix and repairs pending",
+      "implementation": {
+        "file": "design/parity/clipping-matrix.mjs",
+        "anchor": "^async function runTuple\\(tuple\\) \\{$"
+      },
+      "capture": {
+        "file": "design/parity/evidence/clipping/matrix.json"
+      }
     },
     {
       "id": "auto-updates",
@@ -662,6 +735,9 @@
       "test": {
         "file": "tests/TestUpdateCheck.cpp",
         "anchor": "^void TestUpdateCheck::"
+      },
+      "article": {
+        "file": "docs/features/delivery/auto-updates.md"
       }
     },
     {
@@ -677,6 +753,9 @@
       "test": {
         "file": "tests/TestSquirrelLifecycle.cpp",
         "anchor": "^void TestSquirrelLifecycle::"
+      },
+      "article": {
+        "file": "docs/features/delivery/squirrel-installer.md"
       }
     },
     {
@@ -688,6 +767,9 @@
       "implementation": {
         "file": "scripts/build-windows.ps1",
         "anchor": "^\\s*\\[CmdletBinding\\(\\)\\]"
+      },
+      "article": {
+        "file": "docs/features/delivery/build-scripts.md"
       }
     },
     {
@@ -700,7 +782,10 @@
       "id": "line-count-release",
       "surface": "app",
       "title": "Line count in every release",
-      "status": "missing"
+      "status": "missing",
+      "article": {
+        "file": "docs/features/delivery/line-count-release.md"
+      }
     },
     {
       "id": "readme-captures",
@@ -727,6 +812,12 @@
       "test": {
         "file": "design/parity/test-parity-guard.mjs",
         "anchor": "^expectRed\\("
+      },
+      "article": {
+        "file": "docs/features/design/design-parity.md"
+      },
+      "capture": {
+        "file": "design/parity/evidence/reports-default/comparison.png"
       }
     },
     {

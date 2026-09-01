@@ -992,10 +992,10 @@ MainWindow::MainWindow()
         Material::Notify::success(tr("Copied to the clipboard. It clears in 10 seconds."));
     });
 
-    // The bolt button and Ctrl+Shift+P are what the hidden menu bar became.
+    // The bolt button and Ctrl+Shift+F are what the hidden menu bar became.
     auto* commandPalette = new Material::CommandPalette(this);
     connect(appBar, &Material::TopAppBar::paletteRequested, commandPalette, &Material::Overlay::openOverlay);
-    new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
+    new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_F, this, [commandPalette] { commandPalette->openOverlay(); });
 
     auto* regexBuilder = new Material::RegexBuilder(this);
     m_regexBuilder = regexBuilder;

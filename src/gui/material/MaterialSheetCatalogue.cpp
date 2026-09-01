@@ -241,7 +241,7 @@ namespace Material
                 {"settings", "Application Settings", "", PillKind::Mono, "Ctrl+,"},
                 {"help", "Keyboard Shortcuts guide", "", PillKind::Mono, "Ctrl+/"},
                 {"search", "Focus search", "", PillKind::Mono, "Ctrl+F"},
-                {"bolt", "All actions (this build)", "", PillKind::Mono, "Ctrl+Shift+P"},
+                {"bolt", "All actions (this build)", "", PillKind::Mono, "Ctrl+Shift+F"},
             };
             const Section settings_shortcuts_sections[] = {
                 {"Database", "", settings_shortcuts_s0, 10},

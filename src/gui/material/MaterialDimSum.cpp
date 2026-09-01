@@ -65,7 +65,8 @@ namespace Material
     namespace
     {
         /** One launch in a hundred, drawn from the system entropy source. */
-        constexpr int OddsDenominator = 100;
+        // One launch in ten, drawn fresh every launch and never twice in one.
+        constexpr int OddsDenominator = 10;
 
         /** Room the card leaves itself for the el3 shadow. */
         constexpr int ShadowMargin = 24;
@@ -235,7 +236,10 @@ namespace Material
         /** Every suppression rule, with the draw itself left out. */
         bool canShow()
         {
-            return !s_shown && !s_suppressed && config()->get(Config::GUI_DimSumSurprise).toBool() && !isFirstRun()
+            // There is no opt-out: the surprise ships in every profile, and the
+            // retired GUI_DimSumSurprise key is ignored so an old profile that
+            // turned it off simply rejoins the draw.
+            return !s_shown && !s_suppressed && !isFirstRun()
                    && !isQuiet() && !DimSum::catalogue().isEmpty();
         }
 
@@ -310,7 +314,7 @@ namespace Material
     bool DimSum::shouldShow()
     {
         // One decision per launch, remembered, so that asking twice can never make the surprise
-        // more likely than the one percent it advertises.
+        // more likely than the ten percent it advertises.
         //
         // The whole decision latches, not just the random draw. canShow() asks the shell for the
         // user's notification state, which is an out-of-process call costing on the order of a

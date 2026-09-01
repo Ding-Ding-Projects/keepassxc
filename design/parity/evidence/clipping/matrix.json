@@ -1,0 +1,583 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+  "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
+  "generatedAt": "2026-09-01T23:46:36.681Z",
+  "quick": true,
+  "tuples": 20,
+  "errors": 0,
+  "findings": [
+    {
+      "tuple": "vault_compact_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "Material::SegmentedButton#",
+      "rect": "559,190 225x32",
+      "minimumHint": "168x40"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "98,134 106x44",
+      "text": "Database reports",
+      "textWidth": 180
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "QLabel#",
+      "rect": "98,134 106x44",
+      "minimumHint": "180x32"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "offscreen",
+      "widget": "Material::SearchBar#",
+      "rect": "670,134 340x44"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "offscreen",
+      "widget": "QLineEdit#",
+      "rect": "716,136 242x40"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "offscreen",
+      "widget": "Material::IconButton#",
+      "rect": "968,136 32x40"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "QComboBox#reportsCategory",
+      "rect": "334,135 122x42",
+      "minimumHint": "152x42"
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QToolButton#",
+      "rect": "552,140 106x31",
+      "text": "Export 0 selected finding(s)",
+      "textWidth": 142
+    },
+    {
+      "tuple": "reports_compact_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "QToolButton#",
+      "rect": "552,140 106x31",
+      "minimumHint": "163x31"
+    },
+    {
+      "tuple": "vault_expanded_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QAbstractButton#",
+      "rect": "98,736 196x50",
+      "text": "Open database folder in external editor",
+      "textWidth": 204
+    },
+    {
+      "tuple": "vault_expanded_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "Material::SegmentedButton#",
+      "rect": "599,190 225x32",
+      "minimumHint": "168x40"
+    },
+    {
+      "tuple": "reports_expanded_bilingual_light_x1",
+      "kind": "offscreen",
+      "widget": "Material::SearchBar#",
+      "rect": "869,134 340x44"
+    },
+    {
+      "tuple": "reports_expanded_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "QComboBox#reportsCategory",
+      "rect": "459,135 122x42",
+      "minimumHint": "152x42"
+    }
+  ],
+  "records": [
+    {
+      "id": "vault_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_compact_bilingual_light_x1.png",
+      "pngSha256": "7a9624f9a1ab07d2a67f7e19a29741a869f88cbdbc28eecfc151e5b2fcabe997",
+      "widgetCount": 34,
+      "findingCount": 1
+    },
+    {
+      "id": "reports_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_compact_bilingual_light_x1.png",
+      "pngSha256": "33d2c3ba11c7ad49dd5451892144edd387194b1dfb92e034d7e7bbaa88a555f6",
+      "widgetCount": 50,
+      "findingCount": 8
+    },
+    {
+      "id": "editor_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_compact_bilingual_light_x1.png",
+      "pngSha256": "3710ce0256f35af173ec34d573cc0ef62029683c89d3c91f76a6efa95c916db0",
+      "widgetCount": 66,
+      "findingCount": 0
+    },
+    {
+      "id": "database_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "database_compact_bilingual_light_x1.png",
+      "pngSha256": "afef3ba089d80233a9917f7823f5097ad883777831b8850d834dba66e36f6158",
+      "widgetCount": 65,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_compact_bilingual_light_x1.png",
+      "pngSha256": "85ee7f7204bca1e8caef1b2ed1aa3836ff7228c8877252c763bf61c9bfaa27ba",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "history_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "history_compact_bilingual_light_x1.png",
+      "pngSha256": "98681642d4eee335d1c8a1dfb9f9ae89211c50b51f2f13ee4715682e6287120b",
+      "widgetCount": 42,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_compact_bilingual_light_x1.png",
+      "pngSha256": "0333bc17457362789f93a4703b3b9ba2e249ad9c5cdb1001b4f750eab27d657a",
+      "widgetCount": 3675,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_compact_bilingual_light_x1.png",
+      "pngSha256": "81852efacc5a01813d1f32e77664e2a0bf7e7f64bfb81f58e144dbf49d4d9ea4",
+      "widgetCount": 183,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_compact_bilingual_light_x1.png",
+      "pngSha256": "a68f8ac16e9816e04ca8a01cc3d6c8bca94a53f76bb1282389ec2d107fb72527",
+      "widgetCount": 145,
+      "findingCount": 0
+    },
+    {
+      "id": "help_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "help_compact_bilingual_light_x1.png",
+      "pngSha256": "303bfebbf66e6c7df73cdb0a276a36016aa66d6c7c7cf761a1be71e0d509152a",
+      "widgetCount": 52,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_bilingual_light_x1.png",
+      "pngSha256": "6378f15a5a3700ad8092f4c07c5b36a8a825f07213563df20b6e70a29855f9f5",
+      "widgetCount": 66,
+      "findingCount": 2
+    },
+    {
+      "id": "reports_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_bilingual_light_x1.png",
+      "pngSha256": "2e69cb972a861fbc441abb68a3ac62fc5082fee765e9e02fd54b29df75ce3f24",
+      "widgetCount": 50,
+      "findingCount": 2
+    },
+    {
+      "id": "editor_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_bilingual_light_x1.png",
+      "pngSha256": "0459ce80b96c049d4956841201796f13b7c89a6ba9db292675b004da8aa41e46",
+      "widgetCount": 66,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_bilingual_light_x1.png",
+      "pngSha256": "d55a6f2f7903565d75290f3d2cb4cb0f63d4c0c486a312ea46151e2854b7a944",
+      "widgetCount": 65,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_bilingual_light_x1.png",
+      "pngSha256": "e36448135f62a430cc7d1260d1fe165e58def270e553bff4008b7097f30c1186",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_bilingual_light_x1.png",
+      "pngSha256": "00952cd85ae078d3109dce73f9398f309972d30b7204abcfb82490c0af6ccf06",
+      "widgetCount": 42,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_bilingual_light_x1.png",
+      "pngSha256": "5e5249987a9e8d5392170d8bff263d59fb15ae78a467583a1eccb753b1ece8c0",
+      "widgetCount": 3675,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_bilingual_light_x1.png",
+      "pngSha256": "70f7af59832864f7e397751a15d16b6b0052f4671bb5832a370fba57dbcac959",
+      "widgetCount": 183,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_bilingual_light_x1.png",
+      "pngSha256": "cc67cd931346e3399c4f84980f95fda67364f19b68420278b259d40f09a80042",
+      "widgetCount": 145,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_bilingual_light_x1.png",
+      "pngSha256": "7b795837ce5ad1e8b8f352231794cb578544fa2990875c7331d689a49c081e09",
+      "widgetCount": 52,
+      "findingCount": 0
+    }
+  ]
+}

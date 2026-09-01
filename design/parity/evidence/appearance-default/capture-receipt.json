@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
-  "capturedAt": "2026-09-01T21:30:14.838Z",
+  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+  "capturedAt": "2026-09-01T23:54:56.754Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/appearance-default",
     "png": "reference.png",
@@ -51,17 +51,17 @@
   "built": {
     "route": "kpxc://capture/appearance?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
     "png": "built.png",
-    "sha256": "92341368f99f68c9a7baa087bca7661aa523c39c997bf66391e4bcdf55be44ee",
-    "bytes": 86497,
-    "pid": 3828,
-    "hwnd": 35194618,
+    "sha256": "9c60ebdd0270572540f9b70131e9a8b2813981a456c3f6de584fedc453a499a7",
+    "bytes": 86503,
+    "pid": 28240,
+    "hwnd": 27854604,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "appearance",
       "devicePixelRatio": 1,
-      "hwnd": "35194618",
+      "hwnd": "27854604",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -75,8 +75,8 @@
       "target": "page",
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
-      "version": "2.8.8701",
-      "windowGeometry": "560,185 1288x1001"
+      "version": "2.8.8501",
+      "windowGeometry": "560,185 1288x972"
     },
     "cropRect": {
       "x": 88,
@@ -86,13 +86,5 @@
     },
     "windowPng": "built-window.png",
     "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
-  },
-  "comparison": {
-    "png": "comparison.png",
-    "sha256": "f803fe78295e97b1664001fdaf8a63dc5736c13f4a6ca59afbfc76533f9dd703",
-    "diff": "diff.json",
-    "diffSha256": "c8fcff4fd88b33d046c79a8fdecb3c3e7aab55a8731baffe90ae2616f3170e48",
-    "mismatchRatio": 0.11217441860465116,
-    "sizeMismatch": false
   }
 }

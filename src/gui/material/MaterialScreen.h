@@ -90,13 +90,29 @@ namespace Material
 
     protected:
         void paintEvent(QPaintEvent* event) override;
+        void resizeEvent(QResizeEvent* event) override;
 
     private:
         void applyTheme();
+        /**
+         * Lay the headline row out for the current width. Inline when the
+         * headline, every trailing widget and the search bar fit on one row;
+         * otherwise the trailing widgets drop to a second row and, when even
+         * that row would overflow, the search bar takes a third row of its own
+         * and stretches across it. Nothing is ever clipped or pushed off screen.
+         */
+        void relayoutHeader();
+        QList<QWidget*> trailingWidgets() const;
 
         QVBoxLayout* m_rootLayout = nullptr;
         QWidget* m_header = nullptr;
         QHBoxLayout* m_headerLayout = nullptr;
+        QVBoxLayout* m_headerColumn = nullptr;
+        QHBoxLayout* m_headerWrapRow = nullptr;
+        QHBoxLayout* m_headerSearchRow = nullptr;
+        /** The trailing widgets in insertion order, wherever they currently sit. */
+        QList<QWidget*> m_trailing;
+        bool m_relayoutingHeader = false;
         QLabel* m_headlineLabel = nullptr;
         QLabel* m_supportingLabel = nullptr;
         SearchBar* m_searchBar = nullptr;

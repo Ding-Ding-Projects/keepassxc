@@ -59,6 +59,8 @@ namespace Material
             QString languageMode = QStringLiteral("bilingual");
             /** Size the current destination page, not the whole shell, to the viewport. */
             bool fitPage = false;
+            /** Include a per-widget geometry, text-overflow and scroll probe in the receipt. */
+            bool probe = false;
             QString receiptPath;
         };
 

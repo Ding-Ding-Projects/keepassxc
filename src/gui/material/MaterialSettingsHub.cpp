@@ -920,12 +920,6 @@ namespace Material
                   tr("Colour passwords"),
                   tr("Tint digits and symbols so a password can be read aloud."),
                   Config::GUI_ColorPasswords);
-        addToggle(page,
-                  appearance,
-                  QStringLiteral("lightbulb"),
-                  tr("Dim sum surprise"),
-                  tr("Let the interface offer the occasional dish."),
-                  Config::GUI_DimSumSurprise);
 
         const QString window = tr("Window and tray");
         addToggle(page,

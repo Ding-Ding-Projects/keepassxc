@@ -922,9 +922,6 @@ namespace Material
             {Config::Security_ClearClipboard,
              tr("Clear clipboard after %n second(s)", "", clipboardSeconds),
              tr("Applies to passwords, TOTP codes and custom attributes.")},
-            {Config::GUI_DimSumSurprise,
-             tr("Dim sum surprise at startup"),
-             tr("1% chance per launch. Non-blocking, auto-dismissing, bundled images only.")},
             // The rest of this surface's own rows, which the design's four
             // cards have no room for.
             {Config::SingleInstance,

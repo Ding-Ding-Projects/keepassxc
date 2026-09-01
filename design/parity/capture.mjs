@@ -132,7 +132,9 @@ async function captureBuilt(row, outDir, receipt) {
   const state = row.state || 'default';
   const lang = row.determinism.languageMode === 'both' ? 'bilingual' : row.determinism.languageMode;
   const route = `kpxc://capture/${row.screen}?state=${encodeURIComponent(state)}&width=${width}&height=${height}&theme=${row.tuple.theme}&lang=${lang}${row.screen === 'shell' || row.screen === 'regex-builder' ? '' : '&target=page'}`;
-  const command = `"${appPath}" --config "${ini}" --localconfig "${localIni}" --allow-screencapture --keyfile "${keyFile}" --capture-route "${route}" --capture-receipt "${receiptPath}" "${fixture}"`;
+  // The welcome screen is captured with no database at all.
+  const database = row.screen === 'welcome' ? '' : ` --keyfile "${keyFile}" "${fixture}"`;
+  const command = `"${appPath}" --config "${ini}" --localconfig "${localIni}" --allow-screencapture --capture-route "${route}" --capture-receipt "${receiptPath}"${database}`;
   cheap('create_headless_desktop', { name: desktopName });
   const launch = cheap('launch_on_headless_desktop', { name: desktopName, command });
   let routeReceipt = null;
@@ -169,7 +171,7 @@ async function captureBuilt(row, outDir, receipt) {
     if (blackRows > 0) throw new Error(`${row.id}: ${blackRows} unpainted rows remain after ${attempts} captures`);
     // Destination rows are compared against the design's destination content
     // alone, so crop the client capture to the rectangle the route reported.
-    const wholeShell = row.screen === 'shell' || row.screen === 'regex-builder';
+    const wholeShell = row.screen === 'shell' || row.screen === 'regex-builder' || row.screen === 'welcome';
     let cropRect = null;
     if (!wholeShell && routeReceipt.pageRect) {
       const [x, y, w, h] = routeReceipt.pageRect.split(/[ ,x]/).map(Number);

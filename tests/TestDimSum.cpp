@@ -121,26 +121,29 @@ void TestDimSum::testDisplayNameCarriesBothLanguages()
     }
 }
 
-void TestDimSum::testDisabledSuppressesAbsolutely()
+void TestDimSum::testRetiredOptOutIsIgnored()
 {
+    // The surprise has no opt-out. Whatever this desktop currently allows (quiet
+    // hours and focus assist are themselves part of the contract), the retired
+    // GUI_DimSumSurprise key must make no difference to the answer.
+    DimSum::resetLaunchState();
+    config()->set(Config::GUI_DimSumSurprise, true);
+    const bool withKeyOn = DimSum::showNow(m_window.data());
+    const bool shownOn = DimSum::hasShown();
+
+    DimSum::resetLaunchState();
     config()->set(Config::GUI_DimSumSurprise, false);
+    const bool withKeyOff = DimSum::showNow(m_window.data());
+    QCOMPARE(withKeyOff, withKeyOn);
+    QCOMPARE(DimSum::hasShown(), shownOn);
 
-    // Far more launches than the one percent needs to show itself. This loop is
-    // also the regression guard for the cost of shouldShow(): it used to consult
-    // the shell's notification state on every call, an out-of-process round trip
-    // that turned these 20,000 iterations into 42 minutes on Windows. The whole
-    // decision latches now, so all but the first are a bool read.
+    // The launch decision still latches: shouldShow() answers the same thing
+    // however often it is asked, which keeps the odds honest and keeps 20,000
+    // calls a bool read rather than 42 minutes of shell queries.
+    const bool first = DimSum::shouldShow();
     for (int i = 0; i < 20000; ++i) {
-        QVERIFY(!DimSum::shouldShow());
+        QCOMPARE(DimSum::shouldShow(), first);
     }
-
-    // Not even the path that skips the draw gets through.
-    QVERIFY(!DimSum::showNow(m_window.data()));
-    DimSum::showIfDue(m_window.data());
-    QTest::qWait(20);
-
-    QVERIFY(!DimSum::hasShown());
-    QCOMPARE(m_window->findChildren<DimSumCard*>().size(), 0);
 }
 
 void TestDimSum::testFiresOnlyOncePerLaunch()

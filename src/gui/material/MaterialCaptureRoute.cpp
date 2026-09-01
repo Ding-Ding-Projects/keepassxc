@@ -24,7 +24,14 @@
 #include "core/Config.h"
 #include "gui/MainWindow.h"
 
+#include <QAbstractButton>
+#include <QAbstractScrollArea>
+#include <QComboBox>
 #include <QFile>
+#include <QJsonArray>
+#include <QLabel>
+#include <QLineEdit>
+#include <QScrollBar>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QSaveFile>
@@ -41,6 +48,93 @@ namespace Material
         {
             constexpr int kSettleMs = 350;
             constexpr int kReceiptMs = 1200;
+
+            /**
+             * Measure every visible widget under the shell for the clipping
+             * matrix: geometry in window coordinates, size hint versus actual
+             * size, whether a label's or button's text is wider than the space
+             * it has, and the scroll range of every scroll area. This is what
+             * turns "it looks clipped" into a number a test can assert.
+             */
+            QJsonArray probeWidgets(MainWindow* window)
+            {
+                QJsonArray widgets;
+                auto* shell = Shell::instance();
+                if (!shell) {
+                    return widgets;
+                }
+                const QList<QWidget*> all = shell->findChildren<QWidget*>();
+                for (QWidget* widget : all) {
+                    if (!widget->isVisible() || widget->width() <= 0 || widget->height() <= 0) {
+                        continue;
+                    }
+                    QJsonObject entry;
+                    const QPoint origin = widget->mapTo(window, QPoint(0, 0));
+                    entry.insert(QStringLiteral("class"), QString::fromLatin1(widget->metaObject()->className()));
+                    entry.insert(QStringLiteral("name"), widget->objectName());
+                    entry.insert(QStringLiteral("rect"),
+                                 QStringLiteral("%1,%2 %3x%4").arg(origin.x()).arg(origin.y()).arg(widget->width()).arg(widget->height()));
+                    const QSize hint = widget->sizeHint();
+                    const QSize minimum = widget->minimumSizeHint();
+                    entry.insert(QStringLiteral("hint"), QStringLiteral("%1x%2").arg(hint.width()).arg(hint.height()));
+                    entry.insert(QStringLiteral("minimumHint"), QStringLiteral("%1x%2").arg(minimum.width()).arg(minimum.height()));
+                    // A control narrower than its own minimum hint has been squeezed.
+                    // Containers and stacks report the largest of their children as a
+                    // hint, so only leaf controls are judged this way.
+                    const bool leaf = widget->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly).isEmpty()
+                                      || qobject_cast<QAbstractButton*>(widget) || qobject_cast<QComboBox*>(widget)
+                                      || qobject_cast<QLineEdit*>(widget) || qobject_cast<QLabel*>(widget);
+                    entry.insert(QStringLiteral("leaf"), leaf);
+                    entry.insert(QStringLiteral("squeezed"),
+                                 leaf
+                                     && ((minimum.width() > 0 && widget->width() < minimum.width())
+                                         || (minimum.height() > 0 && widget->height() < minimum.height())));
+                    // Text that does not fit its widget is the definition of clipping;
+                    // a label that elides on purpose still reports it so the row can
+                    // decide whether the elision was declared.
+                    QString text;
+                    bool wordWrap = false;
+                    if (auto* label = qobject_cast<QLabel*>(widget)) {
+                        // Rich text measures its markup, not its rendering; skip it.
+                        if (label->textFormat() == Qt::PlainText
+                            || (label->textFormat() == Qt::AutoText && !label->text().contains(QLatin1Char('<')))) {
+                            text = label->text();
+                        }
+                        wordWrap = label->wordWrap();
+                    } else if (auto* button = qobject_cast<QAbstractButton*>(widget)) {
+                        text = button->text();
+                        // A button that reports height-for-width wraps its label.
+                        wordWrap = widget->sizePolicy().hasHeightForWidth();
+                    } else if (auto* edit = qobject_cast<QLineEdit*>(widget)) {
+                        text = edit->placeholderText();
+                    }
+                    if (!text.isEmpty()) {
+                        const int textWidth = widget->fontMetrics().horizontalAdvance(text);
+                        entry.insert(QStringLiteral("text"), text.left(80));
+                        entry.insert(QStringLiteral("textWidth"), textWidth);
+                        entry.insert(QStringLiteral("textOverflows"), !wordWrap && textWidth > widget->contentsRect().width());
+                    }
+                    if (auto* area = qobject_cast<QAbstractScrollArea*>(widget)) {
+                        entry.insert(QStringLiteral("hScrollMax"), area->horizontalScrollBar()->maximum());
+                        entry.insert(QStringLiteral("vScrollMax"), area->verticalScrollBar()->maximum());
+                    }
+                    // Part of the widget outside the window's client area is off-screen,
+                    // unless it lives inside a scroll area, where content below the fold
+                    // is reachable by design.
+                    bool scrollable = false;
+                    for (QWidget* ancestor = widget->parentWidget(); ancestor; ancestor = ancestor->parentWidget()) {
+                        if (qobject_cast<QAbstractScrollArea*>(ancestor)) {
+                            scrollable = true;
+                            break;
+                        }
+                    }
+                    entry.insert(QStringLiteral("scrollable"), scrollable);
+                    const QRect client(QPoint(0, 0), window->size());
+                    entry.insert(QStringLiteral("offscreen"), !scrollable && !client.contains(QRect(origin, widget->size())));
+                    widgets.append(entry);
+                }
+                return widgets;
+            }
 
             void writeReceipt(MainWindow* window, const Request& request, const QString& outcome)
             {
@@ -93,6 +187,9 @@ namespace Material
                 receipt.insert(QStringLiteral("hwnd"), QString::number(static_cast<qulonglong>(window->winId())));
                 receipt.insert(QStringLiteral("devicePixelRatio"), window->devicePixelRatioF());
                 receipt.insert(QStringLiteral("title"), window->windowTitle());
+                if (request.probe) {
+                    receipt.insert(QStringLiteral("widgets"), probeWidgets(window));
+                }
 
                 QSaveFile file(request.receiptPath);
                 if (file.open(QIODevice::WriteOnly)) {
@@ -129,8 +226,10 @@ namespace Material
 
         QString destinationFor(const QString& screen)
         {
+            // "welcome" is the vault destination with no database open: the front
+            // screen a user meets first, where the version provenance lives.
             if (screen == QLatin1String("shell") || screen == QLatin1String("regex-builder")
-                || screen == QLatin1String("vault")) {
+                || screen == QLatin1String("vault") || screen == QLatin1String("welcome")) {
                 return QStringLiteral("vault");
             }
             if (screen == QLatin1String("sheet-editor")) {
@@ -190,6 +289,7 @@ namespace Material
                     return fail(QStringLiteral("The capture theme must be light or dark."));
                 }
             }
+            request.probe = query.queryItemValue(QStringLiteral("probe")) == QLatin1String("1");
             if (query.hasQueryItem(QStringLiteral("target"))) {
                 const QString target = query.queryItemValue(QStringLiteral("target")).toLower();
                 if (target == QLatin1String("page")) {

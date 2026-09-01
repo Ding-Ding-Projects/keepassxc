@@ -276,6 +276,18 @@ endif()
 add_unit_test(NAME testsquirrellifecycle SOURCES TestSquirrelLifecycle.cpp
         LIBS ${TEST_LIBRARIES})
 
+add_unit_test(NAME testwelcomeprovenance SOURCES TestWelcomeProvenance.cpp
+        LIBS testsupport ${TEST_LIBRARIES})
+set_tests_properties(testwelcomeprovenance PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testwelcomeprovenance POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testwelcomeprovenance>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testwelcomeprovenance>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testdimsum SOURCES TestDimSum.cpp
         LIBS testsupport ${TEST_LIBRARIES})
 # The card is a widget, so the test needs a QApplication. Offscreen keeps it
