@@ -1,0 +1,54 @@
+name: Publish the documentation site
+
+# Publishes site/ to GitHub Pages on every push to the default branch. It runs no
+# tests and no lint; it builds nothing that could be withheld by a verdict. The
+# social preview image is copied beside the page so its og:image URL is served
+# from the same origin the crawler fetches.
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Assemble the site with its social preview
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p public
+          cp -R site/. public/
+          cp social-preview.png public/social-preview.png
+          touch public/.nojekyll
+          # The served copy must be byte-identical to the root master.
+          cmp social-preview.png public/social-preview.png
+          test -s public/index.html
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload the site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

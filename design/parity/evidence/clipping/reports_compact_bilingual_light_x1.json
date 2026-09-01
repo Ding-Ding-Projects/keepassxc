@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 3312,
+  "pid": 8396,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,64 +19,8 @@
     "devicePixelRatio": 1
   },
   "png": "reports_compact_bilingual_light_x1.png",
-  "pngSha256": "33d2c3ba11c7ad49dd5451892144edd387194b1dfb92e034d7e7bbaa88a555f6",
-  "findings": [
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QLabel#",
-      "rect": "98,134 106x44",
-      "text": "Database reports",
-      "textWidth": 180
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QLabel#",
-      "rect": "98,134 106x44",
-      "minimumHint": "180x32"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::SearchBar#",
-      "rect": "670,134 340x44"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "QLineEdit#",
-      "rect": "716,136 242x40"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::IconButton#",
-      "rect": "968,136 32x40"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QComboBox#reportsCategory",
-      "rect": "334,135 122x42",
-      "minimumHint": "152x42"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QToolButton#",
-      "rect": "552,140 106x31",
-      "text": "Export 0 selected finding(s)",
-      "textWidth": 142
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QToolButton#",
-      "rect": "552,140 106x31",
-      "minimumHint": "163x31"
-    }
-  ],
+  "pngSha256": "9af5b92ec87f149e5105d33d5c9f5c0e8fd7522de6dd7c0307712e2bff14916a",
+  "findings": [],
   "widgetCount": 50,
   "widgets": [
     {
@@ -244,9 +188,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "1177x670",
+      "hint": "886x670",
       "leaf": false,
-      "minimumHint": "1147x670",
+      "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "72,112 728x608",
@@ -255,9 +199,9 @@
     },
     {
       "class": "Material::ReportsScreen",
-      "hint": "1177x164",
+      "hint": "633x250",
       "leaf": false,
-      "minimumHint": "1147x132",
+      "minimumHint": "603x218",
       "name": "",
       "offscreen": false,
       "rect": "72,112 728x608",
@@ -266,12 +210,12 @@
     },
     {
       "class": "QWidget",
-      "hint": "1177x66",
+      "hint": "633x152",
       "leaf": false,
-      "minimumHint": "1147x66",
+      "minimumHint": "603x152",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x66",
+      "rect": "72,112 728x152",
       "scrollable": false,
       "squeezed": false
     },
@@ -282,11 +226,11 @@
       "minimumHint": "180x32",
       "name": "",
       "offscreen": false,
-      "rect": "98,134 106x44",
+      "rect": "98,134 180x32",
       "scrollable": false,
-      "squeezed": true,
+      "squeezed": false,
       "text": "Database reports",
-      "textOverflows": true,
+      "textOverflows": false,
       "textWidth": 180
     },
     {
@@ -295,8 +239,8 @@
       "leaf": false,
       "minimumHint": "174x44",
       "name": "",
-      "offscreen": true,
-      "rect": "670,134 340x44",
+      "offscreen": false,
+      "rect": "266,220 340x44",
       "scrollable": false,
       "squeezed": false
     },
@@ -306,8 +250,8 @@
       "leaf": true,
       "minimumHint": "28x40",
       "name": "",
-      "offscreen": true,
-      "rect": "716,136 242x40",
+      "offscreen": false,
+      "rect": "312,222 242x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Search this surface",
@@ -320,8 +264,8 @@
       "leaf": true,
       "minimumHint": "32x32",
       "name": "",
-      "offscreen": true,
-      "rect": "968,136 32x40",
+      "offscreen": false,
+      "rect": "564,222 32x40",
       "scrollable": false,
       "squeezed": false
     },
@@ -332,9 +276,9 @@
       "minimumHint": "152x42",
       "name": "reportsCategory",
       "offscreen": false,
-      "rect": "334,135 122x42",
+      "rect": "251,172 152x42",
       "scrollable": false,
-      "squeezed": true
+      "squeezed": false
     },
     {
       "class": "QToolButton",
@@ -343,7 +287,7 @@
       "minimumHint": "89x31",
       "name": "reportsExportAll",
       "offscreen": false,
-      "rect": "451,140 89x31",
+      "rect": "415,177 89x31",
       "scrollable": false,
       "squeezed": false,
       "text": "Export report",
@@ -357,11 +301,11 @@
       "minimumHint": "163x31",
       "name": "",
       "offscreen": false,
-      "rect": "552,140 106x31",
+      "rect": "516,177 163x31",
       "scrollable": false,
-      "squeezed": true,
+      "squeezed": false,
       "text": "Export 0 selected finding(s)",
-      "textOverflows": true,
+      "textOverflows": false,
       "textWidth": 142
     },
     {
@@ -371,7 +315,7 @@
       "minimumHint": "141x40",
       "name": "",
       "offscreen": false,
-      "rect": "216,136 141x40",
+      "rect": "98,173 141x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Detailed reports",
@@ -386,10 +330,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "72,178 728x542",
+      "rect": "72,264 728x456",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 396
+      "vScrollMax": 482
     },
     {
       "class": "QWidget",
@@ -398,7 +342,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "72,178 718x542",
+      "rect": "72,264 718x456",
       "scrollable": true,
       "squeezed": false
     },
@@ -409,7 +353,7 @@
       "minimumHint": "348x938",
       "name": "",
       "offscreen": false,
-      "rect": "72,178 718x938",
+      "rect": "72,264 718x938",
       "scrollable": true,
       "squeezed": false
     },
@@ -420,7 +364,7 @@
       "minimumHint": "47x16",
       "name": "reportsState",
       "offscreen": false,
-      "rect": "98,200 666x16",
+      "rect": "98,286 666x16",
       "scrollable": true,
       "squeezed": false,
       "text": "Breach exposure has not been checked online.",
@@ -434,7 +378,7 @@
       "minimumHint": "135x554",
       "name": "reportsCards",
       "offscreen": false,
-      "rect": "98,522 666x554",
+      "rect": "98,608 666x554",
       "scrollable": true,
       "squeezed": false
     },
@@ -445,7 +389,7 @@
       "minimumHint": "135x99",
       "name": "reportCard_breached",
       "offscreen": false,
-      "rect": "98,522 666x99",
+      "rect": "98,608 666x99",
       "scrollable": true,
       "squeezed": false
     },
@@ -456,7 +400,7 @@
       "minimumHint": "91x31",
       "name": "reportToggle_breached",
       "offscreen": false,
-      "rect": "120,544 91x31",
+      "rect": "120,630 91x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Breached · —",
@@ -470,7 +414,7 @@
       "minimumHint": "47x16",
       "name": "",
       "offscreen": false,
-      "rect": "120,583 622x16",
+      "rect": "120,669 622x16",
       "scrollable": true,
       "squeezed": false
     },
@@ -481,7 +425,7 @@
       "minimumHint": "47x16",
       "name": "",
       "offscreen": false,
-      "rect": "120,583 622x16",
+      "rect": "120,669 622x16",
       "scrollable": true,
       "squeezed": false,
       "text": "Not checked. Run the real breach report to obtain results.",
@@ -495,7 +439,7 @@
       "minimumHint": "109x75",
       "name": "reportCard_weak",
       "offscreen": false,
-      "rect": "98,637 666x75",
+      "rect": "98,723 666x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -506,7 +450,7 @@
       "minimumHint": "65x31",
       "name": "reportToggle_weak",
       "offscreen": false,
-      "rect": "120,659 65x31",
+      "rect": "120,745 65x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Weak · 8",
@@ -520,7 +464,7 @@
       "minimumHint": "118x75",
       "name": "reportCard_reused",
       "offscreen": false,
-      "rect": "98,728 666x75",
+      "rect": "98,814 666x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -531,7 +475,7 @@
       "minimumHint": "74x31",
       "name": "reportToggle_reused",
       "offscreen": false,
-      "rect": "120,750 74x31",
+      "rect": "120,836 74x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Reused · 8",
@@ -545,7 +489,7 @@
       "minimumHint": "118x75",
       "name": "reportCard_expired",
       "offscreen": false,
-      "rect": "98,819 666x75",
+      "rect": "98,905 666x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -556,7 +500,7 @@
       "minimumHint": "74x31",
       "name": "reportToggle_expired",
       "offscreen": false,
-      "rect": "120,841 74x31",
+      "rect": "120,927 74x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Expired · 0",
@@ -570,7 +514,7 @@
       "minimumHint": "127x75",
       "name": "reportCard_healthy",
       "offscreen": false,
-      "rect": "98,910 666x75",
+      "rect": "98,996 666x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -581,7 +525,7 @@
       "minimumHint": "83x31",
       "name": "reportToggle_healthy",
       "offscreen": false,
-      "rect": "120,932 83x31",
+      "rect": "120,1018 83x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Healthy · 12",
@@ -595,7 +539,7 @@
       "minimumHint": "132x75",
       "name": "reportCard_statistics",
       "offscreen": false,
-      "rect": "98,1001 666x75",
+      "rect": "98,1087 666x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -606,7 +550,7 @@
       "minimumHint": "88x31",
       "name": "reportToggle_statistics",
       "offscreen": false,
-      "rect": "120,1023 88x31",
+      "rect": "120,1109 88x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Statistics · 19",
@@ -620,7 +564,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "98,232 163x127",
+      "rect": "98,318 163x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -631,7 +575,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "277,232 162x127",
+      "rect": "277,318 162x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -642,7 +586,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "98,375 163x127",
+      "rect": "98,461 163x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -653,7 +597,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "277,375 162x127",
+      "rect": "277,461 162x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -664,7 +608,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "790,178 10x542",
+      "rect": "790,264 10x456",
       "scrollable": true,
       "squeezed": false
     },
@@ -675,7 +619,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "790,178 10x542",
+      "rect": "790,264 10x456",
       "scrollable": true,
       "squeezed": false
     }

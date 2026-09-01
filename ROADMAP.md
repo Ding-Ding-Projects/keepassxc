@@ -42,6 +42,13 @@
 - [x] Capture every design reference and the built application at identical tuples, compare them, and hand-audit each row against Material Design 3 (`design/parity`).
 - [ ] Repair the open parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports cards, vault root listing, OS caption bar, settings pages) and recapture.
 - [x] Hide the legacy status bar under the Material shell and route progress through the notification host.
+- [x] Show the running version, revision and exact updated-at time of that revision on the welcome screen, with an honest unavailable state.
+- [x] Wrap the shared screen header onto extra rows when its actions and search bar would overflow.
+- [x] Make the dim sum surprise a ten percent draw with no opt-out and retire the old toggle.
+- [x] Bind the command palette to `Ctrl+Shift+F`.
+- [ ] Give command palette results rich inline controls and exact-element teleport.
+- [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
+- [ ] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding.
 - [ ] Turn every row of the fail-closed feature inventory (`docs/features/inventory.json`) green; `scripts/check-feature-inventory.mjs` currently reports 0/172.
 
 ## Installer and updater
@@ -59,3 +66,5 @@
 - [x] Stream full packages with storage preflight, atomic finalization, SHA-256/SHA-1 validation, and bounded NuGet structure checks.
 - [x] Generate the versioned update manifest from verified release bytes and apply only through a verified local Squirrel feed.
 - [ ] Prove update, deferred restart, invalid package rejection, rollback, and uninstall.
+- [x] Publish a CI-measured line count, workflow timing and a dim sum code name with the public photo in every release.
+- [x] Fetch tags in the CodeQL checkout so the changelog provenance guard configures.

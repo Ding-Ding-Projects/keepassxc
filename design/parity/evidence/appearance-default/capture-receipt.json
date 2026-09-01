@@ -86,5 +86,13 @@
     },
     "windowPng": "built-window.png",
     "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "83521e492567b7f7cb934b1badc7be59049a798c8a175fe42bd36760340617c3",
+    "diff": "diff.json",
+    "diffSha256": "4ab8f19ae16be0be9fa3f398e3192f9be239f30595838d1a0131ed60ed140a12",
+    "mismatchRatio": 0.11230038759689923,
+    "sizeMismatch": false
   }
 }

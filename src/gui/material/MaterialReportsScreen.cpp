@@ -425,7 +425,9 @@ namespace Material
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search this surface"));
         searchBar()->setIdentity(QStringLiteral("reports.findings"), tr("Report findings search"));
-        searchBar()->setFixedWidth(SearchWidth);
+        // A minimum, not a fixed width: on the header's own overflow row the bar
+        // stretches across the width instead of sitting at 340 px in a corner.
+        searchBar()->setMinimumWidth(SearchWidth);
 
         m_category = new QComboBox;
         m_category->setObjectName(QStringLiteral("reportsCategory"));

@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 27468,
+  "pid": 4756,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -20,15 +20,7 @@
   },
   "png": "vault_compact_bilingual_light_x1.png",
   "pngSha256": "7a9624f9a1ab07d2a67f7e19a29741a869f88cbdbc28eecfc151e5b2fcabe997",
-  "findings": [
-    {
-      "tuple": "vault_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "Material::SegmentedButton#",
-      "rect": "559,190 225x32",
-      "minimumHint": "168x40"
-    }
-  ],
+  "findings": [],
   "widgetCount": 34,
   "widgets": [
     {
@@ -196,9 +188,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "1177x670",
+      "hint": "886x670",
       "leaf": false,
-      "minimumHint": "1147x670",
+      "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "72,112 728x608",
@@ -365,14 +357,14 @@
     },
     {
       "class": "Material::SegmentedButton",
-      "hint": "225x40",
+      "hint": "225x32",
       "leaf": true,
-      "minimumHint": "168x40",
+      "minimumHint": "168x32",
       "name": "",
       "offscreen": false,
       "rect": "559,190 225x32",
       "scrollable": false,
-      "squeezed": true
+      "squeezed": false
     },
     {
       "class": "QStackedWidget",

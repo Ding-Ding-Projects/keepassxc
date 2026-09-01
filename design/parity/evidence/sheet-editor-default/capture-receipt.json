@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
-  "capturedAt": "2026-09-01T21:31:47.892Z",
+  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+  "capturedAt": "2026-09-01T23:56:24.515Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/sheet-editor-default",
     "png": "reference.png",
@@ -51,17 +51,17 @@
   "built": {
     "route": "kpxc://capture/sheet-editor?state=default&width=1280&height=860&theme=light&lang=bilingual&target=page",
     "png": "built.png",
-    "sha256": "0c469dc07104ddd2db6458a4e8783b7f5f80bea497b7849f007af9055f75e48a",
+    "sha256": "1bd124ead0dcd3d036d9d2a8f2467c1893efa3fb3a084993d948444fa871ae2b",
     "bytes": 84965,
-    "pid": 30548,
-    "hwnd": 13633462,
+    "pid": 30416,
+    "hwnd": 3017932,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "editor",
       "devicePixelRatio": 1,
-      "hwnd": "13633462",
+      "hwnd": "3017932",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -75,8 +75,8 @@
       "target": "page",
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
-      "version": "2.8.8701",
-      "windowGeometry": "560,185 1368x1001"
+      "version": "2.8.8501",
+      "windowGeometry": "560,185 1368x972"
     },
     "cropRect": {
       "x": 88,
@@ -89,9 +89,9 @@
   },
   "comparison": {
     "png": "comparison.png",
-    "sha256": "7fbaf0a550f5bb1bbf78b7950243b4da30ce857e304507e5af918db533975eb4",
+    "sha256": "50819d7662fc0fd351d59889c732e26c9e7239515f65a71d72e9900f958564b5",
     "diff": "diff.json",
-    "diffSha256": "733842205379647fb4c79e1b60d7767fd26c6df4acab149385c346141db1945f",
+    "diffSha256": "5ee697e5e0478706c306cba7f9d35c6c0ed4dc009ca16557fc072f6ec36f6de6",
     "mismatchRatio": 0.04819858284883721,
     "sizeMismatch": false
   }

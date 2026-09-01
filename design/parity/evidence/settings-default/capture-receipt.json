@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
-  "capturedAt": "2026-09-01T21:31:35.492Z",
+  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+  "capturedAt": "2026-09-01T23:56:12.006Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/settings-default",
     "png": "reference.png",
@@ -51,17 +51,17 @@
   "built": {
     "route": "kpxc://capture/settings?state=default&width=1280&height=860&theme=light&lang=bilingual&target=page",
     "png": "built.png",
-    "sha256": "0aefda1a266b5fda7e486a26b240c510fca5403590d5c0e5ec20ef082b7c07d4",
-    "bytes": 106447,
-    "pid": 26652,
-    "hwnd": 4590010,
+    "sha256": "34b652a09d55888c62ada74af8c06e0d8e99ef8c4070959cd9b02623f52f695f",
+    "bytes": 106465,
+    "pid": 21592,
+    "hwnd": 3082102,
     "windowTitle": "Settings - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "settings",
       "devicePixelRatio": 1,
-      "hwnd": "4590010",
+      "hwnd": "3082102",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -75,8 +75,8 @@
       "target": "page",
       "theme": "light",
       "title": "Settings[*] - KeePassXC",
-      "version": "2.8.8701",
-      "windowGeometry": "560,185 1368x1001"
+      "version": "2.8.8501",
+      "windowGeometry": "560,185 1368x972"
     },
     "cropRect": {
       "x": 88,
@@ -89,10 +89,10 @@
   },
   "comparison": {
     "png": "comparison.png",
-    "sha256": "12b1a2e45289d033714ebe2528e10ff69f1e8169c8acab4244e524229d568669",
+    "sha256": "c5dd5340514bad30fa9401518973d40049223a918682412983ca3491aa965fbf",
     "diff": "diff.json",
-    "diffSha256": "8c06cfc469a1196eb2d18cd706d75ccb18381e33a6c050130ee40316802ae127",
-    "mismatchRatio": 0.05601471656976744,
+    "diffSha256": "f89e077eef15e4053951e79cb8b346451488e7e04a9beb32e89baa41961d1ea2",
+    "mismatchRatio": 0.0560328851744186,
     "sizeMismatch": false
   }
 }
