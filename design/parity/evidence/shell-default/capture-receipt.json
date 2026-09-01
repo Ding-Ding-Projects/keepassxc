@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "rowId": "shell-default",
+  "tuple": {
+    "screen": "shell",
+    "state": "default",
+    "theme": "light",
+    "viewport": {
+      "width": 1440,
+      "height": 920
+    },
+    "scale": 1,
+    "locale": "en-HK"
+  },
+  "determinism": {
+    "fixture": "design/lib/vault-data.js",
+    "time": "2026-08-20T12:00:00.000Z",
+    "motion": "disabled",
+    "random": "seeded-from-row-id",
+    "font": "reference-css-font-stack",
+    "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+    "languageMode": "both"
+  },
+  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
+  "capturedAt": "2026-09-01T21:26:01.723Z",
+  "reference": {
+    "url": "http://127.0.0.1:43110/reference/shell-default",
+    "png": "reference.png",
+    "sha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
+    "bytes": 204754,
+    "tool": "msedge --headless=new --screenshot",
+    "edgeArgs": [
+      "--headless=new",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
+      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-shell-default",
+      "--window-size=1440,920",
+      "--force-device-scale-factor=1",
+      "--lang=en-HK",
+      "--virtual-time-budget=12000",
+      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\shell-default\\reference.png",
+      "http://127.0.0.1:43110/reference/shell-default"
+    ]
+  },
+  "built": {
+    "route": "kpxc://capture/shell?state=default&width=1440&height=920&theme=light&lang=bilingual",
+    "png": "built.png",
+    "sha256": "9f77cf7cbd3d6d9b8d87fc65a6e0c3c5b2525f94e5eecdfa0c716e6b2011c220",
+    "bytes": 65170,
+    "pid": 3608,
+    "hwnd": 25495534,
+    "windowTitle": "parity.kdbx - KeePassXC",
+    "windowClass": "Qt683QWindowIcon",
+    "dpi": 96,
+    "routeReceipt": {
+      "destination": "vault",
+      "devicePixelRatio": 1,
+      "hwnd": "25495534",
+      "languageMode": "Bilingual",
+      "outcome": "ready",
+      "page": "",
+      "pageRect": "88,112 1352x808",
+      "requestedViewport": "1440x920",
+      "schemaVersion": 1,
+      "screen": "shell",
+      "shellRect": "0,0 1440x920",
+      "shellViewport": "1440x920",
+      "state": "default",
+      "target": "shell",
+      "theme": "light",
+      "title": "parity.kdbx[*] - KeePassXC",
+      "version": "2.8.8701",
+      "windowGeometry": "560,185 1440x949"
+    },
+    "cropRect": null,
+    "windowPng": null,
+    "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "ca1353cddd26df5fa0d25e45d9e2f470b6287770a878a5ed9d5a4e1585fba60f",
+    "diff": "diff.json",
+    "diffSha256": "89ca46437f5b8a4984b50ecd955b2f6ead0197530da06da3ee9287edf8368c13",
+    "mismatchRatio": 0.08593976449275362,
+    "sizeMismatch": true
+  }
+}

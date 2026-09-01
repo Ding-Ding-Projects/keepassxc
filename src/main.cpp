@@ -29,6 +29,7 @@
 #include "gui/Application.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialCaptureRoute.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/osutils/OSUtils.h"
 #include "platform/SquirrelLifecycle.h"
@@ -106,6 +107,11 @@ int main(int argc, char** argv)
     QCommandLineOption allowScreenCaptureOption("allow-screencapture",
                                                 QObject::tr("allow screenshots and app recording (Windows/macOS)"));
     QCommandLineOption startMinimized("minimized", QObject::tr("start minimized to the system tray"));
+    QCommandLineOption captureRouteOption("capture-route",
+                                          QObject::tr("open a design-parity capture route (kpxc://capture/<screen>)"),
+                                          "url");
+    QCommandLineOption captureReceiptOption(
+        "capture-receipt", QObject::tr("write a JSON readiness receipt for the capture route"), "path");
 
     QCommandLineOption helpOption = parser.addHelpOption();
     QCommandLineOption versionOption = parser.addVersionOption();
@@ -118,6 +124,8 @@ int main(int argc, char** argv)
     parser.addOption(debugInfoOption);
     parser.addOption(allowScreenCaptureOption);
     parser.addOption(startMinimized);
+    parser.addOption(captureRouteOption);
+    parser.addOption(captureReceiptOption);
 
     parser.process(applicationArguments);
 
@@ -233,7 +241,19 @@ int main(int argc, char** argv)
     } else {
         mainWindow.bringToFront();
         Application::processEvents();
-        Material::DimSum::showIfDue(&mainWindow);
+        if (parser.isSet(captureRouteOption)) {
+            Material::CaptureRoute::Request request;
+            request.receiptPath = parser.value(captureReceiptOption);
+            QString error;
+            if (!Material::CaptureRoute::parse(parser.value(captureRouteOption), request, &error)) {
+                QTextStream err(stderr, QIODevice::WriteOnly);
+                err << error << Qt::endl;
+                return EXIT_FAILURE;
+            }
+            Material::CaptureRoute::schedule(&mainWindow, request);
+        } else {
+            Material::DimSum::showIfDue(&mainWindow);
+        }
     }
 
     int exitCode = Application::exec();

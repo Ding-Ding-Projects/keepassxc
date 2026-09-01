@@ -1,0 +1,93 @@
+{
+  "schemaVersion": 1,
+  "rowId": "regex-builder-default",
+  "tuple": {
+    "screen": "regex-builder",
+    "state": "default",
+    "theme": "light",
+    "viewport": {
+      "width": 1040,
+      "height": 720
+    },
+    "scale": 1,
+    "locale": "en-HK"
+  },
+  "determinism": {
+    "fixture": "design/lib/regex-lab.js",
+    "time": "2026-08-20T12:00:00.000Z",
+    "motion": "disabled",
+    "random": "seeded-from-row-id",
+    "font": "reference-css-font-stack",
+    "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+    "languageMode": "both"
+  },
+  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
+  "capturedAt": "2026-09-01T21:26:15.569Z",
+  "reference": {
+    "url": "http://127.0.0.1:43110/reference/regex-builder-default",
+    "png": "reference.png",
+    "sha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
+    "bytes": 84864,
+    "tool": "msedge --headless=new --screenshot",
+    "edgeArgs": [
+      "--headless=new",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
+      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-regex-builder-default",
+      "--window-size=1040,720",
+      "--force-device-scale-factor=1",
+      "--lang=en-HK",
+      "--virtual-time-budget=12000",
+      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\regex-builder-default\\reference.png",
+      "http://127.0.0.1:43110/reference/regex-builder-default"
+    ]
+  },
+  "built": {
+    "route": "kpxc://capture/regex-builder?state=default&width=1040&height=720&theme=light&lang=bilingual",
+    "png": "built.png",
+    "sha256": "b10d563079475e7ef331326c600a5254925814863e1b0a7004ee91bc8e881f2c",
+    "bytes": 57051,
+    "pid": 25536,
+    "hwnd": 35260388,
+    "windowTitle": "parity.kdbx - KeePassXC",
+    "windowClass": "Qt683QWindowIcon",
+    "dpi": 96,
+    "routeReceipt": {
+      "destination": "vault",
+      "devicePixelRatio": 1,
+      "hwnd": "35260388",
+      "languageMode": "Bilingual",
+      "outcome": "ready",
+      "page": "",
+      "pageRect": "88,112 952x608",
+      "requestedViewport": "1040x720",
+      "schemaVersion": 1,
+      "screen": "regex-builder",
+      "shellRect": "0,0 1040x720",
+      "shellViewport": "1040x720",
+      "state": "default",
+      "target": "shell",
+      "theme": "light",
+      "title": "parity.kdbx[*] - KeePassXC",
+      "version": "2.8.8701",
+      "windowGeometry": "560,185 1040x749"
+    },
+    "cropRect": null,
+    "windowPng": null,
+    "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "771c2c83bf4e0ac84e3ee1c27017126eb3d45d8d41e00ce4a1d0462f6124b28d",
+    "diff": "diff.json",
+    "diffSha256": "e8d8b31da84a2497ed4d4e78c9ab82c40d64541945dd9b04e6522b645bf2ad86",
+    "mismatchRatio": 0.3200387286324786,
+    "sizeMismatch": true
+  }
+}

@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "rowId": "reports-default",
+  "tuple": {
+    "screen": "reports",
+    "state": "default",
+    "theme": "light",
+    "viewport": {
+      "width": 1200,
+      "height": 860
+    },
+    "scale": 1,
+    "locale": "en-HK"
+  },
+  "determinism": {
+    "fixture": "design/lib/vault-data.js",
+    "time": "2026-08-20T12:00:00.000Z",
+    "motion": "disabled",
+    "random": "seeded-from-row-id",
+    "font": "reference-css-font-stack",
+    "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+    "languageMode": "both"
+  },
+  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
+  "capturedAt": "2026-09-01T21:26:29.279Z",
+  "built": {
+    "route": "kpxc://capture/reports?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
+    "png": "built.png",
+    "sha256": "762b6b3693615b4943b72858ac2dac87c0c5c3536d0fcff15df1e1442e44d543",
+    "bytes": 57800,
+    "pid": 25380,
+    "hwnd": 27658454,
+    "windowTitle": "parity.kdbx - KeePassXC",
+    "windowClass": "Qt683QWindowIcon",
+    "dpi": 96,
+    "routeReceipt": {
+      "destination": "reports",
+      "devicePixelRatio": 1,
+      "hwnd": "27658454",
+      "languageMode": "Bilingual",
+      "outcome": "ready",
+      "page": "",
+      "pageRect": "88,112 1200x860",
+      "requestedViewport": "1200x860",
+      "schemaVersion": 1,
+      "screen": "reports",
+      "shellRect": "0,0 1288x972",
+      "shellViewport": "1288x972",
+      "state": "default",
+      "target": "page",
+      "theme": "light",
+      "title": "parity.kdbx[*] - KeePassXC",
+      "version": "2.8.8701",
+      "windowGeometry": "560,185 1288x1001"
+    },
+    "cropRect": {
+      "x": 88,
+      "y": 112,
+      "w": 1200,
+      "h": 860
+    },
+    "windowPng": "built-window.png",
+    "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "reference": {
+    "url": "http://127.0.0.1:43110/reference/reports-default",
+    "png": "reference.png",
+    "sha256": "8265bc8dfe88182222c5ba2e6e5a14c6ebe6c9a42f27a88ad99f1f696d3314e6",
+    "bytes": 86450,
+    "tool": "msedge --headless=new --screenshot",
+    "edgeArgs": [
+      "--headless=new",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
+      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-reports-default",
+      "--window-size=1200,860",
+      "--force-device-scale-factor=1",
+      "--lang=en-HK",
+      "--virtual-time-budget=12000",
+      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\reports-default\\reference.png",
+      "http://127.0.0.1:43110/reference/reports-default"
+    ]
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "704c0b32b38fcd6e650013b9af5c52a45a0593682be5b9b83855b74a59f85d3d",
+    "diff": "diff.json",
+    "diffSha256": "766ecbdef57e4e5db2d8b6b12bf76696faa15f60364524c0ba55201dc6b47d62",
+    "mismatchRatio": 0.22579651162790698,
+    "sizeMismatch": false
+  }
+}

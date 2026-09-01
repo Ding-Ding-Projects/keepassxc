@@ -11,12 +11,34 @@ const host = '127.0.0.1';
 const requestedPort = Number.parseInt(process.argv[2] || '43110', 10);
 const fixedNow = '2026-08-20T12:00:00.000Z';
 
+// The checked-in references load their runtime and fonts from public origins.
+// Serving rewrites those exact URLs to the hash-pinned copies under
+// lib/vendor (see design/parity/vendor-reference-assets.mjs) so a capture is
+// offline and deterministic. The files on disk are never modified; the
+// inventory's reference hash is taken from the original bytes.
+const vendorRewrites = new Map([
+  ['https://unpkg.com/react@18.3.1/umd/react.production.min.js', '/design/lib/vendor/react.production.min.js'],
+  ['https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js', '/design/lib/vendor/react-dom.production.min.js'],
+  ['https://unpkg.com/@babel/standalone@7.29.0/babel.min.js', '/design/lib/vendor/babel.min.js'],
+  ['https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Roboto+Mono:wght@400;500&family=Noto+Sans+HK:wght@400;500;700&family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap', '/design/lib/vendor/fonts.css']
+]);
+const rewritable = new Set(['.html', '.js', '.css']);
+
+function applyVendorRewrites(text) {
+  let out = text;
+  for (const [remote, local] of vendorRewrites) out = out.split(remote).join(local);
+  return out;
+}
+
 const mime = new Map([
   ['.css', 'text/css; charset=utf-8'],
   ['.html', 'text/html; charset=utf-8'],
   ['.js', 'text/javascript; charset=utf-8'],
   ['.json', 'application/json; charset=utf-8'],
-  ['.png', 'image/png']
+  ['.png', 'image/png'],
+  ['.woff2', 'font/woff2'],
+  ['.woff', 'font/woff'],
+  ['.ttf', 'font/ttf']
 ]);
 
 function deterministicPrelude(row) {
@@ -74,7 +96,7 @@ const server = createServer(async (request, response) => {
       const source = resolve(designRoot, row.referenceFile);
       if (!insideDesignRoot(source)) throw new Error('Reference path escaped design root');
       const html = await readFile(source, 'utf8');
-      const rendered = html.replace('<head>', `<head>\n${deterministicPrelude(row)}`);
+      const rendered = applyVendorRewrites(html.replace('<head>', `<head>\n${deterministicPrelude(row)}`));
       response.writeHead(200, {
         'Content-Type': 'text/html; charset=utf-8',
         'Cache-Control': 'no-store',
@@ -87,9 +109,10 @@ const server = createServer(async (request, response) => {
       const relativePath = normalize(decodeURIComponent(url.pathname.slice('/design/'.length)));
       const file = resolve(designRoot, relativePath);
       if (!insideDesignRoot(file)) throw new Error('Static path escaped design root');
-      const bytes = await readFile(file);
+      const extension = extname(file).toLowerCase();
+      const bytes = rewritable.has(extension) ? Buffer.from(applyVendorRewrites((await readFile(file)).toString('utf8')), 'utf8') : await readFile(file);
       response.writeHead(200, {
-        'Content-Type': mime.get(extname(file).toLowerCase()) || 'application/octet-stream',
+        'Content-Type': mime.get(extension) || 'application/octet-stream',
         'Cache-Control': 'no-store'
       });
       response.end(bytes);

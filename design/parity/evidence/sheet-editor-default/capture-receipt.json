@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "rowId": "sheet-editor-default",
+  "tuple": {
+    "screen": "sheet-editor",
+    "state": "default",
+    "theme": "light",
+    "viewport": {
+      "width": 1280,
+      "height": 860
+    },
+    "scale": 1,
+    "locale": "en-HK"
+  },
+  "determinism": {
+    "fixture": "design/lib/vault-data.js",
+    "time": "2026-08-20T12:00:00.000Z",
+    "motion": "disabled",
+    "random": "seeded-from-row-id",
+    "font": "reference-css-font-stack",
+    "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+    "languageMode": "both"
+  },
+  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
+  "capturedAt": "2026-09-01T21:26:54.349Z",
+  "reference": {
+    "url": "http://127.0.0.1:43110/reference/sheet-editor-default",
+    "png": "reference.png",
+    "sha256": "47c4896ece7a3e5c105ea0a060d3956cfbd25865bef7459679a01b479c752edb",
+    "bytes": 76325,
+    "tool": "msedge --headless=new --screenshot",
+    "edgeArgs": [
+      "--headless=new",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
+      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-sheet-editor-default",
+      "--window-size=1280,860",
+      "--force-device-scale-factor=1",
+      "--lang=en-HK",
+      "--virtual-time-budget=12000",
+      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\sheet-editor-default\\reference.png",
+      "http://127.0.0.1:43110/reference/sheet-editor-default"
+    ]
+  },
+  "built": {
+    "route": "kpxc://capture/sheet-editor?state=default&width=1280&height=860&theme=light&lang=bilingual&target=page",
+    "png": "built.png",
+    "sha256": "3ae6a95a98f3250f4fd75c18c31f997dd1f537ccf91847fedd50e0861f108aa3",
+    "bytes": 78904,
+    "pid": 16544,
+    "hwnd": 34998010,
+    "windowTitle": "parity.kdbx - KeePassXC",
+    "windowClass": "Qt683QWindowIcon",
+    "dpi": 96,
+    "routeReceipt": {
+      "destination": "editor",
+      "devicePixelRatio": 1,
+      "hwnd": "34998010",
+      "languageMode": "Bilingual",
+      "outcome": "ready",
+      "page": "",
+      "pageRect": "88,112 1280x860",
+      "requestedViewport": "1280x860",
+      "schemaVersion": 1,
+      "screen": "sheet-editor",
+      "shellRect": "0,0 1368x972",
+      "shellViewport": "1368x972",
+      "state": "default",
+      "target": "page",
+      "theme": "light",
+      "title": "parity.kdbx[*] - KeePassXC",
+      "version": "2.8.8701",
+      "windowGeometry": "560,185 1368x1001"
+    },
+    "cropRect": {
+      "x": 88,
+      "y": 112,
+      "w": 1280,
+      "h": 860
+    },
+    "windowPng": "built-window.png",
+    "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "aec39a25f933f30e1f786a5680aff4acf11c7ce5e577ce88eec8097669bf879c",
+    "diff": "diff.json",
+    "diffSha256": "dff5ca1c535f92cbe4ce895caf7c1b6f31a4291526fe26e629dd6274ddc2e762",
+    "mismatchRatio": 0.11571856831395348,
+    "sizeMismatch": false
+  }
+}

@@ -7,63 +7,441 @@
       "referenceFile": "Appearance.dc.html",
       "referenceSha256": "113d6cc0cb02aa1890443b5993039a8669bcdfcb59fcf5f6451b628b6120fa3d",
       "referenceRoute": "/reference/appearance-default",
-      "builtRoute": "material-shell://destination/appearance?state=default",
+      "builtRoute": "kpxc://capture/appearance?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
       "builtRouteStatus": "implemented-source-unverified",
       "screen": "appearance",
       "state": "default",
-      "tuple": { "screen": "appearance", "state": "default", "theme": "light", "viewport": { "width": 1200, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/appearance-default.json", "reason": "Built-artifact review has not run." },
-      "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/appearance-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/appearance-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/appearance-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/appearance-default/diff.json", "diffSha256": "pending" },
-      "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "tuple": {
+        "screen": "appearance",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1200,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/appearance-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/appearance-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/appearance-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/appearance-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/appearance-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending"
     },
     {
-      "id": "changelog-default", "referenceFile": "Changelog.dc.html", "referenceSha256": "b22d21323d92053e95f2650770a8ae7593ffad79f1e3681ddc49647ee838638e", "referenceRoute": "/reference/changelog-default", "builtRoute": "material-shell://destination/changelog?state=default", "builtRouteStatus": "implemented-source-unverified", "screen": "changelog", "state": "default",
-      "tuple": { "screen": "changelog", "state": "default", "theme": "light", "viewport": { "width": 1200, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/changelog-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/changelog-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/changelog-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/changelog-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/changelog-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "changelog-default",
+      "referenceFile": "Changelog.dc.html",
+      "referenceSha256": "b22d21323d92053e95f2650770a8ae7593ffad79f1e3681ddc49647ee838638e",
+      "referenceRoute": "/reference/changelog-default",
+      "builtRoute": "kpxc://capture/changelog?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
+      "builtRouteStatus": "implemented-source-unverified",
+      "screen": "changelog",
+      "state": "default",
+      "tuple": {
+        "screen": "changelog",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1200,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/changelog-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/changelog-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/changelog-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/changelog-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/changelog-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending"
     },
     {
-      "id": "history-default", "referenceFile": "History.dc.html", "referenceSha256": "962c5fb1f779e192e3d837b38e9c0aad78bed574bd99de3ad9b6f142e6a776c8", "referenceRoute": "/reference/history-default", "builtRoute": "material-shell://destination/history?state=default", "builtRouteStatus": "implemented-source-unverified", "screen": "history", "state": "default",
-      "tuple": { "screen": "history", "state": "default", "theme": "light", "viewport": { "width": 1200, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/history-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/history-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/history-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/history-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/history-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "history-default",
+      "referenceFile": "History.dc.html",
+      "referenceSha256": "962c5fb1f779e192e3d837b38e9c0aad78bed574bd99de3ad9b6f142e6a776c8",
+      "referenceRoute": "/reference/history-default",
+      "builtRoute": "kpxc://capture/history?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
+      "builtRouteStatus": "implemented-source-unverified",
+      "screen": "history",
+      "state": "default",
+      "tuple": {
+        "screen": "history",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1200,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/history-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/history-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/history-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/history-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/history-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending"
     },
     {
-      "id": "shell-default", "referenceFile": "KeePassXC Material.dc.html", "referenceSha256": "fa4073762ce15bd734b04197888e2337f2f15e80dfc5a6fbea554a8ff5309c8a", "referenceRoute": "/reference/shell-default", "builtRoute": "kpxc://capture/shell?state=default", "screen": "shell", "state": "default",
-      "tuple": { "screen": "shell", "state": "default", "theme": "light", "viewport": { "width": 1440, "height": 920 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/shell-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/shell-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/shell-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/shell-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/shell-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "shell-default",
+      "referenceFile": "KeePassXC Material.dc.html",
+      "referenceSha256": "fa4073762ce15bd734b04197888e2337f2f15e80dfc5a6fbea554a8ff5309c8a",
+      "referenceRoute": "/reference/shell-default",
+      "builtRoute": "kpxc://capture/shell?state=default&width=1440&height=920&theme=light&lang=bilingual",
+      "screen": "shell",
+      "state": "default",
+      "tuple": {
+        "screen": "shell",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1440,
+          "height": 920
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/shell-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/shell-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/shell-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/shell-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/shell-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending",
+      "builtRouteStatus": "implemented-source-unverified"
     },
     {
-      "id": "regex-builder-default", "referenceFile": "RegexBuilder.dc.html", "referenceSha256": "027c5379fa8f95a75f309ef07e384e9b77d7b1a314aa4cd124513b4beaf09ccd", "referenceRoute": "/reference/regex-builder-default", "builtRoute": "kpxc://capture/regex-builder?state=default", "screen": "regex-builder", "state": "default",
-      "tuple": { "screen": "regex-builder", "state": "default", "theme": "light", "viewport": { "width": 1040, "height": 720 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/regex-lab.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/regex-builder-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/regex-builder-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/regex-builder-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/regex-builder-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "regex-builder-default",
+      "referenceFile": "RegexBuilder.dc.html",
+      "referenceSha256": "027c5379fa8f95a75f309ef07e384e9b77d7b1a314aa4cd124513b4beaf09ccd",
+      "referenceRoute": "/reference/regex-builder-default",
+      "builtRoute": "kpxc://capture/regex-builder?state=default&width=1040&height=720&theme=light&lang=bilingual",
+      "screen": "regex-builder",
+      "state": "default",
+      "tuple": {
+        "screen": "regex-builder",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1040,
+          "height": 720
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/regex-lab.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/regex-builder-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/regex-builder-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending",
+      "builtRouteStatus": "implemented-source-unverified"
     },
     {
-      "id": "reports-default", "referenceFile": "Reports.dc.html", "referenceSha256": "88a235a08bb2d844f51d8f716b834b57e5454768701ba9e4b724725cd084da6d", "referenceRoute": "/reference/reports-default", "builtRoute": "material-shell://destination/reports?state=default", "builtRouteStatus": "implemented-source-unverified", "screen": "reports", "state": "default",
-      "tuple": { "screen": "reports", "state": "default", "theme": "light", "viewport": { "width": 1200, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/reports-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/reports-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/reports-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/reports-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/reports-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "reports-default",
+      "referenceFile": "Reports.dc.html",
+      "referenceSha256": "88a235a08bb2d844f51d8f716b834b57e5454768701ba9e4b724725cd084da6d",
+      "referenceRoute": "/reference/reports-default",
+      "builtRoute": "kpxc://capture/reports?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
+      "builtRouteStatus": "implemented-source-unverified",
+      "screen": "reports",
+      "state": "default",
+      "tuple": {
+        "screen": "reports",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1200,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/reports-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/reports-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/reports-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/reports-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/reports-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending"
     },
     {
-      "id": "settings-default", "referenceFile": "Settings.dc.html", "referenceSha256": "9e4d480fb47c0abb36ac38e81fbdff0a87d8540ab578475bb2089529f3eb85bf", "referenceRoute": "/reference/settings-default", "builtRoute": "kpxc://capture/settings?state=default", "screen": "settings", "state": "default",
-      "tuple": { "screen": "settings", "state": "default", "theme": "light", "viewport": { "width": 1280, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/settings-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/settings-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/settings-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/settings-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/settings-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "settings-default",
+      "referenceFile": "Settings.dc.html",
+      "referenceSha256": "9e4d480fb47c0abb36ac38e81fbdff0a87d8540ab578475bb2089529f3eb85bf",
+      "referenceRoute": "/reference/settings-default",
+      "builtRoute": "kpxc://capture/settings?state=default&width=1280&height=860&theme=light&lang=bilingual&target=page",
+      "screen": "settings",
+      "state": "default",
+      "tuple": {
+        "screen": "settings",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1280,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/settings-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/settings-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/settings-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/settings-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/settings-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending",
+      "builtRouteStatus": "implemented-source-unverified"
     },
     {
-      "id": "sheet-editor-default", "referenceFile": "Sheet.dc.html", "referenceSha256": "1e37b50fdeebe5c1eaa2c428f549f384c15e1659c02c969abe8cd5d8f80d361b", "referenceRoute": "/reference/sheet-editor-default", "builtRoute": "kpxc://capture/sheet/editor?state=default", "screen": "sheet-editor", "state": "default",
-      "tuple": { "screen": "sheet-editor", "state": "default", "theme": "light", "viewport": { "width": 1280, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/sheet-editor-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/sheet-editor-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/sheet-editor-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/sheet-editor-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/sheet-editor-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "sheet-editor-default",
+      "referenceFile": "Sheet.dc.html",
+      "referenceSha256": "1e37b50fdeebe5c1eaa2c428f549f384c15e1659c02c969abe8cd5d8f80d361b",
+      "referenceRoute": "/reference/sheet-editor-default",
+      "builtRoute": "kpxc://capture/sheet-editor?state=default&width=1280&height=860&theme=light&lang=bilingual&target=page",
+      "screen": "sheet-editor",
+      "state": "default",
+      "tuple": {
+        "screen": "sheet-editor",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1280,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/sheet-editor-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/sheet-editor-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/sheet-editor-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/sheet-editor-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/sheet-editor-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending",
+      "builtRouteStatus": "implemented-source-unverified"
     },
     {
-      "id": "vault-default", "referenceFile": "Vault.dc.html", "referenceSha256": "06c5c58a8d2da424414c1954423b232ebc881e3bb11a102b40a17cbf49250c84", "referenceRoute": "/reference/vault-default", "builtRoute": "kpxc://capture/vault?state=default", "screen": "vault", "state": "default",
-      "tuple": { "screen": "vault", "state": "default", "theme": "light", "viewport": { "width": 1440, "height": 860 }, "scale": 1, "locale": "en-HK" },
-      "determinism": { "fixture": "design/lib/vault-data.js", "time": "2026-08-20T12:00:00.000Z", "motion": "disabled", "random": "seeded-from-row-id", "font": "reference-css-font-stack", "network": "allowlisted-pinned-runtime-pending-local-vendoring", "languageMode": "both" },
-      "audit": { "status": "pending", "path": "design/parity/audits/vault-default.json", "reason": "Built-artifact review has not run." }, "evidence": { "status": "pending", "referenceRaw": "design/parity/evidence/vault-default/reference.png", "referenceRawSha256": "pending", "builtRaw": "design/parity/evidence/vault-default/built.png", "builtRawSha256": "pending", "comparison": "design/parity/evidence/vault-default/comparison.png", "comparisonSha256": "pending", "diff": "design/parity/evidence/vault-default/diff.json", "diffSha256": "pending" }, "deviations": [], "sourceCommit": "pending", "captureTool": "pending"
+      "id": "vault-default",
+      "referenceFile": "Vault.dc.html",
+      "referenceSha256": "06c5c58a8d2da424414c1954423b232ebc881e3bb11a102b40a17cbf49250c84",
+      "referenceRoute": "/reference/vault-default",
+      "builtRoute": "kpxc://capture/vault?state=default&width=1440&height=860&theme=light&lang=bilingual&target=page",
+      "screen": "vault",
+      "state": "default",
+      "tuple": {
+        "screen": "vault",
+        "state": "default",
+        "theme": "light",
+        "viewport": {
+          "width": 1440,
+          "height": 860
+        },
+        "scale": 1,
+        "locale": "en-HK"
+      },
+      "determinism": {
+        "fixture": "design/lib/vault-data.js",
+        "time": "2026-08-20T12:00:00.000Z",
+        "motion": "disabled",
+        "random": "seeded-from-row-id",
+        "font": "reference-css-font-stack",
+        "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+        "languageMode": "both"
+      },
+      "audit": {
+        "status": "pending",
+        "path": "design/parity/audits/vault-default.json",
+        "reason": "Built-artifact review has not run."
+      },
+      "evidence": {
+        "status": "pending",
+        "referenceRaw": "design/parity/evidence/vault-default/reference.png",
+        "referenceRawSha256": "pending",
+        "builtRaw": "design/parity/evidence/vault-default/built.png",
+        "builtRawSha256": "pending",
+        "comparison": "design/parity/evidence/vault-default/comparison.png",
+        "comparisonSha256": "pending",
+        "diff": "design/parity/evidence/vault-default/diff.json",
+        "diffSha256": "pending"
+      },
+      "deviations": [],
+      "sourceCommit": "pending",
+      "captureTool": "pending",
+      "builtRouteStatus": "implemented-source-unverified"
     }
   ]
 }

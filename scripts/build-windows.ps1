@@ -60,6 +60,29 @@ if (-not $qtRoot) { throw 'The pinned Qt 6.8.3 MSVC x64 installation could not b
 $qtRoot = [IO.Path]::GetFullPath($qtRoot)
 $qtVersion = (& (Join-Path $qtRoot 'bin\qmake.exe') -query QT_VERSION).Trim()
 if ($LASTEXITCODE -ne 0 -or $qtVersion -ne '6.8.3') { throw "Expected Qt 6.8.3 at $qtRoot; qmake reported '$qtVersion'." }
+# Export the MSVC x64 environment when cl.exe is not already reachable. The
+# release workflow does this with vswhere; a plain local shell has no INCLUDE
+# or LIB at all, and the first compile then fails on <assert.h>.
+if (-not (Get-Command cl.exe -ErrorAction SilentlyContinue)) {
+    $vcvars = $null
+    $vswhere = Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+    if (Test-Path -LiteralPath $vswhere -PathType Leaf) {
+        $vsRoot = & $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+        if ($vsRoot) { $vcvars = Join-Path $vsRoot 'VC\Auxiliary\Build\vcvars64.bat' }
+    }
+    if (-not $vcvars -or -not (Test-Path -LiteralPath $vcvars -PathType Leaf)) {
+        $vcvars = @(
+            (Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\BuildTools\VC\Auxiliary\Build\vcvars64.bat'),
+            (Join-Path $env:LOCALAPPDATA 'material-virtualbox-toolchain\BuildTools\VC\Auxiliary\Build\vcvars64.bat')
+        ) | Where-Object { Test-Path -LiteralPath $_ -PathType Leaf } | Select-Object -First 1
+    }
+    if (-not $vcvars) { throw 'No MSVC x64 toolchain was found: vswhere reported no VC.Tools.x86.x64 installation and no user-scoped Build Tools vcvars64.bat exists.' }
+    Phase "Exporting the MSVC x64 environment from $vcvars."
+    cmd.exe /d /s /c "call `"$vcvars`" >nul && set" | ForEach-Object {
+        if ($_ -match '^([^=]+)=(.*)$') { [Environment]::SetEnvironmentVariable($matches[1], $matches[2], 'Process') }
+    }
+    if (-not (Get-Command cl.exe -ErrorAction SilentlyContinue)) { throw "vcvars64.bat did not put cl.exe on PATH: $vcvars" }
+}
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."

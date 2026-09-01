@@ -1,0 +1,10 @@
+{
+  "name": "keepassxc-design-parity",
+  "private": true,
+  "type": "module",
+  "description": "Pinned tooling for design-parity capture comparison. Not part of the application.",
+  "dependencies": {
+    "pixelmatch": "7.1.0",
+    "pngjs": "7.0.0"
+  }
+}

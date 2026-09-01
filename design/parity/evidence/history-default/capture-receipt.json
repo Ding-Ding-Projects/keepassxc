@@ -1,0 +1,98 @@
+{
+  "schemaVersion": 1,
+  "rowId": "history-default",
+  "tuple": {
+    "screen": "history",
+    "state": "default",
+    "theme": "light",
+    "viewport": {
+      "width": 1200,
+      "height": 860
+    },
+    "scale": 1,
+    "locale": "en-HK"
+  },
+  "determinism": {
+    "fixture": "design/lib/vault-data.js",
+    "time": "2026-08-20T12:00:00.000Z",
+    "motion": "disabled",
+    "random": "seeded-from-row-id",
+    "font": "reference-css-font-stack",
+    "network": "allowlisted-pinned-runtime-pending-local-vendoring",
+    "languageMode": "both"
+  },
+  "sourceCommit": "a0cc2fe00ecb53de00276149f906f42fb6d1ada0",
+  "capturedAt": "2026-09-01T21:25:47.907Z",
+  "reference": {
+    "url": "http://127.0.0.1:43110/reference/history-default",
+    "png": "reference.png",
+    "sha256": "493416b3f99c11c1a1c5bd3638668e4e8878996763f6650f99d9066424252529",
+    "bytes": 139244,
+    "tool": "msedge --headless=new --screenshot",
+    "edgeArgs": [
+      "--headless=new",
+      "--disable-gpu",
+      "--hide-scrollbars",
+      "--no-first-run",
+      "--no-default-browser-check",
+      "--disable-extensions",
+      "--disable-sync",
+      "--disable-component-extensions-with-background-pages",
+      "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
+      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-history-default",
+      "--window-size=1200,860",
+      "--force-device-scale-factor=1",
+      "--lang=en-HK",
+      "--virtual-time-budget=12000",
+      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\history-default\\reference.png",
+      "http://127.0.0.1:43110/reference/history-default"
+    ]
+  },
+  "built": {
+    "route": "kpxc://capture/history?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
+    "png": "built.png",
+    "sha256": "9f5cb2930a24931f43f1fe01257c9f17d529b61f085de2273c3fd3c2010261d5",
+    "bytes": 57067,
+    "pid": 32200,
+    "hwnd": 24905894,
+    "windowTitle": "parity.kdbx - KeePassXC",
+    "windowClass": "Qt683QWindowIcon",
+    "dpi": 96,
+    "routeReceipt": {
+      "destination": "history",
+      "devicePixelRatio": 1,
+      "hwnd": "24905894",
+      "languageMode": "Bilingual",
+      "outcome": "ready",
+      "page": "",
+      "pageRect": "88,112 1200x860",
+      "requestedViewport": "1200x860",
+      "schemaVersion": 1,
+      "screen": "history",
+      "shellRect": "0,0 1288x972",
+      "shellViewport": "1288x972",
+      "state": "default",
+      "target": "page",
+      "theme": "light",
+      "title": "parity.kdbx[*] - KeePassXC",
+      "version": "2.8.8701",
+      "windowGeometry": "560,185 1288x1001"
+    },
+    "cropRect": {
+      "x": 88,
+      "y": 112,
+      "w": 1200,
+      "h": 860
+    },
+    "windowPng": "built-window.png",
+    "tool": "lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
+  },
+  "comparison": {
+    "png": "comparison.png",
+    "sha256": "4b5a75f1c7174d57ac2bf09af04c6f1b9243c65de877c5d42d0c2951e0a70c0b",
+    "diff": "diff.json",
+    "diffSha256": "9e686256420f77a987e00681fa80104103d45618f1e300b639a20041d15533f5",
+    "mismatchRatio": 0.07907073643410853,
+    "sizeMismatch": false
+  }
+}

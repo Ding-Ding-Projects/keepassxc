@@ -72,6 +72,7 @@
 #include "gui/material/MaterialNavigationRail.h"
 #include "gui/material/MaterialNotificationCentre.h"
 #include "gui/material/MaterialNotifier.h"
+#include "gui/material/MaterialCaptureRoute.h"
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialReportsFeed.h"
 #include "gui/material/MaterialReportsScreen.h"
@@ -777,6 +778,7 @@ MainWindow::MainWindow()
     // becomes unreachable. The Appearance overview is hoisted out of the hub
     // because the design's rail gives it a destination of its own.
     auto* settingsHub = new Material::SettingsHub(Material::SettingsHub::Overview::Hosted, nullptr);
+    m_settingsHub = settingsHub;
     settingsHub->setClassicEditor(m_ui->settingsWidget);
     auto* appearanceScreen = new Material::SettingsScreen;
 
@@ -992,6 +994,7 @@ MainWindow::MainWindow()
     new QShortcut(Qt::CTRL | Qt::SHIFT | Qt::Key_P, this, [commandPalette] { commandPalette->openOverlay(); });
 
     auto* regexBuilder = new Material::RegexBuilder(this);
+    m_regexBuilder = regexBuilder;
     auto openBuilderFor = [regexBuilder](Material::SearchBar* bar) {
         Material::SearchRegistry::instance()->setCurrent(bar);
         if (bar) {
@@ -2415,6 +2418,28 @@ void MainWindow::applySettingsChanges()
     updateTrayIcon();
 
     kpxcApp->applyFontSize();
+}
+
+bool MainWindow::captureNavigate(const QString& screen, const QString& page)
+{
+    auto* materialShell = shell();
+    const QString destination = Material::CaptureRoute::destinationFor(screen);
+    if (!materialShell || destination.isEmpty() || !materialShell->destinations().contains(destination)) {
+        return false;
+    }
+    materialShell->setCurrentDestination(destination);
+    if (destination == QLatin1String("settings") && m_settingsHub && !page.isEmpty()) {
+        m_settingsHub->setCurrentPage(page);
+    } else if (!page.isEmpty()) {
+        if (auto* sheet = qobject_cast<Material::SpecSheet*>(materialShell->destination(destination))) {
+            sheet->setCurrentPage(page);
+        }
+    }
+    if (screen == QLatin1String("regex-builder") && m_regexBuilder) {
+        Material::SearchRegistry::instance()->setCurrent(nullptr);
+        m_regexBuilder->openOverlay();
+    }
+    return true;
 }
 
 void MainWindow::setAllowScreenCapture(bool state)

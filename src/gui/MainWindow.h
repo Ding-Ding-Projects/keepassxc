@@ -40,6 +40,8 @@ namespace Ui
 namespace Material
 {
     class SearchBar;
+    class SettingsHub;
+    class RegexBuilder;
 }
 
 class InactivityTimer;
@@ -57,6 +59,13 @@ public:
     QList<DatabaseWidget*> getOpenDatabases();
     void restoreConfigState();
     void setAllowScreenCapture(bool state);
+
+    /**
+     * Land on a design-parity capture screen: a shell destination, an
+     * optional settings or sheet page, and for `regex-builder` the builder
+     * overlay. Returns false when the screen has no destination.
+     */
+    bool captureNavigate(const QString& screen, const QString& page = {});
 
     enum StackedWidgetIndex
     {
@@ -209,6 +218,8 @@ private:
     QPointer<QProgressBar> m_progressBar;
     QPointer<QLabel> m_progressBarLabel;
     QPointer<QLabel> m_statusBarLabel;
+    QPointer<Material::SettingsHub> m_settingsHub;
+    QPointer<Material::RegexBuilder> m_regexBuilder;
 
     Q_DISABLE_COPY(MainWindow)
 

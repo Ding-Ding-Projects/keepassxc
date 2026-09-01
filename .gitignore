@@ -40,3 +40,6 @@ vcpkg_installed*/
 /dist/
 
 __pycache__/
+
+# Pinned design-parity tooling is installed locally from design/parity/package.json
+design/parity/node_modules/
