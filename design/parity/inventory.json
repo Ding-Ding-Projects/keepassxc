@@ -188,22 +188,22 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/shell-default.json",
-        "sha256": "3032906f442ff2df4163c8d56bcb15727014a80f1d921d92658a07a07da5d0a3"
+        "sha256": "c37d2e0808684dd8231ac611f97b2172e6f2664e7a606884da95be6e6a6b737c"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/shell-default/reference.png",
         "referenceRawSha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
         "builtRaw": "design/parity/evidence/shell-default/built.png",
-        "builtRawSha256": "9f77cf7cbd3d6d9b8d87fc65a6e0c3c5b2525f94e5eecdfa0c716e6b2011c220",
+        "builtRawSha256": "d58d65cc057736083482c44e967ee95afc119c9ba36bb6dbf7e3e8c23b14673c",
         "comparison": "design/parity/evidence/shell-default/comparison.png",
-        "comparisonSha256": "ca1353cddd26df5fa0d25e45d9e2f470b6287770a878a5ed9d5a4e1585fba60f",
+        "comparisonSha256": "024b501d47213dc7aa9562ced7f72c5290a3ae7680ca92d04b8dd51de9f188e0",
         "diff": "design/parity/evidence/shell-default/diff.json",
-        "diffSha256": "59f5f8822a68265bcf22febe68226d82135c513b06782b950e0ce0d8d97fda7e",
+        "diffSha256": "0a2a9b6f573e78d182968cb1517c079ad82982d0b03a0725ad95c096908fd0d9",
         "mismatchRatio": 0.08593976449275362
       },
       "deviations": [],
-      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "sourceCommit": "8022ef16ad2b502f3e31b15f8c135b70e5a44ebf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -245,15 +245,15 @@
         "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
         "referenceRawSha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
         "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
-        "builtRawSha256": "54340a567774a462096778e85ade1d96bf86b848a0e12051f31d3ad278803318",
+        "builtRawSha256": "b3ae28aa025143f2d0b4679a619789bf887de702a6301e9c22bdd88191584f43",
         "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
-        "comparisonSha256": "d2699bec6251ee4c5d3640de65da3a748fb1ff3f67ffed8c2f1b9c6fad2fa76c",
+        "comparisonSha256": "e36734f4d6663e4500aa7705ffb993d13144215a7980286ca4f8854dd6f8774e",
         "diff": "design/parity/evidence/regex-builder-default/diff.json",
-        "diffSha256": "0ea9ef5df526b7eec04e1e0b4f9dc7d365a3afde4af56f679efa90f2263cf473",
-        "mismatchRatio": 0.3200667735042735
+        "diffSha256": "8a4c4c315d300e00dfad26b64d86fdf071f346b5b395fa3369f11564fa7223d9",
+        "mismatchRatio": 0.32534188034188033
       },
       "deviations": [],
-      "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
+      "sourceCommit": "8022ef16ad2b502f3e31b15f8c135b70e5a44ebf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },

@@ -1,0 +1,1249 @@
+{
+  "schemaVersion": 1,
+  "note": "Hand-written per-surface completeness inventory. Every canonical feature appears once per surface. A row is green only when status is implemented and every link resolves; scripts/check-feature-inventory.mjs fails closed otherwise.",
+  "rows": [
+    {
+      "id": "language-modes",
+      "surface": "app",
+      "title": "Language modes (English, Cantonese, bilingual)",
+      "status": "partial",
+      "note": "Voice language exists; School-mode suppression and per-surface enum naming pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialVoice.h",
+        "anchor": "^\\s*enum class Language$"
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json"
+      },
+      "test": {
+        "file": "tests/TestMaterialVoice.cpp",
+        "anchor": "^void TestMaterialVoice::"
+      }
+    },
+    {
+      "id": "funny-level-english",
+      "surface": "app",
+      "title": "Funny level slider, English",
+      "status": "partial",
+      "note": "Slider persisted; disclosure and every-category coverage unverified",
+      "implementation": {
+        "file": "src/core/Config.h",
+        "anchor": "^\\s*GUI_FunnyLevelEnglish,$"
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json"
+      },
+      "test": {
+        "file": "tests/TestMaterialVoice.cpp",
+        "anchor": "^void TestMaterialVoice::"
+      }
+    },
+    {
+      "id": "funny-level-cantonese",
+      "surface": "app",
+      "title": "Funny level slider, Cantonese",
+      "status": "partial",
+      "note": "Slider persisted; disclosure and every-category coverage unverified",
+      "implementation": {
+        "file": "src/core/Config.h",
+        "anchor": "^\\s*GUI_FunnyLevelCantonese,$"
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json"
+      },
+      "test": {
+        "file": "tests/TestMaterialVoice.cpp",
+        "anchor": "^void TestMaterialVoice::"
+      }
+    },
+    {
+      "id": "dialog-emoji-toggle",
+      "surface": "app",
+      "title": "Show emojis in dialogs toggle",
+      "status": "partial",
+      "note": "Preference persisted; not applied in every dialog",
+      "implementation": {
+        "file": "src/core/Config.h",
+        "anchor": "^\\s*GUI_ShowDialogEmojis,$"
+      }
+    },
+    {
+      "id": "school-mode",
+      "surface": "app",
+      "title": "School mode (shared, renameable, live)",
+      "status": "missing"
+    },
+    {
+      "id": "narrator",
+      "surface": "app",
+      "title": "Spoken narrator",
+      "status": "missing"
+    },
+    {
+      "id": "narrator-voice-pickers",
+      "surface": "app",
+      "title": "Per-language narrator voice pickers",
+      "status": "missing"
+    },
+    {
+      "id": "scheduled-settings",
+      "surface": "app",
+      "title": "Scheduled settings",
+      "status": "missing"
+    },
+    {
+      "id": "external-settings-sources",
+      "surface": "app",
+      "title": "External HTTPS settings sources",
+      "status": "missing"
+    },
+    {
+      "id": "home-assistant-source",
+      "surface": "app",
+      "title": "Home Assistant boolean source",
+      "status": "missing"
+    },
+    {
+      "id": "dim-sum-surprise",
+      "surface": "app",
+      "title": "Dim sum surprise (10 %, no opt-out)",
+      "status": "partial",
+      "note": "Ships at 1 % with an opt-out; canonical is 10 % with no opt-out and public catalog photos",
+      "implementation": {
+        "file": "src/gui/material/MaterialDimSum.h",
+        "anchor": "^\\s*class DimSum$"
+      }
+    },
+    {
+      "id": "release-code-name",
+      "surface": "app",
+      "title": "Dim sum release code name",
+      "status": "missing"
+    },
+    {
+      "id": "personal-vocabulary-upload",
+      "surface": "app",
+      "title": "Local personal-vocabulary JSON upload",
+      "status": "partial",
+      "note": "Upload and clear exist in Settings; application-wide consumption and bounds tests pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialSettingsHub.cpp",
+        "anchor": "^\\s*config\\(\\)->set\\(Config::GUI_PersonalVocabularyCache,$"
+      }
+    },
+    {
+      "id": "regex-builder",
+      "surface": "app",
+      "title": "Super-advanced regex builder",
+      "status": "partial",
+      "note": "Compact builder; workbench tabs, dialects, pattern library, explain/replace/export missing (parity defect regex-builder-default-1)",
+      "implementation": {
+        "file": "src/gui/material/MaterialRegexBuilder.h",
+        "anchor": "^\\s*class RegexBuilder : public Overlay$"
+      },
+      "test": {
+        "file": "tests/TestMaterialRegexSafety.cpp",
+        "anchor": "^void TestMaterialRegexSafety::"
+      }
+    },
+    {
+      "id": "search-bar-every-surface",
+      "surface": "app",
+      "title": "Search bar on every surface",
+      "status": "partial",
+      "note": "SearchRegistry covers registered Material surfaces; legacy dialogs unregistered",
+      "implementation": {
+        "file": "src/gui/material/MaterialSearchRegistry.h",
+        "anchor": "^\\s*class SearchRegistry\\b"
+      },
+      "test": {
+        "file": "tests/TestMaterialSearchRegistry.cpp",
+        "anchor": "^void TestMaterialSearchRegistry::"
+      }
+    },
+    {
+      "id": "settings-search",
+      "surface": "app",
+      "title": "Settings search on every settings surface",
+      "status": "partial",
+      "note": "Per-page search in the hub; classic editor and dialogs lack one",
+      "implementation": {
+        "file": "src/gui/material/MaterialSettingsHub.h",
+        "anchor": "^\\s*SearchBar\\* activeSearchBar\\(\\) const;$"
+      }
+    },
+    {
+      "id": "dropdown-search",
+      "surface": "app",
+      "title": "Search field in every dropdown",
+      "status": "missing"
+    },
+    {
+      "id": "context-menu-search",
+      "surface": "app",
+      "title": "Search field in every context menu",
+      "status": "missing"
+    },
+    {
+      "id": "notifications",
+      "surface": "app",
+      "title": "Non-blocking notifications",
+      "status": "partial",
+      "note": "Snackbar host and progress exist; audit of remaining modal message boxes pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialNotifier.h",
+        "anchor": "^\\s*void progress\\(const QString& id, const QString& text, int percent\\);$"
+      }
+    },
+    {
+      "id": "notification-centre",
+      "surface": "app",
+      "title": "Notification centre",
+      "status": "partial",
+      "note": "Centre exists; bulk actions and export pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialNotificationCentre.h",
+        "anchor": "^\\s*class NotificationCentre\\b"
+      }
+    },
+    {
+      "id": "no-nag-policy",
+      "surface": "app",
+      "title": "No nag prompts",
+      "status": "partial",
+      "note": "No donation or rating prompts found; startup snapshot warning removed; full audit pending",
+      "implementation": {
+        "file": "scripts/check-repair-contracts.ps1",
+        "anchor": "^\\s*if \\(-not \\$Sources\\.MainWindow\\.Contains\\('m_updateFailureNotified'\\)\\) \\{"
+      }
+    },
+    {
+      "id": "material-3-appearance",
+      "surface": "app",
+      "title": "Material Design 3 appearance",
+      "status": "partial",
+      "note": "Theme, tokens and stylesheet exist; parity audits list open primitives",
+      "implementation": {
+        "file": "src/gui/material/MaterialTheme.h",
+        "anchor": "^\\s*class Theme : public QObject$"
+      },
+      "test": {
+        "file": "tests/TestMaterialAppearance.cpp",
+        "anchor": "^void TestMaterialAppearance::"
+      }
+    },
+    {
+      "id": "per-element-appearance-editor",
+      "surface": "app",
+      "title": "Per-element appearance editor",
+      "status": "partial",
+      "note": "Initial element overrides; per-element context entry and Word/Photoshop depth missing",
+      "implementation": {
+        "file": "src/gui/material/MaterialElementOverrides.h",
+        "anchor": "^\\s*class ElementOverrides\\b"
+      }
+    },
+    {
+      "id": "infinite-color-picker",
+      "surface": "app",
+      "title": "Infinite colour picker with translator",
+      "status": "missing"
+    },
+    {
+      "id": "rainbow-color",
+      "surface": "app",
+      "title": "Animated rainbow colour",
+      "status": "missing"
+    },
+    {
+      "id": "font-customization",
+      "surface": "app",
+      "title": "Interface font customization",
+      "status": "partial",
+      "note": "Family, scale and weight persisted; live preview per family pending",
+      "implementation": {
+        "file": "src/core/Config.h",
+        "anchor": "^\\s*GUI_FontFamily,$"
+      }
+    },
+    {
+      "id": "app-rename",
+      "surface": "app",
+      "title": "User-renameable app display name",
+      "status": "missing"
+    },
+    {
+      "id": "tabs",
+      "surface": "app",
+      "title": "Browser-style tabs",
+      "status": "partial",
+      "note": "Material tab strip with reorder and stable ids",
+      "implementation": {
+        "file": "src/gui/material/MaterialTabStrip.h",
+        "anchor": "^\\s*class TabStrip\\b"
+      },
+      "test": {
+        "file": "tests/TestMaterialTabs.cpp",
+        "anchor": "^void TestMaterialTabs::"
+      }
+    },
+    {
+      "id": "tab-docking",
+      "surface": "app",
+      "title": "Tab strip docking to any edge",
+      "status": "missing"
+    },
+    {
+      "id": "tab-overflow",
+      "surface": "app",
+      "title": "Tab overflow surface",
+      "status": "partial",
+      "note": "Overflow surface exists",
+      "implementation": {
+        "file": "src/gui/material/MaterialTabOverflow.h",
+        "anchor": "^\\s*class TabOverflow\\b"
+      }
+    },
+    {
+      "id": "tab-pinning",
+      "surface": "app",
+      "title": "Tab pinning",
+      "status": "partial",
+      "note": "Pin partition persisted",
+      "implementation": {
+        "file": "src/core/Config.h",
+        "anchor": "^\\s*GUI_PinnedTabs,$"
+      }
+    },
+    {
+      "id": "tab-groups",
+      "surface": "app",
+      "title": "Tab groups",
+      "status": "missing"
+    },
+    {
+      "id": "tab-searches",
+      "surface": "app",
+      "title": "Four tab-discovery searches",
+      "status": "missing"
+    },
+    {
+      "id": "bulk-close-tabs",
+      "surface": "app",
+      "title": "Close tabs containing / not containing text",
+      "status": "missing"
+    },
+    {
+      "id": "move-into-group-picker",
+      "surface": "app",
+      "title": "Move into group picker",
+      "status": "missing"
+    },
+    {
+      "id": "toy-locks",
+      "surface": "app",
+      "title": "Per-element toy locks (six policies)",
+      "status": "missing"
+    },
+    {
+      "id": "support-tickets",
+      "surface": "app",
+      "title": "Support Tickets recovery desk",
+      "status": "missing"
+    },
+    {
+      "id": "unlock-ladder",
+      "surface": "app",
+      "title": "Unlock ladder",
+      "status": "missing"
+    },
+    {
+      "id": "authenticator",
+      "surface": "app",
+      "title": "Built-in authenticator",
+      "status": "missing"
+    },
+    {
+      "id": "qr-pairing",
+      "surface": "app",
+      "title": "QR-based OTP pairing",
+      "status": "missing"
+    },
+    {
+      "id": "secret-mutation-history",
+      "surface": "app",
+      "title": "Secret and display-name mutation history",
+      "status": "missing"
+    },
+    {
+      "id": "command-palette",
+      "surface": "app",
+      "title": "Command palette (Ctrl+Shift+F)",
+      "status": "partial",
+      "note": "Bound to Ctrl+Shift+P; canonical is Ctrl+Shift+F with rich inline controls and teleport",
+      "implementation": {
+        "file": "src/gui/material/MaterialCommandPalette.h",
+        "anchor": "^\\s*class CommandPalette\\b"
+      }
+    },
+    {
+      "id": "super-confirmation",
+      "surface": "app",
+      "title": "Destructive-action super confirmation",
+      "status": "missing"
+    },
+    {
+      "id": "bulk-actions",
+      "surface": "app",
+      "title": "Bulk actions on every list",
+      "status": "missing"
+    },
+    {
+      "id": "export-everything",
+      "surface": "app",
+      "title": "Export every record in every format",
+      "status": "missing"
+    },
+    {
+      "id": "archive-export",
+      "surface": "app",
+      "title": "ZIP and 7z archive export",
+      "status": "missing"
+    },
+    {
+      "id": "local-history",
+      "surface": "app",
+      "title": "Local Git-backed version history",
+      "status": "partial",
+      "note": "Isolated encrypted Git history per database",
+      "implementation": {
+        "file": "src/gui/material/MaterialHistoryStore.h",
+        "anchor": "^\\s*class HistoryStore\\b"
+      },
+      "test": {
+        "file": "tests/TestMaterialHistory.cpp",
+        "anchor": "^void TestMaterialHistory::"
+      }
+    },
+    {
+      "id": "history-panel-filters",
+      "surface": "app",
+      "title": "History date picker and action filters",
+      "status": "partial",
+      "note": "Kind chips and date pickers exist",
+      "implementation": {
+        "file": "src/gui/material/MaterialHistoryScreen.h",
+        "anchor": "^\\s*class HistoryScreen\\b"
+      }
+    },
+    {
+      "id": "changelog-viewer",
+      "surface": "app",
+      "title": "In-app changelog viewer",
+      "status": "partial",
+      "note": "Bundled release catalog, date and regex filters, export",
+      "implementation": {
+        "file": "src/gui/material/MaterialChangelogScreen.h",
+        "anchor": "^\\s*class ChangelogScreen\\b"
+      },
+      "test": {
+        "file": "tests/TestMaterialChangelog.cpp",
+        "anchor": "^void TestMaterialChangelog::"
+      }
+    },
+    {
+      "id": "changelog-commit-links",
+      "surface": "app",
+      "title": "Changelog commit links",
+      "status": "partial",
+      "note": "Catalog binds releases to tag commits",
+      "implementation": {
+        "file": "scripts/generate-changelog-provenance.mjs",
+        "anchor": "^\\s*(const|function|export) "
+      }
+    },
+    {
+      "id": "external-editor",
+      "surface": "app",
+      "title": "External editor integration",
+      "status": "partial",
+      "note": "Detection and open exist in the shell handoff; VS Code export handoff missing",
+      "implementation": {
+        "file": "src/gui/material/MaterialVaultScreen.cpp",
+        "anchor": "^\\s*void VaultScreen::"
+      }
+    },
+    {
+      "id": "vscode-handoff",
+      "surface": "app",
+      "title": "Open exports in Visual Studio Code",
+      "status": "missing"
+    },
+    {
+      "id": "offline-docs-browser",
+      "surface": "app",
+      "title": "Offline in-app documentation browser",
+      "status": "missing"
+    },
+    {
+      "id": "landing-page",
+      "surface": "app",
+      "title": "Material landing page with every feature",
+      "status": "missing"
+    },
+    {
+      "id": "social-preview",
+      "surface": "app",
+      "title": "Social preview embed graphic",
+      "status": "missing"
+    },
+    {
+      "id": "in-app-version-provenance",
+      "surface": "app",
+      "title": "Front-screen version and updated-at provenance",
+      "status": "missing"
+    },
+    {
+      "id": "frameless-material-title-bar",
+      "surface": "app",
+      "title": "Frameless window with Material title bar",
+      "status": "missing"
+    },
+    {
+      "id": "overlays-paint-surface",
+      "surface": "app",
+      "title": "Overlays paint their own surface",
+      "status": "missing"
+    },
+    {
+      "id": "resizable-panels",
+      "surface": "app",
+      "title": "Resizable and draggable panels",
+      "status": "missing"
+    },
+    {
+      "id": "shortcut-display",
+      "surface": "app",
+      "title": "Shortcuts shown in context menus",
+      "status": "missing"
+    },
+    {
+      "id": "progress-where-started",
+      "surface": "app",
+      "title": "Long operations report progress where started",
+      "status": "missing"
+    },
+    {
+      "id": "recovery-reauth",
+      "surface": "app",
+      "title": "Recovery and re-authentication at the failure surface",
+      "status": "missing"
+    },
+    {
+      "id": "rendered-provider-text",
+      "surface": "app",
+      "title": "Provider text rendered as markup",
+      "status": "missing"
+    },
+    {
+      "id": "collapsible-filters",
+      "surface": "app",
+      "title": "Collapsible filters and statistics",
+      "status": "missing"
+    },
+    {
+      "id": "guided-forms",
+      "surface": "app",
+      "title": "Guided forms with browse controls",
+      "status": "missing"
+    },
+    {
+      "id": "novice-expert-controls",
+      "surface": "app",
+      "title": "Novice control over expert values",
+      "status": "missing"
+    },
+    {
+      "id": "settings-explanations",
+      "surface": "app",
+      "title": "Settings explain themselves and their defaults",
+      "status": "missing"
+    },
+    {
+      "id": "rich-controls",
+      "surface": "app",
+      "title": "Rich controls wherever a value is shown",
+      "status": "missing"
+    },
+    {
+      "id": "blank-slate-presets",
+      "surface": "app",
+      "title": "Presets on blank-slate editors",
+      "status": "missing"
+    },
+    {
+      "id": "adhd-modes",
+      "surface": "app",
+      "title": "ADHD modes",
+      "status": "missing"
+    },
+    {
+      "id": "app-logo-customization",
+      "surface": "app",
+      "title": "App-logo customization",
+      "status": "missing"
+    },
+    {
+      "id": "file-converter",
+      "surface": "app",
+      "title": "Universal local file converter",
+      "status": "missing"
+    },
+    {
+      "id": "ollama-manager",
+      "surface": "app",
+      "title": "Local Ollama suite manager",
+      "status": "missing"
+    },
+    {
+      "id": "status-hub",
+      "surface": "app",
+      "title": "Status Hub reporting",
+      "status": "missing"
+    },
+    {
+      "id": "browser-extension-download-dialogs",
+      "surface": "app",
+      "title": "Browser-extension download dialogs",
+      "status": "missing"
+    },
+    {
+      "id": "accessibility",
+      "surface": "app",
+      "title": "Accessibility (keyboard, focus, roles, contrast, motion)",
+      "status": "partial",
+      "note": "Focus ring and roles on Material widgets; full audit pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialStyle.h",
+        "anchor": "^\\s*class Style\\b"
+      }
+    },
+    {
+      "id": "responsive-sizing",
+      "surface": "app",
+      "title": "Responsive sizing at 100-200 % scale",
+      "status": "partial",
+      "note": "Five breakpoints; scale matrix pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialBreakpoints.h",
+        "anchor": "^\\s*Breakpoint breakpointFor\\(int logicalWidth\\);$"
+      },
+      "test": {
+        "file": "tests/TestMaterialBreakpoints.cpp",
+        "anchor": "^void TestMaterialBreakpoints::"
+      }
+    },
+    {
+      "id": "clipping-matrix",
+      "surface": "app",
+      "title": "Clipping matrix evidence",
+      "status": "missing"
+    },
+    {
+      "id": "auto-updates",
+      "surface": "app",
+      "title": "Chrome-style automatic updates",
+      "status": "partial",
+      "note": "Squirrel feed, staged states and restart exist; isolated N to N+1 proof pending",
+      "implementation": {
+        "file": "src/networking/UpdateChecker.h",
+        "anchor": "^class UpdateChecker\\b"
+      },
+      "test": {
+        "file": "tests/TestUpdateCheck.cpp",
+        "anchor": "^void TestUpdateCheck::"
+      }
+    },
+    {
+      "id": "squirrel-installer",
+      "surface": "app",
+      "title": "Unsigned Squirrel.Windows installer",
+      "status": "partial",
+      "note": "Unsigned Squirrel build and verifier exist; isolated install proof pending",
+      "implementation": {
+        "file": "scripts/build-squirrel.ps1",
+        "anchor": "^\\s*\\[CmdletBinding\\(\\)\\]"
+      },
+      "test": {
+        "file": "tests/TestSquirrelLifecycle.cpp",
+        "anchor": "^void TestSquirrelLifecycle::"
+      }
+    },
+    {
+      "id": "build-scripts",
+      "surface": "app",
+      "title": "One-click build and installer scripts",
+      "status": "partial",
+      "note": "build.bat, build-installer.bat and download-dependencies.bat exist; fresh-machine proof pending",
+      "implementation": {
+        "file": "scripts/build-windows.ps1",
+        "anchor": "^\\s*\\[CmdletBinding\\(\\)\\]"
+      }
+    },
+    {
+      "id": "dependency-bundling",
+      "surface": "app",
+      "title": "Bundled dependencies",
+      "status": "missing"
+    },
+    {
+      "id": "line-count-release",
+      "surface": "app",
+      "title": "Line count in every release",
+      "status": "missing"
+    },
+    {
+      "id": "readme-captures",
+      "surface": "app",
+      "title": "README capture matrix",
+      "status": "missing"
+    },
+    {
+      "id": "screen-recording",
+      "surface": "app",
+      "title": "Committed screen recording",
+      "status": "missing"
+    },
+    {
+      "id": "design-parity",
+      "surface": "app",
+      "title": "Design-reference parity evidence",
+      "status": "partial",
+      "note": "Nine rows captured, compared and audited; open defects remain",
+      "implementation": {
+        "file": "design/parity/check-parity.mjs",
+        "anchor": "^export function validateEvidence\\("
+      },
+      "test": {
+        "file": "design/parity/test-parity-guard.mjs",
+        "anchor": "^expectRed\\("
+      }
+    },
+    {
+      "id": "language-modes",
+      "surface": "site",
+      "title": "Language modes (English, Cantonese, bilingual)",
+      "status": "missing"
+    },
+    {
+      "id": "funny-level-english",
+      "surface": "site",
+      "title": "Funny level slider, English",
+      "status": "missing"
+    },
+    {
+      "id": "funny-level-cantonese",
+      "surface": "site",
+      "title": "Funny level slider, Cantonese",
+      "status": "missing"
+    },
+    {
+      "id": "dialog-emoji-toggle",
+      "surface": "site",
+      "title": "Show emojis in dialogs toggle",
+      "status": "missing"
+    },
+    {
+      "id": "school-mode",
+      "surface": "site",
+      "title": "School mode (shared, renameable, live)",
+      "status": "missing"
+    },
+    {
+      "id": "narrator",
+      "surface": "site",
+      "title": "Spoken narrator",
+      "status": "missing"
+    },
+    {
+      "id": "narrator-voice-pickers",
+      "surface": "site",
+      "title": "Per-language narrator voice pickers",
+      "status": "missing"
+    },
+    {
+      "id": "scheduled-settings",
+      "surface": "site",
+      "title": "Scheduled settings",
+      "status": "missing"
+    },
+    {
+      "id": "external-settings-sources",
+      "surface": "site",
+      "title": "External HTTPS settings sources",
+      "status": "missing"
+    },
+    {
+      "id": "home-assistant-source",
+      "surface": "site",
+      "title": "Home Assistant boolean source",
+      "status": "missing"
+    },
+    {
+      "id": "dim-sum-surprise",
+      "surface": "site",
+      "title": "Dim sum surprise (10 %, no opt-out)",
+      "status": "missing"
+    },
+    {
+      "id": "release-code-name",
+      "surface": "site",
+      "title": "Dim sum release code name",
+      "status": "missing"
+    },
+    {
+      "id": "personal-vocabulary-upload",
+      "surface": "site",
+      "title": "Local personal-vocabulary JSON upload",
+      "status": "missing"
+    },
+    {
+      "id": "regex-builder",
+      "surface": "site",
+      "title": "Super-advanced regex builder",
+      "status": "missing"
+    },
+    {
+      "id": "search-bar-every-surface",
+      "surface": "site",
+      "title": "Search bar on every surface",
+      "status": "missing"
+    },
+    {
+      "id": "settings-search",
+      "surface": "site",
+      "title": "Settings search on every settings surface",
+      "status": "missing"
+    },
+    {
+      "id": "dropdown-search",
+      "surface": "site",
+      "title": "Search field in every dropdown",
+      "status": "missing"
+    },
+    {
+      "id": "context-menu-search",
+      "surface": "site",
+      "title": "Search field in every context menu",
+      "status": "missing"
+    },
+    {
+      "id": "notifications",
+      "surface": "site",
+      "title": "Non-blocking notifications",
+      "status": "missing"
+    },
+    {
+      "id": "notification-centre",
+      "surface": "site",
+      "title": "Notification centre",
+      "status": "missing"
+    },
+    {
+      "id": "no-nag-policy",
+      "surface": "site",
+      "title": "No nag prompts",
+      "status": "missing"
+    },
+    {
+      "id": "material-3-appearance",
+      "surface": "site",
+      "title": "Material Design 3 appearance",
+      "status": "missing"
+    },
+    {
+      "id": "per-element-appearance-editor",
+      "surface": "site",
+      "title": "Per-element appearance editor",
+      "status": "missing"
+    },
+    {
+      "id": "infinite-color-picker",
+      "surface": "site",
+      "title": "Infinite colour picker with translator",
+      "status": "missing"
+    },
+    {
+      "id": "rainbow-color",
+      "surface": "site",
+      "title": "Animated rainbow colour",
+      "status": "missing"
+    },
+    {
+      "id": "font-customization",
+      "surface": "site",
+      "title": "Interface font customization",
+      "status": "missing"
+    },
+    {
+      "id": "app-rename",
+      "surface": "site",
+      "title": "User-renameable app display name",
+      "status": "missing"
+    },
+    {
+      "id": "tabs",
+      "surface": "site",
+      "title": "Browser-style tabs",
+      "status": "missing"
+    },
+    {
+      "id": "tab-docking",
+      "surface": "site",
+      "title": "Tab strip docking to any edge",
+      "status": "missing"
+    },
+    {
+      "id": "tab-overflow",
+      "surface": "site",
+      "title": "Tab overflow surface",
+      "status": "missing"
+    },
+    {
+      "id": "tab-pinning",
+      "surface": "site",
+      "title": "Tab pinning",
+      "status": "missing"
+    },
+    {
+      "id": "tab-groups",
+      "surface": "site",
+      "title": "Tab groups",
+      "status": "missing"
+    },
+    {
+      "id": "tab-searches",
+      "surface": "site",
+      "title": "Four tab-discovery searches",
+      "status": "missing"
+    },
+    {
+      "id": "bulk-close-tabs",
+      "surface": "site",
+      "title": "Close tabs containing / not containing text",
+      "status": "missing"
+    },
+    {
+      "id": "move-into-group-picker",
+      "surface": "site",
+      "title": "Move into group picker",
+      "status": "missing"
+    },
+    {
+      "id": "toy-locks",
+      "surface": "site",
+      "title": "Per-element toy locks (six policies)",
+      "status": "missing"
+    },
+    {
+      "id": "support-tickets",
+      "surface": "site",
+      "title": "Support Tickets recovery desk",
+      "status": "missing"
+    },
+    {
+      "id": "unlock-ladder",
+      "surface": "site",
+      "title": "Unlock ladder",
+      "status": "missing"
+    },
+    {
+      "id": "authenticator",
+      "surface": "site",
+      "title": "Built-in authenticator",
+      "status": "missing"
+    },
+    {
+      "id": "qr-pairing",
+      "surface": "site",
+      "title": "QR-based OTP pairing",
+      "status": "missing"
+    },
+    {
+      "id": "secret-mutation-history",
+      "surface": "site",
+      "title": "Secret and display-name mutation history",
+      "status": "missing"
+    },
+    {
+      "id": "command-palette",
+      "surface": "site",
+      "title": "Command palette (Ctrl+Shift+F)",
+      "status": "missing"
+    },
+    {
+      "id": "super-confirmation",
+      "surface": "site",
+      "title": "Destructive-action super confirmation",
+      "status": "missing"
+    },
+    {
+      "id": "bulk-actions",
+      "surface": "site",
+      "title": "Bulk actions on every list",
+      "status": "missing"
+    },
+    {
+      "id": "export-everything",
+      "surface": "site",
+      "title": "Export every record in every format",
+      "status": "missing"
+    },
+    {
+      "id": "archive-export",
+      "surface": "site",
+      "title": "ZIP and 7z archive export",
+      "status": "missing"
+    },
+    {
+      "id": "local-history",
+      "surface": "site",
+      "title": "Local Git-backed version history",
+      "status": "missing"
+    },
+    {
+      "id": "history-panel-filters",
+      "surface": "site",
+      "title": "History date picker and action filters",
+      "status": "missing"
+    },
+    {
+      "id": "changelog-viewer",
+      "surface": "site",
+      "title": "In-app changelog viewer",
+      "status": "missing"
+    },
+    {
+      "id": "changelog-commit-links",
+      "surface": "site",
+      "title": "Changelog commit links",
+      "status": "missing"
+    },
+    {
+      "id": "external-editor",
+      "surface": "site",
+      "title": "External editor integration",
+      "status": "missing"
+    },
+    {
+      "id": "vscode-handoff",
+      "surface": "site",
+      "title": "Open exports in Visual Studio Code",
+      "status": "missing"
+    },
+    {
+      "id": "offline-docs-browser",
+      "surface": "site",
+      "title": "Offline in-app documentation browser",
+      "status": "missing"
+    },
+    {
+      "id": "landing-page",
+      "surface": "site",
+      "title": "Material landing page with every feature",
+      "status": "missing"
+    },
+    {
+      "id": "social-preview",
+      "surface": "site",
+      "title": "Social preview embed graphic",
+      "status": "missing"
+    },
+    {
+      "id": "in-app-version-provenance",
+      "surface": "site",
+      "title": "Front-screen version and updated-at provenance",
+      "status": "missing"
+    },
+    {
+      "id": "frameless-material-title-bar",
+      "surface": "site",
+      "title": "Frameless window with Material title bar",
+      "status": "missing"
+    },
+    {
+      "id": "overlays-paint-surface",
+      "surface": "site",
+      "title": "Overlays paint their own surface",
+      "status": "missing"
+    },
+    {
+      "id": "resizable-panels",
+      "surface": "site",
+      "title": "Resizable and draggable panels",
+      "status": "missing"
+    },
+    {
+      "id": "shortcut-display",
+      "surface": "site",
+      "title": "Shortcuts shown in context menus",
+      "status": "missing"
+    },
+    {
+      "id": "progress-where-started",
+      "surface": "site",
+      "title": "Long operations report progress where started",
+      "status": "missing"
+    },
+    {
+      "id": "recovery-reauth",
+      "surface": "site",
+      "title": "Recovery and re-authentication at the failure surface",
+      "status": "missing"
+    },
+    {
+      "id": "rendered-provider-text",
+      "surface": "site",
+      "title": "Provider text rendered as markup",
+      "status": "missing"
+    },
+    {
+      "id": "collapsible-filters",
+      "surface": "site",
+      "title": "Collapsible filters and statistics",
+      "status": "missing"
+    },
+    {
+      "id": "guided-forms",
+      "surface": "site",
+      "title": "Guided forms with browse controls",
+      "status": "missing"
+    },
+    {
+      "id": "novice-expert-controls",
+      "surface": "site",
+      "title": "Novice control over expert values",
+      "status": "missing"
+    },
+    {
+      "id": "settings-explanations",
+      "surface": "site",
+      "title": "Settings explain themselves and their defaults",
+      "status": "missing"
+    },
+    {
+      "id": "rich-controls",
+      "surface": "site",
+      "title": "Rich controls wherever a value is shown",
+      "status": "missing"
+    },
+    {
+      "id": "blank-slate-presets",
+      "surface": "site",
+      "title": "Presets on blank-slate editors",
+      "status": "missing"
+    },
+    {
+      "id": "adhd-modes",
+      "surface": "site",
+      "title": "ADHD modes",
+      "status": "missing"
+    },
+    {
+      "id": "app-logo-customization",
+      "surface": "site",
+      "title": "App-logo customization",
+      "status": "missing"
+    },
+    {
+      "id": "file-converter",
+      "surface": "site",
+      "title": "Universal local file converter",
+      "status": "missing"
+    },
+    {
+      "id": "ollama-manager",
+      "surface": "site",
+      "title": "Local Ollama suite manager",
+      "status": "missing"
+    },
+    {
+      "id": "status-hub",
+      "surface": "site",
+      "title": "Status Hub reporting",
+      "status": "missing"
+    },
+    {
+      "id": "browser-extension-download-dialogs",
+      "surface": "site",
+      "title": "Browser-extension download dialogs",
+      "status": "missing"
+    },
+    {
+      "id": "accessibility",
+      "surface": "site",
+      "title": "Accessibility (keyboard, focus, roles, contrast, motion)",
+      "status": "missing"
+    },
+    {
+      "id": "responsive-sizing",
+      "surface": "site",
+      "title": "Responsive sizing at 100-200 % scale",
+      "status": "missing"
+    },
+    {
+      "id": "clipping-matrix",
+      "surface": "site",
+      "title": "Clipping matrix evidence",
+      "status": "missing"
+    },
+    {
+      "id": "auto-updates",
+      "surface": "site",
+      "title": "Chrome-style automatic updates",
+      "status": "missing"
+    },
+    {
+      "id": "squirrel-installer",
+      "surface": "site",
+      "title": "Unsigned Squirrel.Windows installer",
+      "status": "missing"
+    },
+    {
+      "id": "build-scripts",
+      "surface": "site",
+      "title": "One-click build and installer scripts",
+      "status": "missing"
+    },
+    {
+      "id": "dependency-bundling",
+      "surface": "site",
+      "title": "Bundled dependencies",
+      "status": "missing"
+    },
+    {
+      "id": "line-count-release",
+      "surface": "site",
+      "title": "Line count in every release",
+      "status": "missing"
+    },
+    {
+      "id": "readme-captures",
+      "surface": "site",
+      "title": "README capture matrix",
+      "status": "missing"
+    },
+    {
+      "id": "screen-recording",
+      "surface": "site",
+      "title": "Committed screen recording",
+      "status": "missing"
+    },
+    {
+      "id": "design-parity",
+      "surface": "site",
+      "title": "Design-reference parity evidence",
+      "status": "missing"
+    }
+  ]
+}

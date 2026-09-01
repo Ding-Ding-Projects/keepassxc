@@ -263,6 +263,16 @@ if(WIN32)
             VERBATIM)
 endif()
 
+# Fail-closed evidence guards. Node is a build-time dependency of the design-parity
+# and feature-inventory tooling; these prove their negative probes turn red then green.
+find_program(NODE_EXECUTABLE NAMES node node.exe)
+if(NODE_EXECUTABLE)
+    add_test(NAME testdesignparityguard COMMAND ${NODE_EXECUTABLE} "${CMAKE_SOURCE_DIR}/design/parity/test-parity-guard.mjs")
+    add_test(NAME testfeatureinventoryguard COMMAND ${NODE_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/test-feature-inventory-guard.mjs")
+else()
+    message(WARNING "node was not found; the design-parity and feature-inventory guard tests are not registered")
+endif()
+
 add_unit_test(NAME testsquirrellifecycle SOURCES TestSquirrelLifecycle.cpp
         LIBS ${TEST_LIBRARIES})
 

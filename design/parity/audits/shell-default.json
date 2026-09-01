@@ -23,8 +23,8 @@
     },
     {
       "primitive": "status bar",
-      "status": "nonconforming",
-      "finding": "A legacy QStatusBar ('0 Entries') remains under the shell, adding 29 px and using non-Material chrome."
+      "status": "conforms",
+      "finding": "The legacy QStatusBar is hidden; entry count lives on the rail sublabel and progress reports through the notification host. Built height now equals the reference (repaired 2026-09-01)."
     },
     {
       "primitive": "window chrome",
@@ -38,11 +38,6 @@
     }
   ],
   "defects": [
-    {
-      "id": "shell-default-1",
-      "severity": "high",
-      "summary": "Legacy status bar under the shell"
-    },
     {
       "id": "shell-default-2",
       "severity": "high",

@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "4ed3af5c336b63b3537846e2383cea27d3b1b90f",
-  "capturedAt": "2026-09-01T21:31:07.879Z",
+  "sourceCommit": "8022ef16ad2b502f3e31b15f8c135b70e5a44ebf",
+  "capturedAt": "2026-09-01T23:28:47.481Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/regex-builder-default",
     "png": "reference.png",
@@ -51,17 +51,17 @@
   "built": {
     "route": "kpxc://capture/regex-builder?state=default&width=1040&height=720&theme=light&lang=bilingual",
     "png": "built.png",
-    "sha256": "54340a567774a462096778e85ade1d96bf86b848a0e12051f31d3ad278803318",
-    "bytes": 57057,
-    "pid": 29288,
-    "hwnd": 18680230,
+    "sha256": "b3ae28aa025143f2d0b4679a619789bf887de702a6301e9c22bdd88191584f43",
+    "bytes": 54645,
+    "pid": 26588,
+    "hwnd": 36571482,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "vault",
       "devicePixelRatio": 1,
-      "hwnd": "18680230",
+      "hwnd": "36571482",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -76,7 +76,7 @@
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
       "version": "2.8.8701",
-      "windowGeometry": "560,185 1040x749"
+      "windowGeometry": "560,185 1040x720"
     },
     "cropRect": null,
     "windowPng": null,
@@ -84,10 +84,10 @@
   },
   "comparison": {
     "png": "comparison.png",
-    "sha256": "d2699bec6251ee4c5d3640de65da3a748fb1ff3f67ffed8c2f1b9c6fad2fa76c",
+    "sha256": "e36734f4d6663e4500aa7705ffb993d13144215a7980286ca4f8854dd6f8774e",
     "diff": "diff.json",
-    "diffSha256": "0ea9ef5df526b7eec04e1e0b4f9dc7d365a3afde4af56f679efa90f2263cf473",
-    "mismatchRatio": 0.3200667735042735,
-    "sizeMismatch": true
+    "diffSha256": "8a4c4c315d300e00dfad26b64d86fdf071f346b5b395fa3369f11564fa7223d9",
+    "mismatchRatio": 0.32534188034188033,
+    "sizeMismatch": false
   }
 }

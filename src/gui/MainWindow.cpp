@@ -740,6 +740,10 @@ MainWindow::MainWindow()
     m_statusBarLabel = new QLabel(statusBar());
     m_statusBarLabel->setObjectName("statusBarLabel");
     statusBar()->addPermanentWidget(m_statusBarLabel);
+    // The stock status bar is legacy chrome under a Material shell. Its entry
+    // count already lives on the rail's Vault sublabel and its progress bar is
+    // reported through the notification host, so the bar itself stays hidden.
+    statusBar()->hide();
 
     // ------------------------------------------------------------------
     // The Material shell takes over the window interior.
@@ -2311,15 +2315,11 @@ void MainWindow::updateTrayIcon()
 
 void MainWindow::updateProgressBar(int percentage, QString message)
 {
-    if (percentage < 0) {
-        m_progressBar->setVisible(false);
-        m_progressBarLabel->setVisible(false);
-    } else {
-        m_progressBar->setValue(percentage);
-        m_progressBar->setVisible(true);
-        m_progressBarLabel->setText(message);
-        m_progressBarLabel->setVisible(true);
-    }
+    // Long operations report through the corner notification host, which
+    // keeps a single progress card per operation id and dismisses it when the
+    // percentage drops below zero.
+    static const QString progressId = QStringLiteral("main-window-operation");
+    Material::Notify::progress(progressId, message, percentage);
 }
 
 void MainWindow::updateEntryCountLabel()

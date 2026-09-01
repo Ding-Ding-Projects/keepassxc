@@ -39,7 +39,10 @@
 - [x] Serialize local History writers and preserve validated encrypted KDBX snapshots in the same append-only commits.
 - [x] Add the first native Reports parity batch with truthful states, real category data, selection/export, regex filtering, accessibility, and responsive reflow.
 - [x] Add the first native Appearance parity batch with typography persistence, element overrides, regex filtering, keyboard controls, and narrow reflow.
-- [ ] Complete deterministic reference-versus-built parity evidence for every design surface.
+- [x] Capture every design reference and the built application at identical tuples, compare them, and hand-audit each row against Material Design 3 (`design/parity`).
+- [ ] Repair the open parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports cards, vault root listing, OS caption bar, settings pages) and recapture.
+- [x] Hide the legacy status bar under the Material shell and route progress through the notification host.
+- [ ] Turn every row of the fail-closed feature inventory (`docs/features/inventory.json`) green; `scripts/check-feature-inventory.mjs` currently reports 0/172.
 
 ## Installer and updater
 
