@@ -156,11 +156,69 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Checkout the released commit for release evidence
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
+          path: source
+
+      - name: Set up Node for the committed line counter
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
       - name: Download the verified package
         uses: actions/download-artifact@v8
         with:
           name: package-windows-x64-${{ github.run_id }}
           path: artifacts
+
+      - name: Count the released commit's lines with the committed counter
+        shell: bash
+        run: |
+          set -euo pipefail
+          (cd source && node scripts/count-lines.mjs) > line-count.md
+          test -s line-count.md
+
+      - name: Select the dim sum code name and photo from the public catalog
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN || github.token }}
+          GH_REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          # Every release takes the next unused dish from the public catalog, in
+          # catalog order, and only a dish whose photo is published. The mapping
+          # is auditable from prior release bodies, which each record their dish id.
+          node source/scripts/select-dim-sum.mjs --used-from-releases --out dim-sum.json
+          cat dim-sum.json
+          asset_url=$(node -e "console.log(require('./dim-sum.json').assetUrl)")
+          asset_name=$(node -e "console.log(require('./dim-sum.json').assetName)")
+          curl -fsSL --retry 3 -o "artifacts/${asset_name}" "$asset_url"
+          # The image must decode as a PNG before it can be attached.
+          node -e "const b=require('fs').readFileSync('artifacts/${asset_name}');if(b.length<8||b.readUInt32BE(0)!==0x89504e47)process.exit(1)"
+          echo "DIM_SUM_ASSET=${asset_name}" >> "$GITHUB_ENV"
+          echo "DIM_SUM_TITLE=$(node -e "const d=require('./dim-sum.json');console.log(d.nameEn+' - '+d.nameZh)")" >> "$GITHUB_ENV"
+          echo "DIM_SUM_ID=$(node -e "console.log(require('./dim-sum.json').id)")" >> "$GITHUB_ENV"
+          echo "DIM_SUM_PHOTO_URL=${asset_url}" >> "$GITHUB_ENV"
+
+      - name: Measure end-to-end workflow timing
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN || github.token }}
+        run: |
+          set -euo pipefail
+          # From the first job's real start to this step, which is the publication
+          # boundary. A missing value fails here rather than becoming an estimate.
+          started=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '[.jobs[].started_at] | sort | .[0]')
+          test -n "$started" && test "$started" != "null"
+          completed=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+          seconds=$(( $(date -u -d "$completed" +%s) - $(date -u -d "$started" +%s) ))
+          printf -v duration '%02d:%02d:%02d' $((seconds/3600)) $((seconds%3600/60)) $((seconds%60))
+          echo "WORKFLOW_STARTED=${started}" >> "$GITHUB_ENV"
+          echo "WORKFLOW_COMPLETED=${completed}" >> "$GITHUB_ENV"
+          echo "WORKFLOW_DURATION=${duration}" >> "$GITHUB_ENV"
 
       - name: Verify required release assets
         shell: bash
@@ -192,8 +250,17 @@ jobs:
 
           No tests or lint run in GitHub Actions. Local verification is reported separately from this packaging and publication workflow.
 
+          Code name: **${DIM_SUM_TITLE}** (\`${DIM_SUM_ID}\`, [public photo](${DIM_SUM_PHOTO_URL}), attached as \`${DIM_SUM_ASSET}\`). Code names come from the public dim-sum catalog and are used once per project.
+
           Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
+          Workflow started: ${WORKFLOW_STARTED}
+          Workflow completed: ${WORKFLOW_COMPLETED}
+          Workflow duration: ${WORKFLOW_DURATION}
+
+          ## Lines of code at \`${GITHUB_SHA}\`
+
           EOF
+          cat line-count.md >> release-notes.md
 
       - name: Create the GitHub Release
         shell: bash
@@ -204,10 +271,10 @@ jobs:
           GH_REPO: ${{ github.repository }}
         run: |
           set -euo pipefail
-          assets=(artifacts/Setup.exe artifacts/RELEASES artifacts/*.nupkg artifacts/artifact-receipt.json artifacts/build-provenance.json artifacts/update-manifest-v1.json)
+          assets=(artifacts/Setup.exe artifacts/RELEASES artifacts/*.nupkg artifacts/artifact-receipt.json artifacts/build-provenance.json artifacts/update-manifest-v1.json "artifacts/${DIM_SUM_ASSET}")
           gh release create "${RELEASE_TAG}" \
             --target "${GITHUB_SHA}" \
-            --title "KeePassXC Material ${PACKAGE_VERSION}" \
+            --title "KeePassXC Material ${PACKAGE_VERSION} - ${DIM_SUM_TITLE}" \
             --notes-file release-notes.md \
             --draft=false \
             --prerelease=false \

@@ -79,6 +79,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          # The changelog provenance guard resolves every released version to its tag
+          # commit at configure time, so the analysis checkout needs the full history
+          # and every tag, exactly as the release workflow fetches them.
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Set up CMake and Ninja
         uses: lukka/get-cmake@latest
