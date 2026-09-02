@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
-  "capturedAt": "2026-09-02T00:52:28.009Z",
+  "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+  "capturedAt": "2026-09-02T01:25:50.497Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/history-default",
     "png": "reference.png",
@@ -53,34 +53,34 @@
     "png": "built.png",
     "sha256": "ce9062d06fa68ef946edcefac2a42c3933ff4ba027cdbe36c0546f367e4e7f62",
     "bytes": 57091,
-    "pid": 32264,
-    "hwnd": 5570726,
+    "pid": 21000,
+    "hwnd": 265444,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "history",
       "devicePixelRatio": 1,
-      "hwnd": "5570726",
+      "hwnd": "265444",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
-      "pageRect": "88,112 1200x860",
+      "pageRect": "88,156 1200x860",
       "requestedViewport": "1200x860",
       "schemaVersion": 1,
       "screen": "history",
-      "shellRect": "0,0 1288x972",
-      "shellViewport": "1288x972",
+      "shellRect": "0,0 1288x1016",
+      "shellViewport": "1288x1016",
       "state": "default",
       "target": "page",
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
       "version": "2.8.8501",
-      "windowGeometry": "560,185 1288x972"
+      "windowGeometry": "560,185 1288x1016"
     },
     "cropRect": {
       "x": 88,
-      "y": 112,
+      "y": 156,
       "w": 1200,
       "h": 860
     },
@@ -91,7 +91,7 @@
     "png": "comparison.png",
     "sha256": "f6e8da8ec8bca507f30f53e4a95eb39268200bfdfedecb005d823c9c77dca44f",
     "diff": "diff.json",
-    "diffSha256": "f9c6e21537a6af2c14c231d3d2860f7cf12d3b7a79aab1dedd944ac4061eeaa5",
+    "diffSha256": "b14290aaf68721d56f7e8a81e713cd6bf51f7ebe0e1293c2115973d547454687",
     "mismatchRatio": 0.0790717054263566,
     "sizeMismatch": false
   }

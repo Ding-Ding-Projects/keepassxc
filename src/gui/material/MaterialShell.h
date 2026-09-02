@@ -38,6 +38,7 @@ namespace Material
     class NavigationRail;
     class SnackbarHost;
     class TabStrip;
+    class TitleBar;
     class TopAppBar;
     class SearchBar;
 
@@ -102,6 +103,8 @@ namespace Material
         static Shell* instance();
 
         NavigationRail* rail() const;
+        /** The application-drawn caption across the very top of the shell. */
+        TitleBar* titleBar() const;
         TopAppBar* appBar() const;
         TabStrip* tabs() const;
         SnackbarHost* snackbars() const;
@@ -164,6 +167,7 @@ namespace Material
         void filterMoreDestinations(const QString& query);
         void handOffNavigationFocus(bool compact, bool navigationHadFocus);
 
+        TitleBar* m_titleBar = nullptr;
         NavigationRail* m_rail = nullptr;
         TopAppBar* m_appBar = nullptr;
         TabStrip* m_tabs = nullptr;

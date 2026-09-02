@@ -79,6 +79,8 @@
         <file>memory.svg</file>
         <file>menu.svg</file>
         <file>minimize.svg</file>
+        <file>crop_square.svg</file>
+        <file>filter_none.svg</file>
         <file>more_horiz.svg</file>
         <file>more_vert.svg</file>
         <file>notifications.svg</file>

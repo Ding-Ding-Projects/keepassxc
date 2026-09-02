@@ -145,6 +145,7 @@ set(gui_SOURCES
         gui/material/MaterialTabDescriptor.cpp
         gui/material/MaterialTabOverflow.cpp
         gui/material/MaterialTheme.cpp
+        gui/material/MaterialTitleBar.cpp
         gui/material/MaterialTopAppBar.cpp
         gui/material/MaterialVaultScreen.cpp
         gui/material/MaterialVaultSidebar.cpp

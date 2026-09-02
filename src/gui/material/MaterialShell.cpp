@@ -24,6 +24,7 @@
 #include "MaterialRegexSafety.h"
 #include "MaterialTabStrip.h"
 #include "MaterialTheme.h"
+#include "MaterialTitleBar.h"
 #include "MaterialTopAppBar.h"
 
 #include <QAction>
@@ -60,6 +61,11 @@ namespace Material
         auto* outer = new QVBoxLayout(this);
         outer->setContentsMargins(0, 0, 0, 0);
         outer->setSpacing(0);
+
+        // The caption is the first row of the application, above the rail and
+        // the app bar alike, exactly where the desktop would have drawn its own.
+        m_titleBar = new TitleBar(this);
+        outer->addWidget(m_titleBar);
 
         auto* root = new QHBoxLayout;
         root->setContentsMargins(0, 0, 0, 0);
@@ -173,6 +179,11 @@ namespace Material
     Shell* Shell::instance()
     {
         return s_instance;
+    }
+
+    TitleBar* Shell::titleBar() const
+    {
+        return m_titleBar;
     }
 
     NavigationRail* Shell::rail() const

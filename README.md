@@ -158,10 +158,12 @@ Honest state of the rewrite, measured rather than remembered:
 - **Design parity is proven, not assumed.** Every one of the nine checked-in design references
   under `design/` has a real capture of the reference and of the built application at the identical
   tuple, a labelled side-by-side comparison, a machine-readable diff and a hand-written Material
-  Design 3 audit (`design/parity/`). Mismatch runs from 4.8 % (entry sheet) to 32.5 % (regex
-  builder). The audits list the open defects: the OS caption bar instead of a frameless Material
-  title bar, the vault root listing no entries, the compact regex builder, the Reports card set and
-  smaller differences on Settings, Appearance, History and Changelog.
+  Design 3 audit (`design/parity/`). Mismatch runs from 4.8 % (entry sheet) to 20.4 % (regex
+  builder). Repaired this pass: the window now draws its own Material title bar in place of the OS
+  caption, the regex builder is the design's workbench, the Reports cards carry the reference
+  anatomy and the vault root lists every entry. The audits list what is still open: the app bar
+  content, vault health chips and group filter, and smaller differences on Settings, Appearance,
+  History and Changelog.
 - **The feature inventory is fail-closed and currently red.** `docs/features/inventory.json` names
   86 canonical features on two surfaces; `node scripts/check-feature-inventory.mjs` reports how many
   rows are fully green (implementation, copy, article, test, interaction record and capture all

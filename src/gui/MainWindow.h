@@ -111,6 +111,7 @@ public slots:
 
 protected:
     bool event(QEvent* event) override;
+    bool nativeEvent(const QByteArray& eventType, void* message, qintptr* result) override;
     void showEvent(QShowEvent* event) override;
     void hideEvent(QHideEvent* event) override;
     void closeEvent(QCloseEvent* event) override;

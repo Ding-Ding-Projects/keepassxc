@@ -249,6 +249,8 @@ namespace Material
                 {"receipt_long",         "receipt_long"},
                 {"regular_expression",   "regular_expression"},
                 {"remove",               "minimize"},
+                {"crop_square",          "crop_square"},
+                {"filter_none",          "filter_none"},
                 {"replay",               "replay"},
                 {"restart_alt",          "restart_alt"},
                 {"restore_page",         "restore_page"},

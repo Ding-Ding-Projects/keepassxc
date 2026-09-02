@@ -580,7 +580,19 @@
       "id": "frameless-material-title-bar",
       "surface": "app",
       "title": "Frameless window with Material title bar",
-      "status": "missing"
+      "status": "partial",
+      "note": "TitleBar row with caption buttons replaces the OS caption on Windows (WM_NCCALCSIZE/WM_NCHITTEST); needs its interaction ledger entry and capture record",
+      "implementation": {
+        "file": "src/gui/material/MaterialTitleBar.h",
+        "anchor": "^\\s*class TitleBar : public QWidget$"
+      },
+      "test": {
+        "file": "tests/TestMaterialTitleBar.cpp",
+        "anchor": "^void TestMaterialTitleBar::"
+      },
+      "article": {
+        "file": "docs/features/design/frameless-title-bar.md"
+      }
     },
     {
       "id": "overlays-paint-surface",

@@ -1,7 +1,7 @@
 {
-  "id": "vault_compact_bilingual_light_x1",
+  "id": "shell_compact_bilingual_light_x1",
   "tuple": {
-    "screen": "vault",
+    "screen": "shell",
     "width": {
       "id": "compact",
       "w": 600,
@@ -11,14 +11,14 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 16400,
+  "pid": 25828,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
     "windowGeometry": "560,185 800x720",
     "devicePixelRatio": 1
   },
-  "png": "vault_compact_bilingual_light_x1.png",
+  "png": "shell_compact_bilingual_light_x1.png",
   "pngSha256": "5bc5f3bbfca2964e8db3664e9268b1fe3158c7caa91d02c14224221504b4dea4",
   "findings": [],
   "widgetCount": 39,

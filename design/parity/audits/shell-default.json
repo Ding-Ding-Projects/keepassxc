@@ -28,8 +28,8 @@
     },
     {
       "primitive": "window chrome",
-      "status": "nonconforming",
-      "finding": "The window keeps the OS caption bar (DWM attributes only); Windows desktop apps are required to use a frameless custom Material title bar."
+      "status": "conforms",
+      "finding": "The application draws its own 44 px Material title bar (mark, name, database, minimise/maximise/close) and the desktop caption is gone; the native frame, shadow and snap layouts remain. Whole-window proof: evidence/shell-default/window-frame.png (repaired 2026-09-01)."
     },
     {
       "primitive": "elevation and shape",
@@ -38,11 +38,6 @@
     }
   ],
   "defects": [
-    {
-      "id": "shell-default-2",
-      "severity": "high",
-      "summary": "OS caption instead of a frameless Material title bar"
-    },
     {
       "id": "shell-default-3",
       "severity": "medium",

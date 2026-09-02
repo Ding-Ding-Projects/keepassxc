@@ -89,6 +89,7 @@
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVoice.h"
 #ifdef Q_OS_WIN
+#include "gui/material/MaterialTitleBar.h"
 #include "gui/material/MaterialWindowChrome.h"
 #endif
 #include "gui/osutils/OSUtils.h"
@@ -754,6 +755,33 @@ MainWindow::MainWindow()
     // lists all of them by name so nothing became unreachable.
     // ------------------------------------------------------------------
     auto* materialShell = new Material::Shell;
+
+    // The caption asks; the window answers. The subtitle follows the window
+    // title so the bar reads "KeePassXC  Personal.kdbx" like the reference.
+    if (auto* titleBar = materialShell->titleBar()) {
+        connect(titleBar, &Material::TitleBar::minimizeRequested, this, &MainWindow::showMinimized);
+        connect(titleBar, &Material::TitleBar::maximizeRequested, this, [this] {
+            if (isMaximized()) {
+                showNormal();
+            } else {
+                showMaximized();
+            }
+        });
+        connect(titleBar, &Material::TitleBar::closeRequested, this, &MainWindow::close);
+        connect(this, &QWidget::windowTitleChanged, titleBar, [titleBar](const QString& title) {
+            const QString app = QApplication::applicationDisplayName();
+            QString subtitle = title;
+            const QStringList separators{QStringLiteral(" - "), QString::fromUtf8(" \xe2\x80\x93 "), QString::fromUtf8(" \xe2\x80\x94 ")};
+            for (const QString& separator : separators) {
+                const int at = subtitle.lastIndexOf(separator);
+                if (at >= 0 && subtitle.mid(at + separator.size()).trimmed() == app) {
+                    subtitle = subtitle.left(at);
+                    break;
+                }
+            }
+            titleBar->setSubtitle(subtitle.trimmed() == app ? QString() : subtitle.trimmed());
+        });
+    }
 
     // The pages are moved out of their .ui layouts into the destinations. The
     // stacked widget stays whole - its indices still drive updateMenuActionState()
@@ -2016,6 +2044,10 @@ void MainWindow::showEvent(QShowEvent* event)
     // fail at link time on a platform that does not compile it.
 #ifdef Q_OS_WIN
     Material::WindowChrome::install(this);
+    // The application draws its own caption; the desktop keeps the frame.
+    if (!QCoreApplication::arguments().contains(QStringLiteral("--native-caption"))) {
+        Material::WindowChrome::installFrameless(this);
+    }
 #endif
 
     // State plainly, once, that the humour level styles warnings and errors too.
@@ -2082,8 +2114,32 @@ void MainWindow::closeEvent(QCloseEvent* event)
     event->ignore();
 }
 
+bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, qintptr* result)
+{
+#ifdef Q_OS_WIN
+    if (eventType == "windows_generic_MSG") {
+        auto* shell = Material::Shell::instance();
+        auto* titleBar = shell ? shell->titleBar() : nullptr;
+        if (titleBar
+            && Material::WindowChrome::handleNativeEvent(this, message, result, [this, titleBar](const QPoint& local) {
+                   return titleBar->isCaptionArea(titleBar->mapFrom(this, local));
+               })) {
+            return true;
+        }
+    }
+#endif
+    return QMainWindow::nativeEvent(eventType, message, result);
+}
+
 void MainWindow::changeEvent(QEvent* event)
 {
+    if (event->type() == QEvent::WindowStateChange) {
+        if (auto* shell = Material::Shell::instance()) {
+            if (shell->titleBar()) {
+                shell->titleBar()->setMaximized(isMaximized());
+            }
+        }
+    }
     if ((event->type() == QEvent::WindowStateChange) && isMinimized()) {
         if (isTrayIconEnabled() && config()->get(Config::GUI_MinimizeToTray).toBool()) {
             event->ignore();

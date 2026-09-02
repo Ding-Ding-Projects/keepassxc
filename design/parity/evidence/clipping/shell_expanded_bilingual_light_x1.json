@@ -1,7 +1,7 @@
 {
-  "id": "vault_expanded_bilingual_light_x1",
+  "id": "shell_expanded_bilingual_light_x1",
   "tuple": {
-    "screen": "vault",
+    "screen": "shell",
     "width": {
       "id": "expanded",
       "w": 1200,
@@ -11,14 +11,14 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 12136,
+  "pid": 32388,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
     "windowGeometry": "560,185 1200x800",
     "devicePixelRatio": 1
   },
-  "png": "vault_expanded_bilingual_light_x1.png",
+  "png": "shell_expanded_bilingual_light_x1.png",
   "pngSha256": "5f633d234a86ababf09456ebb709b8b38883a1fee3b7c44117d54c52ce8e4ad5",
   "findings": [],
   "widgetCount": 88,

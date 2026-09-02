@@ -27,6 +27,7 @@
 #include <QWindow>
 
 #include <windows.h>
+#include <windowsx.h>
 
 namespace Material
 {
@@ -38,6 +39,7 @@ namespace Material
             // taken from <dwmapi.h> so the build does not depend on the Windows
             // SDK being new enough to declare them. They are numbers on the wire
             // either way, and an older desktop window manager fails the call.
+            constexpr const char* FramelessProperty = "materialFrameless";
             constexpr unsigned long AttrUseImmersiveDarkMode = 20; // DWMWA_USE_IMMERSIVE_DARK_MODE
             constexpr unsigned long AttrUseImmersiveDarkModeOld = 19; // ... as numbered before Windows 10 20H1
             constexpr unsigned long AttrWindowCornerPreference = 33; // DWMWA_WINDOW_CORNER_PREFERENCE
@@ -182,6 +184,104 @@ namespace Material
             const bool accepted =
                 setIntAttribute(handle, AttrSystemBackdropType, wanted ? BackdropMainWindow : BackdropNone);
             window->setProperty(BackdropProperty, wanted && accepted);
+        }
+
+        void installFrameless(QWidget* widget)
+        {
+            HWND handle = handleFor(widget);
+            if (!handle) {
+                return;
+            }
+            QWidget* window = widget->window();
+            if (window->property(FramelessProperty).toBool()) {
+                return;
+            }
+            window->setProperty(FramelessProperty, true);
+            // Keep WS_THICKFRAME and WS_CAPTION so the desktop still draws the
+            // shadow, animates minimise and restore, and offers snap layouts;
+            // WM_NCCALCSIZE below is what removes the visible caption. A frame
+            // change makes the window manager ask again.
+            ::SetWindowPos(handle, nullptr, 0, 0, 0, 0,
+                           SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
+        namespace
+        {
+            int frameThickness(HWND handle)
+            {
+                const UINT dpi = ::GetDpiForWindow(handle);
+                return ::GetSystemMetricsForDpi(SM_CXSIZEFRAME, dpi) + ::GetSystemMetricsForDpi(SM_CXPADDEDBORDER, dpi);
+            }
+        } // namespace
+
+        bool handleNativeEvent(QWidget* widget,
+                               void* message,
+                               qintptr* result,
+                               const std::function<bool(const QPoint&)>& captionTest)
+        {
+            auto* msg = static_cast<MSG*>(message);
+            if (!msg || !widget || !widget->window() || !widget->window()->property(FramelessProperty).toBool()) {
+                return false;
+            }
+            QWidget* window = widget->window();
+            const HWND handle = msg->hwnd;
+
+            if (msg->message == WM_NCCALCSIZE && msg->wParam == TRUE) {
+                // The client area is the whole window; when maximised the frame
+                // hangs off the monitor edge, so pull the rectangle back inside
+                // by the frame width or the top row of pixels is lost.
+                auto* params = reinterpret_cast<NCCALCSIZE_PARAMS*>(msg->lParam);
+                if (::IsZoomed(handle)) {
+                    const int frame = frameThickness(handle);
+                    RECT& rect = params->rgrc[0];
+                    rect.left += frame;
+                    rect.top += frame;
+                    rect.right -= frame;
+                    rect.bottom -= frame;
+                }
+                *result = 0;
+                return true;
+            }
+
+            if (msg->message == WM_NCHITTEST) {
+                const int frame = frameThickness(handle);
+                const QPoint global(GET_X_LPARAM(msg->lParam), GET_Y_LPARAM(msg->lParam));
+                RECT bounds{};
+                ::GetWindowRect(handle, &bounds);
+                const bool maximized = ::IsZoomed(handle);
+                const bool left = global.x() < bounds.left + frame;
+                const bool right = global.x() >= bounds.right - frame;
+                const bool top = global.y() < bounds.top + frame;
+                const bool bottom = global.y() >= bounds.bottom - frame;
+                if (!maximized && (left || right || top || bottom)) {
+                    if (top && left) {
+                        *result = HTTOPLEFT;
+                    } else if (top && right) {
+                        *result = HTTOPRIGHT;
+                    } else if (bottom && left) {
+                        *result = HTBOTTOMLEFT;
+                    } else if (bottom && right) {
+                        *result = HTBOTTOMRIGHT;
+                    } else if (left) {
+                        *result = HTLEFT;
+                    } else if (right) {
+                        *result = HTRIGHT;
+                    } else if (top) {
+                        *result = HTTOP;
+                    } else {
+                        *result = HTBOTTOM;
+                    }
+                    return true;
+                }
+                // Device pixels to the window's logical coordinates.
+                const qreal ratio = window->devicePixelRatioF();
+                const int inset = maximized ? frame : 0;
+                const QPoint local(qRound((global.x() - bounds.left - inset) / ratio),
+                                   qRound((global.y() - bounds.top - inset) / ratio));
+                *result = captionTest(local) ? HTCAPTION : HTCLIENT;
+                return true;
+            }
+            return false;
         }
 
         void install(QWidget* widget)

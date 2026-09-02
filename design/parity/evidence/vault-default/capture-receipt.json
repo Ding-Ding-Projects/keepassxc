@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
-  "capturedAt": "2026-09-02T00:53:38.591Z",
+  "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+  "capturedAt": "2026-09-02T01:28:12.768Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/vault-default",
     "png": "reference.png",
@@ -51,36 +51,36 @@
   "built": {
     "route": "kpxc://capture/vault?state=default&width=1440&height=860&theme=light&lang=bilingual&target=page",
     "png": "built.png",
-    "sha256": "80cd0aa62adb2db43ec689e56bc0f5f60e6490c4cefc4784654645d27a2c4879",
-    "bytes": 133270,
-    "pid": 18220,
-    "hwnd": 60491700,
+    "sha256": "48c2eb61c0a8c26dd8881fcc561bf6f0c6a9619e24f985b458e53b26c9fa6e10",
+    "bytes": 133137,
+    "pid": 17128,
+    "hwnd": 658616,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "vault",
       "devicePixelRatio": 1,
-      "hwnd": "60491700",
+      "hwnd": "658616",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
-      "pageRect": "88,112 1440x860",
+      "pageRect": "88,156 1440x860",
       "requestedViewport": "1440x860",
       "schemaVersion": 1,
       "screen": "vault",
-      "shellRect": "0,0 1528x972",
-      "shellViewport": "1528x972",
+      "shellRect": "0,0 1528x1016",
+      "shellViewport": "1528x1016",
       "state": "default",
       "target": "page",
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
       "version": "2.8.8501",
-      "windowGeometry": "560,185 1528x972"
+      "windowGeometry": "560,185 1528x1016"
     },
     "cropRect": {
       "x": 88,
-      "y": 112,
+      "y": 156,
       "w": 1440,
       "h": 860
     },
@@ -89,10 +89,10 @@
   },
   "comparison": {
     "png": "comparison.png",
-    "sha256": "0ec3f185a08ff392a2f7a62f37c4da4819f8a3f087bdb642ba0018afc34b0e8a",
+    "sha256": "6eb3e27727424e68e3fbd705d5057d8f4a54f55280ad5a43f739217ed588c235",
     "diff": "diff.json",
-    "diffSha256": "2b515136edb7127c6d9ea8e38195a7b93a7159e49b789ba444fafb6dfec70730",
-    "mismatchRatio": 0.10831153100775194,
+    "diffSha256": "9bfa2e77ce4fc811a69f5cd6b354ed23c75ec4236f6feb7e6265bf2d296e0adb",
+    "mismatchRatio": 0.10834625322997415,
     "sizeMismatch": false
   }
 }

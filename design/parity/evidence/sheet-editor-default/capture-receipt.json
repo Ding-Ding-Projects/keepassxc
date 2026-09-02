@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
-  "capturedAt": "2026-09-02T00:53:26.798Z",
+  "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+  "capturedAt": "2026-09-02T01:26:51.104Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/sheet-editor-default",
     "png": "reference.png",
@@ -53,34 +53,34 @@
     "png": "built.png",
     "sha256": "1bd124ead0dcd3d036d9d2a8f2467c1893efa3fb3a084993d948444fa871ae2b",
     "bytes": 84965,
-    "pid": 9336,
-    "hwnd": 32770372,
+    "pid": 20900,
+    "hwnd": 724188,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "editor",
       "devicePixelRatio": 1,
-      "hwnd": "32770372",
+      "hwnd": "724188",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
-      "pageRect": "88,112 1280x860",
+      "pageRect": "88,156 1280x860",
       "requestedViewport": "1280x860",
       "schemaVersion": 1,
       "screen": "sheet-editor",
-      "shellRect": "0,0 1368x972",
-      "shellViewport": "1368x972",
+      "shellRect": "0,0 1368x1016",
+      "shellViewport": "1368x1016",
       "state": "default",
       "target": "page",
       "theme": "light",
       "title": "parity.kdbx[*] - KeePassXC",
       "version": "2.8.8501",
-      "windowGeometry": "560,185 1368x972"
+      "windowGeometry": "560,185 1368x1016"
     },
     "cropRect": {
       "x": 88,
-      "y": 112,
+      "y": 156,
       "w": 1280,
       "h": 860
     },
@@ -91,7 +91,7 @@
     "png": "comparison.png",
     "sha256": "50819d7662fc0fd351d59889c732e26c9e7239515f65a71d72e9900f958564b5",
     "diff": "diff.json",
-    "diffSha256": "5be6d8e2033b50eebef2fb7b25debed3e61a28ee87dc80427ad9e7a38941259c",
+    "diffSha256": "ae9e1dcd802eab8ad32d58f4b5e4ca129ff60fb04853d0a4d508cae510084098",
     "mismatchRatio": 0.04819858284883721,
     "sizeMismatch": false
   }

@@ -18,6 +18,10 @@
 #ifndef KEEPASSXC_MATERIALWINDOWCHROME_H
 #define KEEPASSXC_MATERIALWINDOWCHROME_H
 
+#include <QPoint>
+#include <QtGlobal>
+#include <functional>
+
 class QWidget;
 
 namespace Material
@@ -57,6 +61,31 @@ namespace Material
          * has its attributes refreshed.
          */
         void install(QWidget* window);
+
+        /**
+         * Remove the native caption from the top-level window of @p window and
+         * let the application's own TitleBar stand in for it.
+         *
+         * The frame's resize borders, shadow, snap layouts, Aero shake and the
+         * system menu all stay native: only the caption strip is handed over.
+         * handleNativeEvent() must then be called from the window's
+         * nativeEvent() so hit-testing reports the bar as caption.
+         */
+        void installFrameless(QWidget* window);
+
+        /**
+         * Answer the native messages a frameless window has to answer itself:
+         * WM_NCCALCSIZE (no caption, the client area starts at the top edge)
+         * and WM_NCHITTEST (resize borders, then the caption strip, then the
+         * client). Returns true when @p result carries the answer.
+         *
+         * @p captionTest is asked, with a point in @p window coordinates,
+         * whether that point is caption; it is the TitleBar's isCaptionArea().
+         */
+        bool handleNativeEvent(QWidget* window,
+                               void* message,
+                               qintptr* result,
+                               const std::function<bool(const QPoint&)>& captionTest);
 
         /** Apply the chrome once, without subscribing to theme changes. */
         void apply(QWidget* window);
