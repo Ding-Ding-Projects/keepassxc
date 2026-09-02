@@ -45,11 +45,11 @@
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
         "comparisonSha256": "83521e492567b7f7cb934b1badc7be59049a798c8a175fe42bd36760340617c3",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "4ab8f19ae16be0be9fa3f398e3192f9be239f30595838d1a0131ed60ed140a12",
+        "diffSha256": "18996bf3462738ceeaa2573c4ba304289c1347bfbbe94a07b9a00aba4cd3a0b9",
         "mismatchRatio": 0.11230038759689923
       },
       "deviations": [],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -95,11 +95,11 @@
         "comparison": "design/parity/evidence/changelog-default/comparison.png",
         "comparisonSha256": "47172ee2ded289d1278345fe52eeffbbd1b8122211a712a67a325e05cde0ec4c",
         "diff": "design/parity/evidence/changelog-default/diff.json",
-        "diffSha256": "92faacc482fc7f2b8346ebe9b31c1560fdf89302119eaafa30a149c55631682a",
+        "diffSha256": "dfa5e197fab75ee505d6d9dab02194cfafbe3270fbd2312fe5ea951d7ca54327",
         "mismatchRatio": 0.08316763565891473
       },
       "deviations": [],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -141,12 +141,12 @@
         "referenceRaw": "design/parity/evidence/history-default/reference.png",
         "referenceRawSha256": "493416b3f99c11c1a1c5bd3638668e4e8878996763f6650f99d9066424252529",
         "builtRaw": "design/parity/evidence/history-default/built.png",
-        "builtRawSha256": "9f5cb2930a24931f43f1fe01257c9f17d529b61f085de2273c3fd3c2010261d5",
+        "builtRawSha256": "ce9062d06fa68ef946edcefac2a42c3933ff4ba027cdbe36c0546f367e4e7f62",
         "comparison": "design/parity/evidence/history-default/comparison.png",
-        "comparisonSha256": "4b5a75f1c7174d57ac2bf09af04c6f1b9243c65de877c5d42d0c2951e0a70c0b",
+        "comparisonSha256": "f6e8da8ec8bca507f30f53e4a95eb39268200bfdfedecb005d823c9c77dca44f",
         "diff": "design/parity/evidence/history-default/diff.json",
-        "diffSha256": "06074458bf2e0e1c096425a507969a3fcf53828d2c5d9b1a0885c3e41f45c53d",
-        "mismatchRatio": 0.07907073643410853
+        "diffSha256": "f9c6e21537a6af2c14c231d3d2860f7cf12d3b7a79aab1dedd944ac4061eeaa5",
+        "mismatchRatio": 0.0790717054263566
       },
       "deviations": [
         {
@@ -154,7 +154,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -195,15 +195,15 @@
         "referenceRaw": "design/parity/evidence/shell-default/reference.png",
         "referenceRawSha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
         "builtRaw": "design/parity/evidence/shell-default/built.png",
-        "builtRawSha256": "f69cf33de36933ac06b441c46a8b694fcaee67c989dcb6e03f4ab898a78493f3",
+        "builtRawSha256": "62f422cefdfad9b6e5305b3232d0f4f68759ef3a40f611610e289cccc5185419",
         "comparison": "design/parity/evidence/shell-default/comparison.png",
-        "comparisonSha256": "afe1e5db8caea4b30839ba29c661618722d778a6d4728df136dde59441dd1fa2",
+        "comparisonSha256": "d6f7894f2f94061f526ff0e23a0ba62808657c1ae976dd9366ac86c094cffac9",
         "diff": "design/parity/evidence/shell-default/diff.json",
-        "diffSha256": "89757a53c5eed67d71591f6432fdf745e7fe7d769ea1f3dcf0f99f8dbfe58539",
-        "mismatchRatio": 0.12142889492753624
+        "diffSha256": "515f3aa4289a4123c22760f204e0771edfc9ac2ada713269741e96f0d9a7ec41",
+        "mismatchRatio": 0.12141757246376812
       },
       "deviations": [],
-      "sourceCommit": "ca0d779dbc0a259723af3c99758835784a4e6954",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -245,15 +245,15 @@
         "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
         "referenceRawSha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
         "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
-        "builtRawSha256": "b3ae28aa025143f2d0b4679a619789bf887de702a6301e9c22bdd88191584f43",
+        "builtRawSha256": "49e41a6c61bd84a5d30ca530b67ae80c52c85f9344f20fbd291cf6dd3beaffd2",
         "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
-        "comparisonSha256": "e36734f4d6663e4500aa7705ffb993d13144215a7980286ca4f8854dd6f8774e",
+        "comparisonSha256": "6950b95f0a5b9ebbca8052598f8ebf634c22f13b2fac77a5fc86ea894d08c474",
         "diff": "design/parity/evidence/regex-builder-default/diff.json",
-        "diffSha256": "c34a2a11fdb67a6f89df0ac9177283eb475c39eeee8ce83a33255faf331cc3d5",
-        "mismatchRatio": 0.32534188034188033
+        "diffSha256": "539ad5187dd014f465ea293d27a88f2f6e5ac1896274b05075e1387fa722ec58",
+        "mismatchRatio": 0.32524305555555555
       },
       "deviations": [],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -289,7 +289,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/reports-default.json",
-        "sha256": "524139af991a2f1437a083ec0adc9915d0c4284e2a129837245d7180f1dae39f"
+        "sha256": "9a075e2c31dac073707f0360a80695e2ced4fa0cab4085de60ce09c17b5a088b"
       },
       "evidence": {
         "status": "complete",
@@ -300,11 +300,11 @@
         "comparison": "design/parity/evidence/reports-default/comparison.png",
         "comparisonSha256": "83cc2becb5b39320e88a384c91579862e784babd2d50bf0fc188f99518f8c655",
         "diff": "design/parity/evidence/reports-default/diff.json",
-        "diffSha256": "b10bba301c02619da5c54cf117faa72e407792af86cff5f9b63d6783c37795e6",
+        "diffSha256": "1c82c0ab51f68ad595ffee4ba1224b03b0f405826756150f84e923fe26b5c336",
         "mismatchRatio": 0.10147383720930232
       },
       "deviations": [],
-      "sourceCommit": "ca0d779dbc0a259723af3c99758835784a4e6954",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -338,22 +338,22 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/settings-default.json",
-        "sha256": "cfbcb2cd4744c7ef94d87f6896a7a9b94564a7d3248a1a6654e6beb2ffbfcd2a"
+        "sha256": "a32b6574c90c8abb9a3d7edb55c5fc5df9c80fd81788f3e8fb10faef98ee03d3"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/settings-default/reference.png",
         "referenceRawSha256": "a07adfb47dfca3a1f5681b6884066555ff8d7555e2b41abad669ba7e8bff0c5f",
         "builtRaw": "design/parity/evidence/settings-default/built.png",
-        "builtRawSha256": "34b652a09d55888c62ada74af8c06e0d8e99ef8c4070959cd9b02623f52f695f",
+        "builtRawSha256": "185a423953780c3670c98ecd18be3fbb0c08ca56fb610408417b9c9d7636f8c5",
         "comparison": "design/parity/evidence/settings-default/comparison.png",
-        "comparisonSha256": "c5dd5340514bad30fa9401518973d40049223a918682412983ca3491aa965fbf",
+        "comparisonSha256": "76141b4c88b823c228d03247b879a87a77363a8359e276af42b7fae7ded7e05b",
         "diff": "design/parity/evidence/settings-default/diff.json",
-        "diffSha256": "f89e077eef15e4053951e79cb8b346451488e7e04a9beb32e89baa41961d1ea2",
-        "mismatchRatio": 0.0560328851744186
+        "diffSha256": "60a01aea0dadab210136b4c0c330fe594a6c10bf68a210b354c0f0ab4823a506",
+        "mismatchRatio": 0.05958848110465116
       },
       "deviations": [],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -399,11 +399,11 @@
         "comparison": "design/parity/evidence/sheet-editor-default/comparison.png",
         "comparisonSha256": "50819d7662fc0fd351d59889c732e26c9e7239515f65a71d72e9900f958564b5",
         "diff": "design/parity/evidence/sheet-editor-default/diff.json",
-        "diffSha256": "5ee697e5e0478706c306cba7f9d35c6c0ed4dc009ca16557fc072f6ec36f6de6",
+        "diffSha256": "5be6d8e2033b50eebef2fb7b25debed3e61a28ee87dc80427ad9e7a38941259c",
         "mismatchRatio": 0.04819858284883721
       },
       "deviations": [],
-      "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -438,19 +438,19 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/vault-default.json",
-        "sha256": "8f38d86d1f6a3207ffac72b56c5d594c46230c38ef3746695bc43efeda921657"
+        "sha256": "b4034943bcdd5dfcb31a71416ebed8510ad8c251b1d58bbf22f2efd396558aa8"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "945107584137116c69cac65a8e6b7b4055518cf1a14fb9108516e2ad535232a6",
+        "builtRawSha256": "80cd0aa62adb2db43ec689e56bc0f5f60e6490c4cefc4784654645d27a2c4879",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "f4fdd85be7cd11fef931545987f3b7bcfed63f18f42841f002b455171f0543bf",
+        "comparisonSha256": "0ec3f185a08ff392a2f7a62f37c4da4819f8a3f087bdb642ba0018afc34b0e8a",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "5335401911fe848644652b7b8076f7c782c5c071c604642f59361b30337d11b5",
-        "mismatchRatio": 0.10832929586563307
+        "diffSha256": "2b515136edb7127c6d9ea8e38195a7b93a7159e49b789ba444fafb6dfec70730",
+        "mismatchRatio": 0.10831153100775194
       },
       "deviations": [
         {
@@ -458,7 +458,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "ca0d779dbc0a259723af3c99758835784a4e6954",
+      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

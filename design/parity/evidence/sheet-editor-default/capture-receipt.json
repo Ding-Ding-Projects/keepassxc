@@ -21,8 +21,8 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
-  "capturedAt": "2026-09-01T23:56:24.515Z",
+  "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
+  "capturedAt": "2026-09-02T00:53:26.798Z",
   "reference": {
     "url": "http://127.0.0.1:43110/reference/sheet-editor-default",
     "png": "reference.png",
@@ -53,15 +53,15 @@
     "png": "built.png",
     "sha256": "1bd124ead0dcd3d036d9d2a8f2467c1893efa3fb3a084993d948444fa871ae2b",
     "bytes": 84965,
-    "pid": 30416,
-    "hwnd": 3017932,
+    "pid": 9336,
+    "hwnd": 32770372,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "editor",
       "devicePixelRatio": 1,
-      "hwnd": "3017932",
+      "hwnd": "32770372",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -91,7 +91,7 @@
     "png": "comparison.png",
     "sha256": "50819d7662fc0fd351d59889c732e26c9e7239515f65a71d72e9900f958564b5",
     "diff": "diff.json",
-    "diffSha256": "5ee697e5e0478706c306cba7f9d35c6c0ed4dc009ca16557fc072f6ec36f6de6",
+    "diffSha256": "5be6d8e2033b50eebef2fb7b25debed3e61a28ee87dc80427ad9e7a38941259c",
     "mismatchRatio": 0.04819858284883721,
     "sizeMismatch": false
   }

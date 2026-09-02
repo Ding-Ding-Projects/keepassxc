@@ -13,8 +13,8 @@
     },
     {
       "primitive": "entry list",
-      "status": "nonconforming",
-      "finding": "Selecting the root group lists no entries in the built app; the reference lists every entry recursively with health dots, tag chips and relative dates."
+      "status": "deviates",
+      "finding": "Root selection now lists every entry recursively with live add and remove (repaired 2026-09-01); health dots and tag chips per row are still missing against the reference."
     },
     {
       "primitive": "filter chips",
@@ -38,11 +38,6 @@
     }
   ],
   "defects": [
-    {
-      "id": "vault-default-1",
-      "severity": "high",
-      "summary": "Root group selection lists no entries (reference lists recursively)"
-    },
     {
       "id": "vault-default-2",
       "severity": "medium",

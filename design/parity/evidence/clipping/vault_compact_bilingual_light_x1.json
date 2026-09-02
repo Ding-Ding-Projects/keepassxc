@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 16988,
+  "pid": 10972,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "vault_compact_bilingual_light_x1.png",
-  "pngSha256": "cc17527e584fa38146c7ca6ca3eee1d54813186c4acd96b3863f00bb505e5e6a",
+  "pngSha256": "0ab951c9c6a214bcb8fcf02268f4a803fcd135b5b6cdc25c27cc055a685780c6",
   "findings": [],
   "widgetCount": 35,
   "widgets": [
@@ -273,9 +273,9 @@
       "rect": "136,132 509x40",
       "scrollable": false,
       "squeezed": false,
-      "text": "Search entries — title, username, URL, notes",
+      "text": "Search entries",
       "textOverflows": false,
-      "textWidth": 257
+      "textWidth": 82
     },
     {
       "class": "Material::Chip",

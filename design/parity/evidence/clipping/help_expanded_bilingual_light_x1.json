@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 16256,
+  "pid": 31508,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "help_expanded_bilingual_light_x1.png",
-  "pngSha256": "7b795837ce5ad1e8b8f352231794cb578544fa2990875c7331d689a49c081e09",
+  "pngSha256": "37fd0fc9913a9a73140fa131a1c9a02470336f7a772129cb1f6f1517cc64bb7f",
   "findings": [],
   "widgetCount": 52,
   "widgets": [
@@ -188,7 +188,7 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "886x670",
+      "hint": "886x750",
       "leaf": false,
       "minimumHint": "752x670",
       "name": "materialDestinationStack",

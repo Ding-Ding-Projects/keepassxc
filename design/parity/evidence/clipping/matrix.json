@@ -1,8 +1,8 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "9e2c8a561fba359fb883901033beec34395682de",
+  "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T00:00:26.321Z",
+  "generatedAt": "2026-09-02T00:57:23.121Z",
   "quick": true,
   "tuples": 20,
   "errors": 0,
@@ -28,8 +28,8 @@
         "devicePixelRatio": 1
       },
       "png": "vault_compact_bilingual_light_x1.png",
-      "pngSha256": "7a9624f9a1ab07d2a67f7e19a29741a869f88cbdbc28eecfc151e5b2fcabe997",
-      "widgetCount": 34,
+      "pngSha256": "0ab951c9c6a214bcb8fcf02268f4a803fcd135b5b6cdc25c27cc055a685780c6",
+      "widgetCount": 35,
       "findingCount": 0
     },
     {
@@ -52,7 +52,7 @@
         "devicePixelRatio": 1
       },
       "png": "reports_compact_bilingual_light_x1.png",
-      "pngSha256": "9af5b92ec87f149e5105d33d5c9f5c0e8fd7522de6dd7c0307712e2bff14916a",
+      "pngSha256": "5f8f7c133eb802a9810d387faadb516b7917f233cf7bd99b216adb1481a17bb9",
       "widgetCount": 50,
       "findingCount": 0
     },
@@ -196,8 +196,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_compact_bilingual_light_x1.png",
-      "pngSha256": "44cdd4349aeb5391dcce144a22d497a77bf7485f925120bad5bd0068d8913dda",
-      "widgetCount": 181,
+      "pngSha256": "3f722bed4392b1430ef709b604480560abd27e0938e0550f1f13e07710cb71be",
+      "widgetCount": 80,
       "findingCount": 0
     },
     {
@@ -268,8 +268,8 @@
         "devicePixelRatio": 1
       },
       "png": "vault_expanded_bilingual_light_x1.png",
-      "pngSha256": "6378f15a5a3700ad8092f4c07c5b36a8a825f07213563df20b6e70a29855f9f5",
-      "widgetCount": 66,
+      "pngSha256": "2ff33e4e62f88a91adfe9540096b855917599ff618ef875575909124ee119dbc",
+      "widgetCount": 84,
       "findingCount": 0
     },
     {
@@ -292,7 +292,7 @@
         "devicePixelRatio": 1
       },
       "png": "reports_expanded_bilingual_light_x1.png",
-      "pngSha256": "5279fd25cd94ee5732ac195149e3a85904d801257d93459f24f2f0fc9c42e391",
+      "pngSha256": "066c4db03f3f2d69da49961c038ff146d8c563fe5578794618499575d07aca0b",
       "widgetCount": 50,
       "findingCount": 0
     },
@@ -316,7 +316,7 @@
         "devicePixelRatio": 1
       },
       "png": "editor_expanded_bilingual_light_x1.png",
-      "pngSha256": "0459ce80b96c049d4956841201796f13b7c89a6ba9db292675b004da8aa41e46",
+      "pngSha256": "722e8f65a9d45967e8231042df810b1f571453031f962cfa92b37bdf018ecc48",
       "widgetCount": 66,
       "findingCount": 0
     },
@@ -340,7 +340,7 @@
         "devicePixelRatio": 1
       },
       "png": "database_expanded_bilingual_light_x1.png",
-      "pngSha256": "d55a6f2f7903565d75290f3d2cb4cb0f63d4c0c486a312ea46151e2854b7a944",
+      "pngSha256": "06fa9690211543273c0137393ece5cb3dd154e8c325467e8d955fc825ec061b2",
       "widgetCount": 65,
       "findingCount": 0
     },
@@ -364,7 +364,7 @@
         "devicePixelRatio": 1
       },
       "png": "tools_expanded_bilingual_light_x1.png",
-      "pngSha256": "e36448135f62a430cc7d1260d1fe165e58def270e553bff4008b7097f30c1186",
+      "pngSha256": "bf73ee1c8f24370a54f62c07ee6f97ba890fac1b309de68c477e8819e47d0c25",
       "widgetCount": 71,
       "findingCount": 0
     },
@@ -388,7 +388,7 @@
         "devicePixelRatio": 1
       },
       "png": "history_expanded_bilingual_light_x1.png",
-      "pngSha256": "00952cd85ae078d3109dce73f9398f309972d30b7204abcfb82490c0af6ccf06",
+      "pngSha256": "3d5b6f9a8f435fa9eb9989d0922223304808ff87a6fd0b75af225c8759fb9361",
       "widgetCount": 42,
       "findingCount": 0
     },
@@ -412,7 +412,7 @@
         "devicePixelRatio": 1
       },
       "png": "changelog_expanded_bilingual_light_x1.png",
-      "pngSha256": "5e5249987a9e8d5392170d8bff263d59fb15ae78a467583a1eccb753b1ece8c0",
+      "pngSha256": "12ea09fd3d766f68ae32db9d0f25064a899174801de41d3a1bf6f1d1b00f102c",
       "widgetCount": 3675,
       "findingCount": 0
     },
@@ -436,8 +436,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_expanded_bilingual_light_x1.png",
-      "pngSha256": "ff35887e388442cf32fab5bebd0bb9ddedeada7e7f239fbb451ae722975f734f",
-      "widgetCount": 181,
+      "pngSha256": "8555dfa204e76715e2c10c0498b692c440125e9ab80c9895fd9ebd4765bdeb93",
+      "widgetCount": 80,
       "findingCount": 0
     },
     {
@@ -460,7 +460,7 @@
         "devicePixelRatio": 1
       },
       "png": "appearance_expanded_bilingual_light_x1.png",
-      "pngSha256": "e6e8413a8b4b87bb9ed48261eb35a3483a387b0b4123b25ae5537a6948ab31c7",
+      "pngSha256": "34c71055601b39cd8bf3aafe89a9a8c8e675bee7df7eb4af080dee0d27db6e1c",
       "widgetCount": 140,
       "findingCount": 0
     },
@@ -484,7 +484,7 @@
         "devicePixelRatio": 1
       },
       "png": "help_expanded_bilingual_light_x1.png",
-      "pngSha256": "7b795837ce5ad1e8b8f352231794cb578544fa2990875c7331d689a49c081e09",
+      "pngSha256": "37fd0fc9913a9a73140fa131a1c9a02470336f7a772129cb1f6f1517cc64bb7f",
       "widgetCount": 52,
       "findingCount": 0
     }

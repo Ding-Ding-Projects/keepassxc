@@ -8,8 +8,8 @@
   "primitives": [
     {
       "primitive": "summary tiles",
-      "status": "nonconforming",
-      "finding": "Reference: Health score / Breached / Needs work / Healthy tiles in tonal containers; built: Healthy / Weak or short / Found in breaches / Passkeys stored with different counts and colours."
+      "status": "deviates",
+      "finding": "Tiles are now the reference four (Health score, Breached, Needs work, Healthy) in order; the breach tile states its figure is unknown rather than showing a count (repaired 2026-09-01)."
     },
     {
       "primitive": "finding sections",
@@ -36,7 +36,7 @@
     {
       "id": "reports-default-1",
       "severity": "high",
-      "summary": "Summary tile set and finding-row anatomy differ from the reference"
+      "summary": "Finding-row anatomy (entry rows with URL and Fix action) still differs from the reference"
     },
     {
       "id": "reports-default-2",

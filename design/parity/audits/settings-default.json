@@ -8,8 +8,8 @@
   "primitives": [
     {
       "primitive": "page list",
-      "status": "deviates",
-      "finding": "Built lists 8 pages plus Classic editor; reference lists 11 (Password generator, Interface, History & backups, External tools, Advanced are missing as pages)."
+      "status": "conforms",
+      "finding": "Twelve pages including Interface, History & backups, External tools and Advanced, matching the reference set (repaired 2026-09-01); KeeShare and the classic editor remain as extras."
     },
     {
       "primitive": "setting rows",
@@ -33,11 +33,6 @@
     }
   ],
   "defects": [
-    {
-      "id": "settings-default-1",
-      "severity": "medium",
-      "summary": "Three reference settings pages are not separate pages"
-    },
     {
       "id": "settings-default-2",
       "severity": "low",

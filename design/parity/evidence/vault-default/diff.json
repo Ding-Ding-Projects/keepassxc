@@ -13,8 +13,8 @@
     "height": 860
   },
   "sizeMismatch": false,
-  "mismatchedPixels": 134155,
-  "mismatchRatio": 0.10832929586563307,
+  "mismatchedPixels": 134133,
+  "mismatchRatio": 0.10831153100775194,
   "differingCells": 833,
   "cellSize": 32,
   "boxes": [
@@ -2420,7 +2420,7 @@
     }
   ],
   "referenceSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
-  "builtSha256": "945107584137116c69cac65a8e6b7b4055518cf1a14fb9108516e2ad535232a6",
-  "comparisonSha256": "f4fdd85be7cd11fef931545987f3b7bcfed63f18f42841f002b455171f0543bf",
-  "generatedAt": "2026-09-02T00:09:32.741Z"
+  "builtSha256": "80cd0aa62adb2db43ec689e56bc0f5f60e6490c4cefc4784654645d27a2c4879",
+  "comparisonSha256": "0ec3f185a08ff392a2f7a62f37c4da4819f8a3f087bdb642ba0018afc34b0e8a",
+  "generatedAt": "2026-09-02T00:53:53.465Z"
 }

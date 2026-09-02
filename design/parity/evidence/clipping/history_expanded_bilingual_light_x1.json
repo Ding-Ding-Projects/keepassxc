@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 7608,
+  "pid": 12260,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "history_expanded_bilingual_light_x1.png",
-  "pngSha256": "00952cd85ae078d3109dce73f9398f309972d30b7204abcfb82490c0af6ccf06",
+  "pngSha256": "3d5b6f9a8f435fa9eb9989d0922223304808ff87a6fd0b75af225c8759fb9361",
   "findings": [],
   "widgetCount": 42,
   "widgets": [
