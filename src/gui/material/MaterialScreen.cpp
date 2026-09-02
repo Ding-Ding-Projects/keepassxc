@@ -314,6 +314,9 @@ namespace Material
     void Screen::applyTheme()
     {
         m_headlineLabel->setFont(theme()->font(TypeRole::HeadlineSmall));
+        // A headline row that also carries 44 px controls can round the label a
+        // pixel short of its font height; pin the minimum so it never does.
+        m_headlineLabel->setMinimumHeight(m_headlineLabel->fontMetrics().height());
         m_headlineLabel->setStyleSheet(
             QStringLiteral("color: %1; background: transparent;").arg(theme()->hex(Role::OnSurface)));
 

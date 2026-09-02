@@ -895,6 +895,12 @@ namespace Material
 
     void VaultScreen::applyBreakpoint()
     {
+        // The long placeholder needs the expanded field; at compact and medium
+        // widths it would run past the box, so the short form is used there.
+        if (m_searchBar) {
+            const bool narrow = m_breakpoint == Breakpoint::Compact || m_breakpoint == Breakpoint::Medium;
+            m_searchBar->setPlaceholder(narrow ? tr("Search entries") : tr("Search entries — title, username, URL, notes"));
+        }
         const bool showGroups = hasGroupPane(m_breakpoint);
         const bool inlineDetail = hasInlineDetail(m_breakpoint);
         m_sidebar->setVisible(showGroups);
