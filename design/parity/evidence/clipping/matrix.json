@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "60f62c16f88dfdd875fcaee4099cad2e95532ef2",
+  "sourceCommit": "2c67f3e76784b5c3bb870459d30ec068aa6d84b9",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T01:11:59.091Z",
+  "generatedAt": "2026-09-02T01:16:55.580Z",
   "quick": true,
   "tuples": 2,
   "errors": 0,
   "findings": [],
   "records": [
     {
-      "id": "regex-builder_compact_bilingual_light_x1",
+      "id": "reports_compact_bilingual_light_x1",
       "tuple": {
-        "screen": "regex-builder",
+        "screen": "reports",
         "width": {
           "id": "compact",
           "w": 600,
@@ -27,15 +27,15 @@
         "windowGeometry": "560,185 800x720",
         "devicePixelRatio": 1
       },
-      "png": "regex-builder_compact_bilingual_light_x1.png",
-      "pngSha256": "537d91f54e890753bb53fc0c1553086465a1ce0669925b3d714d53e0f9d2a2b8",
-      "widgetCount": 35,
+      "png": "reports_compact_bilingual_light_x1.png",
+      "pngSha256": "6efec1a5cdf19ed0761cab2819acdcc2c96fdf2e4703741f481fb1404b80c1a8",
+      "widgetCount": 56,
       "findingCount": 0
     },
     {
-      "id": "regex-builder_expanded_bilingual_light_x1",
+      "id": "reports_expanded_bilingual_light_x1",
       "tuple": {
-        "screen": "regex-builder",
+        "screen": "reports",
         "width": {
           "id": "expanded",
           "w": 1200,
@@ -51,9 +51,9 @@
         "windowGeometry": "560,185 1200x800",
         "devicePixelRatio": 1
       },
-      "png": "regex-builder_expanded_bilingual_light_x1.png",
-      "pngSha256": "e07819df866fc11082c71150d4a46ee1789f4379ccadc00e3e2ea4ab0c572673",
-      "widgetCount": 84,
+      "png": "reports_expanded_bilingual_light_x1.png",
+      "pngSha256": "0993cfacbeac7b07f6efaa74f83ce5315b21a4cefae187c4ef27b3e3a2ab0568",
+      "widgetCount": 56,
       "findingCount": 0
     }
   ]

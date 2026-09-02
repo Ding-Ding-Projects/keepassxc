@@ -9,6 +9,7 @@
 #include <QProgressBar>
 #include <QSignalSpy>
 #include <QTest>
+#include <QAbstractButton>
 #include <QToolButton>
 
 using namespace Material;
@@ -46,12 +47,12 @@ void TestMaterialReports::statesSelectionAndAccessibility()
     QVERIFY(!screen.findChild<QWidget*>(QStringLiteral("reportsStatisticsCard")));
     QVERIFY(screen.isCardExpanded(QStringLiteral("breached")));
     QVERIFY(!screen.isCardExpanded(QStringLiteral("weak")));
-    auto* weakToggle = screen.findChild<QToolButton*>(QStringLiteral("reportToggle_weak"));
+    auto* weakToggle = screen.findChild<QAbstractButton*>(QStringLiteral("reportToggle_weak"));
     QVERIFY(weakToggle);
     QVERIFY(!weakToggle->accessibleName().isEmpty());
     weakToggle->click();
     QVERIFY(screen.isCardExpanded(QStringLiteral("weak")));
-    auto* breachedToggle = screen.findChild<QToolButton*>(QStringLiteral("reportToggle_breached"));
+    auto* breachedToggle = screen.findChild<QAbstractButton*>(QStringLiteral("reportToggle_breached"));
     QVERIFY(breachedToggle->accessibleDescription().contains(QStringLiteral("Unavailable")));
 
     const auto checks = screen.findChildren<QCheckBox*>();

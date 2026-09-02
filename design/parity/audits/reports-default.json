@@ -13,8 +13,8 @@
     },
     {
       "primitive": "finding sections",
-      "status": "nonconforming",
-      "finding": "Reference expands each finding into entry rows with URL and a Fix action; built shows count chips and a text notice only."
+      "status": "conforms",
+      "finding": "Cards stack in one column with the reference header anatomy (tonal glyph circle, title over blurb, count pill, chevron); expanded cards list entry rows with a Fix action (repaired 2026-09-01)."
     },
     {
       "primitive": "search bar",
@@ -29,19 +29,14 @@
     {
       "primitive": "page header",
       "status": "deviates",
-      "finding": "Built adds a 'Database reports' headline, 'Detailed reports' button and findings dropdown not in the reference."
+      "finding": "Built keeps a 'Database reports' headline, a 'Detailed reports' route to the legacy report dialogs and a findings category filter the reference lacks; search and Export stay."
     }
   ],
   "defects": [
     {
-      "id": "reports-default-1",
-      "severity": "high",
-      "summary": "Finding-row anatomy (entry rows with URL and Fix action) still differs from the reference"
-    },
-    {
       "id": "reports-default-2",
       "severity": "medium",
-      "summary": "Header controls not in the reference"
+      "summary": "Header controls not in the reference (headline, Detailed reports, category filter)"
     }
   ],
   "deviations": []

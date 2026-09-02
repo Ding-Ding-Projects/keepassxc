@@ -24,6 +24,7 @@
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
 
+#include <QAbstractButton>
 #include <QGridLayout>
 #include <QCheckBox>
 #include <QComboBox>
@@ -416,6 +417,80 @@ namespace Material
             QString m_value;
             bool m_separator = true;
         };
+        constexpr int CardHeaderHeight = 64;
+        constexpr int CardGlyphCircle = 36;
+
+        /**
+         * The collapsible card's header, in the reference anatomy: a tonal
+         * glyph circle, title over blurb, the count pill and a chevron.
+         */
+        class ReportCardHeader : public QAbstractButton
+        {
+        public:
+            ReportCardHeader(const ReportCard& card, bool expanded, QWidget* parent = nullptr)
+                : QAbstractButton(parent)
+                , m_card(card)
+            {
+                setCheckable(true);
+                setChecked(expanded);
+                setCursor(Qt::PointingHandCursor);
+                setFocusPolicy(Qt::StrongFocus);
+                setFixedHeight(CardHeaderHeight);
+                setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+                auto* layout = new QHBoxLayout(this);
+                layout->setContentsMargins(0, 0, 0, 0);
+                layout->addStretch(1);
+                m_count = new ScoreChip(card.unavailable ? PillKind::Off : healthPill(card.status), card.count, this);
+                m_count->setAttribute(Qt::WA_TransparentForMouseEvents);
+                layout->addWidget(m_count);
+                layout->addSpacing(GlyphGap);
+                layout->addSpacing(GlyphSize);
+                connect(this, &QAbstractButton::toggled, this, [this] { update(); });
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                const QRect circle(0, (height() - CardGlyphCircle) / 2, CardGlyphCircle, CardGlyphCircle);
+                painter.setPen(Qt::NoPen);
+                painter.setBrush(hasFocus() ? theme()->color(Role::SecondaryContainer)
+                                            : theme()->color(Role::SurfaceContainerHigh));
+                painter.drawEllipse(circle);
+                const QPixmap glyph = Icons::pixmap(m_card.symbol, GlyphSize, theme()->colors().healthColor(m_card.status));
+                painter.drawPixmap(circle.center() - QPoint(GlyphSize / 2 - 1, GlyphSize / 2 - 1), glyph);
+
+                const int left = CardGlyphCircle + GlyphGap;
+                const int textWidth = qMax(0, m_count->x() - ColumnGap - left);
+                const QFont titleFont = theme()->font(TypeRole::TitleSmall);
+                const QFont blurbFont = weighted(TypeRole::LabelMedium, QFont::Normal);
+                const QFontMetrics titleMetrics(titleFont);
+                const QFontMetrics blurbMetrics(blurbFont);
+                int y = (height() - titleMetrics.height() - blurbMetrics.height()) / 2;
+                painter.setFont(titleFont);
+                painter.setPen(theme()->color(Role::OnSurface));
+                painter.drawText(QRect(left, y, textWidth, titleMetrics.height()),
+                                 Qt::AlignLeft | Qt::AlignVCenter,
+                                 titleMetrics.elidedText(m_card.title, Qt::ElideRight, textWidth));
+                y += titleMetrics.height();
+                painter.setFont(blurbFont);
+                painter.setPen(theme()->color(Role::OnSurfaceVariant));
+                painter.drawText(QRect(left, y, textWidth, blurbMetrics.height()),
+                                 Qt::AlignLeft | Qt::AlignVCenter,
+                                 blurbMetrics.elidedText(m_card.blurb, Qt::ElideRight, textWidth));
+
+                const QPixmap chevron = Icons::pixmap(isChecked() ? QStringLiteral("expand_less") : QStringLiteral("expand_more"),
+                                                      GlyphSize,
+                                                      theme()->color(Role::OnSurfaceVariant));
+                painter.drawPixmap(QPoint(width() - GlyphSize, (height() - GlyphSize) / 2), chevron);
+            }
+
+        private:
+            ReportCard m_card;
+            ScoreChip* m_count = nullptr;
+        };
     } // namespace
 
     ReportsScreen::ReportsScreen(QWidget* parent)
@@ -541,15 +616,14 @@ namespace Material
     void ReportsScreen::rebuildReportCards()
     {
         clearLayout(m_reportCardsLayout);
-        const int columns = width() < 840 ? 1 : 2;
+        // The reference stacks the cards in one column at every width.
+        const int columns = 1;
         for (int index = 0; index < m_reportCards.size(); ++index) {
             const auto cardData = m_reportCards.at(index);
             auto* card = new SectionCard;
             card->setObjectName(QStringLiteral("reportCard_") + cardData.id);
-            auto* toggle = new QToolButton(card);
+            auto* toggle = new ReportCardHeader(cardData, m_expandedCards.value(cardData.id), card);
             toggle->setObjectName(QStringLiteral("reportToggle_") + cardData.id);
-            toggle->setCheckable(true);
-            toggle->setChecked(m_expandedCards.value(cardData.id));
             toggle->setText(tr("%1 · %2").arg(cardData.title, cardData.count));
             toggle->setAccessibleName(tr("%1 report, %2. %3").arg(cardData.title, cardData.count, cardData.blurb));
             toggle->setAccessibleDescription(cardData.unavailable
