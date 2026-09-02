@@ -113,6 +113,9 @@ namespace Material
         setCursor(Qt::PointingHandCursor);
         setFocusPolicy(Qt::StrongFocus);
         setAccessibleName(m_label);
+        // A stable, untranslated name so a capture route or a test can find
+        // the row whatever language mode is active.
+        setObjectName(QStringLiteral("specRow_") + m_symbol);
         // Keep the press here so the release is delivered to this row and not
         // swallowed by the section card underneath.
         setAttribute(Qt::WA_NoMousePropagation, true);
@@ -594,9 +597,21 @@ namespace Material
         // grouping calls addSidebarSection() before adding any page.
         m_sidebarLayout->addStretch(1);
 
+        // Eleven pages and their overlines do not fit a short window; the
+        // sidebar scrolls instead of squeezing its rows.
+        m_sidebarScroll = new QScrollArea(this);
+        m_sidebarScroll->setObjectName(QStringLiteral("materialSpecSheetSidebarScroll"));
+        m_sidebarScroll->setFrameShape(QFrame::NoFrame);
+        m_sidebarScroll->setWidgetResizable(true);
+        m_sidebarScroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        m_sidebarScroll->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
+        m_sidebarScroll->viewport()->setAutoFillBackground(false);
+        m_sidebarScroll->setWidget(m_sidebar);
+        m_sidebarScroll->setFixedWidth(Layout::SheetNavWidth);
+
         m_stack = new QStackedWidget(this);
 
-        root->addWidget(m_sidebar);
+        root->addWidget(m_sidebarScroll);
         root->addWidget(m_stack, 1);
 
         connect(theme(), &Theme::changed, this, &SpecSheet::applyTheme);
@@ -749,9 +764,11 @@ namespace Material
         const bool compact = width < 600;
         m_rootLayout->setDirection(compact ? QBoxLayout::TopToBottom : QBoxLayout::LeftToRight);
         m_pagePicker->setVisible(compact);
-        m_sidebar->setVisible(!compact);
+        m_sidebarScroll->setVisible(!compact);
         if (!compact) {
-            m_sidebar->setFixedWidth(width < 840 ? 160 : width < 1200 ? 216 : Layout::SheetNavWidth);
+            const int navWidth = width < 840 ? 160 : width < 1200 ? 216 : Layout::SheetNavWidth;
+            m_sidebarScroll->setFixedWidth(navWidth);
+            m_sidebar->setFixedWidth(navWidth);
         }
     }
 

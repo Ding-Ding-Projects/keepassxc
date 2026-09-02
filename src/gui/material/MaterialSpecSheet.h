@@ -243,6 +243,7 @@ namespace Material
         void registerPage(const QString& id, const QString& symbol, const QString& title, QWidget* widget);
 
         QWidget* m_sidebar = nullptr;
+        QScrollArea* m_sidebarScroll = nullptr;
         QVBoxLayout* m_sidebarLayout = nullptr;
         QStackedWidget* m_stack = nullptr;
         QHash<QString, SpecSheetPage*> m_pages;

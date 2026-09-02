@@ -21,6 +21,7 @@
 
 #include "MaterialDimSum.h"
 #include "MaterialShell.h"
+#include "MaterialSpecSheet.h"
 #include "MaterialTheme.h"
 #include "config-keepassx.h"
 #include "core/Config.h"
@@ -349,6 +350,18 @@ namespace Material
                         if (request.state == QLatin1String("appearance-editor")) {
                             if (auto* target = window->findChild<QWidget*>(QStringLiteral("appearanceFontFamily"))) {
                                 AppearanceEditor::instance()->editElement(target);
+                            }
+                        }
+                        // The personal-vocabulary state opens Settings > Interface and
+                        // scrolls the upload row into view so a driver can click it.
+                        if (request.state == QLatin1String("personal-vocabulary")) {
+                            if (auto* sheet = window->findChild<SpecSheet*>()) {
+                                sheet->setCurrentPage(QStringLiteral("interface"));
+                                if (auto* page = sheet->page(QStringLiteral("interface"))) {
+                                    if (auto* row = page->findChild<QWidget*>(QStringLiteral("specRow_upload_file"))) {
+                                        page->ensureWidgetVisible(row, 0, 80);
+                                    }
+                                }
                             }
                         }
                         writeReceipt(window, request, navigated ? QStringLiteral("ready") : QStringLiteral("unreachable"));

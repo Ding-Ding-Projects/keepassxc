@@ -191,12 +191,26 @@ namespace Material
 
     void SearchBar::setPlaceholder(const QString& placeholder)
     {
-        m_lineEdit->setPlaceholderText(placeholder);
+        m_placeholder = placeholder;
+        applyPlaceholder();
     }
 
     QString SearchBar::placeholder() const
     {
-        return m_lineEdit->placeholderText();
+        return m_placeholder;
+    }
+
+    void SearchBar::applyPlaceholder()
+    {
+        // A placeholder longer than the field would be cut mid-glyph; the
+        // full text stays available through placeholder() and the accessible
+        // description, and the box shows as much as fits with an ellipsis.
+        const QMargins margins = m_lineEdit->textMargins();
+        const int available = m_lineEdit->width() - margins.left() - margins.right() - 8;
+        const QString shown = available > 0 ? m_lineEdit->fontMetrics().elidedText(m_placeholder, Qt::ElideRight, available)
+                                            : m_placeholder;
+        m_lineEdit->setPlaceholderText(shown);
+        m_lineEdit->setAccessibleDescription(m_placeholder);
     }
 
     bool SearchBar::setIdentity(const QString& id, const QString& label)
@@ -288,6 +302,7 @@ namespace Material
     void SearchBar::resizeEvent(QResizeEvent* event)
     {
         QWidget::resizeEvent(event);
+        applyPlaceholder();
         // The pill radius and the glyph both follow the height.
         update();
     }

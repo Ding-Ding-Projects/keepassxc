@@ -80,9 +80,34 @@ namespace Material
             label->setPalette(palette);
         }
 
-        QLabel* makeLabel(const QString& text, TypeRole type, Role color, QWidget* parent = nullptr)
+        /**
+         * A wrapping label whose minimum height follows its height-for-width.
+         * The settings page lives in a scroll area, which sizes its content by
+         * minimum hints, and a plain wrapped QLabel reports a one-line minimum
+         * and is then cut to it.
+         */
+        class WrapLabel : public QLabel
         {
-            auto* label = new QLabel(text, parent);
+        public:
+            using QLabel::QLabel;
+
+        protected:
+            void resizeEvent(QResizeEvent* event) override
+            {
+                QLabel::resizeEvent(event);
+                const int needed = heightForWidth(event->size().width());
+                if (needed > 0 && needed != minimumHeight()) {
+                    setMinimumHeight(needed);
+                }
+            }
+        };
+
+        QLabel* makeLabel(const QString& text, TypeRole type, Role color, QWidget* parent = nullptr, bool wrap = false)
+        {
+            QLabel* label = wrap ? new WrapLabel(text, parent) : new QLabel(text, parent);
+            if (wrap) {
+                label->setWordWrap(true);
+            }
             label->setProperty(TypeProperty, static_cast<int>(type));
             label->setProperty(ColorProperty, static_cast<int>(color));
             applyLabelStyle(label);
@@ -976,8 +1001,7 @@ namespace Material
             text->setContentsMargins(0, 0, 0, 0);
             text->setSpacing(2);
             text->addWidget(makeLabel(spec.label, TypeRole::BodyMedium, Role::OnSurface));
-            auto* sub = makeLabel(spec.sub, TypeRole::LabelMedium, Role::OnSurfaceVariant);
-            sub->setWordWrap(true);
+            auto* sub = makeLabel(spec.sub, TypeRole::LabelMedium, Role::OnSurfaceVariant, nullptr, true);
             text->addWidget(sub);
             rowLayout->addLayout(text, 1);
 
@@ -1154,10 +1178,18 @@ namespace Material
         const int columns = width() < 840 ? 1 : width() < 1100 ? 2 : 3;
         for (int index = 0; index < m_cards.size(); ++index) {
             m_grid->removeWidget(m_cards.at(index).card);
-            m_grid->addWidget(m_cards.at(index).card, index / columns, index % columns, Qt::AlignTop);
+            // No alignment flag: an aligned grid item is sized by its hint and the
+            // wrapped sub-labels inside lose their height-for-width.
+            m_grid->addWidget(m_cards.at(index).card, index / columns, index % columns);
         }
         for (int column = 0; column < 3; ++column) {
             m_grid->setColumnStretch(column, column < columns ? 1 : 0);
+        }
+        // The empty row after the last card takes the slack so cards keep
+        // their natural height without an alignment flag.
+        const int lastRow = (m_cards.size() + columns - 1) / columns;
+        for (int row = 0; row <= 6; ++row) {
+            m_grid->setRowStretch(row, row == lastRow ? 1 : 0);
         }
         m_gridHost->setMinimumWidth(0);
     }

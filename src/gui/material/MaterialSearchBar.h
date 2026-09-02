@@ -101,12 +101,14 @@ namespace Material
 
     private:
         void applyTheme();
+        void applyPlaceholder();
 
         QLineEdit* m_lineEdit = nullptr;
         Chip* m_regexChip = nullptr;
         IconButton* m_builderButton = nullptr;
         Variant m_variant = Variant::Prominent;
         bool m_showRegexControls = true;
+        QString m_placeholder;
         QString m_searchId;
         QString m_searchLabel;
         QString m_regexFlags = QStringLiteral("i");
