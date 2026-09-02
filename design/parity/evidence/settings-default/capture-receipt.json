@@ -91,7 +91,7 @@
     "png": "comparison.png",
     "sha256": "3f996869e3a58c2ccb21db86e4d7f7ea032faf64e12a36a1d00044e18017a3fe",
     "diff": "diff.json",
-    "diffSha256": "1e4afc41ccff5697602db9f0401e1d9cb250b1a5f1d4e85ebbc364ff722ffa82",
+    "diffSha256": "2bed61d1a8e294d313ef4e771b39538e17f5ebd38c3304f4be0885460859b435",
     "mismatchRatio": 0.05926689680232558,
     "sizeMismatch": false
   }

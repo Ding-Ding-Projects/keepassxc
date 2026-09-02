@@ -95,8 +95,11 @@ namespace Material
             void resizeEvent(QResizeEvent* event) override
             {
                 QLabel::resizeEvent(event);
+                // Only ever raise the minimum: lowering it on a narrower pass
+                // makes the scroll area toggle its bar and the layout oscillate
+                // between two widths without settling.
                 const int needed = heightForWidth(event->size().width());
-                if (needed > 0 && needed != minimumHeight()) {
+                if (needed > minimumHeight()) {
                     setMinimumHeight(needed);
                 }
             }

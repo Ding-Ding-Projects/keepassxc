@@ -41,12 +41,12 @@
         "referenceRaw": "design/parity/evidence/appearance-default/reference.png",
         "referenceRawSha256": "b600f4105ccf87fb9b1f8c307c6bb56fe329bc395723930f3ad73f017fc79aac",
         "builtRaw": "design/parity/evidence/appearance-default/built.png",
-        "builtRawSha256": "fa94d0e848ffeb7b07d2201555e68c86525b96af2b9dcd538e45c094b8f6b8de",
+        "builtRawSha256": "edfffbb5a6a7cab3cc16479fe077bc744ad7fbd592c2bcb113940fb246480dd5",
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
-        "comparisonSha256": "d43e6c87875eb8dd1a4761b6af8620917c4d0c3d8e39dd98c9fa79674a198079",
+        "comparisonSha256": "c3c6c0557b08d324fe0f221bf2bc5ba4eb096251b47b512fac7c1ca28915eddf",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "c7d93e557fece147d13880927a886f61f792b66e1d21cbf342a90b96b6fdf802",
-        "mismatchRatio": 0.10670542635658915
+        "diffSha256": "878d819d6a4cc31c8377f789159691ab8e3cbdbd582060ad86a91e05e87770ae",
+        "mismatchRatio": 0.09821802325581395
       },
       "deviations": [
         {
@@ -62,7 +62,7 @@
           "approval": "Owner direction 2026-09-02: every dropdown must be a list box with a search bar and every control 100% Material Design 3; the searchable select is the conforming control."
         }
       ],
-      "sourceCommit": "305684490cba124c21817f434c87cf3e2783bc85",
+      "sourceCommit": "d14e6b79188224b9c40ec85f003dbcfd656f7cc5",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -383,7 +383,7 @@
         "comparison": "design/parity/evidence/settings-default/comparison.png",
         "comparisonSha256": "3f996869e3a58c2ccb21db86e4d7f7ea032faf64e12a36a1d00044e18017a3fe",
         "diff": "design/parity/evidence/settings-default/diff.json",
-        "diffSha256": "1e4afc41ccff5697602db9f0401e1d9cb250b1a5f1d4e85ebbc364ff722ffa82",
+        "diffSha256": "2bed61d1a8e294d313ef4e771b39538e17f5ebd38c3304f4be0885460859b435",
         "mismatchRatio": 0.05926689680232558
       },
       "deviations": [],
@@ -483,7 +483,7 @@
         "comparison": "design/parity/evidence/vault-default/comparison.png",
         "comparisonSha256": "17843ff77c79814638e8f2a122430dacb11c1a4ab39202c06f6228bbd6bd161a",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "e2747328534d93df2114e1d09db7df0ebe24b6c202141faf22f1bb1217a318f9",
+        "diffSha256": "e48911165a54e73c09123f6fe98a56b6fce19b80648419757c7a3a3f21ffcf65",
         "mismatchRatio": 0.08424660852713178
       },
       "deviations": [
