@@ -30,6 +30,7 @@
 
 class QGridLayout;
 class QVBoxLayout;
+class QAbstractButton;
 class QLabel;
 class QProgressBar;
 class QToolButton;
@@ -129,7 +130,7 @@ namespace Material
         QWidget* m_reportCardsHost = nullptr;
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
-        QToolButton* m_bulkExport = nullptr;
+        QAbstractButton* m_bulkExport = nullptr;
         Select* m_category = nullptr;
         State m_state = State::Empty;
         QSet<QString> m_selectedIds;

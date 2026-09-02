@@ -45,7 +45,7 @@
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
         "comparisonSha256": "554079b0eeff5f37914b96da94eb488e68f782f1f8a1ec9aeb1794a6097fef1d",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "2d73c43c5075a946d6925794351097aa72a87ea8b6c065908fb4a39d42efc07a",
+        "diffSha256": "05819daf5c36740795135cda982211074df449c532b49270bd000ab1c2056993",
         "mismatchRatio": 0.10750193798449613
       },
       "deviations": [
@@ -56,7 +56,7 @@
           "approval": "Owner direction 2026-09-02: every control must be 100% Material Design 3; the current slider anatomy is the conforming one."
         }
       ],
-      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
+      "sourceCommit": "8c7bcc45360428f144742f4ac7429dc56c990e0b",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -310,22 +310,29 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/reports-default.json",
-        "sha256": "6eb03fb6b1d9e6736604704cf06a3878a5a7ae2465c6f7508a94bc94d28956d4"
+        "sha256": "de7c82078e2555a57d2c23cf1426b1650fb7021dbdb8a2aa9c3aa5ef435b4b4c"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/reports-default/reference.png",
         "referenceRawSha256": "8265bc8dfe88182222c5ba2e6e5a14c6ebe6c9a42f27a88ad99f1f696d3314e6",
         "builtRaw": "design/parity/evidence/reports-default/built.png",
-        "builtRawSha256": "fbb405df90d6b47bc148b626e4beafba17722b2a9ab110ceae642c1ec9665ccf",
+        "builtRawSha256": "d95129e98327e711f05ba24a9b7698caedbde225534d28488cd889c779555fce",
         "comparison": "design/parity/evidence/reports-default/comparison.png",
-        "comparisonSha256": "8904e67a338e0d53482be46d3b8040365395cde80246d776f30ddff17c140087",
+        "comparisonSha256": "068cf3b78635aa3884d443a3c61d01ced10f28d525f4b15c91ff8aa48d1da387",
         "diff": "design/parity/evidence/reports-default/diff.json",
-        "diffSha256": "4b925d7d7c16872d5c82f0b50f9a20ffe1b8310fd732b09150e374172dcc1cca",
-        "mismatchRatio": 0.11237984496124032
+        "diffSha256": "06dd327443aff8e376d8a6c3a6d4a7e6c691fc13359bb5190037c486a7aa63b0",
+        "mismatchRatio": 0.11230329457364341
       },
-      "deviations": [],
-      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
+      "deviations": [
+        {
+          "id": "reports-default-dev-header",
+          "primitive": "page header",
+          "reason": "The built header keeps a findings category select (a real filter over the finding cards, searchable like every select) and a Detailed reports button that reaches the classic report dialogs still needed for the offline breach corpus; the reference has neither.",
+          "approval": "Reviewed 2026-09-02: both are functional routes, not chrome, and stay until the classic reports are Material."
+        }
+      ],
+      "sourceCommit": "98d83824ca1b9e3151b97558888ef98a880802e1",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -459,27 +466,33 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/vault-default.json",
-        "sha256": "c42d4001da269730fc5e998e3cbaf4ba5f0fd8193200519da7349fc51a9f4f61"
+        "sha256": "8cd224e2b29b8a99c20212d2eb2f3e4141680603781f8bf2e84c23344256d2cc"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "909af9ba9f18885d1df7fb11d63ea5c25dc8630c1b4a4b7cc721402a762567d4",
+        "builtRawSha256": "5fe44c9e89c6730e1faf0c0e318263cee5db5fc95fdcc4927390e8036c0b1ae0",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "1132ea9f40e86894d6c65850f3ee078ff00b00735e289247372bcabfbd6efacc",
+        "comparisonSha256": "f22c388cbeef2675abe2c47bfa5653c4b0c229eb10cfbff8fd9cef99beca7061",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "7394d8b16a8b1780a884e76dee563a937a9997a24606db0910d6b8dbcea75170",
-        "mismatchRatio": 0.08426760335917313
+        "diffSha256": "952e9cacc9000b480e53077341391a74a75e73c5c44679bac61820ca2e80854a",
+        "mismatchRatio": 0.0815374677002584
       },
       "deviations": [
         {
           "reason": "The fixture root group is named 'Passwords' by keepassxc-cli db-create; the reference names it 'Personal'. Data, not chrome.",
           "approval": "recorded 2026-09-01 in issue #12"
+        },
+        {
+          "id": "vault-default-dev-group-sublabels",
+          "primitive": "group rows",
+          "reason": "The reference demo data gives every group a second-language name under its label. Real groups carry one stored name and the vault never invents a translation, so the sublabel line is omitted; counts and indentation match. Entry rows now carry the reference tag chips from each entry’s real tags.",
+          "approval": "Reviewed 2026-09-02 against the design-is-data rule: a translated group name would be a fabricated value."
         }
       ],
-      "sourceCommit": "41d900ebf5f12e3dd0be8c9d1f980dc5c2ad71f3",
+      "sourceCommit": "98d83824ca1b9e3151b97558888ef98a880802e1",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

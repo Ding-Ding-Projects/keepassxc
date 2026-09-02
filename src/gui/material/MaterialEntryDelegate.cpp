@@ -54,6 +54,7 @@ namespace Material
             QRect avatar;
             QRect text;
             QRect url;
+            QRect tags;
             QRect health;
             QRect totp;
             QRect modified;
@@ -93,6 +94,10 @@ namespace Material
             }
             if (!compact && fits(EntryDelegate::HealthColumnWidth)) {
                 layout.health = takeRight(EntryDelegate::HealthColumnWidth);
+            }
+            // The design's tag chips sit between the host and the health verdict.
+            if (!compact && fits(EntryDelegate::TagsColumnWidth)) {
+                layout.tags = takeRight(EntryDelegate::TagsColumnWidth);
             }
             if (!compact && fits(EntryDelegate::UrlColumnWidth)) {
                 layout.url = takeRight(EntryDelegate::UrlColumnWidth);
@@ -265,6 +270,32 @@ namespace Material
                 layout.url,
                 Qt::AlignLeft | Qt::AlignVCenter,
                 metaMetrics.elidedText(index.data(UrlRole).toString(), Qt::ElideRight, layout.url.width()));
+        }
+
+        // Up to two tag chips, each a small tonal pill; the rest are reachable
+        // through the sidebar's tag filter and the detail pane.
+        if (!layout.tags.isEmpty()) {
+            const QStringList tags = index.data(TagsRole).toStringList();
+            QFont chipFont = theme()->font(TypeRole::LabelSmall);
+            const QFontMetrics chipMetrics(chipFont);
+            int x = layout.tags.left();
+            const int chipHeight = chipMetrics.height() + 6;
+            const int y = layout.tags.center().y() - chipHeight / 2;
+            for (int tagIndex = 0; tagIndex < tags.size() && tagIndex < 2; ++tagIndex) {
+                const QString label = chipMetrics.elidedText(tags.at(tagIndex), Qt::ElideRight, layout.tags.width() - 8);
+                const int width = chipMetrics.horizontalAdvance(label) + 16;
+                if (x + width > layout.tags.right() + 1) {
+                    break;
+                }
+                const QRect chip(x, y, width, chipHeight);
+                painter->setPen(Qt::NoPen);
+                painter->setBrush(theme()->color(selected ? Role::SurfaceContainerLowest : Role::SecondaryContainer));
+                painter->drawRoundedRect(chip, chipHeight / 2.0, chipHeight / 2.0);
+                painter->setFont(chipFont);
+                painter->setPen(theme()->color(selected ? Role::OnSurface : Role::OnSecondaryContainer));
+                painter->drawText(chip, Qt::AlignCenter, label);
+                x += width + 6;
+            }
         }
 
         // The design defines exactly four health states, so an entry that cannot

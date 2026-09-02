@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "reports-default",
   "status": "complete",
-  "reviewedOn": "2026-09-01",
+  "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
-  "verdict": "defects-open",
+  "verdict": "conforms-with-deviations",
   "primitives": [
     {
       "primitive": "summary tiles",
@@ -29,15 +29,16 @@
     {
       "primitive": "page header",
       "status": "deviates",
-      "finding": "Built keeps a 'Database reports' headline, a 'Detailed reports' route to the legacy report dialogs and a findings category filter the reference lacks; search and Export stay."
+      "finding": "Headline dropped and the export is a Material outlined button beside the search pill (repaired 2026-09-02); the category select and the Detailed reports route stay as recorded deviations."
     }
   ],
-  "defects": [
+  "defects": [],
+  "deviations": [
     {
-      "id": "reports-default-2",
-      "severity": "medium",
-      "summary": "Header controls not in the reference (headline, Detailed reports, category filter)"
+      "id": "reports-default-dev-header",
+      "primitive": "page header",
+      "reason": "The built header keeps a findings category select (a real filter over the finding cards, searchable like every select) and a Detailed reports button that reaches the classic report dialogs still needed for the offline breach corpus; the reference has neither.",
+      "approval": "Reviewed 2026-09-02: both are functional routes, not chrome, and stay until the classic reports are Material."
     }
-  ],
-  "deviations": []
+  ]
 }

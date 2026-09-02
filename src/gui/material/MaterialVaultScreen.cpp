@@ -425,6 +425,14 @@ namespace Material
             return column(EntryModel::Totp, Qt::UserRole);
         case EntryDelegate::HealthRole:
             return QVariant::fromValue(healthOf(model->entryFromIndex(source)));
+        case EntryDelegate::TagsRole: {
+            // The entry's real tags, the favourite marker excepted: the star
+            // in the detail pane already says that one.
+            Entry* entry = model->entryFromIndex(source);
+            QStringList tags = entry ? entry->tagList() : QStringList();
+            tags.removeAll(favouriteTag());
+            return tags;
+        }
         case EntryDelegate::SymbolRole:
             // The same helper the detail pane asks, so the row avatar and the
             // pane tile are one glyph. It answers a name for every entry, so

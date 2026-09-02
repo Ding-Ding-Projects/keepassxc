@@ -37,17 +37,17 @@
       "finding": "Search field with regex chip and builder affordance."
     }
   ],
-  "defects": [
-    {
-      "id": "vault-default-4",
-      "severity": "low",
-      "summary": "Group rows lack the reference's Cantonese sublabels and per-row tag chips"
-    }
-  ],
+  "defects": [],
   "deviations": [
     {
       "reason": "The fixture root group is named 'Passwords' by keepassxc-cli db-create; the reference names it 'Personal'. Data, not chrome.",
       "approval": "recorded 2026-09-01 in issue #12"
+    },
+    {
+      "id": "vault-default-dev-group-sublabels",
+      "primitive": "group rows",
+      "reason": "The reference demo data gives every group a second-language name under its label. Real groups carry one stored name and the vault never invents a translation, so the sublabel line is omitted; counts and indentation match. Entry rows now carry the reference tag chips from each entry’s real tags.",
+      "approval": "Reviewed 2026-09-02 against the design-is-data rule: a translated group name would be a fabricated value."
     }
   ]
 }

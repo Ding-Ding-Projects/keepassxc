@@ -50,11 +50,13 @@ namespace Material
             HealthRole, // Material::Health, via QVariant::fromValue()
             TotpRole, // bool, draws the TOTP glyph
             ModifiedRole, // QString, already formatted for display
-            SymbolRole // Material Symbols name for the avatar; Icons::entrySymbol() derives one
+            SymbolRole, // Material Symbols name for the avatar; Icons::entrySymbol() derives one
+            TagsRole // QStringList, the first two are drawn as chips
         };
 
         static constexpr int AvatarSize = 36;
         static constexpr int UrlColumnWidth = 132;
+        static constexpr int TagsColumnWidth = 128;
         static constexpr int HealthColumnWidth = 104;
         static constexpr int ModifiedColumnWidth = 80;
         static constexpr int TotpColumnWidth = 22;

@@ -61,9 +61,7 @@ void TestMaterialReports::statesSelectionAndAccessibility()
     QSignalSpy exportSpy(&screen, &ReportsScreen::bulkExportRequested);
     checks.at(0)->setChecked(true);
     QCOMPARE(screen.selectedFindingIds().size(), 1);
-    auto buttons = screen.findChildren<QToolButton*>();
-    QToolButton* bulk = nullptr;
-    for (auto* button : buttons) if (button->text().contains(QStringLiteral("selected finding"))) bulk = button;
+    auto* bulk = screen.findChild<QAbstractButton*>(QStringLiteral("reportsBulkExport"));
     QVERIFY(bulk && bulk->isEnabled());
     bulk->click();
     QCOMPARE(exportSpy.count(), 1);

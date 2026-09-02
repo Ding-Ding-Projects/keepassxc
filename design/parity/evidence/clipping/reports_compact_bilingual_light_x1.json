@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 24456,
+  "pid": 23492,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "reports_compact_bilingual_light_x1.png",
-  "pngSha256": "e5bdbb22fcbd404765cb627c11c604d5f02bb821bc52f647e9e85e7042795b30",
+  "pngSha256": "da0e1f9cac9a975c48e06bba14d9d4c4450f858ecc8d533d9c473cf19482d2b8",
   "findings": [],
   "widgetCount": 61,
   "widgets": [
@@ -254,7 +254,7 @@
     },
     {
       "class": "Material::ReportsScreen",
-      "hint": "625x248",
+      "hint": "724x248",
       "leaf": false,
       "minimumHint": "320x216",
       "name": "",
@@ -265,9 +265,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "625x150",
+      "hint": "724x150",
       "leaf": false,
-      "minimumHint": "601x150",
+      "minimumHint": "700x150",
       "name": "",
       "offscreen": false,
       "rect": "72,156 728x150",
@@ -276,17 +276,14 @@
     },
     {
       "class": "QLabel",
-      "hint": "180x32",
+      "hint": "11x32",
       "leaf": true,
-      "minimumHint": "180x32",
+      "minimumHint": "11x32",
       "name": "",
       "offscreen": false,
-      "rect": "98,178 180x32",
+      "rect": "98,178 11x32",
       "scrollable": false,
-      "squeezed": false,
-      "text": "Database reports",
-      "textOverflows": false,
-      "textWidth": 180
+      "squeezed": false
     },
     {
       "class": "Material::SearchBar",
@@ -336,27 +333,27 @@
       "squeezed": false
     },
     {
-      "class": "QToolButton",
-      "hint": "89x31",
+      "class": "Material::OutlinedButton",
+      "hint": "151x40",
       "leaf": true,
-      "minimumHint": "89x31",
+      "minimumHint": "151x40",
       "name": "reportsExportAll",
       "offscreen": false,
-      "rect": "407,220 89x31",
+      "rect": "407,216 151x40",
       "scrollable": false,
       "squeezed": false,
-      "text": "Export report",
+      "text": "Export Markdown",
       "textOverflows": false,
-      "textWidth": 68
+      "textWidth": 93
     },
     {
-      "class": "QToolButton",
-      "hint": "163x31",
+      "class": "Material::TextButton",
+      "hint": "200x40",
       "leaf": true,
-      "minimumHint": "163x31",
-      "name": "",
+      "minimumHint": "200x40",
+      "name": "reportsBulkExport",
       "offscreen": false,
-      "rect": "508,220 163x31",
+      "rect": "570,216 200x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Export 0 selected finding(s)",

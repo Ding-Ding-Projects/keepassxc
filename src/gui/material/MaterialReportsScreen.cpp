@@ -497,7 +497,9 @@ namespace Material
     ReportsScreen::ReportsScreen(QWidget* parent)
         : Screen(parent)
     {
-        setHeadline(tr("Database reports"));
+        // The design's reports page opens straight on the search pill and the
+        // export action; the app bar already names the destination.
+        setHeadline(QString());
         setSearchVisible(true);
         searchBar()->setPlaceholder(tr("Search this surface"));
         searchBar()->setIdentity(QStringLiteral("reports.findings"), tr("Report findings search"));
@@ -541,17 +543,16 @@ namespace Material
         }
         contentLayout()->addLayout(m_statGrid);
 
-        auto* exportAll = new QToolButton;
+        auto* exportAll = new OutlinedButton(QStringLiteral("download"), tr("Export Markdown"));
         exportAll->setObjectName(QStringLiteral("reportsExportAll"));
-        exportAll->setText(tr("Export report"));
-        exportAll->setAccessibleName(exportAll->text());
-        connect(exportAll, &QToolButton::clicked, this, &ReportsScreen::exportRequested);
+        exportAll->setAccessibleName(tr("Export the report as Markdown"));
+        connect(exportAll, &QAbstractButton::clicked, this, &ReportsScreen::exportRequested);
         insertHeaderWidget(1, exportAll);
-        m_bulkExport = new QToolButton;
-        m_bulkExport->setText(tr("Export selected findings"));
+        m_bulkExport = new TextButton(QStringLiteral("checklist"), tr("Export selected findings"));
+        m_bulkExport->setObjectName(QStringLiteral("reportsBulkExport"));
         m_bulkExport->setAccessibleName(m_bulkExport->text());
         m_bulkExport->setEnabled(false);
-        connect(m_bulkExport, &QToolButton::clicked, this, [this] { emit bulkExportRequested(selectedFindingIds()); });
+        connect(m_bulkExport, &QAbstractButton::clicked, this, [this] { emit bulkExportRequested(selectedFindingIds()); });
         insertHeaderWidget(2, m_bulkExport);
 
         m_reportCardsHost = new QWidget;
