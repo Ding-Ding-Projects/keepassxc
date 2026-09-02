@@ -238,7 +238,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/regex-builder-default.json",
-        "sha256": "0ff7e89b0f2aa615852882dac21f3789dc2d95f51594433c42a637ede5669030"
+        "sha256": "63eec9b4f56cbeb6cf65643c530562b3ab4c6ace3ee14d58a71699218d7740e1"
       },
       "evidence": {
         "status": "complete",
@@ -257,7 +257,7 @@
           "id": "regex-builder-default-d1",
           "summary": "Overlay width 975 px versus the reference 1000 px sheet because the built shell is 1040 px wide at this tuple",
           "reason": "The overlay keeps 32 px shell gutters; anatomy and order match",
-          "approvedBy": "session review 2026-09-01"
+          "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
         }
       ],
       "sourceCommit": "60f62c16f88dfdd875fcaee4099cad2e95532ef2",
