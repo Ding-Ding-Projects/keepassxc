@@ -39,6 +39,7 @@ const Areas = [
   { name: 'vcpkg and toolchain manifests', test: /^vcpkg\//, project: false },
   { name: 'Upstream documentation sources', test: /^docs\/(topics|images|styles|man)\//, project: false },
   { name: 'Translations', test: /^share\/translations\//, project: false },
+  { name: 'Layout probe dumps (clipping evidence)', test: /^design\/parity\/evidence\/clipping\/.*\.json$/, project: false },
   { name: 'Design references and parity tooling', test: /^design\//, project: true },
   { name: 'Material UI (src/gui/material)', test: /^src\/gui\/material\//, project: true },
   { name: 'Application source (src)', test: /^src\//, project: true },
@@ -131,8 +132,9 @@ export async function countRepository({ attribution = true } = {}) {
   const project = ordered.filter(row => row.project);
   const sum = (list, key) => list.reduce((total, row) => total + row[key], 0);
   let authored = null;
+  let attributionError = null;
   if (attribution) {
-    try { authored = await attributeLines(counted, agentCommits()); } catch { authored = null; }
+    try { authored = await attributeLines(counted, agentCommits()); } catch (error) { authored = null; attributionError = String(error && error.message ? error.message : error); }
   }
   let commit = 'unknown';
   try { commit = execSync('git rev-parse --short HEAD').toString().trim(); } catch {}
@@ -140,7 +142,7 @@ export async function countRepository({ attribution = true } = {}) {
     rows: ordered, generated,
     project: { files: sum(project, 'files'), lines: sum(project, 'lines'), nonBlank: sum(project, 'nonBlank') },
     everything: { files: sum(ordered, 'files'), lines: sum(ordered, 'lines'), nonBlank: sum(ordered, 'nonBlank') },
-    authored, commit
+    authored, attributionError, commit
   };
   // The attribution total must equal the project line total, or the counter is wrong.
   if (authored && authored.agent + authored.human !== result.project.lines) {
@@ -174,6 +176,9 @@ export function markdown(result) {
     if (result.consistency && !result.consistency.agrees) {
       lines.push('', `**Counter inconsistency:** ${number(result.consistency.attributed)} attributed lines versus ${number(result.consistency.projectLines)} project lines. Fix the counter before publishing this table.`);
     }
+  }
+  if (!result.authored && result.attributionError) {
+    lines.push('', `**Attribution unavailable:** ${result.attributionError}. The line totals above stand; the agent/people split could not be measured in this run.`);
   }
   lines.push('', `Measured at ${result.commit} with \`node scripts/count-lines.mjs\`.`);
   return lines.join('\n');

@@ -250,8 +250,11 @@ Not captured yet: dark theme, the compact and minimum widths, 125 to 200 percent
 
 ## Lines of code
 
-Counted by the committed `node scripts/count-lines.mjs` at `e09d6e28`, the same table every release
-publishes; the release body is the record and this is a convenience copy.
+Counted by the committed `node scripts/count-lines.mjs`; the same table is published in every release
+and the release body is the record. The figures below are the local measurement at `e09d6e28`; release
+[v2.8.9301](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.9301) measured
+`d7e8adba` at 340,795 project lines because it counted the clipping-matrix probe dumps as generated
+project lines, a classification corrected in the counter after that release.
 
 | Area | Lines |
 | --- | ---: |
