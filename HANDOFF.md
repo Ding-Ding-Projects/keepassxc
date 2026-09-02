@@ -21,7 +21,7 @@ Last verified: 2026-09-02 on the `codex/parity-capture` lane; `main` was fast-fo
 | `matrix-scales.json` (1.25 / 1.5 / 2.0) | 30 | 0 | `69c8c914` |
 | `matrix-lang.json` (English / Cantonese / bilingual × light / dark, expanded) | 60 | 0 | `c165ec83` |
 | `matrix-widths-before.json` (minimum … extra-large, bilingual, light) | 50 | 20 | `4577d73f` |
-| `matrix-widths.json` (same tuples after the repairs) | 50 | see the final section | `693367d1` |
+| `matrix-widths.json` (same tuples after the repairs) | 50 | 0 | `693367d1` |
 
 The twenty findings had three causes, all repaired in `d14e6b79` and `693367d1`: the spec-sheet sidebar squeezed its overline in a 640 px window (it scrolls now); the vault search placeholder overflowed at the medium width (every search bar elides its own placeholder and keeps the full text as the accessible description); nine Security & behaviour sub-labels were cut to one line in the three-column Appearance layout (a `WrapLabel` raises its minimum height to its height-for-width; the minimum is only ever raised, because lowering it made the scroll area oscillate and the capture route never settled).
 
@@ -55,7 +55,7 @@ The probe flags a wrapping label whose `heightForWidth(width())` exceeds its hei
 
 | Check | Scope | Last result |
 | --- | --- | --- |
-| `ctest -R 'testmaterial|testdimsum|testwelcomeprovenance|testrepaircontracts|testupdatecheck|testsquirrellifecycle|testpasskeys|testdesignparityguard|testfeatureinventoryguard|testentrymodel|testpersonalvocabulary'` | lane build | see the final section |
+| `ctest -R 'testmaterial|testdimsum|testwelcomeprovenance|testrepaircontracts|testupdatecheck|testsquirrellifecycle|testpasskeys|testdesignparityguard|testfeatureinventoryguard|testentrymodel|testpersonalvocabulary'` | lane build | 29/29 passed at `325ffc63` |
 | `node design/parity/check-parity.mjs --require-evidence` | 9 rows | PASS at `693367d1` |
 | `node design/parity/test-parity-guard.mjs` | negative probes | GREEN at `693367d1` |
 | `node scripts/check-feature-inventory.mjs` | inventory | 0/172 green (honest red) |
