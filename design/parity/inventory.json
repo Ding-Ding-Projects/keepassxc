@@ -188,22 +188,29 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/shell-default.json",
-        "sha256": "90a70c9c0b32cb8608228cc78f3825884293799385dec69706d7fef118a31754"
+        "sha256": "7241ca627e98d6c9f8f4227fdd4fbef8c3b5c25878fbc4a20c32cb0f2630097d"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/shell-default/reference.png",
         "referenceRawSha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
         "builtRaw": "design/parity/evidence/shell-default/built.png",
-        "builtRawSha256": "04a6046ec44b39c495590203f44efa60ee6856248280e0d8ded4cccdf7c69fb8",
+        "builtRawSha256": "651209c04e4b8eecc4e13f192b6cd423f91a062bd26c090477dbf573699944f5",
         "comparison": "design/parity/evidence/shell-default/comparison.png",
-        "comparisonSha256": "139fb688151cbd9a509e66064dea6024734b5f3a3cab861a5a4955699c6b5c9d",
+        "comparisonSha256": "c0827ae52a9566869d6c67af8ba4f82b72fc77f73577e23568ffdcfedf5e822c",
         "diff": "design/parity/evidence/shell-default/diff.json",
-        "diffSha256": "73034e4ebe14e159ea81f5a84e36310dd9bff6fb1b0bb697ba6056777986dbe2",
-        "mismatchRatio": 0.10861488526570048
+        "diffSha256": "52da203487e2170e9833f31491eb3324c398515f4f0e0a758bd52559b64a90f2",
+        "mismatchRatio": 0.12254679951690821
       },
-      "deviations": [],
-      "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+      "deviations": [
+        {
+          "id": "shell-default-d1",
+          "summary": "No Inspect chip in the app bar",
+          "reason": "The reference's Inspect opens the design tool's element inspector; the product has no such surface",
+          "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
+        }
+      ],
+      "sourceCommit": "76cbb7963068a88d1dfdc4f89c44ccce793b8806",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -452,12 +459,12 @@
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "48c2eb61c0a8c26dd8881fcc561bf6f0c6a9619e24f985b458e53b26c9fa6e10",
+        "builtRawSha256": "1bbcc0363a7aeead3b0d05924a181c8fe631f624199a9e6e605e689f873f5f49",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "6eb3e27727424e68e3fbd705d5057d8f4a54f55280ad5a43f739217ed588c235",
+        "comparisonSha256": "447822631a4a23cdeec2539efd6054db0cd02a02310d3da3fad678e889929fe3",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "9bfa2e77ce4fc811a69f5cd6b354ed23c75ec4236f6feb7e6265bf2d296e0adb",
-        "mismatchRatio": 0.10834625322997415
+        "diffSha256": "5252d4b9ff8c860a6cfb72f6f432bf1a98cd8bb85f8f19e0bced478e63fb3d68",
+        "mismatchRatio": 0.12684108527131782
       },
       "deviations": [
         {
@@ -465,7 +472,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+      "sourceCommit": "76cbb7963068a88d1dfdc4f89c44ccce793b8806",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

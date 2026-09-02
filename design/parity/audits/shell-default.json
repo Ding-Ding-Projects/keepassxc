@@ -14,7 +14,7 @@
     {
       "primitive": "top app bar",
       "status": "deviates",
-      "finding": "Built bar shows the database title and KDBX metadata; the reference shows the destination title, a global search field and an Inspect action."
+      "finding": "Bar names the destination (English over Cantonese in bilingual mode) and hosts the entry search field, as the reference draws it (repaired 2026-09-01). The reference's Inspect chip is its design-inspector tool, not product, and is deliberately absent."
     },
     {
       "primitive": "tab strip",
@@ -37,12 +37,13 @@
       "finding": "Surface containers, corner radii and outline variants resolve through the theme."
     }
   ],
-  "defects": [
+  "defects": [],
+  "deviations": [
     {
-      "id": "shell-default-3",
-      "severity": "medium",
-      "summary": "App bar shows database metadata instead of destination title, search and Inspect"
+      "id": "shell-default-d1",
+      "summary": "No Inspect chip in the app bar",
+      "reason": "The reference's Inspect opens the design tool's element inspector; the product has no such surface",
+      "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
     }
-  ],
-  "deviations": []
+  ]
 }

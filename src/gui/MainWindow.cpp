@@ -801,6 +801,13 @@ MainWindow::MainWindow()
     // whenever an unlocked database is being browsed.
     auto* vaultScreen = new Material::VaultScreen;
     vaultScreen->setHostWidget(m_ui->stackedWidget, m_ui->tabWidget);
+    // The entry search lives in the app bar, as the reference draws it; it is
+    // still the vault's own bar (same identity, same registry entry) and the
+    // app bar only shows it while the vault is the current destination.
+    materialShell->appBar()->setSearchWidget(vaultScreen->searchBar());
+    connect(materialShell, &Material::Shell::destinationChanged, materialShell->appBar(), [materialShell](const QString& id) {
+        materialShell->appBar()->setSearchVisible(id == QLatin1String("vault"));
+    });
     vaultScreen->setBreakpoint(materialShell->breakpoint());
     connect(materialShell, &Material::Shell::breakpointChanged, vaultScreen, &Material::VaultScreen::setBreakpoint);
 
@@ -1642,26 +1649,52 @@ void MainWindow::updateWindowTitle()
         // version it ends at, and everything else by the open database.
         const QString sheetLabel = Material::SheetCatalogue::label(destination);
 
+        // The reference names the destination in the app bar, in English with
+        // the Cantonese name beneath it in bilingual mode; the title bar above
+        // already names the database, so the bar no longer repeats it.
+        struct DestinationName
+        {
+            const char* id;
+            const char* english;
+            const char* cantonese;
+        };
+        static const DestinationName names[] = {
+            {"vault", QT_TR_NOOP("Vault"), "\u5939\u842c"},
+            {"reports", QT_TR_NOOP("Reports"), "\u5831\u544a"},
+            {"editor", QT_TR_NOOP("Entry"), "\u689d\u76ee"},
+            {"database", QT_TR_NOOP("Database"), "\u8cc7\u6599\u5eab"},
+            {"tools", QT_TR_NOOP("Tools"), "\u5de5\u5177"},
+            {"history", QT_TR_NOOP("History"), "\u6b77\u53f2"},
+            {"changelog", QT_TR_NOOP("Changelog"), "\u66f4\u65b0\u7d00\u9304"},
+            {"settings", QT_TR_NOOP("Settings"), "\u8a2d\u5b9a"},
+            {"appearance", QT_TR_NOOP("Appearance"), "\u5916\u89c0"},
+            {"help", QT_TR_NOOP("Help"), "\u5e6b\u624b"},
+        };
         QString barTitle;
         QString barSubtitle;
-        if (!sheetLabel.isEmpty()) {
-            barTitle = sheetLabel;
-            barSubtitle = tr("Recreated from the KeePassXC sources · every option, page and action");
-        } else if (destination == QLatin1String("changelog")) {
-            barTitle = tr("KeePassXC %1").arg(QString::fromLatin1(KEEPASSXC_VERSION));
-            barSubtitle = tr("Every released version");
-        } else if (destination == QLatin1String("appearance")) {
-            barTitle = tr("Appearance & language");
-            barSubtitle = tr("Theme, density, language and the voice of the messages");
-        } else if (stackedWidgetIndex == StackedWidgetIndex::PasswordGeneratorScreen) {
-            barTitle = tr("Password Generator");
-            barSubtitle = tr("Standalone generator");
-        } else if (dbWidget) {
-            barTitle = databaseName.isEmpty() ? BaseWindowTitle : databaseName;
-            barSubtitle = databaseSubtitle(dbWidget);
-        } else {
-            barTitle = BaseWindowTitle;
-            barSubtitle = tr("No database open");
+        const Material::Voice::Language language = Material::Voice::language();
+        for (const auto& name : names) {
+            if (destination == QLatin1String(name.id)) {
+                const QString english = tr(name.english);
+                const QString cantonese = QString::fromUtf8(name.cantonese);
+                barTitle = language == Material::Voice::Language::Cantonese ? cantonese : english;
+                barSubtitle = language == Material::Voice::Language::Bilingual ? cantonese : QString();
+                break;
+            }
+        }
+        if (barTitle.isEmpty()) {
+            if (!sheetLabel.isEmpty()) {
+                barTitle = sheetLabel;
+            } else if (stackedWidgetIndex == StackedWidgetIndex::PasswordGeneratorScreen) {
+                barTitle = tr("Password Generator");
+                barSubtitle = tr("Standalone generator");
+            } else if (dbWidget) {
+                barTitle = databaseName.isEmpty() ? BaseWindowTitle : databaseName;
+                barSubtitle = databaseSubtitle(dbWidget);
+            } else {
+                barTitle = BaseWindowTitle;
+                barSubtitle = tr("No database open");
+            }
         }
 
         materialShell->appBar()->setTitle(barTitle);

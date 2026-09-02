@@ -23,6 +23,7 @@
 #include <QFontMetrics>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QFontMetrics>
 #include <QPainter>
 #include <QVBoxLayout>
 
@@ -30,6 +31,8 @@ namespace Material
 {
     namespace
     {
+        constexpr int TitleMaxWidth = 230;
+        constexpr int SearchMaxWidth = 720;
         constexpr int LeftPadding = 20;
         constexpr int RightPadding = 12;
         constexpr int Spacing = 8;
@@ -45,6 +48,7 @@ namespace Material
         auto* layout = new QHBoxLayout(this);
         layout->setContentsMargins(LeftPadding, 0, RightPadding, 0);
         layout->setSpacing(Spacing);
+        m_layout = layout;
 
         m_titleLabel = new QLabel(this);
         m_subtitleLabel = new QLabel(this);
@@ -56,14 +60,18 @@ namespace Material
             label->setTextInteractionFlags(Qt::NoTextInteraction);
         }
 
-        auto* titleColumn = new QVBoxLayout;
+        // The title column takes what it needs up to the reference's 230 px
+        // when a search field shares the bar, and the free space otherwise.
+        m_titleColumn = new QWidget(this);
+        auto* titleColumn = new QVBoxLayout(m_titleColumn);
         titleColumn->setContentsMargins(0, 0, 0, 0);
         titleColumn->setSpacing(0);
         titleColumn->addStretch();
         titleColumn->addWidget(m_titleLabel);
         titleColumn->addWidget(m_subtitleLabel);
         titleColumn->addStretch();
-        layout->addLayout(titleColumn, 1);
+        layout->addWidget(m_titleColumn, 1);
+        layout->addStretch(0);
 
         m_saveButton = new TonalButton(QStringLiteral("save"), tr("Save"), this);
         m_saveButton->setFixedHeight(Layout::ButtonHeight);
@@ -160,6 +168,45 @@ namespace Material
                                                            : tr("Notifications"));
     }
 
+    void TopAppBar::setSearchWidget(QWidget* search)
+    {
+        if (m_search == search) {
+            return;
+        }
+        if (m_search) {
+            m_layout->removeWidget(m_search);
+            m_search->setParent(nullptr);
+        }
+        m_search = search;
+        if (m_search) {
+            m_search->setParent(this);
+            m_search->setMaximumWidth(SearchMaxWidth);
+            m_search->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            // After the title column, before the stretch and the actions.
+            m_layout->insertWidget(1, m_search, 2);
+            m_search->setVisible(m_searchVisible);
+        }
+        m_titleColumn->setMaximumWidth(m_search && m_searchVisible ? TitleMaxWidth : QWIDGETSIZE_MAX);
+        m_layout->setStretch(0, m_search && m_searchVisible ? 0 : 1);
+        updateLabels();
+    }
+
+    QWidget* TopAppBar::searchWidget() const
+    {
+        return m_search;
+    }
+
+    void TopAppBar::setSearchVisible(bool visible)
+    {
+        m_searchVisible = visible;
+        if (m_search) {
+            m_search->setVisible(visible);
+        }
+        m_titleColumn->setMaximumWidth(m_search && visible ? TitleMaxWidth : QWIDGETSIZE_MAX);
+        m_layout->setStretch(0, m_search && visible ? 0 : 1);
+        updateLabels();
+    }
+
     QSize TopAppBar::sizeHint() const
     {
         return {QWidget::sizeHint().width(), Layout::AppBarHeight};
@@ -207,7 +254,20 @@ namespace Material
 
     void TopAppBar::updateLabels()
     {
-        const int available = m_titleLabel->width();
+        // With a search field beside it the column is sized to its own text,
+        // capped at the reference's 230 px; alone it takes the free space.
+        if (m_titleColumn) {
+            if (m_search && m_searchVisible) {
+                const int wanted = qMax(QFontMetrics(m_titleLabel->font()).horizontalAdvance(m_title),
+                                        QFontMetrics(m_subtitleLabel->font()).horizontalAdvance(m_subtitle));
+                m_titleColumn->setMinimumWidth(qMin(TitleMaxWidth, wanted));
+                m_titleColumn->setMaximumWidth(TitleMaxWidth);
+            } else {
+                m_titleColumn->setMinimumWidth(0);
+                m_titleColumn->setMaximumWidth(QWIDGETSIZE_MAX);
+            }
+        }
+        const int available = m_titleColumn ? m_titleColumn->width() : m_titleLabel->width();
         if (available > 0) {
             m_titleLabel->setText(m_titleLabel->fontMetrics().elidedText(m_title, Qt::ElideRight, available));
             m_subtitleLabel->setText(m_subtitleLabel->fontMetrics().elidedText(m_subtitle, Qt::ElideRight, available));

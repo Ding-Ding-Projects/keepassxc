@@ -21,6 +21,7 @@
 #include <QString>
 #include <QWidget>
 
+class QHBoxLayout;
 class QLabel;
 
 namespace Material
@@ -58,6 +59,16 @@ namespace Material
         int notificationCount() const;
         void setNotificationCount(int count);
 
+        /**
+         * Host a search field between the title and the actions, as the
+         * reference does: the entry search lives in the app bar, not in the
+         * destination. The widget is reparented; nullptr removes it. The bar
+         * shows it only while the destination that owns it is current.
+         */
+        void setSearchWidget(QWidget* search);
+        QWidget* searchWidget() const;
+        void setSearchVisible(bool visible);
+
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
 
@@ -81,6 +92,10 @@ namespace Material
         QString m_subtitle;
         QLabel* m_titleLabel = nullptr;
         QLabel* m_subtitleLabel = nullptr;
+        QWidget* m_titleColumn = nullptr;
+        QWidget* m_search = nullptr;
+        bool m_searchVisible = false;
+        QHBoxLayout* m_layout = nullptr;
         TonalButton* m_saveButton = nullptr;
         IconButton* m_paletteButton = nullptr;
         IconButton* m_generatorButton = nullptr;
