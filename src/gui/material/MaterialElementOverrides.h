@@ -22,6 +22,25 @@ namespace Material
             std::optional<int> spacing;
             std::optional<QColor> background;
             std::optional<QColor> foreground;
+            // Typography, to the word-processor depth the editor offers.
+            std::optional<QString> fontFamily;
+            std::optional<int> fontWeight; // 100..900
+            std::optional<bool> italic;
+            std::optional<bool> underline;
+            std::optional<bool> strikeout;
+            std::optional<bool> overline;
+            std::optional<double> letterSpacing; // px
+            std::optional<double> lineHeight; // multiplier, 0.8..3
+            std::optional<int> capitalization; // QFont::Capitalization
+            // Shape, layout and elevation.
+            std::optional<int> elevation; // 0..5
+            std::optional<int> borderWidth; // px
+            std::optional<QColor> borderColor;
+            std::optional<double> opacity; // 0..1
+            // The animated rainbow replaces the background when set; the level
+            // is the speed 1..5. It is a flag, never a colour string.
+            std::optional<bool> rainbow;
+            std::optional<int> rainbowLevel;
             QJsonObject toJson() const;
             static Override fromJson(const QJsonObject& object);
             bool isEmpty() const;

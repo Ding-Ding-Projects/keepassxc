@@ -17,6 +17,8 @@
 
 #include "MaterialCaptureRoute.h"
 
+#include "MaterialAppearanceEditor.h"
+
 #include "MaterialDimSum.h"
 #include "MaterialShell.h"
 #include "MaterialTheme.h"
@@ -342,6 +344,13 @@ namespace Material
                     // breakpoint; measure again and correct once.
                     fitViewport(window, request);
                     QTimer::singleShot(kSettleMs, window, [window, request, navigated] {
+                        // The appearance-editor state opens the per-element editor on the
+                        // interface font family select, so the editor is addressable.
+                        if (request.state == QLatin1String("appearance-editor")) {
+                            if (auto* target = window->findChild<QWidget*>(QStringLiteral("appearanceFontFamily"))) {
+                                AppearanceEditor::instance()->editElement(target);
+                            }
+                        }
                         writeReceipt(window, request, navigated ? QStringLiteral("ready") : QStringLiteral("unreachable"));
                     });
                 });

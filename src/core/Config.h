@@ -111,6 +111,7 @@ public:
         GUI_FontScale,
         GUI_FontWeight,
         GUI_ElementOverrides,
+        GUI_AppearancePresets,
         GUI_DimSumSurprise,
         GUI_VoiceLanguage,
         GUI_FunnyLevelEnglish,

@@ -314,6 +314,30 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testmaterialcolorpicker SOURCES TestMaterialColorPicker.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialcolorpicker PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialcolorpicker POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialcolorpicker>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialcolorpicker>/platforms/"
+            VERBATIM)
+endif()
+
+add_unit_test(NAME testmaterialappearanceeditor SOURCES TestMaterialAppearanceEditor.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialappearanceeditor PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialappearanceeditor POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialappearanceeditor>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialappearanceeditor>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testmaterialtabs SOURCES TestMaterialTabs.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialtabs PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")

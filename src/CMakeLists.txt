@@ -132,6 +132,8 @@ set(gui_SOURCES
         gui/material/MaterialSearchBar.cpp
         gui/material/MaterialSearchRegistry.cpp
         gui/material/MaterialSegmentedButton.cpp
+        gui/material/MaterialAppearanceEditor.cpp
+        gui/material/MaterialColorPicker.cpp
         gui/material/MaterialDateField.cpp
         gui/material/MaterialSelect.cpp
         gui/material/MaterialSlider.cpp

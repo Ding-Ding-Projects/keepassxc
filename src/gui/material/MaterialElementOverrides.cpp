@@ -14,6 +14,21 @@ namespace Material
         if (spacing) object[QStringLiteral("spacing")] = *spacing;
         if (background) object[QStringLiteral("background")] = background->name(QColor::HexArgb);
         if (foreground) object[QStringLiteral("foreground")] = foreground->name(QColor::HexArgb);
+        if (fontFamily) object[QStringLiteral("fontFamily")] = *fontFamily;
+        if (fontWeight) object[QStringLiteral("fontWeight")] = *fontWeight;
+        if (italic) object[QStringLiteral("italic")] = *italic;
+        if (underline) object[QStringLiteral("underline")] = *underline;
+        if (strikeout) object[QStringLiteral("strikeout")] = *strikeout;
+        if (overline) object[QStringLiteral("overline")] = *overline;
+        if (letterSpacing) object[QStringLiteral("letterSpacing")] = *letterSpacing;
+        if (lineHeight) object[QStringLiteral("lineHeight")] = *lineHeight;
+        if (capitalization) object[QStringLiteral("capitalization")] = *capitalization;
+        if (elevation) object[QStringLiteral("elevation")] = *elevation;
+        if (borderWidth) object[QStringLiteral("borderWidth")] = *borderWidth;
+        if (borderColor) object[QStringLiteral("borderColor")] = borderColor->name(QColor::HexArgb);
+        if (opacity) object[QStringLiteral("opacity")] = *opacity;
+        if (rainbow) object[QStringLiteral("rainbow")] = *rainbow;
+        if (rainbowLevel) object[QStringLiteral("rainbowLevel")] = *rainbowLevel;
         return object;
     }
 
@@ -28,12 +43,37 @@ namespace Material
         if (background.isValid()) value.background = background;
         const QColor foreground(object.value(QStringLiteral("foreground")).toString());
         if (foreground.isValid()) value.foreground = foreground;
+        if (object.value(QStringLiteral("fontFamily")).isString()) {
+            const QString family = object.value(QStringLiteral("fontFamily")).toString().left(120);
+            if (!family.isEmpty()) value.fontFamily = family;
+        }
+        if (object.value(QStringLiteral("fontWeight")).isDouble()) value.fontWeight = qBound(100, object.value(QStringLiteral("fontWeight")).toInt(), 900);
+        auto flag = [&object](const char* key, std::optional<bool>& target) {
+            const QJsonValue v = object.value(QLatin1String(key));
+            if (v.isBool()) target = v.toBool();
+        };
+        flag("italic", value.italic);
+        flag("underline", value.underline);
+        flag("strikeout", value.strikeout);
+        flag("overline", value.overline);
+        flag("rainbow", value.rainbow);
+        if (object.value(QStringLiteral("letterSpacing")).isDouble()) value.letterSpacing = qBound(-2.0, object.value(QStringLiteral("letterSpacing")).toDouble(), 12.0);
+        if (object.value(QStringLiteral("lineHeight")).isDouble()) value.lineHeight = qBound(0.8, object.value(QStringLiteral("lineHeight")).toDouble(), 3.0);
+        if (object.value(QStringLiteral("capitalization")).isDouble()) value.capitalization = qBound(0, object.value(QStringLiteral("capitalization")).toInt(), 4);
+        if (object.value(QStringLiteral("elevation")).isDouble()) value.elevation = qBound(0, object.value(QStringLiteral("elevation")).toInt(), 5);
+        if (object.value(QStringLiteral("borderWidth")).isDouble()) value.borderWidth = qBound(0, object.value(QStringLiteral("borderWidth")).toInt(), 8);
+        const QColor border(object.value(QStringLiteral("borderColor")).toString());
+        if (border.isValid()) value.borderColor = border;
+        if (object.value(QStringLiteral("opacity")).isDouble()) value.opacity = qBound(0.0, object.value(QStringLiteral("opacity")).toDouble(), 1.0);
+        if (object.value(QStringLiteral("rainbowLevel")).isDouble()) value.rainbowLevel = qBound(1, object.value(QStringLiteral("rainbowLevel")).toInt(), 5);
         return value;
     }
 
     bool ElementOverrides::Override::isEmpty() const
     {
-        return !height && !radius && !fontSize && !spacing && !background && !foreground;
+        return !height && !radius && !fontSize && !spacing && !background && !foreground && !fontFamily && !fontWeight
+               && !italic && !underline && !strikeout && !overline && !letterSpacing && !lineHeight && !capitalization
+               && !elevation && !borderWidth && !borderColor && !opacity && !rainbow && !rainbowLevel;
     }
 
     ElementOverrides::ElementOverrides()

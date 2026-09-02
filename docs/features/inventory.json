@@ -286,23 +286,66 @@
       "surface": "app",
       "title": "Per-element appearance editor",
       "status": "partial",
-      "note": "Initial element overrides; per-element context entry and Word/Photoshop depth missing",
+      "note": "Shift+right-click / Ctrl+Shift+E editor with Type, Colour, Shape and Presets tabs; context-menu entry on every menu, the per-state layer stack are pending",
       "implementation": {
-        "file": "src/gui/material/MaterialElementOverrides.h",
-        "anchor": "^\\s*class ElementOverrides\\b"
+        "file": "src/gui/material/MaterialAppearanceEditor.h",
+        "anchor": "^\\s*class AppearanceEditor : public QWidget$"
+      },
+      "test": {
+        "file": "tests/TestMaterialAppearanceEditor.cpp",
+        "anchor": "^void TestMaterialAppearanceEditor::"
+      },
+      "article": {
+        "file": "docs/features/design/per-element-appearance-editor.md"
+      },
+      "capture": {
+        "file": "design/parity/evidence/appearance-default/appearance-editor.png",
+        "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
       }
     },
     {
       "id": "infinite-color-picker",
       "surface": "app",
       "title": "Infinite colour picker with translator",
-      "status": "missing"
+      "status": "partial",
+      "note": "Field, hue and opacity bars, ten-notation translator, contrast readout, recents; the eyedropper is pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialColorPicker.h",
+        "anchor": "^\\s*class ColorPicker : public QWidget$"
+      },
+      "test": {
+        "file": "tests/TestMaterialColorPicker.cpp",
+        "anchor": "^void TestMaterialColorPicker::"
+      },
+      "article": {
+        "file": "docs/features/design/per-element-appearance-editor.md"
+      },
+      "capture": {
+        "file": "design/parity/evidence/appearance-default/appearance-editor.png",
+        "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
+      }
     },
     {
       "id": "rainbow-color",
       "surface": "app",
       "title": "Animated rainbow colour",
-      "status": "missing"
+      "status": "partial",
+      "note": "Sentinel flag with level, shared timer, reduced motion settles",
+      "implementation": {
+        "file": "src/gui/material/MaterialColorPicker.h",
+        "anchor": "^\\s*QString rainbowSentinel\\(\\);$"
+      },
+      "test": {
+        "file": "tests/TestMaterialColorPicker.cpp",
+        "anchor": "^void TestMaterialColorPicker::rainbowIsASentinelNotAColour"
+      },
+      "article": {
+        "file": "docs/features/design/per-element-appearance-editor.md"
+      },
+      "capture": {
+        "file": "design/parity/evidence/appearance-default/appearance-editor.png",
+        "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
+      }
     },
     {
       "id": "font-customization",

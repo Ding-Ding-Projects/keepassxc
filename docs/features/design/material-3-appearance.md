@@ -26,4 +26,4 @@ No network access; fonts come from the installed system faces with a CJK-safe fa
 
 - [Design-reference parity](../design/design-parity.md)
 - font-customization (not implemented yet; see `docs/features/inventory.json`)
-- per-element-appearance-editor (not implemented yet; see `docs/features/inventory.json`)
+- [Per-element appearance editor](per-element-appearance-editor.md)

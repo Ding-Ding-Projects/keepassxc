@@ -89,6 +89,7 @@
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVoice.h"
 #ifdef Q_OS_WIN
+#include "gui/material/MaterialAppearanceEditor.h"
 #include "gui/material/MaterialTitleBar.h"
 #include "gui/material/MaterialWindowChrome.h"
 #endif
@@ -621,6 +622,9 @@ MainWindow::MainWindow()
     m_ui->toolBar->installEventFilter(eventFilter);
     m_ui->tabWidget->tabBar()->installEventFilter(eventFilter);
     installEventFilter(eventFilter);
+    // Element appearance overrides follow every widget as it appears, and the
+    // Shift+right-click / Ctrl+Shift+E routes open the per-element editor.
+    qApp->installEventFilter(Material::AppearanceApplier::instance());
 
 #ifdef Q_OS_MACOS
     setUnifiedTitleAndToolBarOnMac(true);
