@@ -54,7 +54,7 @@
       "id": "regex-builder-default-d1",
       "summary": "Overlay width 975 px versus the reference 1000 px sheet because the built shell is 1040 px wide at this tuple",
       "reason": "The overlay keeps 32 px shell gutters; anatomy and order match",
-      "approvedBy": "session review 2026-09-01"
+      "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
     }
   ]
 }
