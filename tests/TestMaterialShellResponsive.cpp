@@ -8,6 +8,7 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSpecSheet.h"
+#include "gui/material/MaterialSwitch.h"
 
 #include <QApplication>
 #include <QMenu>
@@ -286,6 +287,42 @@ void TestMaterialShellResponsive::settingsPageScrollsFromContentAndContainsScrol
     const QRect barGeometry(bar->mapTo(&page, QPoint()), bar->size());
     QVERIFY(page.rect().contains(barGeometry.topLeft()));
     QVERIFY(page.rect().contains(barGeometry.bottomRight()));
+}
+
+void TestMaterialShellResponsive::settingsSwitchRowsToggleAndStayInStep()
+{
+    SpecSheetPage page(QStringLiteral("general"), QStringLiteral("General"));
+    page.addRow(QStringLiteral("Section"),
+                QStringLiteral("settings"),
+                QStringLiteral("Remember"),
+                QStringLiteral("Description"),
+                PillKind::Off,
+                QStringLiteral("Off"));
+    auto* row = page.row(QStringLiteral("Section/Remember"));
+    QVERIFY(row);
+    QVERIFY(!row->switchControl());
+    row->setSwitch(false);
+    auto* toggle = row->switchControl();
+    QVERIFY(toggle);
+    QVERIFY(!toggle->isChecked());
+    QCOMPARE(toggle->accessibleName(), QStringLiteral("Remember"));
+    page.show();
+    QApplication::processEvents();
+
+    // The switch answers for the row: one click, one activation.
+    QSignalSpy activated(row, &SpecSheetRow::activated);
+    QTest::mouseClick(toggle, Qt::LeftButton);
+    QCOMPARE(activated.count(), 1);
+    QCOMPARE(activated.first().first().toString(), QStringLiteral("Section/Remember"));
+
+    // The owner applies the value and re-pills the row; the switch follows silently.
+    activated.clear();
+    row->setPill(PillKind::On, QStringLiteral("On"));
+    QVERIFY(toggle->isChecked());
+    QCOMPARE(toggle->accessibleDescription(), QStringLiteral("On"));
+    QCOMPARE(activated.count(), 0);
+    row->setPill(PillKind::Off, QStringLiteral("Off"));
+    QVERIFY(!toggle->isChecked());
 }
 
 QTEST_MAIN(TestMaterialShellResponsive)

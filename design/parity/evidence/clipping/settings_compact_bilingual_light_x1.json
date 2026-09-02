@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 9876,
+  "pid": 4416,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "settings_compact_bilingual_light_x1.png",
-  "pngSha256": "638dc340bc1060e355dddde8e8a767c266dd63542887caa0c106992dec95691d",
+  "pngSha256": "4d2d659326f03642e007428a4ddd82fe1c2cb7b921de6f013f47b086c2274df7",
   "findings": [],
   "widgetCount": 85,
   "widgets": [
@@ -124,17 +124,17 @@
     },
     {
       "class": "QLabel",
-      "hint": "67x26",
+      "hint": "40x26",
       "leaf": true,
-      "minimumHint": "67x26",
+      "minimumHint": "40x26",
       "name": "",
       "offscreen": false,
       "rect": "92,57 412x26",
       "scrollable": false,
       "squeezed": false,
-      "text": "Settings",
+      "text": "Set…",
       "textOverflows": false,
-      "textWidth": 67
+      "textWidth": 40
     },
     {
       "class": "QLabel",
@@ -646,9 +646,9 @@
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "316x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,331 563x72",
@@ -656,24 +656,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "44x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Startup/Reopen previous databases",
       "offscreen": false,
-      "rect": "799,351 44x32",
+      "rect": "791,351 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "On",
-      "textOverflows": false,
-      "textWidth": 16
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "317x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,403 563x72",
@@ -681,24 +678,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "45x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Startup/Launch at system startup",
       "offscreen": false,
-      "rect": "798,423 45x32",
+      "rect": "791,423 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "Off",
-      "textOverflows": false,
-      "textWidth": 17
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "317x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,475 563x72",
@@ -706,24 +700,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "45x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Startup/Start minimised",
       "offscreen": false,
-      "rect": "798,495 45x32",
+      "rect": "791,495 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "Off",
-      "textOverflows": false,
-      "textWidth": 17
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "316x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,547 563x72",
@@ -731,18 +722,15 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "44x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Startup/Remember recent databases",
       "offscreen": false,
-      "rect": "799,567 44x32",
+      "rect": "791,567 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "On",
-      "textOverflows": false,
-      "textWidth": 16
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
@@ -771,9 +759,9 @@
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "316x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,691 563x72",
@@ -781,18 +769,15 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "44x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Startup/Remember key files and hardware keys",
       "offscreen": false,
-      "rect": "799,711 44x32",
+      "rect": "791,711 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "On",
-      "textOverflows": false,
-      "textWidth": 16
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
@@ -821,9 +806,9 @@
     },
     {
       "class": "Material::Card",
-      "hint": "361x360",
+      "hint": "368x360",
       "leaf": false,
-      "minimumHint": "253x360",
+      "minimumHint": "268x360",
       "name": "",
       "offscreen": false,
       "rect": "258,873 607x360",
@@ -846,9 +831,9 @@
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "317x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,923 563x72",
@@ -856,24 +841,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "45x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Updates and notices/Check for updates",
       "offscreen": false,
-      "rect": "798,943 45x32",
+      "rect": "791,943 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "Off",
-      "textOverflows": false,
-      "textWidth": 17
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "317x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,995 563x72",
@@ -881,24 +863,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "45x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Updates and notices/Include pre-releases",
       "offscreen": false,
-      "rect": "798,1015 45x32",
+      "rect": "791,1015 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "Off",
-      "textOverflows": false,
-      "textWidth": 17
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "316x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,1067 563x72",
@@ -906,24 +885,21 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "44x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Updates and notices/Update prompt answered",
       "offscreen": false,
-      "rect": "799,1087 44x32",
+      "rect": "791,1087 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "On",
-      "textOverflows": false,
-      "textWidth": 16
+      "squeezed": false
     },
     {
       "class": "Material::SpecSheetRow",
-      "hint": "317x56",
+      "hint": "324x56",
       "leaf": false,
-      "minimumHint": "209x56",
+      "minimumHint": "224x56",
       "name": "",
       "offscreen": false,
       "rect": "280,1139 563x72",
@@ -931,18 +907,15 @@
       "squeezed": false
     },
     {
-      "class": "Material::PillLabel",
-      "hint": "45x32",
+      "class": "Material::Switch",
+      "hint": "52x32",
       "leaf": true,
-      "minimumHint": "37x32",
-      "name": "",
+      "minimumHint": "52x32",
+      "name": "specSwitch_Updates and notices/Hide the legacy key file warning",
       "offscreen": false,
-      "rect": "798,1159 45x32",
+      "rect": "791,1159 52x32",
       "scrollable": true,
-      "squeezed": false,
-      "text": "Off",
-      "textOverflows": false,
-      "textWidth": 17
+      "squeezed": false
     },
     {
       "class": "Material::Card",

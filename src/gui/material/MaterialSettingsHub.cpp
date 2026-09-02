@@ -445,6 +445,12 @@ namespace Material
         QString text;
         pillFor(binding, &kind, &text);
         m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        // A boolean setting is a switch in the design, not an On/Off pill.
+        if (auto* page = m_sheet->page(pageId)) {
+            if (auto* row = page->row(binding.rowKey)) {
+                row->setSwitch(kind == PillKind::On);
+            }
+        }
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);

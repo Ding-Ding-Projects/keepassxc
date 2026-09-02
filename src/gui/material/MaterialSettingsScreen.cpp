@@ -721,11 +721,22 @@ namespace Material
         m_overrideElement->addItem(tr("Live preview"), QStringLiteral("appearance/preview"));
         content->addWidget(m_overrideElement);
 
+        // Each slider is labelled, with its live value beside the label, so a
+        // reader knows which property the thumb moves and where it stands.
         auto addSlider = [content](const QString& name, const QString& objectName, int minimum, int maximum) {
+            auto* caption = makeLabel(QStringLiteral("%1 · %2 px").arg(name).arg(minimum),
+                                      TypeRole::BodySmall,
+                                      Role::OnSurfaceVariant);
+            caption->setObjectName(objectName + QStringLiteral("Label"));
+            caption->setAccessibleName(name);
+            content->addWidget(caption);
             auto* slider = new QSlider(Qt::Horizontal);
             slider->setObjectName(objectName);
             slider->setAccessibleName(name);
             slider->setRange(minimum, maximum);
+            connect(slider, &QSlider::valueChanged, caption, [caption, name](int value) {
+                caption->setText(QStringLiteral("%1 · %2 px").arg(name).arg(value));
+            });
             content->addWidget(slider);
             return slider;
         };

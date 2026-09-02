@@ -2,9 +2,9 @@
   "schemaVersion": 1,
   "rowId": "settings-default",
   "status": "complete",
-  "reviewedOn": "2026-09-01",
+  "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
-  "verdict": "defects-open",
+  "verdict": "conforms",
   "primitives": [
     {
       "primitive": "page list",
@@ -19,7 +19,7 @@
     {
       "primitive": "switches",
       "status": "conforms",
-      "finding": "M3 switch anatomy; built uses On/Off chips where the reference uses switches (minor)."
+      "finding": "M3 switch anatomy on every boolean row (repaired 2026-09-02); the switch is the row control and its click is the row activation."
     },
     {
       "primitive": "search bar",
@@ -32,12 +32,6 @@
       "finding": "Title/body scale matches."
     }
   ],
-  "defects": [
-    {
-      "id": "settings-default-2",
-      "severity": "low",
-      "summary": "On/Off chips instead of switches on some rows"
-    }
-  ],
+  "defects": [],
   "deviations": []
 }

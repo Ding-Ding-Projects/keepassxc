@@ -17,6 +17,8 @@
 
 #include "MaterialSpecSheet.h"
 
+#include "MaterialSwitch.h"
+
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
 #include "MaterialElevation.h"
@@ -29,6 +31,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
+#include <QSignalBlocker>
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -136,8 +139,41 @@ namespace Material
     {
         m_pill->setPillKind(kind);
         m_pill->setPillText(text);
+        if (m_switch) {
+            // The owner has already applied the value; only the picture moves.
+            const QSignalBlocker blocker(m_switch);
+            m_switch->setChecked(kind == PillKind::On);
+            m_switch->setAccessibleDescription(kind == PillKind::On ? tr("On") : tr("Off"));
+        }
         updateGeometry();
         update();
+    }
+
+    void SpecSheetRow::setSwitch(bool on)
+    {
+        if (!m_switch) {
+            m_switch = new Switch(this);
+            m_switch->setObjectName(QStringLiteral("specSwitch_") + m_key);
+            m_switch->setAccessibleName(m_label);
+            m_switch->setFocusPolicy(Qt::TabFocus);
+            // The switch answers for the row: its click is the row's activation
+            // and the owner flips the value, so the row itself must not fire
+            // a second time from the same release.
+            m_switch->setAttribute(Qt::WA_NoMousePropagation, true);
+            connect(m_switch, &QAbstractButton::clicked, this, [this] { emit activated(m_key); });
+            static_cast<QHBoxLayout*>(layout())->addWidget(m_switch, 0, Qt::AlignVCenter);
+            m_pill->hide();
+        }
+        const QSignalBlocker blocker(m_switch);
+        m_switch->setChecked(on);
+        m_switch->setAccessibleDescription(on ? tr("On") : tr("Off"));
+        updateGeometry();
+        update();
+    }
+
+    Switch* SpecSheetRow::switchControl() const
+    {
+        return m_switch;
     }
 
     void SpecSheetRow::setProvenance(const QString& text)
@@ -159,12 +195,14 @@ namespace Material
     QSize SpecSheetRow::sizeHint() const
     {
         const int text = QFontMetrics(theme()->font(TypeRole::BodyMedium)).horizontalAdvance(m_label);
-        return QSize(GlyphColumn + RowGap + qMax(text, 220) + RowGap + m_pill->sizeHint().width(), RowHeight);
+        const int trailing = m_switch ? m_switch->sizeHint().width() : m_pill->sizeHint().width();
+        return QSize(GlyphColumn + RowGap + qMax(text, 220) + RowGap + trailing, RowHeight);
     }
 
     QSize SpecSheetRow::minimumSizeHint() const
     {
-        return QSize(GlyphColumn + RowGap + 120 + RowGap + m_pill->minimumSizeHint().width(), RowHeight);
+        const int trailing = m_switch ? m_switch->minimumSizeHint().width() : m_pill->minimumSizeHint().width();
+        return QSize(GlyphColumn + RowGap + 120 + RowGap + trailing, RowHeight);
     }
 
     void SpecSheetRow::paintEvent(QPaintEvent* event)
@@ -236,6 +274,7 @@ namespace Material
     void SpecSheetRow::keyPressEvent(QKeyEvent* event)
     {
         if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space) {
+            // Space and Return on a switch row toggle it visibly as well.
             emit activated(m_key);
             event->accept();
             return;

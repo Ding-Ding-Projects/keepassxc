@@ -12,7 +12,7 @@ Every widget resolves colour, typography, shape, elevation and motion through `M
 
 ## Failure modes
 
-The window still uses the operating-system caption bar with DWM attributes; the frameless Material title bar is an open inventory row. The parity audits list the remaining primitive differences per screen.
+The parity audits list the remaining primitive differences per screen. Boolean settings rows render a real Material switch that answers for the row: one click, one activation, and the owner re-syncs the switch after applying the value. The element-override sliders on the Appearance page carry a caption with the property name and its live pixel value, so a reader knows which property the thumb moves.
 
 ## Security considerations
 
@@ -20,7 +20,7 @@ No network access; fonts come from the installed system faces with a CJK-safe fa
 
 ## Verification
 
-`testmaterialappearance` (five cases) and the parity rows `appearance-default` and `shell-default`.
+`testmaterialappearance` (five cases, including the captioned override sliders) and `testmaterialshellresponsive::settingsSwitchRowsToggleAndStayInStep` and the parity rows `appearance-default` and `shell-default`.
 
 ## Suggested articles
 

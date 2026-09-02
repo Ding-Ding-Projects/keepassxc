@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "appearance-default",
   "status": "complete",
-  "reviewedOn": "2026-09-01",
+  "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
   "verdict": "defects-open",
   "primitives": [
@@ -34,7 +34,7 @@
     {
       "primitive": "element overrides",
       "status": "deviates",
-      "finding": "Built shows unlabeled sliders; the reference has no such control on this row and the override editor is per element."
+      "finding": "Override sliders now carry a caption with the property name and live value (repaired 2026-09-02); the reference edits overrides per element rather than on this row."
     }
   ],
   "defects": [
@@ -42,11 +42,6 @@
       "id": "appearance-default-1",
       "severity": "medium",
       "summary": "Section layout and typography control anatomy differ"
-    },
-    {
-      "id": "appearance-default-2",
-      "severity": "low",
-      "summary": "Unlabeled override sliders"
     }
   ],
   "deviations": []

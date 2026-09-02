@@ -44,6 +44,8 @@ namespace Material
      * One 56px spec sheet row: a leading glyph, the label over its sub line,
      * and a right-aligned control pill. The whole row is clickable.
      */
+    class Switch;
+
     class SpecSheetRow : public QWidget
     {
         Q_OBJECT
@@ -64,6 +66,13 @@ namespace Material
         QString key() const;
 
         void setPill(PillKind kind, const QString& text);
+        /**
+         * Show a real Material switch in place of the On/Off pill. The row still
+         * reports activated(); the owner flips the value and calls setPill(),
+         * which keeps the switch in step without re-firing it.
+         */
+        void setSwitch(bool on);
+        Switch* switchControl() const;
         void setProvenance(const QString& text);
         QString provenance() const;
         PillLabel* pill() const;
@@ -88,6 +97,7 @@ namespace Material
         QString m_sub;
         QString m_provenance;
         PillLabel* m_pill = nullptr;
+        Switch* m_switch = nullptr;
         bool m_hovered = false;
     };
 

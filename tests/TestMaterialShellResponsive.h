@@ -13,6 +13,7 @@ private slots:
     void appliesVaultPaneContract();
     void fallbackSearchesAreIndependentAndRestoreFocus();
     void settingsPageScrollsFromContentAndContainsScrollbar();
+    void settingsSwitchRowsToggleAndStayInStep();
 };
 
 #endif // KEEPASSXC_TESTMATERIALSHELLRESPONSIVE_H

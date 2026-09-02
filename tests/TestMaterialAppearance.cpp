@@ -155,8 +155,13 @@ void TestMaterialAppearance::elementOverridePersistenceAndReset()
     auto* height = screen.findChild<QSlider*>(QStringLiteral("appearanceOverrideHeight"));
     auto* reset = screen.findChild<QPushButton*>(QStringLiteral("appearanceOverrideReset"));
     QVERIFY(selector && height && reset);
+    // Every override slider is captioned with its name and live value.
+    auto* heightCaption = screen.findChild<QLabel*>(QStringLiteral("appearanceOverrideHeightLabel"));
+    QVERIFY(heightCaption);
+    QVERIFY(heightCaption->text().startsWith(QStringLiteral("Element height")));
     selector->setCurrentIndex(selector->findData(QStringLiteral("appearance/preview")));
     height->setValue(72);
+    QVERIFY(heightCaption->text().contains(QStringLiteral("72 px")));
     QCOMPARE(overrides->get(QStringLiteral("appearance/preview")).height.value(), 72);
     reset->click();
     QVERIFY(overrides->get(QStringLiteral("appearance/preview")).isEmpty());
