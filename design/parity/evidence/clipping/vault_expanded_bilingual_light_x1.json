@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 29648,
+  "pid": 25856,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -20,23 +20,7 @@
   },
   "png": "vault_expanded_bilingual_light_x1.png",
   "pngSha256": "6378f15a5a3700ad8092f4c07c5b36a8a825f07213563df20b6e70a29855f9f5",
-  "findings": [
-    {
-      "tuple": "vault_expanded_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QAbstractButton#",
-      "rect": "98,736 196x50",
-      "text": "Open database folder in external editor",
-      "textWidth": 204
-    },
-    {
-      "tuple": "vault_expanded_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "Material::SegmentedButton#",
-      "rect": "599,190 225x32",
-      "minimumHint": "168x40"
-    }
-  ],
+  "findings": [],
   "widgetCount": 66,
   "widgets": [
     {
@@ -204,9 +188,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "1177x670",
+      "hint": "1028x670",
       "leaf": false,
-      "minimumHint": "1147x670",
+      "minimumHint": "873x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "88,112 1112x688",
@@ -306,7 +290,7 @@
       "scrollable": false,
       "squeezed": false,
       "text": "Open database folder in external editor",
-      "textOverflows": true,
+      "textOverflows": false,
       "textWidth": 204
     },
     {
@@ -408,14 +392,14 @@
     },
     {
       "class": "Material::SegmentedButton",
-      "hint": "225x40",
+      "hint": "225x32",
       "leaf": true,
-      "minimumHint": "168x40",
+      "minimumHint": "168x32",
       "name": "",
       "offscreen": false,
       "rect": "599,190 225x32",
       "scrollable": false,
-      "squeezed": true
+      "squeezed": false
     },
     {
       "class": "QStackedWidget",

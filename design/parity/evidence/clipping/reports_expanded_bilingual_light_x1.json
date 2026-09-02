@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 29488,
+  "pid": 2772,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -19,22 +19,8 @@
     "devicePixelRatio": 1
   },
   "png": "reports_expanded_bilingual_light_x1.png",
-  "pngSha256": "2e69cb972a861fbc441abb68a3ac62fc5082fee765e9e02fd54b29df75ce3f24",
-  "findings": [
-    {
-      "tuple": "reports_expanded_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::SearchBar#",
-      "rect": "869,134 340x44"
-    },
-    {
-      "tuple": "reports_expanded_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QComboBox#reportsCategory",
-      "rect": "459,135 122x42",
-      "minimumHint": "152x42"
-    }
-  ],
+  "pngSha256": "5279fd25cd94ee5732ac195149e3a85904d801257d93459f24f2f0fc9c42e391",
+  "findings": [],
   "widgetCount": 50,
   "widgets": [
     {
@@ -202,9 +188,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "1177x670",
+      "hint": "985x670",
       "leaf": false,
-      "minimumHint": "1147x670",
+      "minimumHint": "955x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "88,112 1112x688",
@@ -213,9 +199,9 @@
     },
     {
       "class": "Material::ReportsScreen",
-      "hint": "1177x164",
+      "hint": "985x202",
       "leaf": false,
-      "minimumHint": "1147x132",
+      "minimumHint": "955x170",
       "name": "",
       "offscreen": false,
       "rect": "88,112 1112x688",
@@ -224,12 +210,12 @@
     },
     {
       "class": "QWidget",
-      "hint": "1177x66",
+      "hint": "985x104",
       "leaf": false,
-      "minimumHint": "1147x66",
+      "minimumHint": "955x104",
       "name": "",
       "offscreen": false,
-      "rect": "88,112 1112x66",
+      "rect": "88,112 1112x104",
       "scrollable": false,
       "squeezed": false
     },
@@ -240,7 +226,7 @@
       "minimumHint": "180x32",
       "name": "",
       "offscreen": false,
-      "rect": "114,134 180x44",
+      "rect": "114,134 180x32",
       "scrollable": false,
       "squeezed": false,
       "text": "Database reports",
@@ -253,8 +239,8 @@
       "leaf": false,
       "minimumHint": "174x44",
       "name": "",
-      "offscreen": true,
-      "rect": "869,134 340x44",
+      "offscreen": false,
+      "rect": "834,172 340x44",
       "scrollable": false,
       "squeezed": false
     },
@@ -265,7 +251,7 @@
       "minimumHint": "28x40",
       "name": "",
       "offscreen": false,
-      "rect": "915,136 242x40",
+      "rect": "880,174 242x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Search this surface",
@@ -279,7 +265,7 @@
       "minimumHint": "32x32",
       "name": "",
       "offscreen": false,
-      "rect": "1167,136 32x40",
+      "rect": "1132,174 32x40",
       "scrollable": false,
       "squeezed": false
     },
@@ -290,9 +276,9 @@
       "minimumHint": "152x42",
       "name": "reportsCategory",
       "offscreen": false,
-      "rect": "459,135 122x42",
+      "rect": "267,173 152x42",
       "scrollable": false,
-      "squeezed": true
+      "squeezed": false
     },
     {
       "class": "QToolButton",
@@ -301,7 +287,7 @@
       "minimumHint": "89x31",
       "name": "reportsExportAll",
       "offscreen": false,
-      "rect": "593,140 89x31",
+      "rect": "431,178 89x31",
       "scrollable": false,
       "squeezed": false,
       "text": "Export report",
@@ -315,7 +301,7 @@
       "minimumHint": "163x31",
       "name": "",
       "offscreen": false,
-      "rect": "694,140 163x31",
+      "rect": "532,178 163x31",
       "scrollable": false,
       "squeezed": false,
       "text": "Export 0 selected finding(s)",
@@ -329,7 +315,7 @@
       "minimumHint": "141x40",
       "name": "",
       "offscreen": false,
-      "rect": "306,136 141x40",
+      "rect": "114,174 141x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Detailed reports",
@@ -344,10 +330,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "88,178 1112x622",
+      "rect": "88,216 1112x584",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 43
+      "vScrollMax": 81
     },
     {
       "class": "QWidget",
@@ -356,7 +342,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "88,178 1102x622",
+      "rect": "88,216 1102x584",
       "scrollable": true,
       "squeezed": false
     },
@@ -367,7 +353,7 @@
       "minimumHint": "348x665",
       "name": "",
       "offscreen": false,
-      "rect": "88,178 1102x665",
+      "rect": "88,216 1102x665",
       "scrollable": true,
       "squeezed": false
     },
@@ -378,7 +364,7 @@
       "minimumHint": "47x16",
       "name": "reportsState",
       "offscreen": false,
-      "rect": "114,200 1050x16",
+      "rect": "114,238 1050x16",
       "scrollable": true,
       "squeezed": false,
       "text": "Breach exposure has not been checked online.",
@@ -392,7 +378,7 @@
       "minimumHint": "283x281",
       "name": "reportsCards",
       "offscreen": false,
-      "rect": "114,522 1050x281",
+      "rect": "114,560 1050x281",
       "scrollable": true,
       "squeezed": false
     },
@@ -403,7 +389,7 @@
       "minimumHint": "135x99",
       "name": "reportCard_breached",
       "offscreen": false,
-      "rect": "114,522 517x99",
+      "rect": "114,560 517x99",
       "scrollable": true,
       "squeezed": false
     },
@@ -414,7 +400,7 @@
       "minimumHint": "91x31",
       "name": "reportToggle_breached",
       "offscreen": false,
-      "rect": "136,544 91x31",
+      "rect": "136,582 91x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Breached · —",
@@ -428,7 +414,7 @@
       "minimumHint": "47x16",
       "name": "",
       "offscreen": false,
-      "rect": "136,583 473x16",
+      "rect": "136,621 473x16",
       "scrollable": true,
       "squeezed": false
     },
@@ -439,7 +425,7 @@
       "minimumHint": "47x16",
       "name": "",
       "offscreen": false,
-      "rect": "136,583 473x16",
+      "rect": "136,621 473x16",
       "scrollable": true,
       "squeezed": false,
       "text": "Not checked. Run the real breach report to obtain results.",
@@ -453,7 +439,7 @@
       "minimumHint": "109x75",
       "name": "reportCard_weak",
       "offscreen": false,
-      "rect": "647,522 517x75",
+      "rect": "647,560 517x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -464,7 +450,7 @@
       "minimumHint": "65x31",
       "name": "reportToggle_weak",
       "offscreen": false,
-      "rect": "669,544 65x31",
+      "rect": "669,582 65x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Weak · 8",
@@ -478,7 +464,7 @@
       "minimumHint": "118x75",
       "name": "reportCard_reused",
       "offscreen": false,
-      "rect": "114,637 517x75",
+      "rect": "114,675 517x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -489,7 +475,7 @@
       "minimumHint": "74x31",
       "name": "reportToggle_reused",
       "offscreen": false,
-      "rect": "136,659 74x31",
+      "rect": "136,697 74x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Reused · 8",
@@ -503,7 +489,7 @@
       "minimumHint": "118x75",
       "name": "reportCard_expired",
       "offscreen": false,
-      "rect": "647,637 517x75",
+      "rect": "647,675 517x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -514,7 +500,7 @@
       "minimumHint": "74x31",
       "name": "reportToggle_expired",
       "offscreen": false,
-      "rect": "669,659 74x31",
+      "rect": "669,697 74x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Expired · 0",
@@ -528,7 +514,7 @@
       "minimumHint": "127x75",
       "name": "reportCard_healthy",
       "offscreen": false,
-      "rect": "114,728 517x75",
+      "rect": "114,766 517x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -539,7 +525,7 @@
       "minimumHint": "83x31",
       "name": "reportToggle_healthy",
       "offscreen": false,
-      "rect": "136,750 83x31",
+      "rect": "136,788 83x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Healthy · 12",
@@ -553,7 +539,7 @@
       "minimumHint": "132x75",
       "name": "reportCard_statistics",
       "offscreen": false,
-      "rect": "647,728 517x75",
+      "rect": "647,766 517x75",
       "scrollable": true,
       "squeezed": false
     },
@@ -564,7 +550,7 @@
       "minimumHint": "88x31",
       "name": "reportToggle_statistics",
       "offscreen": false,
-      "rect": "669,750 88x31",
+      "rect": "669,788 88x31",
       "scrollable": true,
       "squeezed": false,
       "text": "Statistics · 19",
@@ -578,7 +564,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "114,232 259x127",
+      "rect": "114,270 259x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -589,7 +575,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "389,232 258x127",
+      "rect": "389,270 258x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -600,7 +586,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "114,375 259x127",
+      "rect": "114,413 259x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -611,7 +597,7 @@
       "minimumHint": "140x127",
       "name": "",
       "offscreen": false,
-      "rect": "389,375 258x127",
+      "rect": "389,413 258x127",
       "scrollable": true,
       "squeezed": false
     },
@@ -622,7 +608,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "1190,178 10x622",
+      "rect": "1190,216 10x584",
       "scrollable": true,
       "squeezed": false
     },
@@ -633,7 +619,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "1190,178 10x622",
+      "rect": "1190,216 10x584",
       "scrollable": true,
       "squeezed": false
     }

@@ -1,103 +1,12 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
+  "sourceCommit": "9e2c8a561fba359fb883901033beec34395682de",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-01T23:46:36.681Z",
+  "generatedAt": "2026-09-02T00:00:26.321Z",
   "quick": true,
   "tuples": 20,
   "errors": 0,
-  "findings": [
-    {
-      "tuple": "vault_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "Material::SegmentedButton#",
-      "rect": "559,190 225x32",
-      "minimumHint": "168x40"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QLabel#",
-      "rect": "98,134 106x44",
-      "text": "Database reports",
-      "textWidth": 180
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QLabel#",
-      "rect": "98,134 106x44",
-      "minimumHint": "180x32"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::SearchBar#",
-      "rect": "670,134 340x44"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "QLineEdit#",
-      "rect": "716,136 242x40"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::IconButton#",
-      "rect": "968,136 32x40"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QComboBox#reportsCategory",
-      "rect": "334,135 122x42",
-      "minimumHint": "152x42"
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QToolButton#",
-      "rect": "552,140 106x31",
-      "text": "Export 0 selected finding(s)",
-      "textWidth": 142
-    },
-    {
-      "tuple": "reports_compact_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QToolButton#",
-      "rect": "552,140 106x31",
-      "minimumHint": "163x31"
-    },
-    {
-      "tuple": "vault_expanded_bilingual_light_x1",
-      "kind": "text-overflows",
-      "widget": "QAbstractButton#",
-      "rect": "98,736 196x50",
-      "text": "Open database folder in external editor",
-      "textWidth": 204
-    },
-    {
-      "tuple": "vault_expanded_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "Material::SegmentedButton#",
-      "rect": "599,190 225x32",
-      "minimumHint": "168x40"
-    },
-    {
-      "tuple": "reports_expanded_bilingual_light_x1",
-      "kind": "offscreen",
-      "widget": "Material::SearchBar#",
-      "rect": "869,134 340x44"
-    },
-    {
-      "tuple": "reports_expanded_bilingual_light_x1",
-      "kind": "squeezed-below-minimum",
-      "widget": "QComboBox#reportsCategory",
-      "rect": "459,135 122x42",
-      "minimumHint": "152x42"
-    }
-  ],
+  "findings": [],
   "records": [
     {
       "id": "vault_compact_bilingual_light_x1",
@@ -121,7 +30,7 @@
       "png": "vault_compact_bilingual_light_x1.png",
       "pngSha256": "7a9624f9a1ab07d2a67f7e19a29741a869f88cbdbc28eecfc151e5b2fcabe997",
       "widgetCount": 34,
-      "findingCount": 1
+      "findingCount": 0
     },
     {
       "id": "reports_compact_bilingual_light_x1",
@@ -143,9 +52,9 @@
         "devicePixelRatio": 1
       },
       "png": "reports_compact_bilingual_light_x1.png",
-      "pngSha256": "33d2c3ba11c7ad49dd5451892144edd387194b1dfb92e034d7e7bbaa88a555f6",
+      "pngSha256": "9af5b92ec87f149e5105d33d5c9f5c0e8fd7522de6dd7c0307712e2bff14916a",
       "widgetCount": 50,
-      "findingCount": 8
+      "findingCount": 0
     },
     {
       "id": "editor_compact_bilingual_light_x1",
@@ -287,8 +196,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_compact_bilingual_light_x1.png",
-      "pngSha256": "81852efacc5a01813d1f32e77664e2a0bf7e7f64bfb81f58e144dbf49d4d9ea4",
-      "widgetCount": 183,
+      "pngSha256": "44cdd4349aeb5391dcce144a22d497a77bf7485f925120bad5bd0068d8913dda",
+      "widgetCount": 181,
       "findingCount": 0
     },
     {
@@ -311,8 +220,8 @@
         "devicePixelRatio": 1
       },
       "png": "appearance_compact_bilingual_light_x1.png",
-      "pngSha256": "a68f8ac16e9816e04ca8a01cc3d6c8bca94a53f76bb1282389ec2d107fb72527",
-      "widgetCount": 145,
+      "pngSha256": "bd4fa9635d1c13c49ebaaafce50695b7113f61674eaf8f2034929b84ecd8bcdb",
+      "widgetCount": 140,
       "findingCount": 0
     },
     {
@@ -361,7 +270,7 @@
       "png": "vault_expanded_bilingual_light_x1.png",
       "pngSha256": "6378f15a5a3700ad8092f4c07c5b36a8a825f07213563df20b6e70a29855f9f5",
       "widgetCount": 66,
-      "findingCount": 2
+      "findingCount": 0
     },
     {
       "id": "reports_expanded_bilingual_light_x1",
@@ -383,9 +292,9 @@
         "devicePixelRatio": 1
       },
       "png": "reports_expanded_bilingual_light_x1.png",
-      "pngSha256": "2e69cb972a861fbc441abb68a3ac62fc5082fee765e9e02fd54b29df75ce3f24",
+      "pngSha256": "5279fd25cd94ee5732ac195149e3a85904d801257d93459f24f2f0fc9c42e391",
       "widgetCount": 50,
-      "findingCount": 2
+      "findingCount": 0
     },
     {
       "id": "editor_expanded_bilingual_light_x1",
@@ -527,8 +436,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_expanded_bilingual_light_x1.png",
-      "pngSha256": "70f7af59832864f7e397751a15d16b6b0052f4671bb5832a370fba57dbcac959",
-      "widgetCount": 183,
+      "pngSha256": "ff35887e388442cf32fab5bebd0bb9ddedeada7e7f239fbb451ae722975f734f",
+      "widgetCount": 181,
       "findingCount": 0
     },
     {
@@ -551,8 +460,8 @@
         "devicePixelRatio": 1
       },
       "png": "appearance_expanded_bilingual_light_x1.png",
-      "pngSha256": "cc67cd931346e3399c4f84980f95fda67364f19b68420278b259d40f09a80042",
-      "widgetCount": 145,
+      "pngSha256": "e6e8413a8b4b87bb9ed48261eb35a3483a387b0b4123b25ae5537a6948ab31c7",
+      "widgetCount": 140,
       "findingCount": 0
     },
     {

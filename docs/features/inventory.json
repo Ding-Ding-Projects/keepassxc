@@ -713,7 +713,7 @@
       "article": {
         "file": "docs/features/design/clipping-matrix.md"
       },
-      "note": "Quick matrix captured; full width/language/theme/scale matrix and repairs pending",
+      "note": "Quick matrix (20 tuples) is at 0 findings after the header wrap; the full width/language/theme/scale matrix is still to run",
       "implementation": {
         "file": "design/parity/clipping-matrix.mjs",
         "anchor": "^async function runTuple\\(tuple\\) \\{$"

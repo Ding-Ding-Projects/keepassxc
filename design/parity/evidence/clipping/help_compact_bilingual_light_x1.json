@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 25884,
+  "pid": 7604,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -188,9 +188,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "1177x670",
+      "hint": "886x670",
       "leaf": false,
-      "minimumHint": "1147x670",
+      "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "72,112 728x608",
