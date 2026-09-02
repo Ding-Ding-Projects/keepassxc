@@ -6,6 +6,7 @@ class TestMaterialHistory : public QObject
     Q_OBJECT
 private slots:
     void surfaceStateFiltersAndSelection();
+    void detailCardDescribesTheCurrentRevision();
     void routeAndActionInventory();
     void gitStoreTransactionAndRestart();
     void gitStoreFailureDoesNotAdvanceFingerprint();

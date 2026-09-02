@@ -91,6 +91,12 @@ namespace Material
     protected:
         void paintEvent(QPaintEvent* event) override;
         void resizeEvent(QResizeEvent* event) override;
+        /**
+         * The header re-wraps its trailing controls as the width shrinks, so its
+         * one-row width is not a real minimum. Reporting a small one lets the
+         * window narrow to the compact breakpoints the screens actually handle.
+         */
+        QSize minimumSizeHint() const override;
 
     private:
         void applyTheme();

@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 25044,
+  "pid": 29700,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -256,7 +256,7 @@
       "class": "Material::SettingsScreen",
       "hint": "490x471",
       "leaf": false,
-      "minimumHint": "390x153",
+      "minimumHint": "320x153",
       "name": "",
       "offscreen": false,
       "rect": "88,156 1112x644",

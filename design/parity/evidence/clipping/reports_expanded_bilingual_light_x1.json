@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 25004,
+  "pid": 30392,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -245,7 +245,7 @@
       "class": "QStackedWidget",
       "hint": "977x750",
       "leaf": false,
-      "minimumHint": "953x670",
+      "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "88,156 1112x644",
@@ -256,7 +256,7 @@
       "class": "Material::ReportsScreen",
       "hint": "977x202",
       "leaf": false,
-      "minimumHint": "953x170",
+      "minimumHint": "320x170",
       "name": "",
       "offscreen": false,
       "rect": "88,156 1112x644",

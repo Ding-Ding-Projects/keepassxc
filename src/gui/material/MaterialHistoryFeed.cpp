@@ -517,6 +517,26 @@ namespace Material
                 change.row.meta = metaLine(id, change.when, described.kind);
                 change.row.badge = described.tint == RevisionTint::Negative ? tr("DELETE") : tr("EDIT");
                 change.row.hash = id.left(ShortIdLength);
+                change.row.record = entry->group()
+                                        ? tr("%1 · %2").arg(entryName(entry), entry->group()->hierarchy().join(QStringLiteral(" / ")))
+                                        : entryName(entry);
+                {
+                    // The card's diff: what this revision holds against the entry
+                    // as it stands. Values are never listed, only which fields moved.
+                    const QStringList differences = diffLines(entry, before);
+                    for (const QString& line : differences) {
+                        const QChar mark = line.startsWith(tr("Attachments added")) ? QLatin1Char('+')
+                                           : line.startsWith(tr("Attachments removed")) ? QLatin1Char('-')
+                                                                                         : QLatin1Char(' ');
+                        change.row.diff << QString(mark) + QLatin1Char(' ') + line;
+                    }
+                    change.row.detail = differences.isEmpty()
+                                            ? tr("This revision matches the entry as it stands; restoring it would change nothing.")
+                                            : tr("%n field(s) differ from the entry as it stands. Restoring writes a new "
+                                                 "revision; the current values stay in history.",
+                                                 "",
+                                                 differences.size());
+                }
                 change.row.tint = described.tint;
                 change.row.canDiff = true;
                 change.row.canRestore = true;
@@ -560,6 +580,31 @@ namespace Material
                                : recordedRevision.removed > 0                   ? tr("DELETE")
                                                                                 : tr("EDIT");
             change.row.hash = recordedRevision.id.left(ShortIdLength);
+            change.row.record = recordedRevision.kind == RevisionKind::Settings
+                                    ? tr("Application settings")
+                                    : tr("%1 · %n entries, %2 groups", "", recordedRevision.entryCount)
+                                          .arg(recordedRevision.databaseName)
+                                          .arg(recordedRevision.groupCount);
+            change.row.detail = recordedRevision.kind == RevisionKind::Settings
+                                    ? tr("A settings change was saved. The value itself is in the encrypted snapshot, not in this log.")
+                                    : tr("A save of the database: %1 added, %2 removed, %3 edited. %4")
+                                          .arg(recordedRevision.added)
+                                          .arg(recordedRevision.removed)
+                                          .arg(recordedRevision.edited)
+                                          .arg(recordedRevision.snapshotPath.isEmpty()
+                                                   ? tr("No encrypted snapshot is available for this save.")
+                                                   : tr("An encrypted snapshot of the file as saved is available."));
+            if (recordedRevision.added > 0) {
+                change.row.diff << tr("+ %n entry(ies) added", "", recordedRevision.added);
+            }
+            if (recordedRevision.removed > 0) {
+                change.row.diff << tr("- %n entry(ies) removed", "", recordedRevision.removed);
+            }
+            if (recordedRevision.edited > 0) {
+                change.row.diff << tr("  %n entry(ies) edited", "", recordedRevision.edited);
+            }
+            change.row.diff << (recordedRevision.snapshotPath.isEmpty() ? tr("  snapshot = <none>")
+                                                                       : tr("  snapshot = <encrypted, not logged>"));
             change.row.tint = tintFor(recordedRevision);
             change.row.canDiff = true;
             change.row.canRestore = recordedRevision.removed > 0 && !recordedRevision.snapshotPath.isEmpty()
@@ -588,6 +633,11 @@ namespace Material
             change.row.meta = metaLine(restored.id, restored.when, tr("restore"));
             change.row.badge = tr("RESTORE");
             change.row.hash = restored.id.left(ShortIdLength);
+            change.row.record = restored.entryTitle;
+            change.row.detail = tr("Recorded as a new revision. The revision from %1 remains reachable; nothing was discarded.")
+                                    .arg(when(restored.revisionTime));
+            change.row.diff << tr("  restored_from = %1").arg(when(restored.revisionTime))
+                            << tr("+ revision = %1 (new, not a rewrite)").arg(restored.id.left(ShortIdLength));
             change.row.tint = RevisionTint::Positive;
             // The restore has happened and the revision it came from is listed
             // in its own right, so this row is a record, not a handle.

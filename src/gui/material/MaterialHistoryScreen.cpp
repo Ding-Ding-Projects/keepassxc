@@ -19,6 +19,7 @@
 
 #include "MaterialDateField.h"
 #include "MaterialSelect.h"
+#include "MaterialVaultSidebar.h"
 
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
@@ -32,6 +33,10 @@
 #include <QLineEdit>
 #include <QLocale>
 #include <QPainter>
+#include <functional>
+#include <QKeyEvent>
+#include <QMouseEvent>
+#include <QPainterPath>
 #include <QProgressBar>
 #include <QResizeEvent>
 #include <QToolButton>
@@ -63,6 +68,14 @@ namespace Material
         constexpr int RecentDays = 30;
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
+        constexpr int DetailWidth = 392;
+        constexpr int DetailRadius = 28;
+        constexpr int DetailBreakpoint = 900;
+        constexpr int ColumnGapWide = 16;
+        constexpr int BadgeChipHeight = 24;
+        constexpr int DiffRadius = 12;
+        constexpr int DiffMarkWidth = 12;
+        constexpr int FooterButtonHeight = 44;
 
 
         /** The fill of the glyph circle, one container role per tint. */
@@ -157,6 +170,8 @@ namespace Material
                 m_select->setEnabled(!revision.id.isEmpty());
                 layout->addWidget(m_select);
                 layout->addStretch(1);
+                setCursor(revision.id.isEmpty() ? Qt::ArrowCursor : Qt::PointingHandCursor);
+                setFocusPolicy(revision.id.isEmpty() ? Qt::NoFocus : Qt::TabFocus);
                 setAccessibleName(revision.badge.isEmpty()
                                       ? HistoryScreen::tr("%1. %2").arg(revision.label, revision.meta)
                                       : HistoryScreen::tr("%1: %2. %3").arg(revision.badge, revision.label, revision.meta));
@@ -182,6 +197,27 @@ namespace Material
                 setMinimumHeight(CircleSize + RowPaddingY * 2);
             }
 
+            /** The row the detail card describes paints a secondary container. */
+            void setCurrentRow(bool current)
+            {
+                m_current = current;
+                update();
+            }
+
+            bool isCurrentRow() const
+            {
+                return m_current;
+            }
+
+            /** Hide the inline actions while the detail card carries them. */
+            void setActionsVisible(bool visible)
+            {
+                if (m_diff) m_diff->setVisible(visible);
+                if (m_restore) m_restore->setVisible(visible);
+            }
+
+            std::function<void()> onActivated;
+
             ButtonBase* diffButton() const
             {
                 return m_diff;
@@ -202,8 +238,13 @@ namespace Material
                 paintSurface(&painter,
                              rect(),
                              RowRadius,
-                             theme()->color(Role::SurfaceContainerLow),
-                             theme()->color(Role::OutlineVariant));
+                             theme()->color(m_current ? Role::SecondaryContainer : Role::SurfaceContainerLow),
+                             theme()->color(m_current ? Role::SecondaryContainer : Role::OutlineVariant));
+                if (hasFocus()) {
+                    painter.setPen(QPen(theme()->color(Role::Primary), 2));
+                    painter.setBrush(Qt::NoBrush);
+                    painter.drawRoundedRect(QRectF(rect()).adjusted(1, 1, -1, -1), RowRadius, RowRadius);
+                }
 
                 const QRect circleRect(RowPaddingX, (height() - CircleSize) / 2, CircleSize, CircleSize);
                 paintSurface(&painter, circleRect, Shape::Full, tintContainer(m_revision.tint));
@@ -214,7 +255,10 @@ namespace Material
 
                 // The text stops at whichever action comes first, so a row that
                 // only carries a Restore gives its label the same room.
-                const ButtonBase* leading = m_diff ? m_diff : m_restore;
+                // Hidden actions (the detail card carries them) give the text the whole row.
+                const ButtonBase* leading = m_diff && !m_diff->isHidden() ? m_diff
+                                            : m_restore && !m_restore->isHidden() ? m_restore
+                                                                                    : nullptr;
                 const int left = circleRect.right() + CircleGap;
                 const int right = leading ? leading->x() - ColumnGap : width() - RowPaddingX;
                 const QFont labelFont = theme()->font(TypeRole::LabelLarge);
@@ -269,6 +313,25 @@ namespace Material
 
         private:
             Revision m_revision;
+            void mousePressEvent(QMouseEvent* event) override
+            {
+                if (event->button() == Qt::LeftButton && onActivated) {
+                    onActivated();
+                }
+                QWidget::mousePressEvent(event);
+            }
+
+            void keyPressEvent(QKeyEvent* event) override
+            {
+                if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter || event->key() == Qt::Key_Space)
+                    && onActivated) {
+                    onActivated();
+                    return;
+                }
+                QWidget::keyPressEvent(event);
+            }
+
+            bool m_current = false;
             ButtonBase* m_diff = nullptr;
             ButtonBase* m_restore = nullptr;
             QCheckBox* m_select = nullptr;
@@ -325,6 +388,332 @@ namespace Material
         };
     } // namespace
 
+    // -------------------------------------------------------------- DetailCard
+
+    /**
+     * The design's detail card: a secondary-container header with the kind
+     * badge, the short digest, the label and the timestamp; then Record, What
+     * changed, the Diff lines, the note about what the log does not hold, and
+     * the Restore / Compare / Export actions.
+     */
+    class HistoryScreen::DetailCard : public QWidget
+    {
+    public:
+        explicit DetailCard(QWidget* parent = nullptr)
+            : QWidget(parent)
+        {
+            setFixedWidth(DetailWidth);
+            auto* column = new QVBoxLayout(this);
+            column->setContentsMargins(0, 0, 0, 0);
+            column->setSpacing(0);
+
+            m_header = new QWidget(this);
+            auto* header = new QVBoxLayout(m_header);
+            header->setContentsMargins(22, 20, 22, 16);
+            header->setSpacing(4);
+            auto* line = new QHBoxLayout;
+            line->setSpacing(8);
+            m_badge = new QLabel(m_header);
+            m_badge->setObjectName(QStringLiteral("historyDetailBadge"));
+            m_badge->setFixedHeight(BadgeChipHeight);
+            m_badge->setContentsMargins(10, 0, 10, 0);
+            m_badge->setAlignment(Qt::AlignCenter);
+            line->addWidget(m_badge, 0);
+            m_hash = new QLabel(m_header);
+            m_hash->setObjectName(QStringLiteral("historyDetailHash"));
+            line->addWidget(m_hash, 0);
+            line->addStretch(1);
+            header->addLayout(line);
+            m_label = new QLabel(m_header);
+            m_label->setObjectName(QStringLiteral("historyDetailLabel"));
+            m_label->setWordWrap(true);
+            header->addWidget(m_label);
+            m_when = new QLabel(m_header);
+            m_when->setObjectName(QStringLiteral("historyDetailWhen"));
+            header->addWidget(m_when);
+            column->addWidget(m_header);
+
+            m_body = new QWidget(this);
+            auto* body = new QVBoxLayout(m_body);
+            body->setContentsMargins(18, 16, 18, 20);
+            body->setSpacing(0);
+            m_recordTitle = overline(HistoryScreen::tr("Record"));
+            body->addWidget(m_recordTitle);
+            m_record = new QLabel(m_body);
+            m_record->setObjectName(QStringLiteral("historyDetailRecord"));
+            m_record->setWordWrap(true);
+            body->addWidget(m_record);
+            body->addSpacing(16);
+            m_detailTitle = overline(HistoryScreen::tr("What changed"));
+            body->addWidget(m_detailTitle);
+            m_detail = new QLabel(m_body);
+            m_detail->setObjectName(QStringLiteral("historyDetailWhat"));
+            m_detail->setWordWrap(true);
+            body->addWidget(m_detail);
+            body->addSpacing(16);
+            m_diffTitle = overline(HistoryScreen::tr("Diff"));
+            body->addWidget(m_diffTitle);
+            m_diffBox = new QWidget(m_body);
+            m_diffBox->setObjectName(QStringLiteral("historyDetailDiff"));
+            m_diffLayout = new QVBoxLayout(m_diffBox);
+            m_diffLayout->setContentsMargins(0, 0, 0, 0);
+            m_diffLayout->setSpacing(0);
+            body->addWidget(m_diffBox);
+            body->addSpacing(18);
+            m_note = new QLabel(HistoryScreen::tr("The plaintext revision log records what changed and which record it "
+                                                   "belongs to. It never records entry content, passwords or attachment "
+                                                   "bytes; those stay in the encrypted snapshot."),
+                                m_body);
+            m_note->setObjectName(QStringLiteral("historyDetailNote"));
+            m_note->setWordWrap(true);
+            m_note->setContentsMargins(14, 12, 14, 12);
+            body->addWidget(m_note);
+            body->addSpacing(16);
+
+            auto* footer = new QHBoxLayout;
+            footer->setSpacing(8);
+            m_restore = new FilledButton(QStringLiteral("restore"), HistoryScreen::tr("Restore"), m_body);
+            m_restore->setObjectName(QStringLiteral("historyDetailRestore"));
+            m_restore->setSymbolSize(19);
+            m_restore->setFixedHeight(FooterButtonHeight);
+            m_restore->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+            footer->addWidget(m_restore, 1);
+            m_compare = new IconButton(QStringLiteral("difference"), m_body);
+            m_compare->setObjectName(QStringLiteral("historyDetailCompare"));
+            m_compare->setDiameter(FooterButtonHeight);
+            m_compare->setToolTip(HistoryScreen::tr("Compare with the entry as it stands"));
+            m_compare->setAccessibleName(HistoryScreen::tr("Compare revision"));
+            footer->addWidget(m_compare, 0);
+            m_export = new IconButton(QStringLiteral("download"), m_body);
+            m_export->setObjectName(QStringLiteral("historyDetailExport"));
+            m_export->setDiameter(FooterButtonHeight);
+            m_export->setToolTip(HistoryScreen::tr("Export this revision"));
+            m_export->setAccessibleName(HistoryScreen::tr("Export revision"));
+            footer->addWidget(m_export, 0);
+            body->addLayout(footer);
+            column->addWidget(m_body);
+
+            m_empty = new QLabel(HistoryScreen::tr("Select a revision to see what changed, which record it belongs to "
+                                                    "and what restoring it would do."),
+                                 this);
+            m_empty->setObjectName(QStringLiteral("historyDetailEmpty"));
+            m_empty->setWordWrap(true);
+            m_empty->setAlignment(Qt::AlignCenter);
+            m_empty->setContentsMargins(24, 40, 24, 40);
+            column->addWidget(m_empty);
+            column->addStretch(1);
+
+            applyTheme();
+            connect(theme(), &Theme::changed, this, [this] { applyTheme(); });
+            clearRevision();
+        }
+
+        void setRevision(const Revision& revision)
+        {
+            m_revision = revision;
+            m_hasRevision = true;
+            m_badge->setText(revision.badge.isEmpty() ? HistoryScreen::tr("REVISION") : revision.badge);
+            m_hash->setText(revision.hash);
+            m_label->setText(revision.label);
+            m_when->setText(revision.timestamp.isValid() ? revision.timestamp.toUTC().toString(QStringLiteral("yyyy-MM-dd HH:mm:ss 'UTC'"))
+                                                         : revision.meta);
+            m_record->setText(revision.record.isEmpty() ? HistoryScreen::tr("Not recorded") : revision.record);
+            m_detail->setText(revision.detail.isEmpty() ? revision.meta : revision.detail);
+            rebuildDiff(revision.diff);
+            m_restore->setText(HistoryScreen::tr("Restore %1").arg(revision.hash.isEmpty() ? revision.label : revision.hash));
+            m_restore->setEnabled(revision.canRestore);
+            m_restore->setToolTip(revision.canRestore ? QString()
+                                                      : HistoryScreen::tr("This revision cannot be put back; it describes a save, not an entry."));
+            m_restore->setAccessibleName(HistoryScreen::tr("Restore revision: %1").arg(revision.label));
+            m_compare->setEnabled(revision.canDiff);
+            m_export->setEnabled(!revision.id.isEmpty());
+            setAccessibleName(HistoryScreen::tr("%1: %2").arg(m_badge->text(), revision.label));
+            m_header->show();
+            m_body->show();
+            m_empty->hide();
+            update();
+        }
+
+        void clearRevision()
+        {
+            m_revision = Revision();
+            m_hasRevision = false;
+            m_header->hide();
+            m_body->hide();
+            m_empty->show();
+            setAccessibleName(m_empty->text());
+            update();
+        }
+
+        QAbstractButton* restoreButton() const
+        {
+            return m_restore;
+        }
+
+        QAbstractButton* compareButton() const
+        {
+            return m_compare;
+        }
+
+        QAbstractButton* exportButton() const
+        {
+            return m_export;
+        }
+
+        QStringList diffTexts() const
+        {
+            QStringList texts;
+            for (QLabel* line : m_diffLines) {
+                texts << line->text();
+            }
+            return texts;
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            paintSurface(&painter, rect(), DetailRadius, theme()->color(Role::SurfaceContainerLow));
+            if (m_hasRevision) {
+                // The header band, clipped to the card's top corners.
+                QPainterPath clip;
+                clip.addRoundedRect(QRectF(rect()), DetailRadius, DetailRadius);
+                painter.setClipPath(clip);
+                painter.fillRect(m_header->geometry(), theme()->color(Role::SecondaryContainer));
+            }
+        }
+
+    private:
+        QLabel* overline(const QString& text)
+        {
+            auto* label = new QLabel(text, this);
+            label->setContentsMargins(0, 0, 0, 7);
+            m_overlines << label;
+            return label;
+        }
+
+        void rebuildDiff(const QStringList& lines)
+        {
+            qDeleteAll(m_diffLines);
+            m_diffLines.clear();
+            qDeleteAll(m_diffBox->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly));
+            const bool any = !lines.isEmpty();
+            m_diffTitle->setVisible(any);
+            m_diffBox->setVisible(any);
+            for (const QString& raw : lines) {
+                const QChar mark = raw.isEmpty() ? QLatin1Char(' ') : raw.at(0);
+                const QString text = raw.mid(1).trimmed();
+                auto* row = new QWidget(m_diffBox);
+                auto* layout = new QHBoxLayout(row);
+                layout->setContentsMargins(12, 7, 12, 7);
+                layout->setSpacing(9);
+                auto* markLabel = new QLabel(QString(mark), row);
+                markLabel->setFixedWidth(DiffMarkWidth);
+                auto* textLabel = new QLabel(text, row);
+                textLabel->setWordWrap(true);
+                textLabel->setTextInteractionFlags(Qt::TextSelectableByMouse);
+                textLabel->setAccessibleName(mark == QLatin1Char('+') ? HistoryScreen::tr("Added: %1").arg(text)
+                                             : mark == QLatin1Char('-') ? HistoryScreen::tr("Removed: %1").arg(text)
+                                                                        : text);
+                layout->addWidget(markLabel, 0, Qt::AlignTop);
+                layout->addWidget(textLabel, 1);
+                Role fill = Role::SurfaceContainer;
+                Role ink = Role::OnSurface;
+                Role markInk = Role::Outline;
+                if (mark == QLatin1Char('+')) {
+                    fill = Role::GreenContainer; ink = Role::OnGreenContainer; markInk = Role::Green;
+                } else if (mark == QLatin1Char('-')) {
+                    fill = Role::ErrorContainer; ink = Role::OnErrorContainer; markInk = Role::Error;
+                }
+                row->setAutoFillBackground(true);
+                QPalette palette = row->palette();
+                palette.setColor(QPalette::Window, theme()->color(fill));
+                row->setPalette(palette);
+                styleLabel(markLabel, monoFont(), theme()->color(markInk), true);
+                styleLabel(textLabel, monoFont(), theme()->color(ink), false);
+                m_diffLayout->addWidget(row);
+                m_diffLines << textLabel;
+            }
+        }
+
+        static QFont monoFont()
+        {
+            QFont font = theme()->font(TypeRole::Mono);
+            font.setPointSizeF(qMax(7.0, font.pointSizeF() * 0.9));
+            return font;
+        }
+
+        static void styleLabel(QLabel* label, const QFont& font, const QColor& color, bool bold)
+        {
+            QFont copy = font;
+            if (bold) copy.setWeight(QFont::Bold);
+            label->setFont(copy);
+            QPalette palette = label->palette();
+            palette.setColor(QPalette::WindowText, color);
+            label->setPalette(palette);
+        }
+
+        void applyTheme()
+        {
+            const QColor onHeader = theme()->color(Role::OnSecondaryContainer);
+            QFont badgeFont = theme()->font(TypeRole::LabelSmall);
+            badgeFont.setWeight(QFont::Medium);
+            badgeFont.setCapitalization(QFont::AllUppercase);
+            badgeFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.6);
+            styleLabel(m_badge, badgeFont, onHeader, false);
+            m_badge->setStyleSheet(QStringLiteral("background: rgba(128,128,128,56); border-radius: 6px;"));
+            styleLabel(m_hash, monoFont(), onHeader, false);
+            styleLabel(m_label, theme()->font(TypeRole::TitleMedium), onHeader, false);
+            styleLabel(m_when, monoFont(), onHeader, false);
+            QFont overlineFont = theme()->font(TypeRole::LabelSmall);
+            overlineFont.setCapitalization(QFont::AllUppercase);
+            overlineFont.setWeight(QFont::Medium);
+            overlineFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.9);
+            for (QLabel* label : std::as_const(m_overlines)) {
+                styleLabel(label, overlineFont, theme()->color(Role::OnSurfaceVariant), false);
+            }
+            styleLabel(m_record, theme()->font(TypeRole::BodyMedium), theme()->color(Role::OnSurface), false);
+            styleLabel(m_detail, theme()->font(TypeRole::BodySmall), theme()->color(Role::OnSurface), false);
+            styleLabel(m_note, theme()->font(TypeRole::BodySmall), theme()->color(Role::OnSurfaceVariant), false);
+            m_note->setStyleSheet(QStringLiteral("background: %1; border-radius: %2px;")
+                                      .arg(theme()->hex(Role::SurfaceContainer))
+                                      .arg(DiffRadius));
+            m_diffBox->setStyleSheet(QStringLiteral("#historyDetailDiff { border: 1px solid %1; border-radius: %2px; }")
+                                         .arg(theme()->hex(Role::OutlineVariant))
+                                         .arg(DiffRadius));
+            m_diffBox->setAttribute(Qt::WA_StyledBackground, true);
+            styleLabel(m_empty, theme()->font(TypeRole::BodyMedium), theme()->color(Role::OnSurfaceVariant), false);
+            if (m_hasRevision) {
+                rebuildDiff(m_revision.diff);
+            }
+            update();
+        }
+
+        Revision m_revision;
+        bool m_hasRevision = false;
+        QWidget* m_header = nullptr;
+        QWidget* m_body = nullptr;
+        QLabel* m_badge = nullptr;
+        QLabel* m_hash = nullptr;
+        QLabel* m_label = nullptr;
+        QLabel* m_when = nullptr;
+        QLabel* m_recordTitle = nullptr;
+        QLabel* m_record = nullptr;
+        QLabel* m_detailTitle = nullptr;
+        QLabel* m_detail = nullptr;
+        QLabel* m_diffTitle = nullptr;
+        QWidget* m_diffBox = nullptr;
+        QVBoxLayout* m_diffLayout = nullptr;
+        QList<QLabel*> m_diffLines;
+        QLabel* m_note = nullptr;
+        QLabel* m_empty = nullptr;
+        FilledButton* m_restore = nullptr;
+        IconButton* m_compare = nullptr;
+        IconButton* m_export = nullptr;
+        QList<QLabel*> m_overlines;
+    };
+
     HistoryScreen::HistoryScreen(QWidget* parent)
         : Screen(parent)
     {
@@ -362,15 +751,15 @@ namespace Material
 
         m_filterPanel = new QWidget;
         m_filterPanel->setObjectName(QStringLiteral("historyFilters"));
-        auto filterRow = new QHBoxLayout(m_filterPanel);
+        // The chips wrap under the search bar when the width runs out, so the
+        // strip never dictates a minimum width the rest of the screen cannot meet.
+        auto filterRow = new FlowLayout(m_filterPanel, RowSpacing, RowSpacing);
         filterRow->setContentsMargins(0, 0, 0, 0);
-        filterRow->setSpacing(RowSpacing);
         filterRow->addWidget(searchBar());
         filterRow->addWidget(m_entriesChip);
         filterRow->addWidget(m_settingsChip);
         filterRow->addWidget(m_recentChip);
         filterRow->addWidget(m_restoreChip);
-        filterRow->addStretch(1);
         contentLayout()->addWidget(m_filterPanel);
 
         // The design's append-only banner: a primary-container strip with an
@@ -442,7 +831,28 @@ namespace Material
         m_revisionLayout = new QVBoxLayout(list);
         m_revisionLayout->setContentsMargins(0, 0, 0, 0);
         m_revisionLayout->setSpacing(RowSpacing);
-        contentLayout()->addWidget(list);
+
+        // The design's two columns: the revision list and, beside it, the
+        // 392px detail card for whichever revision is current.
+        auto* columns = new QHBoxLayout;
+        columns->setContentsMargins(0, 0, 0, 0);
+        columns->setSpacing(ColumnGapWide);
+        columns->addWidget(list, 1, Qt::AlignTop);
+        m_detail = new DetailCard(this);
+        m_detail->setObjectName(QStringLiteral("historyDetailCard"));
+        connect(m_detail->restoreButton(), &QAbstractButton::clicked, this, [this] {
+            if (!m_currentId.isEmpty()) emit restoreRequested(m_currentId);
+        });
+        connect(m_detail->compareButton(), &QAbstractButton::clicked, this, [this] {
+            if (!m_currentId.isEmpty()) emit diffRequested(m_currentId);
+        });
+        connect(m_detail->exportButton(), &QAbstractButton::clicked, this, [this] {
+            if (!m_currentId.isEmpty()) emit exportRequested({m_currentId});
+        });
+        // No alignment flag: an aligned item is laid out from its size hint and
+        // never asked for height-for-width, which clips its wrapped notes.
+        columns->addWidget(m_detail, 0);
+        contentLayout()->addLayout(columns);
         contentLayout()->addStretch(1);
 
         connect(theme(), &Theme::changed, this, &HistoryScreen::rebuild);
@@ -530,6 +940,48 @@ namespace Material
         const bool compact = width() < 840;
         m_filterPanel->setMaximumWidth(compact ? width() : ListWidth);
         searchBar()->setMaximumWidth(compact ? qMax(220, width() - 40) : SearchMaximumWidth);
+        // Below the breakpoint the card gives way and every row carries its
+        // own Diff and Restore again, so nothing becomes unreachable.
+        const bool wide = width() >= DetailBreakpoint;
+        m_detail->setVisible(wide);
+        for (int index = 0; index < m_revisionLayout->count(); ++index) {
+            if (auto* row = dynamic_cast<RevisionRow*>(m_revisionLayout->itemAt(index)->widget())) {
+                row->setActionsVisible(!wide);
+            }
+        }
+    }
+
+    bool HistoryScreen::detailCardVisible() const
+    {
+        return m_detail && !m_detail->isHidden();
+    }
+
+    QString HistoryScreen::currentRevisionId() const
+    {
+        return m_currentId;
+    }
+
+    void HistoryScreen::setCurrentRevision(const QString& id)
+    {
+        m_currentId = id;
+        for (int index = 0; index < m_revisionLayout->count(); ++index) {
+            if (auto* row = dynamic_cast<RevisionRow*>(m_revisionLayout->itemAt(index)->widget())) {
+                row->setCurrentRow(!id.isEmpty() && row->objectName() == QStringLiteral("historyRevision_") + id);
+            }
+        }
+        updateDetailCard();
+    }
+
+    void HistoryScreen::updateDetailCard()
+    {
+        for (const auto& revision : m_revisions) {
+            if (!revision.id.isEmpty() && revision.id == m_currentId) {
+                m_detail->setRevision(revision);
+                return;
+            }
+        }
+        m_currentId.clear();
+        m_detail->clearRevision();
     }
 
     void HistoryScreen::resizeEvent(QResizeEvent* event)
@@ -557,9 +1009,31 @@ namespace Material
                 if (checked) m_selectedIds.insert(id); else m_selectedIds.remove(id);
                 updateSelectionActions();
             });
+            if (!id.isEmpty()) {
+                row->onActivated = [this, id] { setCurrentRevision(id); };
+            }
             m_revisionLayout->addWidget(row);
         }
         updateSelectionActions();
+        // The newest real revision is current until the user picks another,
+        // so the card is never blank while there is something to describe.
+        QString current = m_currentId;
+        bool stillListed = false;
+        for (const auto& revision : m_revisions) {
+            if (!revision.id.isEmpty() && revision.id == current) stillListed = true;
+        }
+        if (!stillListed) {
+            current.clear();
+            for (const auto& revision : m_revisions) {
+                if (!revision.id.isEmpty()) {
+                    current = revision.id;
+                    break;
+                }
+            }
+        }
+        setCurrentRevision(current);
+        applyResponsiveLayout();
     }
+
 
 } // namespace Material

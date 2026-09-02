@@ -12,7 +12,7 @@ Feature id: `clipping-matrix` · Category: Design and appearance
 
 ## Failure modes
 
-A finding is a widget whose plain text overflows, a leaf control squeezed below its own minimum size hint, or a non-scrollable widget partly off screen. Findings are the work list; the matrix does not fail a build by itself.
+A finding is a widget whose plain text overflows (sideways for a one-line text; downwards for a wrapping label whose height-for-width at its actual width exceeds the height it was given), a leaf control squeezed below its own minimum size hint, or a non-scrollable widget partly off screen. Findings are the work list; the matrix does not fail a build by itself.
 
 ## Security considerations
 

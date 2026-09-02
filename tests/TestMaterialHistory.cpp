@@ -12,6 +12,8 @@
 #include <QDateEdit>
 #include <QLineEdit>
 #include <QSignalSpy>
+#include <QLabel>
+#include <QTimeZone>
 #include <QTest>
 #include <QToolButton>
 #include <QAbstractButton>
@@ -77,6 +79,62 @@ void TestMaterialHistory::surfaceStateFiltersAndSelection()
         }
     }
     QVERIFY(found);
+}
+
+void TestMaterialHistory::detailCardDescribesTheCurrentRevision()
+{
+    HistoryScreen screen;
+    screen.resize(1200, 860);
+    screen.show();
+    Revision edited{QStringLiteral("entry-1"), QStringLiteral("edit"), QStringLiteral("Password changed"), QStringLiteral("2026-08-20 · entry"), RevisionTint::Accent, true, true, QStringLiteral("entry"), QDateTime(QDate(2026, 8, 20), QTime(2, 15, 11), QTimeZone::utc())};
+    edited.badge = QStringLiteral("EDIT");
+    edited.hash = QStringLiteral("9f2c1ab");
+    edited.record = QStringLiteral("Discord — status bot");
+    edited.detail = QStringLiteral("Password field replaced. Previous value retained in entry history.");
+    edited.diff = {QStringLiteral("- password = <encrypted, previous>"), QStringLiteral("+ password = <encrypted, current>"), QStringLiteral("  last_accessed preserved")};
+    Revision saved{QStringLiteral("save-1"), QStringLiteral("save"), QStringLiteral("Saved"), QStringLiteral("2026-08-19 · settings"), RevisionTint::Neutral, true, false, QStringLiteral("settings"), QDateTime::currentDateTime()};
+    saved.badge = QStringLiteral("SETTINGS");
+    saved.hash = QStringLiteral("5d42588");
+    screen.setRevisions({edited, saved});
+    screen.setState(HistoryScreen::State::Populated, QStringLiteral("2 revisions"));
+    QCoreApplication::processEvents();
+
+    // The newest revision is current and the card describes it.
+    QVERIFY(screen.detailCardVisible());
+    QCOMPARE(screen.currentRevisionId(), QStringLiteral("entry-1"));
+    QCOMPARE(screen.findChild<QLabel*>(QStringLiteral("historyDetailBadge"))->text(), QStringLiteral("EDIT"));
+    QCOMPARE(screen.findChild<QLabel*>(QStringLiteral("historyDetailHash"))->text(), QStringLiteral("9f2c1ab"));
+    QCOMPARE(screen.findChild<QLabel*>(QStringLiteral("historyDetailRecord"))->text(), edited.record);
+    QCOMPARE(screen.findChild<QLabel*>(QStringLiteral("historyDetailWhat"))->text(), edited.detail);
+    QVERIFY(screen.findChild<QLabel*>(QStringLiteral("historyDetailWhen"))->text().startsWith(QStringLiteral("2026-08-20 02:15:11")));
+    QCOMPARE(screen.findChild<QWidget*>(QStringLiteral("historyDetailDiff"))->findChildren<QLabel*>().size(), 6);
+    // The rows keep their own actions only when the card is away.
+    QVERIFY(screen.findChild<QAbstractButton*>(QStringLiteral("historyRestore_entry-1"))->isHidden());
+
+    auto* restore = screen.findChild<QAbstractButton*>(QStringLiteral("historyDetailRestore"));
+    QVERIFY(restore && restore->isEnabled());
+    QCOMPARE(restore->text(), QStringLiteral("Restore 9f2c1ab"));
+    QSignalSpy restoreSpy(&screen, &HistoryScreen::restoreRequested);
+    restore->click();
+    QCOMPARE(restoreSpy.count(), 1);
+    QCOMPARE(restoreSpy.at(0).at(0).toString(), QStringLiteral("entry-1"));
+    QSignalSpy diffSpy(&screen, &HistoryScreen::diffRequested);
+    screen.findChild<QAbstractButton*>(QStringLiteral("historyDetailCompare"))->click();
+    QCOMPARE(diffSpy.count(), 1);
+    QSignalSpy exportSpy(&screen, &HistoryScreen::exportRequested);
+    screen.findChild<QAbstractButton*>(QStringLiteral("historyDetailExport"))->click();
+    QCOMPARE(exportSpy.at(0).at(0).toStringList(), QStringList{QStringLiteral("entry-1")});
+
+    // A save record cannot be put back, and the card says so by disabling Restore.
+    screen.setCurrentRevision(QStringLiteral("save-1"));
+    QCOMPARE(screen.findChild<QLabel*>(QStringLiteral("historyDetailBadge"))->text(), QStringLiteral("SETTINGS"));
+    QVERIFY(!restore->isEnabled());
+
+    // Below the breakpoint the card gives way and the rows carry their actions.
+    screen.resize(599, 800);
+    QCoreApplication::processEvents();
+    QVERIFY(!screen.detailCardVisible());
+    QVERIFY(!screen.findChild<QAbstractButton*>(QStringLiteral("historyRestore_entry-1"))->isHidden());
 }
 
 void TestMaterialHistory::routeAndActionInventory()

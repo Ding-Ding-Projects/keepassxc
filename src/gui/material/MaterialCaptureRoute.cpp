@@ -112,7 +112,13 @@ namespace Material
                         const int textWidth = widget->fontMetrics().horizontalAdvance(text);
                         entry.insert(QStringLiteral("text"), text.left(80));
                         entry.insert(QStringLiteral("textWidth"), textWidth);
-                        entry.insert(QStringLiteral("textOverflows"), !wordWrap && textWidth > widget->contentsRect().width());
+                        // A one-line text overflows sideways; a wrapping label overflows
+                        // downwards when its lines need more height than it was given.
+                        bool overflows = !wordWrap && textWidth > widget->contentsRect().width();
+                        if (wordWrap && widget->sizePolicy().hasHeightForWidth()) {
+                            overflows = widget->heightForWidth(widget->width()) > widget->height() + 1;
+                        }
+                        entry.insert(QStringLiteral("textOverflows"), overflows);
                     }
                     if (auto* area = qobject_cast<QAbstractScrollArea*>(widget)) {
                         entry.insert(QStringLiteral("hScrollMax"), area->horizontalScrollBar()->maximum());

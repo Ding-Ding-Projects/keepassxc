@@ -38,6 +38,7 @@ namespace Material
         constexpr int HeadlineSpacing = 12;
         constexpr int ContentSpacing = 16;
         constexpr int BlurbWidth = 900;
+        constexpr int MinimumScreenWidth = 320;
         constexpr int SearchMinimumWidth = 240;
         // The headline row opens with the headline and the stretch that pushes
         // everything else to the right edge; the trailing run starts after them.
@@ -50,6 +51,9 @@ namespace Material
         m_rootLayout = new QVBoxLayout(this);
         m_rootLayout->setContentsMargins(0, 0, 0, 0);
         m_rootLayout->setSpacing(0);
+        // An explicit minimum stops the root layout from imposing the header's
+        // one-row width; the header re-wraps below it (see minimumSizeHint()).
+        setMinimumWidth(MinimumScreenWidth);
 
         m_header = new QWidget(this);
         auto headerColumn = new QVBoxLayout(m_header);
@@ -195,6 +199,11 @@ namespace Material
         relayoutHeader();
     }
 
+    QSize Screen::minimumSizeHint() const
+    {
+        return QSize(MinimumScreenWidth, QWidget::minimumSizeHint().height());
+    }
+
     void Screen::relayoutHeader()
     {
         if (m_relayoutingHeader || !m_headerColumn || m_header->isHidden()) {
@@ -268,6 +277,13 @@ namespace Material
                               mode == Mode::Inline    ? QStringLiteral("inline")
                               : mode == Mode::Wrapped ? QStringLiteral("wrapped")
                                                       : QStringLiteral("three-rows"));
+
+        // A wrapped blurb grows with its lines: the header column does not ask
+        // the label for its height-for-width, so the label asks for itself.
+        if (m_supportingLabel && !m_supportingLabel->isHidden()) {
+            const int blurbWidth = qMin(BlurbWidth, qMax(1, available));
+            m_supportingLabel->setMinimumHeight(m_supportingLabel->heightForWidth(blurbWidth));
+        }
     }
 
     QVBoxLayout* Screen::contentLayout() const

@@ -84,6 +84,15 @@ namespace Material
         QString badge;
         /** The short digest the design prints at the row's right edge. */
         QString hash;
+        /** The detail card's Record line: which entry, file or setting this is about. */
+        QString record;
+        /** The detail card's What changed paragraph. */
+        QString detail;
+        /**
+         * The detail card's Diff lines. Each begins with '+', '-' or ' ' and the
+         * card colours the line by that mark; the text after it is shown as is.
+         */
+        QStringList diff;
     };
 
     /** Which kind of revision the Entries / Settings chips leave showing. */
@@ -119,6 +128,12 @@ namespace Material
         void setActionCounts(const QHash<QString, int>& counts);
         QStringList selectedRevisionIds() const;
 
+        /** The revision the detail card describes; empty when nothing is chosen. */
+        QString currentRevisionId() const;
+        void setCurrentRevision(const QString& id);
+        /** Whether the 392px detail card is shown beside the list at this width. */
+        bool detailCardVisible() const;
+
         /** Which of the two mutually exclusive kind chips is pressed. */
         RevisionFilter kindFilter() const;
         /** Whether the date chip is pressed, scoping the list to its window. */
@@ -137,9 +152,12 @@ namespace Material
         void resizeEvent(QResizeEvent* event) override;
 
     private:
+        class DetailCard;
+
         void rebuild();
         void updateSelectionActions();
         void applyResponsiveLayout();
+        void updateDetailCard();
 
         QVBoxLayout* m_revisionLayout = nullptr;
         QVector<Revision> m_revisions;
@@ -157,6 +175,8 @@ namespace Material
         QWidget* m_filterPanel = nullptr;
         QSet<QString> m_selectedIds;
         State m_state = State::Empty;
+        DetailCard* m_detail = nullptr;
+        QString m_currentId;
     };
 
 } // namespace Material
