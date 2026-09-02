@@ -535,11 +535,13 @@ namespace Material
     Card* SettingsScreen::createAppearanceCard()
     {
         auto* card = new SettingsCard;
-        card->setTitleText(tr("Appearance"));
+        // The design's first section is called Theme; it holds the mode, the
+        // seed palette and the density.
+        card->setTitleText(tr("Theme"));
 
         auto* content = card->contentLayout();
         content->setSpacing(0);
-        QStringList haystack{tr("Appearance")};
+        QStringList haystack{tr("Theme"), tr("Appearance")};
 
         auto caption = [&haystack](const QString& text) {
             haystack << text;
@@ -1146,14 +1148,17 @@ namespace Material
     void SettingsScreen::applyResponsiveGrid()
     {
         if (!m_grid || m_cards.size() < 6) return;
-        const bool single = width() < 840;
+        // The design lays Theme, Typography and Language & voice out side by
+        // side; the page keeps that three-column row from 1100 px, drops to two
+        // columns below it and to one below 840 px.
+        const int columns = width() < 840 ? 1 : width() < 1100 ? 2 : 3;
         for (int index = 0; index < m_cards.size(); ++index) {
             m_grid->removeWidget(m_cards.at(index).card);
-            const int columns = single ? 1 : 2;
             m_grid->addWidget(m_cards.at(index).card, index / columns, index % columns, Qt::AlignTop);
         }
-        m_grid->setColumnStretch(0, 1);
-        m_grid->setColumnStretch(1, single ? 0 : 1);
+        for (int column = 0; column < 3; ++column) {
+            m_grid->setColumnStretch(column, column < columns ? 1 : 0);
+        }
         m_gridHost->setMinimumWidth(0);
     }
 
