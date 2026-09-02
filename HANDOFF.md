@@ -73,4 +73,10 @@ The probe flags a wrapping label whose `heightForWidth(width())` exceeds its hei
 
 ## Final state of this pass
 
-Filled in by the closeout commit: final `main` SHA, lane suite verdict, widths record after repair, release tag and CI verdicts, installer proof, Mat Day result.
+The pass was closed early at the owner's request (usage limit reached), with the task-owned cleanup authorised.
+
+- Lane tip `325ffc63` on `codex/parity-capture`; `main` fast-forwarded to it and pushed at closeout. Full lane suite at `325ffc63`: 29 of 29 passed (`testmaterial*`, `testdimsum`, `testwelcomeprovenance`, `testrepaircontracts`, `testupdatecheck`, `testsquirrellifecycle`, `testpasskeys`, `testdesignparityguard`, `testfeatureinventoryguard`, `testentrymodel`, `testpersonalvocabulary`).
+- Widths record after repair: `matrix-widths.json`, 50 tuples, 0 errors, 0 findings (`693367d1`).
+- Remote CI: Material Squirrel Build and Release green for every lane push through `fbc19318` (releases v2.8.11301 … v2.8.11901 published with code name, timing and line-count table); the run for `325ffc63` and the `main` runs (release, CodeQL, Pages) were still in progress when this was written. Verify them before calling the closeout release shipped: `gh run list -R Ding-Ding-Projects/keepassxc` and `gh release view <tag>`.
+- Not done in this pass: a local `build-installer.bat /s` run with `NotSigned` verification, the isolated silent install and launch proof on a hidden desktop, the complete per-click UI drive ledger across every feature flow, README capture matrix and screen recording, and the 171 inventory rows still red (see the inventory section). Issues #8, #9 and #11 still need their capture proof.
+- Cleanup: the task-owned lane branch and its linked worktree are removed by the closeout after proving the tip is an ancestor of the pushed `main`; the 22 pre-existing remote branches (`copilot/*`, `dependabot/*`, `feature/*`, `fix/*`, `release/2.7.x`, `fork_keepassx_core`, `gh-pages`) are not task-owned and are retained. The exact result is recorded on issue #12.
