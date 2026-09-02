@@ -40,7 +40,9 @@
 - [x] Add the first native Reports parity batch with truthful states, real category data, selection/export, regex filtering, accessibility, and responsive reflow.
 - [x] Add the first native Appearance parity batch with typography persistence, element overrides, regex filtering, keyboard controls, and narrow reflow.
 - [x] Capture every design reference and the built application at identical tuples, compare them, and hand-audit each row against Material Design 3 (`design/parity`).
-- [ ] Repair the open parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports cards, vault root listing, OS caption bar, settings pages) and recapture.
+- [x] List every entry recursively when the database root is selected, as the design does, with live add and remove.
+- [x] Rename the Reports tiles and cards to the design's vocabulary (Health score, Breached, Needs work, Healthy).
+- [ ] Repair the remaining parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports finding rows, OS caption bar, settings pages) and recapture.
 - [x] Hide the legacy status bar under the Material shell and route progress through the notification host.
 - [x] Show the running version, revision and exact updated-at time of that revision on the welcome screen, with an honest unavailable state.
 - [x] Wrap the shared screen header onto extra rows when its actions and search bar would overflow.
@@ -68,3 +70,5 @@
 - [ ] Prove update, deferred restart, invalid package rejection, rollback, and uninstall.
 - [x] Publish a CI-measured line count, workflow timing and a dim sum code name with the public photo in every release.
 - [x] Fetch tags in the CodeQL checkout so the changelog provenance guard configures.
+- [x] Commit `social-preview.png` at the repository root, add Open Graph and Twitter card tags to the site, publish `site/` through a Pages workflow, and point the repository homepage at the Pages URL.
+- [ ] Upload `social-preview.png` in the repository's Settings → General → Social preview (manual; GitHub exposes no API for it).

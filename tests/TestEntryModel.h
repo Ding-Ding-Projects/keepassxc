@@ -34,6 +34,7 @@ private slots:
     void testAutoTypeAssociationsModel();
     void testProxyModel();
     void testDatabaseDelete();
+    void testRootGroupListsRecursively();
 };
 
 #endif // KEEPASSX_TESTENTRYMODEL_H

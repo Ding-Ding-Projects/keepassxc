@@ -25,6 +25,7 @@
 
 #include "core/Clock.h"
 #include "core/Entry.h"
+#include "core/Database.h"
 #include "core/Group.h"
 #include "core/Metadata.h"
 #include "core/PasswordHealth.h"
@@ -59,7 +60,7 @@ QModelIndex EntryModel::indexFromEntry(Entry* entry) const
 
 void EntryModel::setGroup(Group* group)
 {
-    if (!group || group == m_group) {
+    if (!group || group == m_group || (m_recursiveRoot && group == m_recursiveRoot)) {
         return;
     }
 
@@ -67,12 +68,34 @@ void EntryModel::setGroup(Group* group)
 
     severConnections();
 
-    m_group = group;
     m_allGroups.clear();
-    m_entries = group->entries();
     m_orgEntries.clear();
 
-    makeConnections(group);
+    if (group->database() && group->database()->rootGroup() == group) {
+        // The design lists the whole database when its root is selected, so
+        // the root shows every entry outside the recycle bin, recursively, and
+        // listens to every group so additions anywhere appear at once.
+        m_group = nullptr;
+        m_recursiveRoot = group;
+        m_entries.clear();
+        for (Entry* entry : group->entriesRecursive(false)) {
+            if (!entry->isRecycled()) {
+                m_entries.append(entry);
+            }
+        }
+        for (const Group* subgroup : group->groupsRecursive(true)) {
+            if (subgroup->isRecycled()) {
+                continue;
+            }
+            m_allGroups.insert(subgroup);
+            makeConnections(subgroup);
+        }
+    } else {
+        m_group = group;
+        m_recursiveRoot = nullptr;
+        m_entries = group->entries();
+        makeConnections(group);
+    }
 
     endResetModel();
 }
@@ -84,6 +107,7 @@ void EntryModel::setEntries(const QList<Entry*>& entries)
     severConnections();
 
     m_group = nullptr;
+    m_recursiveRoot = nullptr;
     m_allGroups.clear();
     m_entries = entries;
     m_orgEntries = entries;
@@ -510,7 +534,10 @@ QMimeData* EntryModel::mimeData(const QModelIndexList& indexes) const
 
 void EntryModel::entryAboutToAdd(Entry* entry)
 {
-    if (!m_group && !m_orgEntries.contains(entry)) {
+    if (!m_group && !m_recursiveRoot && !m_orgEntries.contains(entry)) {
+        return;
+    }
+    if (m_recursiveRoot && entry->isRecycled()) {
         return;
     }
 
@@ -522,7 +549,10 @@ void EntryModel::entryAboutToAdd(Entry* entry)
 
 void EntryModel::entryAdded(Entry* entry)
 {
-    if (!m_group && !m_orgEntries.contains(entry)) {
+    if (!m_group && !m_recursiveRoot && !m_orgEntries.contains(entry)) {
+        return;
+    }
+    if (m_recursiveRoot && entry->isRecycled()) {
         return;
     }
 
@@ -534,6 +564,9 @@ void EntryModel::entryAdded(Entry* entry)
 
 void EntryModel::entryAboutToRemove(Entry* entry)
 {
+    if (m_recursiveRoot && !m_entries.contains(entry)) {
+        return;
+    }
     beginRemoveRows(QModelIndex(), m_entries.indexOf(entry), m_entries.indexOf(entry));
     if (!m_group) {
         m_entries.removeAll(entry);
@@ -548,8 +581,17 @@ void EntryModel::entryRemoved()
     endRemoveRows();
 }
 
+Group* EntryModel::recursiveRoot() const
+{
+    return m_recursiveRoot;
+}
+
 void EntryModel::entryAboutToMoveUp(int row)
 {
+    if (m_recursiveRoot) {
+        // Row order inside one subgroup does not map onto the recursive list.
+        return;
+    }
     beginMoveRows(QModelIndex(), row, row, QModelIndex(), row - 1);
     if (m_group) {
         m_entries.move(row, row - 1);
@@ -558,6 +600,9 @@ void EntryModel::entryAboutToMoveUp(int row)
 
 void EntryModel::entryMovedUp()
 {
+    if (m_recursiveRoot) {
+        return;
+    }
     if (m_group) {
         m_entries = m_group->entries();
     }
@@ -566,6 +611,9 @@ void EntryModel::entryMovedUp()
 
 void EntryModel::entryAboutToMoveDown(int row)
 {
+    if (m_recursiveRoot) {
+        return;
+    }
     beginMoveRows(QModelIndex(), row, row, QModelIndex(), row + 2);
     if (m_group) {
         m_entries.move(row, row + 1);
@@ -574,6 +622,9 @@ void EntryModel::entryAboutToMoveDown(int row)
 
 void EntryModel::entryMovedDown()
 {
+    if (m_recursiveRoot) {
+        return;
+    }
     if (m_group) {
         m_entries = m_group->entries();
     }
@@ -605,6 +656,7 @@ void EntryModel::severConnections()
     if (m_group) {
         disconnect(m_group, nullptr, this, nullptr);
     }
+    m_recursiveRoot = nullptr;
 
     for (const Group* group : asConst(m_allGroups)) {
         disconnect(group, nullptr, this, nullptr);

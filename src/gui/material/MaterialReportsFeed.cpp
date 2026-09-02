@@ -398,29 +398,39 @@ namespace Material
         m_screen->setSearchValidation(searchValid,
                                       searchValid ? QString() : tr("Invalid regular expression: %1").arg(searchError));
 
+        // The design's four tiles, in its order: Health score, Breached,
+        // Needs work, Healthy. Every figure is computed from the snapshot;
+        // breach exposure needs a Have I Been Pwned lookup this pass cannot
+        // make, so that tile says the figure is unknown instead of inventing one.
         QVector<StatCard> cards;
         if (m_snapshot.valid) {
-            cards.append({tr("Healthy passwords"),
-                          QString::number(m_snapshot.healthy),
-                          tr("of %n entry(s)", "", m_snapshot.entries),
+            int reused = 0;
+            for (const auto& finding : m_snapshot.findings) {
+                if (finding.reused) {
+                    ++reused;
+                }
+            }
+            const int needsWork = m_snapshot.weakOrShort + reused;
+            const QString score = m_snapshot.entries > 0
+                                      ? QString::number(qRound(100.0 * m_snapshot.healthy / m_snapshot.entries))
+                                      : QStringLiteral("—");
+            cards.append({tr("Health score"),
+                          score,
+                          m_snapshot.entries > 0 ? tr("%n of %1 entry(s) healthy", "", m_snapshot.healthy).arg(m_snapshot.entries)
+                                                 : tr("no entries yet"),
                           Health::Ok});
-            // The weak tile is the warning tile whether or not it counts to
-            // zero, so it keeps its family instead of turning green.
-            cards.append({tr("Weak or short"),
-                          QString::number(m_snapshot.weakOrShort),
-                          tr("entropy below %n bit(s)", "", WeakEntropyBits),
-                          Health::Weak});
-            // Breach exposure needs a Have I Been Pwned lookup, which this
-            // pass cannot make. The tile keeps the design's place in the grid
-            // and says the figure is unknown rather than inventing one.
-            cards.append({tr("Found in breaches"),
+            cards.append({tr("Breached"),
                           QStringLiteral("—"),
                           tr("needs an online check"),
                           Health::Unknown});
-            cards.append({tr("Passkeys stored"),
-                          QString::number(m_snapshot.passkeys),
-                          tr("%n relying party(s)", "", m_snapshot.relyingParties),
-                          Health::Unknown});
+            cards.append({tr("Needs work"),
+                          QString::number(needsWork),
+                          tr("weak or reused"),
+                          Health::Weak});
+            cards.append({tr("Healthy"),
+                          QString::number(m_snapshot.healthy),
+                          tr("of %n entry(s)", "", m_snapshot.entries),
+                          Health::Ok});
         }
 
         QVector<HealthRow> rows;
@@ -477,12 +487,12 @@ namespace Material
             if (finding.expired) expired.append(finding);
         }
         QVector<ReportCard> reportCards{
-            {QStringLiteral("breached"), tr("Breached"), tr("Requires the real breach report; this local pass does not guess."), QStringLiteral("—"), QStringLiteral("gpp_bad"), Health::Unknown, {}, {}, true},
-            {QStringLiteral("weak"), tr("Weak"), tr("Passwords below the health threshold."), QString::number(m_snapshot.findings.size()), QStringLiteral("warning"), Health::Weak, toRows(m_snapshot.findings)},
-            {QStringLiteral("reused"), tr("Reused"), tr("Passwords used by more than one entry."), QString::number(reused.size()), QStringLiteral("content_copy"), Health::Reused, toRows(reused)},
-            {QStringLiteral("expired"), tr("Expired"), tr("Entries whose expiry date has passed."), QString::number(expired.size()), QStringLiteral("event_busy"), Health::Weak, toRows(expired)},
-            {QStringLiteral("healthy"), tr("Healthy"), tr("Entries meeting the current password-health threshold."), QString::number(m_snapshot.healthyFindings.size()), QStringLiteral("verified_user"), Health::Ok, toRows(m_snapshot.healthyFindings)},
-            {QStringLiteral("statistics"), tr("Statistics"), tr("Facts calculated by DatabaseStats."), QString::number(filteredStatistics().size()), QStringLiteral("query_stats"), Health::Unknown, {}, filteredStatistics()}
+            {QStringLiteral("breached"), tr("Breached passwords"), tr("Found in an offline breach corpus. Rotate these first. Not checked yet: this local pass does not guess."), QStringLiteral("—"), QStringLiteral("gpp_bad"), Health::Unknown, {}, {}, true},
+            {QStringLiteral("weak"), tr("Weak passwords"), tr("Below the configured entropy floor of %1 bits.").arg(WeakEntropyBits), QString::number(m_snapshot.findings.size()), QStringLiteral("warning"), Health::Weak, toRows(m_snapshot.findings)},
+            {QStringLiteral("reused"), tr("Reused passwords"), tr("One value shared by more than one entry."), QString::number(reused.size()), QStringLiteral("content_copy"), Health::Reused, toRows(reused)},
+            {QStringLiteral("expired"), tr("Expired entries"), tr("Past the expiry date recorded on the entry."), QString::number(expired.size()), QStringLiteral("event_busy"), Health::Weak, toRows(expired)},
+            {QStringLiteral("healthy"), tr("Healthy"), tr("No finding against these entries."), QString::number(m_snapshot.healthyFindings.size()), QStringLiteral("verified_user"), Health::Ok, toRows(m_snapshot.healthyFindings)},
+            {QStringLiteral("statistics"), tr("Database statistics"), tr("Size, entry counts, unique passwords, average length."), QString::number(filteredStatistics().size()), QStringLiteral("query_stats"), Health::Unknown, {}, filteredStatistics()}
         };
         reportCards.erase(std::remove_if(reportCards.begin(), reportCards.end(), [this](const ReportCard& card) {
             QString haystack = card.title + QLatin1Char(' ') + card.blurb;

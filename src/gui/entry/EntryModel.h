@@ -68,6 +68,8 @@ public:
     QMimeData* mimeData(const QModelIndexList& indexes) const override;
 
     void setGroup(Group* group);
+    /** The database root when it is shown recursively, otherwise null. */
+    Group* recursiveRoot() const;
     void setEntries(const QList<Entry*>& entries);
     void setBackgroundColorVisible(bool visible);
 
@@ -92,6 +94,12 @@ private:
     Group* m_group;
     QList<Entry*> m_entries;
     QList<Entry*> m_orgEntries;
+    /**
+     * The root group shown recursively: every entry of the database outside
+     * the recycle bin, kept live through every group's signals. Null when the
+     * model shows one group's own entries or a search result.
+     */
+    Group* m_recursiveRoot = nullptr;
     QSet<const Group*> m_allGroups;
 
     const QString HiddenContentDisplay;

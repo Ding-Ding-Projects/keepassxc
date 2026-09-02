@@ -549,7 +549,18 @@
       "id": "social-preview",
       "surface": "app",
       "title": "Social preview embed graphic",
-      "status": "missing"
+      "status": "partial",
+      "note": "Root graphic, served copy and OG tags verified live; the GitHub repository social-preview upload is a manual step still open",
+      "implementation": {
+        "file": ".github/workflows/pages.yml",
+        "anchor": "^\\s*cmp social-preview\\.png public/social-preview\\.png$"
+      },
+      "article": {
+        "file": "docs/features/delivery/social-preview.md"
+      },
+      "capture": {
+        "file": "social-preview.png"
+      }
     },
     {
       "id": "in-app-version-provenance",
@@ -1148,7 +1159,18 @@
       "id": "social-preview",
       "surface": "site",
       "title": "Social preview embed graphic",
-      "status": "missing"
+      "status": "partial",
+      "note": "Root graphic, served copy and OG tags verified live; the GitHub repository social-preview upload is a manual step still open",
+      "implementation": {
+        "file": ".github/workflows/pages.yml",
+        "anchor": "^\\s*cmp social-preview\\.png public/social-preview\\.png$"
+      },
+      "article": {
+        "file": "docs/features/delivery/social-preview.md"
+      },
+      "capture": {
+        "file": "social-preview.png"
+      }
     },
     {
       "id": "in-app-version-provenance",

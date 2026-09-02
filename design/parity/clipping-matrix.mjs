@@ -35,12 +35,17 @@ const scratch = args.get('scratch') || join(tmpdir(), 'kpxc-clipping');
 
 // The five window-size classes by their smallest width plus the documented
 // minimum client area; heights follow a laptop-ish aspect.
-const widths = quick ? [{ id: 'compact', w: 600, h: 720 }, { id: 'expanded', w: 1200, h: 800 }]
-  : [{ id: 'minimum', w: 480, h: 640 }, { id: 'compact', w: 600, h: 720 }, { id: 'medium', w: 840, h: 760 }, { id: 'expanded', w: 1200, h: 800 }, { id: 'large', w: 1600, h: 900 }, { id: 'extra-large', w: 1920, h: 1000 }];
-const languages = quick ? ['bilingual'] : ['english', 'cantonese', 'bilingual'];
-const themes = quick ? ['light'] : ['light', 'dark'];
-const scales = quick ? ['1'] : ['1', '1.25', '1.5', '2'];
-const screens = ['vault', 'reports', 'editor', 'database', 'tools', 'history', 'changelog', 'settings', 'appearance', 'help'];
+function allWidthsFor(ids) { return ids.map(id => allWidths.find(w => w.id === id)).filter(Boolean); }
+const widths = (args.get('widths') ? allWidthsFor(args.get('widths').split(',')) : (quick ? [{ id: 'compact', w: 600, h: 720 }, { id: 'expanded', w: 1200, h: 800 }] : null));
+// --widths, --languages, --themes, --scales and --screens accept comma lists to run a
+// bounded subset of the full matrix; --quick is the smallest useful one.
+const allWidths = [{ id: 'minimum', w: 480, h: 640 }, { id: 'compact', w: 600, h: 720 }, { id: 'medium', w: 840, h: 760 }, { id: 'expanded', w: 1200, h: 800 }, { id: 'large', w: 1600, h: 900 }, { id: 'extra-large', w: 1920, h: 1000 }];
+const pick = (key, fallback) => args.get(key) ? args.get(key).split(',') : fallback;
+const languages = pick('languages', quick ? ['bilingual'] : ['english', 'cantonese', 'bilingual']);
+const themes = pick('themes', quick ? ['light'] : ['light', 'dark']);
+const scales = pick('scales', quick ? ['1'] : ['1', '1.25', '1.5', '2']);
+const widthSet = widths || allWidths;
+const screens = pick('screens', ['vault', 'reports', 'editor', 'database', 'tools', 'history', 'changelog', 'settings', 'appearance', 'help']);
 
 const sha256 = bytes => createHash('sha256').update(bytes).digest('hex');
 const exists = async path => access(path).then(() => true, () => false);
@@ -126,7 +131,7 @@ async function main() {
   cheap('create_headless_desktop', { name: desktopName });
   const records = [];
   try {
-    for (const scale of scales) for (const theme of themes) for (const language of languages) for (const width of widths) for (const screen of screens) {
+    for (const scale of scales) for (const theme of themes) for (const language of languages) for (const width of widthSet) for (const screen of screens) {
       const record = await runTuple({ screen, width, language, theme, scale });
       records.push(record);
       const count = record.findings ? record.findings.length : 'ERR';

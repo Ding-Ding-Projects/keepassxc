@@ -21,8 +21,10 @@
 #include <QSignalSpy>
 #include <QTest>
 
+#include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "core/Metadata.h"
 #include "crypto/Crypto.h"
 #include "gui/DatabaseIcons.h"
 #include "gui/IconModels.h"
@@ -392,4 +394,77 @@ void TestEntryModel::testDatabaseDelete()
     delete db2;
     delete modelTest;
     delete model;
+}
+
+void TestEntryModel::testRootGroupListsRecursively()
+{
+    // The design lists the whole database when its root is selected, so the
+    // root shows every entry outside the recycle bin, recursively, and stays
+    // live for additions and removals anywhere in the tree.
+    QScopedPointer<Database> db(new Database());
+    Group* root = db->rootGroup();
+    QVERIFY(root);
+
+    auto* banking = new Group();
+    banking->setName("Banking");
+    banking->setParent(root);
+    auto* cloud = new Group();
+    cloud->setName("Cloud");
+    cloud->setParent(banking);
+    auto* bin = new Group();
+    bin->setName("Recycle Bin");
+    bin->setParent(root);
+    db->metadata()->setRecycleBinEnabled(true);
+    db->metadata()->setRecycleBin(bin);
+
+    auto* direct = new Entry();
+    direct->setGroup(root);
+    direct->setTitle("direct");
+    auto* nested = new Entry();
+    nested->setGroup(cloud);
+    nested->setTitle("nested");
+    auto* recycled = new Entry();
+    recycled->setGroup(bin);
+    recycled->setTitle("recycled");
+
+    auto model = new EntryModel(this);
+    auto modelTest = new ModelTest(model, this);
+    model->setGroup(root);
+    QCOMPARE(model->recursiveRoot(), root);
+    QCOMPARE(model->rowCount(), 2);
+    QVERIFY(model->indexFromEntry(nested).isValid());
+    QVERIFY(!model->indexFromEntry(recycled).isValid());
+
+    // An entry added two levels down appears without re-selecting the group.
+    QSignalSpy inserted(model, SIGNAL(rowsInserted(QModelIndex, int, int)));
+    auto* later = new Entry();
+    later->setTitle("later");
+    later->setGroup(cloud);
+    QCOMPARE(inserted.count(), 1);
+    QCOMPARE(model->rowCount(), 3);
+
+    // And a removal anywhere disappears.
+    QSignalSpy removed(model, SIGNAL(rowsRemoved(QModelIndex, int, int)));
+    delete later;
+    QCOMPARE(removed.count(), 1);
+    QCOMPARE(model->rowCount(), 2);
+
+    // Selecting a subgroup returns to the ordinary one-group listing.
+    model->setGroup(banking);
+    QVERIFY(!model->recursiveRoot());
+    QCOMPARE(model->rowCount(), 0);
+    model->setGroup(cloud);
+    QCOMPARE(model->rowCount(), 1);
+
+    // A standalone group with no database is not a recursive root.
+    auto* orphan = new Group();
+    auto* orphanEntry = new Entry();
+    orphanEntry->setGroup(orphan);
+    model->setGroup(orphan);
+    QVERIFY(!model->recursiveRoot());
+    QCOMPARE(model->rowCount(), 1);
+
+    delete modelTest;
+    delete model;
+    delete orphan;
 }
