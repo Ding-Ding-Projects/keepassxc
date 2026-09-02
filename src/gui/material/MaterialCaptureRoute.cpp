@@ -355,13 +355,18 @@ namespace Material
                         // The personal-vocabulary state opens Settings > Interface and
                         // scrolls the upload row into view so a driver can click it.
                         if (request.state == QLatin1String("personal-vocabulary")) {
-                            if (auto* sheet = window->findChild<SpecSheet*>()) {
-                                sheet->setCurrentPage(QStringLiteral("interface"));
-                                if (auto* page = sheet->page(QStringLiteral("interface"))) {
-                                    if (auto* row = page->findChild<QWidget*>(QStringLiteral("specRow_upload_file"))) {
-                                        page->ensureWidgetVisible(row, 0, 80);
-                                    }
+                            // Several hubs own a spec sheet; the one with an interface
+                            // page is the application settings hub.
+                            for (SpecSheet* sheet : window->findChildren<SpecSheet*>()) {
+                                auto* page = sheet->page(QStringLiteral("interface"));
+                                if (!page) {
+                                    continue;
                                 }
+                                sheet->setCurrentPage(QStringLiteral("interface"));
+                                if (auto* row = page->findChild<QWidget*>(QStringLiteral("specRow_upload_file"))) {
+                                    page->ensureWidgetVisible(row, 0, 80);
+                                }
+                                break;
                             }
                         }
                         writeReceipt(window, request, navigated ? QStringLiteral("ready") : QStringLiteral("unreachable"));

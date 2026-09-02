@@ -1,12 +1,172 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "170ff46fa5e56bde6fa4c19cca73198193a5d8b3",
+  "sourceCommit": "4577d73f5132e0f110902f55c68c190c63eb116a",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T20:23:17.037Z",
+  "generatedAt": "2026-09-02T19:57:24.811Z",
   "quick": false,
   "tuples": 50,
   "errors": 0,
-  "findings": [],
+  "findings": [
+    {
+      "tuple": "settings_minimum_bilingual_light_x1",
+      "kind": "squeezed-below-minimum",
+      "widget": "QLabel#materialSpecSheetOverline",
+      "rect": "82,567 140x28",
+      "minimumHint": "105x34"
+    },
+    {
+      "tuple": "vault_medium_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLineEdit#",
+      "rect": "207,56 198x40",
+      "text": "Search entries — title, username, URL, notes",
+      "textWidth": 257
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,891 263x23",
+      "text": "Applies to passwords, TOTP codes and custom attributes.",
+      "textWidth": 292
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,953 263x23",
+      "text": "A second launch raises the running window instead of opening another one.",
+      "textWidth": 399
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1015 263x23",
+      "text": "KeePassXC starts hidden and waits in the tray or task bar.",
+      "textWidth": 293
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1077 263x22",
+      "text": "The window steps aside once the database is open.",
+      "textWidth": 265
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1138 263x23",
+      "text": "Keeps the recent list on the welcome screen and in the file menu.",
+      "textWidth": 334
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1200 263x23",
+      "text": "The databases open at the last launch are restored on the next one.",
+      "textWidth": 348
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1323 263x23",
+      "text": "Unsaved changes are written when the database closes.",
+      "textWidth": 288
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1385 263x23",
+      "text": "Keeps a copy of the previous file next to the database.",
+      "textWidth": 278
+    },
+    {
+      "tuple": "appearance_large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1447 263x23",
+      "text": "Notes stay masked in the preview panel until they are revealed.",
+      "textWidth": 323
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,890 263x22",
+      "text": "Applies to passwords, TOTP codes and custom attributes.",
+      "textWidth": 292
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,949 263x22",
+      "text": "A second launch raises the running window instead of opening another one.",
+      "textWidth": 399
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1009 263x22",
+      "text": "KeePassXC starts hidden and waits in the tray or task bar.",
+      "textWidth": 293
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1069 263x22",
+      "text": "The window steps aside once the database is open.",
+      "textWidth": 265
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1128 263x22",
+      "text": "Keeps the recent list on the welcome screen and in the file menu.",
+      "textWidth": 334
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1187 263x22",
+      "text": "The databases open at the last launch are restored on the next one.",
+      "textWidth": 348
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1307 263x22",
+      "text": "Unsaved changes are written when the database closes.",
+      "textWidth": 288
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1366 263x22",
+      "text": "Keeps a copy of the previous file next to the database.",
+      "textWidth": 278
+    },
+    {
+      "tuple": "appearance_extra-large_bilingual_light_x1",
+      "kind": "text-overflows",
+      "widget": "QLabel#",
+      "rect": "527,1426 263x22",
+      "text": "Notes stay masked in the preview panel until they are revealed.",
+      "textWidth": 323
+    }
+  ],
   "records": [
     {
       "id": "vault_minimum_bilingual_light_x1",
@@ -77,7 +237,7 @@
       },
       "png": "editor_minimum_bilingual_light_x1.png",
       "pngSha256": "1909d8c5856c7e7aa6ad09d18e47b41550f6248300510670f1382aa14f508161",
-      "widgetCount": 73,
+      "widgetCount": 71,
       "findingCount": 0
     },
     {
@@ -101,7 +261,7 @@
       },
       "png": "database_minimum_bilingual_light_x1.png",
       "pngSha256": "19d2a63286ffd983587ec0304d8cea98f9ccad096c2af627fcd60670db0d71cf",
-      "widgetCount": 72,
+      "widgetCount": 70,
       "findingCount": 0
     },
     {
@@ -125,7 +285,7 @@
       },
       "png": "tools_minimum_bilingual_light_x1.png",
       "pngSha256": "b91ed9e2680eb280b510f7fc4c4d62e6c157ad331a78f34fb321d3d3da98b009",
-      "widgetCount": 78,
+      "widgetCount": 76,
       "findingCount": 0
     },
     {
@@ -196,9 +356,9 @@
         "devicePixelRatio": 1
       },
       "png": "settings_minimum_bilingual_light_x1.png",
-      "pngSha256": "205463e88ca3d05d8234dd050c120f7594cb443696a42361e35b81d297742b09",
-      "widgetCount": 89,
-      "findingCount": 0
+      "pngSha256": "3c6bd520eadbb5baa52e38537ef4ccf4432fc72816f53b1bc2ccd1ad8cb484e8",
+      "widgetCount": 85,
+      "findingCount": 1
     },
     {
       "id": "appearance_minimum_bilingual_light_x1",
@@ -245,7 +405,7 @@
       },
       "png": "help_minimum_bilingual_light_x1.png",
       "pngSha256": "97b1bd8eed818ff8fc0beced2fbe4e930ba1c355510f58545be950b19387e301",
-      "widgetCount": 59,
+      "widgetCount": 57,
       "findingCount": 0
     },
     {
@@ -317,7 +477,7 @@
       },
       "png": "editor_compact_bilingual_light_x1.png",
       "pngSha256": "366cd1f3c59eef0b8ac5aed8354d6d8a8c8d639d3f8bbdc2722a99ce7a846749",
-      "widgetCount": 73,
+      "widgetCount": 71,
       "findingCount": 0
     },
     {
@@ -341,7 +501,7 @@
       },
       "png": "database_compact_bilingual_light_x1.png",
       "pngSha256": "e6a75567e6e8956a592c3cb2aa668be5814500946785c5787d293eefb5152fdb",
-      "widgetCount": 72,
+      "widgetCount": 70,
       "findingCount": 0
     },
     {
@@ -365,7 +525,7 @@
       },
       "png": "tools_compact_bilingual_light_x1.png",
       "pngSha256": "06de9c2678a73c5432c0121157e61557527f1541515f74890fb8ea118029adb3",
-      "widgetCount": 78,
+      "widgetCount": 76,
       "findingCount": 0
     },
     {
@@ -436,8 +596,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_compact_bilingual_light_x1.png",
-      "pngSha256": "0db3aedcb9104cec7e9e4621a6e115b4f936f9721860420112ce7487b2f5e2bc",
-      "widgetCount": 89,
+      "pngSha256": "4d2d659326f03642e007428a4ddd82fe1c2cb7b921de6f013f47b086c2274df7",
+      "widgetCount": 85,
       "findingCount": 0
     },
     {
@@ -485,7 +645,7 @@
       },
       "png": "help_compact_bilingual_light_x1.png",
       "pngSha256": "fe0cb90102c13b70f096bf0ccfce6a0660f998036179aba6a6977010d9ccf430",
-      "widgetCount": 59,
+      "widgetCount": 57,
       "findingCount": 0
     },
     {
@@ -508,9 +668,9 @@
         "devicePixelRatio": 1
       },
       "png": "vault_medium_bilingual_light_x1.png",
-      "pngSha256": "9ac1cf3e1b81f7a5951bbd7b1155a981633590f73d319841ac8b7f63af4395da",
+      "pngSha256": "117610f94573518f1c0c12ac91e15323adbf7339dc1b9f2dbc76e9009448f1ba",
       "widgetCount": 102,
-      "findingCount": 0
+      "findingCount": 1
     },
     {
       "id": "reports_medium_bilingual_light_x1",
@@ -557,7 +717,7 @@
       },
       "png": "editor_medium_bilingual_light_x1.png",
       "pngSha256": "82f23b35e3d9a2a763bd6c521eee06c58313d78bf2ca153a9f0c0118d47cc52f",
-      "widgetCount": 73,
+      "widgetCount": 71,
       "findingCount": 0
     },
     {
@@ -581,7 +741,7 @@
       },
       "png": "database_medium_bilingual_light_x1.png",
       "pngSha256": "27281617347f51a80214228d0e2c2803ce217c2c85429c90ee29233339ad91f6",
-      "widgetCount": 72,
+      "widgetCount": 70,
       "findingCount": 0
     },
     {
@@ -605,7 +765,7 @@
       },
       "png": "tools_medium_bilingual_light_x1.png",
       "pngSha256": "90bd38d9e489560da145687d5d4008d9052082632bde4eeb84e2b48fab8380ef",
-      "widgetCount": 78,
+      "widgetCount": 76,
       "findingCount": 0
     },
     {
@@ -676,8 +836,8 @@
         "devicePixelRatio": 1
       },
       "png": "settings_medium_bilingual_light_x1.png",
-      "pngSha256": "549c8acb3186137e0dde79c18523fae401460e0d90b3f808b87c873a0d8e81f5",
-      "widgetCount": 89,
+      "pngSha256": "b5f1a995679eae8a3d504ff7dd5f25fbb6b51be637213283f18a129da16e755d",
+      "widgetCount": 85,
       "findingCount": 0
     },
     {
@@ -725,7 +885,7 @@
       },
       "png": "help_medium_bilingual_light_x1.png",
       "pngSha256": "6f0b6523407552757a0faa9dd443f52f29d6c296cfe2c08852d89f5031ae0950",
-      "widgetCount": 59,
+      "widgetCount": 57,
       "findingCount": 0
     },
     {
@@ -748,7 +908,7 @@
         "devicePixelRatio": 1
       },
       "png": "vault_large_bilingual_light_x1.png",
-      "pngSha256": "995a8d4e632952d1cd6ddbbf07ce3f0f0015ad60d501bc6b14a8397e65ea70b5",
+      "pngSha256": "0b016171c67bdba57d85f8b21fcc3673c2051eaa922857d0441c5f94c129a781",
       "widgetCount": 109,
       "findingCount": 0
     },
@@ -797,7 +957,7 @@
       },
       "png": "editor_large_bilingual_light_x1.png",
       "pngSha256": "1df647b6448901780c48d29fa11c77ef714c08097f425d4aa2802e37b35b5364",
-      "widgetCount": 73,
+      "widgetCount": 71,
       "findingCount": 0
     },
     {
@@ -821,7 +981,7 @@
       },
       "png": "database_large_bilingual_light_x1.png",
       "pngSha256": "834d55e5f937e561923343eb3f1670a722f240bc089a768a4543e2d39cd0db1e",
-      "widgetCount": 72,
+      "widgetCount": 70,
       "findingCount": 0
     },
     {
@@ -845,7 +1005,7 @@
       },
       "png": "tools_large_bilingual_light_x1.png",
       "pngSha256": "c28f0fe250d7fa9131f2cced000858d51e2b38a2e2c4eedb21133959a840d4d2",
-      "widgetCount": 78,
+      "widgetCount": 76,
       "findingCount": 0
     },
     {
@@ -917,7 +1077,7 @@
       },
       "png": "settings_large_bilingual_light_x1.png",
       "pngSha256": "3652b871e49a84ea4ae861eee4ed701b616db4e7bbfb26875c638d602274176a",
-      "widgetCount": 87,
+      "widgetCount": 85,
       "findingCount": 0
     },
     {
@@ -940,9 +1100,9 @@
         "devicePixelRatio": 1
       },
       "png": "appearance_large_bilingual_light_x1.png",
-      "pngSha256": "64e133239a54fb6a289d32acc1d59bd962e3022847926aed5a09505f7af567d4",
+      "pngSha256": "26c0b63ab4380694d769146683571af104d1144ee7286936d4124fccdf1beaf2",
       "widgetCount": 148,
-      "findingCount": 0
+      "findingCount": 9
     },
     {
       "id": "help_large_bilingual_light_x1",
@@ -965,7 +1125,7 @@
       },
       "png": "help_large_bilingual_light_x1.png",
       "pngSha256": "c84a78f129e876e94842307bdff770b5a870d009821d35a42d4fb09a6d6d0460",
-      "widgetCount": 59,
+      "widgetCount": 57,
       "findingCount": 0
     },
     {
@@ -988,7 +1148,7 @@
         "devicePixelRatio": 1
       },
       "png": "vault_extra-large_bilingual_light_x1.png",
-      "pngSha256": "775a73224cd1eca726a14b57c1d8b8131940be565dd7e0239ab0458b4952680b",
+      "pngSha256": "0fb075cbaa83885a8d29cb340ea2ae73a4ba6954b333ca6132cc043d6316ddbb",
       "widgetCount": 107,
       "findingCount": 0
     },
@@ -1037,7 +1197,7 @@
       },
       "png": "editor_extra-large_bilingual_light_x1.png",
       "pngSha256": "37660ad969b3c6e6aa9c8a8e4e1ae76a979e1ff52242f5f49f91ffe1fdedd08c",
-      "widgetCount": 73,
+      "widgetCount": 71,
       "findingCount": 0
     },
     {
@@ -1061,7 +1221,7 @@
       },
       "png": "database_extra-large_bilingual_light_x1.png",
       "pngSha256": "3f80afa030b8172497561726f11ff93130148cc69864fc57f0452748ff491187",
-      "widgetCount": 72,
+      "widgetCount": 70,
       "findingCount": 0
     },
     {
@@ -1085,7 +1245,7 @@
       },
       "png": "tools_extra-large_bilingual_light_x1.png",
       "pngSha256": "1c988ccf030523c0089e7c113f82a033d8dad2e435333a44ce3fe0f6479711f8",
-      "widgetCount": 78,
+      "widgetCount": 76,
       "findingCount": 0
     },
     {
@@ -1157,7 +1317,7 @@
       },
       "png": "settings_extra-large_bilingual_light_x1.png",
       "pngSha256": "5fdd2e9aac49d5e091a7db43593e4e2fa635aa91a56d2d5a7ccf1409adda3ad9",
-      "widgetCount": 87,
+      "widgetCount": 85,
       "findingCount": 0
     },
     {
@@ -1180,9 +1340,9 @@
         "devicePixelRatio": 1
       },
       "png": "appearance_extra-large_bilingual_light_x1.png",
-      "pngSha256": "7c3ca5d88e6eff2ff044004c9cac3401ec78a111fcb600ec01d1e9fa96d1bdbb",
+      "pngSha256": "48b56d7db845c4fcb066c9dab6063e2d5fddf7401b9cefa7c276c11bf42f2097",
       "widgetCount": 148,
-      "findingCount": 0
+      "findingCount": 9
     },
     {
       "id": "help_extra-large_bilingual_light_x1",
@@ -1205,7 +1365,7 @@
       },
       "png": "help_extra-large_bilingual_light_x1.png",
       "pngSha256": "07262c7d3dcc32a65e2194ef724acd665b22b3642eb780c2d7c5920387bfff48",
-      "widgetCount": 57,
+      "widgetCount": 55,
       "findingCount": 0
     }
   ]

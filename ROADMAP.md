@@ -42,7 +42,12 @@
 - [x] Capture every design reference and the built application at identical tuples, compare them, and hand-audit each row against Material Design 3 (`design/parity`).
 - [x] List every entry recursively when the database root is selected, as the design does, with live add and remove.
 - [x] Rename the Reports tiles and cards to the design's vocabulary (Health score, Breached, Needs work, Healthy).
-- [ ] Repair the remaining parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports finding rows, OS caption bar, settings pages) and recapture.
+- [x] Repair the remaining parity defects recorded in `design/parity/audits/*.json` (regex workbench, reports finding rows, OS caption bar, settings pages) and recapture; every audit lists zero open defects at `693367d1`.
+- [x] Replace every stock combo box, slider and date field with searchable Material selects, Material 3 sliders and Material date fields with a calendar picker.
+- [x] Draw a frameless Material title bar with its own window controls.
+- [x] Add the per-element appearance editor with typography, colour, shape and preset tabs, the infinite colour picker with translator, contrast and rainbow, and preset export/import.
+- [x] Give the vault its tag chips and detail card, History its detail card and CREATE badge, Reports its finding rows and exports, the regex builder its workbench and token blocks.
+- [x] Consume the personal vocabulary file at the translation boundary in every language mode, accepting the canonical `entries` member.
 - [x] Hide the legacy status bar under the Material shell and route progress through the notification host.
 - [x] Show the running version, revision and exact updated-at time of that revision on the welcome screen, with an honest unavailable state.
 - [x] Wrap the shared screen header onto extra rows when its actions and search bar would overflow.
@@ -50,7 +55,7 @@
 - [x] Bind the command palette to `Ctrl+Shift+F`.
 - [ ] Give command palette results rich inline controls and exact-element teleport.
 - [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
-- [ ] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding.
+- [x] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding (three named records: widths 50 tuples, languages and themes 60 tuples at the expanded width, scales 30 tuples; 20 findings repaired; all three at 0 at `693367d1`).
 - [ ] Turn every row of the fail-closed feature inventory (`docs/features/inventory.json`) green; `scripts/check-feature-inventory.mjs` currently reports 0/172.
 
 ## Installer and updater
