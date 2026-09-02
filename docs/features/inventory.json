@@ -140,13 +140,17 @@
       "surface": "app",
       "title": "Local personal-vocabulary JSON upload",
       "status": "partial",
-      "note": "Upload and clear exist in Settings; application-wide consumption and bounds tests pending",
+      "note": "Upload, validation, cache consumption at the tr() boundary, replace and clear are implemented and unit-tested; the built-artifact interaction ledger and capture are pending",
       "implementation": {
-        "file": "src/gui/material/MaterialSettingsHub.cpp",
-        "anchor": "^\\s*config\\(\\)->set\\(Config::GUI_PersonalVocabularyCache,$"
+        "file": "src/core/PersonalVocabulary.cpp",
+        "anchor": "^    Validation validate(const QByteArray& bytes)$"
       },
       "article": {
         "file": "docs/features/records/personal-vocabulary-upload.md"
+      },
+      "test": {
+        "file": "tests/TestPersonalVocabulary.cpp",
+        "anchor": "^void TestPersonalVocabulary::"
       }
     },
     {

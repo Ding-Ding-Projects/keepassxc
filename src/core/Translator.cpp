@@ -25,6 +25,8 @@
 #include <QRegularExpression>
 #include <QTranslator>
 
+#include "core/PersonalVocabulary.h"
+
 #include "core/Resources.h"
 
 /**
@@ -52,6 +54,9 @@ void Translator::installTranslators(const QString& uiLanguage)
         // couldn't load configured language or fallback
         qWarning("Couldn't load translations.");
     }
+    // The personal vocabulary answers last-installed-first and consults the
+    // language translators above before applying the user's own wording.
+    PersonalVocabulary::install();
 }
 
 /**
@@ -66,9 +71,9 @@ bool Translator::installTranslator(const QStringList& languages, const QString& 
     for (const auto& language : languages) {
         QLocale locale(language);
         QScopedPointer<QTranslator> translator(new QTranslator(qApp));
-        if (translator->load(locale, "keepassxc_", "", path)) {
-            return QCoreApplication::installTranslator(translator.take());
-        } else if (translator->load(locale, "keepassxc_", "", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+        if (translator->load(locale, "keepassxc_", "", path)
+            || translator->load(locale, "keepassxc_", "", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+            PersonalVocabulary::registerBaseTranslator(translator.data());
             return QCoreApplication::installTranslator(translator.take());
         }
     }
@@ -89,9 +94,9 @@ bool Translator::installQtTranslator(const QStringList& languages, const QString
     for (const auto& language : languages) {
         QLocale locale(language);
         QScopedPointer<QTranslator> qtTranslator(new QTranslator(qApp));
-        if (qtTranslator->load(locale, "qtbase_", "", path)) {
-            return QCoreApplication::installTranslator(qtTranslator.take());
-        } else if (qtTranslator->load(locale, "qtbase_", "", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+        if (qtTranslator->load(locale, "qtbase_", "", path)
+            || qtTranslator->load(locale, "qtbase_", "", QLibraryInfo::location(QLibraryInfo::TranslationsPath))) {
+            PersonalVocabulary::registerBaseTranslator(qtTranslator.data());
             return QCoreApplication::installTranslator(qtTranslator.take());
         }
     }

@@ -42,7 +42,23 @@
 #include <QSpinBox>
 #include <QVBoxLayout>
 #include <QFile>
+#include <QApplication>
+#include <QEvent>
 #include <QJsonDocument>
+
+#include "core/PersonalVocabulary.h"
+
+namespace
+{
+    // Re-translate every open window after the vocabulary changed.
+    void retranslateTopLevels()
+    {
+        QEvent event(QEvent::LanguageChange);
+        for (QWidget* widget : QApplication::topLevelWidgets()) {
+            QCoreApplication::sendEvent(widget, &event);
+        }
+    }
+} // namespace
 #include <QJsonObject>
 
 #include <functional>
@@ -1197,30 +1213,20 @@ namespace Material
                        const QString path = fileDialog()->getOpenFileName(this, tr("Choose personal vocabulary JSON"), {}, tr("JSON (*.json)"));
                        if (path.isEmpty()) return;
                        QFile file(path);
-                       if (!file.open(QIODevice::ReadOnly) || file.size() > 65536) {
+                       if (!file.open(QIODevice::ReadOnly) || file.size() > PersonalVocabulary::MaxFileBytes) {
                            Notify::error(tr("Vocabulary not loaded"), tr("The file must be readable and no larger than 64 KiB."));
                            return;
                        }
-                       QJsonParseError parseError;
-                       const QJsonDocument document = QJsonDocument::fromJson(file.readAll(), &parseError);
-                       const QJsonObject root = document.object();
-                       const QJsonObject replacements = root.value(QStringLiteral("replacements")).toObject();
-                       bool valid = document.isObject() && root.size() == 2
-                                    && root.value(QStringLiteral("schemaVersion")).toInt() == 1
-                                    && root.contains(QStringLiteral("replacements")) && replacements.size() <= 500;
-                       for (auto it = replacements.begin(); valid && it != replacements.end(); ++it) {
-                           valid = it.value().isString() && !it.key().isEmpty() && it.key().size() <= 128
-                                   && it.value().toString().size() <= 512
-                                   && it.key() != QLatin1String("__proto__") && it.key() != QLatin1String("constructor")
-                                   && it.key() != QLatin1String("prototype");
-                       }
-                       if (!valid || parseError.error != QJsonParseError::NoError) {
-                           Notify::error(tr("Vocabulary not loaded"), tr("The JSON must use schema version 1 with at most 500 bounded string replacements."));
+                       const PersonalVocabulary::Validation validation = PersonalVocabulary::validate(file.readAll());
+                       if (!validation.valid) {
+                           Notify::error(tr("Vocabulary not loaded"), tr("The JSON must use schema version 1 with at most 500 bounded string entries."));
                            return;
                        }
                        config()->set(Config::GUI_PersonalVocabularyCache,
-                                     QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact)));
-                       Notify::success(tr("Vocabulary loaded"), tr("The validated private cache is active on this computer."));
+                                     QString::fromUtf8(QJsonDocument(validation.canonical).toJson(QJsonDocument::Compact)));
+                       PersonalVocabulary::refresh();
+                       retranslateTopLevels();
+                       Notify::success(tr("Vocabulary loaded"), tr("%n entries active; the validated private cache lives on this computer only.", nullptr, PersonalVocabulary::activeEntryCount()));
                        refreshAll();
                    });
         addCommand(interfacePage,
@@ -1231,6 +1237,8 @@ namespace Material
                    tr("Clear"),
                    [this] {
                        config()->remove(Config::GUI_PersonalVocabularyCache);
+                       PersonalVocabulary::refresh();
+                       retranslateTopLevels();
                        Notify::success(tr("Vocabulary cleared"), tr("Original wording is active again."));
                        refreshAll();
                    });

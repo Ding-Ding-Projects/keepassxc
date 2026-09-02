@@ -47,6 +47,7 @@ set(core_SOURCES
         core/Tools.cpp
         core/Totp.cpp
         core/Translator.cpp
+        core/PersonalVocabulary.cpp
         cli/Utils.cpp
         crypto/Crypto.cpp
         crypto/CryptoHash.cpp
