@@ -22,6 +22,11 @@ entirely; **Clear personal vocabulary** purges the cache and restores the origin
 immediately. Open windows are re-translated on load and on clear; text that a screen composed
 before the change is refreshed on its next rebuild or at the next launch.
 
+The loaded, cleared and invalid notifications are voiced through the shared catalogue
+(`share/voice/voice.json`: `vocabulary.loaded`, `vocabulary.cleared`, `vocabulary.invalid`) in
+English and Cantonese at every humour level; the facts (entry count, "this computer only", the
+schema bounds) are enforced at every level. Row labels follow the Settings hub's language mode.
+
 ## Contract
 
 Schema version 1, one JSON object with exactly two members:
@@ -60,7 +65,7 @@ notification reports only the entry count. The cache lives in the local (not roa
 - `testpersonalvocabulary` covers the schema and every bound, whole-word longest-first
   application, translator application through `QCoreApplication::translate`, replace, corrupt-cache
   fail-closed and clear restoring original wording.
-- The built-artifact proof drives the Settings upload control with a real file on the hidden
+- `node design/parity/vocab-proof.mjs <exe> <repo> <outDir> <json> neutral|private` drives the Settings upload control with a real file on the hidden
   desktop and records load, applied wording, restart persistence, replace, invalid-file refusal and
   clear, keeping the payload out of the retained captures.
 

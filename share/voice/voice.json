@@ -138,13 +138,7 @@
         "passkey.copied.warning": {
             "category": "security",
             "en": {
-                "facts": [
-                    "{count}",
-                    "clipboard",
-                    "base64",
-                    "any other application on this computer",
-                    "cleared in {seconds} seconds"
-                ],
+                "facts": ["{count}", "clipboard", "base64", "any other application on this computer", "cleared in {seconds} seconds"],
                 "levels": {
                     "1": "You are about to copy {count} passkey(s) to the clipboard as base64 text. The clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
                     "3": "Heads up — {count} passkey(s) are about to go onto the clipboard as base64 text, and the clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
@@ -233,6 +227,63 @@
                     "1": "你確定要永久刪除項目「{title}」嗎？此操作無法復原。",
                     "3": "你確定要永久刪除項目「{title}」嗎？此操作無法復原，亦唔會入回收筒。",
                     "5": "諗清楚先。你確定要永久刪除項目「{title}」嗎？此操作無法復原，冇回收筒、冇副本、追唔返。"
+                }
+            }
+        },
+        "vocabulary.loaded": {
+            "category": "success",
+            "en": {
+                "facts": ["{count}", "active", "this computer only"],
+                "levels": {
+                    "1": "Personal vocabulary loaded: {count} entries active. The validated cache stays on this computer only.",
+                    "3": "Vocabulary loaded — {count} entries active, and the validated cache lives on this computer only.",
+                    "5": "Vocabulary loaded: {count} entries now speak your way, and the validated cache never leaves this computer only."
+                }
+            },
+            "yue": {
+                "facts": ["{count}", "生效", "只留喺呢部電腦"],
+                "levels": {
+                    "1": "個人詞彙已載入：{count} 條生效。已驗證嘅快取只留喺呢部電腦。",
+                    "3": "詞彙載入咗，{count} 條生效，已驗證嘅快取只留喺呢部電腦。",
+                    "5": "詞彙載入咗！{count} 條即刻照你嘅講法嚟講，已驗證嘅快取只留喺呢部電腦，邊度都唔會去。"
+                }
+            }
+        },
+        "vocabulary.cleared": {
+            "category": "success",
+            "en": {
+                "facts": ["cleared", "original wording"],
+                "levels": {
+                    "1": "Personal vocabulary cleared. The original wording is active again.",
+                    "3": "Vocabulary cleared — the original wording is active again.",
+                    "5": "Vocabulary cleared: the original wording is back on duty, exactly as shipped."
+                }
+            },
+            "yue": {
+                "facts": ["已清除", "原文"],
+                "levels": {
+                    "1": "個人詞彙已清除。原文重新生效。",
+                    "3": "詞彙清除咗，原文重新生效。",
+                    "5": "詞彙清除咗，原文返嚟當值，同出廠時一模一樣。"
+                }
+            }
+        },
+        "vocabulary.invalid": {
+            "category": "error",
+            "en": {
+                "facts": ["not loaded", "schema version 1", "500", "64 KiB"],
+                "levels": {
+                    "1": "Vocabulary not loaded. The file must be JSON with schema version 1, at most 500 bounded string entries and no larger than 64 KiB.",
+                    "3": "Vocabulary not loaded — the file must use schema version 1, hold at most 500 bounded string entries and stay under 64 KiB.",
+                    "5": "Vocabulary not loaded: that file did not pass the door. It must use schema version 1, carry at most 500 bounded string entries and weigh no more than 64 KiB."
+                }
+            },
+            "yue": {
+                "facts": ["未載入", "schema version 1", "500", "64 KiB"],
+                "levels": {
+                    "1": "詞彙未載入。檔案必須係 JSON、schema version 1、最多 500 條有界字串、唔大過 64 KiB。",
+                    "3": "詞彙未載入，檔案要用 schema version 1，最多 500 條有界字串，唔可以大過 64 KiB。",
+                    "5": "詞彙未載入：呢個檔案過唔到門口。要用 schema version 1，最多 500 條有界字串，仲要唔大過 64 KiB。"
                 }
             }
         }

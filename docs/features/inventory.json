@@ -139,11 +139,11 @@
       "id": "personal-vocabulary-upload",
       "surface": "app",
       "title": "Local personal-vocabulary JSON upload",
-      "status": "partial",
-      "note": "Upload, validation, cache consumption at the tr() boundary, replace and clear are implemented and unit-tested; the built-artifact interaction ledger and capture are pending",
+      "status": "implemented",
+      "note": "Upload, bounded validation, cache consumption at the tr() boundary, replace, invalid refusal, clear and restart persistence; loaded, cleared and invalid states voiced in English and Cantonese at every level; proved on the built artifact through the real row and the native file dialog. Row labels follow the hub-wide language mode.",
       "implementation": {
         "file": "src/core/PersonalVocabulary.cpp",
-        "anchor": "^    Validation validate(const QByteArray& bytes)$"
+        "anchor": "^    Validation validate\\(const QByteArray& bytes\\)$"
       },
       "article": {
         "file": "docs/features/records/personal-vocabulary-upload.md"
@@ -151,6 +151,18 @@
       "test": {
         "file": "tests/TestPersonalVocabulary.cpp",
         "anchor": "^void TestPersonalVocabulary::"
+      },
+      "interaction": {
+        "file": "design/parity/evidence/personal-vocabulary/ledger.json",
+        "anchor": "^\\s*\"event\": \"restart-after-clear\",$"
+      },
+      "capture": {
+        "file": "design/parity/evidence/personal-vocabulary/03-after-restart.png",
+        "note": "Built application on a hidden desktop after uploading a neutral two-entry file and restarting: the cache persisted and the wording applied (Settings reads Preferences, Interface reads Look and feel). Driven through the real Settings row and the native file dialog; ledger.json records every step."
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json",
+        "anchor": "^\\s*\"vocabulary\\.loaded\": \\{$"
       }
     },
     {

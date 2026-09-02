@@ -21,6 +21,7 @@
 #include "MaterialDialog.h"
 #include "MaterialElevation.h"
 #include "MaterialNotifier.h"
+#include "MaterialVoice.h"
 #include "MaterialOverlay.h"
 #include "MaterialSearchBar.h"
 #include "MaterialSettingsScreen.h"
@@ -1214,19 +1215,22 @@ namespace Material
                        if (path.isEmpty()) return;
                        QFile file(path);
                        if (!file.open(QIODevice::ReadOnly) || file.size() > PersonalVocabulary::MaxFileBytes) {
-                           Notify::error(tr("Vocabulary not loaded"), tr("The file must be readable and no larger than 64 KiB."));
+                           Notify::error(tr("Vocabulary not loaded"), Voice::say(QStringLiteral("vocabulary.invalid"), {}, Voice::Category::Error));
                            return;
                        }
                        const PersonalVocabulary::Validation validation = PersonalVocabulary::validate(file.readAll());
                        if (!validation.valid) {
-                           Notify::error(tr("Vocabulary not loaded"), tr("The JSON must use schema version 1 with at most 500 bounded string entries."));
+                           Notify::error(tr("Vocabulary not loaded"), Voice::say(QStringLiteral("vocabulary.invalid"), {}, Voice::Category::Error));
                            return;
                        }
                        config()->set(Config::GUI_PersonalVocabularyCache,
                                      QString::fromUtf8(QJsonDocument(validation.canonical).toJson(QJsonDocument::Compact)));
                        PersonalVocabulary::refresh();
                        retranslateTopLevels();
-                       Notify::success(tr("Vocabulary loaded"), tr("%n entries active; the validated private cache lives on this computer only.", nullptr, PersonalVocabulary::activeEntryCount()));
+                       Notify::success(tr("Vocabulary loaded"),
+                                       Voice::say(QStringLiteral("vocabulary.loaded"),
+                                                  {{QStringLiteral("count"), PersonalVocabulary::activeEntryCount()}},
+                                                  Voice::Category::Success));
                        refreshAll();
                    });
         addCommand(interfacePage,
@@ -1239,7 +1243,7 @@ namespace Material
                        config()->remove(Config::GUI_PersonalVocabularyCache);
                        PersonalVocabulary::refresh();
                        retranslateTopLevels();
-                       Notify::success(tr("Vocabulary cleared"), tr("Original wording is active again."));
+                       Notify::success(tr("Vocabulary cleared"), Voice::say(QStringLiteral("vocabulary.cleared"), {}, Voice::Category::Success));
                        refreshAll();
                    });
 
