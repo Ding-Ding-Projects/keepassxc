@@ -212,6 +212,10 @@
       },
       "article": {
         "file": "docs/features/search/dropdown-select.md"
+      },
+      "capture": {
+        "file": "design/parity/evidence/appearance-default/select-popup.png",
+        "note": "Interface font family select opened on a hidden desktop through the capture route; search bar, regex builder button and per-face rows visible"
       }
     },
     {
