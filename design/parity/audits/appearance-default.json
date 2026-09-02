@@ -29,7 +29,7 @@
     {
       "primitive": "language and funny sliders",
       "status": "conforms",
-      "finding": "Three-way language control and two sliders with live sample."
+      "finding": "Three-way language control and two sliders with live sample. Family and weight are Material selects with their own search; sliders are Material sliders (repaired 2026-09-02)."
     },
     {
       "primitive": "element overrides",
@@ -42,12 +42,14 @@
       "id": "appearance-default-1",
       "severity": "medium",
       "summary": "Section layout and typography control anatomy differ"
-    },
-    {
-      "id": "appearance-default-3",
-      "severity": "medium",
-      "summary": "Stock QComboBox family/weight pickers and stock QSlider override sliders instead of Material select (list box with search) and Material slider"
     }
   ],
-  "deviations": []
+  "deviations": [
+    {
+      "id": "appearance-default-dev-slider",
+      "primitive": "sliders",
+      "reason": "The reference draws the earlier Material 3 slider (thin track, round thumb). The built app uses the current Material Design 3 slider anatomy (16 px track, 4 px handle bar, stop indicator, value label) because the owner asked for every control to be pure Material Design 3; the mismatch percentage rises by about 0.75 points for it.",
+      "approval": "Owner direction 2026-09-02: every control must be 100% Material Design 3; the current slider anatomy is the conforming one."
+    }
+  ]
 }

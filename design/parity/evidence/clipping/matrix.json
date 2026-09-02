@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "41d900ebf5f12e3dd0be8c9d1f980dc5c2ad71f3",
+  "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T17:46:50.733Z",
+  "generatedAt": "2026-09-02T18:08:34.928Z",
   "quick": true,
-  "tuples": 2,
+  "tuples": 8,
   "errors": 0,
   "findings": [],
   "records": [
     {
-      "id": "vault_compact_bilingual_light_x1",
+      "id": "appearance_compact_bilingual_light_x1",
       "tuple": {
-        "screen": "vault",
+        "screen": "appearance",
         "width": {
           "id": "compact",
           "w": 600,
@@ -27,15 +27,87 @@
         "windowGeometry": "560,185 800x720",
         "devicePixelRatio": 1
       },
-      "png": "vault_compact_bilingual_light_x1.png",
-      "pngSha256": "45f5b91b981dd303308f7dc86b61c6bc205859e3b78ee74fee5d88f489a53b00",
-      "widgetCount": 45,
+      "png": "appearance_compact_bilingual_light_x1.png",
+      "pngSha256": "aa2479571f7c21666397362ddea534fe24c8188ad9096a7d9a969daf9ea01db0",
+      "widgetCount": 148,
       "findingCount": 0
     },
     {
-      "id": "vault_expanded_bilingual_light_x1",
+      "id": "changelog_compact_bilingual_light_x1",
       "tuple": {
-        "screen": "vault",
+        "screen": "changelog",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_compact_bilingual_light_x1.png",
+      "pngSha256": "7a10ed3827f2ae3273fe75705bfc75ecc6e6086735cadd46ba6174cb7375e741",
+      "widgetCount": 2561,
+      "findingCount": 0
+    },
+    {
+      "id": "history_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "history_compact_bilingual_light_x1.png",
+      "pngSha256": "891fcae0a3a0df9d7d9264cdb1e2765b927031ddd77ca886cae0287ae2ddf658",
+      "widgetCount": 50,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_compact_bilingual_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "compact",
+          "w": 600,
+          "h": 720
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "800x720",
+        "windowGeometry": "560,185 800x720",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_compact_bilingual_light_x1.png",
+      "pngSha256": "e5bdbb22fcbd404765cb627c11c604d5f02bb821bc52f647e9e85e7042795b30",
+      "widgetCount": 61,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "appearance",
         "width": {
           "id": "expanded",
           "w": 1200,
@@ -51,9 +123,81 @@
         "windowGeometry": "560,185 1200x800",
         "devicePixelRatio": 1
       },
-      "png": "vault_expanded_bilingual_light_x1.png",
-      "pngSha256": "09d0f4784d7e8b12cea489d2e00ed0059a3dafbaa7ac6827725839cfbd4a5ab6",
-      "widgetCount": 109,
+      "png": "appearance_expanded_bilingual_light_x1.png",
+      "pngSha256": "dcc033d635f177f5a6cefceef6721ea725908e7f60c6a50b5f05eeefeca737e6",
+      "widgetCount": 148,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_bilingual_light_x1.png",
+      "pngSha256": "867a696e953e84e1e77d004ea479b917448abb58521d3165c480021cb54a2d21",
+      "widgetCount": 2561,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_bilingual_light_x1.png",
+      "pngSha256": "bba610cbde86d151469c570e7a77042dddcce700b38fd5e8ac344f0b8f10759c",
+      "widgetCount": 50,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_bilingual_light_x1.png",
+      "pngSha256": "6632bec5fbe5e21c7accaaaebd5c752ff8c6eac78765caf12c52268ec9890e6e",
+      "widgetCount": 61,
       "findingCount": 0
     }
   ]

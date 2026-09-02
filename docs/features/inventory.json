@@ -200,7 +200,19 @@
       "id": "dropdown-search",
       "surface": "app",
       "title": "Search field in every dropdown",
-      "status": "missing"
+      "status": "partial",
+      "note": "Material::Select replaces every stock combo box on the Material screens; the site surface and the per-click ledger/capture are pending",
+      "implementation": {
+        "file": "src/gui/material/MaterialSelect.h",
+        "anchor": "^\\s*class Select : public QAbstractButton$"
+      },
+      "test": {
+        "file": "tests/TestMaterialSelect.cpp",
+        "anchor": "^void TestMaterialSelect::"
+      },
+      "article": {
+        "file": "docs/features/search/dropdown-select.md"
+      }
     },
     {
       "id": "context-menu-search",

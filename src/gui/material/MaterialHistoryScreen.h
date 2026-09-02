@@ -30,8 +30,6 @@
 #include <QVector>
 
 class QVBoxLayout;
-class QDateEdit;
-class QComboBox;
 class QLabel;
 class QProgressBar;
 class QToolButton;
@@ -39,6 +37,9 @@ class QResizeEvent;
 
 namespace Material
 {
+    class DateField;
+    class Select;
+
     /**
      * Which container family a revision's 40px glyph circle is drawn in.
      *
@@ -146,9 +147,9 @@ namespace Material
         Chip* m_settingsChip = nullptr;
         Chip* m_recentChip = nullptr;
         Chip* m_restoreChip = nullptr;
-        QDateEdit* m_fromDate = nullptr;
-        QDateEdit* m_toDate = nullptr;
-        QComboBox* m_datePreset = nullptr;
+        DateField* m_fromDate = nullptr;
+        DateField* m_toDate = nullptr;
+        Select* m_datePreset = nullptr;
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
         QToolButton* m_exportSelected = nullptr;

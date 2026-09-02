@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 24968,
+  "pid": 5224,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "history_compact_bilingual_light_x1.png",
-  "pngSha256": "5aa0d6135a0e5226f00f011c7b9d1dedf9b692d0c9a7fa3c23515fa8d077e431",
+  "pngSha256": "891fcae0a3a0df9d7d9264cdb1e2765b927031ddd77ca886cae0287ae2ddf658",
   "findings": [],
   "widgetCount": 50,
   "widgets": [
@@ -254,7 +254,7 @@
     },
     {
       "class": "Material::HistoryScreen",
-      "hint": "576x417",
+      "hint": "576x415",
       "leaf": false,
       "minimumHint": "516x141",
       "name": "",
@@ -333,7 +333,7 @@
     {
       "class": "QScrollArea",
       "hScrollMax": 7,
-      "hint": "576x282",
+      "hint": "576x280",
       "leaf": false,
       "minimumHint": "66x66",
       "name": "",
@@ -356,9 +356,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "780x350",
+      "hint": "780x348",
       "leaf": false,
-      "minimumHint": "735x340",
+      "minimumHint": "735x338",
       "name": "",
       "offscreen": false,
       "rect": "72,276 735x444",
@@ -505,24 +505,24 @@
       "textWidth": 844
     },
     {
-      "class": "QComboBox",
-      "hint": "152x42",
+      "class": "Material::Select",
+      "hint": "144x40",
       "leaf": true,
-      "minimumHint": "152x42",
+      "minimumHint": "120x40",
       "name": "historyDatePreset",
       "offscreen": false,
-      "rect": "98,428 217x42",
+      "rect": "98,428 217x40",
       "scrollable": true,
       "squeezed": false
     },
     {
-      "class": "QDateEdit",
-      "hint": "126x42",
+      "class": "Material::DateField",
+      "hint": "180x40",
       "leaf": false,
-      "minimumHint": "126x42",
+      "minimumHint": "150x40",
       "name": "historyFromDate",
       "offscreen": false,
-      "rect": "331,428 217x42",
+      "rect": "331,428 217x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -533,18 +533,18 @@
       "minimumHint": "28x18",
       "name": "qt_spinbox_lineedit",
       "offscreen": false,
-      "rect": "344,429 183x40",
+      "rect": "343,428 169x40",
       "scrollable": true,
       "squeezed": false
     },
     {
-      "class": "QDateEdit",
-      "hint": "126x42",
+      "class": "Material::DateField",
+      "hint": "180x40",
       "leaf": false,
-      "minimumHint": "126x42",
+      "minimumHint": "150x40",
       "name": "historyToDate",
       "offscreen": false,
-      "rect": "564,428 217x42",
+      "rect": "564,428 217x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -555,7 +555,7 @@
       "minimumHint": "28x18",
       "name": "qt_spinbox_lineedit",
       "offscreen": false,
-      "rect": "577,429 183x40",
+      "rect": "576,428 169x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -566,7 +566,7 @@
       "minimumHint": "117x16",
       "name": "historyState",
       "offscreen": false,
-      "rect": "98,486 683x16",
+      "rect": "98,484 683x16",
       "scrollable": true,
       "squeezed": false,
       "text": "1 matching revision(s)",
@@ -580,7 +580,7 @@
       "minimumHint": "127x68",
       "name": "",
       "offscreen": false,
-      "rect": "98,518 683x68",
+      "rect": "98,516 683x68",
       "scrollable": true,
       "squeezed": false
     },
@@ -591,7 +591,7 @@
       "minimumHint": "127x68",
       "name": "historyRevision_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "98,518 683x68",
+      "rect": "98,516 683x68",
       "scrollable": true,
       "squeezed": false
     },
@@ -602,7 +602,7 @@
       "minimumHint": "28x22",
       "name": "historySelect_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "116,541 28x22",
+      "rect": "116,539 28x22",
       "scrollable": true,
       "squeezed": false
     },
@@ -613,7 +613,7 @@
       "minimumHint": "47x40",
       "name": "historyDiff_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "716,534 47x40",
+      "rect": "716,532 47x40",
       "scrollable": true,
       "squeezed": false,
       "text": "Diff",

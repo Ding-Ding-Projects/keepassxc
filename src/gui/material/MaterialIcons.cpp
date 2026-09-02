@@ -157,6 +157,7 @@ namespace Material
                 {"check",                "check"},
                 {"check_circle",         "check_circle"},
                 {"checklist",            "checklist"},
+                {"chevron_left",         "chevron_left"},
                 {"chevron_right",        "chevron_right"},
                 {"cleaning_services",    "cleaning_services"},
                 {"cloud_download",       "cloud_download"},

@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 22436,
+  "pid": 25004,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "reports_expanded_bilingual_light_x1.png",
-  "pngSha256": "307e223a254e9fed92b8c75ba29d22ab41fa55d462c1aabe938192b9dab0f032",
+  "pngSha256": "6632bec5fbe5e21c7accaaaebd5c752ff8c6eac78765caf12c52268ec9890e6e",
   "findings": [],
   "widgetCount": 61,
   "widgets": [
@@ -243,9 +243,9 @@
     },
     {
       "class": "QStackedWidget",
-      "hint": "985x750",
+      "hint": "977x750",
       "leaf": false,
-      "minimumHint": "955x670",
+      "minimumHint": "953x670",
       "name": "materialDestinationStack",
       "offscreen": false,
       "rect": "88,156 1112x644",
@@ -254,9 +254,9 @@
     },
     {
       "class": "Material::ReportsScreen",
-      "hint": "985x202",
+      "hint": "977x202",
       "leaf": false,
-      "minimumHint": "955x170",
+      "minimumHint": "953x170",
       "name": "",
       "offscreen": false,
       "rect": "88,156 1112x644",
@@ -265,9 +265,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "985x104",
+      "hint": "977x104",
       "leaf": false,
-      "minimumHint": "955x104",
+      "minimumHint": "953x104",
       "name": "",
       "offscreen": false,
       "rect": "88,156 1112x104",
@@ -325,13 +325,13 @@
       "squeezed": false
     },
     {
-      "class": "QComboBox",
-      "hint": "152x42",
+      "class": "Material::Select",
+      "hint": "144x40",
       "leaf": true,
-      "minimumHint": "152x42",
+      "minimumHint": "120x40",
       "name": "reportsCategory",
       "offscreen": false,
-      "rect": "267,217 152x42",
+      "rect": "267,218 144x40",
       "scrollable": false,
       "squeezed": false
     },
@@ -342,7 +342,7 @@
       "minimumHint": "89x31",
       "name": "reportsExportAll",
       "offscreen": false,
-      "rect": "431,222 89x31",
+      "rect": "423,222 89x31",
       "scrollable": false,
       "squeezed": false,
       "text": "Export report",
@@ -356,7 +356,7 @@
       "minimumHint": "163x31",
       "name": "",
       "offscreen": false,
-      "rect": "532,222 163x31",
+      "rect": "524,222 163x31",
       "scrollable": false,
       "squeezed": false,
       "text": "Export 0 selected finding(s)",

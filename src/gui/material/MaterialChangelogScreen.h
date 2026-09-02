@@ -28,7 +28,6 @@
 
 class QLabel;
 class QVBoxLayout;
-class QDateEdit;
 class QComboBox;
 class QProgressBar;
 class QBoxLayout;
@@ -41,6 +40,7 @@ namespace Material
      * 74px pill, @p tint the family it is drawn in - Good, Value or Warn.
      */
     class Chip;
+    class DateField;
 
     struct ChangeItem
     {
@@ -102,8 +102,8 @@ namespace Material
         QLabel* m_countLabel = nullptr;
         QVector<Release> m_releases;
         QString m_query;
-        QDateEdit* m_fromDate = nullptr;
-        QDateEdit* m_toDate = nullptr;
+        DateField* m_fromDate = nullptr;
+        DateField* m_toDate = nullptr;
         /** The design's preset chips: All time, Last 90 days, Last year, Last 2 years. */
         QList<Chip*> m_presetChips;
         QLabel* m_stateLabel = nullptr;

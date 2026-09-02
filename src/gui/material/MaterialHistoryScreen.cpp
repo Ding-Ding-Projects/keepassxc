@@ -17,6 +17,9 @@
 
 #include "MaterialHistoryScreen.h"
 
+#include "MaterialDateField.h"
+#include "MaterialSelect.h"
+
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -24,7 +27,6 @@
 
 #include <QHBoxLayout>
 #include <QCheckBox>
-#include <QComboBox>
 #include <QDateEdit>
 #include <QLabel>
 #include <QLineEdit>
@@ -62,19 +64,6 @@ namespace Material
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
 
-        class FlexibleDateEdit : public QDateEdit
-        {
-        public:
-            using QDateEdit::QDateEdit;
-
-        protected:
-            QDateTime dateTimeFromText(const QString& text) const override
-            {
-                const QDate iso = QDate::fromString(text.trimmed(), Qt::ISODate);
-                const QDate parsed = iso.isValid() ? iso : locale().toDate(text.trimmed(), QLocale::ShortFormat);
-                return parsed.isValid() ? QDateTime(parsed, QTime(0, 0)) : QDateTime();
-            }
-        };
 
         /** The fill of the glyph circle, one container role per tint. */
         QColor tintContainer(RevisionTint tint)
@@ -391,30 +380,31 @@ namespace Material
         contentLayout()->addWidget(banner);
 
         auto* dates = new QHBoxLayout;
-        m_datePreset = new QComboBox;
+        m_datePreset = new Select;
         m_datePreset->setObjectName(QStringLiteral("historyDatePreset"));
         m_datePreset->setAccessibleName(tr("History date preset"));
+        m_datePreset->setSearchIdentity(QStringLiteral("history.date-preset"), tr("History date preset search"));
         m_datePreset->addItem(tr("All dates"), QStringLiteral("all"));
         m_datePreset->addItem(tr("Last 7 days"), QStringLiteral("7"));
         m_datePreset->addItem(tr("Last 30 days"), QStringLiteral("30"));
-        m_fromDate = new FlexibleDateEdit;
+        m_fromDate = new DateField;
+        m_fromDate->setSearchIdentity(QStringLiteral("history.from"), tr("History start date"));
         m_fromDate->setObjectName(QStringLiteral("historyFromDate"));
         m_fromDate->setAccessibleName(tr("History start date; locale or ISO date"));
-        m_fromDate->setCalendarPopup(true);
         m_fromDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
         m_fromDate->setSpecialValueText(tr("Any start date"));
         m_fromDate->setMinimumDate(QDate(1970, 1, 1));
         m_fromDate->setDate(m_fromDate->minimumDate());
-        m_toDate = new FlexibleDateEdit(QDate::currentDate());
+        m_toDate = new DateField(QDate::currentDate());
+        m_toDate->setSearchIdentity(QStringLiteral("history.to"), tr("History end date"));
         m_toDate->setObjectName(QStringLiteral("historyToDate"));
         m_toDate->setAccessibleName(tr("History end date; locale or ISO date"));
-        m_toDate->setCalendarPopup(true);
         m_toDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
         dates->addWidget(m_datePreset);
         dates->addWidget(m_fromDate);
         dates->addWidget(m_toDate);
         contentLayout()->addLayout(dates);
-        connect(m_datePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
+        connect(m_datePreset, &Select::currentIndexChanged, this, [this](int index) {
             const QString value = m_datePreset->itemData(index).toString();
             m_fromDate->setDate(value == QLatin1String("all") ? m_fromDate->minimumDate()
                                                                : QDate::currentDate().addDays(-value.toInt()));

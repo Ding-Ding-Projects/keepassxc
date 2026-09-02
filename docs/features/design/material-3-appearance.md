@@ -12,7 +12,7 @@ Every widget resolves colour, typography, shape, elevation and motion through `M
 
 ## Failure modes
 
-The parity audits list the remaining primitive differences per screen. Boolean settings rows render a real Material switch that answers for the row: one click, one activation, and the owner re-syncs the switch after applying the value. The element-override sliders on the Appearance page carry a caption with the property name and its live pixel value, so a reader knows which property the thumb moves.
+The parity audits list the remaining primitive differences per screen. Boolean settings rows render a real Material switch that answers for the row: one click, one activation, and the owner re-syncs the switch after applying the value. The element-override sliders on the Appearance page carry a caption with the property name and its live pixel value, so a reader knows which property the thumb moves. Every slider is a `Material::Slider` (`src/gui/material/MaterialSlider.h`): the Material Design 3 anatomy with a 16 px track split by a 4 px handle bar that thins while pressed, a stop indicator at the far end, a value label above the handle during a drag, a keyboard focus ring, and a press that jumps straight to the pointer. Every dropdown is a `Material::Select` list box with its own search bar (see [dropdown-select](../search/dropdown-select.md)). No stock combo box or slider remains on a Material surface; the date fields on History and Changelog are the last stock controls and are recorded as open parity defects.
 
 ## Security considerations
 
@@ -20,7 +20,7 @@ No network access; fonts come from the installed system faces with a CJK-safe fa
 
 ## Verification
 
-`testmaterialappearance` (five cases, including the captioned override sliders) and `testmaterialshellresponsive::settingsSwitchRowsToggleAndStayInStep` and the parity rows `appearance-default` and `shell-default`.
+`testmaterialappearance` (five cases, including the captioned override sliders), `testmaterialslider`, `testmaterialselect` and `testmaterialshellresponsive::settingsSwitchRowsToggleAndStayInStep` and the parity rows `appearance-default` and `shell-default`.
 
 ## Suggested articles
 

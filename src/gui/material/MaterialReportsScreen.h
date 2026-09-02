@@ -34,10 +34,11 @@ class QLabel;
 class QProgressBar;
 class QToolButton;
 class QResizeEvent;
-class QComboBox;
 
 namespace Material
 {
+    class Select;
+
     class Card;
 
     /**
@@ -129,7 +130,7 @@ namespace Material
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
         QToolButton* m_bulkExport = nullptr;
-        QComboBox* m_category = nullptr;
+        Select* m_category = nullptr;
         State m_state = State::Empty;
         QSet<QString> m_selectedIds;
         QVector<ReportCard> m_reportCards;

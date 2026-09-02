@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 29440,
+  "pid": 25900,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "history_expanded_bilingual_light_x1.png",
-  "pngSha256": "d58f0f52e884a7b8af7136f63dd8dd7cae52e6692365eb8bd9c652cbe93e1508",
+  "pngSha256": "bba610cbde86d151469c570e7a77042dddcce700b38fd5e8ac344f0b8f10759c",
   "findings": [],
   "widgetCount": 50,
   "widgets": [
@@ -254,7 +254,7 @@
     },
     {
       "class": "Material::HistoryScreen",
-      "hint": "576x417",
+      "hint": "576x415",
       "leaf": false,
       "minimumHint": "516x141",
       "name": "",
@@ -333,7 +333,7 @@
     {
       "class": "QScrollArea",
       "hScrollMax": 0,
-      "hint": "576x282",
+      "hint": "576x280",
       "leaf": false,
       "minimumHint": "66x66",
       "name": "",
@@ -356,9 +356,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "835x350",
+      "hint": "835x348",
       "leaf": false,
-      "minimumHint": "735x340",
+      "minimumHint": "735x338",
       "name": "",
       "offscreen": false,
       "rect": "88,261 1112x539",
@@ -505,24 +505,24 @@
       "textWidth": 844
     },
     {
-      "class": "QComboBox",
-      "hint": "152x42",
+      "class": "Material::Select",
+      "hint": "144x40",
       "leaf": true,
-      "minimumHint": "152x42",
+      "minimumHint": "120x40",
       "name": "historyDatePreset",
       "offscreen": false,
-      "rect": "114,403 343x42",
+      "rect": "114,403 343x40",
       "scrollable": true,
       "squeezed": false
     },
     {
-      "class": "QDateEdit",
-      "hint": "126x42",
+      "class": "Material::DateField",
+      "hint": "180x40",
       "leaf": false,
-      "minimumHint": "126x42",
+      "minimumHint": "150x40",
       "name": "historyFromDate",
       "offscreen": false,
-      "rect": "473,403 342x42",
+      "rect": "473,403 342x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -533,18 +533,18 @@
       "minimumHint": "28x18",
       "name": "qt_spinbox_lineedit",
       "offscreen": false,
-      "rect": "486,404 308x40",
+      "rect": "485,403 294x40",
       "scrollable": true,
       "squeezed": false
     },
     {
-      "class": "QDateEdit",
-      "hint": "126x42",
+      "class": "Material::DateField",
+      "hint": "180x40",
       "leaf": false,
-      "minimumHint": "126x42",
+      "minimumHint": "150x40",
       "name": "historyToDate",
       "offscreen": false,
-      "rect": "831,403 343x42",
+      "rect": "831,403 343x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -555,7 +555,7 @@
       "minimumHint": "28x18",
       "name": "qt_spinbox_lineedit",
       "offscreen": false,
-      "rect": "844,404 309x40",
+      "rect": "843,403 295x40",
       "scrollable": true,
       "squeezed": false
     },
@@ -566,7 +566,7 @@
       "minimumHint": "117x16",
       "name": "historyState",
       "offscreen": false,
-      "rect": "114,461 1060x16",
+      "rect": "114,459 1060x16",
       "scrollable": true,
       "squeezed": false,
       "text": "1 matching revision(s)",
@@ -580,7 +580,7 @@
       "minimumHint": "127x68",
       "name": "",
       "offscreen": false,
-      "rect": "114,493 1000x68",
+      "rect": "114,491 1000x68",
       "scrollable": true,
       "squeezed": false
     },
@@ -591,7 +591,7 @@
       "minimumHint": "127x68",
       "name": "historyRevision_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "114,493 1000x68",
+      "rect": "114,491 1000x68",
       "scrollable": true,
       "squeezed": false
     },
@@ -602,7 +602,7 @@
       "minimumHint": "28x22",
       "name": "historySelect_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "132,516 28x22",
+      "rect": "132,514 28x22",
       "scrollable": true,
       "squeezed": false
     },
@@ -613,7 +613,7 @@
       "minimumHint": "47x40",
       "name": "historyDiff_449c72c8-e6d3-46c3-80dd-9de30b7f61c0",
       "offscreen": false,
-      "rect": "1049,509 47x40",
+      "rect": "1049,507 47x40",
       "scrollable": true,
       "squeezed": false,
       "text": "Diff",

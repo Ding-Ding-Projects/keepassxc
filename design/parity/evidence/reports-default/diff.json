@@ -13,9 +13,9 @@
     "height": 860
   },
   "sizeMismatch": false,
-  "mismatchedPixels": 115999,
-  "mismatchRatio": 0.11240213178294574,
-  "differingCells": 599,
+  "mismatchedPixels": 115976,
+  "mismatchRatio": 0.11237984496124032,
+  "differingCells": 597,
   "cellSize": 32,
   "boxes": [
     {
@@ -43,12 +43,6 @@
       "h": 32
     },
     {
-      "x": 224,
-      "y": 0,
-      "w": 32,
-      "h": 32
-    },
-    {
       "x": 256,
       "y": 0,
       "w": 32,
@@ -98,12 +92,6 @@
     },
     {
       "x": 512,
-      "y": 0,
-      "w": 32,
-      "h": 32
-    },
-    {
-      "x": 544,
       "y": 0,
       "w": 32,
       "h": 32
@@ -2414,13 +2402,25 @@
     },
     {
       "x": 352,
+      "y": 512,
+      "w": 32,
+      "h": 32
+    },
+    {
+      "x": 384,
+      "y": 512,
+      "w": 32,
+      "h": 32
+    },
+    {
+      "x": 416,
       "y": 512,
       "w": 32,
       "h": 32
     }
   ],
   "referenceSha256": "8265bc8dfe88182222c5ba2e6e5a14c6ebe6c9a42f27a88ad99f1f696d3314e6",
-  "builtSha256": "c9005aeb0654b48a07047f9c75498ff91d841c7b08c1a562d5557c58ff5dc1b4",
-  "comparisonSha256": "8ed28ce7687fbb36b2a7dc9c5cdb6b446c6a7de1371ba224fc3a4bcae5ec136d",
-  "generatedAt": "2026-09-02T01:27:17.201Z"
+  "builtSha256": "fbb405df90d6b47bc148b626e4beafba17722b2a9ab110ceae642c1ec9665ccf",
+  "comparisonSha256": "8904e67a338e0d53482be46d3b8040365395cde80246d776f30ddff17c140087",
+  "generatedAt": "2026-09-02T18:06:57.974Z"
 }

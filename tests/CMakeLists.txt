@@ -278,6 +278,42 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testmaterialselect SOURCES TestMaterialSelect.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialselect PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialselect POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialselect>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialselect>/platforms/"
+            VERBATIM)
+endif()
+
+add_unit_test(NAME testmaterialslider SOURCES TestMaterialSlider.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialslider PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialslider POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialslider>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialslider>/platforms/"
+            VERBATIM)
+endif()
+
+add_unit_test(NAME testmaterialdatefield SOURCES TestMaterialDateField.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialdatefield PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialdatefield POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialdatefield>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialdatefield>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testmaterialtabs SOURCES TestMaterialTabs.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialtabs PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")

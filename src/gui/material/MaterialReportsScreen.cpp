@@ -17,6 +17,8 @@
 
 #include "MaterialReportsScreen.h"
 
+#include "MaterialSelect.h"
+
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
 #include "MaterialChip.h"
@@ -27,7 +29,6 @@
 #include <QAbstractButton>
 #include <QGridLayout>
 #include <QCheckBox>
-#include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QLineEdit>
@@ -504,15 +505,16 @@ namespace Material
         // stretches across the width instead of sitting at 340 px in a corner.
         searchBar()->setMinimumWidth(SearchWidth);
 
-        m_category = new QComboBox;
+        m_category = new Select;
         m_category->setObjectName(QStringLiteral("reportsCategory"));
         m_category->setAccessibleName(tr("Report category"));
+        m_category->setSearchIdentity(QStringLiteral("reports.category"), tr("Report category search"));
         m_category->addItem(tr("All findings"), QStringLiteral("all"));
         m_category->addItem(tr("Weak"), QStringLiteral("weak"));
         m_category->addItem(tr("Reused"), QStringLiteral("reused"));
         m_category->addItem(tr("Expired"), QStringLiteral("expired"));
         m_category->addItem(tr("Excluded"), QStringLiteral("excluded"));
-        connect(m_category, &QComboBox::currentIndexChanged, this, [this](int index) {
+        connect(m_category, &Select::currentIndexChanged, this, [this](int index) {
             emit categoryChanged(m_category->itemData(index).toString());
         });
         insertHeaderWidget(0, m_category);

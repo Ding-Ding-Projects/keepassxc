@@ -2,9 +2,9 @@
 #include "gui/material/MaterialCard.h"
 #include "gui/material/MaterialReportsScreen.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSelect.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include <QCheckBox>
-#include <QComboBox>
 #include <QLineEdit>
 #include <QProgressBar>
 #include <QSignalSpy>
@@ -91,7 +91,7 @@ void TestMaterialReports::searchRegistrationAndResponsiveLayout()
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("reports.findings")), screen.searchBar());
     emit screen.searchBar()->builderRequested();
     QCOMPARE(SearchRegistry::instance()->current(), screen.searchBar());
-    auto* category = screen.findChild<QComboBox*>(QStringLiteral("reportsCategory"));
+    auto* category = screen.findChild<Select*>(QStringLiteral("reportsCategory"));
     QVERIFY(category);
     QVERIFY(!category->accessibleName().isEmpty());
 

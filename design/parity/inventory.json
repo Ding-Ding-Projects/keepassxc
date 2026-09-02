@@ -34,22 +34,29 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/appearance-default.json",
-        "sha256": "51b2dc57cef3cf1653b6491204de9fcd19ddb641fb29fe30686ffd12c3ea1496"
+        "sha256": "85e0379cdf49e5f8f79b22c8504e6ec638f82c9ebb0d3d024df36f7459d6ab47"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/appearance-default/reference.png",
         "referenceRawSha256": "b600f4105ccf87fb9b1f8c307c6bb56fe329bc395723930f3ad73f017fc79aac",
         "builtRaw": "design/parity/evidence/appearance-default/built.png",
-        "builtRawSha256": "ec02e6d97b26996d93348875f5f84e00d237408c07ca134ff1d5f27c38eaccdb",
+        "builtRawSha256": "a452e4332ef2d0b4f8cc602abe0cf37e4b71d6c91ac3449736ac62ecacbfe22c",
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
-        "comparisonSha256": "d11110af42ab903ef9e92b131467585fdebfee96619471c9af17d2684b11a4f3",
+        "comparisonSha256": "554079b0eeff5f37914b96da94eb488e68f782f1f8a1ec9aeb1794a6097fef1d",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "5be065738b2d312d91442dd8304cb1eb14d4c79da70e893290dff10cd0822a4b",
-        "mismatchRatio": 0.10001744186046511
+        "diffSha256": "2d73c43c5075a946d6925794351097aa72a87ea8b6c065908fb4a39d42efc07a",
+        "mismatchRatio": 0.10750193798449613
       },
-      "deviations": [],
-      "sourceCommit": "2afa4bc72cd7fd9581496dc42a804331dd7c6a23",
+      "deviations": [
+        {
+          "id": "appearance-default-dev-slider",
+          "primitive": "sliders",
+          "reason": "The reference draws the earlier Material 3 slider (thin track, round thumb). The built app uses the current Material Design 3 slider anatomy (16 px track, 4 px handle bar, stop indicator, value label) because the owner asked for every control to be pure Material Design 3; the mismatch percentage rises by about 0.75 points for it.",
+          "approval": "Owner direction 2026-09-02: every control must be 100% Material Design 3; the current slider anatomy is the conforming one."
+        }
+      ],
+      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -84,22 +91,22 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/changelog-default.json",
-        "sha256": "31124ddbe394465ebf22b8c3649ba1f0f41f2f14a8b98799705ecfedd8982a2d"
+        "sha256": "89ea3b8d2bb018c611cd1da5a4f56b930216244775914cd76cb89a6f392bf64a"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/changelog-default/reference.png",
         "referenceRawSha256": "392352e3cec98a4ceef0f28db80429bc1c577083b4519bf2a1f1623c0b23d32f",
         "builtRaw": "design/parity/evidence/changelog-default/built.png",
-        "builtRawSha256": "086b7ce3b216023d34df1de43e3275226eb06aac2de2392f2fa8256c7b093766",
+        "builtRawSha256": "c9e11e2a8744e364404e7c3ebb84b3fd342c8ba14305df8011b3f9a6555fcc98",
         "comparison": "design/parity/evidence/changelog-default/comparison.png",
-        "comparisonSha256": "5687164a8f73801759be2e627c1051553097674b72d360a6058abb87e4fb0756",
+        "comparisonSha256": "0f6799147f4fa42221496382042897f7fe8babd90933bba2a5e822dde2971986",
         "diff": "design/parity/evidence/changelog-default/diff.json",
-        "diffSha256": "7ededfcbcdf43f16ecc32e27f857fc5fa247aca2337c141e72369127bbd46814",
-        "mismatchRatio": 0.08325968992248062
+        "diffSha256": "e81b6273f170441ce4e3a3e8e414646f9ae4170b3798c38131c295ee44bbaf3a",
+        "mismatchRatio": 0.08243992248062015
       },
       "deviations": [],
-      "sourceCommit": "5c1beee24c3ad730dd0f43598feb9cfdb4728862",
+      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -141,12 +148,12 @@
         "referenceRaw": "design/parity/evidence/history-default/reference.png",
         "referenceRawSha256": "493416b3f99c11c1a1c5bd3638668e4e8878996763f6650f99d9066424252529",
         "builtRaw": "design/parity/evidence/history-default/built.png",
-        "builtRawSha256": "d68c1547c4e3268fc3f00749a8fdeac256b0ed24bdf1b5e208b2764d87dcc2f5",
+        "builtRawSha256": "df48d2d89418edc226c4a32f49b3beab1c5ed4c43d439b20fbe46a16a8b88bbb",
         "comparison": "design/parity/evidence/history-default/comparison.png",
-        "comparisonSha256": "60ba19afed6f52868cdda17d5f8fa371f2b25bd6113f7409c47b7e8da96c98f8",
+        "comparisonSha256": "b23e1a7eedaf2b49ed12568f6afc373ecae26b43a645db4d7fd8812c86dc7a6a",
         "diff": "design/parity/evidence/history-default/diff.json",
-        "diffSha256": "c23194c613bd4359bfbd8d6c28c2c25b97c0055bf2b9027e86566daff1a3607f",
-        "mismatchRatio": 0.0667141472868217
+        "diffSha256": "cac6dad7a283931bf0ab59822079a8270d36f0e9dbee426638cc21119ea94cb8",
+        "mismatchRatio": 0.0660765503875969
       },
       "deviations": [
         {
@@ -154,7 +161,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "981efe481ed962a931e646c602498c6d0845d017",
+      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -310,15 +317,15 @@
         "referenceRaw": "design/parity/evidence/reports-default/reference.png",
         "referenceRawSha256": "8265bc8dfe88182222c5ba2e6e5a14c6ebe6c9a42f27a88ad99f1f696d3314e6",
         "builtRaw": "design/parity/evidence/reports-default/built.png",
-        "builtRawSha256": "c9005aeb0654b48a07047f9c75498ff91d841c7b08c1a562d5557c58ff5dc1b4",
+        "builtRawSha256": "fbb405df90d6b47bc148b626e4beafba17722b2a9ab110ceae642c1ec9665ccf",
         "comparison": "design/parity/evidence/reports-default/comparison.png",
-        "comparisonSha256": "8ed28ce7687fbb36b2a7dc9c5cdb6b446c6a7de1371ba224fc3a4bcae5ec136d",
+        "comparisonSha256": "8904e67a338e0d53482be46d3b8040365395cde80246d776f30ddff17c140087",
         "diff": "design/parity/evidence/reports-default/diff.json",
-        "diffSha256": "99f8afe8522fc7e4f4bc51bc07746fab276484f47c2b7be4a07a36fa28ddaf8c",
-        "mismatchRatio": 0.11240213178294574
+        "diffSha256": "4b925d7d7c16872d5c82f0b50f9a20ffe1b8310fd732b09150e374172dcc1cca",
+        "mismatchRatio": 0.11237984496124032
       },
       "deviations": [],
-      "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
@@ -352,7 +359,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/settings-default.json",
-        "sha256": "176d1e1a06e190b683417a3b6b483d23d0d6fc3407df39d229a8787a9ec4da89"
+        "sha256": "1d7b3562ccf6b7e0a470696c1eb08ceaff8dbb21f9566847f3e2b9903cbd360e"
       },
       "evidence": {
         "status": "complete",
@@ -363,11 +370,11 @@
         "comparison": "design/parity/evidence/settings-default/comparison.png",
         "comparisonSha256": "3f996869e3a58c2ccb21db86e4d7f7ea032faf64e12a36a1d00044e18017a3fe",
         "diff": "design/parity/evidence/settings-default/diff.json",
-        "diffSha256": "e401ca89ad9d1f3eba8f0757281f7f7ebcc7f871f6a34d6478bc7cb97d9b46cd",
+        "diffSha256": "1e4afc41ccff5697602db9f0401e1d9cb250b1a5f1d4e85ebbc364ff722ffa82",
         "mismatchRatio": 0.05926689680232558
       },
       "deviations": [],
-      "sourceCommit": "2afa4bc72cd7fd9581496dc42a804331dd7c6a23",
+      "sourceCommit": "07c2354926133532edb525dc554eea1323b993cf",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },

@@ -17,6 +17,8 @@
 
 #include "MaterialChangelogScreen.h"
 
+#include "MaterialDateField.h"
+
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
 #include "MaterialElevation.h"
@@ -101,18 +103,6 @@ namespace Material
             return item.tag.contains(query, Qt::CaseInsensitive) || item.text.contains(query, Qt::CaseInsensitive);
         }
 
-        class FlexibleDateEdit : public QDateEdit
-        {
-        public:
-            using QDateEdit::QDateEdit;
-        protected:
-            QDateTime dateTimeFromText(const QString& text) const override
-            {
-                const QDate iso = QDate::fromString(text.trimmed(), Qt::ISODate);
-                const QDate parsed = iso.isValid() ? iso : locale().toDate(text.trimmed(), QLocale::ShortFormat);
-                return parsed.isValid() ? QDateTime(parsed, QTime(0, 0)) : QDateTime();
-            }
-        };
 
         /** One change: a fixed width tag pill and the wrapping description. */
         class ChangeRow : public QWidget
@@ -440,16 +430,16 @@ namespace Material
             });
             m_presetChips.append(chip);
         }
-        m_fromDate = new FlexibleDateEdit;
+        m_fromDate = new DateField;
+        m_fromDate->setSearchIdentity(QStringLiteral("changelog.from"), tr("Changelog start date"));
         m_fromDate->setObjectName(QStringLiteral("changelogFromDate"));
-        m_fromDate->setCalendarPopup(true);
         m_fromDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
         m_fromDate->setMinimumDate(QDate(1970, 1, 1));
         m_fromDate->setSpecialValueText(tr("Any start date"));
         m_fromDate->setDate(m_fromDate->minimumDate());
-        m_toDate = new FlexibleDateEdit(QDate::currentDate());
+        m_toDate = new DateField(QDate::currentDate());
+        m_toDate->setSearchIdentity(QStringLiteral("changelog.to"), tr("Changelog end date"));
         m_toDate->setObjectName(QStringLiteral("changelogToDate"));
-        m_toDate->setCalendarPopup(true);
         m_toDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
         // Presets on their own row so the two date pickers always fit beside
         // each other; the row wraps to a column at compact widths like the dates.

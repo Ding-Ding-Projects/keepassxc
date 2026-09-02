@@ -17,6 +17,9 @@
 
 #include "MaterialSettingsScreen.h"
 
+#include "MaterialSelect.h"
+#include "MaterialSlider.h"
+
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
 #include "MaterialElevation.h"
@@ -34,8 +37,6 @@
 #include "gui/Application.h"
 
 #include <QColorDialog>
-#include <QComboBox>
-#include <QCompleter>
 #include <QEnterEvent>
 #include <QFontDatabase>
 #include <QFontInfo>
@@ -640,19 +641,20 @@ namespace Material
         content->setSpacing(10);
         QStringList haystack{tr("Typography"), tr("Font family size scale weight live preview")};
 
-        m_fontFamily = new QComboBox;
+        // Every installed family, each row rendered in its own face, behind
+        // the select's own search bar and anchored regex builder.
+        m_fontFamily = new Select;
         m_fontFamily->setObjectName(QStringLiteral("appearanceFontFamily"));
         m_fontFamily->setAccessibleName(tr("Interface font family"));
-        m_fontFamily->setEditable(true);
-        m_fontFamily->setInsertPolicy(QComboBox::NoInsert);
+        m_fontFamily->setSearchIdentity(QStringLiteral("appearance.font-family"), tr("Interface font family search"));
+        m_fontFamily->setSearchPlaceholder(tr("Search installed fonts"));
         const auto families = QFontDatabase::families();
         for (const auto& family : families) {
             m_fontFamily->addItem(family);
-            m_fontFamily->setItemData(m_fontFamily->count() - 1, QFont(family), Qt::FontRole);
+            m_fontFamily->setItemFont(m_fontFamily->count() - 1, QFont(family));
         }
         m_fontFamily->setCurrentText(theme()->uiFamily());
-        m_fontFamily->completer()->setCaseSensitivity(Qt::CaseInsensitive);
-        connect(m_fontFamily, &QComboBox::currentTextChanged, this, [this](const QString& family) {
+        connect(m_fontFamily, &Select::currentTextChanged, this, [this](const QString& family) {
             if (m_updating || !QFontDatabase::families().contains(family)) return;
             config()->set(Config::GUI_FontFamily, family);
             Application::applyFontSize();
@@ -661,7 +663,7 @@ namespace Material
         content->addWidget(m_fontFamily);
 
         m_fontScaleValue = makeLabel(QString(), TypeRole::LabelMedium, Role::Primary);
-        m_fontScale = new QSlider(Qt::Horizontal);
+        m_fontScale = new Slider(Qt::Horizontal);
         m_fontScale->setObjectName(QStringLiteral("appearanceFontScale"));
         m_fontScale->setRange(85, 140);
         m_fontScale->setSingleStep(5);
@@ -678,15 +680,16 @@ namespace Material
         content->addWidget(m_fontScaleValue);
         content->addWidget(m_fontScale);
 
-        m_fontWeight = new QComboBox;
+        m_fontWeight = new Select;
         m_fontWeight->setObjectName(QStringLiteral("appearanceFontWeight"));
         m_fontWeight->setAccessibleName(tr("Interface font weight"));
+        m_fontWeight->setSearchIdentity(QStringLiteral("appearance.font-weight"), tr("Interface font weight search"));
         m_fontWeight->addItem(tr("Light"), 300);
         m_fontWeight->addItem(tr("Regular"), 400);
         m_fontWeight->addItem(tr("Medium"), 500);
         m_fontWeight->addItem(tr("Bold"), 700);
         m_fontWeight->setCurrentIndex(qMax(0, m_fontWeight->findData(config()->get(Config::GUI_FontWeight).toInt())));
-        connect(m_fontWeight, &QComboBox::currentIndexChanged, this, [this](int index) {
+        connect(m_fontWeight, &Select::currentIndexChanged, this, [this](int index) {
             if (m_updating || index < 0) return;
             config()->set(Config::GUI_FontWeight, m_fontWeight->itemData(index));
             Application::applyFontSize();
@@ -713,9 +716,10 @@ namespace Material
         content->setSpacing(8);
         QStringList haystack{tr("Element overrides height radius font size spacing color reset")};
 
-        m_overrideElement = new QComboBox;
+        m_overrideElement = new Select;
         m_overrideElement->setObjectName(QStringLiteral("appearanceOverrideElement"));
         m_overrideElement->setAccessibleName(tr("Element to customize"));
+        m_overrideElement->setSearchIdentity(QStringLiteral("appearance.override-element"), tr("Element override target search"));
         m_overrideElement->addItem(tr("Appearance search"), QStringLiteral("appearance/search"));
         m_overrideElement->addItem(tr("Font chooser"), QStringLiteral("appearance/font-button"));
         m_overrideElement->addItem(tr("Live preview"), QStringLiteral("appearance/preview"));
@@ -730,7 +734,7 @@ namespace Material
             caption->setObjectName(objectName + QStringLiteral("Label"));
             caption->setAccessibleName(name);
             content->addWidget(caption);
-            auto* slider = new QSlider(Qt::Horizontal);
+            auto* slider = new Slider(Qt::Horizontal);
             slider->setObjectName(objectName);
             slider->setAccessibleName(name);
             slider->setRange(minimum, maximum);
@@ -770,7 +774,7 @@ namespace Material
             m_updating = false;
             applyCurrentOverride();
         };
-        connect(m_overrideElement, &QComboBox::currentIndexChanged, this, [load](int) { load(); });
+        connect(m_overrideElement, &Select::currentIndexChanged, this, [load](int) { load(); });
         for (auto* slider : {m_overrideHeight, m_overrideRadius, m_overrideFontSize, m_overrideSpacing}) {
             connect(slider, &QSlider::valueChanged, this, [this](int) {
                 if (m_updating) return;
@@ -854,7 +858,7 @@ namespace Material
             content->addSpacing(6);
             haystack << label;
 
-            auto* slider = new QSlider(Qt::Horizontal);
+            auto* slider = new Slider(Qt::Horizontal);
             slider->setRange(Voice::MinLevel, Voice::MaxLevel);
             slider->setSingleStep(1);
             slider->setPageStep(1);

@@ -4,12 +4,12 @@
 #include "gui/material/MaterialCard.h"
 #include "gui/material/MaterialElementOverrides.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSelect.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSegmentedButton.h"
 #include "gui/material/MaterialSettingsScreen.h"
 #include "gui/material/MaterialTheme.h"
 
-#include <QComboBox>
 #include <QJsonDocument>
 #include <QLabel>
 #include <QLineEdit>
@@ -52,9 +52,9 @@ void TestMaterialAppearance::themeTypographyAndResponsiveControls()
 
     auto* mode = screen.findChild<SegmentedButton*>(QStringLiteral("appearanceThemeMode"));
     auto* density = screen.findChild<SegmentedButton*>(QStringLiteral("appearanceDensity"));
-    auto* family = screen.findChild<QComboBox*>(QStringLiteral("appearanceFontFamily"));
+    auto* family = screen.findChild<Select*>(QStringLiteral("appearanceFontFamily"));
     auto* scale = screen.findChild<QSlider*>(QStringLiteral("appearanceFontScale"));
-    auto* weight = screen.findChild<QComboBox*>(QStringLiteral("appearanceFontWeight"));
+    auto* weight = screen.findChild<Select*>(QStringLiteral("appearanceFontWeight"));
     auto* preview = screen.findChild<QLabel*>(QStringLiteral("appearanceFontPreview"));
     QVERIFY(mode && density && family && scale && weight && preview);
     QCOMPARE(mode->focusPolicy(), Qt::StrongFocus);
@@ -151,7 +151,7 @@ void TestMaterialAppearance::elementOverridePersistenceAndReset()
 
     SettingsScreen screen;
     screen.show();
-    auto* selector = screen.findChild<QComboBox*>(QStringLiteral("appearanceOverrideElement"));
+    auto* selector = screen.findChild<Select*>(QStringLiteral("appearanceOverrideElement"));
     auto* height = screen.findChild<QSlider*>(QStringLiteral("appearanceOverrideHeight"));
     auto* reset = screen.findChild<QPushButton*>(QStringLiteral("appearanceOverrideReset"));
     QVERIFY(selector && height && reset);

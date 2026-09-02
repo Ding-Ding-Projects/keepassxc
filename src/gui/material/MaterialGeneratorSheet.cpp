@@ -17,6 +17,8 @@
 
 #include "MaterialGeneratorSheet.h"
 
+#include "MaterialSlider.h"
+
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -473,7 +475,7 @@ namespace Material
         caption->addWidget(m_lengthValue);
         layout->addLayout(caption);
 
-        m_lengthSlider = new QSlider(Qt::Horizontal);
+        m_lengthSlider = new Slider(Qt::Horizontal);
         m_lengthSlider->setRange(MinLength, MaxLength);
         m_lengthSlider->setValue(DefaultLength);
         m_lengthSlider->setPageStep(4);
@@ -584,15 +586,8 @@ namespace Material
         m_valueLabel->setStyleSheet(
             QStringLiteral("color:%1;background:transparent;").arg(theme()->hex(Role::OnSurface)));
 
-        // The handle is the full height of the track, so the whole control
-        // reads as one pill the way the design's range input does.
-        m_lengthSlider->setStyleSheet(
-            QStringLiteral("QSlider::groove:horizontal{height:%1px;border-radius:%2px;background:%3;}"
-                           "QSlider::sub-page:horizontal{height:%1px;border-radius:%2px;background:%4;}"
-                           "QSlider::handle:horizontal{width:%1px;margin:0;border-radius:%2px;background:%4;}")
-                .arg(SliderTrackHeight)
-                .arg(SliderTrackHeight / 2)
-                .arg(theme()->hex(Role::SecondaryContainer), theme()->hex(Role::Primary)));
+        // The length slider is a Material::Slider and paints itself from the
+        // theme, so it needs no stylesheet here.
 
         const QFont chipFont = pillFont();
         for (CharsetPill* pill : std::as_const(m_charsetPills)) {

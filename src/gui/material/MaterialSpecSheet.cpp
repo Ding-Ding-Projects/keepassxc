@@ -17,6 +17,7 @@
 
 #include "MaterialSpecSheet.h"
 
+#include "MaterialSelect.h"
 #include "MaterialSwitch.h"
 
 #include "MaterialButtons.h"
@@ -35,7 +36,6 @@
 #include <QStackedWidget>
 #include <QVBoxLayout>
 #include <QLineEdit>
-#include <QComboBox>
 #include <QAbstractSpinBox>
 #include <QResizeEvent>
 #include <QKeyEvent>
@@ -439,7 +439,7 @@ namespace Material
         // Native value controls retain their own wheel behavior. Everywhere
         // else on the settings content, the gesture belongs to this page.
         for (QObject* current = watched; current && current != m_content; current = current->parent()) {
-            if (qobject_cast<QAbstractSpinBox*>(current) || qobject_cast<QComboBox*>(current)
+            if (qobject_cast<QAbstractSpinBox*>(current) || qobject_cast<Select*>(current)
                 || (current != this && qobject_cast<QAbstractScrollArea*>(current))) {
                 return QScrollArea::eventFilter(watched, event);
             }
@@ -571,11 +571,12 @@ namespace Material
         root->setContentsMargins(0, 0, 0, 0);
         root->setSpacing(0);
 
-        m_pagePicker = new QComboBox(this);
+        m_pagePicker = new Select(this);
         m_pagePicker->setObjectName(QStringLiteral("settingsPagePicker"));
         m_pagePicker->setAccessibleName(tr("Settings tab"));
+        m_pagePicker->setSearchIdentity(QStringLiteral("settings.page-picker"), tr("Settings page picker search"));
         m_pagePicker->hide();
-        connect(m_pagePicker, &QComboBox::currentIndexChanged, this, [this](int index) {
+        connect(m_pagePicker, &Select::currentIndexChanged, this, [this](int index) {
             if (index >= 0) setCurrentPage(m_pagePicker->itemData(index).toString());
         });
         root->addWidget(m_pagePicker);

@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "changelog-default",
   "status": "complete",
-  "reviewedOn": "2026-09-01",
+  "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
   "verdict": "defects-open",
   "primitives": [
@@ -14,7 +14,7 @@
     {
       "primitive": "date presets",
       "status": "conforms",
-      "finding": "All time / Last 90 days / Last year / Last 2 years filter chips on their own row above the two date pickers (repaired 2026-09-01)."
+      "finding": "All time / Last 90 days / Last year / Last 2 years filter chips on their own row above the two date pickers (repaired 2026-09-01). The from/to fields are Material date fields with the anchored calendar picker (repaired 2026-09-02)."
     },
     {
       "primitive": "search bar",
@@ -37,11 +37,6 @@
       "id": "changelog-default-2",
       "severity": "low",
       "summary": "Code names per version are not in the bundled changelog source"
-    },
-    {
-      "id": "changelog-default-3",
-      "severity": "medium",
-      "summary": "Stock QDateEdit from/to fields instead of Material date fields with the anchored calendar picker"
     }
   ],
   "deviations": []

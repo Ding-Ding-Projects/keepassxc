@@ -28,13 +28,14 @@
 
 class QLabel;
 class QSlider;
-class QComboBox;
 class QPushButton;
 class QGridLayout;
 class QResizeEvent;
 
 namespace Material
 {
+    class Select;
+
     class Card;
     class OutlinedButton;
     class SegmentedButton;
@@ -173,12 +174,12 @@ namespace Material
         SegmentedButton* m_languageSegment = nullptr;
         QList<SeedSwatch*> m_swatches;
         OutlinedButton* m_fontRowButton = nullptr;
-        QComboBox* m_fontFamily = nullptr;
-        QComboBox* m_fontWeight = nullptr;
+        Select* m_fontFamily = nullptr;
+        Select* m_fontWeight = nullptr;
         QSlider* m_fontScale = nullptr;
         QLabel* m_fontScaleValue = nullptr;
         QLabel* m_fontPreview = nullptr;
-        QComboBox* m_overrideElement = nullptr;
+        Select* m_overrideElement = nullptr;
         QSlider* m_overrideHeight = nullptr;
         QSlider* m_overrideRadius = nullptr;
         QSlider* m_overrideFontSize = nullptr;

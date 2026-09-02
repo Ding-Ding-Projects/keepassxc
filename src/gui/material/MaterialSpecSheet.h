@@ -30,12 +30,13 @@ class QLabel;
 class QStackedWidget;
 class QVBoxLayout;
 class QBoxLayout;
-class QComboBox;
 class QResizeEvent;
 class QKeyEvent;
 
 namespace Material
 {
+    class Select;
+
     class ButtonBase;
     class Card;
     class SearchBar;
@@ -253,7 +254,7 @@ namespace Material
         /** Set while a search is being mirrored, to stop the pages echoing. */
         bool m_mirroring = false;
         QBoxLayout* m_rootLayout = nullptr;
-        QComboBox* m_pagePicker = nullptr;
+        Select* m_pagePicker = nullptr;
     };
 
 } // namespace Material
