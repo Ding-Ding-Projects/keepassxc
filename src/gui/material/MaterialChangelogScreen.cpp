@@ -55,7 +55,9 @@ namespace Material
         constexpr int SearchMaximumWidth = 520;
 
         /** The release heading, which the type scale has no role for. */
-        constexpr int VersionSizePx = 20;
+        constexpr int VersionSizePx = 24;
+        constexpr int DateChipHeight = 26;
+        constexpr int DateChipPadding = 11;
         /** The size TypeRole::BodyMedium is defined at, the scale's reference. */
         constexpr int BodySizePx = 14;
 
@@ -123,17 +125,26 @@ namespace Material
                 QSizePolicy policy(QSizePolicy::Preferred, QSizePolicy::Minimum);
                 policy.setHeightForWidth(true);
                 setSizePolicy(policy);
-                m_browser = new QTextBrowser(this);
-                m_browser->setFrameShape(QFrame::NoFrame);
-                m_browser->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                m_browser->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-                m_browser->setOpenLinks(false);
-                m_browser->setOpenExternalLinks(false);
-                m_browser->document()->setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
-                m_browser->setAccessibleName(ChangelogScreen::tr("Rendered changelog item: %1").arg(m_item.text));
-                QObject::connect(m_browser, &QTextBrowser::anchorClicked, m_browser, [](const QUrl& url) {
-                    if (url.scheme() == QLatin1String("https") && url.host() == QLatin1String("github.com")) QDesktopServices::openUrl(url);
+                // A label, not a text browser: the browser wore the input
+                // stylesheet's frame and background and clipped to one line.
+                m_text = new QLabel(this);
+                m_text->setTextFormat(Qt::RichText);
+                m_text->setWordWrap(true);
+                m_text->setOpenExternalLinks(false);
+                m_text->setTextInteractionFlags(Qt::TextBrowserInteraction);
+                QTextDocument document;
+                document.setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
+                m_text->setText(document.toHtml());
+                m_text->setAccessibleName(ChangelogScreen::tr("%1: %2").arg(m_item.tag, document.toPlainText().simplified()));
+                m_text->setStyleSheet(QStringLiteral("background: transparent;"));
+                QObject::connect(m_text, &QLabel::linkActivated, m_text, [](const QString& link) {
+                    const QUrl url(link);
+                    if (url.scheme() == QLatin1String("https") && url.host() == QLatin1String("github.com")) {
+                        QDesktopServices::openUrl(url);
+                    }
                 });
+                applyTheme();
+                QObject::connect(theme(), &Theme::changed, this, [this] { applyTheme(); });
             }
 
             bool hasHeightForWidth() const override
@@ -144,12 +155,7 @@ namespace Material
             int heightForWidth(int width) const override
             {
                 const int textWidth = qMax(1, width - TagWidth - TagGap);
-                QTextDocument document;
-                document.setDefaultFont(theme()->font(TypeRole::BodySmall));
-                document.setMarkdown(m_item.text, QTextDocument::MarkdownDialectGitHub);
-                document.setTextWidth(textWidth);
-                const int textHeight = qCeil(document.size().height());
-                return qMax(textHeight, tagHeight()) + ItemPaddingY * 2;
+                return qMax(m_text->heightForWidth(textWidth), tagHeight()) + ItemPaddingY * 2;
             }
 
             QSize sizeHint() const override
@@ -165,42 +171,74 @@ namespace Material
             }
 
         protected:
+            void resizeEvent(QResizeEvent* event) override
+            {
+                QWidget::resizeEvent(event);
+                m_text->setGeometry(TagWidth + TagGap, ItemPaddingY, qMax(1, width() - TagWidth - TagGap), qMax(1, height() - ItemPaddingY * 2));
+            }
+
             void paintEvent(QPaintEvent* event) override
             {
                 Q_UNUSED(event)
                 QPainter painter(this);
                 painter.setRenderHint(QPainter::Antialiasing);
-
-                const QFont tagFont = theme()->font(TypeRole::LabelSmall);
+                // The design's category chip: 74 px, 22 px tall, small capitals.
+                QFont tagFont = theme()->font(TypeRole::LabelSmall);
+                tagFont.setWeight(QFont::Bold);
+                tagFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5);
                 const QFontMetrics tagMetrics(tagFont);
                 const QRect tagRect(0, ItemPaddingY, TagWidth, tagHeight());
                 QColor container = pillContainerColor(m_item.tint);
                 if (!container.isValid()) {
                     container = theme()->color(Role::SurfaceContainerHigh);
                 }
-                paintSurface(&painter, tagRect, Shape::ExtraSmall, container, pillBorderColor(m_item.tint));
-
+                paintSurface(&painter, tagRect, Shape::ExtraSmall, container);
                 painter.setFont(tagFont);
                 painter.setPen(pillContentColor(m_item.tint));
-                painter.drawText(
-                    tagRect, Qt::AlignCenter, tagMetrics.elidedText(m_item.tag, Qt::ElideRight, TagWidth - 8));
-
-                const QRect textRect(
-                    TagWidth + TagGap, ItemPaddingY, qMax(1, width() - TagWidth - TagGap), height() - ItemPaddingY * 2);
-                m_browser->setGeometry(textRect);
-                m_browser->document()->setDefaultFont(theme()->font(TypeRole::BodySmall));
-                m_browser->document()->setDefaultStyleSheet(QStringLiteral("body { color: %1; margin: 0; }").arg(theme()->hex(Role::OnSurface)));
-                m_browser->document()->setTextWidth(textRect.width());
+                painter.drawText(tagRect, Qt::AlignCenter, tagMetrics.elidedText(m_item.tag, Qt::ElideRight, TagWidth - 8));
+                // The design separates rows with a hairline.
+                painter.setPen(theme()->color(Role::OutlineVariant));
+                painter.drawLine(0, height() - 1, width(), height() - 1);
             }
 
         private:
+            void applyTheme()
+            {
+                m_text->setFont(theme()->font(TypeRole::BodySmall));
+                QPalette palette = m_text->palette();
+                palette.setColor(QPalette::WindowText, theme()->color(Role::OnSurface));
+                palette.setColor(QPalette::Link, theme()->color(Role::Primary));
+                m_text->setPalette(palette);
+            }
+
             int tagHeight() const
             {
-                return QFontMetrics(theme()->font(TypeRole::LabelSmall)).height() + 6;
+                return 22;
             }
 
             ChangeItem m_item;
-            QTextBrowser* m_browser = nullptr;
+            QLabel* m_text = nullptr;
+        };
+
+        /** The design's date chip: 26 px, mono, on the header's tint. */
+        class DatePill : public PillLabel
+        {
+        public:
+            explicit DatePill(const QString& text, QWidget* parent = nullptr)
+                : PillLabel(PillKind::Mono, text, parent)
+            {
+            }
+
+            QSize sizeHint() const override
+            {
+                const QFontMetrics metrics(theme()->font(TypeRole::Mono));
+                return {2 * DateChipPadding + metrics.horizontalAdvance(text()), DateChipHeight};
+            }
+
+            QSize minimumSizeHint() const override
+            {
+                return sizeHint();
+            }
         };
 
         /**
@@ -299,11 +337,12 @@ namespace Material
             }
             head->addStretch(1);
 
-            auto date = new QLabel(release.date);
-            date->setFont(dateFont());
-            date->setAlignment(Qt::AlignRight | Qt::AlignVCenter);
-            tint(date, Role::OnSurfaceVariant);
-            head->addWidget(date);
+            // A release without a date (the pending one) gets no empty chip.
+            if (!release.date.isEmpty()) {
+                auto date = new DatePill(release.date);
+                date->setAccessibleName(ChangelogScreen::tr("Released %1").arg(release.date));
+                head->addWidget(date);
+            }
 
             auto commit = new QLabel;
             commit->setObjectName(QStringLiteral("changelogCommit_%1").arg(release.version));
@@ -371,12 +410,36 @@ namespace Material
 
         auto dates = new QHBoxLayout;
         m_dateLayout = dates;
-        m_datePreset = new QComboBox;
-        m_datePreset->setObjectName(QStringLiteral("changelogDatePreset"));
-        m_datePreset->setAccessibleName(tr("Changelog date preset"));
-        m_datePreset->addItem(tr("All dates"), QStringLiteral("all"));
-        m_datePreset->addItem(tr("Last year"), QStringLiteral("365"));
-        m_datePreset->addItem(tr("Last 5 years"), QStringLiteral("1825"));
+        // The design's presets are chips, one of which is always selected.
+        struct Preset
+        {
+            const char* id;
+            QString label;
+            int days;
+        };
+        const Preset presets[] = {
+            {"all", tr("All time"), 0},
+            {"90", tr("Last 90 days"), 90},
+            {"365", tr("Last year"), 365},
+            {"730", tr("Last 2 years"), 730},
+        };
+        for (const auto& preset : presets) {
+            auto* chip = new Chip(preset.label, this);
+            chip->setKind(Chip::Kind::Filter);
+            chip->setCheckable(true);
+            chip->setObjectName(QStringLiteral("changelogPreset_") + QLatin1String(preset.id));
+            chip->setAccessibleName(tr("Show releases: %1").arg(preset.label));
+            chip->setChecked(preset.days == 0);
+            connect(chip, &QAbstractButton::clicked, this, [this, chip, days = preset.days] {
+                for (Chip* other : m_presetChips) {
+                    other->setChecked(other == chip);
+                }
+                m_fromDate->setDate(days == 0 ? m_fromDate->minimumDate() : QDate::currentDate().addDays(-days));
+                m_toDate->setDate(QDate::currentDate());
+                rebuild();
+            });
+            m_presetChips.append(chip);
+        }
         m_fromDate = new FlexibleDateEdit;
         m_fromDate->setObjectName(QStringLiteral("changelogFromDate"));
         m_fromDate->setCalendarPopup(true);
@@ -388,13 +451,18 @@ namespace Material
         m_toDate->setObjectName(QStringLiteral("changelogToDate"));
         m_toDate->setCalendarPopup(true);
         m_toDate->setDisplayFormat(QLocale().dateFormat(QLocale::ShortFormat));
-        dates->addWidget(m_datePreset); dates->addWidget(m_fromDate); dates->addWidget(m_toDate); dates->addStretch(1);
+        // Presets on their own row so the two date pickers always fit beside
+        // each other; the row wraps to a column at compact widths like the dates.
+        auto* presetRow = new QHBoxLayout;
+        presetRow->setContentsMargins(0, 0, 0, 0);
+        presetRow->setSpacing(RowSpacing);
+        for (Chip* chip : m_presetChips) {
+            presetRow->addWidget(chip);
+        }
+        presetRow->addStretch(1);
+        contentLayout()->addLayout(presetRow);
+        dates->addWidget(m_fromDate); dates->addWidget(m_toDate); dates->addStretch(1);
         contentLayout()->addLayout(dates);
-        connect(m_datePreset, &QComboBox::currentIndexChanged, this, [this](int index) {
-            const QString value = m_datePreset->itemData(index).toString();
-            m_fromDate->setDate(value == QLatin1String("all") ? m_fromDate->minimumDate() : QDate::currentDate().addDays(-value.toInt()));
-            m_toDate->setDate(QDate::currentDate()); rebuild();
-        });
         connect(m_fromDate, &QDateEdit::dateChanged, this, &ChangelogScreen::rebuild);
         connect(m_toDate, &QDateEdit::dateChanged, this, &ChangelogScreen::rebuild);
         m_stateLabel = new QLabel;

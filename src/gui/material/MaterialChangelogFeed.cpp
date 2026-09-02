@@ -62,20 +62,23 @@ namespace Material
         /** Turn a `### Fixes` style section name into the tag pill of its bullets. */
         void tagForSection(const QString& section, QString* tag, PillKind* tint)
         {
+            // The design's category chips: ADDED green, FIXED secondary,
+            // CHANGED amber, SECURITY error, each in small capitals.
             const QString name = section.toLower();
             if (name.contains(QLatin1String("add"))) {
-                *tag = ChangelogFeed::tr("Added");
+                *tag = ChangelogFeed::tr("ADDED");
                 *tint = PillKind::Good;
-            } else if (name.contains(QLatin1String("change"))) {
-                *tag = ChangelogFeed::tr("Changed");
-                *tint = PillKind::Value;
-            } else if (name.contains(QLatin1String("fix"))) {
-                *tag = ChangelogFeed::tr("Fixed");
+            } else if (name.contains(QLatin1String("secur"))) {
+                *tag = ChangelogFeed::tr("SECURITY");
                 *tint = PillKind::Bad;
+            } else if (name.contains(QLatin1String("change"))) {
+                *tag = ChangelogFeed::tr("CHANGED");
+                *tint = PillKind::Warn;
+            } else if (name.contains(QLatin1String("fix"))) {
+                *tag = ChangelogFeed::tr("FIXED");
+                *tint = PillKind::Value;
             } else {
-                // Headings in the file are already capitalised, so they are
-                // kept as written rather than re-cased into something else.
-                *tag = section;
+                *tag = section.toUpper();
                 *tint = PillKind::Value;
             }
         }
@@ -204,10 +207,10 @@ namespace Material
                 // wording stays factual: nothing here can tell a security
                 // release from a feature one, so nothing here claims to.
                 if (current.version == QLatin1String(KEEPASSXC_VERSION)) {
-                    marks << tr("This build");
+                    marks << tr("THIS BUILD");
                     current.statusTint = PillKind::Good;
                 } else if (!newestDated.isEmpty() && current.version == newestDated) {
-                    marks << tr("Latest release");
+                    marks << tr("LATEST");
                     current.statusTint = PillKind::Good;
                 } else {
                     marks << tr("Previous release");

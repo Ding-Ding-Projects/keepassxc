@@ -4,7 +4,7 @@ Feature id: `changelog-viewer` · Category: Records and history
 
 ## Behaviour
 
-The Changelog destination (`Material::ChangelogScreen`) parses every bundled release, composes date and bounded-regex filters, renders safe interactive Markdown, supports copy and export honouring the active filters, and shows explicit empty and unavailable states. A generated catalog maps every released version to its exact tag commit and URL.
+The Changelog destination (`Material::ChangelogScreen`) parses every bundled release, composes date and bounded-regex filters, renders safe interactive Markdown, supports copy and export honouring the active filters, and shows explicit empty and unavailable states. Each release is a card in the reference anatomy: the version, a mono date chip (omitted for the pending release, which has no date), a LATEST or THIS BUILD pill where it applies, and one row per change with its category chip (ADDED green, FIXED secondary, CHANGED amber, SECURITY error, other headings in small capitals) beside wrapping text and a hairline separator. Date presets are chips (All time, Last 90 days, Last year, Last 2 years) on their own row above the two date pickers, so both pickers always fit side by side. Code names per version are not shown: the bundled changelog does not record them; the GitHub release notes do. A generated catalog maps every released version to its exact tag commit and URL.
 
 ## Configuration
 

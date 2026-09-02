@@ -40,6 +40,8 @@ namespace Material
      * One line of a release. @p tag is the fixed / added / changed label of the
      * 74px pill, @p tint the family it is drawn in - Good, Value or Warn.
      */
+    class Chip;
+
     struct ChangeItem
     {
         QString tag;
@@ -102,7 +104,8 @@ namespace Material
         QString m_query;
         QDateEdit* m_fromDate = nullptr;
         QDateEdit* m_toDate = nullptr;
-        QComboBox* m_datePreset = nullptr;
+        /** The design's preset chips: All time, Last 90 days, Last year, Last 2 years. */
+        QList<Chip*> m_presetChips;
         QLabel* m_stateLabel = nullptr;
         QProgressBar* m_progress = nullptr;
         State m_state = State::Loading;

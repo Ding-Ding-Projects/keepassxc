@@ -9,12 +9,12 @@
     {
       "primitive": "version cards",
       "status": "deviates",
-      "finding": "Reference: one card per version with date chip, code name and category chips (ADDED/FIXED/CHANGED); built: rows with a generic 'Changed' chip and no code name."
+      "finding": "Cards carry the 24 px version, a mono date chip, the LATEST / THIS BUILD pill and category chips (ADDED green, FIXED secondary, CHANGED amber, SECURITY error) with wrapping change text and hairline separators (repaired 2026-09-01). Code names are absent: the bundled CHANGELOG.md does not record them; they live in the GitHub release notes."
     },
     {
       "primitive": "date presets",
-      "status": "deviates",
-      "finding": "Reference uses chips (All time / 90 days / year / 2 years); built uses three dropdowns."
+      "status": "conforms",
+      "finding": "All time / Last 90 days / Last year / Last 2 years filter chips on their own row above the two date pickers (repaired 2026-09-01)."
     },
     {
       "primitive": "search bar",
@@ -34,9 +34,9 @@
   ],
   "defects": [
     {
-      "id": "changelog-default-1",
-      "severity": "medium",
-      "summary": "Version card anatomy: category chips and code names missing; date presets are dropdowns"
+      "id": "changelog-default-2",
+      "severity": "low",
+      "summary": "Code names per version are not in the bundled changelog source"
     }
   ],
   "deviations": []

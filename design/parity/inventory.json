@@ -84,22 +84,22 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/changelog-default.json",
-        "sha256": "9f4e5a1e65e83fae61a9956e6be2586d6c08b8a72826ab6d5ba636da6c558089"
+        "sha256": "4d1212916b8100da544b0ddcf66b51c595a84c8b716575ba8b9e4610c9b5ebec"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/changelog-default/reference.png",
         "referenceRawSha256": "392352e3cec98a4ceef0f28db80429bc1c577083b4519bf2a1f1623c0b23d32f",
         "builtRaw": "design/parity/evidence/changelog-default/built.png",
-        "builtRawSha256": "50fe0c033555e509fb157d9cb8f190f5f2b33f83948ab94e7356b4f46f61e0e6",
+        "builtRawSha256": "086b7ce3b216023d34df1de43e3275226eb06aac2de2392f2fa8256c7b093766",
         "comparison": "design/parity/evidence/changelog-default/comparison.png",
-        "comparisonSha256": "47172ee2ded289d1278345fe52eeffbbd1b8122211a712a67a325e05cde0ec4c",
+        "comparisonSha256": "5687164a8f73801759be2e627c1051553097674b72d360a6058abb87e4fb0756",
         "diff": "design/parity/evidence/changelog-default/diff.json",
-        "diffSha256": "dd8772e139edcdeafd07a6796e6f88c97f060e71b52ad416f9791ba7f93e4ab9",
-        "mismatchRatio": 0.08316763565891473
+        "diffSha256": "7ededfcbcdf43f16ecc32e27f857fc5fa247aca2337c141e72369127bbd46814",
+        "mismatchRatio": 0.08325968992248062
       },
       "deviations": [],
-      "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+      "sourceCommit": "5c1beee24c3ad730dd0f43598feb9cfdb4728862",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {
