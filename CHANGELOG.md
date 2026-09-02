@@ -1,5 +1,16 @@
 # Changelog
 
+- Interface: Replace every stock combo box, slider and date field on the Material screens with searchable Material selects (list box plus search bar and regex builder), Material 3 sliders and Material date fields with a calendar picker.
+- Interface: Draw a frameless Material title bar with its own window controls instead of the operating-system caption bar.
+- Appearance: Add a per-element appearance editor (Shift+right-click or Ctrl+Shift+E) with typography, colour, shape and preset tabs, an infinite colour picker with notation translator, contrast readout and an animated rainbow option, plus preset export and import.
+- Vault: Paint tag chips in entry rows, give the detail pane its hero, health chip, field containers, attachment filter and footer actions, and list every entry under the root group.
+- Reports: Rebuild the finding rows and summary tiles to the design's anatomy with a Markdown export and a bulk export action.
+- History: Add the revision detail card with diff lines, badge every created record as CREATE and keep the append-only banner.
+- Regex builder: Rebuild the compact dialog into the workbench (Matches, Explain, Replace, Export, Cheat sheet, Dialect), add reorderable token blocks and the pattern library.
+- Settings: Lay the Appearance page out in up to three columns, name the first card Theme, make every settings switch a Material switch, caption override sliders with their live value, scroll the spec-sheet sidebar in short windows and wrap toggle sub-labels at every width.
+- Settings: Consume the personal vocabulary file at the translation boundary so English, Cantonese and bilingual wording take the user's own terms; accept the canonical `entries` member and refuse anything outside the bounded schema.
+- Search: Elide an over-long placeholder inside the search bar and keep the full text as the accessible description.
+- Design parity: Capture every checked-in reference and the built application on an off-screen desktop, compare them, audit each row against Material Design 3, and fail closed on missing evidence; the clipping matrix covers widths, languages, themes and display scales.
 - Entries: Repair new-entry ownership so TOTP setup, cancellation, and repeated creation cannot crash or lose custom attributes.
 - History: Give each database an isolated encrypted local Git repository and restore permanently deleted entries from the preceding KDBX snapshot.
 - Installation: Mark only the main GUI as Squirrel-aware so setup never launches the bundled Visual C++ redistributable or helper executables as install hooks.
