@@ -34,19 +34,19 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/appearance-default.json",
-        "sha256": "85e0379cdf49e5f8f79b22c8504e6ec638f82c9ebb0d3d024df36f7459d6ab47"
+        "sha256": "c46c70cfae94b3f246717ca115c6eced25179fa8f0ea125b51e0a2550619fa47"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/appearance-default/reference.png",
         "referenceRawSha256": "b600f4105ccf87fb9b1f8c307c6bb56fe329bc395723930f3ad73f017fc79aac",
         "builtRaw": "design/parity/evidence/appearance-default/built.png",
-        "builtRawSha256": "a452e4332ef2d0b4f8cc602abe0cf37e4b71d6c91ac3449736ac62ecacbfe22c",
+        "builtRawSha256": "fa94d0e848ffeb7b07d2201555e68c86525b96af2b9dcd538e45c094b8f6b8de",
         "comparison": "design/parity/evidence/appearance-default/comparison.png",
-        "comparisonSha256": "554079b0eeff5f37914b96da94eb488e68f782f1f8a1ec9aeb1794a6097fef1d",
+        "comparisonSha256": "d43e6c87875eb8dd1a4761b6af8620917c4d0c3d8e39dd98c9fa79674a198079",
         "diff": "design/parity/evidence/appearance-default/diff.json",
-        "diffSha256": "05819daf5c36740795135cda982211074df449c532b49270bd000ab1c2056993",
-        "mismatchRatio": 0.10750193798449613
+        "diffSha256": "c7d93e557fece147d13880927a886f61f792b66e1d21cbf342a90b96b6fdf802",
+        "mismatchRatio": 0.10670542635658915
       },
       "deviations": [
         {
@@ -54,9 +54,15 @@
           "primitive": "sliders",
           "reason": "The reference draws the earlier Material 3 slider (thin track, round thumb). The built app uses the current Material Design 3 slider anatomy (16 px track, 4 px handle bar, stop indicator, value label) because the owner asked for every control to be pure Material Design 3; the mismatch percentage rises by about 0.75 points for it.",
           "approval": "Owner direction 2026-09-02: every control must be 100% Material Design 3; the current slider anatomy is the conforming one."
+        },
+        {
+          "id": "appearance-default-dev-typography",
+          "primitive": "typography controls",
+          "reason": "The reference shows the font family as an inline card list with samples and weight as a segmented control. The built page uses searchable Material selects for family and weight (every font renders in its own face inside the list) so the controls follow the owner direction that every dropdown is a list box with a search bar and stay consistent with the other selects on the page; the mismatch percentage stays about 10.7 for it.",
+          "approval": "Owner direction 2026-09-02: every dropdown must be a list box with a search bar and every control 100% Material Design 3; the searchable select is the conforming control."
         }
       ],
-      "sourceCommit": "8c7bcc45360428f144742f4ac7429dc56c990e0b",
+      "sourceCommit": "305684490cba124c21817f434c87cf3e2783bc85",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop"
     },
     {

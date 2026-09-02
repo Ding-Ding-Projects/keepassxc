@@ -4,12 +4,12 @@
   "status": "complete",
   "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
-  "verdict": "defects-open",
+  "verdict": "conforms",
   "primitives": [
     {
       "primitive": "section layout",
-      "status": "deviates",
-      "finding": "Reference lays out five sections in columns; built stacks cards in two columns with different grouping."
+      "status": "conforms",
+      "finding": "Theme, Typography and Language & voice sit side by side from 1100 px (two columns below, one below 840 px) and the first card is titled Theme, matching the reference (repaired 2026-09-02, commit 30568449)."
     },
     {
       "primitive": "seed palette",
@@ -24,7 +24,7 @@
     {
       "primitive": "typography controls",
       "status": "deviates",
-      "finding": "Built uses a family combobox and weight combobox; the reference lists families inline with samples and a weight segmented control."
+      "finding": "Family and weight are Material selects (list box with search bar) with a Material slider for size; the reference lists families inline with samples and uses a weight segmented control. Recorded as an approved deviation."
     },
     {
       "primitive": "language and funny sliders",
@@ -37,19 +37,19 @@
       "finding": "Override sliders now carry a caption with the property name and live value (repaired 2026-09-02); the reference edits overrides per element rather than on this row."
     }
   ],
-  "defects": [
-    {
-      "id": "appearance-default-1",
-      "severity": "medium",
-      "summary": "Section layout and typography control anatomy differ"
-    }
-  ],
+  "defects": [],
   "deviations": [
     {
       "id": "appearance-default-dev-slider",
       "primitive": "sliders",
       "reason": "The reference draws the earlier Material 3 slider (thin track, round thumb). The built app uses the current Material Design 3 slider anatomy (16 px track, 4 px handle bar, stop indicator, value label) because the owner asked for every control to be pure Material Design 3; the mismatch percentage rises by about 0.75 points for it.",
       "approval": "Owner direction 2026-09-02: every control must be 100% Material Design 3; the current slider anatomy is the conforming one."
+    },
+    {
+      "id": "appearance-default-dev-typography",
+      "primitive": "typography controls",
+      "reason": "The reference shows the font family as an inline card list with samples and weight as a segmented control. The built page uses searchable Material selects for family and weight (every font renders in its own face inside the list) so the controls follow the owner direction that every dropdown is a list box with a search bar and stay consistent with the other selects on the page; the mismatch percentage stays about 10.7 for it.",
+      "approval": "Owner direction 2026-09-02: every dropdown must be a list box with a search bar and every control 100% Material Design 3; the searchable select is the conforming control."
     }
   ]
 }

@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 30796,
+  "pid": 30512,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "appearance_compact_bilingual_light_x1.png",
-  "pngSha256": "aa2479571f7c21666397362ddea534fe24c8188ad9096a7d9a969daf9ea01db0",
+  "pngSha256": "e20f5a670ce0459f30258a1f4a5b92b0580a10f50c74b90c51127bae23f2eaf2",
   "findings": [],
   "widgetCount": 148,
   "widgets": [
@@ -397,17 +397,17 @@
     },
     {
       "class": "QLabel",
-      "hint": "63x16",
+      "hint": "37x16",
       "leaf": true,
-      "minimumHint": "63x16",
+      "minimumHint": "37x16",
       "name": "",
       "offscreen": false,
       "rect": "120,287 622x16",
       "scrollable": true,
       "squeezed": false,
-      "text": "Appearance",
+      "text": "Theme",
       "textOverflows": false,
-      "textWidth": 63
+      "textWidth": 37
     },
     {
       "class": "QLabel",

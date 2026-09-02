@@ -1,0 +1,1452 @@
+{
+  "schemaVersion": 1,
+  "sourceCommit": "305684490cba124c21817f434c87cf3e2783bc85",
+  "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
+  "generatedAt": "2026-09-02T19:43:48.567Z",
+  "quick": false,
+  "tuples": 60,
+  "errors": 0,
+  "findings": [],
+  "records": [
+    {
+      "id": "vault_expanded_english_light_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_english_light_x1.png",
+      "pngSha256": "1bc3c9a0dfdd0aee7763cced24cd505f8bc881726b6d85adaeefd80b9808dcad",
+      "widgetCount": 108,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_english_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_english_light_x1.png",
+      "pngSha256": "122a968d2ac1b41a6b54f6063c630958ba5c26fcf24ee71fd913a4902f5d7713",
+      "widgetCount": 60,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_english_light_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_english_light_x1.png",
+      "pngSha256": "fe91aba726396265c965d3f535bf9cadff7205a1bf846b8f0e3b5f466b226f5b",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_english_light_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_english_light_x1.png",
+      "pngSha256": "559c2c721ba84720369815379d67cb6ce272a552473bafb0fb716e19b3f76437",
+      "widgetCount": 69,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_english_light_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_english_light_x1.png",
+      "pngSha256": "d5041bd5938108fbcaf0b83abdb395c3ede07eb847533e8fb52babac4d0b290c",
+      "widgetCount": 75,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_english_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_english_light_x1.png",
+      "pngSha256": "c640388a02bc9456963e41b66425406fdf31b45fcb11d033361debbb92c8333a",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_english_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_english_light_x1.png",
+      "pngSha256": "bb41f0a226555d3033c24155f7639d44b0cffb544ac586cac4a3f9254185052b",
+      "widgetCount": 2560,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_english_light_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_english_light_x1.png",
+      "pngSha256": "2bc64a91c8b119cd697bdade62f616aa86a06c4f98f010c5d4540b6335e46c81",
+      "widgetCount": 84,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_english_light_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_english_light_x1.png",
+      "pngSha256": "f020da97e81ab07f51b5cf964f2c551bbf9cd9a0dce14f6af7b32527ee9fab67",
+      "widgetCount": 147,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_english_light_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_english_light_x1.png",
+      "pngSha256": "e760cb654d42010932f32a0110470810b317f4532a65ab57628a3fdff6ea02c5",
+      "widgetCount": 56,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_cantonese_light_x1.png",
+      "pngSha256": "7ae0c613095983132005d5b4c3c7c10841e3ca07c2f42dda29c94141b57bc825",
+      "widgetCount": 108,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_cantonese_light_x1.png",
+      "pngSha256": "53963759f5dc31dfbfb0ec62176f76b4a286b33f45ce77cf94f0dd05e60d3718",
+      "widgetCount": 60,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_cantonese_light_x1.png",
+      "pngSha256": "254f213469144b434beafa0201179d6cdc7ef2d4cfb72e3bcf406e9a9827c737",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_cantonese_light_x1.png",
+      "pngSha256": "9c55f8d2abec4bf211a9db0673fdd0a67a3910410d90eff1ac68ec54ccf98eca",
+      "widgetCount": 69,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_cantonese_light_x1.png",
+      "pngSha256": "e2a41f6415ae5a8a529caf180767f2a40c049ad946269fda528443c4274df098",
+      "widgetCount": 75,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_cantonese_light_x1.png",
+      "pngSha256": "af73b06779196b7c858714d6ea3d96403faab454868895e1f9464aedc5add3f4",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_cantonese_light_x1.png",
+      "pngSha256": "9627413bb6f6e6084ebf4c93d3914bb484b0fef7bc6f7ba8eb08eceb9c3ebdec",
+      "widgetCount": 2560,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_cantonese_light_x1.png",
+      "pngSha256": "0c784256599151a205c4670c3dd7063dfc6b34d0ef39b8477e72b55827f496ee",
+      "widgetCount": 84,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_cantonese_light_x1.png",
+      "pngSha256": "1dad58d3e5e5da5f19c5e0d957b864b6ce35aa940250fe71e3f8f9e894952d96",
+      "widgetCount": 147,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_cantonese_light_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_cantonese_light_x1.png",
+      "pngSha256": "228d009d1abb93b7e192983dba5e94c78ffcbb44c82b3f477c113dbd44fcb7c3",
+      "widgetCount": 56,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_bilingual_light_x1.png",
+      "pngSha256": "09d0f4784d7e8b12cea489d2e00ed0059a3dafbaa7ac6827725839cfbd4a5ab6",
+      "widgetCount": 109,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_bilingual_light_x1.png",
+      "pngSha256": "0300bdbfdff6d9bfadca74599abbe6cb16bdc7767eb273d0565219a8b5bdf185",
+      "widgetCount": 61,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_bilingual_light_x1.png",
+      "pngSha256": "67be103bc7e32ca02e0f7f88c42392b8f248b2f753accd2325aaf01bfaedb06b",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_bilingual_light_x1.png",
+      "pngSha256": "19d7fa177816d635a9a31f1dac2e672ea5f5c6a058dd1ff804cb10e50bb013da",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_bilingual_light_x1.png",
+      "pngSha256": "342d9062606b5541e5f6f0a149f970af4423f0e658102efe531a661f079c29fe",
+      "widgetCount": 76,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_bilingual_light_x1.png",
+      "pngSha256": "a77f4c45d94e897ddf1351843c029e6377901a97f58629b6e131bb78be5e54c5",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_bilingual_light_x1.png",
+      "pngSha256": "867a696e953e84e1e77d004ea479b917448abb58521d3165c480021cb54a2d21",
+      "widgetCount": 2561,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_bilingual_light_x1.png",
+      "pngSha256": "38670d2ae55421dcd65c218f63463b32c33c84bf07fc084d635bc7edc632eeac",
+      "widgetCount": 85,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_bilingual_light_x1.png",
+      "pngSha256": "dcc033d635f177f5a6cefceef6721ea725908e7f60c6a50b5f05eeefeca737e6",
+      "widgetCount": 148,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_bilingual_light_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "light",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_bilingual_light_x1.png",
+      "pngSha256": "221c01bb4e415d506bc739396ebc749e7506937afe34623db5f9744b5431aa12",
+      "widgetCount": 57,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_english_dark_x1.png",
+      "pngSha256": "34f3600dd69b2ba3ebca61b771f21ccdd4b52b72f2669bfff1b92aac577277dc",
+      "widgetCount": 108,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_english_dark_x1.png",
+      "pngSha256": "f98c069a86f73add4725f9e3a100b73b1d5e52885bcbf923b8d2dcc3e6ae65ff",
+      "widgetCount": 60,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_english_dark_x1.png",
+      "pngSha256": "ccf6f046503a10f3cb31e561dca6c62a2737ac56de997d64b2c39112473533f4",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_english_dark_x1.png",
+      "pngSha256": "82ee6762f49db5aa805e8246434e5695c395207b95b8863bc6562f7121db7f97",
+      "widgetCount": 69,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_english_dark_x1.png",
+      "pngSha256": "4aaadf5e1f904acbb60c4303a3a558c0e9cb07443484c19749f5a9b9252347e9",
+      "widgetCount": 75,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_english_dark_x1.png",
+      "pngSha256": "a54c38e5d0cd24a5ae51c2ea730f6233b21afd33743fe6fc9774a9e4c256cf38",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_english_dark_x1.png",
+      "pngSha256": "0cd7ce6d2bde60970c0fc932de5526314fe1a6c0edfe7fb02f6d0e485f192a6c",
+      "widgetCount": 2560,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_english_dark_x1.png",
+      "pngSha256": "14962ea5332d65f235a95c5cf6140bbc93644f04c0e23fea266f58338ecc9b42",
+      "widgetCount": 84,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_english_dark_x1.png",
+      "pngSha256": "047621aba2245a015ac7704e22277fb03d50ea4abe4767ac88171b77aad907ce",
+      "widgetCount": 147,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_english_dark_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "english",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_english_dark_x1.png",
+      "pngSha256": "7b39913d16a1abbf4f6537dcb33c10025137b67fe44311c1744a02c3cbfc4c6d",
+      "widgetCount": 56,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_cantonese_dark_x1.png",
+      "pngSha256": "2485186dc5159d7593c094143fb81e474864ecc3bbdc7d832ef3940afb1324b9",
+      "widgetCount": 108,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_cantonese_dark_x1.png",
+      "pngSha256": "1ee6c718537f65051625ef245397904557092e75cae36b6b055a86a18acc42cf",
+      "widgetCount": 60,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_cantonese_dark_x1.png",
+      "pngSha256": "5cd70d44c9d25d7ecfee6f27b834b7ef123e88d4c1e1d3854449d5b6e35cc294",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_cantonese_dark_x1.png",
+      "pngSha256": "4877ae63598261c1b757730176ec2760801652429045db820805449b32a34d16",
+      "widgetCount": 69,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_cantonese_dark_x1.png",
+      "pngSha256": "8273199f2f33541cf77f1c674d9c346b93cdae17c5473d32d78eaefa2d253e2b",
+      "widgetCount": 75,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_cantonese_dark_x1.png",
+      "pngSha256": "55366fe479d5a16881e10ce6c2520ade319ca3376272bd18e2c65a733345a9e1",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_cantonese_dark_x1.png",
+      "pngSha256": "239e91a6a006fda2a5812755c78b55f66ddf0a3f193f5d2a33acedb15f703f96",
+      "widgetCount": 2560,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_cantonese_dark_x1.png",
+      "pngSha256": "8fb3cddc44e919a88c31966fa50663f9fc7b80c61d1f4e0be88acf4c838cfa06",
+      "widgetCount": 84,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_cantonese_dark_x1.png",
+      "pngSha256": "1070c2e33fd9a57f309b4bcfc971b6da83eccdb8c4e99d80fd6bb5c948cd6353",
+      "widgetCount": 147,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_cantonese_dark_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "cantonese",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_cantonese_dark_x1.png",
+      "pngSha256": "a6f6bb35f1ee1a18e433f527f9134b4d02139672114f73ac6c7a38a1cefc8c9a",
+      "widgetCount": 56,
+      "findingCount": 0
+    },
+    {
+      "id": "vault_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "vault",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "vault_expanded_bilingual_dark_x1.png",
+      "pngSha256": "3f3e3700be355aac4aebbdc40c82e438a06c2dd935069eaad3550b72024b5318",
+      "widgetCount": 109,
+      "findingCount": 0
+    },
+    {
+      "id": "reports_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "reports",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "reports_expanded_bilingual_dark_x1.png",
+      "pngSha256": "975132d8b533ede7320b259130bf8471822684ad892c7591676c9628c8c2e8a4",
+      "widgetCount": 61,
+      "findingCount": 0
+    },
+    {
+      "id": "editor_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "editor",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "editor_expanded_bilingual_dark_x1.png",
+      "pngSha256": "bbfa3c00d1cd707f0b35537f3d8ed7185e5d531340b95c575ad17e011b1e9e26",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "database_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "database",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "database_expanded_bilingual_dark_x1.png",
+      "pngSha256": "cf58eb7e39ec35f49afdd2fb75a6cb23e9c3d9715f624019adc580913188783e",
+      "widgetCount": 70,
+      "findingCount": 0
+    },
+    {
+      "id": "tools_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "tools",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "tools_expanded_bilingual_dark_x1.png",
+      "pngSha256": "00d7dd82709e4af53c7862940a199adff5953bf1a3f58047ea74ff67b8a04489",
+      "widgetCount": 76,
+      "findingCount": 0
+    },
+    {
+      "id": "history_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "history",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "history_expanded_bilingual_dark_x1.png",
+      "pngSha256": "1608349153e3b39fadd328cb6b78087de01796fa3a254bd4ad387e5630f876df",
+      "widgetCount": 71,
+      "findingCount": 0
+    },
+    {
+      "id": "changelog_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "changelog",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "changelog_expanded_bilingual_dark_x1.png",
+      "pngSha256": "1fe25662af3db5ab8e9dd419a38eac5b3771b60054588c63a81e5848cb3aba86",
+      "widgetCount": 2561,
+      "findingCount": 0
+    },
+    {
+      "id": "settings_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "settings",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "settings_expanded_bilingual_dark_x1.png",
+      "pngSha256": "5b16d4ea8515af0fd14a39405ed7cf59faccacc7bc42ddf1538b75793c274e86",
+      "widgetCount": 85,
+      "findingCount": 0
+    },
+    {
+      "id": "appearance_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "appearance",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "appearance_expanded_bilingual_dark_x1.png",
+      "pngSha256": "27e1a62a9bd6ba754c8706563a2cecf6788fa5d10baa6c3d9e7d73a7e486dc45",
+      "widgetCount": 148,
+      "findingCount": 0
+    },
+    {
+      "id": "help_expanded_bilingual_dark_x1",
+      "tuple": {
+        "screen": "help",
+        "width": {
+          "id": "expanded",
+          "w": 1200,
+          "h": 800
+        },
+        "language": "bilingual",
+        "theme": "dark",
+        "scale": "1"
+      },
+      "receipt": {
+        "outcome": "ready",
+        "shellViewport": "1200x800",
+        "windowGeometry": "560,185 1200x800",
+        "devicePixelRatio": 1
+      },
+      "png": "help_expanded_bilingual_dark_x1.png",
+      "pngSha256": "3bf00e4af24d67dbbad151e03ec992166932626f8ec87701c5c656cf21f7cd77",
+      "widgetCount": 57,
+      "findingCount": 0
+    }
+  ]
+}
