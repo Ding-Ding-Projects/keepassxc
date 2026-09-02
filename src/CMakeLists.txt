@@ -124,6 +124,7 @@ set(gui_SOURCES
         gui/material/MaterialNotifier.cpp
         gui/material/MaterialOverlay.cpp
         gui/material/MaterialRegexBuilder.cpp
+        gui/material/MaterialRegexLab.cpp
         gui/material/MaterialRegexSafety.cpp
         gui/material/MaterialReportsFeed.cpp
         gui/material/MaterialReportsScreen.cpp

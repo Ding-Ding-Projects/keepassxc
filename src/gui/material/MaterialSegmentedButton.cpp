@@ -88,6 +88,18 @@ namespace Material
         return m_segments.at(m_currentIndex).id;
     }
 
+    void SegmentedButton::setSegmentLabel(const QString& id, const QString& label)
+    {
+        const int index = indexOf(id);
+        if (index < 0 || m_segments[index].label == label) {
+            return;
+        }
+        m_segments[index].label = label;
+        updateGeometry();
+        relayout();
+        update();
+    }
+
     void SegmentedButton::setCurrentSegment(const QString& id)
     {
         const int index = indexOf(id);

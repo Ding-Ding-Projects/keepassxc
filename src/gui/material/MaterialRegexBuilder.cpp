@@ -17,6 +17,10 @@
 
 #include "MaterialRegexBuilder.h"
 
+#include "MaterialRegexLab.h"
+#include "MaterialRegexSafety.h"
+#include "MaterialSegmentedButton.h"
+
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -35,6 +39,7 @@
 #include <QPlainTextEdit>
 #include <QRegularExpression>
 #include <QScrollArea>
+#include <QStackedWidget>
 #include <QStringList>
 #include <QVBoxLayout>
 #include <QVariant>
@@ -365,10 +370,21 @@ namespace Material
         titles->setContentsMargins(0, 0, 0, 0);
         titles->setSpacing(2);
         titles->addWidget(makeLabel(tr("Regex builder"), TypeRole::TitleLarge, Role::OnSurface));
-        titles->addWidget(makeLabel(tr("ECMAScript (RE2-safe subset) · same engine as every search bar"),
-                                    TypeRole::LabelMedium,
-                                    Role::OnSurfaceVariant));
+        m_subtitle = makeLabel(tr("QRegularExpression (PCRE2) runs here · the same engine as every search bar"),
+                               TypeRole::LabelMedium,
+                               Role::OnSurfaceVariant);
+        titles->addWidget(m_subtitle);
         layout->addLayout(titles, 1);
+
+        // The dialect switch sits in the header, as the design places it.
+        m_dialects = new SegmentedButton;
+        m_dialects->setObjectName(QStringLiteral("regexDialects"));
+        m_dialects->addSegment(QStringLiteral("js"), tr("ECMAScript"));
+        m_dialects->addSegment(QStringLiteral("qt"), tr("QRegularExpression"));
+        m_dialects->addSegment(QStringLiteral("both"), tr("Both"));
+        m_dialects->setCurrentSegment(m_dialect);
+        connect(m_dialects, &SegmentedButton::segmentSelected, this, [this](const QString& id) { setDialect(id); });
+        layout->addWidget(m_dialects);
 
         auto* close = new IconButton(QStringLiteral("close"));
         close->setToolTip(tr("Close"));
@@ -434,8 +450,75 @@ namespace Material
             layout->addWidget(block);
         }
 
-        layout->addStretch(1);
+        layout->addWidget(buildLibrary(), 1);
         return palette;
+    }
+
+    QWidget* RegexBuilder::buildLibrary()
+    {
+        // The pattern library: every preset the design ships, filtered by its
+        // own search field, applied with one click.
+        auto* library = new QWidget;
+        auto* layout = new QVBoxLayout(library);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        layout->addWidget(makeLabel(tr("Pattern library"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+
+        m_librarySearch = new QLineEdit;
+        m_librarySearch->setObjectName(QStringLiteral("regexLibrarySearch"));
+        m_librarySearch->setPlaceholderText(tr("Search presets"));
+        m_librarySearch->setClearButtonEnabled(true);
+        m_librarySearch->setAccessibleName(tr("Search the pattern library"));
+        connect(m_librarySearch, &QLineEdit::textChanged, this, &RegexBuilder::filterLibrary);
+        layout->addWidget(m_librarySearch);
+
+        auto* scroll = new QScrollArea;
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidgetResizable(true);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        scroll->setStyleSheet(QStringLiteral("QScrollArea{background:transparent;border:none;}"
+                                             "QScrollArea > QWidget > QWidget{background:transparent;}"));
+        auto* rows = new QWidget;
+        m_libraryLayout = new QVBoxLayout(rows);
+        m_libraryLayout->setContentsMargins(0, 0, 0, 0);
+        m_libraryLayout->setSpacing(4);
+        for (const RegexLab::Preset& preset : RegexLab::presets()) {
+            auto* row = new RegexTokenChip(QStringLiteral("%1 · %2").arg(preset.name, preset.cantonese), false);
+            row->setObjectName(QStringLiteral("regexPreset_") + preset.id);
+            row->setToolTip(preset.pattern);
+            row->setAccessibleName(tr("Preset %1: %2").arg(preset.name, preset.pattern));
+            row->setProperty("presetId", preset.id);
+            row->setProperty("haystack", (preset.name + QLatin1Char(' ') + preset.cantonese + QLatin1Char(' ') + preset.pattern).toLower());
+            connect(row, &QAbstractButton::clicked, this, [this, id = preset.id] { applyPreset(id); });
+            m_libraryLayout->addWidget(row);
+            m_libraryRows.append(row);
+        }
+        m_libraryLayout->addStretch(1);
+        scroll->setWidget(rows);
+        layout->addWidget(scroll, 1);
+        return library;
+    }
+
+    void RegexBuilder::filterLibrary(const QString& query)
+    {
+        const QString needle = query.trimmed().toLower();
+        for (QAbstractButton* row : m_libraryRows) {
+            row->setVisible(needle.isEmpty() || row->property("haystack").toString().contains(needle));
+        }
+    }
+
+    bool RegexBuilder::applyPreset(const QString& id)
+    {
+        for (const RegexLab::Preset& preset : RegexLab::presets()) {
+            if (preset.id == id) {
+                setSampleText(preset.sample);
+                setFlags(preset.flags);
+                setPattern(preset.pattern);
+                setCurrentTab(QStringLiteral("matches"));
+                return true;
+            }
+        }
+        return false;
     }
 
     QWidget* RegexBuilder::buildEditor()
@@ -478,6 +561,29 @@ namespace Material
         patternLayout->addWidget(m_statusLabel);
         layout->addWidget(patternBlock);
 
+        // The workbench: which dialect is described, and which pane is open.
+        auto* controls = new QHBoxLayout;
+        controls->setContentsMargins(0, 0, 0, 0);
+        controls->setSpacing(12);
+        m_tabs = new SegmentedButton;
+        m_tabs->setObjectName(QStringLiteral("regexWorkbenchTabs"));
+        m_tabs->addSegment(QStringLiteral("matches"), tr("Matches"));
+        m_tabs->addSegment(QStringLiteral("explain"), tr("Explain"));
+        m_tabs->addSegment(QStringLiteral("replace"), tr("Replace"));
+        m_tabs->addSegment(QStringLiteral("export"), tr("Export"));
+        m_tabs->addSegment(QStringLiteral("cheat"), tr("Cheat sheet"));
+        m_tabs->addSegment(QStringLiteral("dialect"), tr("Dialects"));
+        connect(m_tabs, &SegmentedButton::segmentSelected, this, [this](const QString& id) { setCurrentTab(id); });
+        controls->addWidget(m_tabs, 1);
+        layout->addLayout(controls);
+
+        m_pages = new QStackedWidget;
+        m_pages->setObjectName(QStringLiteral("regexWorkbenchPages"));
+        auto* matchesPage = new QWidget;
+        auto* matchesLayout = new QVBoxLayout(matchesPage);
+        matchesLayout->setContentsMargins(0, 0, 0, 0);
+        matchesLayout->setSpacing(14);
+
         // The sample the pattern runs against.
         auto* sampleBlock = new QWidget;
         auto* sampleLayout = new QVBoxLayout(sampleBlock);
@@ -492,7 +598,7 @@ namespace Material
         m_sampleEdit->setTabChangesFocus(true);
         connect(m_sampleEdit, &QPlainTextEdit::textChanged, this, &RegexBuilder::evaluate);
         sampleLayout->addWidget(m_sampleEdit);
-        layout->addWidget(sampleBlock);
+        matchesLayout->addWidget(sampleBlock);
 
         // The matches, rebuilt on every change.
         auto* matchBlock = new QWidget;
@@ -524,10 +630,323 @@ namespace Material
         scroll->setWidget(rows);
         panelLayout->addWidget(scroll);
         matchLayout->addWidget(m_matchPanel);
-        layout->addWidget(matchBlock);
+        matchesLayout->addWidget(matchBlock);
+        matchesLayout->addStretch(1);
 
-        layout->addStretch(1);
+        m_pages->addWidget(matchesPage);
+        m_pages->addWidget(buildExplainPage());
+        m_pages->addWidget(buildReplacePage());
+        m_pages->addWidget(buildExportPage());
+        m_pages->addWidget(buildCheatPage());
+        m_pages->addWidget(buildDialectPage());
+        layout->addWidget(m_pages, 1);
         return editor;
+    }
+
+    namespace
+    {
+        QScrollArea* transparentScroll(QWidget* content)
+        {
+            auto* scroll = new QScrollArea;
+            scroll->setFrameShape(QFrame::NoFrame);
+            scroll->setWidgetResizable(true);
+            scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+            scroll->setStyleSheet(QStringLiteral("QScrollArea{background:transparent;border:none;}"
+                                                 "QScrollArea > QWidget > QWidget{background:transparent;}"));
+            scroll->setWidget(content);
+            return scroll;
+        }
+    } // namespace
+
+    void RegexBuilder::clearLayout(QLayout* layout)
+    {
+        while (QLayoutItem* item = layout->takeAt(0)) {
+            delete item->widget();
+            delete item;
+        }
+    }
+
+    QWidget* RegexBuilder::buildExplainPage()
+    {
+        auto* page = new QWidget;
+        auto* layout = new QVBoxLayout(page);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        layout->addWidget(makeLabel(tr("Token by token"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+        auto* panel = new RegexPanel(Shape::Large, Role::SurfaceContainer);
+        auto* panelLayout = new QVBoxLayout(panel);
+        panelLayout->setContentsMargins(0, 0, 0, 0);
+        auto* rows = new QWidget;
+        m_explainLayout = new QVBoxLayout(rows);
+        m_explainLayout->setContentsMargins(16, 12, 16, 12);
+        m_explainLayout->setSpacing(6);
+        panelLayout->addWidget(transparentScroll(rows));
+        layout->addWidget(panel, 1);
+        return page;
+    }
+
+    void RegexBuilder::rebuildExplain(const QString& pattern)
+    {
+        clearLayout(m_explainLayout);
+        const auto tokens = RegexLab::tokenize(pattern);
+        if (tokens.isEmpty()) {
+            m_explainLayout->addWidget(
+                makeLabel(tr("Nothing to explain yet - the pattern is empty."), TypeRole::LabelMedium, Role::OnSurfaceVariant));
+        }
+        for (const RegexLab::Token& token : tokens) {
+            auto* row = new QWidget;
+            auto* rowLayout = new QHBoxLayout(row);
+            rowLayout->setContentsMargins(0, 0, 0, 0);
+            rowLayout->setSpacing(12);
+            auto* chip = new RegexTokenChip(token.text, false);
+            chip->setToolTip(token.type);
+            chip->setAccessibleName(tr("Token %1: %2").arg(token.text, token.english));
+            connect(chip, &QAbstractButton::clicked, this, [this, token] {
+                m_patternEdit->setSelection(token.start, token.end - token.start);
+                m_patternEdit->setFocus(Qt::OtherFocusReason);
+            });
+            rowLayout->addWidget(chip);
+            auto* text = makeLabel(token.pcreOnly ? tr("%1 (PCRE2 only)").arg(token.english) : token.english,
+                                   TypeRole::BodySmall,
+                                   Role::OnSurface);
+            text->setWordWrap(true);
+            rowLayout->addWidget(text, 1);
+            rowLayout->addWidget(makeLabel(token.cantonese, TypeRole::BodySmall, Role::OnSurfaceVariant));
+            m_explainLayout->addWidget(row);
+        }
+        m_explainLayout->addStretch(1);
+    }
+
+    QWidget* RegexBuilder::buildReplacePage()
+    {
+        auto* page = new QWidget;
+        auto* layout = new QVBoxLayout(page);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        layout->addWidget(makeLabel(tr("Replacement · $1 $<name> $&"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+        m_replaceEdit = new QLineEdit;
+        m_replaceEdit->setObjectName(QStringLiteral("regexReplacement"));
+        m_replaceEdit->setPlaceholderText(tr("replacement"));
+        m_replaceEdit->setAccessibleName(tr("Replacement template"));
+        connect(m_replaceEdit, &QLineEdit::textChanged, this, &RegexBuilder::rebuildReplace);
+        layout->addWidget(m_replaceEdit);
+        layout->addWidget(makeLabel(tr("Preview"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+        m_replacePreview = new QPlainTextEdit;
+        m_replacePreview->setObjectName(QStringLiteral("regexReplacePreview"));
+        m_replacePreview->setReadOnly(true);
+        m_replacePreview->setLineWrapMode(QPlainTextEdit::NoWrap);
+        layout->addWidget(m_replacePreview, 1);
+        m_replaceNote = makeLabel(tr("QString::replace() takes \\1 and \\0, never $1 or $&; the Export tab writes that form. "
+                                     "Named references resolve through the pattern's own group order."),
+                                  TypeRole::LabelMedium,
+                                  Role::OnSurfaceVariant);
+        m_replaceNote->setWordWrap(true);
+        layout->addWidget(m_replaceNote);
+        return page;
+    }
+
+    void RegexBuilder::rebuildReplace()
+    {
+        if (!m_replacePreview) {
+            return;
+        }
+        const QString pattern = m_patternEdit->text();
+        if (pattern.isEmpty() || !m_valid) {
+            m_replacePreview->setPlainText(m_valid ? tr("Enter a pattern to preview replacements.")
+                                                   : tr("The pattern does not compile."));
+            return;
+        }
+        QString sample = m_sampleEdit->toPlainText();
+        const QString translated = RegexLab::qtReplacement(pattern, m_replaceEdit->text());
+        sample.replace(QRegularExpression(pattern, optionsForFlags(flags())), translated);
+        m_replacePreview->setPlainText(sample);
+    }
+
+    QString RegexBuilder::replacement() const
+    {
+        return m_replaceEdit ? m_replaceEdit->text() : QString();
+    }
+
+    void RegexBuilder::setReplacement(const QString& text)
+    {
+        if (m_replaceEdit) {
+            m_replaceEdit->setText(text);
+        }
+    }
+
+    QString RegexBuilder::replacementPreview() const
+    {
+        return m_replacePreview ? m_replacePreview->toPlainText() : QString();
+    }
+
+    QWidget* RegexBuilder::buildExportPage()
+    {
+        auto* page = new QWidget;
+        auto* layout = new QVBoxLayout(page);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        auto* rows = new QWidget;
+        m_exportLayout = new QVBoxLayout(rows);
+        m_exportLayout->setContentsMargins(0, 0, 0, 0);
+        m_exportLayout->setSpacing(12);
+        layout->addWidget(transparentScroll(rows), 1);
+        return page;
+    }
+
+    void RegexBuilder::rebuildExport()
+    {
+        clearLayout(m_exportLayout);
+        const QString pattern = m_patternEdit->text();
+        for (const RegexLab::Export& item : RegexLab::translate(pattern, flags())) {
+            if (m_dialect == QLatin1String("js") && item.id == QLatin1String("qt")) {
+                continue;
+            }
+            if (m_dialect == QLatin1String("qt") && item.id == QLatin1String("js")) {
+                continue;
+            }
+            auto* block = new QWidget;
+            auto* blockLayout = new QVBoxLayout(block);
+            blockLayout->setContentsMargins(0, 0, 0, 0);
+            blockLayout->setSpacing(4);
+            auto* head = new QHBoxLayout;
+            head->setContentsMargins(0, 0, 0, 0);
+            head->addWidget(makeLabel(item.label, TypeRole::LabelSmall, Role::OnSurfaceVariant, true), 1);
+            auto* copy = new OutlinedButton(QStringLiteral("content_copy"), tr("Copy"));
+            copy->setObjectName(QStringLiteral("regexExportCopy_") + item.id);
+            copy->setEnabled(!pattern.isEmpty());
+            connect(copy, &ButtonBase::clicked, this, [this, code = item.code] { emit patternCopied(code); });
+            head->addWidget(copy);
+            blockLayout->addLayout(head);
+            auto* code = new QPlainTextEdit;
+            code->setReadOnly(true);
+            code->setPlainText(pattern.isEmpty() ? tr("(enter a pattern)") : item.code);
+            code->setLineWrapMode(QPlainTextEdit::NoWrap);
+            code->setFixedHeight(item.id == QLatin1String("qt") ? 96 : 44);
+            code->setAccessibleName(tr("%1 export").arg(item.label));
+            blockLayout->addWidget(code);
+            m_exportLayout->addWidget(block);
+        }
+        m_exportLayout->addStretch(1);
+    }
+
+    QWidget* RegexBuilder::buildCheatPage()
+    {
+        auto* page = new QWidget;
+        auto* layout = new QVBoxLayout(page);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        auto* rows = new QWidget;
+        auto* rowsLayout = new QVBoxLayout(rows);
+        rowsLayout->setContentsMargins(0, 0, 0, 0);
+        rowsLayout->setSpacing(4);
+        for (const RegexLab::CheatEntry& entry : RegexLab::cheatSheet()) {
+            auto* row = new QWidget;
+            auto* rowLayout = new QHBoxLayout(row);
+            rowLayout->setContentsMargins(0, 0, 0, 0);
+            rowLayout->setSpacing(12);
+            auto* chip = new RegexTokenChip(entry.token, false);
+            chip->setAccessibleName(tr("Insert %1: %2").arg(entry.token, entry.english));
+            connect(chip, &QAbstractButton::clicked, this, [this, token = entry.token] { insertToken(token, 0); });
+            rowLayout->addWidget(chip);
+            auto* text = makeLabel(entry.english, TypeRole::BodySmall, Role::OnSurface);
+            text->setWordWrap(true);
+            rowLayout->addWidget(text, 1);
+            rowLayout->addWidget(makeLabel(entry.cantonese, TypeRole::BodySmall, Role::OnSurfaceVariant));
+            rowLayout->addWidget(makeLabel(entry.pcreOnly ? tr("PCRE2 only") : tr("both engines"),
+                                           TypeRole::LabelSmall,
+                                           entry.pcreOnly ? Role::Primary : Role::OnSurfaceVariant));
+            rowsLayout->addWidget(row);
+        }
+        rowsLayout->addStretch(1);
+        layout->addWidget(transparentScroll(rows), 1);
+        return page;
+    }
+
+    QWidget* RegexBuilder::buildDialectPage()
+    {
+        auto* page = new QWidget;
+        auto* layout = new QVBoxLayout(page);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+        auto* cards = new QWidget;
+        m_dialectLayout = new QVBoxLayout(cards);
+        m_dialectLayout->setContentsMargins(0, 0, 0, 0);
+        m_dialectLayout->setSpacing(12);
+        layout->addWidget(transparentScroll(cards), 1);
+        rebuildDialectPage();
+        return page;
+    }
+
+    void RegexBuilder::rebuildDialectPage()
+    {
+        clearLayout(m_dialectLayout);
+        for (const RegexLab::Dialect& dialect : RegexLab::dialects()) {
+            if (m_dialect != QLatin1String("both") && m_dialect != dialect.id) {
+                continue;
+            }
+            auto* card = new RegexPanel(Shape::Large, Role::SurfaceContainer);
+            auto* cardLayout = new QVBoxLayout(card);
+            cardLayout->setContentsMargins(16, 12, 16, 12);
+            cardLayout->setSpacing(6);
+            auto* head = new QHBoxLayout;
+            head->addWidget(makeLabel(QStringLiteral("%1 · %2").arg(dialect.label, dialect.cantonese), TypeRole::TitleSmall, Role::OnSurface), 1);
+            head->addWidget(makeLabel(dialect.id == QLatin1String("qt") ? tr("RUNS HERE") : tr("DESCRIBED ONLY"),
+                                      TypeRole::LabelSmall,
+                                      dialect.id == QLatin1String("qt") ? Role::Green : Role::OnSurfaceVariant));
+            cardLayout->addLayout(head);
+            for (const RegexLab::DialectFlag& flag : dialect.flags) {
+                cardLayout->addWidget(makeLabel(QStringLiteral("%1  %2 · %3").arg(flag.flag, flag.english, flag.cantonese),
+                                                TypeRole::BodySmall,
+                                                Role::OnSurface));
+            }
+            for (const QString& note : dialect.notes) {
+                auto* label = makeLabel(note, TypeRole::BodySmall, Role::OnSurfaceVariant);
+                label->setWordWrap(true);
+                cardLayout->addWidget(label);
+            }
+            m_dialectLayout->addWidget(card);
+        }
+        m_dialectLayout->addStretch(1);
+    }
+
+    QString RegexBuilder::currentTab() const
+    {
+        return m_tabs ? m_tabs->currentSegment() : QString();
+    }
+
+    void RegexBuilder::setCurrentTab(const QString& id)
+    {
+        static const QStringList order = {QStringLiteral("matches"), QStringLiteral("explain"), QStringLiteral("replace"),
+                                          QStringLiteral("export"), QStringLiteral("cheat"), QStringLiteral("dialect")};
+        const int index = order.indexOf(id);
+        if (index < 0 || !m_pages) {
+            return;
+        }
+        m_pages->setCurrentIndex(index);
+        if (m_tabs && m_tabs->currentSegment() != id) {
+            m_tabs->setCurrentSegment(id);
+        }
+    }
+
+    QString RegexBuilder::dialect() const
+    {
+        return m_dialect;
+    }
+
+    void RegexBuilder::setDialect(const QString& id)
+    {
+        if (id != QLatin1String("js") && id != QLatin1String("qt") && id != QLatin1String("both")) {
+            return;
+        }
+        m_dialect = id;
+        if (m_dialects && m_dialects->currentSegment() != id) {
+            m_dialects->setCurrentSegment(id);
+        }
+        if (m_flagCaption) {
+            m_flagCaption->setText(id == QLatin1String("qt") ? tr("QRegularExpression::PatternOptions") : tr("RegExp flags"));
+        }
+        rebuildExport();
+        rebuildDialectPage();
     }
 
     QWidget* RegexBuilder::buildFooter()
@@ -693,6 +1112,22 @@ namespace Material
         const bool usable = m_valid && !pattern.isEmpty();
         m_copyButton->setEnabled(usable);
         m_applyButton->setEnabled(usable);
+
+        // The other panes follow the pattern; the explain pane only when the
+        // pattern itself changed, because it does not depend on the sample.
+        if (m_explainLayout && pattern != m_lastPattern) {
+            rebuildExplain(pattern);
+            m_lastPattern = pattern;
+        }
+        rebuildReplace();
+        if (m_exportLayout) {
+            rebuildExport();
+        }
+        if (m_tabs) {
+            const int tokens = RegexLab::tokenize(pattern).size();
+            m_tabs->setSegmentLabel(QStringLiteral("matches"), count > 0 ? tr("Matches %1").arg(count) : tr("Matches"));
+            m_tabs->setSegmentLabel(QStringLiteral("explain"), tokens > 0 ? tr("Explain %1").arg(tokens) : tr("Explain"));
+        }
     }
 
     void RegexBuilder::applyTheme()

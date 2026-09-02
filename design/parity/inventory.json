@@ -245,15 +245,15 @@
         "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
         "referenceRawSha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
         "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
-        "builtRawSha256": "49e41a6c61bd84a5d30ca530b67ae80c52c85f9344f20fbd291cf6dd3beaffd2",
+        "builtRawSha256": "8741af55e99f5a3ea45b6a0a40eea909756654af65476e21681af35f2771d692",
         "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
-        "comparisonSha256": "6950b95f0a5b9ebbca8052598f8ebf634c22f13b2fac77a5fc86ea894d08c474",
+        "comparisonSha256": "3d86dd6b89bf368e229b57497c9d8cd4c1a859a897c7f50ef3c1e908b31ff15d",
         "diff": "design/parity/evidence/regex-builder-default/diff.json",
-        "diffSha256": "539ad5187dd014f465ea293d27a88f2f6e5ac1896274b05075e1387fa722ec58",
-        "mismatchRatio": 0.32524305555555555
+        "diffSha256": "595ffb36790ac0bde7ef5c88e063461e9fae3b269930a8bc8064cc9036b4cf6f",
+        "mismatchRatio": 0.2035456730769231
       },
       "deviations": [],
-      "sourceCommit": "dcab61d787031264687b3181b1af70f5c1481ca6",
+      "sourceCommit": "60f62c16f88dfdd875fcaee4099cad2e95532ef2",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },

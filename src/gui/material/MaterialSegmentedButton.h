@@ -47,6 +47,8 @@ namespace Material
         void addSegment(const QString& id, const QString& label, const QString& symbol = {});
         void clear();
         int count() const;
+        /** Rename a segment in place, keeping its id and selection. */
+        void setSegmentLabel(const QString& id, const QString& label);
 
         QString currentSegment() const;
         void setCurrentSegment(const QString& id);

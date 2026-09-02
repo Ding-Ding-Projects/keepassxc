@@ -23,10 +23,12 @@
 #include <QHash>
 #include <QString>
 
+class QAbstractButton;
 class QHBoxLayout;
 class QLabel;
 class QLineEdit;
 class QPlainTextEdit;
+class QStackedWidget;
 class QVBoxLayout;
 
 namespace Material
@@ -49,6 +51,8 @@ namespace Material
      * Apply report the pattern through patternCopied() and patternApplied(),
      * and the host decides what to do with it.
      */
+    class SegmentedButton;
+
     class RegexBuilder : public Overlay
     {
         Q_OBJECT
@@ -68,6 +72,20 @@ namespace Material
         QString flags() const;
         void setFlags(const QString& flags);
 
+        /** The workbench tab on screen: matches, explain, replace, export, cheat or dialect. */
+        QString currentTab() const;
+        void setCurrentTab(const QString& id);
+        /** The dialect described: js, qt or both. Execution is always QRegularExpression. */
+        QString dialect() const;
+        void setDialect(const QString& id);
+        /** Load a pattern-library preset by id; false when unknown. */
+        bool applyPreset(const QString& id);
+        /** The replacement template of the Replace tab, in $1 / $<name> / $& form. */
+        QString replacement() const;
+        void setReplacement(const QString& text);
+        /** The Replace tab's preview after applying the pattern to the sample. */
+        QString replacementPreview() const;
+
         /** Whether the current pattern compiles. */
         bool isValid() const;
 
@@ -85,6 +103,18 @@ namespace Material
         QWidget* buildPalette();
         QWidget* buildEditor();
         QWidget* buildFooter();
+        QWidget* buildLibrary();
+        QWidget* buildExplainPage();
+        QWidget* buildReplacePage();
+        QWidget* buildExportPage();
+        QWidget* buildCheatPage();
+        QWidget* buildDialectPage();
+        void rebuildExplain(const QString& pattern);
+        void rebuildReplace();
+        void rebuildExport();
+        void rebuildDialectPage();
+        void filterLibrary(const QString& query);
+        void clearLayout(QLayout* layout);
         void addFlagChip(QHBoxLayout* row, const QString& flag, const QString& hint);
         void insertToken(const QString& token, int caretBack);
         void evaluate();
@@ -101,6 +131,23 @@ namespace Material
         ButtonBase* m_applyButton = nullptr;
         QHash<QString, RegexTokenChip*> m_flagChips;
         bool m_valid = true;
+
+        SegmentedButton* m_tabs = nullptr;
+        SegmentedButton* m_dialects = nullptr;
+        QStackedWidget* m_pages = nullptr;
+        QLabel* m_subtitle = nullptr;
+        QLabel* m_flagCaption = nullptr;
+        QVBoxLayout* m_explainLayout = nullptr;
+        QLineEdit* m_replaceEdit = nullptr;
+        QPlainTextEdit* m_replacePreview = nullptr;
+        QLabel* m_replaceNote = nullptr;
+        QVBoxLayout* m_exportLayout = nullptr;
+        QVBoxLayout* m_dialectLayout = nullptr;
+        QLineEdit* m_librarySearch = nullptr;
+        QVBoxLayout* m_libraryLayout = nullptr;
+        QList<QAbstractButton*> m_libraryRows;
+        QString m_dialect = QStringLiteral("both");
+        QString m_lastPattern;
     };
 
 } // namespace Material

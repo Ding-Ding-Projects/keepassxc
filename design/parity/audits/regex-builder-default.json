@@ -8,28 +8,28 @@
   "primitives": [
     {
       "primitive": "overlay sizing",
-      "status": "nonconforming",
-      "finding": "Built overlay is a centred ~600 px dialog; the reference is a 1000 px sheet."
+      "status": "deviates",
+      "finding": "Built overlay is a centred 975 px dialog inside the 1040 px shell; the reference is a 1000 px sheet. Same anatomy, narrower gutters."
     },
     {
       "primitive": "workbench tabs",
-      "status": "nonconforming",
-      "finding": "Matches / Explain / Replace / Export / Cheat sheet tabs are absent."
+      "status": "conforms",
+      "finding": "Matches / Explain / Replace / Export / Cheat sheet / Dialects segmented tabs present with live counts; no label elides at 1040 px."
     },
     {
       "primitive": "dialect switch",
-      "status": "nonconforming",
-      "finding": "ECMAScript / QRegularExpression / Both segmented control absent; built states a single engine."
+      "status": "conforms",
+      "finding": "ECMAScript / QRegularExpression / Both segmented control in the header, driving flag captions, exports and the dialect cards; subtitle states PCRE2 is the engine that runs."
     },
     {
       "primitive": "pattern library",
-      "status": "nonconforming",
-      "finding": "Searchable preset library absent."
+      "status": "conforms",
+      "finding": "Searchable preset library with the ten shipped presets under the token palette."
     },
     {
       "primitive": "token blocks",
       "status": "deviates",
-      "finding": "Guided token chips exist but the reference's token-block editor with drag-to-reorder is absent."
+      "finding": "Explain tab lists tokens with spans and selects them in the pattern; the reference's drag-to-reorder token-block strip is not built."
     },
     {
       "primitive": "flags",
@@ -44,10 +44,17 @@
   ],
   "defects": [
     {
-      "id": "regex-builder-default-1",
-      "severity": "high",
-      "summary": "Builder lacks the reference workbench: tabs, dialect switch, pattern library, token blocks, explain/replace/export"
+      "id": "regex-builder-default-2",
+      "severity": "low",
+      "summary": "Token-block strip with drag-to-reorder not built; Explain tab covers token listing and selection only"
     }
   ],
-  "deviations": []
+  "deviations": [
+    {
+      "id": "regex-builder-default-d1",
+      "summary": "Overlay width 975 px versus the reference 1000 px sheet because the built shell is 1040 px wide at this tuple",
+      "reason": "The overlay keeps 32 px shell gutters; anatomy and order match",
+      "approvedBy": "session review 2026-09-01"
+    }
+  ]
 }

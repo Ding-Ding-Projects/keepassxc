@@ -154,14 +154,14 @@
       "surface": "app",
       "title": "Super-advanced regex builder",
       "status": "partial",
-      "note": "Compact builder; workbench tabs, dialects, pattern library, explain/replace/export missing (parity defect regex-builder-default-1)",
+      "note": "Workbench built: Matches, Explain, Replace, Export, Cheat sheet and Dialect tabs, dialect switch, searchable pattern library; still needs its interaction ledger entry and capture record",
       "implementation": {
         "file": "src/gui/material/MaterialRegexBuilder.h",
         "anchor": "^\\s*class RegexBuilder : public Overlay$"
       },
       "test": {
-        "file": "tests/TestMaterialRegexSafety.cpp",
-        "anchor": "^void TestMaterialRegexSafety::"
+        "file": "tests/TestMaterialRegexLab.cpp",
+        "anchor": "^void TestMaterialRegexLab::"
       },
       "article": {
         "file": "docs/features/search/regex-builder.md"
