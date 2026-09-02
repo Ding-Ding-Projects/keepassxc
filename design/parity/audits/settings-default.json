@@ -4,7 +4,7 @@
   "status": "complete",
   "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
-  "verdict": "conforms",
+  "verdict": "defects-open",
   "primitives": [
     {
       "primitive": "page list",
@@ -32,6 +32,12 @@
       "finding": "Title/body scale matches."
     }
   ],
-  "defects": [],
+  "defects": [
+    {
+      "id": "settings-default-3",
+      "severity": "medium",
+      "summary": "Stock QComboBox selects on the hub rows and pages instead of a Material select list box with search"
+    }
+  ],
   "deviations": []
 }

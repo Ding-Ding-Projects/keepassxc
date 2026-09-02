@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "rowId": "vault-default",
   "status": "complete",
-  "reviewedOn": "2026-09-01",
+  "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
   "verdict": "defects-open",
   "primitives": [
@@ -23,8 +23,8 @@
     },
     {
       "primitive": "detail pane",
-      "status": "deviates",
-      "finding": "Built pane is a plain form; the reference is a card with a health banner, copyable field rows, custom fields, notes and attachments."
+      "status": "conforms",
+      "finding": "Hero in the health colour with health chip, edit and history actions, title and mono URL; one rounded container per field with uppercase key, value and copy/reveal actions; Modified row; notes; attachments with the \"Filter attachments & fields\" search and anchored builder; footer Copy password and Open URL (repaired 2026-09-02)."
     },
     {
       "primitive": "floating action button",
@@ -38,11 +38,6 @@
     }
   ],
   "defects": [
-    {
-      "id": "vault-default-3",
-      "severity": "medium",
-      "summary": "Detail pane lacks the reference card anatomy with per-field copy actions"
-    },
     {
       "id": "vault-default-4",
       "severity": "low",

@@ -34,7 +34,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/appearance-default.json",
-        "sha256": "e963f7832cdca2302b689f9adbcffad52d5edc75c23e6af42d2c6602c2931e46"
+        "sha256": "51b2dc57cef3cf1653b6491204de9fcd19ddb641fb29fe30686ffd12c3ea1496"
       },
       "evidence": {
         "status": "complete",
@@ -84,7 +84,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/changelog-default.json",
-        "sha256": "4d1212916b8100da544b0ddcf66b51c595a84c8b716575ba8b9e4610c9b5ebec"
+        "sha256": "31124ddbe394465ebf22b8c3649ba1f0f41f2f14a8b98799705ecfedd8982a2d"
       },
       "evidence": {
         "status": "complete",
@@ -352,7 +352,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/settings-default.json",
-        "sha256": "1d7b3562ccf6b7e0a470696c1eb08ceaff8dbb21f9566847f3e2b9903cbd360e"
+        "sha256": "176d1e1a06e190b683417a3b6b483d23d0d6fc3407df39d229a8787a9ec4da89"
       },
       "evidence": {
         "status": "complete",
@@ -452,19 +452,19 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/vault-default.json",
-        "sha256": "bb856a845cc6c5975d95afb5553c537f9645719460016aca2d1e7c8bfc408886"
+        "sha256": "c42d4001da269730fc5e998e3cbaf4ba5f0fd8193200519da7349fc51a9f4f61"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "ac40d6d2102d6586939bf0afff20582a2056f67169cbe151d4707dd60c75e8e7",
+        "builtRawSha256": "909af9ba9f18885d1df7fb11d63ea5c25dc8630c1b4a4b7cc721402a762567d4",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "7ba8203d3fb35bcc80aca8d556a0258c100bf8bddab26aa904951a45a04eb4f0",
+        "comparisonSha256": "1132ea9f40e86894d6c65850f3ee078ff00b00735e289247372bcabfbd6efacc",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "fb2ede5328020a00745675dcac2079b8f32bfb1aa34d3aca097a1254e90e9020",
-        "mismatchRatio": 0.10388081395348837
+        "diffSha256": "7394d8b16a8b1780a884e76dee563a937a9997a24606db0910d6b8dbcea75170",
+        "mismatchRatio": 0.08426760335917313
       },
       "deviations": [
         {
@@ -472,7 +472,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "c130ec806dfa7ee966bbabce4d1b34138e9adf26",
+      "sourceCommit": "41d900ebf5f12e3dd0be8c9d1f980dc5c2ad71f3",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

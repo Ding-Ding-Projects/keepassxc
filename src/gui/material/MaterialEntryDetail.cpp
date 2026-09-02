@@ -20,6 +20,7 @@
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
+#include "MaterialSearchBar.h"
 
 #include <QAbstractButton>
 #include <QDateTime>
@@ -27,7 +28,9 @@
 #include <QFontMetrics>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPainter>
+#include <QRegularExpression>
 #include <QSignalBlocker>
 #include <QTextLayout>
 #include <QTimer>
@@ -57,6 +60,13 @@ namespace Material
         constexpr int TotpStep = 30;
         // The mask is a fixed length so that it does not leak the password's.
         constexpr int MaskedLength = 16;
+        constexpr int HeroButtonSize = 36;
+        constexpr int HealthChipHeight = 26;
+        constexpr int HealthChipPaddingX = 11;
+        constexpr int HealthChipGlyph = 14;
+        constexpr int FieldRowMinHeight = 56;
+        constexpr int FieldButtonSize = 38;
+        constexpr int FooterButtonHeight = 44;
 
         QString maskedPassword()
         {
@@ -426,6 +436,166 @@ namespace Material
         int m_maxLines;
     };
 
+    // -------------------------------------------------------------- HeroPanel
+
+    /**
+     * The header of the design: a flat container in the entry's health colour
+     * carrying the chip, the actions, the title and the URL.
+     */
+    class EntryDetail::HeroPanel : public QWidget
+    {
+    public:
+        explicit HeroPanel(QWidget* parent = nullptr)
+            : QWidget(parent)
+        {
+        }
+
+        void setHealth(Health health)
+        {
+            m_health = health;
+            update();
+        }
+
+        Health health() const
+        {
+            return m_health;
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.fillRect(rect(), theme()->colors().healthContainer(m_health));
+        }
+
+    private:
+        Health m_health = Health::Unknown;
+    };
+
+    // ------------------------------------------------------------- HealthChip
+
+    /** The 26px health chip at the top of the hero: a glyph and the health word. */
+    class EntryDetail::HealthChip : public QWidget
+    {
+    public:
+        explicit HealthChip(QWidget* parent = nullptr)
+            : QWidget(parent)
+        {
+            setFixedHeight(HealthChipHeight);
+            setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
+        }
+
+        void setHealth(Health health)
+        {
+            m_health = health;
+            m_text = health == Health::Unknown ? EntryDetail::tr("Unchecked") : Theme::healthLabel(health);
+            setAccessibleName(EntryDetail::tr("Health: %1").arg(m_text));
+            updateGeometry();
+            update();
+        }
+
+        QSize sizeHint() const override
+        {
+            const QFontMetrics metrics(chipFont());
+            return QSize(2 * HealthChipPaddingX + HealthChipGlyph + 6 + metrics.horizontalAdvance(m_text), HealthChipHeight);
+        }
+
+        QSize minimumSizeHint() const override
+        {
+            return sizeHint();
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            const QColor content = theme()->colors().onHealthContainer(m_health);
+            paintSurface(&painter, rect(), Material::Shape::Small, theme()->color(Role::SurfaceContainerLowest));
+            const QString symbol = m_health == Health::Ok ? QStringLiteral("verified_user")
+                                   : m_health == Health::Unknown ? QStringLiteral("help")
+                                                                 : QStringLiteral("warning");
+            QRect glyph(HealthChipPaddingX, (height() - HealthChipGlyph) / 2, HealthChipGlyph, HealthChipGlyph);
+            Icons::symbol(symbol, content).paint(&painter, glyph);
+            painter.setFont(chipFont());
+            painter.setPen(content);
+            painter.drawText(QRect(glyph.right() + 1 + 6, 0, width() - glyph.right() - 7 - HealthChipPaddingX, height()),
+                             Qt::AlignVCenter | Qt::AlignLeft,
+                             m_text);
+        }
+
+    private:
+        static QFont chipFont()
+        {
+            QFont font = theme()->font(TypeRole::LabelSmall);
+            font.setWeight(QFont::Medium);
+            return font;
+        }
+
+        Health m_health = Health::Unknown;
+        QString m_text;
+    };
+
+    // --------------------------------------------------------------- FieldRow
+
+    /**
+     * One field container: surfaceContainer (surfaceContainerHighest for a
+     * secret) with a 14px corner, the uppercase key over the value and the
+     * trailing round actions.
+     */
+    class EntryDetail::FieldRow : public QWidget
+    {
+    public:
+        FieldRow(const QString& key, bool protectedValue, QWidget* parent = nullptr)
+            : QWidget(parent)
+            , m_key(key)
+            , m_protected(protectedValue)
+        {
+            setMinimumHeight(FieldRowMinHeight);
+            m_layout = new QHBoxLayout(this);
+            m_layout->setContentsMargins(14, 9, 8, 9);
+            m_layout->setSpacing(12);
+            m_text = new QWidget(this);
+            m_column = new QVBoxLayout(m_text);
+            m_column->setContentsMargins(0, 0, 0, 0);
+            m_column->setSpacing(2);
+            m_layout->addWidget(m_text, 1);
+        }
+
+        QString key() const
+        {
+            return m_key;
+        }
+
+        QVBoxLayout* column() const
+        {
+            return m_column;
+        }
+
+        void addTrailing(QWidget* widget)
+        {
+            m_layout->addWidget(widget, 0, Qt::AlignVCenter);
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            paintSurface(&painter,
+                         rect(),
+                         Material::Shape::Large,
+                         theme()->color(m_protected ? Role::SurfaceContainerHighest : Role::SurfaceContainer));
+        }
+
+    private:
+        QString m_key;
+        bool m_protected;
+        QHBoxLayout* m_layout = nullptr;
+        QWidget* m_text = nullptr;
+        QVBoxLayout* m_column = nullptr;
+    };
+
     // ---------------------------------------------------------- StrengthMeter
 
     /** The 6px pill under the password: a track plus a health-coloured fill. */
@@ -575,6 +745,7 @@ namespace Material
         column->addWidget(buildNotes());
         column->addWidget(buildAttachments());
         column->addWidget(buildHistory());
+        column->addWidget(buildFooter());
         column->addStretch(1);
 
         setWidget(m_content);
@@ -582,51 +753,74 @@ namespace Material
 
     QWidget* EntryDetail::buildHeader()
     {
-        auto* header = new QWidget(m_content);
-        auto* layout = new QHBoxLayout(header);
-        layout->setContentsMargins(TextMargin, 22, TextMargin, 16);
-        layout->setSpacing(14);
+        // The design's hero: health chip and round actions on the first line,
+        // then the title and the URL, all on the entry's health colour.
+        m_hero = new HeroPanel(m_content);
+        m_hero->setObjectName(QStringLiteral("entryDetailHero"));
+        auto* layout = new QVBoxLayout(m_hero);
+        layout->setContentsMargins(22, 22, 22, 18);
+        layout->setSpacing(4);
 
-        // Material::Shape has to be qualified here: QFrame::Shape shadows it.
-        auto* tile = new SurfacePanel(Role::PrimaryContainer, Material::Shape::Rail, false, header);
-        tile->setFixedSize(SymbolTileSize, SymbolTileSize);
-        auto* tileLayout = new QVBoxLayout(tile);
-        tileLayout->setContentsMargins(0, 0, 0, 0);
-        m_symbolLabel = new QLabel(tile);
-        m_symbolLabel->setAlignment(Qt::AlignCenter);
-        tileLayout->addWidget(m_symbolLabel);
-        layout->addWidget(tile, 0, Qt::AlignTop);
+        auto* top = new QHBoxLayout;
+        top->setContentsMargins(0, 0, 0, 8);
+        top->setSpacing(8);
+        m_healthChip = new HealthChip(m_hero);
+        m_healthChip->setObjectName(QStringLiteral("entryDetailHealthChip"));
+        top->addWidget(m_healthChip, 0, Qt::AlignVCenter);
+        top->addStretch(1);
 
-        auto* text = new QWidget(header);
-        auto* textLayout = new QVBoxLayout(text);
-        textLayout->setContentsMargins(0, 0, 0, 0);
-        textLayout->setSpacing(2);
-        m_titleLabel = new ValueLabel(2, text);
-        m_urlLabel = new ValueLabel(1, text);
-        textLayout->addWidget(m_titleLabel);
-        textLayout->addWidget(m_urlLabel);
-        textLayout->addStretch(1);
-        layout->addWidget(text, 1);
-
-        m_favouriteButton = new IconButton(QStringLiteral("star"), header);
+        m_favouriteButton = new IconButton(QStringLiteral("star"), m_hero);
         m_favouriteButton->setCheckable(true);
-        m_favouriteButton->setSymbolSize(22);
+        m_favouriteButton->setSymbolSize(RowGlyphSize);
+        m_favouriteButton->setDiameter(HeroButtonSize);
         m_favouriteButton->setToolTip(tr("Toggle favourite"));
         connect(m_favouriteButton, &QAbstractButton::toggled, this, [this](bool favourite) {
             m_data.favourite = favourite;
             updateFavouriteState();
             emit favouriteToggled(favourite);
         });
-        layout->addWidget(m_favouriteButton, 0, Qt::AlignTop);
+        top->addWidget(m_favouriteButton, 0, Qt::AlignVCenter);
 
-        return header;
+        m_editButton = new IconButton(QStringLiteral("edit"), m_hero);
+        m_editButton->setObjectName(QStringLiteral("entryDetailEdit"));
+        m_editButton->setSymbolSize(RowGlyphSize);
+        m_editButton->setDiameter(HeroButtonSize);
+        m_editButton->setFilled(true);
+        m_editButton->setToolTip(tr("Edit"));
+        m_editButton->setAccessibleName(tr("Edit entry"));
+        connect(m_editButton, &QAbstractButton::clicked, this, &EntryDetail::editRequested);
+        top->addWidget(m_editButton, 0, Qt::AlignVCenter);
+
+        m_historyButton = new IconButton(QStringLiteral("history"), m_hero);
+        m_historyButton->setObjectName(QStringLiteral("entryDetailHistory"));
+        m_historyButton->setSymbolSize(RowGlyphSize);
+        m_historyButton->setDiameter(HeroButtonSize);
+        m_historyButton->setFilled(true);
+        m_historyButton->setToolTip(tr("Revision history"));
+        m_historyButton->setAccessibleName(tr("Revision history"));
+        connect(m_historyButton, &QAbstractButton::clicked, this, &EntryDetail::historyRequested);
+        top->addWidget(m_historyButton, 0, Qt::AlignVCenter);
+        layout->addLayout(top);
+
+        // The symbol tile of the earlier pane is kept out of the picture; the
+        // label still exists so the entry glyph reaches assistive technology.
+        m_symbolLabel = new QLabel(m_hero);
+        m_symbolLabel->hide();
+
+        m_titleLabel = new ValueLabel(2, m_hero);
+        m_titleLabel->setObjectName(QStringLiteral("entryDetailTitle"));
+        m_urlLabel = new ValueLabel(2, m_hero);
+        layout->addWidget(m_titleLabel);
+        layout->addWidget(m_urlLabel);
+
+        return m_hero;
     }
 
     QWidget* EntryDetail::buildActions()
     {
         auto* actions = new QWidget(m_content);
         auto* layout = new QHBoxLayout(actions);
-        layout->setContentsMargins(TextMargin, 0, TextMargin, 16);
+        layout->setContentsMargins(TextMargin, 16, TextMargin, 12);
         layout->setSpacing(8);
 
         m_autoTypeButton = new FilledButton(QStringLiteral("keyboard"), tr("Auto-Type"), actions);
@@ -635,13 +829,6 @@ namespace Material
         m_autoTypeButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         connect(m_autoTypeButton, &QAbstractButton::clicked, this, &EntryDetail::autoTypeRequested);
         layout->addWidget(m_autoTypeButton, 1);
-
-        m_editButton = new TonalButton(QStringLiteral("edit"), tr("Edit"), actions);
-        m_editButton->setSymbolSize(20);
-        m_editButton->setFixedHeight(Layout::ButtonHeight);
-        m_editButton->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
-        connect(m_editButton, &QAbstractButton::clicked, this, &EntryDetail::editRequested);
-        layout->addWidget(m_editButton, 1);
 
         auto* deleteButton = new DeleteButton(actions);
         deleteButton->setToolTip(tr("Delete entry"));
@@ -652,103 +839,86 @@ namespace Material
         return actions;
     }
 
+    EntryDetail::FieldRow* EntryDetail::addFieldRow(QVBoxLayout* column, const QString& key, bool protectedValue, ValueLabel** value)
+    {
+        auto* row = new FieldRow(key, protectedValue, m_content);
+        row->setObjectName(QStringLiteral("entryDetailField_") + key);
+        row->column()->addWidget(createOverline(key));
+        *value = new ValueLabel(1, row);
+        row->column()->addWidget(*value);
+        column->addWidget(row);
+        return row;
+    }
+
     QWidget* EntryDetail::buildCredentials()
     {
-        auto* card = new SurfacePanel(Role::SurfaceContainerLowest, Material::Shape::Rail, true, m_content);
+        // The design's field containers: one rounded card per field, the key in
+        // small capitals over the value, and the actions at the trailing edge.
+        auto* card = new QWidget(m_content);
         auto* cardLayout = new QVBoxLayout(card);
-        cardLayout->setContentsMargins(0, 4, 0, 4);
-        cardLayout->setSpacing(0);
+        cardLayout->setContentsMargins(0, 0, 0, 0);
+        cardLayout->setSpacing(8);
 
         // Username
-        auto* usernameRow = new QWidget(card);
-        usernameRow->setFixedHeight(UsernameRowHeight);
-        auto* usernameLayout = new QHBoxLayout(usernameRow);
-        usernameLayout->setContentsMargins(16, 0, 16, 0);
-        usernameLayout->setSpacing(12);
-
-        auto* usernameText = new QWidget(usernameRow);
-        auto* usernameColumn = new QVBoxLayout(usernameText);
-        usernameColumn->setContentsMargins(0, 0, 0, 0);
-        usernameColumn->setSpacing(0);
-        usernameColumn->addWidget(createCaption(tr("Username")));
-        m_usernameLabel = new ValueLabel(1, usernameText);
-        usernameColumn->addWidget(m_usernameLabel);
-        usernameLayout->addWidget(usernameText, 1);
-
+        m_usernameRow = addFieldRow(cardLayout, tr("Username"), false, &m_usernameLabel);
         m_copyUsernameButton = createRowButton(QStringLiteral("content_copy"), tr("Copy username"));
         connect(m_copyUsernameButton, &QAbstractButton::clicked, this, [this] {
             emit copyRequested(QStringLiteral("username"));
         });
-        usernameLayout->addWidget(m_copyUsernameButton, 0, Qt::AlignVCenter);
-        cardLayout->addWidget(usernameRow);
-
-        cardLayout->addWidget(new Divider(card));
+        m_usernameRow->addTrailing(m_copyUsernameButton);
 
         // Password
-        auto* passwordRow = new QWidget(card);
-        auto* passwordLayout = new QHBoxLayout(passwordRow);
-        passwordLayout->setContentsMargins(16, 12, 16, 12);
-        passwordLayout->setSpacing(12);
-
-        auto* passwordText = new QWidget(passwordRow);
-        auto* passwordColumn = new QVBoxLayout(passwordText);
-        passwordColumn->setContentsMargins(0, 0, 0, 0);
-        passwordColumn->setSpacing(0);
-        passwordColumn->addWidget(createCaption(tr("Password")));
-        m_passwordLabel = new ValueLabel(1, passwordText);
-        passwordColumn->addWidget(m_passwordLabel);
-
-        auto* meterRow = new QWidget(passwordText);
+        m_passwordRow = addFieldRow(cardLayout, tr("Password"), true, &m_passwordLabel);
+        auto* meterRow = new QWidget(m_passwordRow);
         auto* meterLayout = new QHBoxLayout(meterRow);
-        meterLayout->setContentsMargins(0, 10, 0, 0);
+        meterLayout->setContentsMargins(0, 8, 0, 0);
         meterLayout->setSpacing(8);
         m_strengthMeter = new StrengthMeter(meterRow);
         meterLayout->addWidget(m_strengthMeter, 1);
         m_strengthLabel = new QLabel(meterRow);
         meterLayout->addWidget(m_strengthLabel, 0);
-        passwordColumn->addWidget(meterRow);
-        passwordLayout->addWidget(passwordText, 1);
+        m_passwordRow->column()->addWidget(meterRow);
 
         m_revealButton = createRowButton(QStringLiteral("visibility"), tr("Show password"));
         m_revealButton->setCheckable(true);
         connect(m_revealButton, &QAbstractButton::toggled, this, &EntryDetail::setPasswordVisible);
-        passwordLayout->addWidget(m_revealButton, 0, Qt::AlignVCenter);
+        m_passwordRow->addTrailing(m_revealButton);
 
         m_copyPasswordButton = createRowButton(QStringLiteral("content_copy"), tr("Copy password"));
         connect(m_copyPasswordButton, &QAbstractButton::clicked, this, [this] {
             emit copyRequested(QStringLiteral("password"));
         });
-        passwordLayout->addWidget(m_copyPasswordButton, 0, Qt::AlignVCenter);
-        cardLayout->addWidget(passwordRow);
+        m_passwordRow->addTrailing(m_copyPasswordButton);
 
-        m_totpDivider = new Divider(card);
+        // URL
+        m_urlRow = addFieldRow(cardLayout, tr("URL"), false, &m_urlFieldLabel);
+        m_copyUrlButton = createRowButton(QStringLiteral("content_copy"), tr("Copy URL"));
+        connect(m_copyUrlButton, &QAbstractButton::clicked, this, [this] {
+            emit copyRequested(QStringLiteral("url"));
+        });
+        m_urlRow->addTrailing(m_copyUrlButton);
+
+        // Modified
+        m_modifiedRow = addFieldRow(cardLayout, tr("Modified"), false, &m_modifiedLabel);
+
+        // One-time password, in the protected tone with its countdown ring.
+        m_totpDivider = new QWidget(card);
+        m_totpDivider->setFixedHeight(0);
         cardLayout->addWidget(m_totpDivider);
-
-        // One-time password
-        m_totpRow = new QWidget(card);
-        m_totpRow->setFixedHeight(TotpRowHeight);
-        auto* totpLayout = new QHBoxLayout(m_totpRow);
-        totpLayout->setContentsMargins(16, 0, 16, 0);
-        totpLayout->setSpacing(14);
-
-        m_totpRing = new CountdownRing(m_totpRow);
-        totpLayout->addWidget(m_totpRing, 0, Qt::AlignVCenter);
-
-        auto* totpText = new QWidget(m_totpRow);
-        auto* totpColumn = new QVBoxLayout(totpText);
-        totpColumn->setContentsMargins(0, 0, 0, 0);
-        totpColumn->setSpacing(0);
-        totpColumn->addWidget(createCaption(tr("One-time password")));
-        m_totpLabel = new ValueLabel(1, totpText);
-        totpColumn->addWidget(m_totpLabel);
-        totpLayout->addWidget(totpText, 1);
-
+        auto* totpRow = new FieldRow(tr("One-time password"), true, m_content);
+        totpRow->setMinimumHeight(TotpRowHeight);
+        m_totpRow = totpRow;
+        m_totpRing = new CountdownRing(totpRow);
+        totpRow->column()->addWidget(createOverline(tr("One-time password")));
+        m_totpLabel = new ValueLabel(1, totpRow);
+        totpRow->column()->addWidget(m_totpLabel);
+        totpRow->addTrailing(m_totpRing);
         m_copyTotpButton = createRowButton(QStringLiteral("content_copy"), tr("Copy one-time password"));
         connect(m_copyTotpButton, &QAbstractButton::clicked, this, [this] {
             emit copyRequested(QStringLiteral("totp"));
         });
-        totpLayout->addWidget(m_copyTotpButton, 0, Qt::AlignVCenter);
-        cardLayout->addWidget(m_totpRow);
+        totpRow->addTrailing(m_copyTotpButton);
+        cardLayout->addWidget(totpRow);
 
         return card;
     }
@@ -785,6 +955,17 @@ namespace Material
 
         layout->addWidget(createOverline(tr("Attachments")));
 
+        // The design's "Filter attachments & fields" search with its own
+        // regex affordance; it narrows the field rows and the attachment list.
+        m_attachmentFilter = new SearchBar(SearchBar::Variant::Surface, m_attachmentsSection);
+        m_attachmentFilter->setObjectName(QStringLiteral("entryDetailAttachmentFilter"));
+        m_attachmentFilter->setPlaceholder(tr("Filter attachments & fields"));
+        m_attachmentFilter->setIdentity(QStringLiteral("vault.attachments"), tr("Entry attachments and fields filter"));
+        m_attachmentFilter->lineEdit()->setAccessibleName(tr("Filter attachments and fields"));
+        connect(m_attachmentFilter, &SearchBar::textChanged, this, [this] { applyDetailFilter(); });
+        connect(m_attachmentFilter, &SearchBar::regexToggled, this, [this] { applyDetailFilter(); });
+        layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
+
         m_attachmentsList = new QWidget(m_attachmentsSection);
         m_attachmentsLayout = new QVBoxLayout(m_attachmentsList);
         m_attachmentsLayout->setContentsMargins(0, 0, 0, 0);
@@ -804,6 +985,96 @@ namespace Material
 
         m_historySection = inset(row, {PaneMargin, 0, PaneMargin, 22});
         return m_historySection;
+    }
+
+    QWidget* EntryDetail::buildFooter()
+    {
+        // The design's closing actions: a full-width Copy password and a round
+        // Open URL beside it.
+        auto* footer = new QWidget(m_content);
+        auto* layout = new QHBoxLayout(footer);
+        layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSpacing(8);
+
+        m_copyPasswordAction = new FilledButton(QStringLiteral("content_copy"), tr("Copy password"), footer);
+        m_copyPasswordAction->setObjectName(QStringLiteral("entryDetailCopyPassword"));
+        m_copyPasswordAction->setSymbolSize(RowGlyphSize);
+        m_copyPasswordAction->setFixedHeight(FooterButtonHeight);
+        m_copyPasswordAction->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+        connect(m_copyPasswordAction, &QAbstractButton::clicked, this, [this] {
+            emit copyRequested(QStringLiteral("password"));
+        });
+        layout->addWidget(m_copyPasswordAction, 1);
+
+        m_openUrlButton = new IconButton(QStringLiteral("open_in_new"), footer);
+        m_openUrlButton->setObjectName(QStringLiteral("entryDetailOpenUrl"));
+        m_openUrlButton->setSymbolSize(RowGlyphSize);
+        m_openUrlButton->setDiameter(FooterButtonHeight);
+        m_openUrlButton->setToolTip(tr("Open URL"));
+        m_openUrlButton->setAccessibleName(tr("Open URL"));
+        connect(m_openUrlButton, &QAbstractButton::clicked, this, &EntryDetail::openUrlRequested);
+        layout->addWidget(m_openUrlButton, 0);
+
+        return inset(footer, {PaneMargin, 0, PaneMargin, 22});
+    }
+
+    SearchBar* EntryDetail::attachmentFilter() const
+    {
+        return m_attachmentFilter;
+    }
+
+    QStringList EntryDetail::visibleFieldKeys() const
+    {
+        QStringList keys;
+        for (FieldRow* row : {m_usernameRow, m_passwordRow, m_urlRow, m_modifiedRow}) {
+            if (row && !row->isHidden()) {
+                keys << row->key();
+            }
+        }
+        return keys;
+    }
+
+    void EntryDetail::applyDetailFilter()
+    {
+        const QString needle = m_attachmentFilter ? m_attachmentFilter->text().trimmed() : QString();
+        QRegularExpression pattern;
+        bool useRegex = false;
+        if (m_attachmentFilter && m_attachmentFilter->isRegexEnabled() && !needle.isEmpty()) {
+            pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
+            // An unparsable pattern changes nothing rather than hiding
+            // everything or quietly turning into a literal search.
+            if (!pattern.isValid()) {
+                return;
+            }
+            useRegex = true;
+        }
+        auto accepts = [&](const QString& haystack) {
+            if (needle.isEmpty()) {
+                return true;
+            }
+            if (useRegex) {
+                return pattern.match(haystack).hasMatch();
+            }
+            return haystack.contains(needle, Qt::CaseInsensitive);
+        };
+
+        const struct
+        {
+            FieldRow* row;
+            QString value;
+        } fields[] = {{m_usernameRow, m_data.username},
+                      {m_passwordRow, QString()},
+                      {m_urlRow, m_data.url},
+                      {m_modifiedRow, m_data.modified}};
+        for (const auto& field : fields) {
+            if (field.row) {
+                field.row->setVisible(accepts(field.row->key() + QLatin1Char(' ') + field.value));
+            }
+        }
+        const auto rows = m_attachmentsList->findChildren<QAbstractButton*>(QString(), Qt::FindDirectChildrenOnly);
+        for (QAbstractButton* row : rows) {
+            row->setVisible(accepts(row->toolTip()));
+        }
     }
 
     QLabel* EntryDetail::createCaption(const QString& text)
@@ -883,8 +1154,18 @@ namespace Material
         m_symbolLabel->setPixmap(Icons::pixmap(symbol, SymbolGlyphSize, theme()->color(Role::OnPrimaryContainer)));
 
         m_titleLabel->setFullText(m_data.title);
-        m_urlLabel->setFullText(m_data.url);
-        m_urlLabel->setVisible(!m_data.url.isEmpty());
+        m_urlLabel->setFullText(m_data.url.isEmpty() ? tr("no URL") : m_data.url);
+        m_hero->setHealth(m_data.health);
+        m_healthChip->setHealth(m_data.health);
+        m_healthChip->setVisible(m_hasEntry);
+        m_historyButton->setEnabled(m_hasEntry);
+        m_urlFieldLabel->setFullText(m_data.url.isEmpty() ? emptyValue() : m_data.url);
+        m_copyUrlButton->setEnabled(!m_data.url.isEmpty());
+        m_openUrlButton->setEnabled(!m_data.url.isEmpty());
+        m_copyPasswordAction->setEnabled(!m_data.password.isEmpty());
+        m_modifiedLabel->setFullText(m_data.modified.isEmpty() ? emptyValue() : m_data.modified);
+        m_modifiedRow->setVisible(m_hasEntry);
+        applyDetailFilter();
 
         {
             const QSignalBlocker blocker(m_favouriteButton);
@@ -1011,8 +1292,14 @@ namespace Material
         const QColor onSurface = theme()->color(Role::OnSurface);
         const QColor onSurfaceVariant = theme()->color(Role::OnSurfaceVariant);
 
-        styleLabel(m_titleLabel, theme()->font(TypeRole::TitleLarge), onSurface);
-        styleLabel(m_urlLabel, theme()->font(TypeRole::BodySmall), onSurfaceVariant);
+        const QColor onHero = theme()->colors().onHealthContainer(m_data.health);
+        QFont heroTitle = theme()->font(TypeRole::TitleLarge);
+        styleLabel(m_titleLabel, heroTitle, onHero);
+        QColor heroUrl = onHero;
+        heroUrl.setAlphaF(0.78);
+        styleLabel(m_urlLabel, monoFont(12), heroUrl);
+        styleLabel(m_urlFieldLabel, monoFont(14), onSurface);
+        styleLabel(m_modifiedLabel, monoFont(14), onSurface);
 
         for (auto* caption : std::as_const(m_captions)) {
             styleLabel(caption, captionFont(), onSurfaceVariant);

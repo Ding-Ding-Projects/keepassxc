@@ -42,6 +42,11 @@
       "id": "appearance-default-1",
       "severity": "medium",
       "summary": "Section layout and typography control anatomy differ"
+    },
+    {
+      "id": "appearance-default-3",
+      "severity": "medium",
+      "summary": "Stock QComboBox family/weight pickers and stock QSlider override sliders instead of Material select (list box with search) and Material slider"
     }
   ],
   "deviations": []

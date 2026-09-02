@@ -28,6 +28,7 @@ private slots:
     void initTestCase();
     void groupFilterKeepsAncestorsOfMatches();
     void healthChipsArePresentAndCheckable();
+    void detailFilterNarrowsFieldsAndAttachments();
 };
 
 #endif // KEEPASSXC_TESTMATERIALVAULTFILTERS_H

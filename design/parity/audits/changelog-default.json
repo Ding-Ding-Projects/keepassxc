@@ -37,6 +37,11 @@
       "id": "changelog-default-2",
       "severity": "low",
       "summary": "Code names per version are not in the bundled changelog source"
+    },
+    {
+      "id": "changelog-default-3",
+      "severity": "medium",
+      "summary": "Stock QDateEdit from/to fields instead of Material date fields with the anchored calendar picker"
     }
   ],
   "deviations": []

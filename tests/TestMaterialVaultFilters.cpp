@@ -20,10 +20,12 @@
 #include "core/Config.h"
 #include "util/TemporaryFile.h"
 #include "gui/material/MaterialChip.h"
+#include "gui/material/MaterialEntryDetail.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVaultSidebar.h"
 
+#include <QAbstractButton>
 #include <QCoreApplication>
 #include <QStandardItemModel>
 #include <QTest>
@@ -97,4 +99,55 @@ void TestMaterialVaultFilters::healthChipsArePresentAndCheckable()
     QVERIFY(weak->isChecked());
     weak->setChecked(false);
     QVERIFY(!weak->isChecked());
+}
+
+void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
+{
+    EntryDetail detail;
+    EntryDetailData data;
+    data.title = QStringLiteral("AWS");
+    data.username = QStringLiteral("ops@acme.example");
+    data.password = QStringLiteral("secret");
+    data.url = QStringLiteral("https://console.aws.amazon.com");
+    data.modified = QStringLiteral("2026-08-14 09:12");
+    data.attachments = {{QStringLiteral("recovery-codes.txt"), QStringLiteral("1 KB")},
+                        {QStringLiteral("mfa-backup.png"), QStringLiteral("40 KB")}};
+    detail.setEntryData(data);
+    detail.show();
+    QCoreApplication::processEvents();
+
+    QVERIFY(detail.attachmentFilter());
+    QCOMPARE(detail.attachmentFilter()->searchId(), QStringLiteral("vault.attachments"));
+    QCOMPARE(detail.visibleFieldKeys().size(), 4);
+
+    detail.attachmentFilter()->setText(QStringLiteral("acme"));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+    auto rows = detail.findChildren<QAbstractButton*>();
+    int visibleAttachments = 0;
+    for (auto* row : rows) {
+        if (row->toolTip().endsWith(QStringLiteral(".txt")) || row->toolTip().endsWith(QStringLiteral(".png"))) {
+            visibleAttachments += row->isHidden() ? 0 : 1;
+        }
+    }
+    QCOMPARE(visibleAttachments, 0);
+
+    // Regex is an opt-in; an unparsable pattern leaves the previous result
+    // standing rather than hiding everything or searching it literally.
+    detail.attachmentFilter()->setRegexEnabled(true);
+    detail.attachmentFilter()->setText(QStringLiteral("^user"));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+    detail.attachmentFilter()->setText(QStringLiteral("("));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+
+    detail.attachmentFilter()->setRegexEnabled(false);
+    detail.attachmentFilter()->clear();
+    QCOMPARE(detail.visibleFieldKeys().size(), 4);
+
+    // The hero carries the health chip, the edit and history actions and the
+    // footer the copy-password and open-URL actions.
+    QVERIFY(detail.findChild<QWidget*>(QStringLiteral("entryDetailHealthChip")));
+    QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailEdit")));
+    QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailHistory")));
+    QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailCopyPassword"))->isEnabled());
+    QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailOpenUrl"))->isEnabled());
 }

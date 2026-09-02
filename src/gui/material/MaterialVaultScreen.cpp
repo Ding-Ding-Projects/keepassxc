@@ -683,6 +683,11 @@ namespace Material
     void VaultScreen::connectDetailActions(EntryDetail* detail)
     {
         connect(detail, &EntryDetail::copyRequested, this, &VaultScreen::copyField);
+        connect(detail, &EntryDetail::openUrlRequested, this, [this] {
+            if (m_dbWidget) {
+                m_dbWidget->openUrl();
+            }
+        });
         connect(detail, &EntryDetail::autoTypeRequested, this, [this] {
             if (m_dbWidget) {
                 m_dbWidget->performAutoType();
@@ -1380,6 +1385,7 @@ namespace Material
         data.username = entry->resolveMultiplePlaceholders(entry->username());
         data.password = entry->resolveMultiplePlaceholders(entry->password());
         data.notes = entry->notes();
+        data.modified = Clock::toString(entry->timeInfo().lastModificationTime().toLocalTime());
         data.health = m_entryModel->healthOf(entry);
         // tagList() is the stored list: already trimmed, so a tag written with
         // spaces around it still registers.
@@ -1468,6 +1474,8 @@ namespace Material
             m_dbWidget->copyUsername();
         } else if (field == QLatin1String("password")) {
             m_dbWidget->copyPassword();
+        } else if (field == QLatin1String("url")) {
+            m_dbWidget->copyURL();
         } else if (field == QLatin1String("totp")) {
             m_dbWidget->copyTotp();
         }

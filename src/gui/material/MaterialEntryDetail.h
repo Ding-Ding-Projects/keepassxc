@@ -24,8 +24,10 @@
 #include <QMargins>
 #include <QScrollArea>
 #include <QString>
+#include <QStringList>
 
 class QAbstractButton;
+class QHBoxLayout;
 class QLabel;
 class QTimer;
 class QVBoxLayout;
@@ -34,6 +36,7 @@ namespace Material
 {
     class FilledButton;
     class IconButton;
+    class SearchBar;
     class TonalButton;
 
     /** One row of the attachment list: display name and an already formatted size. */
@@ -59,6 +62,7 @@ namespace Material
         QString password;
         QString totpCode; // empty leaves the TOTP row in its placeholder state
         int totpPeriod = 30; // seconds per step, drives the countdown ring
+        QString modified; // formatted last-change time, shown as a field row
         QString notes; // empty hides the notes section
         Health health = Health::Unknown;
         QString strengthLabel;
@@ -94,14 +98,20 @@ namespace Material
         /** Blank the pane and stop the countdown; no credentials are kept. */
         void clear();
 
+        /** The "Filter attachments & fields" search of the design. */
+        SearchBar* attachmentFilter() const;
+        /** Field rows currently shown, by key, for the filter's tests. */
+        QStringList visibleFieldKeys() const;
+
         bool isPasswordVisible() const;
 
     public slots:
         void setPasswordVisible(bool visible);
 
     signals:
-        /** @p field is one of "username", "password" or "totp". */
+        /** @p field is one of "username", "password", "url" or "totp". */
         void copyRequested(const QString& field);
+        void openUrlRequested();
         void autoTypeRequested();
         void editRequested();
         void deleteRequested();
@@ -117,8 +127,11 @@ namespace Material
     private:
         // Pane internals, defined in MaterialEntryDetail.cpp.
         class CountdownRing;
+        class HealthChip;
+        class HeroPanel;
         class StrengthMeter;
         class ValueLabel;
+        class FieldRow;
 
         void buildUi();
         QWidget* buildHeader();
@@ -127,6 +140,15 @@ namespace Material
         QWidget* buildNotes();
         QWidget* buildAttachments();
         QWidget* buildHistory();
+        QWidget* buildFooter();
+        /**
+         * One field container of the design: an uppercase key, a value and the
+         * trailing actions. @p protectedValue picks the higher tone the design
+         * gives a secret. The row is returned so the caller can keep it.
+         */
+        FieldRow* addFieldRow(QVBoxLayout* column, const QString& key, bool protectedValue, ValueLabel** value);
+        /** Hide field and attachment rows that miss the attachment filter. */
+        void applyDetailFilter();
 
         QLabel* createCaption(const QString& text);
         QLabel* createOverline(const QString& text);
@@ -147,12 +169,15 @@ namespace Material
         bool m_passwordVisible = false;
 
         QWidget* m_content = nullptr;
+        HeroPanel* m_hero = nullptr;
+        HealthChip* m_healthChip = nullptr;
+        IconButton* m_historyButton = nullptr;
         QLabel* m_symbolLabel = nullptr;
         ValueLabel* m_titleLabel = nullptr;
         ValueLabel* m_urlLabel = nullptr;
         IconButton* m_favouriteButton = nullptr;
         FilledButton* m_autoTypeButton = nullptr;
-        TonalButton* m_editButton = nullptr;
+        IconButton* m_editButton = nullptr;
         QAbstractButton* m_deleteButton = nullptr;
         ValueLabel* m_usernameLabel = nullptr;
         ValueLabel* m_passwordLabel = nullptr;
@@ -162,6 +187,13 @@ namespace Material
         IconButton* m_copyPasswordButton = nullptr;
         IconButton* m_copyUsernameButton = nullptr;
         IconButton* m_copyTotpButton = nullptr;
+        IconButton* m_copyUrlButton = nullptr;
+        ValueLabel* m_urlFieldLabel = nullptr;
+        ValueLabel* m_modifiedLabel = nullptr;
+        FieldRow* m_usernameRow = nullptr;
+        FieldRow* m_passwordRow = nullptr;
+        FieldRow* m_urlRow = nullptr;
+        FieldRow* m_modifiedRow = nullptr;
         QWidget* m_totpDivider = nullptr;
         QWidget* m_totpRow = nullptr;
         CountdownRing* m_totpRing = nullptr;
@@ -169,10 +201,13 @@ namespace Material
         QWidget* m_notesSection = nullptr;
         QLabel* m_notesLabel = nullptr;
         QWidget* m_attachmentsSection = nullptr;
+        SearchBar* m_attachmentFilter = nullptr;
         QWidget* m_attachmentsList = nullptr;
         QVBoxLayout* m_attachmentsLayout = nullptr;
         QWidget* m_historySection = nullptr;
         QLabel* m_historyLabel = nullptr;
+        FilledButton* m_copyPasswordAction = nullptr;
+        IconButton* m_openUrlButton = nullptr;
         QTimer* m_totpTimer = nullptr;
 
         QList<QLabel*> m_captions;

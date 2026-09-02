@@ -1,17 +1,17 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "2afa4bc72cd7fd9581496dc42a804331dd7c6a23",
+  "sourceCommit": "41d900ebf5f12e3dd0be8c9d1f980dc5c2ad71f3",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T17:33:07.827Z",
+  "generatedAt": "2026-09-02T17:46:50.733Z",
   "quick": true,
-  "tuples": 4,
+  "tuples": 2,
   "errors": 0,
   "findings": [],
   "records": [
     {
-      "id": "settings_compact_bilingual_light_x1",
+      "id": "vault_compact_bilingual_light_x1",
       "tuple": {
-        "screen": "settings",
+        "screen": "vault",
         "width": {
           "id": "compact",
           "w": 600,
@@ -27,39 +27,15 @@
         "windowGeometry": "560,185 800x720",
         "devicePixelRatio": 1
       },
-      "png": "settings_compact_bilingual_light_x1.png",
-      "pngSha256": "4d2d659326f03642e007428a4ddd82fe1c2cb7b921de6f013f47b086c2274df7",
-      "widgetCount": 85,
+      "png": "vault_compact_bilingual_light_x1.png",
+      "pngSha256": "45f5b91b981dd303308f7dc86b61c6bc205859e3b78ee74fee5d88f489a53b00",
+      "widgetCount": 45,
       "findingCount": 0
     },
     {
-      "id": "appearance_compact_bilingual_light_x1",
+      "id": "vault_expanded_bilingual_light_x1",
       "tuple": {
-        "screen": "appearance",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "appearance_compact_bilingual_light_x1.png",
-      "pngSha256": "4efb968c5d6a2b1236eafd765923f28ff04d8a5e1bab8f8a66580adb286c081d",
-      "widgetCount": 149,
-      "findingCount": 0
-    },
-    {
-      "id": "settings_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "settings",
+        "screen": "vault",
         "width": {
           "id": "expanded",
           "w": 1200,
@@ -75,33 +51,9 @@
         "windowGeometry": "560,185 1200x800",
         "devicePixelRatio": 1
       },
-      "png": "settings_expanded_bilingual_light_x1.png",
-      "pngSha256": "38670d2ae55421dcd65c218f63463b32c33c84bf07fc084d635bc7edc632eeac",
-      "widgetCount": 85,
-      "findingCount": 0
-    },
-    {
-      "id": "appearance_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "appearance",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "appearance_expanded_bilingual_light_x1.png",
-      "pngSha256": "5ddb486acdf1a22cbf36f7b252fed8f4b0ded8a0b77795a9ada0e8650bd75f2f",
-      "widgetCount": 149,
+      "png": "vault_expanded_bilingual_light_x1.png",
+      "pngSha256": "09d0f4784d7e8b12cea489d2e00ed0059a3dafbaa7ac6827725839cfbd4a5ab6",
+      "widgetCount": 109,
       "findingCount": 0
     }
   ]
