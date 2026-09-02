@@ -141,7 +141,7 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/history-default.json",
-        "sha256": "d6e3be80ef8ed3ebcb5c18214c55a3cfbebfdbbe249e79fc2cb5b0fd3b36c9cf"
+        "sha256": "b172f28ae1945764b008a0ba94317b748ca7971292ca288a1b83198b6f2ca4b8"
       },
       "evidence": {
         "status": "complete",

@@ -13,5 +13,6 @@ private slots:
     void gitStoreMigratesLegacyOnce();
     void gitStoreSerializesConcurrentWriters();
     void restoresDeletedEntryFromPerDatabaseRepository();
+    void feedBadgesTheCreatedStateAsCreate();
 };
 #endif

@@ -4,7 +4,7 @@
   "status": "complete",
   "reviewedOn": "2026-09-02",
   "method": "Hand review of design/parity/evidence/<row>/comparison.png (reference, built, pixelmatch diff) against Material Design 3 component anatomy and the checked-in reference.",
-  "verdict": "defects-open",
+  "verdict": "conforms",
   "primitives": [
     {
       "primitive": "append-only banner",
@@ -27,13 +27,7 @@
       "finding": "392 px detail card beside the list: secondary-container header with kind badge, digest, label and UTC time; Record, What changed, coloured Diff lines, the append-only note, Restore/Compare/Export (repaired 2026-09-02). Rows keep their own actions only below 900 px."
     }
   ],
-  "defects": [
-    {
-      "id": "history-default-3",
-      "severity": "low",
-      "summary": "CREATE badge not distinguished from EDIT for entry revisions"
-    }
-  ],
+  "defects": [],
   "deviations": [
     {
       "reason": "The fixture database has one history revision (the first save); the reference shows an authored eight-revision timeline. Data, not chrome.",

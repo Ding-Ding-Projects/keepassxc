@@ -1,5 +1,6 @@
 #include "TestMaterialHistory.h"
 #include "gui/material/MaterialHistoryScreen.h"
+#include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialHistoryStore.h"
@@ -358,6 +359,43 @@ void TestMaterialHistory::restoresDeletedEntryFromPerDatabaseRepository()
     QVERIFY2(restoreError.isEmpty(), qPrintable(restoreError));
     QVERIFY(database->rootGroup()->findEntryByUuid(deletedUuid));
     QVERIFY(!database->containsDeletedObject(deletedUuid));
+}
+
+void TestMaterialHistory::feedBadgesTheCreatedStateAsCreate()
+{
+    // An entry edited once leaves its created state in history; the feed
+    // badges the step out of it CREATE, and a second edit is an EDIT.
+    auto database = QSharedPointer<Database>::create();
+    auto* entry = new Entry();
+    entry->setUuid(QUuid::createUuid());
+    entry->setTitle(QStringLiteral("Fresh"));
+    entry->setGroup(database->rootGroup());
+    QCOMPARE(entry->timeInfo().creationTime(), entry->timeInfo().lastModificationTime());
+    QTest::qWait(1100); // the history step needs a later modification second
+    entry->beginUpdate();
+    entry->setTitle(QStringLiteral("Fresh, renamed"));
+    entry->endUpdate();
+    QCOMPARE(entry->historyItems().size(), 1);
+    QTest::qWait(1100);
+    entry->beginUpdate();
+    entry->setUsername(QStringLiteral("someone"));
+    entry->endUpdate();
+    QCOMPARE(entry->historyItems().size(), 2);
+
+    HistoryScreen screen;
+    screen.resize(1200, 860);
+    HistoryFeed feed(&screen);
+    feed.setDatabase(database);
+    feed.rebuild();
+    QStringList badges;
+    for (QWidget* row : screen.findChildren<QWidget*>()) {
+        if (row->objectName().startsWith(QStringLiteral("historyRevision_"))) {
+            badges << row->accessibleName().section(QLatin1Char(':'), 0, 0);
+        }
+    }
+    QVERIFY2(badges.contains(QStringLiteral("CREATE")), qPrintable(badges.join(QStringLiteral(" | "))));
+    QVERIFY2(badges.contains(QStringLiteral("EDIT")), qPrintable(badges.join(QStringLiteral(" | "))));
+    QCOMPARE(badges.count(QStringLiteral("CREATE")), 1);
 }
 
 QTEST_MAIN(TestMaterialHistory)

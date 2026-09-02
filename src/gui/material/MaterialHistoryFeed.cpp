@@ -515,7 +515,12 @@ namespace Material
                 change.row.symbol = described.symbol;
                 change.row.label = described.label;
                 change.row.meta = metaLine(id, change.when, described.kind);
-                change.row.badge = described.tint == RevisionTint::Negative ? tr("DELETE") : tr("EDIT");
+                // The oldest history item that still carries the entry's creation
+                // time is the state the entry was created in, so the step out of
+                // it is the CREATE the design badges separately from an EDIT.
+                const bool created = i == 0 && before->timeInfo().creationTime().isValid()
+                                     && before->timeInfo().lastModificationTime() == before->timeInfo().creationTime();
+                change.row.badge = described.tint == RevisionTint::Negative ? tr("DELETE") : created ? tr("CREATE") : tr("EDIT");
                 change.row.hash = id.left(ShortIdLength);
                 change.row.record = entry->group()
                                         ? tr("%1 · %2").arg(entryName(entry), entry->group()->hierarchy().join(QStringLiteral(" / ")))
