@@ -17,6 +17,7 @@
 
 #include "MaterialSettingsScreen.h"
 
+#include "MaterialAppearanceEditor.h"
 #include "MaterialSelect.h"
 #include "MaterialSlider.h"
 
@@ -36,7 +37,6 @@
 #include "keys/drivers/YubiKey.h"
 #include "gui/Application.h"
 
-#include <QColorDialog>
 #include <QEnterEvent>
 #include <QFontDatabase>
 #include <QFontInfo>
@@ -749,11 +749,14 @@ namespace Material
         m_overrideFontSize = addSlider(tr("Element font size"), QStringLiteral("appearanceOverrideFontSize"), 8, 32);
         m_overrideSpacing = addSlider(tr("Element spacing"), QStringLiteral("appearanceOverrideSpacing"), 0, 32);
 
-        m_overrideColor = new QPushButton(tr("Choose continuous background colour"));
+        // The full editor (typography, the infinite colour picker, shape,
+        // presets) opens beside the chosen element; the sliders here are the
+        // quick path for the four commonest properties.
+        m_overrideColor = new FilledButton(QStringLiteral("palette"), tr("Open the appearance editor"));
         m_overrideColor->setObjectName(QStringLiteral("appearanceOverrideColor"));
-        m_overrideColor->setAccessibleName(tr("Element background colour"));
+        m_overrideColor->setAccessibleName(tr("Open the appearance editor for the selected element"));
         content->addWidget(m_overrideColor);
-        m_overrideReset = new QPushButton(tr("Reset this element"));
+        m_overrideReset = new OutlinedButton(QStringLiteral("restart_alt"), tr("Reset this element"));
         m_overrideReset->setObjectName(QStringLiteral("appearanceOverrideReset"));
         m_overrideReset->setAccessibleName(tr("Reset selected element appearance"));
         content->addWidget(m_overrideReset);
@@ -788,18 +791,10 @@ namespace Material
             });
         }
         connect(m_overrideColor, &QPushButton::clicked, this, [this] {
-            auto value = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
-            auto* dialog = new QColorDialog(value.background.value_or(theme()->color(Role::SecondaryContainer)), this);
-            dialog->setOption(QColorDialog::ShowAlphaChannel);
-            dialog->setOption(QColorDialog::DontUseNativeDialog);
-            dialog->setAttribute(Qt::WA_DeleteOnClose);
-            connect(dialog, &QColorDialog::currentColorChanged, this, [this](const QColor& color) {
-                auto current = ElementOverrides::instance()->get(m_overrideElement->currentData().toString());
-                current.background = color;
-                ElementOverrides::instance()->set(m_overrideElement->currentData().toString(), current);
-                applyCurrentOverride();
-            });
-            dialog->open();
+            const QString key = m_overrideElement->currentData().toString();
+            QWidget* target = overrideTarget(key);
+            AppearanceEditor::instance()->editElement(target ? target : m_overridePreview, key);
+            AppearanceEditor::instance()->setCurrentTab(QStringLiteral("colour"));
         });
         connect(m_overrideReset, &QPushButton::clicked, this, [this, load] {
             ElementOverrides::instance()->reset(m_overrideElement->currentData().toString());

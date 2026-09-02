@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 29700,
+  "pid": 22268,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "1200x800",
@@ -828,9 +828,9 @@
     },
     {
       "class": "Material::Card",
-      "hint": "291x532",
+      "hint": "284x532",
       "leaf": false,
-      "minimumHint": "192x452",
+      "minimumHint": "249x452",
       "name": "",
       "offscreen": false,
       "rect": "647,677 517x532",
@@ -963,24 +963,24 @@
       "squeezed": false
     },
     {
-      "class": "QPushButton",
-      "hint": "247x40",
+      "class": "Material::FilledButton",
+      "hint": "205x40",
       "leaf": true,
-      "minimumHint": "247x40",
+      "minimumHint": "205x40",
       "name": "appearanceOverrideColor",
       "offscreen": false,
       "rect": "669,1075 473x40",
       "scrollable": true,
       "squeezed": false,
-      "text": "Choose continuous background colour",
+      "text": "Open the appearance editor",
       "textOverflows": false,
-      "textWidth": 207
+      "textWidth": 147
     },
     {
-      "class": "QPushButton",
-      "hint": "136x40",
+      "class": "Material::OutlinedButton",
+      "hint": "154x40",
       "leaf": true,
-      "minimumHint": "136x40",
+      "minimumHint": "154x40",
       "name": "appearanceOverrideReset",
       "offscreen": false,
       "rect": "669,1123 473x40",

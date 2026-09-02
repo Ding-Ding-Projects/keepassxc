@@ -1,205 +1,13 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "36c6d1f48e44de6dee286f2c254148d14984010d",
+  "sourceCommit": "8c7bcc45360428f144742f4ac7429dc56c990e0b",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T18:44:01.563Z",
+  "generatedAt": "2026-09-02T19:09:36.131Z",
   "quick": true,
-  "tuples": 20,
+  "tuples": 4,
   "errors": 0,
   "findings": [],
   "records": [
-    {
-      "id": "vault_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "vault",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "vault_compact_bilingual_light_x1.png",
-      "pngSha256": "c58b98717cd9a939c30c944286ba5ebb3f0f1a9ce3523a5ec282c868c7ee965d",
-      "widgetCount": 45,
-      "findingCount": 0
-    },
-    {
-      "id": "reports_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "reports",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "reports_compact_bilingual_light_x1.png",
-      "pngSha256": "e5bdbb22fcbd404765cb627c11c604d5f02bb821bc52f647e9e85e7042795b30",
-      "widgetCount": 61,
-      "findingCount": 0
-    },
-    {
-      "id": "editor_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "editor",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "editor_compact_bilingual_light_x1.png",
-      "pngSha256": "366cd1f3c59eef0b8ac5aed8354d6d8a8c8d639d3f8bbdc2722a99ce7a846749",
-      "widgetCount": 71,
-      "findingCount": 0
-    },
-    {
-      "id": "database_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "database",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "database_compact_bilingual_light_x1.png",
-      "pngSha256": "e6a75567e6e8956a592c3cb2aa668be5814500946785c5787d293eefb5152fdb",
-      "widgetCount": 70,
-      "findingCount": 0
-    },
-    {
-      "id": "tools_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "tools",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "tools_compact_bilingual_light_x1.png",
-      "pngSha256": "06de9c2678a73c5432c0121157e61557527f1541515f74890fb8ea118029adb3",
-      "widgetCount": 76,
-      "findingCount": 0
-    },
-    {
-      "id": "history_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "history",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "history_compact_bilingual_light_x1.png",
-      "pngSha256": "3ad03537f16432cb9552438bff842063840e4d99fe39d5006f0b120091df8c80",
-      "widgetCount": 50,
-      "findingCount": 0
-    },
-    {
-      "id": "changelog_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "changelog",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "changelog_compact_bilingual_light_x1.png",
-      "pngSha256": "7a10ed3827f2ae3273fe75705bfc75ecc6e6086735cadd46ba6174cb7375e741",
-      "widgetCount": 2561,
-      "findingCount": 0
-    },
-    {
-      "id": "settings_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "settings",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "settings_compact_bilingual_light_x1.png",
-      "pngSha256": "4d2d659326f03642e007428a4ddd82fe1c2cb7b921de6f013f47b086c2274df7",
-      "widgetCount": 85,
-      "findingCount": 0
-    },
     {
       "id": "appearance_compact_bilingual_light_x1",
       "tuple": {
@@ -225,9 +33,9 @@
       "findingCount": 0
     },
     {
-      "id": "help_compact_bilingual_light_x1",
+      "id": "settings_compact_bilingual_light_x1",
       "tuple": {
-        "screen": "help",
+        "screen": "settings",
         "width": {
           "id": "compact",
           "w": 600,
@@ -243,200 +51,8 @@
         "windowGeometry": "560,185 800x720",
         "devicePixelRatio": 1
       },
-      "png": "help_compact_bilingual_light_x1.png",
-      "pngSha256": "fe0cb90102c13b70f096bf0ccfce6a0660f998036179aba6a6977010d9ccf430",
-      "widgetCount": 57,
-      "findingCount": 0
-    },
-    {
-      "id": "vault_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "vault",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "vault_expanded_bilingual_light_x1.png",
-      "pngSha256": "09d0f4784d7e8b12cea489d2e00ed0059a3dafbaa7ac6827725839cfbd4a5ab6",
-      "widgetCount": 109,
-      "findingCount": 0
-    },
-    {
-      "id": "reports_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "reports",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "reports_expanded_bilingual_light_x1.png",
-      "pngSha256": "6632bec5fbe5e21c7accaaaebd5c752ff8c6eac78765caf12c52268ec9890e6e",
-      "widgetCount": 61,
-      "findingCount": 0
-    },
-    {
-      "id": "editor_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "editor",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "editor_expanded_bilingual_light_x1.png",
-      "pngSha256": "67be103bc7e32ca02e0f7f88c42392b8f248b2f753accd2325aaf01bfaedb06b",
-      "widgetCount": 71,
-      "findingCount": 0
-    },
-    {
-      "id": "database_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "database",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "database_expanded_bilingual_light_x1.png",
-      "pngSha256": "19d7fa177816d635a9a31f1dac2e672ea5f5c6a058dd1ff804cb10e50bb013da",
-      "widgetCount": 70,
-      "findingCount": 0
-    },
-    {
-      "id": "tools_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "tools",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "tools_expanded_bilingual_light_x1.png",
-      "pngSha256": "342d9062606b5541e5f6f0a149f970af4423f0e658102efe531a661f079c29fe",
-      "widgetCount": 76,
-      "findingCount": 0
-    },
-    {
-      "id": "history_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "history",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "history_expanded_bilingual_light_x1.png",
-      "pngSha256": "a77f4c45d94e897ddf1351843c029e6377901a97f58629b6e131bb78be5e54c5",
-      "widgetCount": 71,
-      "findingCount": 0
-    },
-    {
-      "id": "changelog_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "changelog",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "changelog_expanded_bilingual_light_x1.png",
-      "pngSha256": "867a696e953e84e1e77d004ea479b917448abb58521d3165c480021cb54a2d21",
-      "widgetCount": 2561,
-      "findingCount": 0
-    },
-    {
-      "id": "settings_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "settings",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "settings_expanded_bilingual_light_x1.png",
-      "pngSha256": "38670d2ae55421dcd65c218f63463b32c33c84bf07fc084d635bc7edc632eeac",
+      "png": "settings_compact_bilingual_light_x1.png",
+      "pngSha256": "4d2d659326f03642e007428a4ddd82fe1c2cb7b921de6f013f47b086c2274df7",
       "widgetCount": 85,
       "findingCount": 0
     },
@@ -465,9 +81,9 @@
       "findingCount": 0
     },
     {
-      "id": "help_expanded_bilingual_light_x1",
+      "id": "settings_expanded_bilingual_light_x1",
       "tuple": {
-        "screen": "help",
+        "screen": "settings",
         "width": {
           "id": "expanded",
           "w": 1200,
@@ -483,9 +99,9 @@
         "windowGeometry": "560,185 1200x800",
         "devicePixelRatio": 1
       },
-      "png": "help_expanded_bilingual_light_x1.png",
-      "pngSha256": "221c01bb4e415d506bc739396ebc749e7506937afe34623db5f9744b5431aa12",
-      "widgetCount": 57,
+      "png": "settings_expanded_bilingual_light_x1.png",
+      "pngSha256": "38670d2ae55421dcd65c218f63463b32c33c84bf07fc084d635bc7edc632eeac",
+      "widgetCount": 85,
       "findingCount": 0
     }
   ]
