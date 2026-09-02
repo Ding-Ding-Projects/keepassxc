@@ -110,6 +110,8 @@ namespace Material
         QWidget* buildCheatPage();
         QWidget* buildDialectPage();
         void rebuildExplain(const QString& pattern);
+        /** The design's token blocks under the pattern: click removes, drag reorders. */
+        void rebuildTokenStrip(const QString& pattern);
         void rebuildReplace();
         void rebuildExport();
         void rebuildDialectPage();
@@ -138,6 +140,9 @@ namespace Material
         QLabel* m_subtitle = nullptr;
         QLabel* m_flagCaption = nullptr;
         QVBoxLayout* m_explainLayout = nullptr;
+        QWidget* m_tokenStrip = nullptr;
+        QLayout* m_tokenStripLayout = nullptr;
+        QLabel* m_tokenStripEmpty = nullptr;
         QLineEdit* m_replaceEdit = nullptr;
         QPlainTextEdit* m_replacePreview = nullptr;
         QLabel* m_replaceNote = nullptr;

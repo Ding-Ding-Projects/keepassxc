@@ -4,6 +4,8 @@ Feature id: `regex-builder` · Category: Search and regex
 
 ## Behaviour
 
+Under the pattern field sit the design's **token blocks**: one coloured mono chip per token (literals, classes, groups, lookarounds, quantifiers, anchors, alternation and escapes each in their own tone) with a drag handle. Clicking a block removes that token from the pattern; dragging a block onto another moves it there; with the keyboard, <kbd>Delete</kbd> removes the focused block and <kbd>Ctrl</kbd>+<kbd>Left</kbd> / <kbd>Ctrl</kbd>+<kbd>Right</kbd> move it. The strip is a dashed drop zone that states plainly when the pattern is empty.
+
 Every Material search bar carries a `.*` chip that switches the query to regex mode and a builder affordance that opens the `Material::RegexBuilder` overlay (`src/gui/material/MaterialRegexBuilder.h`) for that exact field. The overlay is a workbench, not a compact dialog:
 
 - **Token palette and pattern library.** Guided token chips (character classes, anchors, quantifiers, groups, alternation, lookaround, backreferences) insert at the caret. Beneath them the pattern library lists the ten shipped presets with their own search field; choosing one loads its pattern, flags and sample.

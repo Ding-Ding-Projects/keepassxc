@@ -25,8 +25,16 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
+#include "MaterialVaultSidebar.h"
 
 #include <QAbstractButton>
+#include <QMouseEvent>
+#include <QMimeData>
+#include <QKeyEvent>
+#include <QDropEvent>
+#include <QDragEnterEvent>
+#include <QDrag>
+#include <QApplication>
 #include <QFontMetrics>
 #include <QFrame>
 #include <QHBoxLayout>
@@ -44,6 +52,7 @@
 #include <QVBoxLayout>
 #include <QVariant>
 
+#include <functional>
 #include <utility>
 
 namespace Material
@@ -198,6 +207,187 @@ namespace Material
      * A monospace chip: the palette tokens insert themselves, the flag chips
      * are checkable and fill with primary when on.
      */
+    /**
+     * One token block of the design: a coloured mono chip with a drag handle.
+     * Click removes it from the pattern; drag it onto another block to move it
+     * there; with the keyboard, Delete removes and Ctrl+Left / Ctrl+Right move.
+     */
+    class RegexTokenBlock : public QAbstractButton
+    {
+    public:
+        RegexTokenBlock(int index, const RegexLab::Token& token, QWidget* parent = nullptr)
+            : QAbstractButton(parent)
+            , m_index(index)
+            , m_type(token.type)
+        {
+            setText(token.text);
+            setFont(monoFont(-1));
+            setCursor(Qt::OpenHandCursor);
+            setFocusPolicy(Qt::TabFocus);
+            setAcceptDrops(true);
+            setToolTip(RegexBuilder::tr("%1 · %2 (click to remove, drag to move)").arg(token.english, token.cantonese));
+            setAccessibleName(RegexBuilder::tr("Token block %1: %2").arg(token.text, token.english));
+            setAccessibleDescription(RegexBuilder::tr("Delete removes it; Ctrl+Left and Ctrl+Right move it."));
+        }
+
+        int index() const
+        {
+            return m_index;
+        }
+
+        std::function<void(int from, int to)> onMove;
+        std::function<void(int index)> onRemove;
+
+        QSize sizeHint() const override
+        {
+            return {fontMetrics().horizontalAdvance(text()) + 20 + 16 + 6, 30};
+        }
+
+        QSize minimumSizeHint() const override
+        {
+            return sizeHint();
+        }
+
+        static QPair<Role, Role> colours(const QString& type)
+        {
+            if (type == QLatin1String("charclass") || type == QLatin1String("class") || type == QLatin1String("unicode")) {
+                return {Role::SecondaryContainer, Role::OnSecondaryContainer};
+            }
+            if (type == QLatin1String("group") || type == QLatin1String("backref")) {
+                return {Role::PrimaryContainer, Role::OnPrimaryContainer};
+            }
+            if (type == QLatin1String("look")) {
+                return {Role::AmberContainer, Role::OnAmberContainer};
+            }
+            if (type == QLatin1String("quant")) {
+                return {Role::GreenContainer, Role::OnGreenContainer};
+            }
+            if (type == QLatin1String("anchor")) {
+                return {Role::ErrorContainer, Role::OnErrorContainer};
+            }
+            if (type == QLatin1String("alt") || type == QLatin1String("dot")) {
+                return {Role::SurfaceContainerHighest, Role::OnSurface};
+            }
+            if (type == QLatin1String("escape")) {
+                return {Role::SurfaceContainer, Role::OnSurfaceVariant};
+            }
+            return {Role::SurfaceContainer, Role::OnSurface};
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            const auto roles = colours(m_type);
+            paintSurface(&painter, rect(), Shape::Small, theme()->color(roles.first));
+            if (hasFocus() || m_dropTarget) {
+                painter.setPen(QPen(theme()->color(Role::Primary), 2));
+                painter.setBrush(Qt::NoBrush);
+                painter.drawRoundedRect(QRectF(rect()).adjusted(1, 1, -1, -1), Shape::Small, Shape::Small);
+            }
+            QColor handle = theme()->color(roles.second);
+            handle.setAlphaF(0.65);
+            Icons::symbol(QStringLiteral("drag_indicator"), handle).paint(&painter, QRect(6, (height() - 14) / 2, 14, 14));
+            painter.setFont(font());
+            painter.setPen(theme()->color(roles.second));
+            painter.drawText(rect().adjusted(24, 0, -8, 0), Qt::AlignVCenter | Qt::AlignLeft, text());
+        }
+
+        void mousePressEvent(QMouseEvent* event) override
+        {
+            m_pressPos = event->pos();
+            QAbstractButton::mousePressEvent(event);
+        }
+
+        void mouseMoveEvent(QMouseEvent* event) override
+        {
+            if (!(event->buttons() & Qt::LeftButton) || (event->pos() - m_pressPos).manhattanLength() < QApplication::startDragDistance()) {
+                QAbstractButton::mouseMoveEvent(event);
+                return;
+            }
+            auto* drag = new QDrag(this);
+            auto* mime = new QMimeData;
+            mime->setData(QStringLiteral("application/x-kpxc-regex-token"), QByteArray::number(m_index));
+            drag->setMimeData(mime);
+            drag->setPixmap(grab());
+            setDown(false);
+            drag->exec(Qt::MoveAction);
+        }
+
+        void dragEnterEvent(QDragEnterEvent* event) override
+        {
+            if (event->mimeData()->hasFormat(QStringLiteral("application/x-kpxc-regex-token"))) {
+                m_dropTarget = true;
+                update();
+                event->acceptProposedAction();
+            }
+        }
+
+        void dragLeaveEvent(QDragLeaveEvent*) override
+        {
+            m_dropTarget = false;
+            update();
+        }
+
+        void dropEvent(QDropEvent* event) override
+        {
+            m_dropTarget = false;
+            update();
+            const int from = event->mimeData()->data(QStringLiteral("application/x-kpxc-regex-token")).toInt();
+            if (onMove && from != m_index) {
+                onMove(from, m_index);
+            }
+            event->acceptProposedAction();
+        }
+
+        void keyPressEvent(QKeyEvent* event) override
+        {
+            if (event->key() == Qt::Key_Delete || event->key() == Qt::Key_Backspace) {
+                if (onRemove) onRemove(m_index);
+                return;
+            }
+            if (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Left) {
+                if (onMove && m_index > 0) onMove(m_index, m_index - 1);
+                return;
+            }
+            if (event->modifiers().testFlag(Qt::ControlModifier) && event->key() == Qt::Key_Right) {
+                if (onMove) onMove(m_index, m_index + 1);
+                return;
+            }
+            QAbstractButton::keyPressEvent(event);
+        }
+
+    private:
+        int m_index;
+        QString m_type;
+        QPoint m_pressPos;
+        bool m_dropTarget = false;
+    };
+
+    /** The dashed drop zone the token blocks sit in. */
+    class RegexTokenStrip : public QWidget
+    {
+    public:
+        explicit RegexTokenStrip(QWidget* parent = nullptr)
+            : QWidget(parent)
+        {
+            setMinimumHeight(44);
+        }
+
+    protected:
+        void paintEvent(QPaintEvent*) override
+        {
+            QPainter painter(this);
+            painter.setRenderHint(QPainter::Antialiasing);
+            paintSurface(&painter, rect(), Shape::Large, theme()->color(Role::SurfaceContainerLowest));
+            QPen pen(theme()->color(Role::OutlineVariant), 1, Qt::DashLine);
+            painter.setPen(pen);
+            painter.setBrush(Qt::NoBrush);
+            painter.drawRoundedRect(QRectF(rect()).adjusted(0.5, 0.5, -0.5, -0.5), Shape::Large, Shape::Large);
+        }
+    };
+
     class RegexTokenChip : public QAbstractButton
     {
     public:
@@ -561,6 +751,30 @@ namespace Material
         patternLayout->addWidget(m_statusLabel);
         layout->addWidget(patternBlock);
 
+        // The design's token blocks: the pattern as coloured pieces to remove
+        // by clicking or reorder by dragging.
+        auto* stripHeader = new QHBoxLayout;
+        stripHeader->setContentsMargins(0, 4, 0, 0);
+        stripHeader->setSpacing(8);
+        stripHeader->addWidget(makeLabel(tr("Token blocks"), TypeRole::LabelSmall, Role::OnSurfaceVariant, true));
+        auto* stripRule = new QFrame;
+        stripRule->setFrameShape(QFrame::HLine);
+        stripRule->setFixedHeight(1);
+        stripRule->setStyleSheet(QStringLiteral("background:%1;border:none;").arg(theme()->hex(Role::OutlineVariant)));
+        stripHeader->addWidget(stripRule, 1);
+        stripHeader->addWidget(makeLabel(tr("click to remove · drag to reorder"), TypeRole::LabelSmall, Role::Outline));
+        layout->addLayout(stripHeader);
+        m_tokenStrip = new RegexTokenStrip;
+        m_tokenStrip->setObjectName(QStringLiteral("regexTokenStrip"));
+        m_tokenStrip->setAccessibleName(tr("Token blocks"));
+        auto* stripLayout = new FlowLayout(m_tokenStrip, 5, 5);
+        stripLayout->setContentsMargins(9, 9, 9, 9);
+        m_tokenStripLayout = stripLayout;
+        m_tokenStripEmpty = makeLabel(tr("Type a pattern and its pieces appear here."), TypeRole::LabelMedium, Role::Outline);
+        m_tokenStripEmpty->setObjectName(QStringLiteral("regexTokenStripEmpty"));
+        stripLayout->addWidget(m_tokenStripEmpty);
+        layout->addWidget(m_tokenStrip);
+
         // The workbench: which dialect is described, and which pane is open.
         auto* controls = new QHBoxLayout;
         controls->setContentsMargins(0, 0, 0, 0);
@@ -715,6 +929,55 @@ namespace Material
             m_explainLayout->addWidget(row);
         }
         m_explainLayout->addStretch(1);
+    }
+
+    void RegexBuilder::rebuildTokenStrip(const QString& pattern)
+    {
+        if (!m_tokenStrip) {
+            return;
+        }
+        const auto children = m_tokenStrip->findChildren<QWidget*>(QString(), Qt::FindDirectChildrenOnly);
+        for (QWidget* child : children) {
+            if (child != m_tokenStripEmpty) {
+                // A block may be rebuilding from its own click, so it is detached
+                // now and deleted once its signal has returned.
+                m_tokenStripLayout->removeWidget(child);
+                child->hide();
+                child->setParent(nullptr);
+                child->deleteLater();
+            }
+        }
+        const auto tokens = RegexLab::tokenize(pattern);
+        m_tokenStripEmpty->setVisible(tokens.isEmpty());
+        auto texts = QStringList();
+        for (const auto& token : tokens) {
+            texts << token.text;
+        }
+        for (int index = 0; index < tokens.size(); ++index) {
+            auto* block = new RegexTokenBlock(index, tokens.at(index), m_tokenStrip);
+            block->setObjectName(QStringLiteral("regexTokenBlock_%1").arg(index));
+            block->onRemove = [this, texts](int at) {
+                QStringList next = texts;
+                if (at >= 0 && at < next.size()) {
+                    next.removeAt(at);
+                }
+                setPattern(next.join(QString()));
+            };
+            block->onMove = [this, texts](int from, int to) {
+                QStringList next = texts;
+                if (from < 0 || from >= next.size()) {
+                    return;
+                }
+                const QString piece = next.takeAt(from);
+                next.insert(qBound(0, to, next.size()), piece);
+                setPattern(next.join(QString()));
+            };
+            connect(block, &QAbstractButton::clicked, this, [block] {
+                if (block->onRemove) block->onRemove(block->index());
+            });
+            m_tokenStripLayout->addWidget(block);
+        }
+        m_tokenStrip->setAccessibleDescription(tokens.isEmpty() ? tr("No token blocks") : tr("%n token block(s)", "", tokens.size()));
     }
 
     QWidget* RegexBuilder::buildReplacePage()
@@ -1117,6 +1380,7 @@ namespace Material
         // pattern itself changed, because it does not depend on the sample.
         if (m_explainLayout && pattern != m_lastPattern) {
             rebuildExplain(pattern);
+            rebuildTokenStrip(pattern);
             m_lastPattern = pattern;
         }
         rebuildReplace();

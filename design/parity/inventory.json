@@ -252,19 +252,19 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/regex-builder-default.json",
-        "sha256": "63eec9b4f56cbeb6cf65643c530562b3ab4c6ace3ee14d58a71699218d7740e1"
+        "sha256": "a4c574817e3fe4eeb6e7fb52af27c006af9ef2cc3de89f45d89ef226c8db0fc6"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/regex-builder-default/reference.png",
         "referenceRawSha256": "d4ffd9a0f59fa5257313a8a5d43420d120bb7e74cb9281762e07b7321b25a209",
         "builtRaw": "design/parity/evidence/regex-builder-default/built.png",
-        "builtRawSha256": "ee467cefffaf082ab0ecefa7f40f9a6b141822bb9d07c0ce51b09ae415e6555e",
+        "builtRawSha256": "efba740a761e2558a539345e190ac7715a65ffef65f63b4f7e7ae5af48d41826",
         "comparison": "design/parity/evidence/regex-builder-default/comparison.png",
-        "comparisonSha256": "9dd8e2c2d5a0b8b27688b656419c1052ded02e53b7e5a8db26044120e51546fc",
+        "comparisonSha256": "8618e6cc2b113708ebfdbbbc40e38745c32967017523c47b2a3b46ea1de3a118",
         "diff": "design/parity/evidence/regex-builder-default/diff.json",
-        "diffSha256": "37a44189cc32af1a3417e703c0f8b3a55e4f50f3e4517529930af01f9091fc58",
-        "mismatchRatio": 0.2036071047008547
+        "diffSha256": "81df8b0af66b01ca92172c9bc5d38f47236498e96445389f6dffba05f7c2d189",
+        "mismatchRatio": 0.20778846153846153
       },
       "deviations": [
         {
@@ -274,7 +274,7 @@
           "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
         }
       ],
-      "sourceCommit": "6e8be144e9f584598c314f08b777a049d2df11d1",
+      "sourceCommit": "761bf1989675b8b67918327b4c2a7dbb07ade27b",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
