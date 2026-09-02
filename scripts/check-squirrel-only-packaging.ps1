@@ -109,7 +109,7 @@ $workflowVersionContract = @(
     'package-version: ${{ steps.package_version.outputs.value }}',
     'PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}',
     'RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}',
-    '--title "KeePassXC Material ${PACKAGE_VERSION}"'
+    '--title "KeePassXC Material ${PACKAGE_VERSION} - ${DIM_SUM_TITLE}"'
 )
 foreach ($needle in $workflowVersionContract) {
     if (-not $workflow.Contains($needle)) {
@@ -133,7 +133,7 @@ $releaseStepVersionContract = @(
     'PACKAGE_VERSION: ${{ needs.package-windows.outputs.package-version }}',
     'RELEASE_TAG: v${{ needs.package-windows.outputs.package-version }}',
     'gh release create "${RELEASE_TAG}"',
-    '--title "KeePassXC Material ${PACKAGE_VERSION}"'
+    '--title "KeePassXC Material ${PACKAGE_VERSION} - ${DIM_SUM_TITLE}"'
 )
 foreach ($needle in $releaseStepVersionContract) {
     if (-not $createReleaseStep.Contains($needle)) {
