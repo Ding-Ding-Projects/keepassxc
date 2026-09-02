@@ -8,13 +8,13 @@
   "primitives": [
     {
       "primitive": "append-only banner",
-      "status": "nonconforming",
-      "finding": "Reference shows the append-only explanation banner; built has a long paragraph under the title instead."
+      "status": "conforms",
+      "finding": "Primary-container banner with info glyph stating the append-only rule sits under the filter row (repaired 2026-09-01); the feed summary stays as the supporting line."
     },
     {
       "primitive": "timeline",
       "status": "deviates",
-      "finding": "Reference: kind badges (EDIT/SETTINGS/RESTORE/CREATE), hash, metadata line; built: single row with icon and text. Fixture has one revision."
+      "finding": "Rows carry the kind badge (EDIT/SETTINGS/RESTORE/DELETE), label, short digest at the right edge and the meta line (repaired 2026-09-01). The fixture has one revision; the reference lists fourteen. CREATE is not distinguished from EDIT for entry revisions."
     },
     {
       "primitive": "filter chips",
@@ -29,9 +29,14 @@
   ],
   "defects": [
     {
-      "id": "history-default-1",
+      "id": "history-default-2",
       "severity": "medium",
-      "summary": "Timeline kind badges and detail card differ from the reference"
+      "summary": "Detail card with diff and Restore action not built; rows expose Diff per row"
+    },
+    {
+      "id": "history-default-3",
+      "severity": "low",
+      "summary": "CREATE badge not distinguished from EDIT for entry revisions"
     }
   ],
   "deviations": [

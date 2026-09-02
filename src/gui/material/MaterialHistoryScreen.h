@@ -79,6 +79,10 @@ namespace Material
         bool canRestore = false;
         QString action;
         QDateTime timestamp;
+        /** The design's kind badge: EDIT, SETTINGS, RESTORE, CREATE or DELETE. */
+        QString badge;
+        /** The short digest the design prints at the row's right edge. */
+        QString hash;
     };
 
     /** Which kind of revision the Entries / Settings chips leave showing. */

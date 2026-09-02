@@ -59,6 +59,24 @@ void TestMaterialHistory::surfaceStateFiltersAndSelection()
     QCOMPARE(restoreSpy.at(0).at(0).toString(), QStringLiteral("entry-1"));
     QVERIFY(screen.findChild<QDateEdit*>(QStringLiteral("historyFromDate")));
     QVERIFY(screen.findChild<QDateEdit*>(QStringLiteral("historyToDate")));
+
+    // The append-only banner is a real widget with the rule as its name.
+    auto* banner = screen.findChild<QWidget*>(QStringLiteral("historyAppendOnlyBanner"));
+    QVERIFY(banner);
+    QVERIFY(banner->accessibleName().startsWith(QStringLiteral("History is append-only.")));
+
+    // A kind badge reaches the row's accessible name, so it is not colour only.
+    QVector<Revision> badged = revisions;
+    badged[0].badge = QStringLiteral("EDIT");
+    badged[0].hash = QStringLiteral("a1b2c3d");
+    screen.setRevisions(badged);
+    bool found = false;
+    for (auto* widget : screen.findChildren<QWidget*>()) {
+        if (widget->accessibleName().startsWith(QStringLiteral("EDIT: Edited Alpha"))) {
+            found = true;
+        }
+    }
+    QVERIFY(found);
 }
 
 void TestMaterialHistory::routeAndActionInventory()

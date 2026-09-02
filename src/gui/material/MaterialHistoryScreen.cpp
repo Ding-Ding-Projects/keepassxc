@@ -51,6 +51,13 @@ namespace Material
         constexpr int ActionHeight = 36;
         constexpr int DiffPadding = 14;
         constexpr int FilterChipHeight = 36;
+        constexpr int BadgeHeight = 22;
+        constexpr int BadgePaddingX = 9;
+        constexpr int BadgeRadius = 6;
+        constexpr int BadgeGap = 9;
+        constexpr int BannerRadius = 16;
+        constexpr int BannerPadding = 12;
+        constexpr int BannerGlyph = 20;
         constexpr int RecentDays = 30;
         constexpr int ListWidth = 1000;
         constexpr int SearchMaximumWidth = 520;
@@ -161,7 +168,9 @@ namespace Material
                 m_select->setEnabled(!revision.id.isEmpty());
                 layout->addWidget(m_select);
                 layout->addStretch(1);
-                setAccessibleName(HistoryScreen::tr("%1. %2").arg(revision.label, revision.meta));
+                setAccessibleName(revision.badge.isEmpty()
+                                      ? HistoryScreen::tr("%1. %2").arg(revision.label, revision.meta)
+                                      : HistoryScreen::tr("%1: %2. %3").arg(revision.badge, revision.label, revision.meta));
 
                 // Each action is drawn only where it can do its job: a save
                 // record can be compared but not put back, and the lines the
@@ -219,18 +228,47 @@ namespace Material
                 const ButtonBase* leading = m_diff ? m_diff : m_restore;
                 const int left = circleRect.right() + CircleGap;
                 const int right = leading ? leading->x() - ColumnGap : width() - RowPaddingX;
-                const int textWidth = qMax(0, right - left);
                 const QFont labelFont = theme()->font(TypeRole::LabelLarge);
                 const QFont metaLineFont = metaFont();
                 const QFontMetrics labelMetrics(labelFont);
                 const QFontMetrics metaMetrics(metaLineFont);
-
                 int y = (height() - labelMetrics.height() - metaMetrics.height()) / 2;
+
+                // The design's row: kind badge, label, then the short digest at
+                // the right edge in the outline colour, all on the first line.
+                int labelLeft = left;
+                if (!m_revision.badge.isEmpty()) {
+                    QFont badgeFont = theme()->font(TypeRole::LabelSmall);
+                    badgeFont.setWeight(QFont::Bold);
+                    badgeFont.setLetterSpacing(QFont::AbsoluteSpacing, 0.5);
+                    const QFontMetrics badgeMetrics(badgeFont);
+                    const int badgeWidth = badgeMetrics.horizontalAdvance(m_revision.badge) + 2 * BadgePaddingX;
+                    const QRect badgeRect(left, y + (labelMetrics.height() - BadgeHeight) / 2, badgeWidth, BadgeHeight);
+                    paintSurface(&painter, badgeRect, BadgeRadius, tintContainer(m_revision.tint));
+                    painter.setFont(badgeFont);
+                    painter.setPen(tintContent(m_revision.tint));
+                    painter.drawText(badgeRect, Qt::AlignCenter, m_revision.badge);
+                    labelLeft += badgeWidth + BadgeGap;
+                }
+                int hashWidth = 0;
+                if (!m_revision.hash.isEmpty()) {
+                    const QFont hashFont = theme()->font(TypeRole::Mono);
+                    const QFontMetrics hashMetrics(hashFont);
+                    hashWidth = hashMetrics.horizontalAdvance(m_revision.hash);
+                    painter.setFont(hashFont);
+                    painter.setPen(theme()->color(Role::Outline));
+                    painter.drawText(QRect(right - hashWidth, y, hashWidth, labelMetrics.height()),
+                                     Qt::AlignRight | Qt::AlignVCenter,
+                                     m_revision.hash);
+                    hashWidth += ColumnGap;
+                }
+                const int textWidth = qMax(0, right - left);
+                const int labelWidth = qMax(0, right - hashWidth - labelLeft);
                 painter.setFont(labelFont);
                 painter.setPen(theme()->color(Role::OnSurface));
-                painter.drawText(QRect(left, y, textWidth, labelMetrics.height()),
+                painter.drawText(QRect(labelLeft, y, labelWidth, labelMetrics.height()),
                                  Qt::AlignLeft | Qt::AlignVCenter,
-                                 labelMetrics.elidedText(m_revision.label, Qt::ElideRight, textWidth));
+                                 labelMetrics.elidedText(m_revision.label, Qt::ElideRight, labelWidth));
 
                 y += labelMetrics.height();
                 painter.setFont(metaLineFont);
@@ -245,6 +283,56 @@ namespace Material
             ButtonBase* m_diff = nullptr;
             ButtonBase* m_restore = nullptr;
             QCheckBox* m_select = nullptr;
+        };
+        /**
+         * The append-only banner. It paints its own primary container so it
+         * reads as one strip whatever sits behind it, and wraps its copy.
+         */
+        class AppendOnlyBanner : public QWidget
+        {
+        public:
+            explicit AppendOnlyBanner(QWidget* parent = nullptr)
+                : QWidget(parent)
+            {
+                auto* layout = new QHBoxLayout(this);
+                layout->setContentsMargins(BannerPadding + 4, BannerPadding, BannerPadding + 4, BannerPadding);
+                layout->setSpacing(10);
+                m_glyph = new QLabel(this);
+                m_glyph->setFixedSize(BannerGlyph, BannerGlyph);
+                layout->addWidget(m_glyph, 0, Qt::AlignTop);
+                m_text = new QLabel(HistoryScreen::tr("History is append-only. Restoring writes a new revision rather than "
+                                                      "rewriting the branch it replaces, so an undo can itself be undone, "
+                                                      "and nothing is ever discarded."),
+                                    this);
+                m_text->setWordWrap(true);
+                m_text->setTextInteractionFlags(Qt::NoTextInteraction);
+                layout->addWidget(m_text, 1);
+                setAccessibleName(m_text->text());
+                applyTheme();
+                connect(theme(), &Theme::changed, this, [this] { applyTheme(); });
+            }
+
+        protected:
+            void paintEvent(QPaintEvent*) override
+            {
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                paintSurface(&painter, rect(), BannerRadius, theme()->color(Role::PrimaryContainer));
+            }
+
+        private:
+            void applyTheme()
+            {
+                m_glyph->setPixmap(Icons::pixmap(QStringLiteral("info"), BannerGlyph, theme()->color(Role::OnPrimaryContainer)));
+                QFont font = theme()->font(TypeRole::BodySmall);
+                m_text->setFont(font);
+                QPalette palette = m_text->palette();
+                palette.setColor(QPalette::WindowText, theme()->color(Role::OnPrimaryContainer));
+                m_text->setPalette(palette);
+            }
+
+            QLabel* m_glyph = nullptr;
+            QLabel* m_text = nullptr;
         };
     } // namespace
 
@@ -295,6 +383,12 @@ namespace Material
         filterRow->addWidget(m_restoreChip);
         filterRow->addStretch(1);
         contentLayout()->addWidget(m_filterPanel);
+
+        // The design's append-only banner: a primary-container strip with an
+        // info glyph, stating the one rule that makes the history safe to use.
+        auto* banner = new AppendOnlyBanner(this);
+        banner->setObjectName(QStringLiteral("historyAppendOnlyBanner"));
+        contentLayout()->addWidget(banner);
 
         auto* dates = new QHBoxLayout;
         m_datePreset = new QComboBox;

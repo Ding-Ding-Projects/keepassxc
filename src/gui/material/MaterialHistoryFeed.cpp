@@ -515,6 +515,8 @@ namespace Material
                 change.row.symbol = described.symbol;
                 change.row.label = described.label;
                 change.row.meta = metaLine(id, change.when, described.kind);
+                change.row.badge = described.tint == RevisionTint::Negative ? tr("DELETE") : tr("EDIT");
+                change.row.hash = id.left(ShortIdLength);
                 change.row.tint = described.tint;
                 change.row.canDiff = true;
                 change.row.canRestore = true;
@@ -554,6 +556,10 @@ namespace Material
             change.row.symbol = symbolFor(recordedRevision);
             change.row.label = recordedRevision.label;
             change.row.meta = meta;
+            change.row.badge = recordedRevision.kind == RevisionKind::Settings ? tr("SETTINGS")
+                               : recordedRevision.removed > 0                   ? tr("DELETE")
+                                                                                : tr("EDIT");
+            change.row.hash = recordedRevision.id.left(ShortIdLength);
             change.row.tint = tintFor(recordedRevision);
             change.row.canDiff = true;
             change.row.canRestore = recordedRevision.removed > 0 && !recordedRevision.snapshotPath.isEmpty()
@@ -580,6 +586,8 @@ namespace Material
             change.row.symbol = QStringLiteral("restore");
             change.row.label = tr("Restored \"%1\" from %2").arg(restored.entryTitle, stamp(restored.revisionTime));
             change.row.meta = metaLine(restored.id, restored.when, tr("restore"));
+            change.row.badge = tr("RESTORE");
+            change.row.hash = restored.id.left(ShortIdLength);
             change.row.tint = RevisionTint::Positive;
             // The restore has happened and the revision it came from is listed
             // in its own right, so this row is a record, not a handle.
