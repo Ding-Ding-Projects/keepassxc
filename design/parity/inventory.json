@@ -473,12 +473,12 @@
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "5fe44c9e89c6730e1faf0c0e318263cee5db5fc95fdcc4927390e8036c0b1ae0",
+        "builtRawSha256": "c8643ea1b540b40bdb07fbcc5bf651c3266e5048132d7ed52fae36f23b5bee05",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "f22c388cbeef2675abe2c47bfa5653c4b0c229eb10cfbff8fd9cef99beca7061",
+        "comparisonSha256": "17843ff77c79814638e8f2a122430dacb11c1a4ab39202c06f6228bbd6bd161a",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "952e9cacc9000b480e53077341391a74a75e73c5c44679bac61820ca2e80854a",
-        "mismatchRatio": 0.0815374677002584
+        "diffSha256": "e2747328534d93df2114e1d09db7df0ebe24b6c202141faf22f1bb1217a318f9",
+        "mismatchRatio": 0.08424660852713178
       },
       "deviations": [
         {
@@ -492,7 +492,7 @@
           "approval": "Reviewed 2026-09-02 against the design-is-data rule: a translated group name would be a fabricated value."
         }
       ],
-      "sourceCommit": "98d83824ca1b9e3151b97558888ef98a880802e1",
+      "sourceCommit": "a961def222ec52e00f8d83365eddcbab11e3244a",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

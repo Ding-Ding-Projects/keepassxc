@@ -1,10 +1,10 @@
 {
   "schemaVersion": 1,
-  "sourceCommit": "98d83824ca1b9e3151b97558888ef98a880802e1",
+  "sourceCommit": "a961def222ec52e00f8d83365eddcbab11e3244a",
   "app": "C:\\Users\\cntow\\AppData\\Local\\KeePassXCMaterial\\stage-lane-parity\\KeePassXC.exe",
-  "generatedAt": "2026-09-02T19:14:43.271Z",
+  "generatedAt": "2026-09-02T19:17:58.721Z",
   "quick": true,
-  "tuples": 4,
+  "tuples": 2,
   "errors": 0,
   "findings": [],
   "records": [
@@ -28,32 +28,8 @@
         "devicePixelRatio": 1
       },
       "png": "vault_compact_bilingual_light_x1.png",
-      "pngSha256": "905be0820b6d0cd17ad6609b7fa1719d71f5e6c843a1a488da16d592932358bc",
+      "pngSha256": "f43270a7f5e8931a571e64c48d2484607b4e7691ffc3144b0f7c18a396596027",
       "widgetCount": 45,
-      "findingCount": 0
-    },
-    {
-      "id": "reports_compact_bilingual_light_x1",
-      "tuple": {
-        "screen": "reports",
-        "width": {
-          "id": "compact",
-          "w": 600,
-          "h": 720
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "800x720",
-        "windowGeometry": "560,185 800x720",
-        "devicePixelRatio": 1
-      },
-      "png": "reports_compact_bilingual_light_x1.png",
-      "pngSha256": "da0e1f9cac9a975c48e06bba14d9d4c4450f858ecc8d533d9c473cf19482d2b8",
-      "widgetCount": 61,
       "findingCount": 0
     },
     {
@@ -78,30 +54,6 @@
       "png": "vault_expanded_bilingual_light_x1.png",
       "pngSha256": "09d0f4784d7e8b12cea489d2e00ed0059a3dafbaa7ac6827725839cfbd4a5ab6",
       "widgetCount": 109,
-      "findingCount": 0
-    },
-    {
-      "id": "reports_expanded_bilingual_light_x1",
-      "tuple": {
-        "screen": "reports",
-        "width": {
-          "id": "expanded",
-          "w": 1200,
-          "h": 800
-        },
-        "language": "bilingual",
-        "theme": "light",
-        "scale": "1"
-      },
-      "receipt": {
-        "outcome": "ready",
-        "shellViewport": "1200x800",
-        "windowGeometry": "560,185 1200x800",
-        "devicePixelRatio": 1
-      },
-      "png": "reports_expanded_bilingual_light_x1.png",
-      "pngSha256": "0300bdbfdff6d9bfadca74599abbe6cb16bdc7767eb273d0565219a8b5bdf185",
-      "widgetCount": 61,
       "findingCount": 0
     }
   ]

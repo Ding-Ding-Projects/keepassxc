@@ -21,6 +21,8 @@
 #include "util/TemporaryFile.h"
 #include "gui/material/MaterialChip.h"
 #include "gui/material/MaterialEntryDetail.h"
+#include "gui/material/MaterialTheme.h"
+#include "gui/material/MaterialEntryDelegate.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVaultSidebar.h"
@@ -28,6 +30,9 @@
 #include <QAbstractButton>
 #include <QCoreApplication>
 #include <QStandardItemModel>
+#include <QImage>
+#include <QPainter>
+#include <QStyleOptionViewItem>
 #include <QTest>
 #include <QTreeView>
 
@@ -99,6 +104,46 @@ void TestMaterialVaultFilters::healthChipsArePresentAndCheckable()
     QVERIFY(weak->isChecked());
     weak->setChecked(false);
     QVERIFY(!weak->isChecked());
+}
+
+void TestMaterialVaultFilters::entryRowsPaintTagChips()
+{
+    // A tagged row paints up to two tonal chips; an untagged row gives the room back.
+    QStandardItemModel model;
+    auto* tagged = new QStandardItem(QStringLiteral("Tagged"));
+    tagged->setData(QStringLiteral("Tagged"), EntryDelegate::TitleRole);
+    tagged->setData(QStringList{QStringLiteral("prod"), QStringLiteral("critical"), QStringLiteral("third")}, EntryDelegate::TagsRole);
+    auto* plain = new QStandardItem(QStringLiteral("Plain"));
+    plain->setData(QStringLiteral("Plain"), EntryDelegate::TitleRole);
+    model.appendRow(tagged);
+    model.appendRow(plain);
+
+    EntryDelegate delegate;
+    delegate.setCompactColumns(false);
+    const QRect row(0, 0, 900, 52);
+    auto render = [&](int rowIndex) {
+        QImage image(row.size(), QImage::Format_ARGB32_Premultiplied);
+        image.fill(theme()->color(Role::Surface));
+        QPainter painter(&image);
+        QStyleOptionViewItem option;
+        option.rect = row;
+        option.widget = nullptr;
+        delegate.paint(&painter, option, model.index(rowIndex, 0));
+        return image;
+    };
+    const QImage withTags = render(0);
+    const QImage without = render(1);
+    const QColor chip = theme()->color(Role::SecondaryContainer);
+    int chipPixels = 0;
+    int plainChipPixels = 0;
+    for (int x = 0; x < row.width(); ++x) {
+        for (int y = 0; y < row.height(); ++y) {
+            if (QColor(withTags.pixel(x, y)) == chip) ++chipPixels;
+            if (QColor(without.pixel(x, y)) == chip) ++plainChipPixels;
+        }
+    }
+    QVERIFY2(chipPixels > 200, qPrintable(QString::number(chipPixels)));
+    QCOMPARE(plainChipPixels, 0);
 }
 
 void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()

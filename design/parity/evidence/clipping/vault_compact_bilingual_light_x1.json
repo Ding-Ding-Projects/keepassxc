@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 22004,
+  "pid": 29488,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,7 +19,7 @@
     "devicePixelRatio": 1
   },
   "png": "vault_compact_bilingual_light_x1.png",
-  "pngSha256": "905be0820b6d0cd17ad6609b7fa1719d71f5e6c843a1a488da16d592932358bc",
+  "pngSha256": "f43270a7f5e8931a571e64c48d2484607b4e7691ffc3144b0f7c18a396596027",
   "findings": [],
   "widgetCount": 45,
   "widgets": [

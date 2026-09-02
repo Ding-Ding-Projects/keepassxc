@@ -67,7 +67,7 @@ namespace Material
          * its minimum width, so a narrow pane sheds columns instead of clipping
          * the title.
          */
-        RowLayout layoutRow(const QRect& rowRect, bool compact)
+        RowLayout layoutRow(const QRect& rowRect, bool compact, bool hasTags = false)
         {
             RowLayout layout;
             QRect content = rowRect.adjusted(RowPadding, 0, -RowPadding, 0);
@@ -95,8 +95,9 @@ namespace Material
             if (!compact && fits(EntryDelegate::HealthColumnWidth)) {
                 layout.health = takeRight(EntryDelegate::HealthColumnWidth);
             }
-            // The design's tag chips sit between the host and the health verdict.
-            if (!compact && fits(EntryDelegate::TagsColumnWidth)) {
+            // The design's tag chips sit between the host and the health verdict;
+            // a row with no tags gives that room back to the host and the title.
+            if (!compact && hasTags && fits(EntryDelegate::TagsColumnWidth)) {
                 layout.tags = takeRight(EntryDelegate::TagsColumnWidth);
             }
             if (!compact && fits(EntryDelegate::UrlColumnWidth)) {
@@ -216,7 +217,8 @@ namespace Material
         QColor secondary = content;
         secondary.setAlphaF(SecondaryOpacity);
 
-        const RowLayout layout = layoutRow(row, m_compactColumns);
+        const QStringList rowTags = index.data(TagsRole).toStringList();
+        const RowLayout layout = layoutRow(row, m_compactColumns, !rowTags.isEmpty());
 
         // The avatar reads as a hole in the row, so it takes the surface family
         // rather than the accent: the lowest surface once the row itself is
@@ -275,7 +277,7 @@ namespace Material
         // Up to two tag chips, each a small tonal pill; the rest are reachable
         // through the sidebar's tag filter and the detail pane.
         if (!layout.tags.isEmpty()) {
-            const QStringList tags = index.data(TagsRole).toStringList();
+            const QStringList& tags = rowTags;
             QFont chipFont = theme()->font(TypeRole::LabelSmall);
             const QFontMetrics chipMetrics(chipFont);
             int x = layout.tags.left();
