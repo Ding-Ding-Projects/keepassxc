@@ -195,12 +195,12 @@
         "referenceRaw": "design/parity/evidence/shell-default/reference.png",
         "referenceRawSha256": "344b9bde3e136227a1100da6518a2af453a24c61bace93c456082db209a7307d",
         "builtRaw": "design/parity/evidence/shell-default/built.png",
-        "builtRawSha256": "651209c04e4b8eecc4e13f192b6cd423f91a062bd26c090477dbf573699944f5",
+        "builtRawSha256": "e47728e1cf2f9416c1bb31d3c823ce6bd75dd9a5fd61c907b63fbeef92fdadf3",
         "comparison": "design/parity/evidence/shell-default/comparison.png",
-        "comparisonSha256": "c0827ae52a9566869d6c67af8ba4f82b72fc77f73577e23568ffdcfedf5e822c",
+        "comparisonSha256": "2b935302995d75cb5bf9f93fbf2ac3de1edef93682eff4c4c2de05316d4e2917",
         "diff": "design/parity/evidence/shell-default/diff.json",
-        "diffSha256": "52da203487e2170e9833f31491eb3324c398515f4f0e0a758bd52559b64a90f2",
-        "mismatchRatio": 0.12254679951690821
+        "diffSha256": "9cb4ce5d21c4b2aeea29cfb4f794ee18e67533aa2dea42449f6aa137b566fba1",
+        "mismatchRatio": 0.10427838164251207
       },
       "deviations": [
         {
@@ -210,7 +210,7 @@
           "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
         }
       ],
-      "sourceCommit": "76cbb7963068a88d1dfdc4f89c44ccce793b8806",
+      "sourceCommit": "c130ec806dfa7ee966bbabce4d1b34138e9adf26",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     },
@@ -452,19 +452,19 @@
       "audit": {
         "status": "complete",
         "path": "design/parity/audits/vault-default.json",
-        "sha256": "b4034943bcdd5dfcb31a71416ebed8510ad8c251b1d58bbf22f2efd396558aa8"
+        "sha256": "bb856a845cc6c5975d95afb5553c537f9645719460016aca2d1e7c8bfc408886"
       },
       "evidence": {
         "status": "complete",
         "referenceRaw": "design/parity/evidence/vault-default/reference.png",
         "referenceRawSha256": "ccdf227742af4576ed8342ac75181fc2e1382beb623a2ea5e0a874eb8a08c315",
         "builtRaw": "design/parity/evidence/vault-default/built.png",
-        "builtRawSha256": "1bbcc0363a7aeead3b0d05924a181c8fe631f624199a9e6e605e689f873f5f49",
+        "builtRawSha256": "ac40d6d2102d6586939bf0afff20582a2056f67169cbe151d4707dd60c75e8e7",
         "comparison": "design/parity/evidence/vault-default/comparison.png",
-        "comparisonSha256": "447822631a4a23cdeec2539efd6054db0cd02a02310d3da3fad678e889929fe3",
+        "comparisonSha256": "7ba8203d3fb35bcc80aca8d556a0258c100bf8bddab26aa904951a45a04eb4f0",
         "diff": "design/parity/evidence/vault-default/diff.json",
-        "diffSha256": "5252d4b9ff8c860a6cfb72f6f432bf1a98cd8bb85f8f19e0bced478e63fb3d68",
-        "mismatchRatio": 0.12684108527131782
+        "diffSha256": "fb2ede5328020a00745675dcac2079b8f32bfb1aa34d3aca097a1254e90e9020",
+        "mismatchRatio": 0.10388081395348837
       },
       "deviations": [
         {
@@ -472,7 +472,7 @@
           "approval": "recorded 2026-09-01 in issue #12"
         }
       ],
-      "sourceCommit": "76cbb7963068a88d1dfdc4f89c44ccce793b8806",
+      "sourceCommit": "c130ec806dfa7ee966bbabce4d1b34138e9adf26",
       "captureTool": "msedge --headless=new --screenshot | lowlevel-computer-use-cheap screenshot(hwnd, client_only) on a named off-screen desktop",
       "builtRouteStatus": "implemented-captured"
     }

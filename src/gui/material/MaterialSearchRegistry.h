@@ -34,6 +34,8 @@ namespace Material
         explicit SearchRegistry(QObject* parent = nullptr);
         QHash<QString, QPointer<SearchBar>> m_bars;
         QPointer<SearchBar> m_current;
+        /** The bar that last asked for the builder; restoreCurrentFocus() returns there. */
+        QPointer<SearchBar> m_builderOwner;
     };
 } // namespace Material
 

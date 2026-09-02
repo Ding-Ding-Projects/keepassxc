@@ -21,6 +21,7 @@
 #include "MaterialElevation.h"
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
+#include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
 
 #include <QAbstractButton>
@@ -28,9 +29,13 @@
 #include <QFontMetrics>
 #include <QItemSelectionModel>
 #include <QLabel>
+#include <QLineEdit>
 #include <QPainter>
+#include <QRegularExpression>
 #include <QTreeView>
 #include <QVBoxLayout>
+
+#include <functional>
 
 namespace Material
 {
@@ -275,6 +280,17 @@ namespace Material
         m_groupsOverline = createOverline(tr("Groups"), GroupsOverlineTop, this);
         root->addWidget(m_groupsOverline);
 
+        // The reference's "Filter groups" field sits above the tree with its
+        // own regex affordance; a match keeps the group's ancestors visible.
+        m_groupFilter = new SearchBar(SearchBar::Variant::Surface, this);
+        m_groupFilter->setObjectName(QStringLiteral("materialVaultGroupFilter"));
+        m_groupFilter->setPlaceholder(tr("Filter groups"));
+        m_groupFilter->setIdentity(QStringLiteral("vault.groups"), tr("Vault group filter"));
+        m_groupFilter->lineEdit()->setAccessibleName(tr("Filter groups"));
+        connect(m_groupFilter, &SearchBar::textChanged, this, &VaultSidebar::filterGroups);
+        connect(m_groupFilter, &SearchBar::regexToggled, this, [this] { filterGroups(m_groupFilter->text()); });
+        root->addWidget(m_groupFilter);
+
         m_groupDelegate = new GroupDelegate(this);
         m_groupDelegate->setIndentStep(IndentStep);
 
@@ -362,6 +378,47 @@ namespace Material
     QAbstractItemModel* VaultSidebar::groupModel() const
     {
         return m_groupView->model();
+    }
+
+    SearchBar* VaultSidebar::groupFilter() const
+    {
+        return m_groupFilter;
+    }
+
+    void VaultSidebar::filterGroups(const QString& query)
+    {
+        auto* model = m_groupView->model();
+        if (!model) {
+            return;
+        }
+        const QString needle = query.trimmed();
+        const bool regex = m_groupFilter->isRegexEnabled();
+        QRegularExpression pattern;
+        if (regex && !needle.isEmpty()) {
+            pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
+            if (!pattern.isValid()) {
+                return; // an unparsable pattern changes nothing until it parses
+            }
+        }
+        std::function<bool(const QModelIndex&)> apply = [&](const QModelIndex& parent) -> bool {
+            bool anyVisible = false;
+            for (int row = 0; row < model->rowCount(parent); ++row) {
+                const QModelIndex index = model->index(row, 0, parent);
+                const QString name = index.data(Qt::DisplayRole).toString();
+                const bool self = needle.isEmpty() || (regex ? pattern.match(name).hasMatch()
+                                                             : name.contains(needle, Qt::CaseInsensitive));
+                const bool descendant = apply(index);
+                const bool visible = self || descendant;
+                m_groupView->setRowHidden(row, parent, !visible);
+                if (visible && descendant && !needle.isEmpty()) {
+                    m_groupView->setExpanded(index, true);
+                }
+                anyVisible = anyVisible || visible;
+            }
+            return anyVisible;
+        };
+        apply(QModelIndex());
+        updateGroupViewHeight();
     }
 
     QTreeView* VaultSidebar::groupView() const

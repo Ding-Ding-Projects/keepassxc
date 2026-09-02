@@ -9,7 +9,7 @@
     {
       "primitive": "group pane",
       "status": "deviates",
-      "finding": "Groups list matches, but the reference shows per-group counts, Cantonese sublabels and a group filter field; built shows counts only and no filter field."
+      "finding": "Groups list with per-group counts and a 'Filter groups' field above it (plain text, regex on request; a match keeps ancestors visible; repaired 2026-09-01). The reference's Cantonese sublabels per group are not built."
     },
     {
       "primitive": "entry list",
@@ -18,8 +18,8 @@
     },
     {
       "primitive": "filter chips",
-      "status": "deviates",
-      "finding": "Title/Modified/Health segmented control conforms; the Breached/Weak/Reused/Healthy health chips are absent."
+      "status": "conforms",
+      "finding": "Title/Modified/Health segmented control and the Breached/Weak/Reused/Healthy filter chips with live counts; Breached carries no count because breach exposure needs an online check (repaired 2026-09-01)."
     },
     {
       "primitive": "detail pane",
@@ -39,14 +39,14 @@
   ],
   "defects": [
     {
-      "id": "vault-default-2",
-      "severity": "medium",
-      "summary": "Health chips and group filter field missing"
-    },
-    {
       "id": "vault-default-3",
       "severity": "medium",
       "summary": "Detail pane lacks the reference card anatomy with per-field copy actions"
+    },
+    {
+      "id": "vault-default-4",
+      "severity": "low",
+      "summary": "Group rows lack the reference's Cantonese sublabels and per-row tag chips"
     }
   ],
   "deviations": [

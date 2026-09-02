@@ -11,7 +11,7 @@
     "theme": "light",
     "scale": "1"
   },
-  "pid": 28772,
+  "pid": 20832,
   "receipt": {
     "outcome": "ready",
     "shellViewport": "800x720",
@@ -19,9 +19,9 @@
     "devicePixelRatio": 1
   },
   "png": "shell_compact_bilingual_light_x1.png",
-  "pngSha256": "6dffe402b4f40df513a2c948495c328380fb24dd4d642fcb7c2185a087b5b92b",
+  "pngSha256": "beb01aea594ff8c4e98c15292376d09d432b00f27d0a1e8892f081c90bdcd3d6",
   "findings": [],
-  "widgetCount": 37,
+  "widgetCount": 45,
   "widgets": [
     {
       "class": "Material::TitleBar",
@@ -102,14 +102,53 @@
     },
     {
       "class": "Material::TopAppBar",
-      "hint": "744x64",
+      "hint": "787x64",
       "leaf": false,
-      "minimumHint": "589x64",
+      "minimumHint": "632x64",
       "name": "",
       "offscreen": false,
       "rect": "72,44 728x64",
       "scrollable": false,
       "squeezed": false
+    },
+    {
+      "class": "QWidget",
+      "hint": "0x38",
+      "leaf": false,
+      "minimumHint": "0x38",
+      "name": "",
+      "offscreen": false,
+      "rect": "92,44 43x64",
+      "scrollable": false,
+      "squeezed": false
+    },
+    {
+      "class": "QLabel",
+      "hint": "43x26",
+      "leaf": true,
+      "minimumHint": "43x26",
+      "name": "",
+      "offscreen": false,
+      "rect": "92,57 43x26",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "Vault",
+      "textOverflows": false,
+      "textWidth": 43
+    },
+    {
+      "class": "QLabel",
+      "hint": "18x12",
+      "leaf": true,
+      "minimumHint": "18x12",
+      "name": "",
+      "offscreen": false,
+      "rect": "92,83 43x12",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "夹萬",
+      "textOverflows": false,
+      "textWidth": 18
     },
     {
       "class": "Material::TonalButton",
@@ -176,7 +215,7 @@
       "minimumHint": "265x52",
       "name": "",
       "offscreen": false,
-      "rect": "100,50 404x52",
+      "rect": "143,50 361x52",
       "scrollable": false,
       "squeezed": false
     },
@@ -187,7 +226,7 @@
       "minimumHint": "30x40",
       "name": "",
       "offscreen": false,
-      "rect": "148,56 217x40",
+      "rect": "191,56 174x40",
       "scrollable": false,
       "squeezed": false,
       "text": "Search entries",
@@ -287,9 +326,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "451x248",
+      "hint": "451x292",
       "leaf": false,
-      "minimumHint": "394x202",
+      "minimumHint": "394x246",
       "name": "",
       "offscreen": false,
       "rect": "72,156 728x564",
@@ -298,9 +337,9 @@
     },
     {
       "class": "QWidget",
-      "hint": "451x248",
+      "hint": "451x292",
       "leaf": false,
-      "minimumHint": "394x202",
+      "minimumHint": "394x246",
       "name": "",
       "offscreen": false,
       "rect": "72,156 728x564",
@@ -309,12 +348,12 @@
     },
     {
       "class": "QWidget",
-      "hint": "451x56",
+      "hint": "451x100",
       "leaf": false,
-      "minimumHint": "394x56",
+      "minimumHint": "394x100",
       "name": "",
       "offscreen": false,
-      "rect": "72,156 728x56",
+      "rect": "72,156 728x100",
       "scrollable": false,
       "squeezed": false
     },
@@ -383,13 +422,80 @@
       "squeezed": false
     },
     {
+      "class": "QWidget",
+      "hint": "307x32",
+      "leaf": false,
+      "minimumHint": "307x32",
+      "name": "",
+      "offscreen": false,
+      "rect": "88,214 696x32",
+      "scrollable": false,
+      "squeezed": false
+    },
+    {
+      "class": "Material::Chip",
+      "hint": "72x32",
+      "leaf": true,
+      "minimumHint": "33x32",
+      "name": "vaultHealthChip_breached",
+      "offscreen": false,
+      "rect": "88,214 72x32",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "Breached",
+      "textOverflows": false,
+      "textWidth": 49
+    },
+    {
+      "class": "Material::Chip",
+      "hint": "62x32",
+      "leaf": true,
+      "minimumHint": "33x32",
+      "name": "vaultHealthChip_weak",
+      "offscreen": false,
+      "rect": "168,214 62x32",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "Weak 8",
+      "textOverflows": false,
+      "textWidth": 38
+    },
+    {
+      "class": "Material::Chip",
+      "hint": "71x32",
+      "leaf": true,
+      "minimumHint": "33x32",
+      "name": "vaultHealthChip_reused",
+      "offscreen": false,
+      "rect": "238,214 71x32",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "Reused 0",
+      "textOverflows": false,
+      "textWidth": 47
+    },
+    {
+      "class": "Material::Chip",
+      "hint": "78x32",
+      "leaf": true,
+      "minimumHint": "33x32",
+      "name": "vaultHealthChip_healthy",
+      "offscreen": false,
+      "rect": "317,214 78x32",
+      "scrollable": false,
+      "squeezed": false,
+      "text": "Healthy 12",
+      "textOverflows": false,
+      "textWidth": 56
+    },
+    {
       "class": "QStackedWidget",
       "hint": "256x192",
       "leaf": false,
       "minimumHint": "84x146",
       "name": "",
       "offscreen": false,
-      "rect": "72,212 728x508",
+      "rect": "72,256 728x464",
       "scrollable": false,
       "squeezed": false
     },
@@ -401,10 +507,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "72,212 728x508",
+      "rect": "72,256 728x464",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 13
+      "vScrollMax": 14
     },
     {
       "class": "QWidget",
@@ -413,7 +519,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "84,212 694x412",
+      "rect": "84,256 694x368",
       "scrollable": true,
       "squeezed": false
     },
@@ -424,7 +530,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "790,212 10x508",
+      "rect": "790,256 10x464",
       "scrollable": true,
       "squeezed": false
     },
@@ -435,7 +541,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "790,212 10x508",
+      "rect": "790,256 10x464",
       "scrollable": true,
       "squeezed": false
     },

@@ -77,6 +77,8 @@ namespace Material
      * The pane owns no data: the group model is set from outside and the tags
      * are a plain string list, which keeps it usable before a database is open.
      */
+    class SearchBar;
+
     class VaultSidebar : public QWidget
     {
         Q_OBJECT
@@ -90,6 +92,10 @@ namespace Material
 
         /** The tree itself, for callers that need its selection model. */
         QTreeView* groupView() const;
+        /** The filter field above the tree; plain text by default, regex on request. */
+        SearchBar* groupFilter() const;
+        /** Hide every group whose name (and descendants' names) miss @p query. */
+        void filterGroups(const QString& query);
 
         QStringList tags() const;
         void setTags(const QStringList& tags);
@@ -114,6 +120,7 @@ namespace Material
         int visibleRowCount(const QModelIndex& parent) const;
 
         QLabel* m_groupsOverline = nullptr;
+        SearchBar* m_groupFilter = nullptr;
         QLabel* m_tagsOverline = nullptr;
         QTreeView* m_groupView = nullptr;
         GroupDelegate* m_groupDelegate = nullptr;

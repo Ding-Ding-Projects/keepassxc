@@ -26,6 +26,7 @@
 #include <QList>
 #include <QPointer>
 #include <QSharedPointer>
+#include <QSet>
 #include <QSortFilterProxyModel>
 #include <QWidget>
 
@@ -52,6 +53,7 @@ namespace Material
     class Overlay;
     class SearchBar;
     class SegmentedButton;
+    class Chip;
     class VaultSidebar;
 
     /**
@@ -100,6 +102,15 @@ namespace Material
          */
         Health healthOf(Entry* entry) const;
 
+        /**
+         * The health chips' filter: empty shows every row, otherwise only rows
+         * whose verdict is in the set. Counts come from countHealth(), which
+         * walks every source row regardless of the filter.
+         */
+        QSet<Health> healthFilter() const;
+        void setHealthFilter(const QSet<Health>& filter);
+        QHash<Health, int> countHealth() const;
+
         /** The entry behind a proxy row, or nullptr when the row is stale. */
         Entry* entryFromIndex(const QModelIndex& index) const;
         QModelIndex indexFromEntry(Entry* entry) const;
@@ -108,12 +119,14 @@ namespace Material
 
     protected:
         bool filterAcceptsColumn(int sourceColumn, const QModelIndex& sourceParent) const override;
+        bool filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const override;
         bool lessThan(const QModelIndex& left, const QModelIndex& right) const override;
 
     private:
         EntryModel* entryModel() const;
 
         SortKey m_sortKey = SortKey::Title;
+        QSet<Health> m_healthFilter;
         QSharedPointer<Database> m_database;
         // Rebuilt on demand: one pass over the database answers every row.
         mutable QHash<QString, int> m_reuse;
@@ -234,6 +247,7 @@ namespace Material
         void updateTotpTimer();
         void runSearch();
 
+        void rebuildHealthChips();
         void syncSelectionToDatabase();
         void syncSelectionFromDatabase();
         void syncGroupFromDatabase();
@@ -250,6 +264,8 @@ namespace Material
         QPointer<DatabaseWidget> m_dbWidget;
 
         VaultSidebar* m_sidebar = nullptr;
+        QWidget* m_healthChipRow = nullptr;
+        QHash<Health, Chip*> m_healthChips;
         EntryDetail* m_detail = nullptr;
         EntryDetail* m_sheetDetail = nullptr;
         Overlay* m_detailOverlay = nullptr;

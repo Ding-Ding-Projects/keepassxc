@@ -21,6 +21,7 @@
 
 #include "MaterialButtons.h"
 #include "MaterialEntryDelegate.h"
+#include "MaterialChip.h"
 #include "MaterialEntryDetail.h"
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
@@ -438,6 +439,49 @@ namespace Material
         return QSortFilterProxyModel::data(index, role);
     }
 
+    QSet<Health> EntryListModel::healthFilter() const
+    {
+        return m_healthFilter;
+    }
+
+    void EntryListModel::setHealthFilter(const QSet<Health>& filter)
+    {
+        if (filter == m_healthFilter) {
+            return;
+        }
+        m_healthFilter = filter;
+        invalidateFilter();
+    }
+
+    QHash<Health, int> EntryListModel::countHealth() const
+    {
+        QHash<Health, int> counts;
+        auto* model = entryModel();
+        if (!model) {
+            return counts;
+        }
+        for (int row = 0; row < model->rowCount(); ++row) {
+            Entry* entry = model->entryFromIndex(model->index(row, 0));
+            if (entry) {
+                counts[healthOf(entry)] += 1;
+            }
+        }
+        return counts;
+    }
+
+    bool EntryListModel::filterAcceptsRow(int sourceRow, const QModelIndex& sourceParent) const
+    {
+        if (m_healthFilter.isEmpty()) {
+            return true;
+        }
+        auto* model = entryModel();
+        if (!model) {
+            return true;
+        }
+        Entry* entry = model->entryFromIndex(model->index(sourceRow, 0, sourceParent));
+        return entry && m_healthFilter.contains(healthOf(entry));
+    }
+
     bool EntryListModel::lessThan(const QModelIndex& left, const QModelIndex& right) const
     {
         auto* model = entryModel();
@@ -728,6 +772,48 @@ namespace Material
         m_sortControl->addSegment(QStringLiteral("health"), tr("Health"));
         summaryLayout->addWidget(m_sortControl, 0);
         headerLayout->addWidget(summaryRow);
+
+        // The reference's health chips: Breached / Weak / Reused / Healthy,
+        // each with its count, each a filter on the list. Breached carries no
+        // count because breach exposure is not checked offline; it says so.
+        m_healthChipRow = new QWidget(header);
+        auto* chipLayout = new QHBoxLayout(m_healthChipRow);
+        chipLayout->setContentsMargins(0, 0, 0, 0);
+        chipLayout->setSpacing(8);
+        struct HealthChipSpec
+        {
+            Health health;
+            const char* id;
+            QString label;
+        };
+        const HealthChipSpec specs[] = {
+            {Health::Breached, "breached", tr("Breached")},
+            {Health::Weak, "weak", tr("Weak")},
+            {Health::Reused, "reused", tr("Reused")},
+            {Health::Ok, "healthy", tr("Healthy")},
+        };
+        for (const auto& spec : specs) {
+            auto* chip = new Chip(spec.label, m_healthChipRow);
+            chip->setObjectName(QStringLiteral("vaultHealthChip_") + QLatin1String(spec.id));
+            chip->setKind(Chip::Kind::Filter);
+            chip->setCheckable(true);
+            chip->setFixedHeight(Layout::ChipHeight);
+            chip->setAccessibleName(tr("Filter by health: %1").arg(spec.label));
+            connect(chip, &QAbstractButton::toggled, this, [this] {
+                QSet<Health> filter;
+                for (auto it = m_healthChips.cbegin(); it != m_healthChips.cend(); ++it) {
+                    if (it.value()->isChecked()) {
+                        filter.insert(it.key());
+                    }
+                }
+                m_entryModel->setHealthFilter(filter);
+                updateResultLine();
+            });
+            chipLayout->addWidget(chip);
+            m_healthChips.insert(spec.health, chip);
+        }
+        chipLayout->addStretch(1);
+        headerLayout->addWidget(m_healthChipRow);
 
         layout->addWidget(header, 0);
 
@@ -1222,8 +1308,31 @@ namespace Material
         m_sidebar->setTags(m_dbWidget->database()->tagList());
     }
 
+    void VaultScreen::rebuildHealthChips()
+    {
+        const QHash<Health, int> counts = m_entryModel->countHealth();
+        const struct
+        {
+            Health health;
+            QString label;
+        } labels[] = {{Health::Breached, tr("Breached")}, {Health::Weak, tr("Weak")}, {Health::Reused, tr("Reused")}, {Health::Ok, tr("Healthy")}};
+        for (const auto& item : labels) {
+            Chip* chip = m_healthChips.value(item.health);
+            if (!chip) {
+                continue;
+            }
+            // Breach exposure needs an online check this screen does not make.
+            const QString text = item.health == Health::Breached ? item.label
+                                                                  : QStringLiteral("%1 %2").arg(item.label).arg(counts.value(item.health));
+            chip->setText(text);
+            chip->setToolTip(item.health == Health::Breached ? tr("Not checked: breach exposure needs an online lookup")
+                                                              : tr("%n entry(s)", "", counts.value(item.health)));
+        }
+    }
+
     void VaultScreen::updateResultLine()
     {
+        rebuildHealthChips();
         const int rows = m_entryModel->rowCount();
         const bool searching = m_dbWidget && m_dbWidget->isSearchActive();
 

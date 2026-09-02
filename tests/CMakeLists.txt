@@ -266,6 +266,18 @@ if(WIN32)
             VERBATIM)
 endif()
 
+add_unit_test(NAME testmaterialvaultfilters SOURCES TestMaterialVaultFilters.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialvaultfilters PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialvaultfilters POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialvaultfilters>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialvaultfilters>/platforms/"
+            VERBATIM)
+endif()
+
 add_unit_test(NAME testmaterialtabs SOURCES TestMaterialTabs.cpp
         LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialtabs PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")

@@ -34,6 +34,11 @@ namespace Material
         m_bars.insert(bar->searchId(), bar);
         connect(bar, &SearchBar::builderRequested, this, [this, bar] {
             setCurrent(bar);
+            // Focus wanders while the builder is open (its own fields, then
+            // whatever the window hands focus to when an overlay closes), and
+            // every wander can make another bar current. The bar that asked is
+            // the one to return to, so it is pinned here.
+            m_builderOwner = bar;
             emit builderRequested(bar);
         });
         return true;
@@ -74,9 +79,12 @@ namespace Material
 
     void SearchRegistry::restoreCurrentFocus() const
     {
-        auto* target = current();
+        SearchBar* target = m_builderOwner ? m_builderOwner.data() : current();
         if (!target) {
             return;
+        }
+        if (target != m_current) {
+            const_cast<SearchRegistry*>(this)->setCurrent(target);
         }
         QMenu* ownerMenu = nullptr;
         for (QWidget* widget = target->parentWidget(); widget; widget = widget->parentWidget()) {
