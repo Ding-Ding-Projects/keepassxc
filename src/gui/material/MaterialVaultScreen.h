@@ -190,6 +190,10 @@ namespace Material
         QToolButton* detailSheetButton() const;
 
     public slots:
+
+        /** Open the current database folder in the configured external editor, or the file manager. */
+
+        void openDatabaseFolderExternally();
         void setDatabaseWidget(DatabaseWidget* dbWidget);
         void focusSearch();
         void setBreakpoint(Material::Breakpoint breakpoint);

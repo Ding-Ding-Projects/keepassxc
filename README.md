@@ -178,6 +178,76 @@ Honest state of the rewrite, measured rather than remembered:
 
 [HANDOFF.md](./HANDOFF.md) carries the full picture and the next owner's route.
 
+## Captures
+
+Every image below is a capture of the built application, taken by handle on an off-screen desktop through `design/parity/capture.mjs` at the commit named beside it, in light theme and bilingual mode with the key-file fixture database. The reference and the pixel diff for each one sit beside it under `design/parity/evidence/<row>/`.
+
+<details>
+<summary>Built captures of every destination (9 images)</summary>
+
+**The shell: rail, app bar, tab strip and the vault destination (1440×920)** — commit `cd7d2de63404`
+
+![The shell: rail, app bar, tab strip and the vault destination (1440×920), built application capture](design/parity/evidence/shell-default/built.png)
+
+**Vault destination (1440×860)** — commit `cd7d2de63404`
+
+![Vault destination (1440×860), built application capture](design/parity/evidence/vault-default/built.png)
+
+**Reports destination (1200×860)** — commit `cd7d2de63404`
+
+![Reports destination (1200×860), built application capture](design/parity/evidence/reports-default/built.png)
+
+**History destination (1200×860)** — commit `cd7d2de63404`
+
+![History destination (1200×860), built application capture](design/parity/evidence/history-default/built.png)
+
+**Changelog destination (1200×860)** — commit `cd7d2de63404`
+
+![Changelog destination (1200×860), built application capture](design/parity/evidence/changelog-default/built.png)
+
+**Settings destination, General page (1280×860)** — commit `cd7d2de63404`
+
+![Settings destination, General page (1280×860), built application capture](design/parity/evidence/settings-default/built.png)
+
+**Appearance destination (1200×860)** — commit `cd7d2de63404`
+
+![Appearance destination (1200×860), built application capture](design/parity/evidence/appearance-default/built.png)
+
+**Entry sheet (1280×860)** — commit `cd7d2de63404`
+
+![Entry sheet (1280×860), built application capture](design/parity/evidence/sheet-editor-default/built.png)
+
+**Regex builder overlay over the vault (1040×720)** — commit `cd7d2de63404`
+
+![Regex builder overlay over the vault (1040×720), built application capture](design/parity/evidence/regex-builder-default/built.png)
+
+</details>
+
+<details>
+<summary>Reference versus built comparisons (9 images)</summary>
+
+![The shell: rail, app bar, tab strip and the vault destination (1440×920): reference, built and diff side by side](design/parity/evidence/shell-default/comparison.png)
+
+![Vault destination (1440×860): reference, built and diff side by side](design/parity/evidence/vault-default/comparison.png)
+
+![Reports destination (1200×860): reference, built and diff side by side](design/parity/evidence/reports-default/comparison.png)
+
+![History destination (1200×860): reference, built and diff side by side](design/parity/evidence/history-default/comparison.png)
+
+![Changelog destination (1200×860): reference, built and diff side by side](design/parity/evidence/changelog-default/comparison.png)
+
+![Settings destination, General page (1280×860): reference, built and diff side by side](design/parity/evidence/settings-default/comparison.png)
+
+![Appearance destination (1200×860): reference, built and diff side by side](design/parity/evidence/appearance-default/comparison.png)
+
+![Entry sheet (1280×860): reference, built and diff side by side](design/parity/evidence/sheet-editor-default/comparison.png)
+
+![Regex builder overlay over the vault (1040×720): reference, built and diff side by side](design/parity/evidence/regex-builder-default/comparison.png)
+
+</details>
+
+Not captured yet: dark theme, the compact and minimum widths, 125 to 200 percent display scales, dialogs and error states. The clipping matrix under `design/parity/evidence/clipping/` holds captures at the compact and expanded widths that are not yet promoted into this list.
+
 ## Lines of code
 
 Counted by the committed `node scripts/count-lines.mjs` at `e09d6e28`, the same table every release

@@ -35,11 +35,11 @@ const scratch = args.get('scratch') || join(tmpdir(), 'kpxc-clipping');
 
 // The five window-size classes by their smallest width plus the documented
 // minimum client area; heights follow a laptop-ish aspect.
-function allWidthsFor(ids) { return ids.map(id => allWidths.find(w => w.id === id)).filter(Boolean); }
-const widths = (args.get('widths') ? allWidthsFor(args.get('widths').split(',')) : (quick ? [{ id: 'compact', w: 600, h: 720 }, { id: 'expanded', w: 1200, h: 800 }] : null));
 // --widths, --languages, --themes, --scales and --screens accept comma lists to run a
 // bounded subset of the full matrix; --quick is the smallest useful one.
 const allWidths = [{ id: 'minimum', w: 480, h: 640 }, { id: 'compact', w: 600, h: 720 }, { id: 'medium', w: 840, h: 760 }, { id: 'expanded', w: 1200, h: 800 }, { id: 'large', w: 1600, h: 900 }, { id: 'extra-large', w: 1920, h: 1000 }];
+function allWidthsFor(ids) { return ids.map(id => allWidths.find(w => w.id === id)).filter(Boolean); }
+const widths = (args.get('widths') ? allWidthsFor(args.get('widths').split(',')) : (quick ? [{ id: 'compact', w: 600, h: 720 }, { id: 'expanded', w: 1200, h: 800 }] : null));
 const pick = (key, fallback) => args.get(key) ? args.get(key).split(',') : fallback;
 const languages = pick('languages', quick ? ['bilingual'] : ['english', 'cantonese', 'bilingual']);
 const themes = pick('themes', quick ? ['light'] : ['light', 'dark']);

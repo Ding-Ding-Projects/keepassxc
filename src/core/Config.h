@@ -118,6 +118,7 @@ public:
         GUI_VoiceDisclosureShown,
         GUI_ShowDialogEmojis,
         GUI_PersonalVocabularyCache,
+        GUI_ExternalEditorPath,
         GUI_TabOrder,
         GUI_PinnedTabs,
         GUI_TabOverflow,

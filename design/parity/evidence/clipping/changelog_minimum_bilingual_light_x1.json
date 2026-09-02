@@ -1,25 +1,25 @@
 {
-  "id": "changelog_compact_bilingual_light_x1",
+  "id": "changelog_minimum_bilingual_light_x1",
   "tuple": {
     "screen": "changelog",
     "width": {
-      "id": "compact",
-      "w": 600,
-      "h": 720
+      "id": "minimum",
+      "w": 480,
+      "h": 640
     },
     "language": "bilingual",
     "theme": "light",
     "scale": "1"
   },
-  "pid": 12236,
+  "pid": 25072,
   "receipt": {
     "outcome": "ready",
-    "shellViewport": "800x720",
-    "windowGeometry": "560,185 800x720",
+    "shellViewport": "800x640",
+    "windowGeometry": "560,185 800x640",
     "devicePixelRatio": 1
   },
-  "png": "changelog_compact_bilingual_light_x1.png",
-  "pngSha256": "0333bc17457362789f93a4703b3b9ba2e249ad9c5cdb1001b4f750eab27d657a",
+  "png": "changelog_minimum_bilingual_light_x1.png",
+  "pngSha256": "7f28959887e61e9aadedcd96e51919de86c9c6d314aa636fe8f1e3aa62a59d64",
   "findings": [],
   "widgetCount": 3675,
   "widgets": [
@@ -30,7 +30,7 @@
       "minimumHint": "88x270",
       "name": "",
       "offscreen": false,
-      "rect": "0,0 72x720",
+      "rect": "0,0 72x640",
       "scrollable": false,
       "squeezed": false
     },
@@ -41,7 +41,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,608 48x48",
+      "rect": "12,528 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -52,7 +52,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,660 48x48",
+      "rect": "12,580 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -193,7 +193,7 @@
       "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -204,7 +204,7 @@
       "minimumHint": "471x128",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -269,10 +269,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "72,174 728x546",
+      "rect": "72,174 728x466",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 91204
+      "vScrollMax": 91284
     },
     {
       "class": "QWidget",
@@ -281,7 +281,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "72,174 718x546",
+      "rect": "72,174 718x466",
       "scrollable": true,
       "squeezed": false
     },
@@ -654,16 +654,16 @@
     },
     {
       "class": "QTextBrowser",
-      "hScrollMax": 22,
+      "hScrollMax": 0,
       "hint": "256x192",
       "leaf": false,
       "minimumHint": "88x88",
       "name": "",
       "offscreen": false,
-      "rect": "206,682 536x53",
+      "rect": "120,675 256x192",
       "scrollable": true,
       "squeezed": false,
-      "vScrollMax": 18
+      "vScrollMax": 0
     },
     {
       "class": "QWidget",
@@ -672,7 +672,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "217,691 514x35",
+      "rect": "131,684 234x174",
       "scrollable": true,
       "squeezed": false
     },
@@ -43199,7 +43199,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "790,174 10x546",
+      "rect": "790,174 10x466",
       "scrollable": true,
       "squeezed": false
     },
@@ -43210,7 +43210,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "790,174 10x546",
+      "rect": "790,174 10x466",
       "scrollable": true,
       "squeezed": false
     }

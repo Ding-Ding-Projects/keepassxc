@@ -190,7 +190,7 @@
       "surface": "app",
       "title": "Settings search on every settings surface",
       "status": "partial",
-      "note": "Per-page search in the hub; classic editor and dialogs lack one",
+      "note": "Per-page search in the hub across the design's twelve pages; classic editor and legacy dialogs lack one",
       "implementation": {
         "file": "src/gui/material/MaterialSettingsHub.h",
         "anchor": "^\\s*SearchBar\\* activeSearchBar\\(\\) const;$"
@@ -518,10 +518,10 @@
       "surface": "app",
       "title": "External editor integration",
       "status": "partial",
-      "note": "Detection and open exist in the shell handoff; VS Code export handoff missing",
+      "note": "Persisted editor path (GUI/ExternalEditorPath) with existence check and file-manager fallback; VS Code export handoff and a focused test still pending",
       "implementation": {
         "file": "src/gui/material/MaterialVaultScreen.cpp",
-        "anchor": "^\\s*void VaultScreen::"
+        "anchor": "^\\s*void VaultScreen::openDatabaseFolderExternally\\(\\)$"
       },
       "article": {
         "file": "docs/features/navigation/external-editor.md"

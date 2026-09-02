@@ -1,25 +1,25 @@
 {
-  "id": "appearance_compact_bilingual_light_x1",
+  "id": "appearance_minimum_bilingual_light_x1",
   "tuple": {
     "screen": "appearance",
     "width": {
-      "id": "compact",
-      "w": 600,
-      "h": 720
+      "id": "minimum",
+      "w": 480,
+      "h": 640
     },
     "language": "bilingual",
     "theme": "light",
     "scale": "1"
   },
-  "pid": 30156,
+  "pid": 11516,
   "receipt": {
     "outcome": "ready",
-    "shellViewport": "800x720",
-    "windowGeometry": "560,185 800x720",
+    "shellViewport": "800x640",
+    "windowGeometry": "560,185 800x640",
     "devicePixelRatio": 1
   },
-  "png": "appearance_compact_bilingual_light_x1.png",
-  "pngSha256": "bd4fa9635d1c13c49ebaaafce50695b7113f61674eaf8f2034929b84ecd8bcdb",
+  "png": "appearance_minimum_bilingual_light_x1.png",
+  "pngSha256": "934d3afb0680cd3e41e3485cc86cb04cfe46bac2f14d5b39c24ca71a064e1283",
   "findings": [],
   "widgetCount": 140,
   "widgets": [
@@ -30,7 +30,7 @@
       "minimumHint": "88x270",
       "name": "",
       "offscreen": false,
-      "rect": "0,0 72x720",
+      "rect": "0,0 72x640",
       "scrollable": false,
       "squeezed": false
     },
@@ -41,7 +41,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,608 48x48",
+      "rect": "12,528 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -52,7 +52,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,660 48x48",
+      "rect": "12,580 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -193,7 +193,7 @@
       "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -204,7 +204,7 @@
       "minimumHint": "390x153",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -291,10 +291,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "72,199 728x521",
+      "rect": "72,199 728x441",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 2132
+      "vScrollMax": 2212
     },
     {
       "class": "QWidget",
@@ -303,7 +303,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "72,199 718x521",
+      "rect": "72,199 718x441",
       "scrollable": true,
       "squeezed": false
     },
@@ -1718,7 +1718,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "790,199 10x521",
+      "rect": "790,199 10x441",
       "scrollable": true,
       "squeezed": false
     },
@@ -1729,7 +1729,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "790,199 10x521",
+      "rect": "790,199 10x441",
       "scrollable": true,
       "squeezed": false
     }

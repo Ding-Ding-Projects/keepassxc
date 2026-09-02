@@ -21,22 +21,22 @@
     "network": "allowlisted-pinned-runtime-pending-local-vendoring",
     "languageMode": "both"
   },
-  "sourceCommit": "cd7d2de634048c4310fa2b95edac4f4431d3145d",
-  "capturedAt": "2026-09-01T23:56:00.107Z",
+  "sourceCommit": "ca0d779dbc0a259723af3c99758835784a4e6954",
+  "capturedAt": "2026-09-02T00:09:07.174Z",
   "built": {
     "route": "kpxc://capture/reports?state=default&width=1200&height=860&theme=light&lang=bilingual&target=page",
     "png": "built.png",
-    "sha256": "661453f05e7a7372aea4392538591584e6a153a3d82e3ca18b9b6baa862db27d",
-    "bytes": 57797,
-    "pid": 19896,
-    "hwnd": 37422954,
+    "sha256": "c0a022baa98a95ccc2f2ab6fda167b6782989f001f0a349a306cd294fee4bb7d",
+    "bytes": 60502,
+    "pid": 13456,
+    "hwnd": 32180588,
     "windowTitle": "parity.kdbx - KeePassXC",
     "windowClass": "Qt683QWindowIcon",
     "dpi": 96,
     "routeReceipt": {
       "destination": "reports",
       "devicePixelRatio": 1,
-      "hwnd": "37422954",
+      "hwnd": "32180588",
       "languageMode": "Bilingual",
       "outcome": "ready",
       "page": "",
@@ -89,10 +89,10 @@
   },
   "comparison": {
     "png": "comparison.png",
-    "sha256": "47035abfea228f53b36980303aa17bf5a62d50a85ebf55ae8877b0e85c74ff0c",
+    "sha256": "83cc2becb5b39320e88a384c91579862e784babd2d50bf0fc188f99518f8c655",
     "diff": "diff.json",
-    "diffSha256": "d50910318700b39e9dfbd8c9793bb76ec511ca3ee762e9ed1ed4b32a128160d0",
-    "mismatchRatio": 0.10383236434108527,
+    "diffSha256": "b10bba301c02619da5c54cf117faa72e407792af86cff5f9b63d6783c37795e6",
+    "mismatchRatio": 0.10147383720930232,
     "sizeMismatch": false
   }
 }

@@ -778,11 +778,49 @@ namespace Material
             built->setNote(tr("Every option on the Basic Settings tab of Application Settings, in Material form."));
         }
 
+        // The design gives these four their own pages; the rows below that
+        // belong to them are added under those page ids. Every row still binds
+        // to its real Config key and searches within its own page.
+        const QString interfacePage = QStringLiteral("interface");
+        const QString historyPage = QStringLiteral("history-backups");
+        const QString externalPage = QStringLiteral("external-tools");
+        const QString advancedPage = QStringLiteral("advanced");
+        m_sheet->addPage(interfacePage, QStringLiteral("web"), tr("Interface"));
+        m_sheet->addPage(historyPage, QStringLiteral("history"), tr("History & backups"));
+        m_sheet->addPage(externalPage, QStringLiteral("open_in_new"), tr("External tools"));
+        m_sheet->addPage(advancedPage, QStringLiteral("settings_suggest"), tr("Advanced"));
+        if (auto* interfaceBuilt = m_sheet->page(interfacePage)) {
+            interfaceBuilt->setNote(tr("Language, content, window and tray behaviour, entry handling and voice."));
+        }
+        if (auto* historyBuilt = m_sheet->page(historyPage)) {
+            historyBuilt->setNote(tr("Saving, backups and the local Git-backed history beside the application data."));
+        }
+        if (auto* externalBuilt = m_sheet->page(externalPage)) {
+            externalBuilt->setNote(tr("Programs KeePassXC hands files to. Nothing here is required; the application is complete without them."));
+        }
+        if (auto* advancedBuilt = m_sheet->page(advancedPage)) {
+            advancedBuilt->setNote(tr("Options that change how files are written or how the process behaves. Change these deliberately."));
+        }
+        const QString externalSection = tr("External editor");
+        addText(externalPage,
+                externalSection,
+                QStringLiteral("edit_note"),
+                tr("Editor program"),
+                tr("Full path of the editor that opens the database folder. Leave empty to use the system file manager."),
+                Config::GUI_ExternalEditorPath);
+        addCommand(externalPage,
+                   externalSection,
+                   QStringLiteral("folder_open"),
+                   tr("Open the current database folder"),
+                   tr("Opens the folder of the database in front in the editor above, or in the file manager."),
+                   tr("Open"),
+                   [this] { emit integrationActivated(QStringLiteral("external-editor")); });
+
         const QString startup = tr("Startup");
         if (built) {
             built->setSectionNote(startup, tr("Config keys SingleInstance … GUI_ShowExpiredEntriesOnDatabaseUnlock."));
         }
-        addToggle(page,
+        addToggle(advancedPage,
                   startup,
                   QStringLiteral("looks_one"),
                   tr("Single instance"),
@@ -837,50 +875,50 @@ namespace Material
         if (built) {
             built->setSectionNote(saving, tr("Saving, reloading and backup behaviour."));
         }
-        addToggle(page,
+        addToggle(historyPage,
                   saving,
                   QStringLiteral("save"),
                   tr("Save after every change"),
                   tr("Write the database as soon as anything is edited."),
                   Config::AutoSaveAfterEveryChange);
-        addToggle(page,
+        addToggle(historyPage,
                   saving,
                   QStringLiteral("save"),
                   tr("Save on exit"),
                   tr("Write pending changes when KeePassXC closes."),
                   Config::AutoSaveOnExit);
-        addToggle(page,
+        addToggle(historyPage,
                   saving,
                   QStringLiteral("save"),
                   tr("Save non-data changes"),
                   tr("Persist column widths, sort order and other view state."),
                   Config::AutoSaveNonDataChanges);
-        addToggle(page,
+        addToggle(advancedPage,
                   saving,
                   QStringLiteral("sync"),
                   tr("Reload on external change"),
                   tr("Pick up edits another program made to the database file."),
                   Config::AutoReloadOnChange);
-        addToggle(page,
+        addToggle(historyPage,
                   saving,
                   QStringLiteral("backup"),
                   tr("Back up before saving"),
                   tr("Keep a copy of the previous database next to the new one."),
                   Config::BackupBeforeSave);
-        addText(page,
+        addText(historyPage,
                 saving,
                 QStringLiteral("folder"),
                 tr("Backup path pattern"),
                 tr("Where backups go. {DB_FILENAME} and {TIME} are substituted."),
                 Config::BackupFilePathPattern,
                 Control::Path);
-        addToggle(page,
+        addToggle(advancedPage,
                   saving,
                   QStringLiteral("task"),
                   tr("Use atomic saves"),
                   tr("Write to a temporary file and rename it over the database."),
                   Config::UseAtomicSaves);
-        addToggle(page,
+        addToggle(advancedPage,
                   saving,
                   QStringLiteral("task"),
                   tr("Use direct write saves"),
@@ -901,20 +939,20 @@ namespace Material
             }
             languages.append({language.first, language.second});
         }
-        addChoice(page,
+        addChoice(interfacePage,
                   appearance,
                   QStringLiteral("language"),
                   tr("Interface language"),
                   tr("Takes effect after KeePassXC restarts."),
                   Config::GUI_Language,
                   languages);
-        addToggle(page,
+        addToggle(interfacePage,
                   appearance,
                   QStringLiteral("code"),
                   tr("Monospace notes"),
                   tr("Show entry notes in a fixed width font."),
                   Config::GUI_MonospaceNotes);
-        addToggle(page,
+        addToggle(interfacePage,
                   appearance,
                   QStringLiteral("password"),
                   tr("Colour passwords"),
@@ -922,13 +960,13 @@ namespace Material
                   Config::GUI_ColorPasswords);
 
         const QString window = tr("Window and tray");
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("notifications"),
                   tr("Show tray icon"),
                   tr("Keep KeePassXC in the system notification area."),
                   Config::GUI_ShowTrayIcon);
-        addChoice(page,
+        addChoice(interfacePage,
                   window,
                   QStringLiteral("dark_mode"),
                   tr("Tray icon appearance"),
@@ -938,43 +976,43 @@ namespace Material
                    {QStringLiteral("monochrome-light"), tr("Monochrome (light)")},
                    {QStringLiteral("monochrome-dark"), tr("Monochrome (dark)")},
                    {QStringLiteral("colorful"), tr("Colourful")}});
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("minimize"),
                   tr("Minimise to tray"),
                   tr("Hide the window rather than shrinking it to the task bar."),
                   Config::GUI_MinimizeToTray);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("close"),
                   tr("Minimise instead of closing"),
                   tr("The window close button hides KeePassXC rather than quitting it."),
                   Config::GUI_MinimizeOnClose);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("arrow_upward"),
                   tr("Always on top"),
                   tr("Keep the window above every other window."),
                   Config::GUI_AlwaysOnTop);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("menu_book"),
                   tr("Hide the menu bar"),
                   tr("The Material shell replaces it; the command palette still runs every action."),
                   Config::GUI_HideMenubar);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("build"),
                   tr("Hide the tool bar"),
                   tr("The Material app bar replaces it."),
                   Config::GUI_HideToolbar);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("drive_file_move"),
                   tr("Movable tool bar"),
                   tr("Let the stock tool bar be dragged to another edge."),
                   Config::GUI_MovableToolbar);
-        addChoice(page,
+        addChoice(interfacePage,
                   window,
                   QStringLiteral("short_text"),
                   tr("Tool button style"),
@@ -985,13 +1023,13 @@ namespace Material
                    {static_cast<int>(Qt::ToolButtonTextBesideIcon), tr("Text beside icon")},
                    {static_cast<int>(Qt::ToolButtonTextUnderIcon), tr("Text under icon")},
                    {static_cast<int>(Qt::ToolButtonFollowStyle), tr("Follow the style")}});
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("folder"),
                   tr("Hide the group panel"),
                   tr("Drop the group tree from the vault."),
                   Config::GUI_HideGroupPanel);
-        addToggle(page,
+        addToggle(interfacePage,
                   window,
                   QStringLiteral("visibility_off"),
                   tr("Hide the preview panel"),
@@ -999,31 +1037,31 @@ namespace Material
                   Config::GUI_HidePreviewPanel);
 
         const QString entryList = tr("Entry list");
-        addToggle(page,
+        addToggle(interfacePage,
                   entryList,
                   QStringLiteral("person"),
                   tr("Hide usernames"),
                   tr("Mask the username column in the entry list."),
                   Config::GUI_HideUsernames);
-        addToggle(page,
+        addToggle(interfacePage,
                   entryList,
                   QStringLiteral("password"),
                   tr("Hide passwords"),
                   tr("Mask the password column in the entry list."),
                   Config::GUI_HidePasswords);
-        addToggle(page,
+        addToggle(interfacePage,
                   entryList,
                   QStringLiteral("search"),
                   tr("Search on Enter only"),
                   tr("Wait for Return rather than searching as you type."),
                   Config::GUI_SearchWaitForEnter);
-        addToggle(page,
+        addToggle(interfacePage,
                   entryList,
                   QStringLiteral("event_busy"),
                   tr("Report expired entries on unlock"),
                   tr("Raise a message when a database is opened with expiring entries."),
                   Config::GUI_ShowExpiredEntriesOnDatabaseUnlock);
-        addNumber(page,
+        addNumber(interfacePage,
                   entryList,
                   QStringLiteral("calendar_month"),
                   tr("Expiry warning window"),
@@ -1032,7 +1070,7 @@ namespace Material
                   0,
                   365,
                   tr("days"));
-        addToggle(page,
+        addToggle(interfacePage,
                   entryList,
                   QStringLiteral("folder_open"),
                   tr("Search the selected group only"),
@@ -1040,62 +1078,62 @@ namespace Material
                   Config::SearchLimitGroup);
 
         const QString entries = tr("Entry handling");
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("open_in_new"),
                   tr("Minimise when opening a URL"),
                   tr("Get out of the browser's way once a link is launched."),
                   Config::MinimizeOnOpenUrl);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("web"),
                   tr("Open URL on double click"),
                   tr("The legacy switch the URL action below replaced."),
                   Config::OpenURLOnDoubleClick);
-        addChoice(page,
+        addChoice(interfacePage,
                   entries,
                   QStringLiteral("link"),
                   tr("URL double click action"),
                   tr("What a double click on the URL column does."),
                   Config::URLDoubleClickAction,
                   {{0, tr("Open the URL in a browser")}, {1, tr("Copy the URL")}, {2, tr("Edit the entry")}});
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("visibility_off"),
                   tr("Hide the window on copy"),
                   tr("Get out of the way when something is copied."),
                   Config::HideWindowOnCopy);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("minimize"),
                   tr("Minimise on copy"),
                   tr("How the window hides itself after a copy."),
                   Config::MinimizeOnCopy);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("arrow_downward"),
                   tr("Drop to background on copy"),
                   tr("Send the window behind the others instead of minimising."),
                   Config::DropToBackgroundOnCopy);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("lock_open"),
                   tr("Minimise after unlocking"),
                   tr("Hide the window once a database has been opened."),
                   Config::MinimizeAfterUnlock);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("casino"),
                   tr("Generate a password for new entries"),
                   tr("Prefill the password field when an entry is created."),
                   Config::AutoGeneratePasswordForNewEntries);
-        addToggle(page,
+        addToggle(interfacePage,
                   entries,
                   QStringLiteral("folder"),
                   tr("Inherit the group icon"),
                   tr("A new entry starts with the icon of the group it lands in."),
                   Config::UseGroupIconOnEntryCreation);
-        addNumber(page,
+        addNumber(interfacePage,
                   entries,
                   QStringLiteral("download"),
                   tr("Favicon download timeout"),
@@ -1106,7 +1144,7 @@ namespace Material
                   tr("seconds"));
 
         const QString voice = tr("Voice");
-        addChoice(page,
+        addChoice(interfacePage,
                   voice,
                   QStringLiteral("language"),
                   tr("Message language"),
@@ -1115,7 +1153,7 @@ namespace Material
                   {{QStringLiteral("English"), tr("English")},
                    {QStringLiteral("Cantonese"), tr("Cantonese")},
                    {QStringLiteral("Bilingual"), tr("Both")}});
-        addNumber(page,
+        addNumber(interfacePage,
                   voice,
                   QStringLiteral("lightbulb"),
                   tr("English humour level"),
@@ -1123,7 +1161,7 @@ namespace Material
                   Config::GUI_FunnyLevelEnglish,
                   1,
                   5);
-        addNumber(page,
+        addNumber(interfacePage,
                   voice,
                   QStringLiteral("lightbulb"),
                   tr("Cantonese humour level"),
@@ -1131,19 +1169,19 @@ namespace Material
                   Config::GUI_FunnyLevelCantonese,
                   1,
                   5);
-        addToggle(page,
+        addToggle(interfacePage,
                   voice,
                   QStringLiteral("info"),
                   tr("Voice disclosure shown"),
                   tr("Records that the note about the message voice has been read."),
                   Config::GUI_VoiceDisclosureShown);
-        addToggle(page,
+        addToggle(interfacePage,
                   voice,
                   QStringLiteral("emoji_emotions"),
                   tr("Show emojis in dialogs and message boxes"),
                   tr("Adds relevant decorative emoji while keeping action labels and accessible names factual."),
                   Config::GUI_ShowDialogEmojis);
-        addCommand(page,
+        addCommand(interfacePage,
                    voice,
                    QStringLiteral("upload_file"),
                    tr("Personal vocabulary JSON"),
@@ -1179,7 +1217,7 @@ namespace Material
                        Notify::success(tr("Vocabulary loaded"), tr("The validated private cache is active on this computer."));
                        refreshAll();
                    });
-        addCommand(page,
+        addCommand(interfacePage,
                    voice,
                    QStringLiteral("delete_sweep"),
                    tr("Clear personal vocabulary"),

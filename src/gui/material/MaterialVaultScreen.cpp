@@ -17,6 +17,8 @@
 
 #include "MaterialVaultScreen.h"
 
+#include "core/Config.h"
+
 #include "MaterialButtons.h"
 #include "MaterialEntryDelegate.h"
 #include "MaterialEntryDetail.h"
@@ -49,6 +51,7 @@
 #include "gui/group/GroupView.h"
 
 #include <QDesktopServices>
+#include <QProcess>
 #include <QDir>
 #include <QFileInfo>
 #include <QHBoxLayout>
@@ -601,16 +604,7 @@ namespace Material
             m_dbWidget->groupView()->setCurrentGroup(group);
         });
         connect(m_sidebar, &VaultSidebar::tagsChanged, this, [this] { runSearch(); });
-        connect(m_sidebar, &VaultSidebar::externalEditorRequested, this, [this] {
-            if (!m_dbWidget || !m_dbWidget->database()) {
-                return;
-            }
-            const QString path = m_dbWidget->database()->filePath();
-            if (path.isEmpty()) {
-                return;
-            }
-            QDesktopServices::openUrl(QUrl::fromLocalFile(QFileInfo(path).absolutePath()));
-        });
+        connect(m_sidebar, &VaultSidebar::externalEditorRequested, this, &VaultScreen::openDatabaseFolderExternally);
 
         connectDetailActions(m_detail);
 
@@ -1555,6 +1549,33 @@ namespace Material
     {
         QWidget::resizeEvent(event);
         updateFabGeometry();
+    }
+
+    void VaultScreen::openDatabaseFolderExternally()
+    {
+        if (!m_dbWidget || !m_dbWidget->database()) {
+            return;
+        }
+        const QString path = m_dbWidget->database()->filePath();
+        if (path.isEmpty()) {
+            return;
+        }
+        const QString folder = QFileInfo(path).absolutePath();
+        // A configured editor wins; otherwise the folder opens in the file
+        // manager. A configured path that no longer exists is reported instead
+        // of silently falling back, so the setting never lies.
+        const QString editor = config()->get(Config::GUI_ExternalEditorPath).toString().trimmed();
+        if (!editor.isEmpty()) {
+            if (!QFileInfo::exists(editor)) {
+                Notify::warning(tr("The external editor was not found: %1").arg(editor));
+                return;
+            }
+            if (!QProcess::startDetached(editor, {folder})) {
+                Notify::error(tr("The external editor could not be started: %1").arg(editor));
+            }
+            return;
+        }
+        QDesktopServices::openUrl(QUrl::fromLocalFile(folder));
     }
 
 } // namespace Material

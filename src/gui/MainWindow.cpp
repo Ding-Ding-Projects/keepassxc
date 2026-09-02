@@ -1038,7 +1038,12 @@ MainWindow::MainWindow()
     connect(appearanceScreen, &Material::SettingsScreen::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
     connect(settingsHub, &Material::SettingsHub::interfaceFontRequested, this, &MainWindow::chooseInterfaceFont);
 
-    auto showIntegration = [this, settingsHub](const QString& id) {
+    auto showIntegration = [this, settingsHub, vaultScreen](const QString& id) {
+        // The External tools page's command row acts rather than navigates.
+        if (id == QLatin1String("external-editor")) {
+            vaultScreen->openDatabaseFolderExternally();
+            return;
+        }
         // Each integration row in the overview lands on the spec sheet that
         // owns it; anything without one falls back to the classic editor.
         static const QHash<QString, QString> pages{{QStringLiteral("browser"), QStringLiteral("browser")},

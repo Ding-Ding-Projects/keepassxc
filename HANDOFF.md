@@ -27,6 +27,9 @@ Last verified: 2026-09-01 against `main` at `e09d6e285993` plus the `codex/parit
 - Welcome screen shows version, revision and the exact updated-at time of that revision from the built commit's committer date, or says the date is unavailable (`testwelcomeprovenance`, lane).
 - Dim sum surprise: ten percent draw, no opt-out, retired key ignored (`testdimsum`, lane).
 - Command palette on `Ctrl+Shift+F` (lane).
+- Vault root lists every entry recursively with live add and remove (`testentrymodel`, lane `ca0d779d`).
+- Reports tiles and cards use the design's vocabulary (lane `ca0d779d`).
+- Settings hub carries the design's Interface, History & backups, External tools and Advanced pages, with a persisted external editor path (lane, uncommitted at the time of writing; verify `testmaterial*` before merging).
 - `build-windows.ps1` exports the MSVC environment itself; CodeQL checkout fetches tags so the changelog provenance guard can configure (lane, `cd7d2de6`).
 
 ### Fail-closed feature inventory

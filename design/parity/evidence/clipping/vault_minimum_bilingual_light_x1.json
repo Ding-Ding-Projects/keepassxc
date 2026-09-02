@@ -1,25 +1,25 @@
 {
-  "id": "vault_compact_bilingual_light_x1",
+  "id": "vault_minimum_bilingual_light_x1",
   "tuple": {
     "screen": "vault",
     "width": {
-      "id": "compact",
-      "w": 600,
-      "h": 720
+      "id": "minimum",
+      "w": 480,
+      "h": 640
     },
     "language": "bilingual",
     "theme": "light",
     "scale": "1"
   },
-  "pid": 16988,
+  "pid": 21732,
   "receipt": {
     "outcome": "ready",
-    "shellViewport": "800x720",
-    "windowGeometry": "560,185 800x720",
+    "shellViewport": "800x640",
+    "windowGeometry": "560,185 800x640",
     "devicePixelRatio": 1
   },
-  "png": "vault_compact_bilingual_light_x1.png",
-  "pngSha256": "cc17527e584fa38146c7ca6ca3eee1d54813186c4acd96b3863f00bb505e5e6a",
+  "png": "vault_minimum_bilingual_light_x1.png",
+  "pngSha256": "7ab13a670bd7c617d99b6ab53293870fcb63425fa6e5eda32e51b8d813dd796f",
   "findings": [],
   "widgetCount": 35,
   "widgets": [
@@ -30,7 +30,7 @@
       "minimumHint": "88x270",
       "name": "",
       "offscreen": false,
-      "rect": "0,0 72x720",
+      "rect": "0,0 72x640",
       "scrollable": false,
       "squeezed": false
     },
@@ -41,7 +41,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,608 48x48",
+      "rect": "12,528 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -52,7 +52,7 @@
       "minimumHint": "48x48",
       "name": "",
       "offscreen": false,
-      "rect": "12,660 48x48",
+      "rect": "12,580 48x48",
       "scrollable": false,
       "squeezed": false
     },
@@ -193,7 +193,7 @@
       "minimumHint": "752x670",
       "name": "materialDestinationStack",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -204,7 +204,7 @@
       "minimumHint": "752x670",
       "name": "materialVaultScreen",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -215,7 +215,7 @@
       "minimumHint": "752x670",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -226,7 +226,7 @@
       "minimumHint": "394x266",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -237,7 +237,7 @@
       "minimumHint": "394x266",
       "name": "",
       "offscreen": false,
-      "rect": "72,112 728x608",
+      "rect": "72,112 728x528",
       "scrollable": false,
       "squeezed": false
     },
@@ -373,7 +373,7 @@
       "minimumHint": "84x146",
       "name": "",
       "offscreen": false,
-      "rect": "72,232 728x488",
+      "rect": "72,232 728x408",
       "scrollable": false,
       "squeezed": false
     },
@@ -385,10 +385,10 @@
       "minimumHint": "66x66",
       "name": "",
       "offscreen": false,
-      "rect": "72,232 728x488",
+      "rect": "72,232 728x408",
       "scrollable": false,
       "squeezed": false,
-      "vScrollMax": 13
+      "vScrollMax": 15
     },
     {
       "class": "QWidget",
@@ -397,7 +397,7 @@
       "minimumHint": "-1x-1",
       "name": "qt_scrollarea_viewport",
       "offscreen": false,
-      "rect": "84,232 694x392",
+      "rect": "84,232 694x312",
       "scrollable": true,
       "squeezed": false
     },
@@ -408,7 +408,7 @@
       "minimumHint": "10x56",
       "name": "qt_scrollarea_vcontainer",
       "offscreen": false,
-      "rect": "790,232 10x488",
+      "rect": "790,232 10x408",
       "scrollable": true,
       "squeezed": false
     },
@@ -419,7 +419,7 @@
       "minimumHint": "-1x-1",
       "name": "",
       "offscreen": false,
-      "rect": "790,232 10x488",
+      "rect": "790,232 10x408",
       "scrollable": true,
       "squeezed": false
     },
@@ -430,7 +430,7 @@
       "minimumHint": "135x56",
       "name": "",
       "offscreen": false,
-      "rect": "641,640 135x56",
+      "rect": "641,560 135x56",
       "scrollable": false,
       "squeezed": false,
       "text": "New entry",
