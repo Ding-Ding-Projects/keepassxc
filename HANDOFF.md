@@ -2,6 +2,11 @@
 
 Last verified: 2026-09-02 on the `codex/parity-capture` lane; `main` was fast-forwarded to it at the end of the pass (see the final section). Every claim names the commit it was measured at.
 
+## Follow-up guard repair (2026-09-03)
+
+- `scripts/check-feature-inventory.mjs` now indexes every inventory row by surface and feature id, so a duplicate canonical row cannot hide behind the first matching row. Malformed row values are reported as findings rather than throwing during validation.
+- `scripts/test-feature-inventory-guard.mjs` includes negative probes for both regressions. The baseline remains intentionally red until the outstanding inventory contracts are implemented.
+
 ## What this pass established
 
 ### Design parity: nine rows, evidence complete, no open audit defect

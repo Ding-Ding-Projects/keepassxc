@@ -55,15 +55,25 @@ function anchoredMatch(file, pattern) {
 
 export function validateInventory(inventory) {
   const errors = [];
-  const seen = new Set();
-  const rows = Array.isArray(inventory.rows) ? inventory.rows : [];
+  const rows = Array.isArray(inventory?.rows) ? inventory.rows : [];
+  const rowsByKey = new Map();
+  for (const row of rows) {
+    if (!row || typeof row !== 'object' || Array.isArray(row)) {
+      errors.push('inventory row must be an object');
+      continue;
+    }
+    const key = `${row.surface}:${row.id}`;
+    const matches = rowsByKey.get(key) || [];
+    matches.push(row);
+    rowsByKey.set(key, matches);
+  }
   for (const surface of SURFACES) {
     for (const id of CANONICAL_FEATURES) {
       const key = `${surface}:${id}`;
-      const row = rows.find(candidate => candidate.surface === surface && candidate.id === id);
+      const matches = rowsByKey.get(key) || [];
+      const row = matches[0];
       if (!row) { errors.push(`${key}: no inventory row`); continue; }
-      if (seen.has(key)) errors.push(`${key}: duplicate row`);
-      seen.add(key);
+      if (matches.length > 1) errors.push(`${key}: duplicate row (${matches.length} copies)`);
       if (typeof row.title !== 'string' || !row.title.trim()) errors.push(`${key}: title missing`);
       if (row.status !== 'implemented') {
         errors.push(`${key}: status is ${row.status || 'undefined'}${row.note ? ` (${row.note})` : ''}`);
@@ -86,6 +96,7 @@ export function validateInventory(inventory) {
     }
   }
   for (const row of rows) {
+    if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
     if (!CANONICAL_FEATURES.includes(row.id)) errors.push(`${row.surface}:${row.id}: not a canonical feature id`);
     if (!SURFACES.includes(row.surface)) errors.push(`${row.surface}:${row.id}: unknown surface`);
   }
