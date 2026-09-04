@@ -1572,6 +1572,8 @@ void DatabaseWidget::entryActivationSignalReceived(Entry* entry, EntryModel::Mod
     case EntryModel::Totp:
         if (entry->hasValidTotp()) {
             setClipboardTextAndMinimize(entry->totp());
+            m_totpTimer->start(entry->totpSecondsLeft() * 1000);
+            connect(m_totpTimer, &QTimer::timeout, this, [=]() { this->pollToptOrStopAndDisconnect(entry); });
         } else {
             setupTotp();
         }

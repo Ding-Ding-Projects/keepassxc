@@ -320,6 +320,8 @@ private:
     bool m_modifiedSinceBegin;
     QPointer<Group> m_group;
     bool m_updateTimeinfo;
+
+    QTimer totptimer;
 };
 
 Q_DECLARE_OPERATORS_FOR_FLAGS(Entry::CloneFlags)

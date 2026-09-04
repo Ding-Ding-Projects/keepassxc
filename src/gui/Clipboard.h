@@ -38,6 +38,8 @@ public:
 
     static Clipboard* instance();
 
+    int secondsElapsed();
+
 public slots:
     void clearCopiedText();
 
