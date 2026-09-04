@@ -290,6 +290,31 @@ void TestAutoType::testGlobalAutoTypeRegExp()
     m_test->clearActions();
 }
 
+void TestAutoType::testGlobalAutoTypeEmptyWindow()
+{
+    // Enable title matching for this test since our fallback logic requires it
+    config()->set(Config::AutoTypeEntryTitleMatch, true);
+
+    // Test that empty window title associations work as fallback when no other associations match
+    // This should use the empty window association from m_entry6 when no specific window matches
+    m_test->setActiveWindowTitle("no_matching_window_title");
+    emit osUtils->globalShortcutTriggered("autotype");
+    m_autoType->performGlobalAutoType(m_dbList);
+    QCOMPARE(m_test->actionChars(), QString("empty_window_sequence"));
+    m_test->clearActions();
+
+    // Test that empty window title associations do NOT match when other associations exist and match
+    // This entry has window associations that should take precedence over empty window title
+    m_test->setActiveWindowTitle("custom window"); // This should match m_entry1 association
+    emit osUtils->globalShortcutTriggered("autotype");
+    m_autoType->performGlobalAutoType(m_dbList);
+    QCOMPARE(m_test->actionChars(), QString("myuserassociationmypass")); // Should be from m_entry1, not empty window
+    m_test->clearActions();
+
+    // Reset title matching to default state
+    config()->set(Config::AutoTypeEntryTitleMatch, false);
+}
+
 void TestAutoType::testAutoTypeResults()
 {
     QScopedPointer<Entry> entry(new Entry());

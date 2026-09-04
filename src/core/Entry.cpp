@@ -349,6 +349,13 @@ QList<QString> Entry::autoTypeSequences(const QString& windowTitle) const
             } else {
                 sequenceList << effectiveAutoTypeSequence();
             }
+        } else if (assoc.window.isEmpty()) {
+            // Store empty window title associations as fallback
+            if (!assoc.sequence.isEmpty()) {
+                emptyWindowSequences << assoc.sequence;
+            } else {
+                emptyWindowSequences << effectiveAutoTypeSequence();
+            }
         }
     }
 
