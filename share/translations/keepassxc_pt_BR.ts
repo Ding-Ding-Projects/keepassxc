@@ -261,6 +261,50 @@
         <source>Custom</source>
         <translation>Personalizado</translation>
     </message>
+    <message>
+        <source>Confirm Reset</source>
+        <translation>Confirmar Redefinição</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to reset all settings to default?</source>
+        <translation>Tem certeza de que deseja redefinir todas as configurações para o padrão?</translation>
+    </message>
+    <message>
+        <source>Import KeePassXC Settings</source>
+        <translation>Importar Configurações do KeePassXC</translation>
+    </message>
+    <message>
+        <source>Failed to import settings from %1, not a valid settings file.</source>
+        <translation>Falha ao importar configurações de %1; arquivo de configurações inválido.</translation>
+    </message>
+    <message>
+        <source>Export KeePassXC Settings</source>
+        <translation>Exportar Configurações do KeePassXC</translation>
+    </message>
+    <message>
+        <source>Small</source>
+        <translation>Pequeno</translation>
+    </message>
+    <message>
+        <source>Normal</source>
+        <translation>Normal</translation>
+    </message>
+    <message>
+        <source>Medium</source>
+        <translation>Médio</translation>
+    </message>
+    <message>
+        <source>Large</source>
+        <translation>Grande</translation>
+    </message>
+    <message>
+        <source>Custom</source>
+        <translation>Personalizado</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Esta configuração não pode ser habilitada quando minimizar ao desbloquear está habilitado.</translation>
+    </message>
 </context>
 <context>
     <name>ApplicationSettingsWidgetGeneral</name>
@@ -378,7 +422,7 @@
     </message>
     <message>
         <source>Favicon download timeout:</source>
-        <translation>Tempo limite de download Favicon:</translation>
+        <translation>Tempo limite de download do Favicon:</translation>
     </message>
     <message>
         <source>Website icon download timeout in seconds</source>
@@ -451,39 +495,39 @@
     </message>
     <message>
         <source>Auto-Type</source>
-        <translation>Autodigitação</translation>
+        <translation>Auto Digitação</translation>
     </message>
     <message>
         <source>Use entry title to match windows for global Auto-Type</source>
-        <translation>Usar o título de entrada para coincidir com a janela para Auto-Digitar global</translation>
+        <translation>Usar o título de entrada para coincidir com a janela de Digitação Automática global</translation>
     </message>
     <message>
         <source>Use entry URL to match windows for global Auto-Type</source>
-        <translation>Use o URL de entrada para coincidir com a janela para Auto-Digitar global</translation>
+        <translation>Use o URL de entrada para coincidir com a janela de Digitação Automática global</translation>
     </message>
     <message>
         <source>Always ask before performing Auto-Type</source>
-        <translation>Sempre perguntar antes de executar o Auto-Digitar</translation>
+        <translation>Sempre perguntar antes de executar a Digitação Automática</translation>
     </message>
     <message>
         <source>Hide expired entries from Auto-Type</source>
-        <translation>Ocultar entradas expiradas de Auto-Digitar:</translation>
+        <translation>Ocultar entradas expiradas da Digitação Automática:</translation>
     </message>
     <message>
         <source>Re-lock previously locked database after performing Auto-Type</source>
-        <translation>Bloquear novamente o banco de dados anteriormente bloqueado depois de executar o Auto-Digitar</translation>
+        <translation>Bloquear novamente o banco de dados anteriormente bloqueado depois de executar a Digitação Automática</translation>
     </message>
     <message>
         <source>Auto-Type start delay:</source>
-        <translation>Atraso para início de digitação automática:</translation>
+        <translation>Atraso do início da Digitação Automática:</translation>
     </message>
     <message>
         <source>Global Auto-Type shortcut:</source>
-        <translation>Atalho para Auto-Digitação global:</translation>
+        <translation>Atalho da Digitação Automática global:</translation>
     </message>
     <message>
         <source>Auto-type start delay milliseconds</source>
-        <translation>Auto-Digitar inicia com atraso de milissegundos</translation>
+        <translation>A Digitação Automática inicia com atraso de milissegundos</translation>
     </message>
     <message>
         <source> ms</source>
@@ -492,15 +536,15 @@
     </message>
     <message>
         <source>Auto-Type typing delay:</source>
-        <translation>Atraso para digitação automática:</translation>
+        <translation>Atraso da Digitação Automática:</translation>
     </message>
     <message>
         <source>Global auto-type shortcut</source>
-        <translation>Atalho para Auto-Digitar global</translation>
+        <translation>Atalho da Digitação Automática global</translation>
     </message>
     <message>
         <source>Auto-type character typing delay milliseconds</source>
-        <translation>Digitação de caracteres com Auto-Digitar com atraso de milissegundos</translation>
+        <translation>Digitação de caracteres com a Digitação Automática com atraso de milissegundos</translation>
     </message>
     <message>
         <source>Remember last typed entry for:</source>
@@ -684,11 +728,11 @@
     <name>AutoType</name>
     <message>
         <source>The requested Auto-Type sequence cannot be used due to an error:</source>
-        <translation>A sequência de escrita automática não pode ser utilizada por causa do seguinte erro:</translation>
+        <translation>A sequência da Digitação Automática não pode ser utilizada por causa do seguinte erro:</translation>
     </message>
     <message>
         <source>Auto-Type Error</source>
-        <translation>Erro de escrita automática</translation>
+        <translation>Erro de Digitação Automática</translation>
     </message>
     <message>
         <source>Permission Required</source>
@@ -696,11 +740,11 @@
     </message>
     <message>
         <source>KeePassXC requires the Accessibility permission in order to perform entry level Auto-Type. If you already granted permission, you may have to restart KeePassXC.</source>
-        <translation>KeePassXC requer a permissão de Acessibilidade para realizar Auto-Digitar no nível de entrada. Se você já garantiu as permissões, você deve reiniciar o KeePassXC.</translation>
+        <translation>KeePassXC requer a Permissão de Acessibilidade para realizar a Digitação Automática no nível de entrada. Se você já garantiu as permissões, você deve reiniciar o KeePassXC.</translation>
     </message>
     <message>
         <source>KeePassXC requires the Accessibility and Screen Recorder permission in order to perform global Auto-Type. Screen Recording is necessary to use the window title to find entries. If you already granted permission, you may have to restart KeePassXC.</source>
-        <translation>KeePassXC requer as permissões de Acessibilidade e de Gravação de Tela para realizar o Auto-Digitar global. Gravação de Tela é necessário para usar o título da janela e encontrar as entradas. Se você já garantiu as permissões, você deve reiniciar o KeePassXC.</translation>
+        <translation>KeePassXC requer as permissões de Acessibilidade e de Gravação de Tela para realizar a Digitação Automática global. Gravação de Tela é necessário para usar o título da janela e encontrar as entradas. Se você já garantiu as permissões, você deve reiniciar o KeePassXC.</translation>
     </message>
     <message>
         <source>Invalid entry provided</source>
@@ -796,7 +840,7 @@
     <name>AutoTypeSelectDialog</name>
     <message>
         <source>Auto-Type - KeePassXC</source>
-        <translation>Auto-Digitação - KeePassXC</translation>
+        <translation>Digitação Automática - KeePassXC</translation>
     </message>
     <message>
         <source>Double click a row to perform Auto-Type or find an entry using the search:</source>
@@ -1696,7 +1740,7 @@ Para impedir que esses erros apareçam, você deve ir em &quot;Configurações d
     </message>
     <message>
         <source>Old key file format</source>
-        <translation>Formato antigo de arquivo de chave</translation>
+        <translation>Formato antigo de arquivo-chave</translation>
     </message>
     <message>
         <source>You are using an old key file format which KeePassXC may&lt;br&gt;stop supporting in the future.&lt;br&gt;&lt;br&gt;Please consider generating a new key file by going to:&lt;br&gt;&lt;strong&gt;Database &amp;gt; Database Security &amp;gt; Change Key File.&lt;/strong&gt;&lt;br&gt;</source>
@@ -2686,11 +2730,11 @@ Este é definitivamente um bug, por favor denuncie para os desenvolvedores.</tra
     </message>
     <message>
         <source>Confirm Auto-Type</source>
-        <translation>Confirmar digitação automática</translation>
+        <translation>Confirmar a Digitação Automática</translation>
     </message>
     <message>
         <source>Perform Auto-Type into the previously active window?</source>
-        <translation>Executar digitação automática na janela anteriormente ativa?</translation>
+        <translation>Executar Digitação Automática na janela anteriormente ativa?</translation>
     </message>
     <message>
         <source>Execute command?</source>
@@ -2955,7 +2999,7 @@ Deseja desabilitar salvamento seguro e tentar novamente?</translation>
     </message>
     <message>
         <source>Auto-Type</source>
-        <translation>Auto-Digitação</translation>
+        <translation>Digitação Automática</translation>
     </message>
     <message>
         <source>Browser Integration</source>
@@ -3021,13 +3065,13 @@ Infelizmente, todas as alterações feitas foram perdidas.</translation>
     </message>
     <message>
         <source>Auto-Type Validation Error</source>
-        <translation>Erro de validação de digitação automática</translation>
+        <translation>Erro de validação de Digitação Automática</translation>
     </message>
     <message>
         <source>An error occurred while validating the custom Auto-Type sequence:
 %1
 Would you like to correct it?</source>
-        <translation>Ocorreu um erro ao validar a sequência personalizada de digitação automática:
+        <translation>Ocorreu um erro ao validar a sequência personalizada de Digitação Automática:
 %1
 Gostaria de a corrigir?</translation>
     </message>
@@ -3183,23 +3227,23 @@ Gostaria de a corrigir?</translation>
     <name>EditEntryWidgetAutoType</name>
     <message>
         <source>Enable Auto-Type for this entry</source>
-        <translation>Habilitar Auto-Digitação para esta entrada</translation>
+        <translation>Habilitar a Digitação Automática para esta entrada</translation>
     </message>
     <message>
         <source>Inherit default Auto-Type sequence from the group</source>
-        <translation>Herdar sequência pré-definida de Auto-Digitação do grupo</translation>
+        <translation>Herdar sequência pré-definida da Digitação Automática do grupo</translation>
     </message>
     <message>
         <source>Use custom Auto-Type sequence:</source>
-        <translation>Usar sequência de Auto-Digitação personalizada:</translation>
+        <translation>Usar sequência da Digitação Automática personalizada:</translation>
     </message>
     <message>
         <source>Custom Auto-Type sequence</source>
-        <translation>Personalizar sequência de Auto-Digitar</translation>
+        <translation>Personalizar sequência da Digitação Automática</translation>
     </message>
     <message>
         <source>Open Auto-Type help webpage</source>
-        <translation>Abrir a página de ajuda do Auto-Digitar</translation>
+        <translation>Abrir a página de ajuda da Digitação Automática</translation>
     </message>
     <message>
         <source>Window Associations</source>
@@ -3249,7 +3293,7 @@ Gostaria de a corrigir?</translation>
     </message>
     <message>
         <source>Custom Auto-Type sequence for this window</source>
-        <translation>Sequência de Auto-Digitar personalizada para esta janela</translation>
+        <translation>Sequência da Digitação Automática personalizada para esta janela</translation>
     </message>
 </context>
 <context>
@@ -3736,6 +3780,14 @@ Extensões suportadas são: %1</translation>
         <source>Select import/export file</source>
         <translation>Selecione o arquivo de importação/exportação</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Manter estrutura do grupo com a base de dados partilhada</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Manter estrutura do grupo</translation>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -3761,11 +3813,11 @@ Extensões suportadas são: %1</translation>
     </message>
     <message>
         <source>Use default Auto-Type sequence of parent group</source>
-        <translation>Usar a sequência padrão de Auto-Digitar do grupo pai</translation>
+        <translation>Usar a sequência padrão da Digitação Automática do grupo pai</translation>
     </message>
     <message>
         <source>Auto-Type:</source>
-        <translation>Auto-Digitar:</translation>
+        <translation>Digitação Automática:</translation>
     </message>
     <message>
         <source>Search:</source>
@@ -3773,7 +3825,7 @@ Extensões suportadas são: %1</translation>
     </message>
     <message>
         <source>Auto-Type toggle for this and sub groups</source>
-        <translation>Alternar Auto-Digitar para estes sub grupos</translation>
+        <translation>Alternar a Digitação Automática para estes sub grupos</translation>
     </message>
     <message>
         <source>Notes:</source>
@@ -3781,7 +3833,7 @@ Extensões suportadas são: %1</translation>
     </message>
     <message>
         <source>Default auto-type sequence field</source>
-        <translation>Campo de sequência de Auto-Digitar padrão</translation>
+        <translation>Campo de sequência da Digitação Automática padrão</translation>
     </message>
     <message>
         <source>Notes field</source>
@@ -3793,7 +3845,7 @@ Extensões suportadas são: %1</translation>
     </message>
     <message>
         <source>Set default Auto-Type sequence</source>
-        <translation>Configurar sequência padrão de Auto-Digitar</translation>
+        <translation>Configurar sequência padrão da Digitação Automática</translation>
     </message>
     <message>
         <source>Search toggle for this and sub groups</source>
@@ -5294,7 +5346,7 @@ Linha %2, coluna %3</translation>
     </message>
     <message>
         <source>Auto-type association window or sequence missing</source>
-        <translation>Janela associada ao Auto-Digitar ou sequência ausente</translation>
+        <translation>Janela associada à Digitação Automática ou sequência ausente</translation>
     </message>
     <message>
         <source>Invalid bool value</source>
@@ -5855,7 +5907,7 @@ Tem certeza que deseja continuar com este arquivo?</translation>
     </message>
     <message>
         <source>Perform &amp;Auto-Type</source>
-        <translation>Executar &amp;Auto Digitação</translation>
+        <translation>Executar Digitação &amp;Automática</translation>
     </message>
     <message>
         <source>Download &amp;Favicon</source>
@@ -7203,7 +7255,7 @@ Os seguintes dados estão faltando:
     </message>
     <message>
         <source>Passphrase</source>
-        <translation>Senha</translation>
+        <translation>Frase secreta</translation>
     </message>
     <message>
         <source>Word Separator:</source>
@@ -8236,14 +8288,6 @@ Tem certeza que deseja substitui-la?</translation>
         <translation>Tipo: Espacial(Rep)</translation>
     </message>
     <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Tipo: Data(Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Tipo: Desconhecido (%1)</translation>
-    </message>
-    <message>
         <source>Entropy %1 (%2)</source>
         <translation>Entropia %1 (%2)</translation>
     </message>
@@ -8736,7 +8780,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Auto-Type</source>
-        <translation>Auto-Digitar</translation>
+        <translation>Digitação Automática</translation>
     </message>
     <message>
         <source>SSH Agent</source>
@@ -8991,7 +9035,7 @@ Foi encontrada a versão %2.%3.%4</translation>
     </message>
     <message>
         <source>lock all open databases</source>
-        <translation>bloquear todas os bancos de dados abertas</translation>
+        <translation>bloquear todas os bancos de dados abertos</translation>
     </message>
     <message>
         <source>key file of the database</source>
@@ -10566,6 +10610,14 @@ Exemplo: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Detectando chaves de hardware...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Atualizar chaves de hardware</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Se você possui uma &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; ou &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, você pode usá-la para segurança adicional.&lt;/p&gt;&lt;p&gt;A chave requer que um de seus slots seja programado com &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

@@ -3734,6 +3734,14 @@ Supported extensions are: %1.</source>
         <source>Select import/export file</source>
         <translation>Вибрати файл імпорту/експорту</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Підтримувати структуру групи за допомогою спільної бази даних</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Зберегти структуру групи</translation>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -10566,6 +10574,14 @@ Example: JBSWY3DPEHPK3PXP</source>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Виявлення апаратних ключів...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Оновити апаратні ключі</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Якщо у вас є &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; або &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, ви можете використовувати його для додаткової безпеки.&lt;/p&gt;&lt;p&gt;Для ключа потрібно, щоб один із його слотів був запрограмований на &lt;a href=&quot;https://KeePassXC.org/docs/#faq-yubikey-howto&quot;&gt;виклик-відповідь&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

@@ -24,6 +24,10 @@
 #include "format/KeePass2.h"
 #include "format/KeePass2Reader.h"
 #include "format/KeePass2Writer.h"
+#ifdef WITH_XC_KEESHARE
+#include "keeshare/KeeShare.h"
+#include "keeshare/KeeShareSettings.h"
+#endif
 #include "keys/FileKey.h"
 #include "keys/PasswordKey.h"
 #include "mock/MockChallengeResponseKey.h"

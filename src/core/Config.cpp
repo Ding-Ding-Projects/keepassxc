@@ -699,4 +699,25 @@ void Config::setShortcuts(const QList<ShortcutEntry>& shortcuts)
     m_settings->endGroup();
 }
 
+bool Config::isPortable()
+{
+#ifdef Q_OS_WIN
+    // Enable QFileInfo::isWritable check on Windows
+    extern Q_CORE_EXPORT int qt_ntfs_permission_lookup;
+    qt_ntfs_permission_lookup++;
+#endif
+    auto portablePath = QCoreApplication::applicationDirPath().append("/%1");
+    auto portableFile = portablePath.arg(".portable");
+    auto isPortable = QFile::exists(portableFile) && QFileInfo(portableFile).isWritable();
+#ifdef Q_OS_WIN
+    qt_ntfs_permission_lookup--;
+#endif
+    return isPortable;
+}
+
+QString Config::portableConfigDir()
+{
+    return QCoreApplication::applicationDirPath().append("/config");
+}
+
 #undef QS

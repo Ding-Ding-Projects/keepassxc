@@ -42,6 +42,9 @@
 #ifdef KPXC_FEATURE_BROWSER
 #include "browser/BrowserSettingsPage.h"
 #endif
+#ifdef WITH_XC_BROWSER
+#include "browser/BrowserSettingsPage.h"
+#endif
 
 class ApplicationSettingsWidget::ExtraPage
 {

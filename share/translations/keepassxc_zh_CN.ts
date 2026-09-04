@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>窗口</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>最小化</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>缩放</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>全部置于前端</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -3095,6 +3114,10 @@ Would you like to correct it?</source>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
         <translation>解密 SSH 密钥失败，请确认密码是否正确。</translation>
     </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation>解密 SSH 密钥失败，请确认密码是否正确。</translation>
+    </message>
 </context>
 <context>
     <name>EditEntryWidgetAdvanced</name>
@@ -3735,6 +3758,14 @@ Supported extensions are: %1.</source>
     <message>
         <source>Select import/export file</source>
         <translation>选择导入/导出文件</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>保持群组结构与共享群组一致</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>保持群组结构</translation>
     </message>
 </context>
 <context>
@@ -7300,20 +7331,6 @@ The following data is missing:
         <translation>所有文件</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>选择自定义词表</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>覆盖词表吗？</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>自定义词表“%1”已存在。
-您要覆盖它吗？</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>添加词表失败</translation>
     </message>
@@ -8232,14 +8249,6 @@ Do you want to overwrite it?</source>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>类型：空间（重复）</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>类型：日期（重复）</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>类型：未知（%1）</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9380,6 +9389,312 @@ This option is deprecated, use --set-key-file instead.</source>
     <message>
         <source>Confirm Replace Entry References</source>
         <translation>确认替换条目引用</translation>
+    </message>
+    <message>
+        <source>Show all the attributes of the entry.</source>
+        <translation>显示条目的所有属性。</translation>
+    </message>
+    <message>
+        <source>Set the key file for the database.
+This option is deprecated, use --set-key-file instead.</source>
+        <translation>设置数据库的密钥文件。
+此选项已弃用，请用 --set-key-file 代替。</translation>
+    </message>
+    <message>
+        <source>Databases have been locked.</source>
+        <translation>数据库已被锁定。</translation>
+    </message>
+    <message>
+        <source>Attestation not supported</source>
+        <translation>认证不支持</translation>
+    </message>
+    <message>
+        <source>Loading the new key file failed: %1</source>
+        <translation>加载新密钥文件失败：%1</translation>
+    </message>
+    <message>
+        <source>Unset the password for the database.</source>
+        <translation>删除数据库的密码。</translation>
+    </message>
+    <message>
+        <source>Unset the key file for the database.</source>
+        <translation>删除数据库的密钥文件。</translation>
+    </message>
+    <message>
+        <source>Cannot use %1 and %2 at the same time.</source>
+        <translation>无法同时使用 %1 和 %2。</translation>
+    </message>
+    <message>
+        <source>Cannot remove all the keys from a database.</source>
+        <translation>无法从数据库中删除所有密钥 。</translation>
+    </message>
+    <message>
+        <source>Passkeys</source>
+        <translation>通行密钥</translation>
+    </message>
+    <message>
+        <source>Found unexpected Key type %1</source>
+        <translation>发现意料之外的密钥类型 %1</translation>
+    </message>
+    <message>
+        <source>KeePassXC is not running. No open database to lock</source>
+        <translation>KeePassXC 未在运行。没有可锁定的已打开数据库</translation>
+    </message>
+    <message>
+        <source>allow screenshots and app recording (Windows/macOS)</source>
+        <translation>允许屏幕截图与应用录制（Windows/macOS）</translation>
+    </message>
+    <message>
+        <source>Origin is empty or not allowed</source>
+        <translation>Origin 为空或不被允许</translation>
+    </message>
+    <message>
+        <source>Effective domain is not a valid domain</source>
+        <translation>Effective Domain 不是有效的域名</translation>
+    </message>
+    <message>
+        <source>Origin and RP ID do not match</source>
+        <translation>Origin 与 RP ID 不匹配</translation>
+    </message>
+    <message>
+        <source>No supported algorithms were provided</source>
+        <translation>未提供受支持的算法</translation>
+    </message>
+    <message>
+        <source>Wait for timer to expire</source>
+        <translation>等待计时器过期</translation>
+    </message>
+    <message>
+        <source>Challenge is shorter than required minimum length</source>
+        <translation>挑战短于所需最小长度</translation>
+    </message>
+    <message>
+        <source>user.id does not match the required length</source>
+        <translation>user.id 不匹配所需长度</translation>
+    </message>
+    <message>
+        <source>Access to all entries is denied</source>
+        <translation>对所有条目的访问已禁止</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>Tag for favorite entries</comment>
+        <translation>收藏</translation>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation>文件不存在。</translation>
+    </message>
+    <message>
+        <source>Cannot open file: %1</source>
+        <translation>无法打开文件：%1</translation>
+    </message>
+    <message>
+        <source>Cannot parse file: %1 at position %2</source>
+        <translation>无法解析文件：%1 在位置 %2</translation>
+    </message>
+    <message>
+        <source>Failed to decrypt json file: %1</source>
+        <translation>解密 JSON 文件失败：%1</translation>
+    </message>
+    <message>
+        <source>Invalid encKeyValidation field</source>
+        <translation>无效的 encKeyValidation 字段</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encKeyValidation field</source>
+        <translation>encKeyValidation 字段内的加密方式列表无效</translation>
+    </message>
+    <message>
+        <source>Wrong password</source>
+        <translation>错误的密码</translation>
+    </message>
+    <message>
+        <source>Invalid encrypted data field</source>
+        <translation>无效的加密数据字段</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encrypted data field</source>
+        <translation>加密数据字段内的加密方式列表无效</translation>
+    </message>
+    <message>
+        <source>Cannot initialize cipher</source>
+        <translation>无法初始化加密</translation>
+    </message>
+    <message>
+        <source>Cannot decrypt data</source>
+        <translation>无法解密数据</translation>
+    </message>
+    <message>
+        <source>Bitwarden Import</source>
+        <translation>Bitwarden 导入</translation>
+    </message>
+    <message>
+        <source>Archived</source>
+        <comment>Tag for archived entries</comment>
+        <translation>归档</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Not a valid ZIP file.</source>
+        <translation>无效的 1PUX 文件格式：不是有效的 ZIP 文件。</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Missing export.data</source>
+        <translation>无效的 1PUX 文件格式：缺少 export.data</translation>
+    </message>
+    <message>
+        <source>1Password Import</source>
+        <translation>1Password 导入</translation>
+    </message>
+    <message>
+        <source>Credential is excluded</source>
+        <translation>凭据被排除</translation>
+    </message>
+    <message>
+        <source>Passkeys request canceled</source>
+        <translation>通行密钥请求被取消</translation>
+    </message>
+    <message>
+        <source>Invalid user verification</source>
+        <translation>无效的用户验证</translation>
+    </message>
+    <message>
+        <source>Empty public key</source>
+        <translation>空的公钥</translation>
+    </message>
+    <message>
+        <source>Invalid URL provided</source>
+        <translation>提供的 URL 无效</translation>
+    </message>
+    <message>
+        <source>Edit a database.</source>
+        <translation>编辑一个数据库。</translation>
+    </message>
+    <message>
+        <source>Could not change the database key.</source>
+        <translation>无法更改数据库密钥。</translation>
+    </message>
+    <message>
+        <source>Database was not modified.</source>
+        <translation>数据库未被修改。</translation>
+    </message>
+    <message>
+        <source>Successfully edited the database.</source>
+        <translation>已成功编辑数据库。</translation>
+    </message>
+    <message>
+        <source>Cannot remove password: The database does not have a password.</source>
+        <translation>无法删除密码：数据库不含密码。</translation>
+    </message>
+    <message>
+        <source>Cannot remove file key: The database does not have a file key.</source>
+        <translation>无法删除文件密钥：数据库不含文件密钥。</translation>
+    </message>
+    <message>
+        <source>Unknown passkeys error</source>
+        <translation>未知通行密钥错误</translation>
+    </message>
+    <message>
+        <source>Encrypted files are not supported.</source>
+        <translation>加密文件不支持。</translation>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation>Proton Pass 导入</translation>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>通行密钥</translation>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation>导出时使用的格式。可用的选项是“xml”、“csv”或“html”。默认值为“xml”。</translation>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation>启动时最小化到系统托盘</translation>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation>不合法的字符串，可能存在未转义的分隔符</translation>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation>缺少闭合分隔符</translation>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation>%1，行：%2，列：%3</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>标签</translation>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation>警告：所选词表小于最小推荐大小！</translation>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation>无效的步长</translation>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation>无效的位数</translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation><numerusform>%1 个字符</numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation>您确定要永久删除条目“%1”吗？</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation><numerusform>您确定要永久删除 %n 个条目吗？</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation><numerusform>确认删除条目</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation><numerusform>确认回收条目</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation>确认删除插件数据</translation>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation><numerusform>是否从所选条目中删除插件数据？</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation>确认替换条目引用</translation>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation>类型：日期（重复）</translation>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation>类型：未知（%1）</translation>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation>不支持的格式，请确认您的 Bitwarden 导出文件受密码保护</translation>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation>无效的 KDF 迭代数，无法解密 JSON 文件</translation>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation>仅有 PBKDF 和 Argon2 受支持，无法解密 JSON 文件</translation>
     </message>
 </context>
 <context>
@@ -10562,6 +10877,14 @@ Example: JBSWY3DPEHPK3PXP</source>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>正在检测硬件密钥...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>刷新硬件密钥</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;如果您拥有 &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; 或 &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;，则可以使用它来提高安全性。&lt;/p&gt;&lt;p&gt;硬件密钥要求将其中一个插槽以&lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;质询响应&lt;/a&gt;编程。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

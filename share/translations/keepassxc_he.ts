@@ -11,19 +11,19 @@
     </message>
     <message>
         <source>Report bugs at: &lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/issues&quot; style=&quot;text-decoration: underline;&quot;&gt;https://github.com&lt;/a&gt;</source>
-        <translation>דווח על תקלים ב: &lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/issues&quot; style=&quot;text־decoration: underline;&quot;&gt;https://github.com&lt;/a&gt;</translation>
+        <translation>דווח על תקלים בכתובת: &lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/issues&quot; style=&quot;text-decoration: תחתון ;&quot;&gt; https://github.com &lt;/a&gt;</translation>
     </message>
     <message>
         <source>KeePassXC is distributed under the terms of the GNU General Public License (GPL) version 2 or (at your option) version 3.</source>
-        <translation>KeePassXC מופץ בתנאי רישיון (GNU General License (GPL גרסה 2 או (לבחירתכם) גרסה 3.</translation>
+        <translation>KeePassXC מופץ בתנאי הרשיון של (GNU General License (GPL גרסה 2 או (לבחירה) גרסה 3.</translation>
     </message>
     <message>
         <source>Project Maintainers:</source>
-        <translation>מתחזקי מיזם:</translation>
+        <translation>מתחזקי המייזם:</translation>
     </message>
     <message>
         <source>Special thanks from the KeePassXC team go to debfx for creating the original KeePassX.</source>
-        <translation>תודה מיוחדת מצוות KeePassXC עבור אל debfx ליצירת ה־KeePassX המקורי.</translation>
+        <translation>תודה מיוחדת מצוות KeePassXC, נא לעבור אל debfx ליצירת ה־KeePassX המקורי.</translation>
     </message>
     <message>
         <source>Contributors</source>
@@ -31,7 +31,7 @@
     </message>
     <message>
         <source>&lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/graphs/contributors&quot;&gt;See Contributions on GitHub&lt;/a&gt;</source>
-        <translation>&lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/graphs/contributors&quot;&gt; ראו תרומות ב־GitHub &lt;/a&gt;</translation>
+        <translation>&lt;a href=&quot;https://github.com/keepassxreboot/keepassxc/graphs/contributors&quot;&gt; צפיה בתרומות ב־GitHub &lt;/a&gt;</translation>
     </message>
     <message>
         <source>Debug Info</source>
@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Include the following information whenever you report a bug:</source>
-        <translation>לכלול את המידע הבא בכל דווח על תקל:</translation>
+        <translation>הכללת המידע הבא בכל דווח על תקל:</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
@@ -50,11 +50,11 @@
     <name>AccessControlDialog</name>
     <message>
         <source>KeePassXC -  Access Request</source>
-        <translation>בקשת גישה – KeePassXC</translation>
+        <translation>בקשת גישה - KeePassXC</translation>
     </message>
     <message>
         <source>Non-existing/inaccessible executable path. Please double-check the client is legit.</source>
-        <translation>נתיב הפעלה לא קיים/נגיש. אנא בדקו שוב שהלקוח (קליינט) חוקי.</translation>
+        <translation>נתיב הפעלה לא קיים/נגיש. נא לבדוק שנית את חוקיות הלקוח.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;%1 &lt;/span&gt;is requesting access to the following entries:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -66,7 +66,7 @@
     </message>
     <message>
         <source>PID</source>
-        <translation>קוד זיהוי אישי</translation>
+        <translation>קוד מזהה אישי</translation>
     </message>
     <message>
         <source>Executable</source>
@@ -90,7 +90,7 @@
     </message>
     <message>
         <source>Allow Selected</source>
-        <translation>בחירת קובץ ססמה</translation>
+        <translation>אפשור נבחרים</translation>
     </message>
     <message>
         <source>Deny All &amp;&amp; Future</source>
@@ -112,7 +112,7 @@
     <name>AgentSettingsWidget</name>
     <message>
         <source>Enable SSH Agent integration</source>
-        <translation>איפשור שילוב סוכן SSH</translation>
+        <translation>אפשור שילוב סוכן SSH</translation>
     </message>
     <message>
         <source>Use Pageant</source>
@@ -128,7 +128,7 @@
     </message>
     <message>
         <source>SSH_AUTH_SOCK override</source>
-        <translation>כתיבה על SSH_AUTH_SOCK</translation>
+        <translation>עקיפת SSH_AUTH_SOCK</translation>
     </message>
     <message>
         <source>SSH_AUTH_SOCK value</source>
@@ -148,7 +148,7 @@
     </message>
     <message>
         <source>No SSH Agent socket available. Either make sure SSH_AUTH_SOCK environment variable exists or set an override.</source>
-        <translation>אין שקע סוכן SSH. זמין. נא לוודא שמשתנה סביבת SSH_AUTH_SOCK קיים או להגדיר כתיבה מעל.</translation>
+        <translation>אין שקע סוכן SSH זמין. נא לוודא שמשתנה הסביבה SSH_AUTH_SOCK קיים או לקבוע עקיפה.</translation>
     </message>
     <message>
         <source>SSH Agent connection is working!</source>
@@ -175,7 +175,7 @@
     </message>
     <message>
         <source>Access error for config file %1</source>
-        <translation>שגיאת גישה לקובץ התצורה 1%</translation>
+        <translation>שגיאת גישה לקובץ התצורה %1</translation>
     </message>
     <message>
         <source>Icon only</source>
@@ -191,11 +191,11 @@
     </message>
     <message>
         <source>Text under icon</source>
-        <translation>מלל בתחתית הסמל</translation>
+        <translation>מלל מתחת לסמל</translation>
     </message>
     <message>
         <source>Follow style</source>
-        <translation>עקיבה אחר הסגנון</translation>
+        <translation>עקוב אחר הסגנון</translation>
     </message>
     <message>
         <source>Monochrome</source>
@@ -270,7 +270,7 @@
     </message>
     <message>
         <source>Startup</source>
-        <translation>אתחול</translation>
+        <translation>איתחול</translation>
     </message>
     <message>
         <source>Start only a single instance of KeePassXC</source>
@@ -302,7 +302,7 @@
     </message>
     <message>
         <source>Remember database key files and security dongles</source>
-        <translation>זכירת קבצי מפתח מסד־נתונים והתקני אבטחה</translation>
+        <translation>זכירת קבצי מפתח־מסד־נתונים ותקיעי אבטחה</translation>
     </message>
     <message>
         <source>Check for updates at application startup once per week</source>
@@ -362,7 +362,7 @@
     </message>
     <message>
         <source>Minimize when opening a URL</source>
-        <translation>מזעור בעת פתיחת מען URL</translation>
+        <translation>מזעור בעת פתיחת כתובת אתר</translation>
     </message>
     <message>
         <source>Hide window when copying to clipboard</source>
@@ -374,11 +374,11 @@
     </message>
     <message>
         <source>Drop to background</source>
-        <translation>גרור לרקע</translation>
+        <translation>שחרור לרקע</translation>
     </message>
     <message>
         <source>Favicon download timeout:</source>
-        <translation>פסק זמן להורדת Favicon:</translation>
+        <translation>פסק זמן להורדת פביקון:</translation>
     </message>
     <message>
         <source>Website icon download timeout in seconds</source>
@@ -387,15 +387,15 @@
     <message>
         <source> sec</source>
         <comment>Seconds</comment>
-        <translation>שניות</translation>
+        <translation> שניות</translation>
     </message>
     <message>
         <source>User Interface</source>
-        <translation>ממשק המשתמש</translation>
+        <translation>מנשק המשתמש</translation>
     </message>
     <message>
         <source>Toolbar button style</source>
-        <translation>סגנון כפתור סרגל הכלים</translation>
+        <translation>סגנון לחצן סרגל כלים</translation>
     </message>
     <message>
         <source>Movable toolbar</source>
@@ -415,7 +415,7 @@
     </message>
     <message>
         <source>Toolbar button style:</source>
-        <translation>סגנון סרגל כלים תחתון</translation>
+        <translation>סגנון לחצן סרגל כלים:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -423,7 +423,7 @@
     </message>
     <message>
         <source>Use monospaced font for notes</source>
-        <translation>שימוש בגופן monospace להערות</translation>
+        <translation>שימוש בגופן ברוחב אחיד להערות</translation>
     </message>
     <message>
         <source>Minimize instead of app exit</source>
@@ -431,7 +431,7 @@
     </message>
     <message>
         <source>Show a system tray icon</source>
-        <translation>הצגת סמל במגש המערכת</translation>
+        <translation>הצגת סמל מגש מערכת</translation>
     </message>
     <message>
         <source>Tray icon type</source>
@@ -447,7 +447,7 @@
     </message>
     <message>
         <source>Reset settings to default…</source>
-        <translation>אפס הגדרות לברירת מחדל</translation>
+        <translation>איפוס הגדרות לברירת מחדל...</translation>
     </message>
     <message>
         <source>Auto-Type</source>
@@ -471,7 +471,7 @@
     </message>
     <message>
         <source>Re-lock previously locked database after performing Auto-Type</source>
-        <translation>נעילת מסד־נתונים מחדש לאחר הקלדה־אוטומטית</translation>
+        <translation>לנעול מחדש מסד־נתונים שננעל בעבר לאחר ביצוע הקלדה־אוטומטית</translation>
     </message>
     <message>
         <source>Auto-Type start delay:</source>
@@ -479,7 +479,7 @@
     </message>
     <message>
         <source>Global Auto-Type shortcut:</source>
-        <translation>קיצור דרך כללי להקלדה־אוטומטית</translation>
+        <translation>קיצור דרך כללי להקלדה־אוטומטית:</translation>
     </message>
     <message>
         <source>Auto-type start delay milliseconds</source>
@@ -488,11 +488,11 @@
     <message>
         <source> ms</source>
         <comment>Milliseconds</comment>
-        <translation>אלפית שניה</translation>
+        <translation>אלפיות שנייה</translation>
     </message>
     <message>
         <source>Auto-Type typing delay:</source>
-        <translation>השהיית הקלדה הקלדה־אוטומטית:</translation>
+        <translation>השהיית הקלדת הקלדה־אוטומטית:</translation>
     </message>
     <message>
         <source>Global auto-type shortcut</source>
@@ -500,7 +500,7 @@
     </message>
     <message>
         <source>Auto-type character typing delay milliseconds</source>
-        <translation>השהיית התחלת הקלדה־אוטומטית של תווים באלפיות השנייה</translation>
+        <translation>השהיית הקלדה־אוטומטית של תווים באלפיות השנייה</translation>
     </message>
     <message>
         <source>Remember last typed entry for:</source>
@@ -588,29 +588,29 @@
     </message>
     <message>
         <source>Database lock timeout seconds</source>
-        <translation>פסק־זמן לנעילת מסד־נתונים</translation>
+        <translation>פסק זמן בשניות לנעילת מסד־נתונים</translation>
     </message>
     <message>
         <source> sec</source>
         <comment>Seconds</comment>
-        <translation>שניה</translation>
+        <translation> שנ&apos;</translation>
     </message>
     <message>
         <source>Clear clipboard after</source>
-        <translation>ניקוי לוח־הגזירים לאחר</translation>
+        <translation>ניקוי לוח גזירים לאחר</translation>
     </message>
     <message>
         <source>Clear search query after</source>
-        <translation>נקוי שאילתת חיפוש לאחר</translation>
+        <translation>ניקוי שאילתת חיפוש לאחר</translation>
     </message>
     <message>
         <source> min</source>
         <comment>Minutes</comment>
-        <translation>דקות</translation>
+        <translation>דק&apos;</translation>
     </message>
     <message>
         <source>Clipboard clear seconds</source>
-        <translation>שניות נקיון לוח־גזירים</translation>
+        <translation>ניקוי לוח גזירים בשניות</translation>
     </message>
     <message>
         <source>Lock databases after inactivity of</source>
@@ -634,11 +634,11 @@
     </message>
     <message>
         <source>Hide passwords when editing them</source>
-        <translation>הסתרת ססמאות בעת עריכתן</translation>
+        <translation>הסתרת סיסמאות בעת עריכתן</translation>
     </message>
     <message>
         <source>Use placeholder for empty password fields</source>
-        <translation>נא להשתמש בשומר מקום לשדות ססמה ריקים</translation>
+        <translation>יש להשתמש בשומר מקום עבור שדות סיסמה ריקים</translation>
     </message>
     <message>
         <source>Hide passwords in the entry preview panel</source>
@@ -650,7 +650,34 @@
     </message>
     <message>
         <source>Use DuckDuckGo service to download website icons</source>
-        <translation>נא להשתמש בשירות DuckDuckGo כדי להוריד סמלי אתרים</translation>
+        <translation>יש להשתמש בשירות DuckDuckGo כדי להוריד סמלי אתרים</translation>
+    </message>
+    <message>
+        <source>Hide TOTP in the entry preview panel</source>
+        <translation>הסתרת TOTP בלוחית תצוגת רשומות מקדימה</translation>
+    </message>
+    <message>
+        <source>Lock databases when switching user</source>
+        <translation>נעילת מסדי־נתונים בעת החלפת משתמש</translation>
+    </message>
+    <message>
+        <source>Lock Options</source>
+        <translation>אפשרויות נעילה</translation>
+    </message>
+    <message>
+        <source>Hide notes in the entry preview panel</source>
+        <translation>הסתרת הערות בלוח תצוגת רשומות מקדימה</translation>
+    </message>
+</context>
+<context>
+    <name>AttachmentWidget</name>
+    <message>
+        <source>Attachment Viewer</source>
+        <translation>משקף צרופות</translation>
+    </message>
+    <message>
+        <source>Unknown attachment type</source>
+        <translation>סוג צרופה לא ידוע</translation>
     </message>
     <message>
         <source>Hide TOTP in the entry preview panel</source>
@@ -692,15 +719,15 @@
     </message>
     <message>
         <source>Permission Required</source>
-        <translation>דרושה הרשאה</translation>
+        <translation>נדרשת הרשאה</translation>
     </message>
     <message>
         <source>KeePassXC requires the Accessibility permission in order to perform entry level Auto-Type. If you already granted permission, you may have to restart KeePassXC.</source>
-        <translation>ל־KeePassXC נדרשת הרשאת נגישות על מנת לבצע הקלדה־אוטומטית ברמה בסיסית. אם כבר הענקה הרשאה, ייתכן שיידרש להפעיל את KeePassXC מחדש.</translation>
+        <translation>ל־KeePassXC נדרשת הרשאת נגישות על מנת לבצע הקלדה־אוטומטית ברמה בסיסית. אם כבר הוענקה הרשאה, ייתכן שצריך לאתחל את KeePassXC.</translation>
     </message>
     <message>
         <source>KeePassXC requires the Accessibility and Screen Recorder permission in order to perform global Auto-Type. Screen Recording is necessary to use the window title to find entries. If you already granted permission, you may have to restart KeePassXC.</source>
-        <translation>ל־KeePassXC נדרשת הרשאת נגישות ומקליט־המסך על מנת לבצע הקלדה־אוטומטית כללית. הקלטת מסך נחוצה כדי להשתמש בכותרת החלון לחפש רשומות. אם כבר הוענקה הרשאה, ייתכן שיידרש להפעיל את KeePassXC מחדש.</translation>
+        <translation>ל־KeePassXC נדרשת הרשאת נגישות ומקליט מסך על מנת לבצע הקלדה־אוטומטית כללית. הקלטת מסך נחוצה כדי להשתמש בכותרת החלון כדי למצוא רשומות. אם כבר הוענקה הרשאה, ייתכן שצריך לאתחל את KeePassXC.</translation>
     </message>
     <message>
         <source>Invalid entry provided</source>
@@ -708,15 +735,15 @@
     </message>
     <message>
         <source>Bracket imbalance detected, found extra { or }</source>
-        <translation>זוהה חוסר איזון בסוגרים, נמצאו {or }</translation>
+        <translation>זוהה חוסר איזון בסוגריים, נמצאו { או } נוספים</translation>
     </message>
     <message>
         <source>Too many repetitions detected, max is %1: %2</source>
-        <translation>זוהו חזרות רבות מדי, מרבי %1: %2</translation>
+        <translation>זוהו חזרות רבות מדי, המרב הוא %1: %2</translation>
     </message>
     <message>
         <source>Very slow key press detected, max is %1: %2</source>
-        <translation>זוהתה הקשת מקש איטית מאוד, המירב הוא %1: %2</translation>
+        <translation>זוהתה הקשת מקש איטית מאוד, המרב הוא %1: %2</translation>
     </message>
     <message>
         <source>Very long delay detected, max is %1: %2</source>
@@ -728,7 +755,15 @@
     </message>
     <message>
         <source>Invalid placeholder: %1</source>
-        <translation>מציין מיקום לא תקין: %1</translation>
+        <translation>שומר מקום לא תקין: %1</translation>
+    </message>
+    <message>
+        <source>Entry does not have attribute for PICKCHARS: %1</source>
+        <translation>לרשומה אין תכונה עבור PICKCHARS: %1</translation>
+    </message>
+    <message>
+        <source>Entry has invalid TOTP settings</source>
+        <translation>raunv עם הגדרות TOTP לא תקינות</translation>
     </message>
     <message>
         <source>Entry has invalid TOTP settings</source>
@@ -777,11 +812,11 @@
     <name>AutoTypePlatformX11</name>
     <message>
         <source>Sequence aborted: Caps Lock is on</source>
-        <translation>הרצף ננטש: אותיות רישיות מופעלות</translation>
+        <translation>הרצף בוטל: Caps Lock מופעל</translation>
     </message>
     <message>
         <source>Sequence aborted: Modifier keys held by user</source>
-        <translation>הרצף ננטש: מפתחות הסגלה מוחזקים על־ידי המשתמש</translation>
+        <translation>הרצף בוטל: מקשי הצירוף מוחזקים על־ידי המשתמש</translation>
     </message>
     <message>
         <source>Unable to get valid keycode for key: </source>
@@ -812,7 +847,7 @@
     </message>
     <message>
         <source>Type Sequence</source>
-        <translation>סוג רצף</translation>
+        <translation>הקלדת רצף</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -820,11 +855,11 @@
     </message>
     <message>
         <source>Type {USERNAME}</source>
-        <translation>סוג {USERNAME}</translation>
+        <translation>סוג {שם משתמש}</translation>
     </message>
     <message>
         <source>Type {PASSWORD}</source>
-        <translation>סוג {PASSWORD}</translation>
+        <translation>סוג {סיסמה}</translation>
     </message>
     <message>
         <source>Type {TOTP}</source>
@@ -836,7 +871,7 @@
     </message>
     <message>
         <source>Copy Password</source>
-        <translation>העתקת ססמה</translation>
+        <translation>העתקת סיסמה</translation>
     </message>
     <message>
         <source>Copy TOTP</source>
@@ -893,7 +928,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     </message>
     <message>
         <source>%1 is requesting access to the following entries:</source>
-        <translation>%1 מבקש גישה לרשומות הבאות:</translation>
+        <translation>נתקבלה בקשת גישה מ־%1 לרשומות הבאות:</translation>
     </message>
     <message>
         <source>Remember access to checked entries</source>
@@ -905,7 +940,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     </message>
     <message>
         <source>Allow access to entries</source>
-        <translation>איפשור גישה לרשומה</translation>
+        <translation>אפשור גישה לרשומות</translation>
     </message>
     <message>
         <source>Allow Selected</source>
@@ -913,11 +948,15 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     </message>
     <message>
         <source>Deny All</source>
-        <translation>דחיית הכל</translation>
+        <translation>דחיית הכול</translation>
     </message>
     <message>
         <source>Disable for this site</source>
-        <translation>השבתת אתר זה</translation>
+        <translation>השבתה עבור אתר זה</translation>
+    </message>
+    <message>
+        <source>Undo</source>
+        <translation>ביטול פעולה</translation>
     </message>
     <message>
         <source>Undo</source>
@@ -928,7 +967,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     <name>BrowserEntrySaveDialog</name>
     <message>
         <source>Ok</source>
-        <translation>אישור</translation>
+        <translation>בסדר</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -1012,7 +1051,7 @@ Do you want to register a new passkey for:</source>
         <source>A request for creating a new group &quot;%1&quot; has been received.
 Do you want to create this group?
 </source>
-        <translation>הבקשה ליצור קבוצה חדשה &quot;%1&quot; התקבלה.
+        <translation>בקשה ליצור קבוצה חדשה &quot;%1&quot; התקבלה.
 האם ליצור קבוצה זו?
 </translation>
     </message>
@@ -1025,8 +1064,8 @@ chrome-laptop.</source>
         <translation>התקבלה בקשת שיוך מסד־נתונים הבא:
 %1
 
-נא לתת לחיבור שם או מזהה ייחודיים, לדוגמה:
-מחשב נייד כרום.</translation>
+יש לתת לחיבור שם או מזהה ייחודיים, לדוגמה:
+מחשב נייד-כרום.</translation>
     </message>
     <message>
         <source>Save and allow access</source>
@@ -1116,7 +1155,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Enable browser integration</source>
-        <translation>איפשור שילוב דפדפן</translation>
+        <translation>אפשור שילוב דפדפן</translation>
     </message>
     <message>
         <source>General</source>
@@ -1124,40 +1163,40 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Enable integration for these browsers:</source>
-        <translation>איפשור שילוב עם דפדפנים אלה:</translation>
+        <translation>אפשור שילוב עם דפדפנים אלה:</translation>
     </message>
     <message>
         <source>Vivaldi</source>
-        <translation>ויואלדי</translation>
+        <translation>Vivaldi</translation>
     </message>
     <message>
         <source>&amp;Edge</source>
-        <translation>&amp;אדג&apos;</translation>
+        <translation>&amp;Edge</translation>
     </message>
     <message>
         <source>Firefox</source>
-        <translation>פיירפוקס</translation>
+        <translation>Firefox</translation>
     </message>
     <message>
         <source>Tor Browser</source>
-        <translation>דפדפן תור</translation>
+        <translation>דפדפן Tor</translation>
     </message>
     <message>
         <source>Brave</source>
-        <translation>ברייב</translation>
+        <translation>Brave</translation>
     </message>
     <message>
         <source>Google Chrome</source>
-        <translation>גוגל כרום</translation>
+        <translation>Google Chrome</translation>
     </message>
     <message>
         <source>Chromium</source>
-        <translation>כרומיום</translation>
+        <translation>Chromium</translation>
     </message>
     <message>
         <source>Show a notification when credentials are requested</source>
         <extracomment>Credentials mean login data requested via browser extension</extracomment>
-        <translation>הצגת הודעה כאשר נדרשים אישורים</translation>
+        <translation>הצגת הודעה כאשר נדרשים נתוני האמנה</translation>
     </message>
     <message>
         <source>Request to unlock the database if it is locked</source>
@@ -1165,27 +1204,27 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Only entries with the same scheme (http://, https://, …) are returned.</source>
-        <translation>רק רשומות עם אותה סכמה (http: //, https: //, ...) מוחזרות.</translation>
+        <translation>רק רשומות עם אותה הסכמה (http://, https://, …) מוחזרות.</translation>
     </message>
     <message>
         <source>Match URL scheme (e.g., https://example.com)</source>
-        <translation>התאמת ערכת מעני URL (לדוגמה, https://example.com)</translation>
+        <translation>התאמת סכמת URL (לדוגמה, https://example.com)</translation>
     </message>
     <message>
         <source>Only returns the best matches for a specific URL instead of all entries for the whole domain.</source>
-        <translation>מחזירה רק את ההתאמות הטובות ביותר עבור כתובת אתר ספציפית במקום כל הרשומות של כל התחום.</translation>
+        <translation>החזרת ההתאמות הטובות ביותר בלבד עבור כתובת אתר מסויימת במקום כל הרשומות עבור כל תחום.</translation>
     </message>
     <message>
         <source>Return only best-matching credentials</source>
-        <translation>החזרת האישורים המתאימים ביותר בלבד</translation>
+        <translation>החזרת נתוני האמנה המתאימים ביותר בלבד</translation>
     </message>
     <message>
         <source>Returns expired credentials. String [expired] is added to the title.</source>
-        <translation>החזרת אישורים שפג תוקפם. מחרוזת [פג תוקף] נוספה לכותרת.</translation>
+        <translation>מחזיר נתוני האמנה שפג תוקפם. מחרוזת [פג תוקף] נוספת לכותרת.</translation>
     </message>
     <message>
         <source>Allow returning expired credentials</source>
-        <translation>איפשור החזרת אישורים פגי תוקף</translation>
+        <translation>אפשור החזרת נתוני האמנה שפג תוקפם</translation>
     </message>
     <message>
         <source>All databases connected to the extension will return matching credentials.</source>
@@ -1213,11 +1252,11 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Do not ask permission for HTTP Basic Auth</source>
         <extracomment>An extra HTTP Basic Auth setting</extracomment>
-        <translation>לא לבקש הרשאה Auth בסיסי של HTTP</translation>
+        <translation>לא לבקש רשות עבור אימות בסיסי של HTTP</translation>
     </message>
     <message>
         <source>Automatically creating or updating string fields is not supported.</source>
-        <translation>אין תמיכה ביצירה או בעדכון של שדות מחרוזות.</translation>
+        <translation>יצירה או עדכון אוטומטיים של שדות מחרוזת אינם נתמכים.</translation>
     </message>
     <message>
         <source>Return advanced string fields which start with &quot;KPH: &quot;</source>
@@ -1229,7 +1268,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Do not prompt for KeePassHTTP settings migration.</source>
-        <translation>לא להציג בקשה להעברת הגדרות KeePassHTTP.</translation>
+        <translation>לא להציג הנחיה להעברת הגדרות KeePassHTTP.</translation>
     </message>
     <message>
         <source>Updates KeePassXC or keepassxc-proxy binary path automatically to native messaging scripts on startup.</source>
@@ -1241,20 +1280,20 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Use a custom proxy location if you installed a proxy manually.</source>
-        <translation>שימוש במיקום שָׁרָת מְתַוֵּךְ מותאם אישית אם השָׁרָת המְתַוֵּךְ הותקן באופן ידני.</translation>
+        <translation>שימוש במיקום שרת מתווך מותאם אישית אם השרת המתווך הותקן באופן ידני.</translation>
     </message>
     <message>
         <source>Use a custom proxy location:</source>
         <comment>Meant is the proxy for KeePassXC-Browser</comment>
-        <translation>שימוש במיקום שָׁרָת מְתַוֵּךְ מותאם אישית:</translation>
+        <translation>שימוש במיקום שרת מתווך מותאם אישית:</translation>
     </message>
     <message>
         <source>Custom proxy location field</source>
-        <translation>שדה מיקום שָׁרָת מְתַוֵּךְ מותאם אישית</translation>
+        <translation>שדה מיקום שרת מתווך מותאם אישית</translation>
     </message>
     <message>
         <source>Browser for custom proxy file</source>
-        <translation>דפדופן לקובץ שָׁרָת מְתַוֵּךְ מותאם אישית</translation>
+        <translation>דפדפן עבור קובץ שרת מתווך מותאם אישית</translation>
     </message>
     <message>
         <source>Browse…</source>
@@ -1271,7 +1310,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Toolbar button style</source>
-        <translation>סגנון כפתור סרגל הכלים</translation>
+        <translation>סגנון לחצן סרגל כלים</translation>
     </message>
     <message>
         <source>Config Location:</source>
@@ -1283,7 +1322,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Browse for custom browser path</source>
-        <translation>איתור נתיב דפדפן מותאם אישית</translation>
+        <translation>עיון עבור נתיב דפדפן מותאם אישית</translation>
     </message>
     <message>
         <source>Custom extension ID:</source>
@@ -1303,7 +1342,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Select custom proxy location</source>
-        <translation>בחירת מיקום שָׁרָת מְתַוֵּךְ מותאם אישית</translation>
+        <translation>בחירת מיקום שרת מתווך מותאם אישית</translation>
     </message>
     <message>
         <source>Select native messaging host folder location</source>
@@ -1358,7 +1397,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Append &apos; - Clone&apos; to title</source>
-        <translation>צרוף &apos; - שיבוט&apos; לכותרת</translation>
+        <translation>צירוף &apos; - שיבוט&apos; לכותרת</translation>
     </message>
     <message>
         <source>Replace username and password with references</source>
@@ -1366,7 +1405,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Copy history</source>
-        <translation>היסטוריית עותקים</translation>
+        <translation>העתק הסטוריה</translation>
     </message>
 </context>
 <context>
@@ -1413,7 +1452,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Last Modified</source>
-        <translation>שונה לאחרונה</translation>
+        <translation>הוסגל לאחרונה</translation>
     </message>
     <message>
         <source>Icon</source>
@@ -1429,11 +1468,11 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Text is qualified by</source>
-        <translation>מלל הוסמך על־ידי</translation>
+        <translation>מלל הוכשר על־ידי</translation>
     </message>
     <message>
         <source>Text qualification</source>
-        <translation>הסמכת מלל</translation>
+        <translation>הכשרת מלל</translation>
     </message>
     <message>
         <source>Fields are separated by</source>
@@ -1449,7 +1488,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Header lines skipped</source>
-        <translation>המערכת דילגה על שורות כותרת עליונה</translation>
+        <translation>המערכת דלגה על שורות כותרת עליונה</translation>
     </message>
     <message>
         <source>Number of header lines to discard</source>
@@ -1461,7 +1500,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Consider &apos;\&apos; an escape character</source>
-        <translation>נא לשקול תו החלצות &apos;\&apos;</translation>
+        <translation>נא לשקול תו החלצות  &apos;\&apos;</translation>
     </message>
     <message>
         <source>Preview</source>
@@ -1532,11 +1571,11 @@ Are you sure you want to import?</source>
     </message>
     <message>
         <source>Unable to open file %1.</source>
-        <translation>לא ניתן לפתוח קובץ %1.</translation>
+        <translation>לא יכול לפתוח את הקובץ %1.</translation>
     </message>
     <message>
         <source>Error while reading the database: %1</source>
-        <translation>שגיאה בעת קריאת מסד־נתונים: %1</translation>
+        <translation>שגיאה בזמן קריאת מסד־נתונים: %1</translation>
     </message>
     <message>
         <source>Could not save, database does not point to a valid file.</source>
@@ -1566,7 +1605,15 @@ Backup database located at %2</source>
     </message>
     <message>
         <source>Recycle Bin</source>
-        <translation>סל־מחזור</translation>
+        <translation>סל המחזור</translation>
+    </message>
+    <message>
+        <source>Database file read error.</source>
+        <translation>שגיאת קריאת קובץ מסד־נתונים</translation>
+    </message>
+    <message>
+        <source>No file path was provided.</source>
+        <translation>לא סופק נתיב קובץ.</translation>
     </message>
     <message>
         <source>Database file read error.</source>
@@ -1588,11 +1635,11 @@ Backup database located at %2</source>
     <name>DatabaseOpenWidget</name>
     <message>
         <source>Unlock KeePassXC Database</source>
-        <translation>שחרור נעילת מסד־נתוני KeePassXC</translation>
+        <translation>שחרור נעילת מסד־נתונים KeePassXC</translation>
     </message>
     <message>
         <source>Enter Password:</source>
-        <translation>הכנס/י ססמה:</translation>
+        <translation>הזנת ססמה:</translation>
     </message>
     <message>
         <source>Password field</source>
@@ -1645,10 +1692,10 @@ We recommend you update your KeePassXC installation.</source>
         <translation>מסד־נתונים שאתה מנסה לפתוח היה קרוב לוודאי
 נוצר על ידי גרסה חדשה יותר של Keepassxc.
 
-אתה יכול לנסות לפתוח אותו בכל מקרה, אבל זה עשוי להיות לא שלם
-ושמירת שינויים עלולה לגרום לאובדן נתונים.
+ניתן לנסות לפתוח אותו למרות זאת, אך עשוי הוא עשוי להיות חלקי
+ושמירת שינויים למסד הנתונים שנפתח, עלולה לגרום לאובדן נתונים.
 
-אנו ממליצים שתעדכן את ההתקנה של KeepassXC שלך.</translation>
+אנו ממליצים לעדכן את התקנת KeepassXC שבמחשב.</translation>
     </message>
     <message>
         <source>Open database anyway</source>
@@ -1702,7 +1749,7 @@ To prevent this error from appearing, you must go to &quot;Database Settings / S
     </message>
     <message>
         <source>Select key file</source>
-        <translation>בחירת קובץ מפתח</translation>
+        <translation>בחירת קובץ ססמה</translation>
     </message>
     <message>
         <source>Cannot use database file as key file</source>
@@ -1800,7 +1847,7 @@ Are you sure you want to continue with this file?.</source>
     </message>
     <message>
         <source>Encryption Settings</source>
-        <translation>הגדרות הצפנה</translation>
+        <translation>הצנת ההגדרות</translation>
     </message>
     <message>
         <source>Browser Integration</source>
@@ -1847,7 +1894,7 @@ Are you sure you want to continue with this file?.</source>
     </message>
     <message>
         <source>Stored keys</source>
-        <translation>מפתחות מאוחסנים</translation>
+        <translation>אחסן ססמאות</translation>
     </message>
     <message>
         <source>Stored browser keys</source>
@@ -1885,7 +1932,7 @@ This may prevent connection to the browser plugin.</source>
     </message>
     <message>
         <source>Enable Browser Integration to access these settings.</source>
-        <translation>איפשור שילוב דפדפנים לגישה להגדרות.</translation>
+        <translation>אפשור שילוב דפדפנים לגישה להגדרות.</translation>
     </message>
     <message>
         <source>Do you really want to disconnect all browsers?
@@ -1935,6 +1982,22 @@ This is only necessary if your database is a copy of another and the browser ext
     <message>
         <source>Convert legacy KeePassHTTP attributes to KeePassXC-Browser compatible custom data</source>
         <translation>המרת מאפייני תוכנת־מורשת KeePassHTTP לנתוני דפדפן KeePassXC תואמים.</translation>
+    </message>
+    <message>
+        <source>No keys found</source>
+        <translation>לא נמצאו מפתחות</translation>
+    </message>
+    <message>
+        <source>Removed keys from database</source>
+        <translation>מפתחות שהוסרו ממסד הנתונים</translation>
+    </message>
+    <message>
+        <source>Removed permissions</source>
+        <translation>התרים שהוסרו</translation>
+    </message>
+    <message>
+        <source>No entry with permissions found!</source>
+        <translation>לא נמצאה רשומה עם התרים!</translation>
     </message>
     <message>
         <source>No keys found</source>
@@ -2093,7 +2156,7 @@ Are you sure you want to continue without a password?</source>
     <message>
         <source>Number of rounds too high</source>
         <comment>Key transformation rounds</comment>
-        <translation>מספר סבבים גבוה מדי</translation>
+        <translation>מספר הסבבים גבוה מדי</translation>
     </message>
     <message>
         <source>You are using a very high number of key transform rounds with Argon2.
@@ -2230,7 +2293,7 @@ If you keep this number, your database will not be protected from brute force at
     </message>
     <message>
         <source>Enable compression (recommended)</source>
-        <translation>איפשור דחיסה (מומלץ)</translation>
+        <translation>איפור דחיסה (מומלץ)</translation>
     </message>
     <message>
         <source>Delete Recycle Bin</source>
@@ -2426,7 +2489,7 @@ removed from the database.</source>
     <name>DatabaseSettingsWidgetMetaDataSimple</name>
     <message>
         <source>Database Name:</source>
-        <translation>שם מסד־נתונים</translation>
+        <translation>שם מסד־נתונים:</translation>
     </message>
     <message>
         <source>Database name field</source>
@@ -2602,7 +2665,7 @@ This is definitely a bug, please report it to the developers.</source>
     </message>
     <message>
         <source>Failed to open %1. It either does not exist or is not accessible.</source>
-        <translation>פתיחת %1 כשלה. יתכן והוא לא קיים או לא נגיש</translation>
+        <translation>פתיחת %1 כשלה. יתכן והוא לא קיים או לא נגיש.</translation>
     </message>
     <message>
         <source>CSV file</source>
@@ -2736,7 +2799,7 @@ This is definitely a bug, please report it to the developers.</source>
     <message>
         <source>&quot;%1&quot; was modified.
 Save changes?</source>
-        <translation>&quot;%1&quot; השתנה.
+        <translation>&quot;%1&quot; הוסגל.
 האם לשמור שינויים?</translation>
     </message>
     <message>
@@ -2785,7 +2848,7 @@ Disable safe saves and try again?</source>
     </message>
     <message>
         <source>Are you sure you want to permanently delete everything from your recycle bin?</source>
-        <translation>האם למחוק הכל מסל־המיחזור לצמיתות?</translation>
+        <translation>האם למחוק הכול מסל־המיחזור לצמיתות?</translation>
     </message>
     <message>
         <source>Could not find database file: %1</source>
@@ -3026,7 +3089,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Entry updated successfully.</source>
-        <translation>רשומה עודכנה בהצלחה</translation>
+        <translation>רשומה עודכנה בהצלחה.</translation>
     </message>
     <message>
         <source>Unsaved Changes</source>
@@ -3188,7 +3251,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Window Associations</source>
-        <translation>שיוך חלון</translation>
+        <translation>שיוכי חלונות</translation>
     </message>
     <message>
         <source>Existing window associations</source>
@@ -3205,7 +3268,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Remove selected window association</source>
-        <translation>הסרת שיוך החלון שנבחר</translation>
+        <translation>הסרת חלון צרופות שנבחר</translation>
     </message>
     <message>
         <source>-</source>
@@ -3230,7 +3293,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Use a specific sequence for this association:</source>
-        <translation>נא להשתמש ברצף מסויים עבור שיוך זה:</translation>
+        <translation>נא להשתמש ברצף מבויים עבור שיוך זה:</translation>
     </message>
     <message>
         <source>Custom Auto-Type sequence for this window</source>
@@ -3324,7 +3387,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Delete all</source>
-        <translation>מחיקת הכל</translation>
+        <translation>מחיקת הכול</translation>
     </message>
 </context>
 <context>
@@ -3430,7 +3493,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Add key to agent when database is opened/unlocked</source>
-        <translation>הוספת מפתח לסוכן בעת פתיחה/שחרור נעילת מסד־נתונים</translation>
+        <translation>הוספת מפתח לסוכן כאשר מסד־נתונים נפתח/שוחרר מנעילה</translation>
     </message>
     <message>
         <source>Decrypt</source>
@@ -3503,7 +3566,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Remove key from agent after specified seconds</source>
-        <translation>הסרת מפתח מהסוכן לאחר מספר השניות שצוינו</translation>
+        <translation>הסרה מפתח מהסוכן לאחר מספר השניות שצוינו</translation>
     </message>
     <message>
         <source> seconds</source>
@@ -3550,7 +3613,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Disable</source>
-        <translation>השבתה</translation>
+        <translation>מושבת</translation>
     </message>
     <message>
         <source>Inherit from parent group (%1)</source>
@@ -3569,7 +3632,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Hide entries from browser extension toggle for this and sub groups</source>
-        <translation>הסתר רשומות מתוסף של הדפדפן ועבור  תתי קבוצות.</translation>
+        <translation>הסתרת רשומות ממחלף הרחבות דפדפן עבור זה ועבור קבוצות משנה</translation>
     </message>
     <message>
         <source>Skip Auto-Submit for entries:</source>
@@ -3652,7 +3715,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Clear</source>
-        <translation>צלול</translation>
+        <translation>נקה</translation>
     </message>
     <message>
         <source>Inactive</source>
@@ -3673,7 +3736,7 @@ Would you like to correct it?</source>
     <message>
         <source>Your KeePassXC version does not support sharing this container type.
 Supported extensions are: %1.</source>
-        <translation>גרסת KeePassXC אינה תומכת בשיתוף סוג מיכל זה.
+        <translation>גרסת KeePassXC לא תומכת בשיתוף סוג מיכל זה.
 הרחבות נתמכות הן: %1.</translation>
     </message>
     <message>
@@ -3711,15 +3774,23 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Select import source</source>
-        <translation>בחירת מקור ייבוא</translation>
+        <translation>בחירת מקור יבוא</translation>
     </message>
     <message>
         <source>Select export target</source>
-        <translation>בחירת יעד ייצוא</translation>
+        <translation>בחירת יעד יצוא</translation>
     </message>
     <message>
         <source>Select import/export file</source>
         <translation>בחירת קובץ ייבוא/ייצוא</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>שמירה על מבנה מקובץ עם מסד נתונים משותף</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>להשאיר מבנה קבוצה</translation>
     </message>
 </context>
 <context>
@@ -3809,11 +3880,11 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Download favicon for URL</source>
-        <translation>הורדת favicon למען URL</translation>
+        <translation>הורדת פביקון למען URL</translation>
     </message>
     <message>
         <source>Download favicon</source>
-        <translation>הורדת favicon</translation>
+        <translation>הורדת פביקון</translation>
     </message>
     <message>
         <source>Apply selected icon to subgroups and entries</source>
@@ -3934,7 +4005,7 @@ This may cause the affected plugins to malfunction.</source>
     </message>
     <message>
         <source>Key</source>
-        <translation>מפתח</translation>
+        <translation>ססמה</translation>
     </message>
     <message>
         <source>Value</source>
@@ -3945,7 +4016,81 @@ This may cause the affected plugins to malfunction.</source>
     <name>Entry</name>
     <message>
         <source>%1 - Clone</source>
-        <translation>שכפול %1 - </translation>
+        <translation>שכפול - %1</translation>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>Passkey</translation>
+    </message>
+    <message>
+        <source>Invalid conversion type: %1</source>
+        <translation>סוג המרה לא תקין: %1</translation>
+    </message>
+    <message>
+        <source>Invalid conversion syntax: %1</source>
+        <translation>תחביר המרה לא תקין: %1</translation>
+    </message>
+    <message>
+        <source>Invalid regular expression syntax %1
+%2</source>
+        <translation>תחביר ביטוי רגיל לא תקין %1
+%2</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>כותרת</translation>
+    </message>
+    <message>
+        <source>Username</source>
+        <translation>שם משתמש</translation>
+    </message>
+    <message>
+        <source>Password</source>
+        <translation>סיסמה</translation>
+    </message>
+    <message>
+        <source>URL</source>
+        <translation>URL</translation>
+    </message>
+    <message>
+        <source>Notes</source>
+        <translation>הערות</translation>
+    </message>
+    <message>
+        <source>Custom Attributes</source>
+        <translation>מאפיינים מותאמים אישית</translation>
+    </message>
+    <message>
+        <source>Icon</source>
+        <translation>סמל</translation>
+    </message>
+    <message>
+        <source>Color</source>
+        <translation>צבע</translation>
+    </message>
+    <message>
+        <source>Expiration</source>
+        <translation>תפוגה</translation>
+    </message>
+    <message>
+        <source>TOTP</source>
+        <translation>TOTP</translation>
+    </message>
+    <message>
+        <source>Custom Data</source>
+        <translation>נתונים מותאמים אישית</translation>
+    </message>
+    <message>
+        <source>Attachments</source>
+        <translation>צרופות</translation>
+    </message>
+    <message>
+        <source>Auto-Type</source>
+        <translation>הקלדה־אוטומטית</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>תגים</translation>
     </message>
     <message>
         <source>Passkey</source>
@@ -4108,19 +4253,19 @@ This may cause the affected plugins to malfunction.</source>
         <source>Unable to save attachments:
 %1</source>
         <translation>לא ניתן לשמור צרופות:
-%1</translation>
+ %1</translation>
     </message>
     <message>
         <source>Unable to open attachment:
 %1</source>
         <translation>לא ניתן לפתוח צרופה:
-%1</translation>
+ %1</translation>
     </message>
     <message>
         <source>Unable to open attachments:
 %1</source>
-        <translation>לא ניתן לפתוח צרופות:
-%1</translation>
+        <translation>לא ניתן לפתוח צרופה:
+ %1</translation>
     </message>
     <message numerus="yes">
         <source>Unable to open file(s):
@@ -4238,7 +4383,7 @@ Would you like to overwrite the existing attachment?</source>
     <message>
         <source>Ref: </source>
         <comment>Reference abbreviation</comment>
-        <translation>הפניה:</translation>
+        <translation>הפניה: </translation>
     </message>
     <message>
         <source>Never</source>
@@ -4409,7 +4554,7 @@ Would you like to overwrite the existing attachment?</source>
     </message>
     <message>
         <source>Sequence</source>
-        <translation>רצף</translation>
+        <translation>רצף סדר פעולות</translation>
     </message>
     <message>
         <source>Searching</source>
@@ -4425,7 +4570,7 @@ Would you like to overwrite the existing attachment?</source>
     </message>
     <message>
         <source>Clear</source>
-        <translation>צלול</translation>
+        <translation>נקה</translation>
     </message>
     <message>
         <source>Never</source>
@@ -4599,7 +4744,7 @@ This will leave your passwords and sensitive information vulnerable!
     </message>
     <message>
         <source>Non-existing/inaccessible executable path. Please double-check the client is legit.</source>
-        <translation>נתיב הפעלה לא קיים/נגיש. אנא בדקו שוב שהלקוח (קליינט) חוקי.</translation>
+        <translation>נתיב הפעלה לא קיים/נגיש. נא לבדוק שנית את חוקיות הלקוח.</translation>
     </message>
 </context>
 <context>
@@ -4650,7 +4795,7 @@ This will leave your passwords and sensitive information vulnerable!
     <name>IconDownloaderDialog</name>
     <message>
         <source>Download Favicons</source>
-        <translation>הורדת Favicons</translation>
+        <translation>הורדת פביקונס</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -4979,7 +5124,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Invalid header checksum size</source>
-        <translation>גודל סיכום ביקורת כותרת עליונה לא תקין</translation>
+        <translation>גודל  סיכום ביקורת כותרת עליונה לא תקין</translation>
     </message>
     <message>
         <source>Header SHA256 mismatch</source>
@@ -5029,7 +5174,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Invalid inner header field length: field %1</source>
-        <translation>אורך שדה כותרת פנימי לא תקין: שדה %1</translation>
+        <translation>אורך שדה כותרת פנימית לא תקין: שדה %1</translation>
     </message>
     <message>
         <source>Invalid inner header data length: field %1, %2 expected, %3 found</source>
@@ -5037,7 +5182,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Invalid inner header binary size</source>
-        <translation>גודל בינארי של כותרת פנימית לא תקין </translation>
+        <translation>גודל בינארי של כותרת פנימית לא תקין</translation>
     </message>
     <message>
         <source>Unsupported KeePass variant map version.</source>
@@ -5092,7 +5237,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     <message>
         <source>Invalid variant map entry type</source>
         <extracomment>Translation: variant map = data structure for storing meta data</extracomment>
-        <translation>סוג מפת משתנה רשומה לא תקין</translation>
+        <translation>סוג מפת משתנה רשומה לא תקינים</translation>
     </message>
     <message>
         <source>Invalid variant map field type size</source>
@@ -5222,11 +5367,11 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Null group uuid</source>
-        <translation>uuid קבוצה ריקה</translation>
+        <translation>uuid קבוצת Null</translation>
     </message>
     <message>
         <source>Invalid group icon number</source>
-        <translation>מספר סמל קבוצה לא תקין</translation>
+        <translation>מספר סמל קבוצה לא כותרת פנימית</translation>
     </message>
     <message>
         <source>Invalid EnableAutoType value</source>
@@ -5246,11 +5391,11 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Missing DeletedObject uuid or time</source>
-        <translation>חסרים uuid עצם שנמחק או זמן</translation>
+        <translation>חסרים uuid עצמים שנמחקו או זמן</translation>
     </message>
     <message>
         <source>Null entry uuid</source>
-        <translation>uuid רשומה ריקה</translation>
+        <translation>רשומת uuid ריקה</translation>
     </message>
     <message>
         <source>Invalid entry icon number</source>
@@ -5262,7 +5407,7 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>No entry uuid found</source>
-        <translation>לא נמצאה uuid רשומה</translation>
+        <translation>לא נמצאה uuid רשומת</translation>
     </message>
     <message>
         <source>History element with different uuid</source>
@@ -5326,7 +5471,7 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Private key is empty</source>
-        <translation>מפתח פרטי ריק</translation>
+        <translation>המפתח הפרטי ריק</translation>
     </message>
     <message>
         <source>File too large to be a private key</source>
@@ -5374,7 +5519,7 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Invalid transform seed size</source>
-        <translation>המרת גודל זרע לא תקינה</translation>
+        <translation>המרת גודל זרע לא תקין</translation>
     </message>
     <message>
         <source>Invalid number of transform rounds</source>
@@ -5408,7 +5553,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Invalid group field type number</source>
-        <translation>מספר סוג שדה קבוצה לא תקין</translation>
+        <translation>מספר סוג שדה קבוצה לאתקין</translation>
     </message>
     <message>
         <source>Invalid group field size</source>
@@ -5428,11 +5573,11 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Incorrect group modification time field size</source>
-        <translation>גודל שדה זמן שינוי קבוצה שגוי</translation>
+        <translation>גודל שדה זמן הסגלת קבוצה שגויה</translation>
     </message>
     <message>
         <source>Incorrect group access time field size</source>
-        <translation>גודל שדה זמן גישה לקבוצה שגוי</translation>
+        <translation>גודל שדה זמן גישה לקבוצה  שגוי</translation>
     </message>
     <message>
         <source>Incorrect group expiry time field size</source>
@@ -5735,11 +5880,11 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>&amp;Quit</source>
-        <translation>&amp;יציאה</translation>
+        <translation>&amp;יצאה</translation>
     </message>
     <message>
         <source>&amp;About</source>
-        <translation>&amp;אודות</translation>
+        <translation>&amp;על אודות</translation>
     </message>
     <message>
         <source>&amp;Check for Updates</source>
@@ -5787,15 +5932,15 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Download All &amp;Favicons…</source>
-        <translation>הורדת כל ה־&amp;Favicon</translation>
+        <translation>הורדת כל ה־&amp;פביקונס...</translation>
     </message>
     <message>
         <source>Sort &amp;A-Z</source>
-        <translation>מיין &amp;א־ת</translation>
+        <translation>מיין &amp;א-ת</translation>
     </message>
     <message>
         <source>Sort &amp;Z-A</source>
-        <translation>מיין &amp;ת־א</translation>
+        <translation>מיין &amp;ת-א</translation>
     </message>
     <message>
         <source>Sa&amp;ve Database As…</source>
@@ -5847,7 +5992,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Download &amp;Favicon</source>
-        <translation>הורדת &amp;Favicon</translation>
+        <translation>הורדת &amp;פביקון</translation>
     </message>
     <message>
         <source>Open &amp;URL</source>
@@ -5923,7 +6068,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Report a &amp;Bug</source>
-        <translation>דיווח על &amp;תקל</translation>
+        <translation>דיווח על &amp;תקלה</translation>
     </message>
     <message>
         <source>&amp;Getting Started</source>
@@ -5947,7 +6092,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>&amp;Keyboard Shortcuts</source>
-        <translation>&amp;קיצורי מקלדת</translation>
+        <translation>&amp;קיצורי מקשים</translation>
     </message>
     <message>
         <source>Save Database Backup…</source>
@@ -6019,7 +6164,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Access error for config file %1</source>
-        <translation>שגיאת גישה לקובץ תצורה 1%</translation>
+        <translation>שגיאת גישה לקובץ התצורה %1</translation>
     </message>
     <message>
         <source>Don&apos;t show again for this version</source>
@@ -6065,11 +6210,11 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     </message>
     <message>
         <source>Toggle window</source>
-        <translation>החלפת־מצב</translation>
+        <translation>החלפת־מצב חלון</translation>
     </message>
     <message>
         <source>Quit KeePassXC</source>
-        <translation>יציאה מ־KeePassXC</translation>
+        <translation>יצאה מ־KeePassXC</translation>
     </message>
     <message numerus="yes">
         <source>%1 Entry(s)</source>
@@ -6428,7 +6573,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     </message>
     <message>
         <source>Unlock database</source>
-        <translation>שחרור נעילת מסד־נתונים</translation>
+        <translation>שחרור נעילה של מסד־נתונים</translation>
     </message>
     <message>
         <source>Unlock database to show more information</source>
@@ -6614,7 +6759,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     <name>NewDatabaseWizardPageEncryption</name>
     <message>
         <source>Encryption Settings</source>
-        <translation>הגדרות הצפנה</translation>
+        <translation>הצנת ההגדרות</translation>
     </message>
     <message>
         <source>Here you can adjust the database encryption settings. Don&apos;t worry, you can change them later in the database settings.</source>
@@ -6721,7 +6866,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     </message>
     <message>
         <source>Key file way too small.</source>
-        <translation>קובץ מפתח קטן מדי.</translation>
+        <translation>קובץ המפתח קטן מדי.</translation>
     </message>
     <message>
         <source>Key file magic header id invalid</source>
@@ -7158,7 +7303,7 @@ The following data is missing:
     </message>
     <message>
         <source>Add non-hex letters to &quot;do not include&quot; list</source>
-        <translation>הוספת אותיות non־hex לרשימת ה&quot;החרגה&quot;</translation>
+        <translation>הוספת אותיות non-hex לרשימת ה&quot;החרגה&quot;</translation>
     </message>
     <message>
         <source>Hex Passwords</source>
@@ -7287,20 +7432,6 @@ The following data is missing:
     <message>
         <source>All files</source>
         <translation>כל הקבצים</translation>
-    </message>
-    <message>
-        <source>Select Custom Wordlist</source>
-        <translation>בחירת רשימת מילים מותאמת אישית</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>כתיבה־על רשימת מילים?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>קימת כבר רשימת מילים &quot;%1&quot; כרשימת מילים מותאמת אישית.
-האם לכתוב־על רשימת המילים?</translation>
     </message>
     <message>
         <source>Failed to add wordlist</source>
@@ -7448,11 +7579,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Skip</source>
-        <translation>דילוג</translation>
+        <translation>דלוג</translation>
     </message>
     <message>
         <source>Disable</source>
-        <translation>השבתה</translation>
+        <translation>מושבת</translation>
     </message>
     <message>
         <source>Merge</source>
@@ -7543,7 +7674,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Could not save the native messaging script file for %1.</source>
-        <translation>לא ניתן לשמור את קובץ תסריט ההודעות המובנה ל־%1.</translation>
+        <translation>לא ניתן לשמור את קובץ התסריט המקורי של %1.</translation>
     </message>
     <message>
         <source>Username for the entry.</source>
@@ -7571,11 +7702,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Prompt for the entry&apos;s password.</source>
-        <translation>בקשת ססמת רשומה.</translation>
+        <translation>הנחיה לססמת רשומה.</translation>
     </message>
     <message>
         <source>Generate a password for the entry.</source>
-        <translation>חילול ססמה עבור הרשומה:</translation>
+        <translation>חילול ססמה עבור הרשומה.</translation>
     </message>
     <message>
         <source>Add a new entry to a database.</source>
@@ -7595,7 +7726,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Enter password for new entry: </source>
-        <translation>הזנת ססמה לרשומה חדשה:</translation>
+        <translation>הזנת ססמה לרשומה חדשה: </translation>
     </message>
     <message>
         <source>Writing the database failed %1.</source>
@@ -7603,7 +7734,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Successfully added entry %1.</source>
-        <translation>רשומה %1 נוספה בהצלחה. </translation>
+        <translation>רשומה %1 נוספה בהצלחה.</translation>
     </message>
     <message>
         <source>Adds a new group to a database.</source>
@@ -7611,7 +7742,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Path of the group to add.</source>
-        <translation>הנתיב לקבוצה להוספה</translation>
+        <translation>הנתיב לקבוצה להוספה.</translation>
     </message>
     <message>
         <source>Group %1 already exists!</source>
@@ -7619,7 +7750,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Group %1 not found.</source>
-        <translation>קבוצה %1 לא נמצאה.</translation>
+        <translation>הקבוצה %1 לא נמצאה.</translation>
     </message>
     <message>
         <source>Successfully added group %1.</source>
@@ -7683,7 +7814,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Path to which the attachment should be exported.</source>
-        <translation>נתיב שאליו יש לייצא את הקובץ.</translation>
+        <translation>נתיב לצרופה שתיוצא.</translation>
     </message>
     <message>
         <source>Could not find entry with path %1.</source>
@@ -7769,7 +7900,7 @@ Do you want to overwrite it?</source>
     <message>
         <source>Path of the entry to clip.</source>
         <comment>clip = copy to clipboard</comment>
-        <translation>הנתיב לרשומה לקיצוץ.</translation>
+        <translation>הנתיב לרשומה לקְטִימָה.</translation>
     </message>
     <message>
         <source>Timeout before clearing the clipboard (default is %1 seconds, set to 0 for unlimited).</source>
@@ -7809,7 +7940,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Entry&apos;s &quot;%1&quot; attribute copied to the clipboard!</source>
-        <translation>העתקת תכונת רשומה  &apos;%1&apos; ללוח־הגזירים.</translation>
+        <translation>העתקת תכונת רשומה &apos;%1&apos; ללוח־הגזירים!</translation>
     </message>
     <message numerus="yes">
         <source>Clearing the clipboard in %1 second(s)...</source>
@@ -7829,7 +7960,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Silence password prompt and other secondary outputs.</source>
-        <translation>השתקת בקשת הססמה ופלטים משניים אחרים.</translation>
+        <translation>השתקת הנחית ססמה ופלטים משניים אחרים.</translation>
     </message>
     <message>
         <source>Key file of the database.</source>
@@ -7881,7 +8012,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Create a new database.</source>
-        <translation>יצירת מסד־נתונים חדש</translation>
+        <translation>יצירת מסד־נתונים חדש.</translation>
     </message>
     <message>
         <source>Invalid decryption time %1.</source>
@@ -7921,7 +8052,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Failed to save the database: %1.</source>
-        <translation>כשל בשמירת מסד־נתונים לקובץ : %1</translation>
+        <translation>כשל בשמירת מסד־נתונים לקובץ : %1.</translation>
     </message>
     <message>
         <source>Successfully created new database.</source>
@@ -8108,11 +8239,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Edit an entry.</source>
-        <translation>עריכת רשומה</translation>
+        <translation>עריכת רשומה.</translation>
     </message>
     <message>
         <source>Path of the entry to edit.</source>
-        <translation>הנתיב לרשומה לעריכה</translation>
+        <translation>הנתיב לרשומה לעריכה.</translation>
     </message>
     <message>
         <source>Not changing any field for entry %1.</source>
@@ -8120,11 +8251,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Enter new password for entry: </source>
-        <translation>הזנת ססמה חדשה לרשומה:</translation>
+        <translation>הזנת ססמה חדשה לרשומה: </translation>
     </message>
     <message>
         <source>Successfully edited entry %1.</source>
-        <translation>רשומה %1 נערכה בהצלחה. </translation>
+        <translation>רשומה %1 נערכה בהצלחה.</translation>
     </message>
     <message>
         <source>Perform advanced analysis on the password.</source>
@@ -8148,7 +8279,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Log10 %1</source>
-        <translation>לוג10 %1</translation>
+        <translation>Log10 %1</translation>
     </message>
     <message>
         <source>Multi-word extra bits %1</source>
@@ -8192,7 +8323,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Type: Bruteforce(Rep)</source>
-        <translation>סוג: תְּקִיפָה כּוֹחָנִית(מחזורי)</translation>
+        <translation>סוג: תְּקִיפָה כּוֹחָנִית (נציג)</translation>
     </message>
     <message>
         <source>Type: Dictionary(Rep)</source>
@@ -8200,7 +8331,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Type: Dict+Leet(Rep)</source>
-        <translation>סוג: מילון+לית(מחזורי)</translation>
+        <translation>סוג: תכתיב+לייט(מחזורי)</translation>
     </message>
     <message>
         <source>Type: User Words(Rep)</source>
@@ -8221,14 +8352,6 @@ Do you want to overwrite it?</source>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>סוג: מרחבי(מחזורי)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>סוג: תאריך(מחזורי)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>סוג: לא ידוע (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -8362,7 +8485,7 @@ Available commands:
     </message>
     <message>
         <source>Displays debugging information.</source>
-        <translation>הצגת מידע ניפוי־תקלים</translation>
+        <translation>הצגת מידע ניפוי־תקלים.</translation>
     </message>
     <message>
         <source>Invalid command %1.</source>
@@ -8414,7 +8537,7 @@ Available commands:
     </message>
     <message>
         <source>Merge two databases.</source>
-        <translation>מיזוג שני מסדי־נתונים.</translation>
+        <translation>מזוג שני מסדי־נתונים.</translation>
     </message>
     <message>
         <source>Path of the database to merge from.</source>
@@ -8432,7 +8555,7 @@ Available commands:
     </message>
     <message>
         <source>Successfully merged %1 into %2.</source>
-        <translation>%1 מוזג לתוך %2 בהצלחה. </translation>
+        <translation>%1 מוזג לתוך %2 בהצלחה.</translation>
     </message>
     <message>
         <source>Database was not modified by merge operation.</source>
@@ -8476,15 +8599,15 @@ Available commands:
     </message>
     <message>
         <source>Successfully recycled entry %1.</source>
-        <translation>רשומה %1 מוחזרה בהצלחה. </translation>
+        <translation>רשומה %1 מוחזרה בהצלחה.</translation>
     </message>
     <message>
         <source>Successfully deleted entry %1.</source>
-        <translation>רשומה %1 נמחקה בהצלחה. </translation>
+        <translation>רשומה %1 נמחקה בהצלחה.</translation>
     </message>
     <message>
         <source>Path of the group to remove.</source>
-        <translation>הנתיב לקבוצה להסרה</translation>
+        <translation>הנתיב לקבוצה להסרה.</translation>
     </message>
     <message>
         <source>Cannot remove root group from database.</source>
@@ -8492,7 +8615,7 @@ Available commands:
     </message>
     <message>
         <source>Successfully recycled group %1.</source>
-        <translation>רשומה %1 מוחזרה בהצלחה. </translation>
+        <translation>רשומה %1 מוחזרה בהצלחה.</translation>
     </message>
     <message>
         <source>Successfully deleted group %1.</source>
@@ -8500,7 +8623,7 @@ Available commands:
     </message>
     <message>
         <source>Find entries quickly.</source>
-        <translation>חיפוש רשומות מהיר.</translation>
+        <translation>חיפוש ערכים מהיר.</translation>
     </message>
     <message>
         <source>Search term.</source>
@@ -8615,7 +8738,8 @@ Please consider generating a new key file.</source>
     <message>
         <source>All clipping programs failed. Tried %1
 </source>
-        <translation>כל תוכניות הקְטִימָה כשלו. בוצע ניסיון %1</translation>
+        <translation>כל תוכניות הקְטִימָה כשלו. בוצע ניסיון %1
+</translation>
     </message>
     <message>
         <source>Creating KeyFile %1 failed: %2</source>
@@ -8707,11 +8831,11 @@ Please consider generating a new key file.</source>
     </message>
     <message>
         <source>Debugging mode is disabled.</source>
-        <translation>מצב ניפוי־תקלים מושבת</translation>
+        <translation>מצב ניפוי־תקלים מושבת.</translation>
     </message>
     <message>
         <source>Debugging mode is enabled.</source>
-        <translation>מצב ניפוי־תקלים מאופשר</translation>
+        <translation>מצב ניפוי־תקלים מאופשר.</translation>
     </message>
     <message>
         <source>Operating system: %1
@@ -8791,7 +8915,7 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>Argon2%1 (%2 rounds, %3 KB)</source>
-        <translation>Argon2%1 (%2 סבבים, %3 ק&quot;ב)</translation>
+        <translation>Argon2%1 (%2 סבבים, %3 KB)</translation>
     </message>
     <message>
         <source>SymmetricCipher::init: Invalid cipher mode.</source>
@@ -8835,7 +8959,7 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>Twofish 256-bit</source>
-        <translation>256־סיביות Twofish</translation>
+        <translation>256-סיביות Twofish</translation>
     </message>
     <message>
         <source>ChaCha20 256-bit</source>
@@ -8851,7 +8975,7 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>AES-KDF (KDBX 4)</source>
-        <translation>AES־KDF (KDBX 4)</translation>
+        <translation>AES-KDF (KDBX 4)</translation>
     </message>
     <message>
         <source>AES-KDF (KDBX 3)</source>
@@ -9023,11 +9147,23 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>Failed to create Windows Hello credential.</source>
-        <translation>נכשל ביצירת אישור של Windows Hello</translation>
+        <translation>יצירת אישור Windows Hello כשלה.</translation>
     </message>
     <message>
         <source>Failed to sign challenge using Windows Hello.</source>
-        <translation>האימות נכשל עם Windows Hello</translation>
+        <translation>אימות אתגר־מענה באמצעות Windows Hello כשל.</translation>
+    </message>
+    <message>
+        <source>Warning: Failed to block screenshot capture on a top-level window.</source>
+        <translation>אזהרה: חסימת צילומי מסך בחלון ברמה העליונה כשלה!</translation>
+    </message>
+    <message>
+        <source>Invalid Cipher</source>
+        <translation>צופן לא תקין</translation>
+    </message>
+    <message>
+        <source>Invalid KDF</source>
+        <translation>KDF לא תקין</translation>
     </message>
     <message>
         <source>Warning: Failed to block screenshot capture on a top-level window.</source>
@@ -9473,11 +9609,11 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Please wait, browser statistics is being calculated…</source>
-        <translation>אנא המתן, נתונים סטטיסטיים מחושבים...</translation>
+        <translation>נא להמתין, סטטיסטיקת נתוני דפדפן מחושבים עתה...</translation>
     </message>
     <message>
         <source>No entries with a URL, or none has browser extension settings saved.</source>
-        <translation>אין רשומות עם כתובת האתר, או ללא הגדרות הרחבות דפדפן שנשמרו.</translation>
+        <translation>לאף רשומה, עם או ללא מען URL, אין הגדרות הרחבת דפדפן שנשמרו.</translation>
     </message>
     <message>
         <source>Title</source>
@@ -9568,7 +9704,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Congratulations, everything is healthy!</source>
-        <translation>מזל טוב, הכל תקין!</translation>
+        <translation>מזל טוב, הכול תקין!</translation>
     </message>
     <message>
         <source>Title</source>
@@ -9627,7 +9763,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Congratulations, no exposed passwords!</source>
-        <translation>מזל טוב, אין ססמאות חשופות!</translation>
+        <translation>ברכות, אין ססמאות חשופות!</translation>
     </message>
     <message>
         <source>Title</source>
@@ -9647,7 +9783,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>This entry is being excluded from reports</source>
-        <translation>הרשומה הוחרגה מדוחות</translation>
+        <translation>הרשומה הופעלה מתוך דוחות</translation>
     </message>
     <message>
         <source>once</source>
@@ -9996,7 +10132,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>match anything</source>
-        <translation>התאמת הכל</translation>
+        <translation>התאמת הכול</translation>
     </message>
     <message>
         <source>match one</source>
@@ -10113,7 +10249,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Exposed database groups:</source>
-        <translation>קבוצות מסד־נתונים חשופות:</translation>
+        <translation>קבוצות מסדי־נתונים חשופות:</translation>
     </message>
     <message>
         <source>Authorization</source>
@@ -10125,7 +10261,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>&lt;b&gt;Warning:&lt;/b&gt; </source>
-        <translation>&lt;b&gt;אזהרה:&lt;/b&gt;</translation>
+        <translation>&lt;b&gt;אזהרה:&lt;/b&gt; </translation>
     </message>
     <message>
         <source>Save current changes to activate the plugin and enable editing of this section.</source>
@@ -10388,7 +10524,7 @@ This option is deprecated, use --set-key-file instead.</source>
     <message>
         <source> sec</source>
         <comment>Seconds</comment>
-        <translation>שניה</translation>
+        <translation> שניה</translation>
     </message>
     <message>
         <source>Code size:</source>
@@ -10444,7 +10580,7 @@ Example: JBSWY3DPEHPK3PXP</source>
     </message>
     <message>
         <source>Software Update</source>
-        <translation>עדכון תכנה</translation>
+        <translation>עדכון תוכנה</translation>
     </message>
     <message>
         <source>An error occurred when trying to retrieve update information, please try again later.</source>
@@ -10471,11 +10607,23 @@ Example: JBSWY3DPEHPK3PXP</source>
     </message>
     <message>
         <source>Open a recent database</source>
-        <translation>פתיחת מסד־נתונים אחרון</translation>
+        <translation>פתיחת מסד־נתונים קודם</translation>
     </message>
     <message>
         <source>Welcome to KeePassXC %1</source>
-        <translation>ברוכים הבאים ל־KeePassXC %1</translation>
+        <translation>ברוכים הבאים ל-KeePassXC %1</translation>
+    </message>
+    <message>
+        <source>Create Database</source>
+        <translation>יצירת מסד נתונים</translation>
+    </message>
+    <message>
+        <source>Open Database</source>
+        <translation>פתיחת מסד נתונים</translation>
+    </message>
+    <message>
+        <source>Import File</source>
+        <translation>ייבוא קובץ</translation>
     </message>
     <message>
         <source>Create Database</source>
@@ -10553,6 +10701,14 @@ Example: JBSWY3DPEHPK3PXP</source>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>זוהה מפתח חומרה...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>רענון מפתחות חומרה</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;אם קיים &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; או &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, ניתן להשתמש בו לאבטחה נוספת.&lt;/p&gt;&lt;p&gt;המפתח דורש שאחד החריצים שלו יהיה מתוכנת עם &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;אתגר־מענה&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

@@ -1,4 +1,4 @@
-﻿/*
+/*
  *  Copyright (C) 2016 Enrico Mariotti <enricomariotti@yahoo.it>
  *  Copyright (C) 2017 KeePassXC Team <team@keepassxc.org>
  *

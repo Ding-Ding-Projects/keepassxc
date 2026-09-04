@@ -216,6 +216,13 @@ namespace Tools
         return regexp.match(str).hasMatch();
     }
 
+    bool isAsciiString(const QString& str)
+    {
+        constexpr auto pattern = R"(^[\x00-\x7F]+$)";
+        QRegularExpression regexp(pattern, QRegularExpression::CaseInsensitiveOption);
+        return regexp.match(str).hasMatch();
+    }
+
     void sleep(int ms)
     {
         Q_ASSERT(ms >= 0);

@@ -98,7 +98,7 @@
     </message>
     <message>
         <source>Allow All &amp;&amp; &amp;Future</source>
-        <translation>Tillåt alla &amp;&amp; framtida</translation>
+        <translation>Tillåt alla &amp;&amp; &amp;framtida</translation>
     </message>
 </context>
 <context>
@@ -153,6 +153,25 @@
     <message>
         <source>SSH Agent connection is working!</source>
         <translation>SSH-tjänstens anslutning arbetar!</translation>
+    </message>
+</context>
+<context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>Fönster</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Mimimera</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>Zooma</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>Visa allt överst</translation>
     </message>
 </context>
 <context>
@@ -455,11 +474,11 @@
     </message>
     <message>
         <source>Use entry title to match windows for global Auto-Type</source>
-        <translation>Använd postens titel för att matcha fönster vid global autoskriv</translation>
+        <translation>Använd postens titel för att matcha fönster vid systemövergripande autoskriv</translation>
     </message>
     <message>
         <source>Use entry URL to match windows for global Auto-Type</source>
-        <translation>Använd postens URL för att matcha fönster vid global autoskriv</translation>
+        <translation>Använd postens URL för att matcha fönster vid systemövergripande autoskriv</translation>
     </message>
     <message>
         <source>Always ask before performing Auto-Type</source>
@@ -820,11 +839,11 @@
     </message>
     <message>
         <source>Type {USERNAME}</source>
-        <translation>Skriv {ANVÄNDARNAMN}</translation>
+        <translation>Skriv {USERNAME}</translation>
     </message>
     <message>
         <source>Type {PASSWORD}</source>
-        <translation>Skriv {LÖSENORD}</translation>
+        <translation>Skriv {PASSWORD}</translation>
     </message>
     <message>
         <source>Type {TOTP}</source>
@@ -2941,6 +2960,13 @@ Vill du inaktivera &quot;Spara säkert&quot; och försöka igen?</translation>
     </message>
 </context>
 <context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
+        <translation>Redigera: %1</translation>
+    </message>
+</context>
+<context>
     <name>EditEntryWidget</name>
     <message>
         <source>Entry</source>
@@ -2964,7 +2990,7 @@ Vill du inaktivera &quot;Spara säkert&quot; och försöka igen?</translation>
     </message>
     <message>
         <source>&lt;empty URL&gt;</source>
-        <translation>&lt;tom URL&gt;</translation>
+        <translation>&lt;empty URL&gt;</translation>
     </message>
     <message>
         <source>Confirm Removal</source>
@@ -3736,6 +3762,14 @@ Filtyper som stöds är: %1.</translation>
     <message>
         <source>Select import/export file</source>
         <translation>Välj import-/exportfil</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Behåll gruppstruktur med delad databas</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Bevara gruppstruktur</translation>
     </message>
 </context>
 <context>
@@ -5157,11 +5191,11 @@ Om detta upprepas, kan din databasfil vara skadad.</translation>
     </message>
     <message>
         <source>Invalid master seed size</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltig storlek på huvudöverföring</translation>
     </message>
     <message>
         <source>Invalid transform seed size</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltig storlek på transformeringsöverföring</translation>
     </message>
     <message>
         <source>Invalid transform rounds size</source>
@@ -5254,7 +5288,7 @@ Rad %2, kolumn: %3</translation>
     </message>
     <message>
         <source>Null DeleteObject uuid</source>
-        <translation type="unfinished"/>
+        <translation>Null DeleteObject uuid</translation>
     </message>
     <message>
         <source>Missing DeletedObject uuid or time</source>
@@ -5386,7 +5420,7 @@ Rad %2, kolumn: %3</translation>
     </message>
     <message>
         <source>Invalid transform seed size</source>
-        <translation type="unfinished"/>
+        <translation>Ogiltig storlek på transformeringsöverföring</translation>
     </message>
     <message>
         <source>Invalid number of transform rounds</source>
@@ -5452,15 +5486,15 @@ Om detta upprepas, kan din databasfil vara skadad.</translation>
     </message>
     <message>
         <source>Incorrect group icon field size</source>
-        <translation>Felaktig gruppikonstorlek</translation>
+        <translation>Felaktig ikonstorlek för grupp</translation>
     </message>
     <message>
         <source>Incorrect group level field size</source>
-        <translation>Felaktig gruppnivåstorlek</translation>
+        <translation>Felaktig nivåstorlek för grupp</translation>
     </message>
     <message>
         <source>Invalid group field type</source>
-        <translation>Ogiltig grupptyp</translation>
+        <translation>Ogiltig typ för grupp</translation>
     </message>
     <message>
         <source>Missing group id or level</source>
@@ -5688,7 +5722,7 @@ Vill du verkligen fortsätta med den här filen?</translation>
     </message>
     <message>
         <source>Global shortcut already registered to %1</source>
-        <translation>Systemövergripande genväg redan registrerad på %1</translation>
+        <translation>Systemövergripande genväg redan registrerad för %1</translation>
     </message>
     <message>
         <source>Could not register global shortcut</source>
@@ -6652,7 +6686,7 @@ Förvänta dig några fel och mindre problem, den här versionen är avsedd för
     </message>
     <message>
         <source>Global shortcut already registered to %1</source>
-        <translation>Systemövergripande genväg redan registrerad på %1</translation>
+        <translation>Systemövergripande genväg finns redan registrerad för %1</translation>
     </message>
     <message>
         <source>Could not register global shortcut</source>
@@ -7302,20 +7336,6 @@ Följande data saknas:
         <translation>Alla filer</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>Välj anpassad ordlista</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>Vill du skriva över ordlistan?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>Ordlistan &quot;%1&quot; finns redan som anpassad ordlista.
-Vill du skriva över den?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>Kunde inte lägga till ordlistan</translation>
     </message>
@@ -7740,7 +7760,7 @@ Vill du skriva över den?</translation>
     </message>
     <message>
         <source>Attachment %1 already exists for entry %2.</source>
-        <translation>Bilagan %1 finns redan i post &amp;2.</translation>
+        <translation>Bilagan %1 finns redan i post %2.</translation>
     </message>
     <message>
         <source>Could not open attachment file %1.</source>
@@ -8234,14 +8254,6 @@ Vill du skriva över den?</translation>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>Typ: Spatial (Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Typ: Datum (Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Typ: Okänt (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9385,6 +9397,312 @@ Det här alternativet är föråldrat, använd --set-key-file istället.</transl
         <source>Confirm Replace Entry References</source>
         <translation>Bekräfta ersättning av postreferenser</translation>
     </message>
+    <message>
+        <source>Show all the attributes of the entry.</source>
+        <translation>Visa alla attribut för posten.</translation>
+    </message>
+    <message>
+        <source>Set the key file for the database.
+This option is deprecated, use --set-key-file instead.</source>
+        <translation>Ange nyckelfil för databasen.
+Det här alternativet är föråldrat, använd --set-key-file istället.</translation>
+    </message>
+    <message>
+        <source>Databases have been locked.</source>
+        <translation>Databaserna har låsts.</translation>
+    </message>
+    <message>
+        <source>Attestation not supported</source>
+        <translation>Attestering stöds inte</translation>
+    </message>
+    <message>
+        <source>Loading the new key file failed: %1</source>
+        <translation>Inläsning av den nya nyckeln misslyckades: %1</translation>
+    </message>
+    <message>
+        <source>Unset the password for the database.</source>
+        <translation>Ta bort lösenordet för databasen.</translation>
+    </message>
+    <message>
+        <source>Unset the key file for the database.</source>
+        <translation>Ta bort nyckelfilen för databasen.</translation>
+    </message>
+    <message>
+        <source>Cannot use %1 and %2 at the same time.</source>
+        <translation>Kan inte använda %1 och %2 på samma gång.</translation>
+    </message>
+    <message>
+        <source>Cannot remove all the keys from a database.</source>
+        <translation>Kan inte ta bort alla nycklarna från en databas.</translation>
+    </message>
+    <message>
+        <source>Passkeys</source>
+        <translation>Passnycklar</translation>
+    </message>
+    <message>
+        <source>Found unexpected Key type %1</source>
+        <translation>Identifierade oväntad nyckeltyp %1</translation>
+    </message>
+    <message>
+        <source>KeePassXC is not running. No open database to lock</source>
+        <translation>KeePassXC körs inte. Det finns ingen öppen databas att låsa.</translation>
+    </message>
+    <message>
+        <source>allow screenshots and app recording (Windows/macOS)</source>
+        <translation>tillåt skärmklipp och programinspelning (Windows/macOS)</translation>
+    </message>
+    <message>
+        <source>Origin is empty or not allowed</source>
+        <translation>Ursprung är tomt eller inte tillåtet</translation>
+    </message>
+    <message>
+        <source>Effective domain is not a valid domain</source>
+        <translation>Effektiv domän är ingen giltig domän</translation>
+    </message>
+    <message>
+        <source>Origin and RP ID do not match</source>
+        <translation>Ursprung och RP-ID matchar inte</translation>
+    </message>
+    <message>
+        <source>No supported algorithms were provided</source>
+        <translation>Inga algoritmer som stöds tillhandahölls</translation>
+    </message>
+    <message>
+        <source>Wait for timer to expire</source>
+        <translation>Vänta tills tiduret löper ut</translation>
+    </message>
+    <message>
+        <source>Challenge is shorter than required minimum length</source>
+        <translation>Utmaningen är kortare än den minimilängd söm krävs</translation>
+    </message>
+    <message>
+        <source>user.id does not match the required length</source>
+        <translation>user.id matchar inte den längd som krävs</translation>
+    </message>
+    <message>
+        <source>Access to all entries is denied</source>
+        <translation>Åtkomst till alla poster är nekad</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>Tag for favorite entries</comment>
+        <translation>Favorit</translation>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation>Filen finns inte.</translation>
+    </message>
+    <message>
+        <source>Cannot open file: %1</source>
+        <translation>Kan inte öppna filen: %1</translation>
+    </message>
+    <message>
+        <source>Cannot parse file: %1 at position %2</source>
+        <translation>Kan inte tolka filen: %1 på position %2</translation>
+    </message>
+    <message>
+        <source>Failed to decrypt json file: %1</source>
+        <translation>Kunde inte avkryptera json-fil: %1</translation>
+    </message>
+    <message>
+        <source>Invalid encKeyValidation field</source>
+        <translation>Ogiltigt encKeyValidation-fält</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encKeyValidation field</source>
+        <translation>Ogiltig chifferlista i encKeyValidation-fältet</translation>
+    </message>
+    <message>
+        <source>Wrong password</source>
+        <translation>Fel lösenord</translation>
+    </message>
+    <message>
+        <source>Invalid encrypted data field</source>
+        <translation>Ogiltigt krypterat datafält</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encrypted data field</source>
+        <translation>Ogiltig chifferlista i krypterat datafält</translation>
+    </message>
+    <message>
+        <source>Cannot initialize cipher</source>
+        <translation>Kan inte initiera chiffer</translation>
+    </message>
+    <message>
+        <source>Cannot decrypt data</source>
+        <translation>Kan inte avkryptera data</translation>
+    </message>
+    <message>
+        <source>Bitwarden Import</source>
+        <translation>Bitwarden-import</translation>
+    </message>
+    <message>
+        <source>Archived</source>
+        <comment>Tag for archived entries</comment>
+        <translation>Arkiverat</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Not a valid ZIP file.</source>
+        <translation>Ogiltigt 1PUX-filformat: Inte en giltig ZIP-fil.</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Missing export.data</source>
+        <translation>Ogiltigt 1PUX-filformat:  Exportdata saknas</translation>
+    </message>
+    <message>
+        <source>1Password Import</source>
+        <translation>1Password-import</translation>
+    </message>
+    <message>
+        <source>Credential is excluded</source>
+        <translation>Autentiseringsuppgift undantas</translation>
+    </message>
+    <message>
+        <source>Passkeys request canceled</source>
+        <translation>Begäran om passnycklar avbruten</translation>
+    </message>
+    <message>
+        <source>Invalid user verification</source>
+        <translation>Ogiltig användarverifiering</translation>
+    </message>
+    <message>
+        <source>Empty public key</source>
+        <translation>Tom offentlig nyckel</translation>
+    </message>
+    <message>
+        <source>Invalid URL provided</source>
+        <translation>Ogiltig URL angiven</translation>
+    </message>
+    <message>
+        <source>Edit a database.</source>
+        <translation>Redigera en databas.</translation>
+    </message>
+    <message>
+        <source>Could not change the database key.</source>
+        <translation>Kunde inte ändra databasnyckeln.</translation>
+    </message>
+    <message>
+        <source>Database was not modified.</source>
+        <translation>Databasen är inte ändrad.</translation>
+    </message>
+    <message>
+        <source>Successfully edited the database.</source>
+        <translation>Databasen redigerades korrekt.</translation>
+    </message>
+    <message>
+        <source>Cannot remove password: The database does not have a password.</source>
+        <translation>Kan inte ta bort lösenordet. Databasen har inget lösenord.</translation>
+    </message>
+    <message>
+        <source>Cannot remove file key: The database does not have a file key.</source>
+        <translation>Kan inte ta bort nyckelfilen. Databasen har ingen nyckelfil.</translation>
+    </message>
+    <message>
+        <source>Unknown passkeys error</source>
+        <translation>Okänt passnyckelfel</translation>
+    </message>
+    <message>
+        <source>Encrypted files are not supported.</source>
+        <translation>Krypterade filer stöds inte.</translation>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation>Proton Pass-import</translation>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>Passnyckel</translation>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation>Format att använda vid export. Tillgängliga alternativ är &quot;xml&quot;, &quot;csv&quot; eller &quot;html&quot;. Standardvärdet är &quot;xml&quot;.</translation>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation>starta minimerad i systemfältet</translation>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation>felaktig sträng, möjligen ej utkommenterad avgränsare</translation>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation>saknar avslutande avgränsare</translation>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation>%1, rad: %2, kolumn: %3</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Taggar</translation>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation>Varning! Den valda ordlistan är mindre än minsta rekommenderade storlek!</translation>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation>Ogiltigt steg</translation>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation>Ogiltiga siffror</translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation><numerusform>%1 tecken</numerusform><numerusform>%1 tecken</numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation>Vill du verkligen ta bort posten &quot;%1&quot; permanent?</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation><numerusform>Vill du verkligen ta bort %n post permanent?</numerusform><numerusform>Vill du verkligen ta bort %n poster permanent?</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation><numerusform>Bekräfta borttagning av post</numerusform><numerusform>Bekräfta borttagning av poster</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation><numerusform>Bekräfta post till papperskorgen</numerusform><numerusform>Bekräfta poster till papperskorgen</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation>Bekräfta borttagning av insticksdata</translation>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation><numerusform>Vill du ta bort insticksdata från markerad post?</numerusform><numerusform>Vill du ta bort insticksdata från markerade poster?</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation>Bekräfta ersättning av postreferenser</translation>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation>Typ: Datum (Rep)</translation>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation>Typ: Okänt (%1)</translation>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation>Formatet stöds inte, tillse att din Bitwarden-export är lösenordsskyddad.</translation>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation>Ogiltiga KDF-upprepningar, kan inte avkryptera json-filen.</translation>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation>Endast PBKDF och Argon2 stöds, kan inte avkryptera json-filen.</translation>
+    </message>
 </context>
 <context>
     <name>QtIOCompressor</name>
@@ -9483,7 +9801,7 @@ Det här alternativet är föråldrat, använd --set-key-file istället.</transl
     </message>
     <message>
         <source>This entry is being excluded from reports</source>
-        <translation>Denna post har undantagits från rapporter</translation>
+        <translation>Denna post undantas från rapporter</translation>
     </message>
     <message>
         <source>Please wait, browser statistics is being calculated…</source>
@@ -10541,7 +10859,7 @@ Exempel: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
         <source>Selected hardware key slot does not support challenge-response!</source>
-        <translation>Den valda maskinvarunyckelplatsen stöder inte challenge-response!</translation>
+        <translation>Den valda hårdvarunyckelplatsen stöder inte challenge-response!</translation>
     </message>
     <message>
         <source>Challenge-Response</source>

@@ -1588,6 +1588,100 @@ void MainWindow::updateMenuActionState()
     if (auto* materialShell = shell()) {
         materialShell->appBar()->setSaveEnabled(m_ui->actionDatabaseSave->isEnabled());
     }
+    m_ui->actionEntryMoveUp->setVisible(inDatabase && !entryViewSorted);
+    m_ui->actionEntryMoveDown->setVisible(inDatabase && !entryViewSorted);
+    m_ui->actionEntryMoveUp->setEnabled(singleEntrySelected && !entryViewSorted && !entryViewAtTop);
+    m_ui->actionEntryMoveDown->setEnabled(singleEntrySelected && !entryViewSorted && !entryViewAtBottom);
+    m_ui->actionEntryCopyTitle->setEnabled(singleEntryOrEditing && dbWidget->currentEntryHasTitle());
+    m_ui->actionEntryCopyUsername->setEnabled(singleEntryOrEditing && dbWidget->currentEntryHasUsername());
+    // NOTE: Copy password is enabled even if the selected entry's password is blank to prevent Ctrl+C
+    // from copying information from the currently selected cell in the entry view table.
+    m_ui->actionEntryCopyPassword->setEnabled(singleEntryOrEditing);
+    m_ui->actionEntryCopyURL->setEnabled(singleEntryOrEditing && dbWidget->currentEntryHasUrl());
+    m_ui->actionEntryCopyNotes->setEnabled(singleEntryOrEditing && dbWidget->currentEntryHasNotes());
+    m_ui->menuEntryCopyAttribute->setEnabled(singleEntryOrEditing);
+    m_ui->menuEntryTotp->setEnabled(singleEntrySelected);
+    m_ui->menuTags->setEnabled(multiEntrySelected);
+    // Handle tear-off tags menu
+    if (m_ui->menuTags->isTearOffMenuVisible()) {
+        if (!databaseUnlocked) {
+            m_ui->menuTags->hideTearOffMenu();
+        } else {
+            updateSetTagsMenu();
+        }
+    }
+    m_ui->actionEntryAutoType->setEnabled(singleEntrySelected && dbWidget->currentEntryHasAutoTypeEnabled());
+    m_ui->actionEntryAutoType->menu()->setEnabled(singleEntrySelected && dbWidget->currentEntryHasAutoTypeEnabled());
+    m_ui->actionEntryAutoTypeSequence->setText(singleEntrySelected
+                                                   ? dbWidget->currentSelectedEntry()->effectiveAutoTypeSequence()
+                                                   : Group::RootAutoTypeSequence);
+    m_ui->actionEntryAutoTypeSequence->setEnabled(singleEntrySelected);
+    m_ui->actionEntryAutoTypeUsername->setEnabled(singleEntrySelected && dbWidget->currentEntryHasUsername());
+    m_ui->actionEntryAutoTypeUsernameEnter->setEnabled(singleEntrySelected && dbWidget->currentEntryHasUsername());
+    m_ui->actionEntryAutoTypePassword->setEnabled(singleEntrySelected && dbWidget->currentEntryHasPassword());
+    m_ui->actionEntryAutoTypePasswordEnter->setEnabled(singleEntrySelected && dbWidget->currentEntryHasPassword());
+    m_ui->actionEntryAutoTypeTOTP->setEnabled(singleEntrySelected && dbWidget->currentEntryHasTotp());
+    m_ui->actionEntryAutoTypeURL->setEnabled(singleEntrySelected && dbWidget->currentEntryHasUrl());
+    m_ui->actionEntryAutoTypeURLEnter->setEnabled(singleEntrySelected && dbWidget->currentEntryHasUrl());
+    m_ui->actionEntryAutoTypeTOTP->setVisible(singleEntrySelected && dbWidget->currentEntryHasTotp());
+    m_ui->actionEntryOpenUrl->setEnabled(singleEntryOrEditing && dbWidget->currentEntryHasUrl());
+    m_ui->actionEntryTotp->setEnabled(singleEntrySelected && dbWidget->currentEntryHasTotp());
+    m_ui->actionEntryCopyTotp->setEnabled(singleEntrySelected);
+    m_ui->actionEntryCopyPasswordTotp->setEnabled(singleEntrySelected && dbWidget->currentEntryHasTotp());
+    m_ui->actionEntrySetupTotp->setEnabled(singleEntrySelected);
+    m_ui->actionEntryTotpQRCode->setEnabled(singleEntrySelected && dbWidget->currentEntryHasTotp());
+    m_ui->actionEntryDownloadIcon->setEnabled((multiEntrySelected && !singleEntrySelected)
+                                              || (singleEntrySelected && dbWidget->currentEntryHasUrl()));
+#ifdef WITH_XC_BROWSER_PASSKEYS
+    m_ui->actionEntryImportPasskey->setVisible(singleEntrySelected);
+    m_ui->actionEntryImportPasskey->setEnabled(singleEntrySelected);
+    m_ui->actionEntryRemovePasskey->setVisible(singleEntrySelected && dbWidget->currentEntryHasPasskey());
+    m_ui->actionEntryRemovePasskey->setEnabled(singleEntrySelected && dbWidget->currentEntryHasPasskey());
+#endif
+#ifdef WITH_XC_SSHAGENT
+    bool hasSSHKey = singleEntrySelected && sshAgent()->isEnabled() && dbWidget->currentEntryHasSshKey();
+    m_ui->actionEntryAddToAgent->setVisible(hasSSHKey);
+    m_ui->actionEntryAddToAgent->setEnabled(hasSSHKey);
+    m_ui->actionEntryRemoveFromAgent->setVisible(hasSSHKey);
+    m_ui->actionEntryRemoveFromAgent->setEnabled(hasSSHKey);
+    m_ui->actionClearSSHAgent->setVisible(sshAgent()->isEnabled());
+    m_ui->actionClearSSHAgent->setEnabled(sshAgent()->isEnabled());
+#endif
+
+    m_ui->actionGroupNew->setEnabled(groupSelected && !inRecycleBin);
+    m_ui->actionGroupEdit->setEnabled(groupSelected);
+    m_ui->actionGroupClone->setEnabled(groupSelected && dbWidget->canCloneCurrentGroup());
+    m_ui->actionGroupDelete->setEnabled(groupSelected && dbWidget->canDeleteCurrentGroup());
+    m_ui->actionGroupSortAsc->setVisible(groupHasChildren);
+    m_ui->actionGroupSortAsc->setEnabled(groupHasChildren);
+    m_ui->actionGroupSortDesc->setVisible(groupHasChildren);
+    m_ui->actionGroupSortDesc->setEnabled(groupHasChildren);
+    m_ui->actionGroupEmptyRecycleBin->setVisible(inRecycleBin);
+    m_ui->actionGroupEmptyRecycleBin->setEnabled(inRecycleBin);
+#ifdef WITH_XC_NETWORKING
+    m_ui->actionGroupDownloadFavicons->setVisible(!inRecycleBin);
+#endif
+    m_ui->actionGroupDownloadFavicons->setEnabled(groupSelected && groupHasEntries && !inRecycleBin);
+
+    // Database Menu
+    m_ui->actionDatabaseSave->setEnabled(databaseUnlocked && m_ui->tabWidget->canSave());
+    m_ui->actionDatabaseSaveAs->setEnabled(databaseUnlocked);
+    m_ui->actionDatabaseSaveBackup->setEnabled(databaseUnlocked);
+    m_ui->actionDatabaseClose->setEnabled(dbWidget);
+    m_ui->actionLockDatabase->setEnabled(databaseUnlocked);
+    m_ui->actionLockAllDatabases->setEnabled(hasLockableDatabase);
+    m_ui->actionLockDatabaseToolbar->setEnabled(hasLockableDatabase);
+    m_ui->actionDatabaseSettings->setEnabled(inDatabase || inDatabaseSettings);
+    m_ui->actionDatabaseSecurity->setEnabled(inDatabase || inDatabaseSettings);
+    m_ui->actionReports->setEnabled(inDatabase || inReports);
+    m_ui->menuExport->setEnabled(inDatabase);
+    m_ui->actionDatabaseMerge->setEnabled(inDatabase);
+#ifdef WITH_XC_BROWSER_PASSKEYS
+    m_ui->actionPasskeys->setEnabled(inDatabase || inReports);
+    m_ui->actionImportPasskey->setEnabled(inDatabase);
+#endif
+
+    m_searchWidgetAction->setEnabled(inDatabase);
 }
 
 void MainWindow::updateToolbarSeparatorVisibility()
@@ -1805,7 +1899,11 @@ void MainWindow::showUpdateReadyNotification(bool replaceExisting)
 
 void MainWindow::customOpenUrl(QString url)
 {
+#ifdef KEEPASSXC_DIST_APPIMAGE
+    QProcess::execute("xdg-open", {url});
+#else
     QDesktopServices::openUrl(QUrl(url));
+#endif
 }
 
 void MainWindow::openDonateUrl()
@@ -2435,6 +2533,17 @@ void MainWindow::updateEntryCountLabel()
     // The rail's Vault tile carries the same count under its label.
     if (auto* materialShell = shell()) {
         materialShell->rail()->setSublabel(QStringLiteral("vault"), vaultSublabel);
+    }
+}
+
+void MainWindow::updateEntryCountLabel()
+{
+    auto dbWidget = m_ui->tabWidget->currentDatabaseWidget();
+    if (dbWidget && dbWidget->currentMode() == DatabaseWidget::Mode::ViewMode) {
+        int numEntries = dbWidget->entryView()->model()->rowCount();
+        m_statusBarLabel->setText(tr("%1 Entry(s)", "", numEntries).arg(numEntries));
+    } else {
+        m_statusBarLabel->setText("");
     }
 }
 

@@ -23,6 +23,7 @@
 #include <QScopedPointer>
 #include <QTimer>
 
+#include "config-keepassx.h"
 #include "gui/DialogyWidget.h"
 #include "gui/MessageWidget.h"
 #include "osutils/DeviceListener.h"

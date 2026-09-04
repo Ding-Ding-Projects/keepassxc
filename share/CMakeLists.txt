@@ -27,6 +27,10 @@ if(WIN32)
   install(FILES windows/qt.conf DESTINATION ${BIN_INSTALL_DIR})
 endif()
 
+if(WIN32)
+  install(FILES windows/qt.conf DESTINATION ${BIN_INSTALL_DIR})
+endif()
+
 install(FILES icons/application/256x256/apps/keepassxc.png DESTINATION ${DATA_INSTALL_DIR}/icons/application/256x256/apps)
 
 add_custom_target(icons)

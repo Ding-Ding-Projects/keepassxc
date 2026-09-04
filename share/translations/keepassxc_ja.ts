@@ -467,7 +467,7 @@
     </message>
     <message>
         <source>Hide expired entries from Auto-Type</source>
-        <translation>期限切れのエントリーは自動入力しない</translation>
+        <translation>有効期限切れのエントリーは自動入力しない</translation>
     </message>
     <message>
         <source>Re-lock previously locked database after performing Auto-Type</source>
@@ -578,6 +578,34 @@
     <message>
         <source>Auto-generate password for new entries</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Double-click action for URL field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit entry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open entry URL in browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy entry URL to clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-generate password for new entries</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> recent files</source>
+        <translation> 件の最近使用したファイル</translation>
+    </message>
+    <message>
+        <source>Show passwords in color</source>
+        <translation>パスワードに色を付けて表示する</translation>
     </message>
 </context>
 <context>
@@ -1854,7 +1882,7 @@ Are you sure you want to continue with this file?.</source>
     </message>
     <message>
         <source>Refresh database root group ID</source>
-        <translation>データベースのルートグループ ID を更新する</translation>
+        <translation>データベースのルートグループ ID を更新</translation>
     </message>
     <message>
         <source>Stored keys</source>
@@ -3734,6 +3762,14 @@ Supported extensions are: %1.</source>
         <source>Select import/export file</source>
         <translation>インポート/エクスポートファイルを選択</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -3743,7 +3779,7 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Toggle expiration</source>
-        <translation>有効期限を切り替え</translation>
+        <translation>有効期限の有無を切り替え</translation>
     </message>
     <message>
         <source>Expires:</source>
@@ -4497,7 +4533,7 @@ Would you like to overwrite the existing attachment?</source>
     </message>
     <message>
         <source>Sort entries by...</source>
-        <translation>エントリーを並べ替え...</translation>
+        <translation>エントリーを並べ替え…</translation>
     </message>
     <message>
         <source>You are about to export your database to an unencrypted file.
@@ -4686,7 +4722,7 @@ You can enable the DuckDuckGo website icon service in the security section of th
     </message>
     <message>
         <source>Please wait, processing entry list…</source>
-        <translation>エントリー一覧を処理中です、しばらくお待ちください…</translation>
+        <translation>エントリー一覧を処理中です。しばらくお待ちください…</translation>
     </message>
     <message>
         <source>Downloading…</source>
@@ -6011,7 +6047,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Clone Group...</source>
-        <translation>グループを複製...</translation>
+        <translation>グループを複製…</translation>
     </message>
     <message>
         <source>&amp;XML File…</source>
@@ -6069,7 +6105,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     </message>
     <message>
         <source>Toggle window</source>
-        <translation>ウィンドウ切替</translation>
+        <translation>ウィンドウ切り替え</translation>
     </message>
     <message>
         <source>Quit KeePassXC</source>
@@ -7692,7 +7728,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Could not find entry with path %1.</source>
-        <translation>パス %1 のエントリーを見つけられませんでした。</translation>
+        <translation>パス %1 のエントリーが見つかりませんでした。</translation>
     </message>
     <message>
         <source>Could not find attachment with name %1.</source>
@@ -7818,7 +7854,7 @@ Do you want to overwrite it?</source>
     </message>
     <message numerus="yes">
         <source>Clearing the clipboard in %1 second(s)...</source>
-        <translation><numerusform>%1 秒後にクリップボードを消去します...</numerusform></translation>
+        <translation><numerusform>%1 秒後にクリップボードを消去します…</numerusform></translation>
     </message>
     <message>
         <source>Clipboard cleared!</source>
@@ -8226,14 +8262,6 @@ Do you want to overwrite it?</source>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>種類: 空間 (反復)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>種類: 日付 (反復)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>種類: 不明 (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9377,6 +9405,258 @@ This option is deprecated, use --set-key-file instead.</source>
         <source>Confirm Replace Entry References</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Origin is empty or not allowed</source>
+        <translation>オリジンが空白または許可されていません</translation>
+    </message>
+    <message>
+        <source>Effective domain is not a valid domain</source>
+        <translation>Effective domain が有効なドメインではありません</translation>
+    </message>
+    <message>
+        <source>Origin and RP ID do not match</source>
+        <translation>オリジンと RP ID が一致しません</translation>
+    </message>
+    <message>
+        <source>No supported algorithms were provided</source>
+        <translation>対応するアルゴリズムが提供されませんでした</translation>
+    </message>
+    <message>
+        <source>Wait for timer to expire</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Challenge is shorter than required minimum length</source>
+        <translation>チャレンジが規定の最低文字数より短いです</translation>
+    </message>
+    <message>
+        <source>user.id does not match the required length</source>
+        <translation>user.id の文字数が規定に適合しません</translation>
+    </message>
+    <message>
+        <source>Access to all entries is denied</source>
+        <translation>すべてのエントリーへのアクセスが拒否されました</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>Tag for favorite entries</comment>
+        <translation>お気に入り</translation>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation>ファイルが存在しません。</translation>
+    </message>
+    <message>
+        <source>Cannot open file: %1</source>
+        <translation>ファイルを開けません: %1</translation>
+    </message>
+    <message>
+        <source>Cannot parse file: %1 at position %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to decrypt json file: %1</source>
+        <translation>json ファイルを復号できませんでした: %1</translation>
+    </message>
+    <message>
+        <source>Invalid encKeyValidation field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid cipher list within encKeyValidation field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong password</source>
+        <translation>パスワードが間違っています</translation>
+    </message>
+    <message>
+        <source>Invalid encrypted data field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid cipher list within encrypted data field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot initialize cipher</source>
+        <translation>暗号を初期化できませんでした</translation>
+    </message>
+    <message>
+        <source>Cannot decrypt data</source>
+        <translation>データを復号できません</translation>
+    </message>
+    <message>
+        <source>Bitwarden Import</source>
+        <translation>Bitwarden のインポート</translation>
+    </message>
+    <message>
+        <source>Archived</source>
+        <comment>Tag for archived entries</comment>
+        <translation>アーカイブ</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Not a valid ZIP file.</source>
+        <translation>無効な 1PUX ファイル形式: 有効な ZIP ファイルではありません。</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Missing export.data</source>
+        <translation>無効な 1PUX ファイル形式: export.data がありません</translation>
+    </message>
+    <message>
+        <source>1Password Import</source>
+        <translation>1Password のインポート</translation>
+    </message>
+    <message>
+        <source>Credential is excluded</source>
+        <translation>資格情報が有効期限切れです</translation>
+    </message>
+    <message>
+        <source>Passkeys request canceled</source>
+        <translation>パスキー要求がキャンセルされました</translation>
+    </message>
+    <message>
+        <source>Invalid user verification</source>
+        <translation>不正なユーザー認証</translation>
+    </message>
+    <message>
+        <source>Empty public key</source>
+        <translation>公開鍵が空白です</translation>
+    </message>
+    <message>
+        <source>Invalid URL provided</source>
+        <translation>無効な URL が提供されました</translation>
+    </message>
+    <message>
+        <source>Edit a database.</source>
+        <translation>データベースを編集。</translation>
+    </message>
+    <message>
+        <source>Could not change the database key.</source>
+        <translation>データベース鍵を変更できません。</translation>
+    </message>
+    <message>
+        <source>Database was not modified.</source>
+        <translation>データベースは変更されていません。</translation>
+    </message>
+    <message>
+        <source>Successfully edited the database.</source>
+        <translation>正常にデータベースを編集しました。</translation>
+    </message>
+    <message>
+        <source>Cannot remove password: The database does not have a password.</source>
+        <translation>パスワードは削除できません: データベースにパスワードがありません。</translation>
+    </message>
+    <message>
+        <source>Cannot remove file key: The database does not have a file key.</source>
+        <translation>キーファイルは削除できません: データベースにキーファイルがありません。</translation>
+    </message>
+    <message>
+        <source>Unknown passkeys error</source>
+        <translation>不明なパスキーエラーが発生しました</translation>
+    </message>
+    <message>
+        <source>Encrypted files are not supported.</source>
+        <translation>暗号化されたファイルには対応していません。</translation>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation>Proton Pass Import</translation>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>パスキー</translation>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation>%1, 行: %2, 列: %3</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>タグ</translation>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation><numerusform>%1 文字</numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation>本当にエントリー &quot;%1&quot; を永久に削除しますか？</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation><numerusform>本当に %n 個のエントリーを永久に削除しますか？</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation><numerusform>エントリーの削除の確認</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation>プラグインデータの削除の確認</translation>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation><numerusform>選択したエントリーからプラグインデータを削除しますか？</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation>種類: 日付 (反復)</translation>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation>種類: 不明 (%1)</translation>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation>対応していないフォーマットです。Bitwarden エクスポートがパスワードで保護されているか確認してください</translation>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation>無効な KDF 反復、json ファイルを復号できませんでした</translation>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation>PBKDF と Argon2 に対応しており、json ファイルは復号できません</translation>
+    </message>
 </context>
 <context>
     <name>QtIOCompressor</name>
@@ -9795,7 +10075,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Please wait, database statistics are being calculated…</source>
-        <translation>データベースの統計を算出しているため、しばらくお待ちください…</translation>
+        <translation>データベース統計の生成中です。しばらくお待ちください…</translation>
     </message>
     <message>
         <source>Database name</source>
@@ -9883,7 +10163,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Recommend using long, randomized passwords with a rating of &apos;good&apos; or &apos;excellent&apos;.</source>
-        <translation>「良い」または「すばらしい」評価の長くてランダムなパスワードの使用を推奨します。</translation>
+        <translation>「良好」または「すばらしい」評価の長くてランダムなパスワードの使用を推奨します。</translation>
     </message>
     <message>
         <source>Entries excluded from reports</source>
@@ -9899,7 +10179,11 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Average password length is less than ten characters. Longer passwords provide more security.</source>
-        <translation>パスワード長の平均値が10文字以下です。パスワードは長いほどセキュリティが向上します。</translation>
+        <translation>パスワード長の平均値が 10 文字以下です。パスワードは長いほどセキュリティが向上します。</translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation><numerusform>%1 文字</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>%1 character(s)</source>
@@ -10558,6 +10842,14 @@ Example: JBSWY3DPEHPK3PXP</source>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>ハードウェアキーを検出中…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>ハードウェアトークンを初期化</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;&lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; または &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt; をお持ちの場合、セキュリティをさらに強化できます。&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;チャレンジレスポンス&lt;/a&gt;に設定されたスロットが 1 つ必要です。&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

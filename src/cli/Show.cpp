@@ -119,6 +119,14 @@ int Show::executeWithDatabase(QSharedPointer<Database> database, QSharedPointer<
     // Iterate over the attributes and output them line-by-line.
     bool encounteredError = false;
     for (const QString& attributeName : asConst(attributes)) {
+        if (Utils::EntryFieldNames.contains(attributeName)) {
+            if (!attributesWereSpecified) {
+                out << attributeName << ": ";
+            }
+            out << Utils::getTopLevelField(entry, attributeName) << Qt::endl;
+            continue;
+        }
+
         QStringList attrs = Utils::findAttributes(*entry->attributes(), attributeName);
         if (attrs.isEmpty()) {
             encounteredError = true;

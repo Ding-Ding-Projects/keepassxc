@@ -30,6 +30,7 @@
 #include "PasskeyUtils.h"
 #include "core/EntryAttributes.h"
 #include "core/Tools.h"
+#include "core/UrlTools.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
 #include "gui/UrlTools.h"
@@ -1065,6 +1066,13 @@ QList<Entry*> BrowserService::searchEntries(const QSharedPointer<Database>& db,
                 continue;
             }
 
+#ifdef WITH_XC_BROWSER_PASSKEYS
+            // With Passkeys, check for the Relying Party instead of URL
+            if (passkey && entry->attributes()->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY) != siteUrl) {
+                continue;
+            }
+#endif
+
             // Additional URL check may have already inserted the entry to the list
             if (!entries.contains(entry)) {
                 entries.append(entry);
@@ -1123,6 +1131,11 @@ QList<Entry*> BrowserService::searchEntries(const QString& siteUrl,
     } while (entries.isEmpty() && removeFirstDomain(hostname));
 
     return entries;
+}
+
+QString BrowserService::decodeCustomDataRestrictKey(const QString& key)
+{
+    return key.isEmpty() ? tr("Disable") : key;
 }
 
 QString BrowserService::decodeCustomDataRestrictKey(const QString& key)

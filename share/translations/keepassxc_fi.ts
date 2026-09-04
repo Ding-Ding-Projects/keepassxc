@@ -3,7 +3,7 @@
     <name>AboutDialog</name>
     <message>
         <source>About KeePassXC</source>
-        <translation>Tietoja ohjelmasta KeePassXC</translation>
+        <translation>Tietoa KeePassXC:stä</translation>
     </message>
     <message>
         <source>About</source>
@@ -50,11 +50,11 @@
     <name>AccessControlDialog</name>
     <message>
         <source>KeePassXC -  Access Request</source>
-        <translation>KeePassXC - Pääsypyyntö</translation>
+        <translation>KeePassXC – pääsypyyntö</translation>
     </message>
     <message>
         <source>Non-existing/inaccessible executable path. Please double-check the client is legit.</source>
-        <translation>Suorituspolkua ei löydy. Tarkista asiakasohjelman todenperäisyys.</translation>
+        <translation>Ohjelmatiedoston sijaintia ei löydy. Varmista asiakasohjelman luotettavuus.</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;%1 &lt;/span&gt;is requesting access to the following entries:&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
@@ -70,7 +70,7 @@
     </message>
     <message>
         <source>Executable</source>
-        <translation>Suoritettava tiedosto</translation>
+        <translation>Ohjelmatiedosto</translation>
     </message>
     <message>
         <source>Command Line</source>
@@ -112,7 +112,7 @@
     <name>AgentSettingsWidget</name>
     <message>
         <source>Enable SSH Agent integration</source>
-        <translation>Ota SSH Agentti käyttöön</translation>
+        <translation>Ota SSH-agentin integraatio käyttöön</translation>
     </message>
     <message>
         <source>Use Pageant</source>
@@ -148,11 +148,11 @@
     </message>
     <message>
         <source>No SSH Agent socket available. Either make sure SSH_AUTH_SOCK environment variable exists or set an override.</source>
-        <translation>SSH Agentin socketia ei ole. Varmista, että SSH_AUTH_SOCK-ympäristömuuttuja on olemassa, tai aseta sille ylikirjoitus</translation>
+        <translation>Yhteystieto SSH-agenttiin puuttuu. Varmista, että SSH_AUTH_SOCK-ympäristömuuttuja on olemassa, tai aseta sille ylikirjoitus</translation>
     </message>
     <message>
         <source>SSH Agent connection is working!</source>
-        <translation>SSH Agent -yhteys toimii!</translation>
+        <translation>Yhteys SSH-agenttiin toimii!</translation>
     </message>
 </context>
 <context>
@@ -163,7 +163,7 @@
     </message>
     <message>
         <source>General</source>
-        <translation>Yleistä</translation>
+        <translation>Perusasetukset</translation>
     </message>
     <message>
         <source>Security</source>
@@ -314,7 +314,7 @@
     </message>
     <message>
         <source>File Management</source>
-        <translation>Tiedostohallinta</translation>
+        <translation>Tiedostonhallinta</translation>
     </message>
     <message>
         <source>Automatically save after every change</source>
@@ -322,7 +322,7 @@
     </message>
     <message>
         <source>Automatically save when locking database</source>
-        <translation>Tallenna automaattisesti, kun tietokanta lukitaan</translation>
+        <translation>Tallenna automaattisesti lukittaessa tietokanta</translation>
     </message>
     <message>
         <source>Automatically save non-data changes when locking database</source>
@@ -330,7 +330,7 @@
     </message>
     <message>
         <source>Automatically reload the database when modified externally</source>
-        <translation>Lataa tietokanta automaattisesti uudelleen jos tietokantaa muokattiin muualla</translation>
+        <translation>Lataa tietokanta automaattisesti uudelleen, jos sitä on muokattu toisaalla</translation>
     </message>
     <message>
         <source>Backup database file before saving</source>
@@ -342,7 +342,7 @@
     </message>
     <message>
         <source>Use alternative saving method (may solve problems with Dropbox, Google Drive, GVFS, etc.)</source>
-        <translation>Käytä vaihtoehtoista tallennusmetodia (voi ratkaista ongelmia Dropboxin, Google Driven GVFS:n, ymv. kanssa)</translation>
+        <translation>Käytä vaihtoehtoista tallennustapaa (voi ratkaista ongelmia Dropboxin, Google Driven GVFS:n ym. kanssa)</translation>
     </message>
     <message>
         <source>Temporary file moved into place</source>
@@ -378,11 +378,11 @@
     </message>
     <message>
         <source>Favicon download timeout:</source>
-        <translation>Faviconin latauksen aikakatkaisu:</translation>
+        <translation>Sivustokuvakkeen latauksen aikakatkaisu:</translation>
     </message>
     <message>
         <source>Website icon download timeout in seconds</source>
-        <translation>Nettisivun ikonin latauksen aikakatkaisu sekunneissa</translation>
+        <translation>Sivustokuvakkeen latauksen aikakatkaisu sekunteina</translation>
     </message>
     <message>
         <source> sec</source>
@@ -423,27 +423,27 @@
     </message>
     <message>
         <source>Use monospaced font for notes</source>
-        <translation>Käytä tasalevyistä fonttia muistiinpanoille</translation>
+        <translation>Käytä muistiinpanoille tasalevyistä fonttia</translation>
     </message>
     <message>
         <source>Minimize instead of app exit</source>
-        <translation>Minimoi ohjelma sulkemisen sijasta</translation>
+        <translation>Pienennä ohjelma sulkemisen sijaan</translation>
     </message>
     <message>
         <source>Show a system tray icon</source>
-        <translation>Näytä ilmoitusalueen kuvake</translation>
+        <translation>Näytä ilmoitusaluekuvake</translation>
     </message>
     <message>
         <source>Tray icon type</source>
-        <translation>Ilmoitusalueen ikonin tyyppi</translation>
+        <translation>Ilmoitusaluekuvakkeen tyyppi</translation>
     </message>
     <message>
         <source>Tray icon type:</source>
-        <translation>Ilmoitusalueen ikonin tyyppi:</translation>
+        <translation>Ilmoitusaluekuvakkeen tyyppi:</translation>
     </message>
     <message>
         <source>Hide window to system tray when minimized</source>
-        <translation>Piiloita pienennetty ikkuna ilmoitusalueelle</translation>
+        <translation>Piilota ikkuna ilmoitusalueelle pienennettäessä</translation>
     </message>
     <message>
         <source>Reset settings to default…</source>
@@ -471,7 +471,7 @@
     </message>
     <message>
         <source>Re-lock previously locked database after performing Auto-Type</source>
-        <translation>Uudelleenlukitse aikaisemmin lukittu tietokanta automaattisyötön jälkeen</translation>
+        <translation>Lukitse aikaisemmin lukittu tietokanta uudelleen automaattisyötön jälkeen</translation>
     </message>
     <message>
         <source>Auto-Type start delay:</source>
@@ -597,24 +597,24 @@
     </message>
     <message>
         <source>Clear clipboard after</source>
-        <translation>Tyhjennä leikepöytä kun on kulunut</translation>
+        <translation>Tyhjennä leikepöytä ajassa</translation>
     </message>
     <message>
         <source>Clear search query after</source>
-        <translation>Tyhjennä hakukentän sisältö kun on kulunut</translation>
+        <translation>Tyhjennä hakukentän sisältö ajassa</translation>
     </message>
     <message>
         <source> min</source>
         <comment>Minutes</comment>
-        <translation>minuuttia</translation>
+        <translation> minuuttia</translation>
     </message>
     <message>
         <source>Clipboard clear seconds</source>
-        <translation>Leikepöydän tyhjentäminen sekunneissa</translation>
+        <translation>Leikepöydän tyhjennys sekunteina</translation>
     </message>
     <message>
         <source>Lock databases after inactivity of</source>
-        <translation>Lukitse tietokannat jos on oltu joutilaana</translation>
+        <translation>Lukitse tietokannat, kun on oltu jouten</translation>
     </message>
     <message>
         <source>Convenience</source>
@@ -626,7 +626,7 @@
     </message>
     <message>
         <source>Lock databases when session is locked or lid is closed</source>
-        <translation>Lukitse tietokannat kun istunto lukitaan tai kansi suljetaan</translation>
+        <translation>Lukitse tietokannat istuntoa lukittaessa tai kantta suljettaessa</translation>
     </message>
     <message>
         <source>Lock databases after minimizing the window</source>
@@ -638,7 +638,7 @@
     </message>
     <message>
         <source>Use placeholder for empty password fields</source>
-        <translation>Käytä paikkamerkkiä tyhjissä salasanakentissä</translation>
+        <translation>Käytä tyhjiin salasanakenttiin paikkamerkkiä</translation>
     </message>
     <message>
         <source>Hide passwords in the entry preview panel</source>
@@ -650,7 +650,34 @@
     </message>
     <message>
         <source>Use DuckDuckGo service to download website icons</source>
-        <translation>Käytä DuckDuckGo:ta sivustojen ikonien lataukseen</translation>
+        <translation>Käytä DuckDuckGo’ta sivustojen ikonien lataukseen</translation>
+    </message>
+    <message>
+        <source>Hide TOTP in the entry preview panel</source>
+        <translation>Piilota TOTP merkinnän esikatselupaneelista</translation>
+    </message>
+    <message>
+        <source>Lock databases when switching user</source>
+        <translation>Lukitse tietokanta käyttäjää vaihdettaessa</translation>
+    </message>
+    <message>
+        <source>Lock Options</source>
+        <translation>Lukituksen asetukset</translation>
+    </message>
+    <message>
+        <source>Hide notes in the entry preview panel</source>
+        <translation>Piilota muistiinpanot tietueen esikatselupaneelista</translation>
+    </message>
+</context>
+<context>
+    <name>AttachmentWidget</name>
+    <message>
+        <source>Attachment Viewer</source>
+        <translation>Liitekatselin</translation>
+    </message>
+    <message>
+        <source>Unknown attachment type</source>
+        <translation>Tuntematon liitetyyppi</translation>
     </message>
     <message>
         <source>Hide TOTP in the entry preview panel</source>
@@ -708,15 +735,15 @@
     </message>
     <message>
         <source>Bracket imbalance detected, found extra { or }</source>
-        <translation>Sulkujen määrissä on virhe. Löydettiin ylimääräinen { tai }</translation>
+        <translation>Sulkeet ovat epätasapainossa: löytyi ylimääräinen { tai }</translation>
     </message>
     <message>
         <source>Too many repetitions detected, max is %1: %2</source>
-        <translation>Liian monta toistoa, maksimi on %1: %2</translation>
+        <translation>Liikaa toistoja, enimmäismäärä on %1: %2</translation>
     </message>
     <message>
         <source>Very slow key press detected, max is %1: %2</source>
-        <translation>Erittäin hidas näppäinpainallus havaittu, maksimi on %1: %2</translation>
+        <translation>Erittäin hidas näppäinpainallus havaittu, enimmäisaika on %1: %2</translation>
     </message>
     <message>
         <source>Very long delay detected, max is %1: %2</source>
@@ -777,7 +804,7 @@
     <name>AutoTypePlatformX11</name>
     <message>
         <source>Sequence aborted: Caps Lock is on</source>
-        <translation>Sekvenssi peruutettu: Caps Lock on päällä</translation>
+        <translation>Sekvenssi peruutettu: vaihtolukko on käytössä</translation>
     </message>
     <message>
         <source>Sequence aborted: Modifier keys held by user</source>
@@ -796,7 +823,7 @@
     <name>AutoTypeSelectDialog</name>
     <message>
         <source>Auto-Type - KeePassXC</source>
-        <translation>Automaattisyöttö - KeePassXC</translation>
+        <translation>Automaattisyöttö – KeePassXC</translation>
     </message>
     <message>
         <source>Double click a row to perform Auto-Type or find an entry using the search:</source>
@@ -816,7 +843,7 @@
     </message>
     <message>
         <source>Cancel</source>
-        <translation>Peruuta</translation>
+        <translation>Peru</translation>
     </message>
     <message>
         <source>Type {USERNAME}</source>
@@ -844,7 +871,56 @@
     </message>
     <message>
         <source>Use Virtual Keyboard</source>
-        <translation>Käytä virtuaalista näppäimistöä</translation>
+        <translation>Käytä näyttönäppäimistöä</translation>
+    </message>
+    <message>
+        <source>Type {URL}</source>
+        <translation>Kirjoita {URL}</translation>
+    </message>
+    <message>
+        <source>Copy URL</source>
+        <translation>Kopioi URL-osoite</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The following shortcuts are available:&lt;br/&gt;
+Ctrl+F - Focus search&lt;br/&gt;
+Ctrl+1 - Type username&lt;br/&gt;
+Ctrl+2 - Type password&lt;br/&gt;
+Ctrl+3 - Type TOTP&lt;br/&gt;
+Ctrl+4 - Type URL&lt;br/&gt;
+Ctrl+5 - Use Virtual Keyboard (Windows Only)&lt;br/&gt;
+Ctrl+Shift+1 - Copy username&lt;br/&gt;
+Ctrl+Shift+2 - Copy password&lt;br/&gt;
+Ctrl+Shift+3 - Copy TOTP&lt;br/&gt;
+Ctrl+Shift+4 - Copy URL&lt;br/&gt;
+&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Käytettävissä ovat seuraavat pikanäppäimet:&lt;br/&gt;
+Ctrl+F – Kohdista hakuun&lt;br/&gt;
+Ctrl+1 – Kirjoita käyttäjänimi&lt;br/&gt;
+Ctrl+2 – Kirjoita salasana&lt;br/&gt;
+Ctrl+3 – Kirjoita TOTP&lt;br/&gt;
+Ctrl+4 – Kirjoita osoite&lt;br/&gt;
+Ctrl+5 – Käytä näyttönäppäimistöä (vain Windows)&lt;br/&gt;
+Ctrl+Vaihto+1 – Kopioi käyttäjänimi&lt;br/&gt;
+Ctrl+Vaihto+2 – Kopioi salasana&lt;br/&gt;
+Ctrl+Vaihto+3 – Kopioi TOTP&lt;br/&gt;
+Ctrl+Vaihto+4 – Kopioi osoite&lt;br/&gt;
+&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>You can use advanced search queries to find any entry in your open databases.</source>
+        <translation>Lisähakuehdoin voi löytää avoimista tietokannoista minkä tahansa tietueen.</translation>
+    </message>
+</context>
+<context>
+    <name>BinaryStream</name>
+    <message>
+        <source>Failed to read string data: %1</source>
+        <translation>Merkkijonodatan luenta epäonnistui: %1</translation>
+    </message>
+    <message>
+        <source>String length exceeds 10 MiB limit (requested %1)</source>
+        <translation>Merkkijonon pituus ylittää 10 MiB:n rajan (pituus %1)</translation>
     </message>
     <message>
         <source>Type {URL}</source>
@@ -889,7 +965,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     <name>BrowserAccessControlDialog</name>
     <message>
         <source>KeePassXC - Browser Access Request</source>
-        <translation>KeePassXC - Selaimen pääsypyyntö</translation>
+        <translation>KeePassXC – selaimen pääsypyyntö</translation>
     </message>
     <message>
         <source>%1 is requesting access to the following entries:</source>
@@ -897,7 +973,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     </message>
     <message>
         <source>Remember access to checked entries</source>
-        <translation>Muista pääsylupa merkatuille tietueille</translation>
+        <translation>Muista pääsylupa valituille tietueille</translation>
     </message>
     <message>
         <source>Remember</source>
@@ -3714,6 +3790,14 @@ Tuetut tyypit ovat: %1.</translation>
         <source>Select import/export file</source>
         <translation>Valitse tuonti-/vientitiedosto</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Ylläpidä ryhmärakennetta jaetulla tietokannalla</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Säilytä ryhmärakenne</translation>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -4579,7 +4663,7 @@ Tämä jättää salasanasi ja minkä tahansa arkaluontoisen tiedon haavoittuvak
     <message numerus="yes">
         <source>%n Entry(s) was used by %1</source>
         <comment>%1 is the name of an application</comment>
-        <translation><numerusform>%n tietue käytetiin %1</numerusform><numerusform>%n tietuetta käytettiin %1</numerusform></translation>
+        <translation><numerusform>%1 tietuetta käytettiin %1:n toimesta</numerusform><numerusform>%1 tietuetta käytettiin %1:n toimesta</numerusform></translation>
     </message>
 </context>
 <context>
@@ -7275,20 +7359,6 @@ Seuraavat tiedot puuttuvat:
         <translation>Kaikki tiedostot</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>Valitse mukautettu sanalista</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>Ylikirjoita sanalista?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>&quot;%1&quot; on jo mukautettu sanalista.
-Haluatko ylikirjoittaa sen?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>Sanalistaa ei voitu lisätä</translation>
     </message>
@@ -7426,7 +7496,7 @@ Haluatko ylikirjoittaa sen?</translation>
     </message>
     <message>
         <source>Empty</source>
-        <translation>Tyhjä</translation>
+        <translation>Tyhjennä</translation>
     </message>
     <message>
         <source>Remove</source>
@@ -8207,14 +8277,6 @@ Haluatko ylikirjoittaa sen?</translation>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>Tyyppi: Spatiaalinen (toistettu)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Tyyppi: Päivämäärä (toistettu)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Tyyppi: Tuntematon (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9428,7 +9490,7 @@ Asetus on vanhentunut, käytä sen sijaan &quot;--set-key-file&quot; -määritys
     <name>ReportsWidgetBrowserStatistics</name>
     <message>
         <source>Double-click entries to edit.</source>
-        <translation>Tuplaklikkaa tietuetta muokataksesi</translation>
+        <translation>Kaksoisnapsauta tietuetta muokataksesi</translation>
     </message>
     <message>
         <source>List of entry URLs</source>
@@ -9484,7 +9546,7 @@ Asetus on vanhentunut, käytä sen sijaan &quot;--set-key-file&quot; -määritys
     </message>
     <message numerus="yes">
         <source>Delete Entry(s)…</source>
-        <translation><numerusform>Poista tietue...</numerusform><numerusform>Poista tietueet...</numerusform></translation>
+        <translation type="unfinished"><numerusform></numerusform><numerusform>Poista tietueet...</numerusform></translation>
     </message>
     <message>
         <source>Exclude from reports</source>
@@ -9931,7 +9993,15 @@ Asetus on vanhentunut, käytä sen sijaan &quot;--set-key-file&quot; -määritys
     </message>
     <message>
         <source>No agent running, cannot list identities.</source>
-        <translation>Agentti ei ole päällä, tunnisteita ei voi listata.</translation>
+        <translation>Agentti ei ole päällä, identiteettejä ei voi listata.</translation>
+    </message>
+    <message>
+        <source>Failed to remove all SSH identities from agent.</source>
+        <translation>Kaikkien tietojen poisto SSH-agentista epäonnistui.</translation>
+    </message>
+    <message>
+        <source>All SSH identities removed from agent.</source>
+        <translation>Kaikki tiedot poistettu SSH-agentista.</translation>
     </message>
     <message>
         <source>Failed to remove all SSH identities from agent.</source>
@@ -10539,6 +10609,14 @@ Esimerkiksi: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Etsitään laiteavaimia...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Uudista laiteavaimet</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Jos sinulla on &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; tai &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, sitä voi käyttää lisäturvaksi&lt;/p&gt;&lt;p&gt;Avain vaatii, että yksi sen kentistä ohjelmoidaan  &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;-ohjelmalla.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

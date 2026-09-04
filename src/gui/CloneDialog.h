@@ -39,6 +39,9 @@ public:
 signals:
     void entryCloned(Entry* clone);
 
+signals:
+    void entryCloned(Entry* clone);
+
 private:
     QScopedPointer<Ui::CloneDialog> m_ui;
 

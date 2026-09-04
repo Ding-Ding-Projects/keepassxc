@@ -21,6 +21,7 @@
 #include <QApplication>
 #include <QClipboard>
 #include <QMimeData>
+#include <QProcess>
 #include <QTimer>
 
 #include "core/Config.h"

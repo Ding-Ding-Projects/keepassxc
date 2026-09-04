@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>Window</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Minimise</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>Bring All to Front</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -2940,6 +2959,13 @@ Disable safe saves and try again?</translation>
     </message>
 </context>
 <context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
+        <translation>Edit: %1</translation>
+    </message>
+</context>
+<context>
     <name>EditEntryWidget</name>
     <message>
         <source>Entry</source>
@@ -3090,6 +3116,10 @@ Would you like to correct it?</translation>
     <message numerus="yes">
         <source>%n year(s)</source>
         <translation><numerusform>%n year</numerusform><numerusform>%n years</numerusform></translation>
+    </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation>Failed to decrypt SSH key, ensure password is correct.</translation>
     </message>
     <message>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
@@ -3735,6 +3765,14 @@ Supported extensions are: %1.</translation>
     <message>
         <source>Select import/export file</source>
         <translation>Select import/export file</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Maintain group structure with shared database</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Keep Group Structure</translation>
     </message>
 </context>
 <context>
@@ -4601,7 +4639,7 @@ This will leave your passwords and sensitive information vulnerable!
     <message numerus="yes">
         <source>%n Entry(s) was used by %1</source>
         <comment>%1 is the name of an application</comment>
-        <translation><numerusform>%n Entry was used by %1</numerusform><numerusform>%n Entries were used by %1</numerusform></translation>
+        <translation><numerusform>%n entry was used by %1</numerusform><numerusform>%n entries were used by %1</numerusform></translation>
     </message>
 </context>
 <context>
@@ -7303,20 +7341,6 @@ The following data is missing:
         <translation>All files</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>Select Custom Wordlist</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>Overwrite Wordlist?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>Failed to add wordlist</translation>
     </message>
@@ -8235,14 +8259,6 @@ Do you want to overwrite it?</translation>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>Type: Spatial(Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Type: Date(Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Type: Unknown (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9385,6 +9401,312 @@ This option is deprecated, use --set-key-file instead.</translation>
     <message>
         <source>Confirm Replace Entry References</source>
         <translation>Confirm Replace Entry References</translation>
+    </message>
+    <message>
+        <source>Show all the attributes of the entry.</source>
+        <translation>Show all the attributes of the entry.</translation>
+    </message>
+    <message>
+        <source>Set the key file for the database.
+This option is deprecated, use --set-key-file instead.</source>
+        <translation>Set the key file for the database.
+This option is deprecated, use --set-key-file instead.</translation>
+    </message>
+    <message>
+        <source>Databases have been locked.</source>
+        <translation>Databases have been locked.</translation>
+    </message>
+    <message>
+        <source>Attestation not supported</source>
+        <translation>Attestation not supported</translation>
+    </message>
+    <message>
+        <source>Loading the new key file failed: %1</source>
+        <translation>Loading the new key file failed: %1</translation>
+    </message>
+    <message>
+        <source>Unset the password for the database.</source>
+        <translation>Unset the password for the database.</translation>
+    </message>
+    <message>
+        <source>Unset the key file for the database.</source>
+        <translation>Unset the key file for the database.</translation>
+    </message>
+    <message>
+        <source>Cannot use %1 and %2 at the same time.</source>
+        <translation>Cannot use %1 and %2 at the same time.</translation>
+    </message>
+    <message>
+        <source>Cannot remove all the keys from a database.</source>
+        <translation>Cannot remove all the keys from a database.</translation>
+    </message>
+    <message>
+        <source>Passkeys</source>
+        <translation>Passkeys</translation>
+    </message>
+    <message>
+        <source>Found unexpected Key type %1</source>
+        <translation>Found unexpected Key type %1</translation>
+    </message>
+    <message>
+        <source>KeePassXC is not running. No open database to lock</source>
+        <translation>KeePassXC is not running. No open database to lock</translation>
+    </message>
+    <message>
+        <source>allow screenshots and app recording (Windows/macOS)</source>
+        <translation>allow screenshots and app recording (Windows/macOS)</translation>
+    </message>
+    <message>
+        <source>Origin is empty or not allowed</source>
+        <translation>Origin is empty or not allowed</translation>
+    </message>
+    <message>
+        <source>Effective domain is not a valid domain</source>
+        <translation>Effective domain is not a valid domain</translation>
+    </message>
+    <message>
+        <source>Origin and RP ID do not match</source>
+        <translation>Origin and RP ID do not match</translation>
+    </message>
+    <message>
+        <source>No supported algorithms were provided</source>
+        <translation>No supported algorithms were provided</translation>
+    </message>
+    <message>
+        <source>Wait for timer to expire</source>
+        <translation>Wait for timer to expire</translation>
+    </message>
+    <message>
+        <source>Challenge is shorter than required minimum length</source>
+        <translation>Challenge is shorter than required minimum length</translation>
+    </message>
+    <message>
+        <source>user.id does not match the required length</source>
+        <translation>user.id does not match the required length</translation>
+    </message>
+    <message>
+        <source>Access to all entries is denied</source>
+        <translation>Access to all entries is denied</translation>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>Tag for favorite entries</comment>
+        <translation>Favorite</translation>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation>File does not exist.</translation>
+    </message>
+    <message>
+        <source>Cannot open file: %1</source>
+        <translation>Cannot open file: %1</translation>
+    </message>
+    <message>
+        <source>Cannot parse file: %1 at position %2</source>
+        <translation>Cannot parse file: %1 at position %2</translation>
+    </message>
+    <message>
+        <source>Failed to decrypt json file: %1</source>
+        <translation>Failed to decrypt json file: %1</translation>
+    </message>
+    <message>
+        <source>Invalid encKeyValidation field</source>
+        <translation>Invalid encKeyValidation field</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encKeyValidation field</source>
+        <translation>Invalid cipher list within encKeyValidation field</translation>
+    </message>
+    <message>
+        <source>Wrong password</source>
+        <translation>Wrong password</translation>
+    </message>
+    <message>
+        <source>Invalid encrypted data field</source>
+        <translation>Invalid encrypted data field</translation>
+    </message>
+    <message>
+        <source>Invalid cipher list within encrypted data field</source>
+        <translation>Invalid cipher list within encrypted data field</translation>
+    </message>
+    <message>
+        <source>Cannot initialize cipher</source>
+        <translation>Cannot initialize cipher</translation>
+    </message>
+    <message>
+        <source>Cannot decrypt data</source>
+        <translation>Cannot decrypt data</translation>
+    </message>
+    <message>
+        <source>Bitwarden Import</source>
+        <translation>Bitwarden Import</translation>
+    </message>
+    <message>
+        <source>Archived</source>
+        <comment>Tag for archived entries</comment>
+        <translation>Archived</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Not a valid ZIP file.</source>
+        <translation>Invalid 1PUX file format: Not a valid ZIP file.</translation>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Missing export.data</source>
+        <translation>Invalid 1PUX file format: Missing export.data</translation>
+    </message>
+    <message>
+        <source>1Password Import</source>
+        <translation>1Password Import</translation>
+    </message>
+    <message>
+        <source>Credential is excluded</source>
+        <translation>Credential is excluded</translation>
+    </message>
+    <message>
+        <source>Passkeys request canceled</source>
+        <translation>Passkeys request canceled</translation>
+    </message>
+    <message>
+        <source>Invalid user verification</source>
+        <translation>Invalid user verification</translation>
+    </message>
+    <message>
+        <source>Empty public key</source>
+        <translation>Empty public key</translation>
+    </message>
+    <message>
+        <source>Invalid URL provided</source>
+        <translation>Invalid URL provided</translation>
+    </message>
+    <message>
+        <source>Edit a database.</source>
+        <translation>Edit a database.</translation>
+    </message>
+    <message>
+        <source>Could not change the database key.</source>
+        <translation>Could not change the database key.</translation>
+    </message>
+    <message>
+        <source>Database was not modified.</source>
+        <translation>Database was not modified.</translation>
+    </message>
+    <message>
+        <source>Successfully edited the database.</source>
+        <translation>Successfully edited the database.</translation>
+    </message>
+    <message>
+        <source>Cannot remove password: The database does not have a password.</source>
+        <translation>Cannot remove password: The database does not have a password.</translation>
+    </message>
+    <message>
+        <source>Cannot remove file key: The database does not have a file key.</source>
+        <translation>Cannot remove file key: The database does not have a file key.</translation>
+    </message>
+    <message>
+        <source>Unknown passkeys error</source>
+        <translation>Unknown passkeys error</translation>
+    </message>
+    <message>
+        <source>Encrypted files are not supported.</source>
+        <translation>Encrypted files are not supported.</translation>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation>Proton Pass Import</translation>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>Passkey</translation>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</translation>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation>start minimized to the system tray</translation>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation>malformed string, possible unescaped delimiter</translation>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation>missing closing delimiter</translation>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation>%1, row: %2, column: %3</translation>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>Tags</translation>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation>Warning: the chosen wordlist is smaller than the minimum recommended size!</translation>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation>Invalid Step</translation>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation>Invalid Digits</translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation><numerusform>%1 character(s)</numerusform><numerusform>%1 character(s)</numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation>Do you really want to permanently delete the entry &quot;%1&quot;?</translation>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation><numerusform>Do you really want to permanently delete %n entry(s)?</numerusform><numerusform>Do you really want to permanently delete %n entry(s)?</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation><numerusform>Confirm Delete Entry(s)</numerusform><numerusform>Confirm Delete Entry(s)</numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation><numerusform>Confirm Recycle Entry(s)</numerusform><numerusform>Confirm Recycle Entry(s)</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation>Confirm Delete Plugin Data</translation>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation><numerusform>Delete plugin data from the selected entry(s)?</numerusform><numerusform>Delete plugin data from the selected entry(s)?</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation>Confirm Replace Entry References</translation>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation>Type: Date(Rep)</translation>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation>Type: Unknown (%1)</translation>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation>Unsupported format, ensure your Bitwarden export is password-protected</translation>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation>Invalid KDF iterations, cannot decrypt json file</translation>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation>Only PBKDF and Argon2 are supported, cannot decrypt json file</translation>
     </message>
 </context>
 <context>
@@ -10567,6 +10889,14 @@ Example: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Detecting hardware keys…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Refresh hardware keys</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

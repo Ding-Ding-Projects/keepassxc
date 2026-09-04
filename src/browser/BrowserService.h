@@ -125,6 +125,8 @@ public:
 
     static QString decodeCustomDataRestrictKey(const QString& key);
 
+    static QString decodeCustomDataRestrictKey(const QString& key);
+
     static const QString KEEPASSXCBROWSER_NAME;
     static const QString KEEPASSXCBROWSER_OLD_NAME;
     static const QString OPTION_SKIP_AUTO_SUBMIT;

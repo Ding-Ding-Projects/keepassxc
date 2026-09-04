@@ -186,6 +186,16 @@ if(WITH_CCACHE)
     set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE_FOUND})
 endif()
 
+# Find Botan early since the version affects subsequent compiler options
+find_package(Botan REQUIRED)
+if(BOTAN_VERSION VERSION_GREATER_EQUAL "3.0.0")
+    set(WITH_XC_BOTAN3 TRUE)
+elseif(BOTAN_VERSION VERSION_LESS "2.11.0")
+    # Check for minimum Botan version
+    message(FATAL_ERROR "Botan 2.11.0 or higher is required")   
+endif()
+include_directories(SYSTEM ${BOTAN_INCLUDE_DIR})
+
 # Create position independent code for shared libraries and executables
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 cmake_policy(SET CMP0083 NEW)

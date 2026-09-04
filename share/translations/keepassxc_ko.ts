@@ -2928,6 +2928,13 @@ Disable safe saves and try again?</source>
     </message>
 </context>
 <context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>EditEntryWidget</name>
     <message>
         <source>Entry</source>
@@ -3078,6 +3085,10 @@ Would you like to correct it?</source>
     <message numerus="yes">
         <source>%n year(s)</source>
         <translation><numerusform>%n년</numerusform></translation>
+    </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation>SSH 키를 복호화할 수 없습니다. 암호가 올바른지 확인하십시오.</translation>
     </message>
     <message>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
@@ -3723,6 +3734,14 @@ Supported extensions are: %1.</source>
     <message>
         <source>Select import/export file</source>
         <translation>가져올/내보낼 파일 선택</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -7284,20 +7303,6 @@ The following data is missing:
         <translation>모든 파일</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>사용자 정의 단어 목록 선택</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>단어 목록을 덮어쓰시겠습니까?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>단어 목록 &quot;%1&quot;이(가) 이미 사용자 정의 단어 목록에 있습니다.
-덮어쓰시겠습니까?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>단어 목록을 추가할 수 없음</translation>
     </message>
@@ -8216,14 +8221,6 @@ Do you want to overwrite it?</source>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>형식: 인접(반복)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>형식: 날짜(반복)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>형식: 알 수 없음(%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -9366,6 +9363,104 @@ This option is deprecated, use --set-key-file instead.</source>
     <message>
         <source>Confirm Replace Entry References</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation>패스키</translation>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation>태그</translation>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation>형식: 날짜(반복)</translation>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation>형식: 알 수 없음(%1)</translation>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation>지원하지 않는 형식, Bitwarden 내보내기 파일이 암호로 보호되었는지 확인하십시오</translation>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation>잘못된 KDF 반복 횟수, JSON 파일을 복호화할 수 없음</translation>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation>PBKDF와 Argon2만 지원함, JSON 파일을 복호화할 수 없음</translation>
     </message>
 </context>
 <context>
@@ -10548,6 +10643,14 @@ Example: JBSWY3DPEHPK3PXP</source>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>하드웨어 키 인식 중...</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>하드웨어 키 새로 고침</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No hardware keys detected</source>

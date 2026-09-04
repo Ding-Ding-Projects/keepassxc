@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>Aken</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Minimeeri</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>Suum</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>Tõsta kõik esiplaanile</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -2940,6 +2959,13 @@ Kas keelata turvaline salvestamine ja proovida seejärel uuesti?</translation>
     </message>
 </context>
 <context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
+        <translation>Muuda: %1</translation>
+    </message>
+</context>
+<context>
     <name>EditEntryWidget</name>
     <message>
         <source>Entry</source>
@@ -3090,6 +3116,10 @@ Kas soovid vea parandada?</translation>
     <message numerus="yes">
         <source>%n year(s)</source>
         <translation><numerusform>%n aasta pärast</numerusform><numerusform>%n aasta pärast</numerusform></translation>
+    </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation>SSH-võtme lahtikrüptimine ebaõnnestus. Vaata, et parool oleks õige.</translation>
     </message>
     <message>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
@@ -3737,6 +3767,14 @@ Toetatud faililaiendid: %1</translation>
     <message>
         <source>Select import/export file</source>
         <translation>Imporditava/eksporditava faili valimine</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Säilita jagatud andmebaasis gruppide struktuur</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Säilita gruppide struktuur</translation>
     </message>
 </context>
 <context>
@@ -7304,20 +7342,6 @@ Järgmised andmed on puudu:
         <translation>Kõik failid</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>Kohandatud sõnaloendi valimine</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>Sõnaloendi ülekirjutamine</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>Kohandatud sõnaloend „%1” on juba olemas.
-Kas soovid selle üle kirjutada?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>Sõnaloendi lisamine ebaõnnestus.</translation>
     </message>
@@ -8236,14 +8260,6 @@ Kas soovid selle üle kirjutada?</translation>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>Tüüp: ruumiline (korduv)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Tüüp: kuupäev (korduv)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Tüüp: teadmata (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -10568,6 +10584,14 @@ Näide: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>riistvaraliste võtmete tuvastamine…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Värskenda riistvaraliste võtmete loendit</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Kui sul on &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; või &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt; turvavõti, võid lisaturvalisuse nimel seda kasutada.&lt;/p&gt;&lt;p&gt;Võtme ühe pesa peab programmeerima &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;pretensiooni ja vastusena&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

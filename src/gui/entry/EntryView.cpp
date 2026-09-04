@@ -26,6 +26,7 @@
 #include <QListWidget>
 #include <QMenu>
 #include <QPainter>
+#include <QScreen>
 #include <QShortcut>
 #include <QStyledItemDelegate>
 #include <QWindow>

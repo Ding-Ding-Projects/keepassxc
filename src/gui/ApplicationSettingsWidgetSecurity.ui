@@ -487,11 +487,11 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="QGroupBox" name="lockOptionsGroup">
      <property name="title">
-      <string>Convenience</string>
+      <string>Lock Options</string>
      </property>
-     <layout class="QVBoxLayout" name="verticalLayout_2">
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
        <layout class="QHBoxLayout" name="passwordShowDotsCheckBoxRow">
         <property name="leftMargin">
@@ -639,6 +639,15 @@
         </item>
        </layout>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="groupBox_2">
+     <property name="title">
+      <string>Convenience</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_2">
       <item>
        <layout class="QHBoxLayout" name="hideTotpCheckBoxRow">
         <property name="leftMargin">

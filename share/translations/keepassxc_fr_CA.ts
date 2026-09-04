@@ -1189,7 +1189,7 @@ Remplacer la clé dans %1 – %2 ?</translation>
     </message>
     <message>
         <source>Return only best-matching credentials</source>
-        <translation>Retourner que les identifiants qui correspondent le mieux</translation>
+        <translation>Ne retourner que les identifiants qui correspondent le mieux</translation>
     </message>
     <message>
         <source>Returns expired credentials. String [expired] is added to the title.</source>
@@ -1813,7 +1813,9 @@ Confirmez-vous ?</translation>
     </message>
     <message>
         <source>Browser Integration</source>
-        <translation>Intégration aux navigateurs</translation>
+        <translation>Intégration
+aux
+navigateurs</translation>
     </message>
     <message>
         <source>Maintenance</source>
@@ -2945,7 +2947,9 @@ Désactiver les enregistrements sécurisés et réessayer ?</translation>
     </message>
     <message>
         <source>Browser Integration</source>
-        <translation>Intégration aux navigateurs</translation>
+        <translation>Intégration
+aux
+navigateurs</translation>
     </message>
     <message>
         <source>&lt;empty URL&gt;</source>
@@ -10549,6 +10553,14 @@ Exemple : JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Détection des clés matérielles…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Actualiser les clés matérielles</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Si vous possédez une &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; ou &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, vous pouvez l’utiliser pour renforcer la sécurité.&lt;/p&gt;&lt;p&gt;L’un des emplacements de la clé doit être programmé avec une &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;question-réponse&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

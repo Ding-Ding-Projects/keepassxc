@@ -898,6 +898,34 @@
     <string notr="true">{URL}{ENTER}</string>
    </property>
   </action>
+  <action name="actionEntryAutoTypeURL">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string notr="true">{URL}</string>
+   </property>
+   <property name="iconText">
+    <string notr="true">{URL}</string>
+   </property>
+   <property name="toolTip">
+    <string notr="true">{URL}</string>
+   </property>
+  </action>
+  <action name="actionEntryAutoTypeURLEnter">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string notr="true">{URL}{ENTER}</string>
+   </property>
+   <property name="iconText">
+    <string notr="true">{URL}{ENTER}</string>
+   </property>
+   <property name="toolTip">
+    <string notr="true">{URL}{ENTER}</string>
+   </property>
+  </action>
   <action name="actionEntryDownloadIcon">
    <property name="text">
     <string>Download &amp;Favicon</string>
@@ -1040,6 +1068,11 @@
     <string notr="true">Ctrl+Y</string>
    </property>
   </action>
+  <action name="actionEntryCopyPasswordTotp">
+   <property name="text">
+    <string>Copy Password and TOTP</string>
+   </property>
+  </action>
   <action name="actionGroupEmptyRecycleBin">
    <property name="text">
     <string>E&amp;mpty recycle bin</string>
@@ -1174,6 +1207,20 @@
    </property>
    <property name="toolTip">
     <string>Set Theme: Dark</string>
+   </property>
+  </action>
+  <action name="actionShowMenubar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Menubar</string>
+   </property>
+   <property name="toolTip">
+    <string>Toggle Show Menubar</string>
    </property>
   </action>
   <action name="actionShowMenubar">

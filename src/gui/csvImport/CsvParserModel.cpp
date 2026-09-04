@@ -37,6 +37,11 @@ CsvParser* CsvParserModel::parser()
     return m_parser;
 }
 
+CsvParser* CsvParserModel::parser()
+{
+    return m_parser;
+}
+
 void CsvParserModel::setFilename(const QString& filename)
 {
     m_filename = filename;

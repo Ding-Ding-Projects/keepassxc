@@ -3,7 +3,7 @@
     <name>AboutDialog</name>
     <message>
         <source>About KeePassXC</source>
-        <translation>O KeePassXC</translation>
+        <translation>О KeePassXC</translation>
     </message>
     <message>
         <source>About</source>
@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -274,7 +293,7 @@
     </message>
     <message>
         <source>Start only a single instance of KeePassXC</source>
-        <translation>Покрени само једну инстанцу KeePassX-а</translation>
+        <translation>Покрени само једну инстанцу KeePassX</translation>
     </message>
     <message>
         <source>Automatically launch KeePassXC at system startup</source>
@@ -286,11 +305,11 @@
     </message>
     <message>
         <source>Minimize window after unlocking database</source>
-        <translation>Минимизирајте прозор након откључавања базе података</translation>
+        <translation>Минимизирајте прозор након откључавања базе</translation>
     </message>
     <message>
         <source>Remember previously used databases</source>
-        <translation>Запамти последњу употребљену базу података</translation>
+        <translation>Запамти последњу употребљену базу</translation>
     </message>
     <message>
         <source> recent files</source>
@@ -298,11 +317,11 @@
     </message>
     <message>
         <source>Load previously open databases on startup</source>
-        <translation>На покретање, учитај последњу отворену базу података</translation>
+        <translation>На покретање, учитај последњу отворену базу</translation>
     </message>
     <message>
         <source>Remember database key files and security dongles</source>
-        <translation>Запамтити Кључ-Датотеке базе података и сигурносне кључеве</translation>
+        <translation>Запамтити кључне датотеке базе и сигурносне кључеве</translation>
     </message>
     <message>
         <source>Check for updates at application startup once per week</source>
@@ -322,15 +341,15 @@
     </message>
     <message>
         <source>Automatically save when locking database</source>
-        <translation>Аутоматски сачувај приликом закључавања базе података</translation>
+        <translation>Аутоматски сачувај приликом закључавања базе</translation>
     </message>
     <message>
         <source>Automatically save non-data changes when locking database</source>
-        <translation>Аутоматски сачувај промене без података приликом закључавања базе података</translation>
+        <translation>Аутоматски сачувај промене без података приликом закључавања базе</translation>
     </message>
     <message>
         <source>Automatically reload the database when modified externally</source>
-        <translation>Аутоматски поново учитати базу података када се спољно модификује</translation>
+        <translation>Аутоматски поново учитати базу када се спољно модификује</translation>
     </message>
     <message>
         <source>Backup database file before saving</source>
@@ -387,7 +406,7 @@
     <message>
         <source> sec</source>
         <comment>Seconds</comment>
-        <translation> сек</translation>
+        <translation>сек</translation>
     </message>
     <message>
         <source>User Interface</source>
@@ -455,15 +474,15 @@
     </message>
     <message>
         <source>Use entry title to match windows for global Auto-Type</source>
-        <translation>Користити наслов за подударање прозора за глобално ауто-куцање</translation>
+        <translation>Користити наслов уноса за подударање прозора за глобални ауто-уноса</translation>
     </message>
     <message>
         <source>Use entry URL to match windows for global Auto-Type</source>
-        <translation>Користити URL за подударање прозора за глобално ауто-куцање</translation>
+        <translation>Користити URL за подударање прозора за глобални ауто-уноса</translation>
     </message>
     <message>
         <source>Always ask before performing Auto-Type</source>
-        <translation>Увек питати пре извођења ауто-куцања</translation>
+        <translation>Увек питати пре извођења ауто-уноса</translation>
     </message>
     <message>
         <source>Hide expired entries from Auto-Type</source>
@@ -475,32 +494,32 @@
     </message>
     <message>
         <source>Auto-Type start delay:</source>
-        <translation>Кашњење покретања ауто-куцања:</translation>
+        <translation>Кашњење покретања ауто-уноса:</translation>
     </message>
     <message>
         <source>Global Auto-Type shortcut:</source>
-        <translation>Глобална пречица ауто-куцања:</translation>
+        <translation>Глобална пречица ауто-уноса</translation>
     </message>
     <message>
         <source>Auto-type start delay milliseconds</source>
-        <translation>Кашњење, у милисекундама, покретања Ауто-куцања</translation>
+        <translation>Кашњење, у милисекундама, покретања Ауто-уноса</translation>
     </message>
     <message>
         <source> ms</source>
         <comment>Milliseconds</comment>
-        <translation> мс</translation>
+        <translation>мс</translation>
     </message>
     <message>
         <source>Auto-Type typing delay:</source>
-        <translation>Кашњење куцања Ауто-куцања:</translation>
+        <translation>Кашњење куцања Ауто-уноса:</translation>
     </message>
     <message>
         <source>Global auto-type shortcut</source>
-        <translation>Глобална пречица за ауто-куцање</translation>
+        <translation>Глобална пречица за ауто-унос</translation>
     </message>
     <message>
         <source>Auto-type character typing delay milliseconds</source>
-        <translation>Кашњење, у милисекундама, уношења Ауто-куцања</translation>
+        <translation>Кашњење, у милисекундама, уношење Ауто-уноса</translation>
     </message>
     <message>
         <source>Remember last typed entry for:</source>
@@ -588,12 +607,12 @@
     </message>
     <message>
         <source>Database lock timeout seconds</source>
-        <translation>Тајмаут закључавања базе података</translation>
+        <translation>Тајмаут закључавања базе</translation>
     </message>
     <message>
         <source> sec</source>
         <comment>Seconds</comment>
-        <translation> сек</translation>
+        <translation>сек</translation>
     </message>
     <message>
         <source>Clear clipboard after</source>
@@ -606,7 +625,7 @@
     <message>
         <source> min</source>
         <comment>Minutes</comment>
-        <translation> мин</translation>
+        <translation>мин</translation>
     </message>
     <message>
         <source>Clipboard clear seconds</source>
@@ -614,7 +633,7 @@
     </message>
     <message>
         <source>Lock databases after inactivity of</source>
-        <translation>Закључај базе података након неактивности од</translation>
+        <translation>Закључај базе након неактивности од </translation>
     </message>
     <message>
         <source>Convenience</source>
@@ -626,7 +645,7 @@
     </message>
     <message>
         <source>Lock databases when session is locked or lid is closed</source>
-        <translation>Закључај базе података када је сесија закључана или екран затворен</translation>
+        <translation>Закључати базе када је сесија закључана или екран затворен</translation>
     </message>
     <message>
         <source>Lock databases after minimizing the window</source>
@@ -743,7 +762,7 @@
     </message>
     <message>
         <source>Sequence</source>
-        <translation>Секвенца</translation>
+        <translation>Редослед</translation>
     </message>
     <message>
         <source>(empty)</source>
@@ -1154,11 +1173,11 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Show a notification when credentials are requested</source>
         <extracomment>Credentials mean login data requested via browser extension</extracomment>
-        <translation>Приказати обавештење када се захтевају акредитиви</translation>
+        <translation>Прикажите обавештење када се захтевају акредитиви</translation>
     </message>
     <message>
         <source>Request to unlock the database if it is locked</source>
-        <translation>Захтев за откључавање базе података ако је закључана</translation>
+        <translation>Захтев за откључавање базе ако је закључана</translation>
     </message>
     <message>
         <source>Only entries with the same scheme (http://, https://, …) are returned.</source>
@@ -1186,12 +1205,12 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>All databases connected to the extension will return matching credentials.</source>
-        <translation>Све базе података повезане са екстензијом вратиће одговарајуће акредитиве.</translation>
+        <translation>Све базе повезане са екстензијом вратиће одговарајуће акредитиве.</translation>
     </message>
     <message>
         <source>Search in all opened databases for matching credentials</source>
         <extracomment>Credentials mean login data requested via browser extension</extracomment>
-        <translation>Претражите све отворене базе података да бисте пронашли одговарајуће акредитиве</translation>
+        <translation>Претражите све отворене базе да бисте пронашли одговарајуће акредитиве</translation>
     </message>
     <message>
         <source>Advanced</source>
@@ -1355,11 +1374,11 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Append &apos; - Clone&apos; to title</source>
-        <translation>Додај наслову суфикс &apos; - дупликат&apos;</translation>
+        <translation>Додај наслову суфикс &apos; - дупликат&apos; </translation>
     </message>
     <message>
         <source>Replace username and password with references</source>
-        <translation>Замените корисничко име и лозинку са референцама</translation>
+        <translation>Замени корисничко име и лозинку са референцама</translation>
     </message>
     <message>
         <source>Copy history</source>
@@ -1462,7 +1481,7 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Preview</source>
-        <translation>Приказ</translation>
+        <translation>Преглед</translation>
     </message>
     <message>
         <source>CSV import preview</source>
@@ -1532,19 +1551,19 @@ Are you sure you want to import?</source>
     </message>
     <message>
         <source>Error while reading the database: %1</source>
-        <translation>Грешка при читању базе података: %1</translation>
+        <translation>Грешка при читању базе: %1</translation>
     </message>
     <message>
         <source>Could not save, database does not point to a valid file.</source>
-        <translation>Није могуће сачувати, база података не упућује на важећу датотеку.</translation>
+        <translation>Није могуће сачувати, база не упућује на важећу датотеку.</translation>
     </message>
     <message>
         <source>Database save is already in progress.</source>
-        <translation>Сачувавање базе података је већ у току.</translation>
+        <translation>Сачувавање базе је већ у току.</translation>
     </message>
     <message>
         <source>Could not save, database has not been initialized!</source>
-        <translation>Није могуће сачувати, база података није иницијализована!</translation>
+        <translation>Није могуће сачувати, база није иницијализована!</translation>
     </message>
     <message>
         <source>Database file has unmerged changes.</source>
@@ -1600,11 +1619,11 @@ Backup database located at %2</source>
     </message>
     <message>
         <source>Key file to unlock the database</source>
-        <translation>Кључ-Датотека за откључавање базе података</translation>
+        <translation>Датотека кључа за откључавање базе</translation>
     </message>
     <message>
         <source>Browse for key file</source>
-        <translation>Претражити Кључ-Датотеку</translation>
+        <translation>Претражи датотеку са кључем</translation>
     </message>
     <message>
         <source>Browse…</source>
@@ -1668,11 +1687,11 @@ To prevent this error from appearing, you must go to &quot;Database Settings / S
     </message>
     <message>
         <source>Failed to open key file: %1</source>
-        <translation>Отварање Кључ-Датотеке није успело: %1</translation>
+        <translation>Отварање датотеке кључа није успело: %1</translation>
     </message>
     <message>
         <source>Old key file format</source>
-        <translation>Стари формат Кључ-Датотеке</translation>
+        <translation>Стари формат датотеке кључа</translation>
     </message>
     <message>
         <source>You are using an old key file format which KeePassXC may&lt;br&gt;stop supporting in the future.&lt;br&gt;&lt;br&gt;Please consider generating a new key file by going to:&lt;br&gt;&lt;strong&gt;Database &amp;gt; Database Security &amp;gt; Change Key File.&lt;/strong&gt;&lt;br&gt;</source>
@@ -1692,11 +1711,11 @@ To prevent this error from appearing, you must go to &quot;Database Settings / S
     </message>
     <message>
         <source>Select key file</source>
-        <translation>Одаберите Кључ-Датотеку</translation>
+        <translation>Одаберите кључ-датотеку</translation>
     </message>
     <message>
         <source>Cannot use database file as key file</source>
-        <translation>Датотека базе података не може се користити као Кључ-Датотеку</translation>
+        <translation>Датотека базе не може се користити као датотека кључа</translation>
     </message>
     <message>
         <source>authenticate to access the database</source>
@@ -1782,7 +1801,7 @@ Are you sure you want to continue with this file?.</source>
     </message>
     <message>
         <source>Database Credentials</source>
-        <translation>Акредитиви базе података</translation>
+        <translation>Акредитиви базе</translation>
     </message>
     <message>
         <source>Encryption Settings</source>
@@ -1885,7 +1904,7 @@ This may prevent connection to the browser plugin.</source>
     </message>
     <message numerus="yes">
         <source>Successfully removed %n encryption key(s) from KeePassXC settings.</source>
-        <translation><numerusform>Успешно уклоњено %n кључ(ови) за шифровање из подешавања</numerusform><numerusform>Успешно уклоњено %n кључ(ови) за шифровање из подешавања</numerusform><numerusform>Успешно уклоњено %n кључ(ови) за шифровање из подешавања</numerusform></translation>
+        <translation><numerusform>Успешно је уклоњено %n кључева за шифровање из подешавања KeePassXC-а.</numerusform><numerusform>Успешно је уклоњено %n кључева за шифровање из подешавања KeePassXC-а.</numerusform><numerusform>Успешно је уклоњено %n кључева за шифровање из подешавања KeePassXC-а.</numerusform></translation>
     </message>
     <message>
         <source>Do you really want forget all site-specific settings on every entry?
@@ -1907,7 +1926,7 @@ Permissions to access entries will be revoked.</source>
     </message>
     <message>
         <source>The active database does not contain an entry with permissions.</source>
-        <translation>Активна база података не садржи унос са дозволама.</translation>
+        <translation>Активна база не садржи унос са дозволама.</translation>
     </message>
     <message>
         <source>Refresh database ID</source>
@@ -1960,7 +1979,7 @@ Are you sure you want to continue without a password?</source>
     </message>
     <message>
         <source>Continue without password</source>
-        <translation>Наставити без лозинке</translation>
+        <translation>Наставити без озинке</translation>
     </message>
     <message>
         <source>No encryption key added</source>
@@ -1976,7 +1995,19 @@ Are you sure you want to continue without a password?</source>
     </message>
     <message>
         <source>Failed to change database credentials</source>
-        <translation>Неуспешна промена акредитива базе података</translation>
+        <translation>Неуспешна промена акредитива базе</translation>
+    </message>
+    <message>
+        <source>Weak password</source>
+        <translation>Слаба лозинка</translation>
+    </message>
+    <message>
+        <source>This is a weak password! For better protection of your secrets, you should choose a stronger password.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The provided password does not meet the minimum quality requirement.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Weak password</source>
@@ -2003,15 +2034,15 @@ Are you sure you want to continue without a password?</source>
     </message>
     <message>
         <source>Higher values offer more protection, but opening the database will take longer.</source>
-        <translation>Веће вредности нуде већу заштиту, али отварање базе података трајаће дуже.</translation>
+        <translation>Веће вредности нуде већу заштиту, али отварање базе трајаће дуже.</translation>
     </message>
     <message>
         <source>Database format:</source>
-        <translation>Формат базе података:</translation>
+        <translation>Формат базе:</translation>
     </message>
     <message>
         <source>Database format</source>
-        <translation>Формат базе података</translation>
+        <translation>Формат базе</translation>
     </message>
     <message>
         <source>Format cannot be changed: Your database uses KDBX 4 features</source>
@@ -2169,7 +2200,7 @@ If you keep this number, your database will not be protected from brute force at
     </message>
     <message>
         <source>Database name field</source>
-        <translation>Поље „Име“ базе података</translation>
+        <translation>Поље „Име“ базе</translation>
     </message>
     <message>
         <source>Database description:</source>
@@ -2177,7 +2208,7 @@ If you keep this number, your database will not be protected from brute force at
     </message>
     <message>
         <source>Database description field</source>
-        <translation>Поље „Опис“ базе података</translation>
+        <translation>Поље „Опис“ базе</translation>
     </message>
     <message>
         <source>Default username:</source>
@@ -2209,7 +2240,7 @@ If you keep this number, your database will not be protected from brute force at
     </message>
     <message>
         <source>Additional Database Settings</source>
-        <translation>Додатне поставке базе података</translation>
+        <translation>Додатне поставке базе</translation>
     </message>
     <message>
         <source>Enable compression (recommended)</source>
@@ -2402,11 +2433,11 @@ removed from the database.</source>
     <name>DatabaseSettingsWidgetMetaDataSimple</name>
     <message>
         <source>Database Name:</source>
-        <translation>Име базе података:</translation>
+        <translation>Име базе:</translation>
     </message>
     <message>
         <source>Database name field</source>
-        <translation>Поље „Име“ базе података</translation>
+        <translation>Поље „Име“ базе</translation>
     </message>
     <message>
         <source>Description:</source>
@@ -2414,7 +2445,7 @@ removed from the database.</source>
     </message>
     <message>
         <source>Database description field</source>
-        <translation>Поље „Опис“ базе података</translation>
+        <translation>Поље „Опис“ базе</translation>
     </message>
 </context>
 <context>
@@ -2691,7 +2722,7 @@ This is definitely a bug, please report it to the developers.</source>
     </message>
     <message>
         <source>Lock Database?</source>
-        <translation>Закључати базу података?</translation>
+        <translation>Закључати базу?</translation>
     </message>
     <message>
         <source>You are editing an entry. Discard changes and lock anyway?</source>
@@ -2724,7 +2755,7 @@ Save changes?</source>
     <message>
         <source>KeePassXC has failed to save the database multiple times. This is likely caused by file sync services holding a lock on the save file.
 Disable safe saves and try again?</source>
-        <translation>KeePassXC није успео да сачува базу података више пута. Ово је вероватно узроковано услугама синхронизације које држе датотеке закључане.
+        <translation>KeePassXC није успео да сачува базу више пута. Ово је вероватно узроковано услугама синхронизације које држе датотеке закључане.
 Онемогућити сигурносно сачувавање и покушати поново?</translation>
     </message>
     <message>
@@ -2753,7 +2784,108 @@ Disable safe saves and try again?</source>
     </message>
     <message>
         <source>Could not find database file: %1</source>
-        <translation>Није могуће пронаћи датотеку базе података: %1</translation>
+        <translation>Није могуће пронаћи датотеку базе: %1</translation>
+    </message>
+    <message>
+        <source>New Database</source>
+        <translation>Нова база података</translation>
+    </message>
+    <message>
+        <source>%1 [New Database]</source>
+        <comment>Database tab name modifier</comment>
+        <translation>%1 [Нова база]</translation>
+    </message>
+    <message>
+        <source>Remove passkey from entry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to remove the passkey from this entry?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The database file &quot;%1&quot; was modified externally</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you want to load the changes?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reloading database…</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reload canceled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reload successful</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reload pending user action…</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The database file &quot;%1&quot; was modified externally.&lt;br&gt;How would you like to proceed?&lt;br&gt;&lt;br&gt;Merge all changes&lt;br&gt;Ignore the changes on disk until save&lt;br&gt;Discard unsaved changes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>The database file &quot;%1&quot; was modified externally.&lt;br&gt;How would you like to proceed?&lt;br&gt;&lt;br&gt;Merge all changes then save&lt;br&gt;Overwrite the changes on disk&lt;br&gt;Discard unsaved changes</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Reload database</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Database file overwritten.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Database file on disk cannot be unlocked with current credentials.&lt;br&gt;Enter new credentials and/or present hardware key to continue.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to save backup database: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Confirm Delete Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the group &quot;%1&quot;?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Confirm Recycle Group</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Save</source>
+        <translation>Сними</translation>
+    </message>
+    <message>
+        <source>Save Database Backup</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Successfully merged the selected database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No changes were made by the merge operation.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Merge canceled, no changes were made.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Searches and Tags</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>New Database</source>
@@ -2878,6 +3010,13 @@ Disable safe saves and try again?</source>
     </message>
     <message>
         <source>Merge canceled, no changes were made.</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
         <translation type="unfinished"/>
     </message>
 </context>
@@ -3035,6 +3174,10 @@ Would you like to correct it?</source>
     <message numerus="yes">
         <source>%n year(s)</source>
         <translation><numerusform>%n година(е)</numerusform><numerusform>%n година(е)</numerusform><numerusform>%n година(е)</numerusform></translation>
+    </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
@@ -3398,7 +3541,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>Fingerprint</source>
-        <translation>Отисак</translation>
+        <translation>Отисак прста</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
@@ -3418,7 +3561,7 @@ Would you like to correct it?</source>
     </message>
     <message>
         <source>External key file</source>
-        <translation>Екстерна Кључ-Датотека</translation>
+        <translation>Екстерна кључна датотека</translation>
     </message>
     <message>
         <source>Add to agent</source>
@@ -3646,7 +3789,7 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>%1 is being imported and exported by different groups in this database.</source>
-        <translation>%1 се увози и извози из различитих група у овој бази података.</translation>
+        <translation>%1 се увози и извози из различитих група у овој бази.</translation>
     </message>
     <message>
         <source>KeeShare is currently disabled. You can enable import/export in the application settings.</source>
@@ -3655,11 +3798,11 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Database export is currently disabled by application settings.</source>
-        <translation>Извоз базе података је тренутно онемогућен подешавањима апликације.</translation>
+        <translation>Извоз базе је тренутно онемогућен подешавањима апликације.</translation>
     </message>
     <message>
         <source>Database import is currently disabled by application settings.</source>
-        <translation>Увоз базе података је тренутно онемогућен подешавањима апликације.</translation>
+        <translation>Увоз базе је тренутно онемогућен подешавањима апликације.</translation>
     </message>
     <message>
         <source>KeeShare container</source>
@@ -3710,7 +3853,7 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Auto-Type:</source>
-        <translation>Ауто-куцање:</translation>
+        <translation>Ауто-унос:</translation>
     </message>
     <message>
         <source>Search:</source>
@@ -3773,7 +3916,7 @@ Supported extensions are: %1.</source>
     </message>
     <message>
         <source>Download favicon</source>
-        <translation>Преузми икону са сајта</translation>
+        <translation>Преузми иконицу са сајта</translation>
     </message>
     <message>
         <source>Apply selected icon to subgroups and entries</source>
@@ -3829,7 +3972,7 @@ Supported extensions are: %1.</source>
     </message>
     <message numerus="yes">
         <source>%n icon(s) already exist in the database</source>
-        <translation><numerusform>%n икона(е? већ постоји(е) у бази</numerusform><numerusform>%n икона(е? већ постоји(е) у бази</numerusform><numerusform>%n икона(е? већ постоји(е) у бази података</numerusform></translation>
+        <translation><numerusform>%n икона(е) већ постоји(е) у бази података</numerusform><numerusform>%n икона(е) већ постоји(е) у бази података</numerusform><numerusform>%n икона(е) већ постоји(е) у бази података</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>The following icon(s) failed:</source>
@@ -4577,7 +4720,7 @@ This will leave your passwords and sensitive information vulnerable!
     <name>FdoSecretsPlugin</name>
     <message>
         <source>&lt;b&gt;Fdo Secret Service:&lt;/b&gt; %1</source>
-        <translation>&lt;b&gt;Fdo Тајни Сервис:&lt;/b&gt; %1</translation>
+        <translation>&lt;b&gt;Fdo Тајна Служба:&lt;/b&gt; %1</translation>
     </message>
 </context>
 <context>
@@ -4869,7 +5012,7 @@ The command has to exit. In case of `sftp` as last commend `exit` has to be sent
     </message>
     <message>
         <source>Unable to calculate database key</source>
-        <translation>Није могуће израчунати кључ базе података</translation>
+        <translation>Није могуће израчунати кључ базе</translation>
     </message>
     <message>
         <source>Unable to issue challenge-response: %1</source>
@@ -4911,18 +5054,18 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Unable to calculate database key</source>
-        <translation>Није могуће израчунати кључ базе података</translation>
+        <translation>Није могуће израчунати кључ базе</translation>
     </message>
 </context>
 <context>
     <name>Kdbx4Reader</name>
     <message>
         <source>missing database headers</source>
-        <translation>недостају заглавља базе података</translation>
+        <translation>недостају заглавља базе</translation>
     </message>
     <message>
         <source>Unable to calculate database key: %1</source>
-        <translation>Није могуће израчунати кључ базе података: %1</translation>
+        <translation>Није могуће израчунати кључ базе: %1</translation>
     </message>
     <message>
         <source>Invalid header checksum size</source>
@@ -5060,7 +5203,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Unable to calculate database key: %1</source>
-        <translation>Није могуће израчунати кључ базе података: %1</translation>
+        <translation>Није могуће израчунати кључ базе: %1</translation>
     </message>
     <message>
         <source>Failed to serialize KDF parameters variant map</source>
@@ -5116,7 +5259,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Failed to read database file.</source>
-        <translation>Читање датотеке базе података није успело.</translation>
+        <translation>Читање датотеке базе није успело.</translation>
     </message>
     <message>
         <source>The selected file is an old KeePass 1 database (.kdb).
@@ -5334,7 +5477,7 @@ Line %2, column %3</source>
     </message>
     <message>
         <source>Unable to calculate database key</source>
-        <translation>Није могуће израчунати кључ базе података</translation>
+        <translation>Није могуће израчунати кључ базе</translation>
     </message>
     <message>
         <source>unable to seek to content position</source>
@@ -5490,11 +5633,11 @@ If this reoccurs, then your database file may be corrupt.</source>
     <name>KeyComponentWidget</name>
     <message>
         <source>Key Component</source>
-        <translation>Кључ компонент </translation>
+        <translation>Компонента кључа</translation>
     </message>
     <message>
         <source>Key Component Description</source>
-        <translation>Опис кључ компонента</translation>
+        <translation>Опис компонента кључа</translation>
     </message>
     <message>
         <source>Cancel</source>
@@ -5533,7 +5676,7 @@ If this reoccurs, then your database file may be corrupt.</source>
     </message>
     <message>
         <source>Old key file format</source>
-        <translation>Стари формат Кључ-Датотеке</translation>
+        <translation>Стари формат датотеке кључа</translation>
     </message>
     <message>
         <source>You selected a key file in an old format which KeePassXC&lt;br&gt;may stop supporting in the future.&lt;br&gt;&lt;br&gt;Please consider generating a new key file instead.</source>
@@ -5647,7 +5790,7 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>&amp;Entries</source>
-        <translation>Уноси</translation>
+        <translation>Уноса</translation>
     </message>
     <message>
         <source>Copy Att&amp;ribute</source>
@@ -5735,11 +5878,11 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Sort &amp;A-Z</source>
-        <translation>Среди по A-Z</translation>
+        <translation>Среди A-Z</translation>
     </message>
     <message>
         <source>Sort &amp;Z-A</source>
-        <translation>Среди по Z-A</translation>
+        <translation>Среди Z-A</translation>
     </message>
     <message>
         <source>Sa&amp;ve Database As…</source>
@@ -5915,11 +6058,11 @@ Are you sure you want to continue with this file?</source>
     </message>
     <message>
         <source>Light</source>
-        <translation>Светла</translation>
+        <translation>Светло</translation>
     </message>
     <message>
         <source>Dark</source>
-        <translation>Тамна</translation>
+        <translation>Тамно</translation>
     </message>
     <message>
         <source>Classic (Platform-native)</source>
@@ -6373,7 +6516,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     </message>
     <message>
         <source>Unlock database to show more information</source>
-        <translation>Откључајте базу података да бисте приказали више информација</translation>
+        <translation>Откључајте базу да бисте приказали више информација</translation>
     </message>
     <message>
         <source>Lock database</source>
@@ -6544,7 +6687,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     <name>NewDatabaseWizardPageDatabaseKey</name>
     <message>
         <source>Database Credentials</source>
-        <translation>Акредитиви базе података</translation>
+        <translation>Акредитиви базе</translation>
     </message>
     <message>
         <source>A set of credentials known only to you that protects your database.</source>
@@ -6650,7 +6793,7 @@ Expect some bugs and minor issues, this version is meant for testing purposes.</
     <name>OpenSSHKey</name>
     <message>
         <source>Invalid key file, expecting an OpenSSH key</source>
-        <translation>Неисправна Кључ-Датотека, очекује се OpenSSH кључ</translation>
+        <translation>Неисправна датотека са кључем, очекује се OpenSSH кључ</translation>
     </message>
     <message>
         <source>PEM boundary mismatch</source>
@@ -7024,7 +7167,7 @@ The following data is missing:
     </message>
     <message>
         <source>&amp;Length:</source>
-        <translation>&amp;Дужина:</translation>
+        <translation>Дужина:</translation>
     </message>
     <message>
         <source>Password length</source>
@@ -7136,7 +7279,7 @@ The following data is missing:
     </message>
     <message>
         <source>Wordlist:</source>
-        <translation>Листа речи:</translation>
+        <translation>Листа фраза:</translation>
     </message>
     <message>
         <source>Word Count:</source>
@@ -7225,19 +7368,6 @@ The following data is missing:
     <message>
         <source>All files</source>
         <translation>Све датотеке</translation>
-    </message>
-    <message>
-        <source>Select Custom Wordlist</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation type="unfinished"/>
     </message>
     <message>
         <source>Failed to add wordlist</source>
@@ -7408,11 +7538,11 @@ Do you want to overwrite it?</source>
     <name>QObject</name>
     <message>
         <source>Database not opened</source>
-        <translation>База података није отворена</translation>
+        <translation>База није отворена</translation>
     </message>
     <message>
         <source>Database hash not available</source>
-        <translation>Хеш базе података није доступно</translation>
+        <translation>Хеш базе није доступно</translation>
     </message>
     <message>
         <source>Client public key not received</source>
@@ -7536,7 +7666,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Writing the database failed %1.</source>
-        <translation>Писање базе података није успело %1.</translation>
+        <translation>Писање базе није успело %1.</translation>
     </message>
     <message>
         <source>Successfully added entry %1.</source>
@@ -7802,7 +7932,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Target decryption time in MS for the database.</source>
-        <translation>Циљно време дешифровања басе података у МС.</translation>
+        <translation>Target decryption time in MS for the database.</translation>
     </message>
     <message>
         <source>time</source>
@@ -7810,11 +7940,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Set the key file for the database.</source>
-        <translation>Поставља Кључ-Датотеке за базу података.</translation>
+        <translation>Поставља кључ за базу.</translation>
     </message>
     <message>
         <source>Set a password for the database.</source>
-        <translation>Пставља лозинку за базу података.</translation>
+        <translation>Пставља лозинку за базу.</translation>
     </message>
     <message>
         <source>Create a new database.</source>
@@ -7830,7 +7960,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Failed to set database password.</source>
-        <translation>Постављање лозинке базе података није успело.</translation>
+        <translation>Постављање лозинке базе није успело.</translation>
     </message>
     <message>
         <source>Loading the key file failed</source>
@@ -8159,14 +8289,6 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Type: Date(Rep)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
         <source>Entropy %1 (%2)</source>
         <translation>Ентропија %1 (%2)</translation>
     </message>
@@ -8212,7 +8334,7 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Use special characters</source>
-        <translation>Користити специјалне карактере</translation>
+        <translation>Користити специјална слова</translation>
     </message>
     <message>
         <source>Use extended ASCII</source>
@@ -8220,11 +8342,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Exclude character set</source>
-        <translation>Изузети скуп карактера</translation>
+        <translation>Изузети скуп знакова</translation>
     </message>
     <message>
         <source>chars</source>
-        <translation>кар.</translation>
+        <translation>слов.</translation>
     </message>
     <message>
         <source>Use custom character set</source>
@@ -8272,11 +8394,11 @@ Do you want to overwrite it?</source>
     </message>
     <message>
         <source>Unable to import XML database: %1</source>
-        <translation>Увоз није могућ XML базе података: %1</translation>
+        <translation>Увоз није могућ XML базе: %1</translation>
     </message>
     <message>
         <source>Successfully imported database.</source>
-        <translation>Успешан увоз базе података.</translation>
+        <translation>Успешан увоз базе.</translation>
     </message>
     <message>
         <source>Unknown command %1</source>
@@ -8326,11 +8448,11 @@ Available commands:
     </message>
     <message>
         <source>Use the same credentials for both database files.</source>
-        <translation>Користите исте акредитиве за обе датотеке базе података.</translation>
+        <translation>Користите исте акредитиве за обе датотеке базе.</translation>
     </message>
     <message>
         <source>Key file of the database to merge from.</source>
-        <translation>Кауч-датотека базе података из које се спаја.</translation>
+        <translation>Кауч-датотека базе из које се спаја.</translation>
     </message>
     <message>
         <source>Deactivate password key for the database to merge from.</source>
@@ -8350,21 +8472,21 @@ Available commands:
     </message>
     <message>
         <source>Merge two databases.</source>
-        <translation>Споји две базе података</translation>
+        <translation>Удружи две базе података</translation>
     </message>
     <message>
         <source>Path of the database to merge from.</source>
-        <translation>Путање базе података из које се спаја.</translation>
+        <translation>Путање базе из које се спаја.</translation>
     </message>
     <message>
         <source>Error reading merge file:
 %1</source>
-        <translation>Грешка при читању спојене датотеке:
+        <translation>Грешка при читању удружене датотеке:
 %1</translation>
     </message>
     <message>
         <source>Unable to save database to file : %1</source>
-        <translation>Није могуће сачувати базу података у датотеку: %1</translation>
+        <translation>Није могуће сачувати базу у датотеку: %1</translation>
     </message>
     <message>
         <source>Successfully merged %1 into %2.</source>
@@ -8408,7 +8530,7 @@ Available commands:
     </message>
     <message>
         <source>Unable to save database to file: %1</source>
-        <translation>Није могуће сачувати базу података у датотеку: %1</translation>
+        <translation>Није могуће сачувати базу у датотеку: %1</translation>
     </message>
     <message>
         <source>Successfully recycled entry %1.</source>
@@ -8428,7 +8550,7 @@ Available commands:
     </message>
     <message>
         <source>Successfully recycled group %1.</source>
-        <translation>Успешно рециклирана група %1.</translation>
+        <translation>Успешно избрисана група %1.</translation>
     </message>
     <message>
         <source>Successfully deleted group %1.</source>
@@ -8488,15 +8610,15 @@ Available commands:
     </message>
     <message>
         <source>Failed to open database file %1: not found</source>
-        <translation>Отварање датотеке базе података %1 није успело: није пронађено</translation>
+        <translation>Отварање датотеке базе %1 није успело: није пронађено</translation>
     </message>
     <message>
         <source>Failed to open database file %1: not a plain file</source>
-        <translation>Отварање датотеке базе података %1 није успело: није текст датотека</translation>
+        <translation>Отварање датотеке базе %1 није успело: није текст датотека</translation>
     </message>
     <message>
         <source>Failed to open database file %1: not readable</source>
-        <translation>Отварање датотеке базе података %1 није успело: није читљиво</translation>
+        <translation>Отварање датотеке базе %1 није успело: није читљиво</translation>
     </message>
     <message>
         <source>Enter password to unlock %1: </source>
@@ -8504,7 +8626,7 @@ Available commands:
     </message>
     <message>
         <source>Failed to load key file %1: %2</source>
-        <translation>Учитавање Кључ-Датотеке није успело %1: %2</translation>
+        <translation>Учитавање датотеке кључа није успело %1: %2</translation>
     </message>
     <message>
         <source>WARNING: You are using an old key file format which KeePassXC may
@@ -8530,7 +8652,7 @@ Please consider generating a new key file.</source>
     </message>
     <message>
         <source>Enter password to encrypt database (optional): </source>
-        <translation>Унесите лозинку за шифровање базе података (опционално):</translation>
+        <translation>Унесите лозинку за шифровање базе (опционално):</translation>
     </message>
     <message>
         <source>Do you want to create a database with an empty password? [y/N]: </source>
@@ -8917,7 +9039,7 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>key file of the database</source>
-        <translation>кључ-датотека од базе података</translation>
+        <translation>кључ-датотека од базе</translation>
     </message>
     <message>
         <source>read password of the database from stdin</source>
@@ -8945,7 +9067,7 @@ Kernel: %3 %4</source>
     </message>
     <message>
         <source>Database password: </source>
-        <translation>Лозинка базе података:</translation>
+        <translation>Лозинка базе:</translation>
     </message>
     <message>
         <source>Invalid Settings</source>
@@ -9306,12 +9428,317 @@ This option is deprecated, use --set-key-file instead.</source>
         <source>Confirm Replace Entry References</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Show all the attributes of the entry.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Set the key file for the database.
+This option is deprecated, use --set-key-file instead.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Databases have been locked.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Attestation not supported</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Loading the new key file failed: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset the password for the database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unset the key file for the database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot use %1 and %2 at the same time.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove all the keys from a database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passkeys</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Found unexpected Key type %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>KeePassXC is not running. No open database to lock</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>allow screenshots and app recording (Windows/macOS)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Origin is empty or not allowed</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Effective domain is not a valid domain</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Origin and RP ID do not match</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>No supported algorithms were provided</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wait for timer to expire</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Challenge is shorter than required minimum length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>user.id does not match the required length</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Access to all entries is denied</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Favorite</source>
+        <comment>Tag for favorite entries</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>File does not exist.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot open file: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot parse file: %1 at position %2</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Failed to decrypt json file: %1</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid encKeyValidation field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid cipher list within encKeyValidation field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Wrong password</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid encrypted data field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid cipher list within encrypted data field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot initialize cipher</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot decrypt data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bitwarden Import</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Archived</source>
+        <comment>Tag for archived entries</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Not a valid ZIP file.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid 1PUX file format: Missing export.data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>1Password Import</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Credential is excluded</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passkeys request canceled</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid user verification</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Empty public key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid URL provided</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit a database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Could not change the database key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Database was not modified.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Successfully edited the database.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove password: The database does not have a password.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Cannot remove file key: The database does not have a file key.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unknown passkeys error</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Encrypted files are not supported.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Proton Pass Import</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Passkey</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>start minimized to the system tray</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>malformed string, possible unescaped delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>missing closing delimiter</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>%1, row: %2, column: %3</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Tags</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Warning: the chosen wordlist is smaller than the minimum recommended size!</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Step</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid Digits</source>
+        <comment>TOTP</comment>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Do you really want to permanently delete the entry &quot;%1&quot;?</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Do you really want to permanently delete %n entry(s)?</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Delete Entry(s)</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message numerus="yes">
+        <source>Confirm Recycle Entry(s)</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Delete Plugin Data</source>
+        <translation type="unfinished"/>
+    </message>
+    <message numerus="yes">
+        <source>Delete plugin data from the selected entry(s)?</source>
+        <translation type="unfinished"><numerusform></numerusform><numerusform></numerusform><numerusform></numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Replace Entry References</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type: Date(Rep)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Type: Unknown (%1)</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Unsupported format, ensure your Bitwarden export is password-protected</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Invalid KDF iterations, cannot decrypt json file</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Only PBKDF and Argon2 are supported, cannot decrypt json file</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>QtIOCompressor</name>
     <message>
         <source>Internal zlib error when compressing: </source>
-        <translation>Интерна zlib грешка при компримовању:</translation>
+        <translation>Интерна zlib грешка при компресије:</translation>
     </message>
     <message>
         <source>Error writing to underlying device: </source>
@@ -9776,7 +10203,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>The database contains entries that have expired.</source>
-        <translation>База података садржи уносе којима је истекао рок трајања.</translation>
+        <translation>База садржи уносе којима је истекао рок трајања.</translation>
     </message>
     <message>
         <source>Unique passwords</source>
@@ -9788,7 +10215,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>More than 10% of passwords are reused. Use unique passwords when possible.</source>
-        <translation>Више од 10% лозинки се користе више пута. Користите јединствене лозинке када је то могуће.</translation>
+        <translation>Више од 10% лозинки се више пута користе. Користите јединствене лозинке када је то могуће.</translation>
     </message>
     <message>
         <source>Maximum password reuse</source>
@@ -9847,7 +10274,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>No agent running, cannot add identity.</source>
-        <translation>Ни један агент не ради, не може да се дода идентитет.</translation>
+        <translation>Агент не ради, не може да се дода идентитет.</translation>
     </message>
     <message>
         <source>Key identity ownership conflict. Refusing to add.</source>
@@ -9863,7 +10290,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Restricted lifetime is not supported by the agent (check options).</source>
-        <translation>Агент не подржава ограничени радни век (означите опције).</translation>
+        <translation>Агент не подржава ограничени радни век (провери опције).</translation>
     </message>
     <message>
         <source>A confirmation request is not supported by the agent (check options).</source>
@@ -9875,7 +10302,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>No agent running, cannot remove identity.</source>
-        <translation>Ни један агент не ради, не може да се уклони идентитет.</translation>
+        <translation>Агент не ради, не може да се уклони идентитет.</translation>
     </message>
     <message>
         <source>No agent running, cannot list identities.</source>
@@ -9910,7 +10337,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>exclude term from results</source>
-        <translation>изузети појам из резултата</translation>
+        <translation>изузет термин из резултата</translation>
     </message>
     <message>
         <source>match term exactly</source>
@@ -9930,7 +10357,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>match anything</source>
-        <translation>подудара се са било чим</translation>
+        <translation>подударати се са било чим</translation>
     </message>
     <message>
         <source>match one</source>
@@ -10118,7 +10545,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Fingerprint:</source>
-        <translation>Отисак:</translation>
+        <translation>Отисак прста:</translation>
     </message>
     <message>
         <source>Signer name field</source>
@@ -10126,7 +10553,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Fingerprint</source>
-        <translation>Отисак</translation>
+        <translation>Отисак прста</translation>
     </message>
 </context>
 <context>
@@ -10285,7 +10712,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Secret key must be in Base32 format</source>
-        <translation>Тајни кључ треба бити у „Base32“ формату</translation>
+        <translation>Тајни кључ треба бити у Base32 формат</translation>
     </message>
     <message>
         <source>Secret key field</source>
@@ -10401,11 +10828,11 @@ Example: JBSWY3DPEHPK3PXP</source>
     </message>
     <message>
         <source>Recent databases</source>
-        <translation>Недавне базе података</translation>
+        <translation>Недавне базе</translation>
     </message>
     <message>
         <source>Open a recent database</source>
-        <translation>Отвори недавну базу података</translation>
+        <translation>Отвори недавну базу</translation>
     </message>
     <message>
         <source>Welcome to KeePassXC %1</source>

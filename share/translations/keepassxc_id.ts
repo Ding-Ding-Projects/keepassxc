@@ -39,7 +39,7 @@
     </message>
     <message>
         <source>Include the following information whenever you report a bug:</source>
-        <translation>Sertakan informasi berikut setiap kali Anda melaporkan kutu:</translation>
+        <translation>Sertakan informasi berikut setiap Anda melaporkan bug:</translation>
     </message>
     <message>
         <source>Copy to clipboard</source>
@@ -105,7 +105,7 @@
     <name>AccessControlDialog::DenyButton</name>
     <message>
         <source>Deny for this program</source>
-        <translation>Tolakj untuk program ini</translation>
+        <translation>Tolak untuk program ini</translation>
     </message>
 </context>
 <context>
@@ -463,7 +463,7 @@
     </message>
     <message>
         <source>Always ask before performing Auto-Type</source>
-        <translation>Selalu bertanya sebelum menjalankan Ketik-Otomatis</translation>
+        <translation>Selalu tanyakan sebelum menjalankan Ketik-Otomatis</translation>
     </message>
     <message>
         <source>Hide expired entries from Auto-Type</source>
@@ -1382,7 +1382,7 @@ Apakah Anda ingin menimpa kunci akses di %1 - %2?</translation>
     </message>
     <message>
         <source>Password</source>
-        <translation>Sandi</translation>
+        <translation>Kata Sandi</translation>
     </message>
     <message>
         <source>Username</source>
@@ -1525,7 +1525,7 @@ Apakah Anda yakin ingin mengimpor?</translation>
     <message>
         <source>Passwords</source>
         <comment>Root group name</comment>
-        <translation>Sandi</translation>
+        <translation>Kata Sandi</translation>
     </message>
     <message>
         <source>File %1 does not exist.</source>
@@ -2597,7 +2597,7 @@ Masalah ini jelas sebuah bug, silakan laporkan ke pengembang.</translation>
     </message>
     <message>
         <source>All files</source>
-        <translation>Semua Berkas</translation>
+        <translation>Semua berkas</translation>
     </message>
     <message>
         <source>Open database</source>
@@ -3124,7 +3124,7 @@ Would you like to correct it?</translation>
     </message>
     <message>
         <source>Toggle attribute protection</source>
-        <translation>Aktif/Nonaktifkan proteksi atribut</translation>
+        <translation>Sakelar proteksi atribut</translation>
     </message>
     <message>
         <source>Protect</source>
@@ -3199,7 +3199,7 @@ Would you like to correct it?</translation>
     </message>
     <message>
         <source>Add new window association</source>
-        <translation>Tambah asosiasi jendela baru</translation>
+        <translation>Tambahkan asosiasi jendela baru</translation>
     </message>
     <message>
         <source>+</source>
@@ -3465,7 +3465,7 @@ Would you like to correct it?</translation>
     </message>
     <message>
         <source>Add to agent</source>
-        <translation>Tambahkan ke agent</translation>
+        <translation>Tambahkan ke agen</translation>
     </message>
     <message>
         <source>Remove from agent</source>
@@ -3724,6 +3724,14 @@ Ekstensi yang didukung adalah: %1.</translation>
         <source>Select import/export file</source>
         <translation>Pilih berkas impor/ekspor</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Pertahankan struktur grup dengan basis data yang sama</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Pertahankan Struktur Grup</translation>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -3733,7 +3741,7 @@ Ekstensi yang didukung adalah: %1.</translation>
     </message>
     <message>
         <source>Toggle expiration</source>
-        <translation>Aktif/Nonaktifkan kedaluwarsa</translation>
+        <translation>Sakelar kedaluwarsa</translation>
     </message>
     <message>
         <source>Expires:</source>
@@ -3761,7 +3769,7 @@ Ekstensi yang didukung adalah: %1.</translation>
     </message>
     <message>
         <source>Auto-Type toggle for this and sub groups</source>
-        <translation>Aktif/Nonaktifkan Ketik-Otomatis untuk ini dan sub grup</translation>
+        <translation>Sakelar Isi-Otomatis untuk ini dan subgrup</translation>
     </message>
     <message>
         <source>Notes:</source>
@@ -3785,7 +3793,7 @@ Ekstensi yang didukung adalah: %1.</translation>
     </message>
     <message>
         <source>Search toggle for this and sub groups</source>
-        <translation>Aktif/Nonaktifkan pencarian untuk ini dan sub grup</translation>
+        <translation>Sakelar pencarian untuk ini dan subgrup</translation>
     </message>
 </context>
 <context>
@@ -3832,15 +3840,15 @@ Ekstensi yang didukung adalah: %1.</translation>
     </message>
     <message>
         <source>Also apply to child groups</source>
-        <translation>Juga terapkan ke grup di dalamnya</translation>
+        <translation>Terapkan juga ke grup di dalamnya</translation>
     </message>
     <message>
         <source>Also apply to child entries</source>
-        <translation>Juga terapkan ke entri di dalamnya</translation>
+        <translation>Terapkan juga ke entri di dalamnya</translation>
     </message>
     <message>
         <source>Also apply to all children</source>
-        <translation>Juga terapkan ke semua grup dan entri</translation>
+        <translation>Terapkan juga ke semua grup dan entri</translation>
     </message>
     <message>
         <source>Unable to fetch favicon.</source>
@@ -3856,7 +3864,7 @@ Ekstensi yang didukung adalah: %1.</translation>
     </message>
     <message>
         <source>All files</source>
-        <translation>Semua Berkas</translation>
+        <translation>Semua berkas</translation>
     </message>
     <message>
         <source>Select Image(s)</source>
@@ -4896,6 +4904,74 @@ The command has to exit. In case of `sftp` as last commend `exit` has to be sent
         <source>Remote Database (.kdbx)</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Comma Separated Values (.csv)</source>
+        <translation>Nilai yang Dipisahkan Koma (.csv)</translation>
+    </message>
+    <message>
+        <source>1Password Export (.1pux)</source>
+        <translation>Ekspor 1Password (.1pux)</translation>
+    </message>
+    <message>
+        <source>1Password Vault (.opvault)</source>
+        <translation>Brankas 1Password (.opvault)</translation>
+    </message>
+    <message>
+        <source>Bitwarden (.json)</source>
+        <translation>Bitwarden (.json)</translation>
+    </message>
+    <message>
+        <source>KeePass 1 Database (.kdb)</source>
+        <translation>Basis data KeePass 1 (.kdb)</translation>
+    </message>
+    <message>
+        <source>Open OPVault</source>
+        <translation>Buka OPVault</translation>
+    </message>
+    <message>
+        <source>Select import file</source>
+        <translation>Pilih berkas untuk diimpor</translation>
+    </message>
+    <message>
+        <source>All files</source>
+        <translation>Semua berkas</translation>
+    </message>
+    <message>
+        <source>Key files</source>
+        <translation>Berkas kunci</translation>
+    </message>
+    <message>
+        <source>Select key file</source>
+        <translation>Pilih berkas kunci</translation>
+    </message>
+    <message>
+        <source>Comma Separated Values</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>1Password Export</source>
+        <translation>Ekspor 1Password</translation>
+    </message>
+    <message>
+        <source>Bitwarden JSON Export</source>
+        <translation>Ekspor JSON Bitwarden</translation>
+    </message>
+    <message>
+        <source>1Password Vault</source>
+        <translation>Brankas 1Password</translation>
+    </message>
+    <message>
+        <source>KeePass1 Database</source>
+        <translation>Basis data KeePass1</translation>
+    </message>
+    <message>
+        <source>Proton Pass (.json)</source>
+        <translation>Proton Pass (.json)</translation>
+    </message>
+    <message>
+        <source>Proton Pass JSON Export</source>
+        <translation>Ekspor JSON Proton Pass</translation>
+    </message>
 </context>
 <context>
     <name>KMessageWidget</name>
@@ -5625,7 +5701,7 @@ Pesan: %2</translation>
     </message>
     <message>
         <source>All files</source>
-        <translation>Semua Berkas</translation>
+        <translation>Semua berkas</translation>
     </message>
     <message>
         <source>Create Key File…</source>
@@ -6031,7 +6107,7 @@ Versi ini tidak dimaksudkan untuk penggunaan sehari-hari.</translation>
         <source>NOTE: You are using a pre-release version of KeePassXC.
 Expect some bugs and minor issues, this version is meant for testing purposes.</source>
         <translation>CATATAN: Anda menggunakan versi pra-rilis KeePassXC.
-Ada beberapa kutu dan masalah-masalah kecil, versi ini ditujukan untuk penggunaan percobaan.</translation>
+Ada beberapa kutu dan masalah-masalah kecil, versi ini dimaksudkan untuk penggunaan percobaan.</translation>
     </message>
     <message>
         <source>No Tags</source>
@@ -6059,7 +6135,7 @@ Ada beberapa kutu dan masalah-masalah kecil, versi ini ditujukan untuk penggunaa
     </message>
     <message>
         <source>Toggle window</source>
-        <translation>Jungkit jendela</translation>
+        <translation>Sakelar jendela</translation>
     </message>
     <message>
         <source>Quit KeePassXC</source>
@@ -7634,7 +7710,7 @@ Do you want to overwrite it?</translation>
     </message>
     <message>
         <source>Analyze passwords for weaknesses and problems.</source>
-        <translation>Menganalisa kata sandi untuk kelemahan dan masalah.</translation>
+        <translation>Menganalisis kata sandi untuk kelemahan dan masalah.</translation>
     </message>
     <message>
         <source>Cannot find HIBP file: %1</source>
@@ -7820,7 +7896,7 @@ Do you want to overwrite it?</translation>
     </message>
     <message>
         <source>Silence password prompt and other secondary outputs.</source>
-        <translation>Jangan tampilkan pengingat sandi dan kaluaran sekunder lainnya.</translation>
+        <translation>Jangan tampilkan pengingat sandi dan keluaran sekunder lainnya.</translation>
     </message>
     <message>
         <source>Key file of the database.</source>
@@ -8859,7 +8935,7 @@ Kernel: %3 %4</translation>
     </message>
     <message numerus="yes">
         <source>Clearing the clipboard in %1 second(s)…</source>
-        <translation><numerusform>Menghapus papan klip dalam %1 detik...</numerusform></translation>
+        <translation><numerusform>Membersihkan papan klip dalam %1 second(s)…</numerusform></translation>
     </message>
     <message>
         <source>Group</source>
@@ -9606,7 +9682,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Perform Online Analysis</source>
-        <translation>Jalankan Analisis Daring</translation>
+        <translation>Lakukan Analisis Online</translation>
     </message>
     <message>
         <source>Also show entries that have been excluded from reports</source>
@@ -9884,7 +9960,11 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Average password length is less than ten characters. Longer passwords provide more security.</source>
-        <translation>Panjang rata-rata kata sandi kurang dari sepuluh karakter. Kata sandi yang lebih panjang memberikan keamanan yang lebih.</translation>
+        <translation>Panjang rata-rata kata sandi kurang dari sepuluh karakter. Makin panjang kata sandi makin baik keamanannya.</translation>
+    </message>
+    <message numerus="yes">
+        <source>%1 character(s)</source>
+        <translation type="unfinished"><numerusform></numerusform></translation>
     </message>
     <message numerus="yes">
         <source>%1 character(s)</source>
@@ -9911,7 +9991,7 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Agent refused this identity. Possible reasons include:</source>
-        <translation>Agen menolak identitas ini. Alasan yang mungkin meliputi:</translation>
+        <translation>Agen menolak identitas ini. Kemungkinan alasannya meliputi:</translation>
     </message>
     <message>
         <source>The key has already been added.</source>
@@ -10543,6 +10623,14 @@ Contoh: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Mendeteksi kunci perangkat keras…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No hardware keys detected</source>

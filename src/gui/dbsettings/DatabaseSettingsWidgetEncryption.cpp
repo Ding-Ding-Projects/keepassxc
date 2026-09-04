@@ -30,6 +30,8 @@
 
 #include <QPushButton>
 
+#include <QPushButton>
+
 const char* DatabaseSettingsWidgetEncryption::CD_DECRYPTION_TIME_PREFERENCE_KEY = "KPXC_DECRYPTION_TIME_PREFERENCE";
 
 #define IS_ARGON2(uuid) (uuid == KeePass2::KDF_ARGON2D || uuid == KeePass2::KDF_ARGON2ID)

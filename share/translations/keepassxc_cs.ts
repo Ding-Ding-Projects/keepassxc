@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -578,6 +597,86 @@
     <message>
         <source>Auto-generate password for new entries</source>
         <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{DB_FILENAME}&lt;/span&gt; is replaced with the filename of the saved database without extension&lt;/p&gt;&lt;p&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;{TIME:&amp;lt;format&amp;gt;}&lt;/span&gt; is replaced with the specified time format (default: dd_MM_yyyy_hh-mm-ss)&lt;/p&gt;&lt;p&gt;See the User Guide for more details&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Choose folder...</source>
+        <translation>Zvolit složku...</translation>
+    </message>
+    <message>
+        <source>Show confirmation before moving entries to recycle bin</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy data on double clicking field in entry view</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show toolbar</source>
+        <translation>Zobrazovat lištu nástrojů</translation>
+    </message>
+    <message>
+        <source>Show the menu bar by pressing the Alt key</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Show menubar</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Import settings…</source>
+        <translation>Import nastavení...</translation>
+    </message>
+    <message>
+        <source>Export settings…</source>
+        <translation>Export nastavení...</translation>
+    </message>
+    <message>
+        <source>Font size:</source>
+        <translation>Velikost písma:</translation>
+    </message>
+    <message>
+        <source>Font size selection</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Skip confirmation for main window Auto-Type actions</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Double-click action for URL:</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Double-click action for URL field</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Edit entry</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Open entry URL in browser</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Copy entry URL to clipboard</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Auto-generate password for new entries</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source> recent files</source>
+        <translation>nedávné soubory</translation>
+    </message>
+    <message>
+        <source>Show passwords in color</source>
+        <translation>Zobrazit hesla barevně</translation>
     </message>
 </context>
 <context>
@@ -2411,7 +2510,7 @@ removed from the database.</source>
     </message>
     <message numerus="yes">
         <source>Purged %n icon(s) from the database.</source>
-        <translation><numerusform>%n ikona odstraněna z databáze.</numerusform><numerusform>%n ikony odstraněny z databáze.</numerusform><numerusform>%n ikon odstraněno z databáze.</numerusform><numerusform>%n ikony odstraněny z databáze.</numerusform></translation>
+        <translation><numerusform>%n ikona odstraněna z databáze.</numerusform><numerusform>%n ikony odstraněny z databáze.</numerusform><numerusform>%n ikon odstraněno z databáze.</numerusform><numerusform>%n ikon(a) odstraněno z databáze.</numerusform></translation>
     </message>
 </context>
 <context>
@@ -3060,6 +3159,10 @@ Chcete ji opravit?</translation>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
         <translation type="unfinished"/>
     </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation type="unfinished"/>
+    </message>
 </context>
 <context>
     <name>EditEntryWidgetAdvanced</name>
@@ -3311,7 +3414,7 @@ Chcete ji opravit?</translation>
     <name>EditEntryWidgetMain</name>
     <message>
         <source>Edit Entry</source>
-        <translation>Upravit záznam</translation>
+        <translation>Upravit položku</translation>
     </message>
     <message>
         <source>Notes field</source>
@@ -3700,6 +3803,14 @@ Podporovaná rozšíření jsou: %1.</translation>
     <message>
         <source>Select import/export file</source>
         <translation>Vybrat importní/exportní soubor</translation>
+    </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation type="unfinished"/>
     </message>
 </context>
 <context>
@@ -8194,14 +8305,6 @@ Chcete ho přepsat?</translation>
         <translation>Typ: prostorové (opak.)</translation>
     </message>
     <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Type: datum (opak)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Typ: neznámé (%1)</translation>
-    </message>
-    <message>
         <source>Entropy %1 (%2)</source>
         <translation>Nahodilost %1 (%2)</translation>
     </message>
@@ -8926,7 +9029,7 @@ Jádro systému: %3 %4</translation>
     </message>
     <message>
         <source>Checksum mismatch! Key file may be corrupt.</source>
-        <translation>Kontrolní součet se neshoduje! Soubor s klíčem může být poškozený.</translation>
+        <translation>Kontrolní součet se neshoduje! Soubor s klíčem může být poškozen.</translation>
     </message>
     <message>
         <source>Unexpected key file data! Key file may be corrupt.</source>
@@ -10524,6 +10627,14 @@ Příklad: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Zjišťování hardwarových klíčů…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Znovu načíst hardwarové klíče</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation type="unfinished"/>
     </message>
     <message>
         <source>No hardware keys detected</source>

@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>Window</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Minimise</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>Bring All to Front</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -1560,7 +1579,7 @@ Are you sure you want to import?</translation>
     </message>
     <message>
         <source>Could not save, database has not been initialized!</source>
-        <translation>Could not save. Database has not been initialised!</translation>
+        <translation>Could not save, database has not been initialised!</translation>
     </message>
     <message>
         <source>Database file has unmerged changes.</source>
@@ -2940,6 +2959,13 @@ Disable safe saves and try again?</translation>
     </message>
 </context>
 <context>
+    <name>EditEntryAttachmentsDialog</name>
+    <message>
+        <source>Edit: %1</source>
+        <translation>Edit: %1</translation>
+    </message>
+</context>
+<context>
     <name>EditEntryWidget</name>
     <message>
         <source>Entry</source>
@@ -3090,6 +3116,10 @@ Would you like to correct it?</translation>
     <message numerus="yes">
         <source>%n year(s)</source>
         <translation><numerusform>%n year</numerusform><numerusform>%n years</numerusform></translation>
+    </message>
+    <message>
+        <source>Failed to decrypt SSH key, ensure password is correct.</source>
+        <translation>Failed to decrypt SSH key, ensure password is correct.</translation>
     </message>
     <message>
         <source>Failed to decrypt SSH key, ensure password is correct.</source>
@@ -3736,6 +3766,14 @@ Supported extensions are: %1.</translation>
         <source>Select import/export file</source>
         <translation>Select import/export file</translation>
     </message>
+    <message>
+        <source>Maintain group structure with shared database</source>
+        <translation>Maintain group structure with shared database</translation>
+    </message>
+    <message>
+        <source>Keep Group Structure</source>
+        <translation>Keep Group Structure</translation>
+    </message>
 </context>
 <context>
     <name>EditGroupWidgetMain</name>
@@ -3773,7 +3811,7 @@ Supported extensions are: %1.</translation>
     </message>
     <message>
         <source>Auto-Type toggle for this and sub groups</source>
-        <translation>Auto-Type toggle for this group and subgroups</translation>
+        <translation>Auto-Type toggle for this and subgroups</translation>
     </message>
     <message>
         <source>Notes:</source>
@@ -7303,20 +7341,6 @@ The following data is missing:
         <translation>All files</translation>
     </message>
     <message>
-        <source>Select Custom Wordlist</source>
-        <translation>Select Custom Wordlist</translation>
-    </message>
-    <message>
-        <source>Overwrite Wordlist?</source>
-        <translation>Overwrite Wordlist?</translation>
-    </message>
-    <message>
-        <source>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</source>
-        <translation>Wordlist &quot;%1&quot; already exists as a custom wordlist.
-Do you want to overwrite it?</translation>
-    </message>
-    <message>
         <source>Failed to add wordlist</source>
         <translation>Failed to add wordlist</translation>
     </message>
@@ -8237,14 +8261,6 @@ Do you want to overwrite it?</translation>
         <translation>Type: Spatial(Rep)</translation>
     </message>
     <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Type: Date(Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Type: Unknown (%1)</translation>
-    </message>
-    <message>
         <source>Entropy %1 (%2)</source>
         <translation>Entropy %1 (%2)</translation>
     </message>
@@ -8923,7 +8939,7 @@ Kernel: %3 %4</translation>
     <message numerus="yes">
         <source>%1 ms</source>
         <comment>milliseconds</comment>
-        <translation><numerusform>%1 ms</numerusform><numerusform>%1ms</numerusform></translation>
+        <translation><numerusform>%1ms</numerusform><numerusform>%1ms</numerusform></translation>
     </message>
     <message numerus="yes">
         <source>%1 s</source>
@@ -10567,6 +10583,14 @@ Example: JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Detecting hardware keys…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Refresh hardware keys</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>

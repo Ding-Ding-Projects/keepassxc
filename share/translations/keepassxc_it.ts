@@ -370,11 +370,11 @@
     </message>
     <message>
         <source>Minimize</source>
-        <translation>Minimizzare</translation>
+        <translation>Riduci ad icona</translation>
     </message>
     <message>
         <source>Drop to background</source>
-        <translation>Rilascia su sfondo</translation>
+        <translation>Sposta sotto le altre finestre</translation>
     </message>
     <message>
         <source>Favicon download timeout:</source>
@@ -710,7 +710,7 @@ Se hai già concesso il permesso, riavvia KeePassXC.</translation>
     </message>
     <message>
         <source>Bracket imbalance detected, found extra { or }</source>
-        <translation>Rilevato squilibrio tra parentesi quadre, trovato extra { or }</translation>
+        <translation>Rilevato squilibrio tra parentesi quadre, trovato { o } di troppo</translation>
     </message>
     <message>
         <source>Too many repetitions detected, max is %1: %2</source>
@@ -891,7 +891,7 @@ Ctrl+Shift+4 - Copy URL&lt;br/&gt;
     <name>BrowserAccessControlDialog</name>
     <message>
         <source>KeePassXC - Browser Access Request</source>
-        <translation>KeePassXC - Browser accesso richiesto</translation>
+        <translation>Richiesta di accesso KeePassXC - Browser</translation>
     </message>
     <message>
         <source>%1 is requesting access to the following entries:</source>
@@ -1356,7 +1356,7 @@ Vuoi sovrascrivere la passkey in %1 - %2?</translation>
     <name>CloneDialog</name>
     <message>
         <source>Clone Entry Options</source>
-        <translation>Opzioni di inserimento clone</translation>
+        <translation>Opzioni voci clone</translation>
     </message>
     <message>
         <source>Append &apos; - Clone&apos; to title</source>
@@ -4030,6 +4030,203 @@ Questo potrebbe causare malfunzionamenti ai plugin interessati.</translation>
 <context>
     <name>EntryAttachments</name>
     <message>
+        <source>Passkey</source>
+        <translation>Passkey</translation>
+    </message>
+    <message>
+        <source>Invalid conversion type: %1</source>
+        <translation>Tipo conversione non valido: %1</translation>
+    </message>
+    <message>
+        <source>Invalid conversion syntax: %1</source>
+        <translation>Sintassi conversione non valida: %1</translation>
+    </message>
+    <message>
+        <source>Add new attachment</source>
+        <translation>Aggiungi nuovo allegato</translation>
+    </message>
+    <message>
+        <source>Remove selected attachment</source>
+        <translation>Rimuovi allegato selezionato</translation>
+    </message>
+    <message>
+        <source>Remove</source>
+        <translation>Rimuovi</translation>
+    </message>
+    <message>
+        <source>Open selected attachment</source>
+        <translation>Apri allegato selezionato</translation>
+    </message>
+    <message>
+        <source>Open</source>
+        <translation>Apri</translation>
+    </message>
+    <message>
+        <source>Save selected attachment to disk</source>
+        <translation>Salva l&apos;allegato selezionato su disco</translation>
+    </message>
+    <message>
+        <source>Select files</source>
+        <translation>Seleziona file</translation>
+    </message>
+    <message>
+        <source>Confirm remove</source>
+        <translation>Conferma rimozione</translation>
+    </message>
+    <message numerus="yes">
+        <source>Are you sure you want to remove %n attachment(s)?</source>
+        <translation><numerusform>Sei sicuro di voler rimuovere %n allegato?</numerusform><numerusform>Sei sicuro di voler rimuovere %n allegati?</numerusform><numerusform>Sei sicuro di voler rimuovere %n allegati?</numerusform></translation>
+    </message>
+    <message>
+        <source>Save attachments</source>
+        <translation>Salva allegati</translation>
+    </message>
+    <message>
+        <source>Unable to create directory:
+%1</source>
+        <translation>Impossibile creare la cartella:
+%1</translation>
+    </message>
+    <message>
+        <source>Are you sure you want to overwrite the existing file &quot;%1&quot; with the attachment?</source>
+        <translation>Sei sicuro di sovrascrivere il file &quot;%1&quot; esistente con l&apos;allegato?</translation>
+    </message>
+    <message>
+        <source>Confirm overwrite</source>
+        <translation>Conferma sovrascrittura</translation>
+    </message>
+    <message>
+        <source>Unable to save attachments:
+%1</source>
+        <translation>Impossibile salvare l&apos;allegato:
+%1</translation>
+    </message>
+    <message>
+        <source>Unable to open attachment:
+%1</source>
+        <translation>Impossibile aprire l&apos;allegato:
+%1</translation>
+    </message>
+    <message>
+        <source>Unable to open attachments:
+%1</source>
+        <translation>Impossibile aprire gli allegati:
+%1</translation>
+    </message>
+    <message numerus="yes">
+        <source>Unable to open file(s):
+%1</source>
+        <translation><numerusform>Impossibile aprire il file:
+%1</numerusform><numerusform>Impossibile aprire i file:
+%1</numerusform><numerusform>Impossibile aprire i file:
+%1</numerusform></translation>
+    </message>
+    <message>
+        <source>Confirm Overwrite Attachment</source>
+        <translation>Conferma sovrascrittura allegato</translation>
+    </message>
+    <message>
+        <source>Confirm Attachment</source>
+        <translation>Conferma l&apos;allegato </translation>
+    </message>
+    <message>
+        <source>%1 is a big file (%2 MB).
+Your database may get very large and reduce performance.
+
+Are you sure to add this file?</source>
+        <translation>%1 ha dimensioni elevate (%2 MB).
+Il database potrebbe occupare più spazio e ridurre le sue performance.
+
+Sei sicuro di voler aggiungere questo file?</translation>
+    </message>
+    <message>
+        <source>Attachment modified</source>
+        <translation>Allegato modificato</translation>
+    </message>
+    <message>
+        <source>The attachment '%1' was modified.
+Do you want to save the changes to your database?</source>
+        <translation>L&apos;allegato &apos;%1&apos; è stato modificato.
+Vuoi salvare le modifiche nel database?</translation>
+    </message>
+    <message>
+        <source>Saving attachment failed</source>
+        <translation>Salvataggio dell&apos;allegato non riuscito</translation>
+    </message>
+    <message>
+        <source>Saving updated attachment failed.
+Error: %1</source>
+        <translation>Salvataggio allegato aggiornato non riuscito.
+Errore: %1</translation>
+    </message>
+    <message>
+        <source>Attachment &quot;%1&quot; already exists. 
+Would you like to overwrite the existing attachment?</source>
+        <translation>L&apos;allegato &quot;%1&quot; esiste già. 
+Vuoi sovrascrivere l&apos;allegato esistente?</translation>
+    </message>
+    <message>
+        <source>Preview</source>
+        <translation>Anteprima</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Modifica</translation>
+    </message>
+    <message>
+        <source>New Text Document</source>
+        <translation>Nuovo documento testo</translation>
+    </message>
+    <message>
+        <source>Add file…</source>
+        <translation>Aggiungi file...</translation>
+    </message>
+    <message>
+        <source>Load from Disk…</source>
+        <translation>Carica da disco...</translation>
+    </message>
+    <message>
+        <source>Save…</source>
+        <translation>Salva...</translation>
+    </message>
+    <message>
+        <source>New Attachment</source>
+        <translation type="unfinished"/>
+    </message>
+</context>
+<context>
+    <name>EntryAttributesModel</name>
+    <message>
+        <source>Name</source>
+        <translation>Nome</translation>
+    </message>
+</context>
+<context>
+    <name>EntryHistoryModel</name>
+    <message>
+        <source>Current (%1)</source>
+        <translation>Corrente (%1)</translation>
+    </message>
+    <message>
+        <source>Last modified</source>
+        <translation>Ultima modifica</translation>
+    </message>
+    <message>
+        <source>Age</source>
+        <translation>Età</translation>
+    </message>
+    <message>
+        <source>Difference</source>
+        <translation>Differenza</translation>
+    </message>
+    <message>
+        <source>Size</source>
+        <translation>Dimensione</translation>
+    </message>
+</context>
+<context>
+    <name>EntryAttachments</name>
+    <message>
         <source>Cannot open file &quot;%1&quot;</source>
         <translation>Impossibile aprire il file &quot;%1&quot;</translation>
     </message>
@@ -4205,7 +4402,7 @@ Vuoi sovrascrivere l&apos;allegato esistente?</translation>
     </message>
     <message>
         <source>New Attachment</source>
-        <translation type="unfinished"/>
+        <translation>Nuovo allegato</translation>
     </message>
 </context>
 <context>
@@ -8229,14 +8426,6 @@ Usa &apos;--stdout&apos; o specifica un &apos;file-esportazione&apos;.</translat
         <translation>Tipo: Spaziale(Rep)</translation>
     </message>
     <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Tipo: Data(Rep)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Tipo: Sconosciuto (%1)</translation>
-    </message>
-    <message>
         <source>Entropy %1 (%2)</source>
         <translation>Entropia %1 (%2)</translation>
     </message>
@@ -8294,7 +8483,7 @@ Usa &apos;--stdout&apos; o specifica un &apos;file-esportazione&apos;.</translat
     </message>
     <message>
         <source>chars</source>
-        <translation>chars</translation>
+        <translation>caratteri</translation>
     </message>
     <message>
         <source>Use custom character set</source>
@@ -8384,15 +8573,15 @@ Comandi disponibili:
     </message>
     <message>
         <source>List database entries.</source>
-        <translation>Elenco delle voci del database.</translation>
+        <translation>Elenco voci database.</translation>
     </message>
     <message>
         <source>Path of the group to list. Default is /</source>
-        <translation>Percorso del gruppo da elencare. L&apos;impostazione predefinita è /</translation>
+        <translation>Percorso gruppo da elencare. L&apos;impostazione predefinita è /</translation>
     </message>
     <message>
         <source>Cannot find group %1.</source>
-        <translation>Impossibile trovare il gruppo %1.</translation>
+        <translation>Impossibile trovare gruppo %1.</translation>
     </message>
     <message>
         <source>Use the same credentials for both database files.</source>
@@ -8400,7 +8589,7 @@ Comandi disponibili:
     </message>
     <message>
         <source>Key file of the database to merge from.</source>
-        <translation>File chiave del database da unire</translation>
+        <translation>File chiave del database da cui unire.</translation>
     </message>
     <message>
         <source>Deactivate password key for the database to merge from.</source>
@@ -8424,7 +8613,7 @@ Comandi disponibili:
     </message>
     <message>
         <source>Path of the database to merge from.</source>
-        <translation>Percorso del database sorgente da unire.</translation>
+        <translation>Percorso del database da cui unire.</translation>
     </message>
     <message>
         <source>Error reading merge file:
@@ -8438,7 +8627,7 @@ Comandi disponibili:
     </message>
     <message>
         <source>Successfully merged %1 into %2.</source>
-        <translation>È stato possibile unire con successo %1 in %2.</translation>
+        <translation>Unione %1 in %2 completata.</translation>
     </message>
     <message>
         <source>Database was not modified by merge operation.</source>
@@ -8466,7 +8655,7 @@ Comandi disponibili:
     </message>
     <message>
         <source>Successfully moved entry %1 to group %2.</source>
-        <translation>È stata spostata correttamente la voce %1 nel gruppo %2.</translation>
+        <translation>Voce %1 spostata correttamente nel gruppo %2.</translation>
     </message>
     <message>
         <source>Open a database.</source>
@@ -8482,11 +8671,11 @@ Comandi disponibili:
     </message>
     <message>
         <source>Successfully recycled entry %1.</source>
-        <translation>Riciclata con successo la voce %1.</translation>
+        <translation>Riciclata correttamente la voce %1.</translation>
     </message>
     <message>
         <source>Successfully deleted entry %1.</source>
-        <translation>Eliminata la voce %1.</translation>
+        <translation>Eliminazione voce %1 completata.</translation>
     </message>
     <message>
         <source>Path of the group to remove.</source>
@@ -8498,15 +8687,15 @@ Comandi disponibili:
     </message>
     <message>
         <source>Successfully recycled group %1.</source>
-        <translation>Riciclato con successo il gruppo %1.</translation>
+        <translation>Riciclo gruppo %1 completato.</translation>
     </message>
     <message>
         <source>Successfully deleted group %1.</source>
-        <translation>Eliminazione del gruppo %1 completata.</translation>
+        <translation>Eliminazione gruppo %1 completata.</translation>
     </message>
     <message>
         <source>Find entries quickly.</source>
-        <translation>Cerca voci rapidamente.</translation>
+        <translation>Cerca velocemente voci.</translation>
     </message>
     <message>
         <source>Search term.</source>
@@ -8526,7 +8715,7 @@ Comandi disponibili:
     </message>
     <message>
         <source>Show the attachments of the entry.</source>
-        <translation>Visualizza allegati dell&apos;elemento.</translation>
+        <translation>Visualizza gli allegati della voce.</translation>
     </message>
     <message>
         <source>Names of the attributes to show. This option can be specified more than once, with each attribute shown one-per-line in the given order. If no attributes are specified, a summary of the default attributes is given.</source>
@@ -8625,11 +8814,11 @@ Prendi in considerazione la possibilità di generare un nuovo file chiave.</tran
     </message>
     <message>
         <source>Creating KeyFile %1 failed: %2</source>
-        <translation>Creazione di KeyFile %1 non riuscita: %2</translation>
+        <translation>Creazione file chiave %1 non riuscita: %2</translation>
     </message>
     <message>
         <source>Loading KeyFile %1 failed: %2</source>
-        <translation>Caricamento del KeyFile %1 non riuscito: %2</translation>
+        <translation>Caricamento file chiave %1 non riuscito: %2</translation>
     </message>
     <message>
         <source>HIBP file, line %1: parse error</source>
@@ -8641,15 +8830,15 @@ Prendi in considerazione la possibilità di generare un nuovo file chiave.</tran
     </message>
     <message>
         <source>Could not start okon process: %1</source>
-        <translation>Impossibile avviare il processo okon: %1</translation>
+        <translation>Impossibile avviare processo okon: %1</translation>
     </message>
     <message>
         <source>Error: okon process did not finish</source>
-        <translation>Errore: il processo okon non è terminato</translation>
+        <translation>Errore: processo okon non terminato</translation>
     </message>
     <message>
         <source>Failed to load okon processed database: %1</source>
-        <translation>Impossibile caricare il database elaborato con okon: %1</translation>
+        <translation>Impossibile caricare database elaborato con okon: %1</translation>
     </message>
     <message>
         <source>Very weak password</source>
@@ -8657,7 +8846,7 @@ Prendi in considerazione la possibilità di generare un nuovo file chiave.</tran
     </message>
     <message>
         <source>Password entropy is %1 bits</source>
-        <translation>L&apos;entropia della password è %1 bits</translation>
+        <translation>L&apos;entropia della password è %1 bit</translation>
     </message>
     <message>
         <source>Weak password</source>
@@ -8701,7 +8890,7 @@ Prendi in considerazione la possibilità di generare un nuovo file chiave.</tran
     </message>
     <message>
         <source>Build Type: %1</source>
-        <translation>Tipo di compilazione: %1</translation>
+        <translation>Tipo build: %1</translation>
     </message>
     <message>
         <source>Revision: %1</source>
@@ -8749,7 +8938,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Secret Service Integration</source>
-        <translation>Integrazione del servizio segreto</translation>
+        <translation>Integrazione Secret Service</translation>
     </message>
     <message>
         <source>None</source>
@@ -8793,15 +8982,15 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>AES (%1 rounds)</source>
-        <translation>AES (%1 turni)</translation>
+        <translation>AES (%1 cicli)</translation>
     </message>
     <message>
         <source>Argon2%1 (%2 rounds, %3 KB)</source>
-        <translation>Argon2%1 (%2 passaggi, %3 KB)</translation>
+        <translation>Argon2%1 (%2 cicli, %3 KB)</translation>
     </message>
     <message>
         <source>SymmetricCipher::init: Invalid cipher mode.</source>
-        <translation>SymmetricCipher::init: modalità di cifratura non valida.</translation>
+        <translation>SymmetricCipher::init: modalità cifrario non valida.</translation>
     </message>
     <message>
         <source>SymmetricCipher::init: Invalid IV size of %1 for %2.</source>
@@ -8809,11 +8998,11 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Cipher not initialized prior to use.</source>
-        <translation>Cifrario non inizializzato prima dell&apos;utilizzo.</translation>
+        <translation>Cifrario non inizializzato prima dell&apos;uso.</translation>
     </message>
     <message>
         <source>Cannot process 0 length data.</source>
-        <translation>Impossibile elaborare i dati di lunghezza 0.</translation>
+        <translation>Impossibile elaborare dati di lunghezza 0.</translation>
     </message>
     <message>
         <source>unknown executable (DBus address %1)</source>
@@ -8825,11 +9014,11 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>NULL device</source>
-        <translation>Periferica NULL</translation>
+        <translation>Dispositivo NULL</translation>
     </message>
     <message>
         <source>error reading from device</source>
-        <translation>errore di lettura dal dispositivo</translation>
+        <translation>errore lettura dal dispositivo</translation>
     </message>
     <message>
         <source>file empty</source>
@@ -8865,7 +9054,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Existing single-instance lock file is invalid. Launching new instance.</source>
-        <translation>Il file di blocco singola istanza non è valido. Viene eseguita una nuova istanza.</translation>
+        <translation>Il file di blocco singola istanza non è valido. Avvio nuova istanza.</translation>
     </message>
     <message>
         <source>The lock file could not be created. Single-instance mode disabled.</source>
@@ -8923,7 +9112,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Do you really want to move entry &quot;%1&quot; to the recycle bin?</source>
-        <translation>Vuoi davvero cestinare la voce &quot;%1&quot;?</translation>
+        <translation>Vuoi spostare la voce &quot;%1&quot; nel Cestino?</translation>
     </message>
     <message numerus="yes">
         <source>Do you really want to move %n entry(s) to the recycle bin?</source>
@@ -8939,11 +9128,11 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Browser Statistics</source>
-        <translation>Statistiche del browser</translation>
+        <translation>Statistiche browser</translation>
     </message>
     <message>
         <source>Health Check</source>
-        <translation>Controllo dell&apos;integrità</translation>
+        <translation>Controllo integrità</translation>
     </message>
     <message>
         <source>HIBP</source>
@@ -8963,11 +9152,11 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Unexpected key file data! Key file may be corrupt.</source>
-        <translation>Dati di file chiave imprevisti! Il file chiave potrebbe essere danneggiato.</translation>
+        <translation>Dati file chiave imprevisti! Il file chiave potrebbe essere danneggiato.</translation>
     </message>
     <message>
         <source>KeePassXC - cross-platform password manager</source>
-        <translation>KeePassXC - gestore di password multipiattaforma</translation>
+        <translation>KeePassXC - gestore password multipiattaforma</translation>
     </message>
     <message>
         <source>filenames of the password databases to open (*.kdbx)</source>
@@ -8979,7 +9168,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>path to a custom local config file</source>
-        <translation>Percorso di un file di configurazione locale personalizzato</translation>
+        <translation>Percorso file configurazione locale personalizzato</translation>
     </message>
     <message>
         <source>lock all open databases</source>
@@ -9015,7 +9204,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Database password: </source>
-        <translation>Password del database: </translation>
+        <translation>Password database: </translation>
     </message>
     <message>
         <source>Invalid Settings</source>
@@ -9029,7 +9218,7 @@ Kernel: %3 %4</translation>
     </message>
     <message>
         <source>Failed to create Windows Hello credential.</source>
-        <translation>Impossibile creare le credenziali di Windows Hello.</translation>
+        <translation>Impossibile creare credenziale Windows Hello.</translation>
     </message>
     <message>
         <source>Failed to sign challenge using Windows Hello.</source>
@@ -9386,15 +9575,15 @@ Questa opzione è deprecata, utilizza invece --set-key-file.</translation>
     </message>
     <message>
         <source>Error writing to underlying device: </source>
-        <translation>Errore durante la scrittura nel dispositivo: </translation>
+        <translation>Errore durante la scrittura nel dispositivo sottostante: </translation>
     </message>
     <message>
         <source>Error opening underlying device: </source>
-        <translation>Errore durante l&apos;apertura del dispositivo: </translation>
+        <translation>Errore durante l&apos;apertura dal dispositivo sottostante: </translation>
     </message>
     <message>
         <source>Error reading data from underlying device: </source>
-        <translation>Errore durante la lettura dal dispositivo: </translation>
+        <translation>Errore durante la lettura dal dispositivo sottostante: </translation>
     </message>
     <message>
         <source>Internal zlib error when decompressing: </source>
@@ -9455,7 +9644,7 @@ Questa opzione è deprecata, utilizza invece --set-key-file.</translation>
     </message>
     <message>
         <source>Entry has no URLs set</source>
-        <translation>La voce non ha URL impostati</translation>
+        <translation>La voce non ha una URL</translation>
     </message>
     <message>
         <source>Allowed URLs</source>
@@ -9483,7 +9672,7 @@ Questa opzione è deprecata, utilizza invece --set-key-file.</translation>
     </message>
     <message>
         <source>No entries with a URL, or none has browser extension settings saved.</source>
-        <translation>Nessuna voce con un URL o nessuna ha salvato le impostazioni dell&apos;estensione del browser.</translation>
+        <translation>Nessuna voce con una URL o nessuna ha impostazioni estensione browser salvate.</translation>
     </message>
     <message>
         <source>Title</source>
@@ -9574,7 +9763,7 @@ Questa opzione è deprecata, utilizza invece --set-key-file.</translation>
     </message>
     <message>
         <source>Congratulations, everything is healthy!</source>
-        <translation>Congratulazioni, nessun problema rilevato!</translation>
+        <translation>Congratulazioni, tutt ok - nessun problema rilevato!</translation>
     </message>
     <message>
         <source>Title</source>
@@ -9621,7 +9810,7 @@ Questa opzione è deprecata, utilizza invece --set-key-file.</translation>
     </message>
     <message>
         <source>Perform Online Analysis</source>
-        <translation>Esegui un&apos;analisi online</translation>
+        <translation>Esegui analisi online</translation>
     </message>
     <message>
         <source>Also show entries that have been excluded from reports</source>
@@ -9796,15 +9985,15 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Please wait, database statistics are being calculated…</source>
-        <translation>Attendere, le statistiche del database vengono calcolate...</translation>
+        <translation>Elaborazione statistiche database...</translation>
     </message>
     <message>
         <source>Database name</source>
-        <translation>Nome del database</translation>
+        <translation>Nome database</translation>
     </message>
     <message>
         <source>Description</source>
-        <translation>descrizione</translation>
+        <translation>Descrizione</translation>
     </message>
     <message>
         <source>Location</source>
@@ -9828,7 +10017,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>no</source>
-        <translation>No</translation>
+        <translation>no</translation>
     </message>
     <message>
         <source>The database was modified, but the changes have not yet been saved to disk.</source>
@@ -9864,7 +10053,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Maximum password reuse</source>
-        <translation>Massimo riutilizzo della password</translation>
+        <translation>Massimo riutilizzo password</translation>
     </message>
     <message>
         <source>Some passwords are used more than three times. Use unique passwords when possible.</source>
@@ -9986,7 +10175,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>match term exactly</source>
-        <translation>Corrispondenza esatta dei termini</translation>
+        <translation>corrispondenza esatta</translation>
     </message>
     <message>
         <source>use regex in term</source>
@@ -9998,15 +10187,15 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Term Wildcards</source>
-        <translation>Termine caratteri jolly</translation>
+        <translation>Jolly termine</translation>
     </message>
     <message>
         <source>match anything</source>
-        <translation>corrispondenza con qualsiasi cosa</translation>
+        <translation>cerca qualsiasi corrispondenza</translation>
     </message>
     <message>
         <source>match one</source>
-        <translation>corrisponde a uno</translation>
+        <translation>cerca una corrispondenza</translation>
     </message>
     <message>
         <source>logical OR</source>
@@ -10038,7 +10227,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Case sensitive</source>
-        <translation>Riconoscimento di maiuscole e minuscole</translation>
+        <translation>Differenzia maiuscole/minuscole</translation>
     </message>
     <message>
         <source>Limit search to selected group</source>
@@ -10065,7 +10254,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Manage</source>
-        <translation>Gestire</translation>
+        <translation>Gestione</translation>
     </message>
 </context>
 <context>
@@ -10080,7 +10269,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>Manage</source>
-        <translation>Gestire</translation>
+        <translation>Gestione</translation>
     </message>
 </context>
 <context>
@@ -10095,7 +10284,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>General</source>
-        <translation>Generale</translation>
+        <translation>Generali</translation>
     </message>
     <message>
         <source>Show notification when passwords are retrieved by clients</source>
@@ -10103,7 +10292,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;If enabled, any attempt to read a password must be confirmed. Otherwise, clients can read passwords without confirmation when the database is unlocked.&lt;/p&gt;&lt;p&gt;This option only covers the access to the password of an entry. Clients can always enumerate the items of exposed databases and query their attributes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Se abilitato, qualsiasi tentativo di leggere una password deve essere confermato. In caso contrario, i client possono leggere le password senza conferma quando il database viene sbloccato.&lt;/p&gt;&lt;p&gt;Questa opzione copre solo l&apos;accesso alla password di una voce. I client possono sempre enumerare gli elementi dei database esposti ed eseguire query sui relativi attributi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Se abilitato, qualsiasi tentativo di leggere una password deve essere confermato. In caso contrario,  quando il database è sbloccato i client possono leggere le password senza conferma.&lt;/p&gt;&lt;p&gt;Questa opzione copre solo l&apos;accesso alla password di una voce. I client possono sempre enumerare gli elementi dei database esposti ed eseguire una ricerca sui relativi attributi.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Confirm when passwords are retrieved by clients</source>
@@ -10314,7 +10503,7 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     <name>TotpDialog</name>
     <message>
         <source>Timed Password</source>
-        <translation>Password temporizzata</translation>
+        <translation>Password a tempo</translation>
     </message>
     <message>
         <source>Copy</source>
@@ -10411,7 +10600,8 @@ La funzionalità di rete è richiesta per verificare la password con i database 
     <message>
         <source>You have entered an invalid secret key. The key must be in Base32 format.
 Example: JBSWY3DPEHPK3PXP</source>
-        <translation>È stata immessa una chiave segreta non valida. La chiave deve essere in formato Base32.
+        <translation>Hai isnerito una chiave segreta non valida. 
+La chiave deve essere in formato Base32.
 Esempio: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
@@ -10420,7 +10610,11 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
         <source>Are you sure you want to delete TOTP settings for this entry?</source>
-        <translation>Sei sicuro di voler eliminare le impostazioni TOTP per questa voce?</translation>
+        <translation>Vuoi eliminare le impostazioni TOTP per questa voce?</translation>
+    </message>
+    <message>
+        <source>Error: secret key is invalid</source>
+        <translation>Errore: la chiave segreta non è valida</translation>
     </message>
     <message>
         <source>Error: secret key is invalid</source>
@@ -10431,18 +10625,18 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     <name>URLEdit</name>
     <message>
         <source>Invalid URL</source>
-        <translation>URL non corretto</translation>
+        <translation>URL non valida</translation>
     </message>
 </context>
 <context>
     <name>UpdateCheckDialog</name>
     <message>
         <source>Checking for updates</source>
-        <translation>Verifica della disponibilità di aggiornamenti</translation>
+        <translation>Verifica disponibilità aggiornamenti</translation>
     </message>
     <message>
         <source>Checking for updates…</source>
-        <translation>Verifica della disponibilità di aggiornamenti…</translation>
+        <translation>Verifica disponibilità aggiornamenti…</translation>
     </message>
     <message>
         <source>Close</source>
@@ -10526,31 +10720,31 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     <name>YubiKeyEditWidget</name>
     <message>
         <source>Hardware key slot selection</source>
-        <translation>Selezione degli slot dei tasti hardware</translation>
+        <translation>Selezione slot chiave fisica</translation>
     </message>
     <message>
         <source>Could not find any hardware keys!</source>
-        <translation>Impossibile trovare le chiavi hardware!</translation>
+        <translation>Nessuna chiave fisica trovata!</translation>
     </message>
     <message>
         <source>Selected hardware key slot does not support challenge-response!</source>
-        <translation>La porta USB selezionata non supporta il protocollo challenge-response!</translation>
+        <translation>Lo slot chiave fisica selezionato non supporta challenge-response!</translation>
     </message>
     <message>
         <source>Challenge-Response</source>
-        <translation>Risposta di verifica</translation>
+        <translation>Challenge-Response</translation>
     </message>
     <message>
         <source>Add Challenge-Response</source>
-        <translation>Aggiungi una risposta di verifica</translation>
+        <translation>Aggiungi Challenge-Response</translation>
     </message>
     <message>
         <source>Change Challenge-Response</source>
-        <translation>Modifica la risposta di verifica</translation>
+        <translation>Modifica Challenge-Response</translation>
     </message>
     <message>
         <source>Remove Challenge-Response</source>
-        <translation>Rimuovi la risposta di verifica</translation>
+        <translation>Rimuovi Challenge-Response</translation>
     </message>
     <message>
         <source>Challenge-Response set, click to change or remove</source>
@@ -10562,7 +10756,7 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>
-        <translation>Nessuna chiave hardware rilevata</translation>
+        <translation>Nessuna chiave fisica rilevata</translation>
     </message>
     <message>
         <source>Refresh hardware keys</source>
@@ -10585,11 +10779,11 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
         <source>Hardware key is locked or timed out. Unlock or re-present it to continue.</source>
-        <translation>La chiave hardware è bloccata o scaduta. Sbloccala o ripresentala per continuare.</translation>
+        <translation>La chiave fisica è bloccata o scaduta. Per continuare sbloccala o ri-collegala.</translation>
     </message>
     <message>
         <source>Hardware key was not found or is not configured.</source>
-        <translation>La chiave hardware non è stata trovata o non è configurata.</translation>
+        <translation>La chiave fisica non è stata trovata o non è configurata.</translation>
     </message>
     <message>
         <source>(NFC) %1 [%2] - Slot %3, %4</source>
@@ -10637,11 +10831,11 @@ Esempio: JBSWY3DPEHPK3PXP</translation>
     </message>
     <message>
         <source>Hardware key timed out waiting for user interaction.</source>
-        <translation>Sessione della chiave hardware scaduta aspettando un interazione da parte dell&apos;utente.</translation>
+        <translation>Sessione chiave fisica scaduta in attesa di un interazione da parte dell&apos;utente.</translation>
     </message>
     <message>
         <source>A USB error occurred when accessing the hardware key: %1</source>
-        <translation>Errore USB durante l&apos;accesso alla chiave hardware: %1</translation>
+        <translation>Errore USB durante l&apos;accesso alla chiave fisica: %1</translation>
     </message>
     <message>
         <source>Failed to complete a challenge-response, the specific error was: %1</source>

@@ -36,6 +36,7 @@
 #include "gui/osutils/macutils/MacUtils.h"
 #endif
 #include "gui/wizard/NewDatabaseWizard.h"
+#include "wizard/ImportWizard.h"
 
 DatabaseTabWidget::DatabaseTabWidget(QWidget* parent)
     : QTabWidget(parent)

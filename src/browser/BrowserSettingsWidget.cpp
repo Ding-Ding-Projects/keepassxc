@@ -244,6 +244,7 @@ void BrowserSettingsWidget::validateProxyLocation()
             }
         }
     }
+#endif
 }
 
 void BrowserSettingsWidget::saveSettings()

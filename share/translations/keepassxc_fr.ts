@@ -156,6 +156,25 @@
     </message>
 </context>
 <context>
+    <name>AppKit</name>
+    <message>
+        <source>Window</source>
+        <translation>Fenêtre</translation>
+    </message>
+    <message>
+        <source>Minimize</source>
+        <translation>Réduire</translation>
+    </message>
+    <message>
+        <source>Zoom</source>
+        <translation>Zoom</translation>
+    </message>
+    <message>
+        <source>Bring All to Front</source>
+        <translation>Tout mettre au premier plan</translation>
+    </message>
+</context>
+<context>
     <name>ApplicationSettingsWidget</name>
     <message>
         <source>Application Settings</source>
@@ -1189,7 +1208,7 @@ Remplacer la clé dans %1 – %2 ?</translation>
     </message>
     <message>
         <source>Return only best-matching credentials</source>
-        <translation>Retourner que les identifiants qui correspondent le mieux</translation>
+        <translation>Ne retourner que les identifiants qui correspondent le mieux</translation>
     </message>
     <message>
         <source>Returns expired credentials. String [expired] is added to the title.</source>
@@ -1813,7 +1832,9 @@ Confirmez-vous ?</translation>
     </message>
     <message>
         <source>Browser Integration</source>
-        <translation>Intégration aux navigateurs</translation>
+        <translation>Intégration
+aux
+navigateurs</translation>
     </message>
     <message>
         <source>Maintenance</source>
@@ -2945,7 +2966,9 @@ Désactiver les enregistrements sécurisés et réessayer ?</translation>
     </message>
     <message>
         <source>Browser Integration</source>
-        <translation>Intégration aux navigateurs</translation>
+        <translation>Intégration
+aux
+navigateurs</translation>
     </message>
     <message>
         <source>&lt;empty URL&gt;</source>
@@ -6486,6 +6509,37 @@ Attendez-vous à des bogues et problèmes mineurs. C’est une version de test, 
     </message>
 </context>
 <context>
+    <name>MergeDialog</name>
+    <message>
+        <source>Database Merge Confirmation</source>
+        <translation>Confirmation de fusion de la base de données</translation>
+    </message>
+    <message>
+        <source>Merge</source>
+        <translation>Fusionner</translation>
+    </message>
+    <message>
+        <source>Group</source>
+        <translation>Groupe</translation>
+    </message>
+    <message>
+        <source>Title</source>
+        <translation>Titre</translation>
+    </message>
+    <message>
+        <source>UUID</source>
+        <translation>UUID</translation>
+    </message>
+    <message>
+        <source>Details</source>
+        <translation>Détails</translation>
+    </message>
+    <message>
+        <source>Change</source>
+        <translation>Changement</translation>
+    </message>
+</context>
+<context>
     <name>Merger</name>
     <message>
         <source>Changed deleted objects</source>
@@ -6769,7 +6823,7 @@ Attendez-vous à des bogues et problèmes mineurs. C’est une version de test, 
     </message>
     <message>
         <source>Decryption failed: %1</source>
-        <translation>Échec lors du déchiffrement : %1</translation>
+        <translation>Échec de déchiffrement : %1</translation>
     </message>
     <message>
         <source>Decryption failed, wrong passphrase?</source>
@@ -8217,14 +8271,6 @@ Voulez-vous la remplacer ?</translation>
     <message>
         <source>Type: Spatial(Rep)</source>
         <translation>Type : spatial (rép.)</translation>
-    </message>
-    <message>
-        <source>Type: Date(Rep)</source>
-        <translation>Type : date (rép.)</translation>
-    </message>
-    <message>
-        <source>Type: Unknown (%1)</source>
-        <translation>Type : inconnu (%1)</translation>
     </message>
     <message>
         <source>Entropy %1 (%2)</source>
@@ -10549,6 +10595,14 @@ Exemple : JBSWY3DPEHPK3PXP</translation>
     <message>
         <source>Detecting hardware keys…</source>
         <translation>Détection des clés matérielles…</translation>
+    </message>
+    <message>
+        <source>Refresh hardware keys</source>
+        <translation>Actualiser les clés matérielles</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;If you own a &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; or &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, you can use it for additional security.&lt;/p&gt;&lt;p&gt;The key requires one of its slots to be programmed with &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;Challenge-Response&lt;/a&gt;.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Si vous possédez une &lt;a href=&quot;https://www.yubico.com/&quot;&gt;YubiKey&lt;/a&gt; ou &lt;a href=&quot;https://onlykey.io&quot;&gt;OnlyKey&lt;/a&gt;, vous pouvez l’utiliser pour renforcer la sécurité.&lt;/p&gt;&lt;p&gt;L’un des emplacements de la clé doit être programmé avec une &lt;a href=&quot;https://keepassxc.org/docs/#faq-yubikey-howto&quot;&gt;question-réponse&lt;/a&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
         <source>No hardware keys detected</source>
