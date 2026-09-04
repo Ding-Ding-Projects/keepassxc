@@ -29,6 +29,7 @@ private slots:
     void testCompareVersion();
     void testStateTransitions();
     void testManifestContract();
+    void testRedirectPolicy();
     void testPackageContract();
     void testRestartCommandContract();
 };

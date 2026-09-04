@@ -144,6 +144,23 @@ void TestUpdateCheck::testManifestContract()
     QCOMPARE(failure, UpdateChecker::Failure::OversizedManifest);
 }
 
+void TestUpdateCheck::testRedirectPolicy()
+{
+    // The release's "latest/download" link is a redirect to the asset host;
+    // refusing every redirect would fail every check.
+    QVERIFY(UpdateChecker::redirectAllowed(
+        QUrl(QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.1/update-manifest-v1.json"))));
+    QVERIFY(UpdateChecker::redirectAllowed(
+        QUrl(QStringLiteral("https://objects.githubusercontent.com/github-production-release-asset/abc?X-Amz=1"))));
+    QVERIFY(UpdateChecker::redirectAllowed(QUrl(QStringLiteral("https://release-assets.githubusercontent.com/x"))));
+    QVERIFY(!UpdateChecker::redirectAllowed(QUrl(QStringLiteral("http://github.com/insecure"))));
+    QVERIFY(!UpdateChecker::redirectAllowed(QUrl(QStringLiteral("https://github.com.evil.example/x"))));
+    QVERIFY(!UpdateChecker::redirectAllowed(QUrl(QStringLiteral("https://example.com/x"))));
+    QVERIFY(!UpdateChecker::redirectAllowed(QUrl()));
+    QVERIFY(UpdateChecker::describeFailure(UpdateChecker::Failure::None).isEmpty());
+    QVERIFY(!UpdateChecker::describeFailure(UpdateChecker::Failure::UpdaterMissing).isEmpty());
+}
+
 void TestUpdateCheck::testPackageContract()
 {
     QTemporaryDir directory;

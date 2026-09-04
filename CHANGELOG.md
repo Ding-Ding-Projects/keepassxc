@@ -1,5 +1,6 @@
 # Changelog
 
+- Updates: Follow the release link's redirect (HTTPS, GitHub hosts only) when fetching the update manifest, so the automatic update check no longer fails on every run; say why an update failed instead of a generic message, and stay quiet when a background check is merely offline.
 - Window: Keep the frameless title bar draggable and the edges resizable after the native window is recreated (View ▸ Always on Top) or the shell is not there to ask; right-clicking the bar opens the system menu.
 - Capture: Allow screenshots and screen recording by default, remember the View ▸ Allow Screen Capture choice, and add `--prevent-screencapture`; capture affinity is no longer re-applied to every popup on every focus change.
 - Layout: Open at 1280x800 (never narrower than the Expanded class), show the group pane from 840 px, put the vault's three panes in a persistent splitter, and fold the app bar's trailing actions into a More menu instead of squeezing them.

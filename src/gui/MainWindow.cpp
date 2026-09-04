@@ -637,7 +637,7 @@ MainWindow::MainWindow()
 
 #ifdef KPXC_FEATURE_UPDATES
     connect(m_ui->actionCheckForUpdates, SIGNAL(triggered()), SLOT(showUpdateCheckDialog()));
-    connect(updateCheck(), &UpdateChecker::stateChanged, this, [this](UpdateChecker::State state, UpdateChecker::Failure) {
+    connect(updateCheck(), &UpdateChecker::stateChanged, this, [this](UpdateChecker::State state, UpdateChecker::Failure failure) {
         switch (state) {
         case UpdateChecker::State::Checking:
             Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Checking for updates…"), -1);
@@ -650,15 +650,20 @@ MainWindow::MainWindow()
             m_updateFailureNotified = false;
             Material::Notify::endProgress(QStringLiteral("squirrel-update"));
             break;
-        case UpdateChecker::State::Failed:
+        case UpdateChecker::State::Failed: {
             Material::Notify::endProgress(QStringLiteral("squirrel-update"));
-            if (!m_updateFailureNotified) {
+            // A background check that merely could not reach the server is
+            // not news; the next hourly check will try again. Everything else,
+            // and anything the user asked for, says exactly what went wrong.
+            const bool quiet = !updateCheck()->isManuallyRequested()
+                               && (failure == UpdateChecker::Failure::Offline
+                                   || failure == UpdateChecker::Failure::Timeout);
+            if (!quiet && !m_updateFailureNotified) {
                 m_updateFailureNotified = true;
-                Material::Notify::error(
-                    tr("Update failed"),
-                    tr("The update could not be completed. Open the notification history for the recorded state."));
+                Material::Notify::error(tr("Update failed"), UpdateChecker::describeFailure(failure));
             }
             break;
+        }
         default:
             break;
         }

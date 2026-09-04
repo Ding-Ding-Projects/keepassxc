@@ -75,6 +75,16 @@ public:
     Candidate candidate() const;
     static bool transitionAllowed(State from, State to);
     static bool parseManifest(const QByteArray& bytes, Candidate& candidate, Failure& failure);
+    /**
+     * Whether a redirect of the manifest or package request may be followed:
+     * HTTPS only, and only to GitHub's own hosts, where the release lives.
+     * A "latest/download" release link is itself a redirect, so refusing
+     * redirects outright would fail every check.
+     */
+    static bool redirectAllowed(const QUrl& target);
+    /** A sentence for people about why the update stopped; empty for None. */
+    static QString describeFailure(Failure failure);
+    bool isManuallyRequested() const;
     static bool verifyPackage(const QString& path, const Candidate& candidate, Failure& failure);
 
     static const QString ErrorVersion;
@@ -92,6 +102,7 @@ private slots:
 
 private:
     QNetworkReply* m_reply;
+    bool m_redirectRejected = false;
     QNetworkReply* m_downloadReply = nullptr;
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;

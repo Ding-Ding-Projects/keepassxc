@@ -76,13 +76,24 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
 
     if (m_isManuallyRequested || Clock::currentSecondsSinceEpoch() >= nextCheck) {
         m_bytesReceived.clear();
+        m_redirectRejected = false;
         setState(State::Checking);
         QNetworkRequest request(ManifestUrl);
         request.setRawHeader("Accept", "application/json");
-        request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::ManualRedirectPolicy);
+        // The release's "latest/download" link answers with a redirect to the
+        // asset; follow it, but only to HTTPS on GitHub's own hosts.
+        request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+        request.setMaximumRedirectsAllowed(5);
+        request.setTransferTimeout(30000);
 
         m_reply = getNetMgr()->get(request);
 
+        connect(m_reply, &QNetworkReply::redirected, this, [this](const QUrl& target) {
+            if (m_reply && !redirectAllowed(target)) {
+                m_redirectRejected = true;
+                m_reply->abort();
+            }
+        });
         connect(m_reply, &QNetworkReply::finished, this, &UpdateChecker::fetchFinished);
         connect(m_reply, &QIODevice::readyRead, this, &UpdateChecker::fetchReadyRead);
     }
@@ -99,9 +110,11 @@ void UpdateChecker::fetchReadyRead()
 void UpdateChecker::fetchFinished()
 {
     bool error = (m_reply->error() != QNetworkReply::NoError);
+    const bool timedOut = m_reply->error() == QNetworkReply::TimeoutError
+                          || m_reply->error() == QNetworkReply::OperationCanceledError;
     bool hasNewVersion = false;
     QString version = "";
-    const bool redirected = m_reply->attribute(QNetworkRequest::RedirectionTargetAttribute).isValid();
+    const bool redirected = m_redirectRejected;
 
     m_reply->deleteLater();
     m_reply = nullptr;
@@ -131,6 +144,8 @@ void UpdateChecker::fetchFinished()
             setState(State::Failed, Failure::RedirectRejected);
         } else if (m_bytesReceived.size() > MaxManifestBytes) {
             setState(State::Failed, Failure::OversizedManifest);
+        } else if (timedOut) {
+            setState(State::Failed, Failure::Timeout);
         } else {
             setState(State::Failed, Failure::Offline);
         }
@@ -172,9 +187,15 @@ void UpdateChecker::downloadAvailableUpdate()
     const quint64 generation = ++m_generation;
     QNetworkRequest request(packageUrl);
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    request.setMaximumRedirectsAllowed(5);
     request.setTransferTimeout(30000);
     m_downloadReply = getNetMgr()->get(request);
     setState(State::Downloading);
+    connect(m_downloadReply, &QNetworkReply::redirected, this, [this, generation](const QUrl& target) {
+        if (generation == m_generation && m_downloadReply && !redirectAllowed(target)) {
+            m_downloadReply->abort();
+        }
+    });
     connect(m_downloadReply, &QIODevice::readyRead, this, [this, generation] {
         if (generation != m_generation || !m_downloadReply || !m_downloadFile) {
             return;
@@ -618,6 +639,63 @@ bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidat
     }
     failure = Failure::None;
     return true;
+}
+
+bool UpdateChecker::redirectAllowed(const QUrl& target)
+{
+    if (!target.isValid() || target.scheme() != QStringLiteral("https")) {
+        return false;
+    }
+    const QString host = target.host().toLower();
+    return host == QStringLiteral("github.com") || host.endsWith(QStringLiteral(".github.com"))
+           || host.endsWith(QStringLiteral(".githubusercontent.com"));
+}
+
+bool UpdateChecker::isManuallyRequested() const
+{
+    return m_isManuallyRequested;
+}
+
+QString UpdateChecker::describeFailure(Failure failure)
+{
+    switch (failure) {
+    case Failure::None:
+        return {};
+    case Failure::Offline:
+        return tr("The update server could not be reached. Check the connection and try again.");
+    case Failure::Timeout:
+        return tr("The update server took too long to answer.");
+    case Failure::RedirectRejected:
+        return tr("The update server redirected somewhere other than GitHub, so the download was refused.");
+    case Failure::OversizedManifest:
+    case Failure::MalformedManifest:
+    case Failure::InvalidVersion:
+        return tr("The update description could not be read.");
+    case Failure::PackageIdentityMismatch:
+    case Failure::ArchitectureMismatch:
+        return tr("The published update is for a different package or architecture.");
+    case Failure::InsufficientStorage:
+        return tr("There is not enough free space to stage the update.");
+    case Failure::Cancelled:
+        return tr("The download was cancelled.");
+    case Failure::ByteCountMismatch:
+    case Failure::Sha256Mismatch:
+    case Failure::ReleasesMismatch:
+    case Failure::UnsafePackage:
+        return tr("The downloaded package did not match what the release describes, so it was discarded.");
+    case Failure::UpdaterMissing:
+        return tr("This copy was not installed through Setup.exe, so it cannot update itself. Download the "
+                  "latest Setup.exe from the releases page.");
+    case Failure::UpdaterStartFailed:
+    case Failure::UpdaterApplyFailed:
+        return tr("The installer could not apply the update.");
+    case Failure::AppliedVersionMissing:
+        return tr("The update was applied but the new version could not be verified.");
+    case Failure::RestartRefused:
+    case Failure::RestartFailed:
+        return tr("The updated version could not be started. Restart KeePassXC to finish the update.");
+    }
+    return {};
 }
 
 bool UpdateChecker::compareVersions(const QString& localVersion, const QString& remoteVersion)
