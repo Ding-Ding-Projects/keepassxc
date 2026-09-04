@@ -40,6 +40,17 @@ namespace Material
             // SDK being new enough to declare them. They are numbers on the wire
             // either way, and an older desktop window manager fails the call.
             constexpr const char* FramelessProperty = "materialFrameless";
+            /**
+             * The native handle the frameless frame change was last sent to.
+             * Qt destroys and recreates the HWND on setWindowFlags() (View >
+             * Always on Top does exactly that), so a bool on the QWidget would
+             * outlive the window it described and the new handle would never
+             * be asked to recompute its frame: no caption, no resize borders,
+             * no drag. Keyed on the handle, the install repeats when needed.
+             */
+            constexpr const char* FramelessHandleProperty = "materialFramelessHwnd";
+            /** Logical height of the strip that counts as caption without a bar. */
+            constexpr int FallbackCaptionHeight = 44;
             constexpr unsigned long AttrUseImmersiveDarkMode = 20; // DWMWA_USE_IMMERSIVE_DARK_MODE
             constexpr unsigned long AttrUseImmersiveDarkModeOld = 19; // ... as numbered before Windows 10 20H1
             constexpr unsigned long AttrWindowCornerPreference = 33; // DWMWA_WINDOW_CORNER_PREFERENCE
@@ -193,16 +204,54 @@ namespace Material
                 return;
             }
             QWidget* window = widget->window();
-            if (window->property(FramelessProperty).toBool()) {
+            const auto current = static_cast<qulonglong>(reinterpret_cast<quintptr>(handle));
+            if (window->property(FramelessProperty).toBool()
+                && window->property(FramelessHandleProperty).toULongLong() == current) {
                 return;
             }
             window->setProperty(FramelessProperty, true);
+            window->setProperty(FramelessHandleProperty, current);
             // Keep WS_THICKFRAME and WS_CAPTION so the desktop still draws the
             // shadow, animates minimise and restore, and offers snap layouts;
             // WM_NCCALCSIZE below is what removes the visible caption. A frame
             // change makes the window manager ask again.
-            ::SetWindowPos(handle, nullptr, 0, 0, 0, 0,
+            ::SetWindowPos(handle,
+                           nullptr,
+                           0,
+                           0,
+                           0,
+                           0,
                            SWP_FRAMECHANGED | SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+        }
+
+        void showSystemMenu(QWidget* widget, const QPoint& globalPos)
+        {
+            HWND handle = handleFor(widget);
+            if (!handle) {
+                return;
+            }
+            HMENU menu = ::GetSystemMenu(handle, FALSE);
+            if (!menu) {
+                return;
+            }
+            const bool maximized = ::IsZoomed(handle);
+            ::EnableMenuItem(menu, SC_RESTORE, MF_BYCOMMAND | (maximized ? MF_ENABLED : MF_GRAYED));
+            ::EnableMenuItem(menu, SC_MAXIMIZE, MF_BYCOMMAND | (maximized ? MF_GRAYED : MF_ENABLED));
+            ::EnableMenuItem(menu, SC_SIZE, MF_BYCOMMAND | (maximized ? MF_GRAYED : MF_ENABLED));
+            ::EnableMenuItem(menu, SC_MOVE, MF_BYCOMMAND | (maximized ? MF_GRAYED : MF_ENABLED));
+            ::SetMenuDefaultItem(menu, SC_CLOSE, FALSE);
+            // Device pixels: the popup is positioned by the desktop.
+            const qreal ratio = widget->window()->devicePixelRatioF();
+            const QPoint origin = widget->window()->mapToGlobal(QPoint(0, 0));
+            RECT bounds{};
+            ::GetWindowRect(handle, &bounds);
+            const int x = bounds.left + qRound((globalPos.x() - origin.x()) * ratio);
+            const int y = bounds.top + qRound((globalPos.y() - origin.y()) * ratio);
+            const UINT flags = TPM_RETURNCMD | TPM_NONOTIFY | TPM_LEFTBUTTON | TPM_RIGHTBUTTON;
+            const BOOL command = ::TrackPopupMenu(menu, flags, x, y, 0, handle, nullptr);
+            if (command) {
+                ::PostMessageW(handle, WM_SYSCOMMAND, static_cast<WPARAM>(command), 0);
+            }
         }
 
         namespace
@@ -225,6 +274,16 @@ namespace Material
             }
             QWidget* window = widget->window();
             const HWND handle = msg->hwnd;
+
+            // A message from a handle other than the one the frame change was
+            // sent to means the window was recreated underneath us; ask the
+            // new one to recompute its frame before answering for it.
+            if (handle
+                && window->property(FramelessHandleProperty).toULongLong()
+                       != static_cast<qulonglong>(reinterpret_cast<quintptr>(handle))
+                && handle == handleFor(widget)) {
+                installFrameless(widget);
+            }
 
             if (msg->message == WM_NCCALCSIZE && msg->wParam == TRUE) {
                 // The client area is the whole window; when maximised the frame
@@ -273,12 +332,27 @@ namespace Material
                     }
                     return true;
                 }
-                // Device pixels to the window's logical coordinates.
-                const qreal ratio = window->devicePixelRatioF();
+                // Device pixels to the window's logical coordinates. The DPI
+                // is asked of the handle rather than Qt so the answer is right
+                // on the very message that follows a monitor change.
+                const UINT dpi = ::GetDpiForWindow(handle);
+                const qreal ratio = dpi > 0 ? dpi / 96.0 : window->devicePixelRatioF();
                 const int inset = maximized ? frame : 0;
                 const QPoint local(qRound((global.x() - bounds.left - inset) / ratio),
                                    qRound((global.y() - bounds.top - inset) / ratio));
-                *result = captionTest(local) ? HTCAPTION : HTCLIENT;
+                if (captionTest && captionTest(local)) {
+                    *result = HTCAPTION;
+                    return true;
+                }
+                // Without a bar to ask (the shell is not built yet, or is gone)
+                // the top strip still has to be caption, or the window can
+                // never be moved again: DefWindowProc has no caption to find
+                // once WM_NCCALCSIZE above has removed it.
+                if (!captionTest && local.y() >= 0 && local.y() < FallbackCaptionHeight) {
+                    *result = HTCAPTION;
+                    return true;
+                }
+                *result = HTCLIENT;
                 return true;
             }
             return false;

@@ -87,8 +87,8 @@ int main(int argc, char** argv)
     app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
 
     QStringList applicationArguments = app.arguments();
-    if (const auto lifecycleExit = SquirrelLifecycle::handle(applicationArguments,
-                                                              QCoreApplication::applicationDirPath())) {
+    if (const auto lifecycleExit =
+            SquirrelLifecycle::handle(applicationArguments, QCoreApplication::applicationDirPath())) {
         return *lifecycleExit;
     }
     SquirrelLifecycle::consume(applicationArguments);
@@ -114,10 +114,12 @@ int main(int argc, char** argv)
     QCommandLineOption pwstdinOption("pw-stdin", QObject::tr("read password of the database from stdin"));
     QCommandLineOption allowScreenCaptureOption("allow-screencapture",
                                                 QObject::tr("allow screenshots and app recording (Windows/macOS)"));
+    QCommandLineOption preventScreenCaptureOption(
+        "prevent-screencapture",
+        QObject::tr("exclude the application from screenshots and recordings (Windows/macOS)"));
     QCommandLineOption startMinimized("minimized", QObject::tr("start minimized to the system tray"));
-    QCommandLineOption captureRouteOption("capture-route",
-                                          QObject::tr("open a design-parity capture route (kpxc://capture/<screen>)"),
-                                          "url");
+    QCommandLineOption captureRouteOption(
+        "capture-route", QObject::tr("open a design-parity capture route (kpxc://capture/<screen>)"), "url");
     QCommandLineOption captureReceiptOption(
         "capture-receipt", QObject::tr("write a JSON readiness receipt for the capture route"), "path");
 
@@ -134,6 +136,7 @@ int main(int argc, char** argv)
     parser.addOption(pwstdinOption);
     parser.addOption(debugInfoOption);
     parser.addOption(allowScreenCaptureOption);
+    parser.addOption(preventScreenCaptureOption);
     parser.addOption(startMinimized);
     parser.addOption(captureRouteOption);
     parser.addOption(captureReceiptOption);
@@ -230,9 +233,16 @@ int main(int argc, char** argv)
     mainWindow.setProperty("windowOpacity", 0.0);
 #endif
 
-    // Disable screen capture if not explicitly allowed
-    // This ensures any top-level windows (Main Window, Modal Dialogs, etc.) are excluded from screenshots
-    mainWindow.setAllowScreenCapture(parser.isSet(allowScreenCaptureOption));
+    // Screen capture is allowed unless the user turned it off (View > Allow
+    // Screen Capture is remembered) or asked on the command line. A flag on
+    // the command line wins over the remembered choice for this run only.
+    bool allowScreenCapture = config()->get(Config::GUI_AllowScreenCapture).toBool();
+    if (parser.isSet(preventScreenCaptureOption)) {
+        allowScreenCapture = false;
+    } else if (parser.isSet(allowScreenCaptureOption)) {
+        allowScreenCapture = true;
+    }
+    mainWindow.setAllowScreenCapture(allowScreenCapture, /*persist=*/false);
 
     const bool pwstdin = parser.isSet(pwstdinOption);
     for (const QString& filename : fileNames) {

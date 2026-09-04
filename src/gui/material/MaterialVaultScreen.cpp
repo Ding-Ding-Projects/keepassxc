@@ -56,6 +56,7 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QHBoxLayout>
+#include <QSplitter>
 #include <QItemSelectionModel>
 #include <QLabel>
 #include <QLineEdit>
@@ -79,6 +80,12 @@ namespace Material
 {
     namespace
     {
+        // The panes never go below these: sidebar, entry list and detail add
+        // up to less than the Expanded class less the rail, so all three fit
+        // at the smallest window that shows them.
+        constexpr int SidebarMinimumWidth = 180;
+        constexpr int CentreMinimumWidth = 240;
+        constexpr int DetailMinimumWidth = 280;
         constexpr int HeaderLeftPadding = 16;
         constexpr int HeaderTopPadding = 14;
         constexpr int HeaderBottomPadding = 10;
@@ -605,24 +612,40 @@ namespace Material
 
     QWidget* VaultScreen::buildPanes()
     {
-        auto* panes = new QWidget(m_stack);
-        auto* layout = new QHBoxLayout(panes);
-        layout->setContentsMargins(0, 0, 0, 0);
-        layout->setSpacing(0);
+        // The three panes share a splitter so the user, not a breakpoint
+        // table, decides how the width is divided. Nothing collapses: a pane
+        // that is on show stays on show, at its minimum if need be.
+        auto* panes = new QSplitter(Qt::Horizontal, m_stack);
+        panes->setObjectName(QStringLiteral("materialVaultPanes"));
+        panes->setChildrenCollapsible(false);
+        panes->setHandleWidth(1);
+        m_splitter = panes;
 
         m_sidebar = new VaultSidebar(panes);
         m_sidebar->setGroupModel(m_groupModel);
-        layout->addWidget(m_sidebar, 0);
+        m_sidebar->setMinimumWidth(SidebarMinimumWidth);
+        panes->addWidget(m_sidebar);
 
         m_centre = buildCentreColumn();
         m_centre->setParent(panes);
+        m_centre->setMinimumWidth(CentreMinimumWidth);
         // The FAB is placed by hand over the centre column, and the row shape
         // sheds columns when the column narrows; both need its resizes.
         m_centre->installEventFilter(this);
-        layout->addWidget(m_centre, 1);
+        panes->addWidget(m_centre);
 
         m_detail = new EntryDetail(panes);
-        layout->addWidget(m_detail, 0);
+        m_detail->setMinimumWidth(DetailMinimumWidth);
+        panes->addWidget(m_detail);
+
+        panes->setStretchFactor(0, 0);
+        panes->setStretchFactor(1, 1);
+        panes->setStretchFactor(2, 0);
+        connect(panes, &QSplitter::splitterMoved, this, [this] {
+            if (!m_restoringSplitter && m_sidebar->isVisible() && m_detail->isVisible()) {
+                config()->set(Config::GUI_MaterialVaultSplitterState, m_splitter->saveState());
+            }
+        });
 
         auto* tree = m_sidebar->groupView();
         tree->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -1003,20 +1026,32 @@ namespace Material
         const bool showGroups = hasGroupPane(m_breakpoint);
         const bool inlineDetail = hasInlineDetail(m_breakpoint);
         m_sidebar->setVisible(showGroups);
-        if (showGroups) {
-            m_sidebar->setFixedWidth(m_breakpoint == Breakpoint::ExtraLarge ? 250 : 216);
-        }
         m_groupScopeButton->setVisible(!showGroups);
         m_detail->setVisible(inlineDetail);
-        if (inlineDetail) {
-            m_detail->setFixedWidth(detailWidth(m_breakpoint));
-            if (m_detailOverlay->isOpen()) {
-                m_detailOverlay->closeOverlay();
-            }
+        if (inlineDetail && m_detailOverlay->isOpen()) {
+            m_detailOverlay->closeOverlay();
         }
         m_detailSheetButton->setVisible(!inlineDetail);
+        restoreSplitter();
         m_detailSheetButton->setEnabled(m_dbWidget && m_dbWidget->currentSelectedEntry());
         updateFabGeometry();
+    }
+
+    void VaultScreen::restoreSplitter()
+    {
+        if (!m_splitter || !m_sidebar->isVisible() || !m_detail->isVisible()) {
+            return;
+        }
+        m_restoringSplitter = true;
+        const QByteArray saved = config()->get(Config::GUI_MaterialVaultSplitterState).toByteArray();
+        if (saved.isEmpty() || !m_splitter->restoreState(saved)) {
+            // The reference widths for a first run; the centre takes the rest.
+            const int sidebar = m_breakpoint == Breakpoint::ExtraLarge ? 250 : 216;
+            const int detail = qMax(DetailMinimumWidth, detailWidth(m_breakpoint));
+            const int centre = qMax(CentreMinimumWidth, m_splitter->width() - sidebar - detail);
+            m_splitter->setSizes({sidebar, centre, detail});
+        }
+        m_restoringSplitter = false;
     }
 
     void VaultScreen::openDetailSheet()

@@ -35,7 +35,11 @@ namespace Material
 
     bool hasGroupPane(Breakpoint breakpoint)
     {
-        return breakpoint == Breakpoint::Large || breakpoint == Breakpoint::ExtraLarge;
+        // The group pane joins the entry list and the inline detail as soon
+        // as the window is Expanded: a window sized for the detail pane is
+        // sized for the groups too, and every pane of the vault is on show.
+        return breakpoint == Breakpoint::Expanded || breakpoint == Breakpoint::Large
+               || breakpoint == Breakpoint::ExtraLarge;
     }
 
     bool hasInlineDetail(Breakpoint breakpoint)

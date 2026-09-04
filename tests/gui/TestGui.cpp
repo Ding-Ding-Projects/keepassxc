@@ -959,6 +959,12 @@ void TestGui::testScreenCaptureStatePreserved()
     QVERIFY(m_mainWindow->isVisible());
     QCOMPARE(m_mainWindow->windowState(), state);
     QCOMPARE(m_mainWindow->geometry(), geometry);
+    // The View toggle is remembered; the command line is not.
+    QVERIFY(!config()->get(Config::GUI_AllowScreenCapture).toBool());
+    m_mainWindow->setAllowScreenCapture(true, false);
+    QVERIFY(!config()->get(Config::GUI_AllowScreenCapture).toBool());
+    m_mainWindow->setAllowScreenCapture(true);
+    QVERIFY(config()->get(Config::GUI_AllowScreenCapture).toBool());
 }
 
 void TestGui::testPasskeyImportEntrySearchScales()

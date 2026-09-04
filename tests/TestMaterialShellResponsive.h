@@ -11,6 +11,7 @@ private slots:
     void preservesDestinationAccessAcrossBreakpoints();
     void emitsOnlyOnBreakpointTransitions();
     void appliesVaultPaneContract();
+    void appBarFoldsActionsIntoOverflow();
     void fallbackSearchesAreIndependentAndRestoreFocus();
     void settingsPageScrollsFromContentAndContainsScrollbar();
     void settingsSwitchRowsToggleAndStayInStep();

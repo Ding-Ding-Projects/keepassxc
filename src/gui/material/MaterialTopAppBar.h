@@ -22,7 +22,9 @@
 #include <QWidget>
 
 class QHBoxLayout;
+class QAction;
 class QLabel;
+class QMenu;
 
 namespace Material
 {
@@ -72,6 +74,15 @@ namespace Material
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
 
+        /**
+         * The trailing actions that did not fit and were folded into the
+         * overflow menu, in bar order. Empty when every button is on show.
+         */
+        QStringList overflowedActions() const;
+        /** The overflow button; hidden while nothing is folded. */
+        QAbstractButton* overflowButton() const;
+        QMenu* overflowMenu() const;
+
     signals:
         void saveRequested();
         void paletteRequested();
@@ -87,6 +98,12 @@ namespace Material
         void applyTheme();
         /** Re-elide the title and subtitle against the width the layout gave them. */
         void updateLabels();
+        /**
+         * Fold trailing action buttons into the overflow menu, last first,
+         * until the rest fit beside the title (and search) at their minimum
+         * widths; unfold them again as room returns. Nothing is ever clipped.
+         */
+        void relayoutActions();
 
         QString m_title;
         QString m_subtitle;
@@ -101,6 +118,17 @@ namespace Material
         IconButton* m_generatorButton = nullptr;
         IconButton* m_regexButton = nullptr;
         IconButton* m_notificationsButton = nullptr;
+        struct ActionSlot
+        {
+            IconButton* button = nullptr;
+            QAction* action = nullptr;
+            QString name;
+        };
+        QList<ActionSlot> m_actions;
+        IconButton* m_overflowButton = nullptr;
+        QMenu* m_overflowMenu = nullptr;
+        int m_folded = 0;
+        bool m_relayouting = false;
     };
 
 } // namespace Material

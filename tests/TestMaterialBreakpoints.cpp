@@ -33,7 +33,8 @@ void TestMaterialBreakpoints::capabilities()
 {
     QVERIFY(!hasRail(Breakpoint::Compact));
     QVERIFY(hasRail(Breakpoint::Medium));
-    QVERIFY(!hasGroupPane(Breakpoint::Expanded));
+    QVERIFY(!hasGroupPane(Breakpoint::Medium));
+    QVERIFY(hasGroupPane(Breakpoint::Expanded));
     QVERIFY(hasGroupPane(Breakpoint::Large));
     QVERIFY(!hasInlineDetail(Breakpoint::Medium));
     QVERIFY(hasInlineDetail(Breakpoint::Expanded));

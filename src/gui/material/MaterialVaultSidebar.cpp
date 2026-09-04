@@ -271,7 +271,7 @@ namespace Material
         : QWidget(parent)
     {
         setObjectName(QStringLiteral("materialVaultSidebar"));
-        setFixedWidth(Layout::GroupPaneWidth);
+        setMinimumWidth(180);
 
         auto* root = new QVBoxLayout(this);
         root->setContentsMargins(HorizontalPadding, VerticalPadding, HorizontalPadding, VerticalPadding);

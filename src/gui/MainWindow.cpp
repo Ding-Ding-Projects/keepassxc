@@ -36,9 +36,11 @@
 #include <QTimer>
 #include <QTabBar>
 #include <QToolButton>
+#include <QScreen>
 #include <QWindow>
 
 #include <algorithm>
+#include <functional>
 
 #include "config-keepassx.h"
 
@@ -80,6 +82,9 @@
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSettingsHub.h"
 #include "gui/material/MaterialSettingsScreen.h"
+#ifdef Q_OS_WIN
+#include "gui/material/MaterialWindowChrome.h"
+#endif
 #include "gui/material/MaterialSheetCatalogue.h"
 #include "gui/material/MaterialShell.h"
 #include "gui/material/MaterialSpecSheet.h"
@@ -772,6 +777,11 @@ MainWindow::MainWindow()
             }
         });
         connect(titleBar, &Material::TitleBar::closeRequested, this, &MainWindow::close);
+#ifdef Q_OS_WIN
+        connect(titleBar, &Material::TitleBar::systemMenuRequested, this, [this](const QPoint& globalPos) {
+            Material::WindowChrome::showSystemMenu(this, globalPos);
+        });
+#endif
         connect(this, &QWidget::windowTitleChanged, titleBar, [titleBar](const QString& title) {
             const QString app = QApplication::applicationDisplayName();
             QString subtitle = title;
@@ -2253,12 +2263,18 @@ bool MainWindow::nativeEvent(const QByteArray& eventType, void* message, qintptr
 {
 #ifdef Q_OS_WIN
     if (eventType == "windows_generic_MSG") {
+        // Answer for the frame whether or not the shell is there to ask: a
+        // window that has given up its native caption must always be able to
+        // report a caption of its own, or it can never be moved again.
         auto* shell = Material::Shell::instance();
         auto* titleBar = shell ? shell->titleBar() : nullptr;
-        if (titleBar
-            && Material::WindowChrome::handleNativeEvent(this, message, result, [this, titleBar](const QPoint& local) {
-                   return titleBar->isCaptionArea(titleBar->mapFrom(this, local));
-               })) {
+        std::function<bool(const QPoint&)> captionTest;
+        if (titleBar) {
+            captionTest = [this, titleBar](const QPoint& local) {
+                return titleBar->isCaptionArea(titleBar->mapFrom(this, local));
+            };
+        }
+        if (Material::WindowChrome::handleNativeEvent(this, message, result, captionTest)) {
             return true;
         }
     }
@@ -2424,8 +2440,28 @@ void MainWindow::saveWindowInformation()
 
 void MainWindow::restoreWindowInformation()
 {
-    restoreGeometry(config()->get(Config::GUI_MainWindowGeometry).toByteArray());
+    const bool restored = restoreGeometry(config()->get(Config::GUI_MainWindowGeometry).toByteArray());
     restoreState(config()->get(Config::GUI_MainWindowState).toByteArray());
+    // The full vault - rail, groups, entries and detail side by side - needs
+    // the Expanded class. Rather than open in a window that hides two of its
+    // panes until it is dragged wider, size a first run (or a stale, narrow
+    // geometry) to the reference width when the screen has room for it.
+    QScreen* screen = QGuiApplication::screenAt(frameGeometry().center());
+    if (!screen) {
+        screen = QGuiApplication::primaryScreen();
+    }
+    if (screen) {
+        const QRect available = screen->availableGeometry();
+        const QSize wanted(qMin(DefaultWindowWidth, available.width()), qMin(DefaultWindowHeight, available.height()));
+        if (!restored || width() < minimumWidth() || width() < ExpandedWindowWidth) {
+            if (!isMaximized()) {
+                resize(qMax(width(), wanted.width()), qMax(height(), wanted.height()));
+                if (!restored) {
+                    move(available.center() - QPoint(width() / 2, height() / 2));
+                }
+            }
+        }
+    }
     // A state saved before the shell existed can bring the tool bar back up.
     m_ui->toolBar->setHidden(true);
 }
@@ -2649,14 +2685,23 @@ bool MainWindow::captureNavigate(const QString& screen, const QString& page)
     return true;
 }
 
-void MainWindow::setAllowScreenCapture(bool state)
+void MainWindow::setAllowScreenCapture(bool state, bool persist)
 {
     const Qt::WindowStates originalState = windowState();
     const bool wasVisible = isVisible();
+    const bool changed = m_allowScreenCapture != state;
     m_allowScreenCapture = state;
-    for (auto window : qApp->topLevelWindows()) {
-        if (window->isVisible() && (window->type() == Qt::Window || window->type() == Qt::Dialog)) {
-            osUtils->setPreventScreenCapture(window, !m_allowScreenCapture);
+    if (persist) {
+        config()->set(Config::GUI_AllowScreenCapture, state);
+    }
+    // Only touch the display affinity when there is something to change: the
+    // default is to leave every window native, and a WDA_NONE call on a window
+    // that never had an affinity is not free on the desktop window manager.
+    if (changed || !m_allowScreenCapture) {
+        for (auto window : qApp->topLevelWindows()) {
+            if (window->isVisible() && (window->type() == Qt::Window || window->type() == Qt::Dialog)) {
+                osUtils->setPreventScreenCapture(window, !m_allowScreenCapture);
+            }
         }
     }
     m_ui->actionAllowScreenCapture->blockSignals(true);
@@ -2682,7 +2727,15 @@ void MainWindow::focusWindowChanged(QWindow* window)
         m_lastFocusOutTime = Clock::currentMilliSecondsSinceEpoch();
     }
 
-    if (!osUtils->setPreventScreenCapture(window, !m_allowScreenCapture) && !m_allowScreenCapture) {
+    // Capture is only ever blocked on demand. When it is allowed nothing is
+    // asked of the desktop at all, and when it is blocked only real windows
+    // and dialogs are excluded: menus, tooltips and other transient popups
+    // are not worth forcing a native handle into existence for on every
+    // focus change.
+    if (m_allowScreenCapture || !window || !(window->type() == Qt::Window || window->type() == Qt::Dialog)) {
+        return;
+    }
+    if (!osUtils->setPreventScreenCapture(window, true)) {
         displayGlobalMessage(QObject::tr("Warning: Failed to block screenshot capture on a top-level window."),
                              MessageWidget::Error);
     }
@@ -3005,6 +3058,14 @@ void MainWindow::initViewMenu()
             setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
         }
         show();
+#ifdef Q_OS_WIN
+        // setWindowFlags() recreates the native window; the chrome and the
+        // frameless caption belong to the handle, so they are put back here.
+        Material::WindowChrome::install(this);
+        if (!QCoreApplication::arguments().contains(QStringLiteral("--native-caption"))) {
+            Material::WindowChrome::installFrameless(this);
+        }
+#endif
     });
     // Set checked after connecting to act on a toggle in state (default state is unchecked)
     m_ui->actionAlwaysOnTop->setChecked(config()->get(Config::GUI_AlwaysOnTop).toBool());

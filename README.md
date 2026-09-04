@@ -126,13 +126,15 @@ cmake --build build
 
 Longer instructions, including the test invocations, live in [INSTALL.md](./INSTALL.md).
 
-### Screenshots come out black — this is not a bug in the app
+### Screenshots
 
-KeePassXC calls `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)` on its top-level windows. The
-window is plainly visible on your monitor and fully hit-testable, but `PrintWindow`, `BitBlt` and
-`CopyFromScreen` all return black, and a desktop grab of its rectangle returns *the windows behind
-it*. Pass `--allow-screencapture` when you need to record or screenshot it. This is upstream
-behaviour and it cost this project several hours of misdiagnosis.
+Screen capture is allowed by default: the window shows up in screenshots, recordings and screen
+sharing like any other application. View ▸ *Allow Screen Capture* turns that off, and the choice is
+remembered. With capture blocked KeePassXC calls `SetWindowDisplayAffinity(WDA_EXCLUDEFROMCAPTURE)`
+on its top-level windows: they stay visible and hit-testable on the monitor, but `PrintWindow`,
+`BitBlt` and `CopyFromScreen` return black and a desktop grab returns *the windows behind them*.
+`--prevent-screencapture` forces that state for one run; `--allow-screencapture` forces the
+opposite.
 
 ## Layout of the UI code
 

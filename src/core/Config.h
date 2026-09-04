@@ -85,6 +85,8 @@ public:
         GUI_HideGroupPanel,
         GUI_HidePreviewPanel,
         GUI_AlwaysOnTop,
+        GUI_AllowScreenCapture,
+        GUI_MaterialVaultSplitterState,
         GUI_ToolButtonStyle,
         GUI_LaunchAtStartup,
         GUI_ShowTrayIcon,

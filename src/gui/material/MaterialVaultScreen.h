@@ -37,6 +37,7 @@ class Entry;
 class EntryModel;
 class Group;
 class QLabel;
+class QSplitter;
 class QListView;
 class QStackedWidget;
 class QTimer;
@@ -211,6 +212,7 @@ namespace Material
         void focusSearch();
         void setBreakpoint(Material::Breakpoint breakpoint);
         void openDetailSheet();
+        void restoreSplitter();
 
     protected:
         bool eventFilter(QObject* watched, QEvent* event) override;
@@ -257,6 +259,8 @@ namespace Material
         void toggleFavourite(bool favourite);
 
         QWidget* m_panes = nullptr;
+        QSplitter* m_splitter = nullptr;
+        bool m_restoringSplitter = false;
         QStackedWidget* m_stack = nullptr;
         QPointer<QStackedWidget> m_host;
         QPointer<QWidget> m_databasePage;

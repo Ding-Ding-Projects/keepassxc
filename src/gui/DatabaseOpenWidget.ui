@@ -636,70 +636,22 @@
               <item>
                <widget class="Material::TextButton" name="resetQuickUnlockButton">
                 <property name="symbol">
+                 <string notr="true">restart_alt</string>
+                </property>
+                <property name="text">
+                 <string>Reset</string>
+                </property>
+               </widget>
+              </item>
+              <item>
+               <widget class="Material::TextButton" name="closeQuickUnlockButton">
+                <property name="symbol">
                  <string notr="true">close</string>
                 </property>
                 <property name="text">
-                 <string>Cancel</string>
+                 <string>Close Database</string>
                 </property>
-                <property name="sizeType">
-                 <enum>QSizePolicy::Fixed</enum>
-                </property>
-                <property name="sizeHint" stdset="0">
-                 <size>
-                  <width>20</width>
-                  <height>4</height>
-                 </size>
-                </property>
-               </spacer>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="horizontalLayout_4">
-                <property name="spacing">
-                 <number>0</number>
-                </property>
-                <item>
-                 <widget class="QPushButton" name="resetQuickUnlockButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Reset</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <spacer name="horizontalSpacer_8">
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                  <property name="sizeType">
-                   <enum>QSizePolicy::Fixed</enum>
-                  </property>
-                  <property name="sizeHint" stdset="0">
-                   <size>
-                    <width>4</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                 </spacer>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="closeQuickUnlockButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>0</width>
-                    <height>20</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>Close Database</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
+               </widget>
               </item>
               <item>
                <spacer name="verticalSpacer_8">

@@ -18,7 +18,11 @@
 #include "MaterialTopAppBar.h"
 
 #include "MaterialButtons.h"
+#include "MaterialIcons.h"
 #include "MaterialTheme.h"
+
+#include <QAction>
+#include <QMenu>
 
 #include <QFontMetrics>
 #include <QHBoxLayout>
@@ -93,6 +97,21 @@ namespace Material
             {&m_regexButton, "regular_expression", tr("Regular expression builder"), &TopAppBar::regexRequested},
             {&m_notificationsButton, "notifications", tr("Notifications"), &TopAppBar::notificationsRequested},
         };
+        // The overflow menu holds whichever trailing actions the bar cannot
+        // fit; its button is the last thing in the row and only shows then.
+        m_overflowMenu = new QMenu(this);
+        m_overflowMenu->setObjectName(QStringLiteral("topAppBarOverflowMenu"));
+        m_overflowButton = new IconButton(QStringLiteral("more_vert"), this);
+        m_overflowButton->setObjectName(QStringLiteral("topAppBarOverflow"));
+        m_overflowButton->setFixedSize(Layout::IconButtonSize, Layout::IconButtonSize);
+        m_overflowButton->setSymbolSize(ActionGlyphSize);
+        m_overflowButton->setToolTip(tr("More actions"));
+        m_overflowButton->setAccessibleName(tr("More actions"));
+        m_overflowButton->hide();
+        connect(m_overflowButton, &QAbstractButton::clicked, this, [this] {
+            m_overflowMenu->popup(m_overflowButton->mapToGlobal(QPoint(0, m_overflowButton->height())));
+        });
+
         for (const auto& action : actions) {
             auto* button = new IconButton(QString::fromLatin1(action.symbol), this);
             // ButtonBase fixes a minimum width from its label metrics on
@@ -105,7 +124,14 @@ namespace Material
             connect(button, &QAbstractButton::clicked, this, action.signal);
             layout->addWidget(button);
             *action.button = button;
+
+            // The same command, as a menu entry, for when the button is folded.
+            auto* menuAction = new QAction(Icons::symbol(QString::fromLatin1(action.symbol)), action.tip, this);
+            menuAction->setObjectName(QStringLiteral("topAppBarOverflow_") + QString::fromLatin1(action.symbol));
+            connect(menuAction, &QAction::triggered, this, action.signal);
+            m_actions.append({button, menuAction, action.tip});
         }
+        layout->addWidget(m_overflowButton);
 
         applyTheme();
         connect(theme(), &Theme::changed, this, [this] { applyTheme(); });
@@ -204,6 +230,7 @@ namespace Material
         }
         m_titleColumn->setMaximumWidth(m_search && visible ? TitleMaxWidth : QWIDGETSIZE_MAX);
         m_layout->setStretch(0, m_search && visible ? 0 : 1);
+        relayoutActions();
         updateLabels();
     }
 
@@ -229,7 +256,83 @@ namespace Material
     void TopAppBar::resizeEvent(QResizeEvent* event)
     {
         QWidget::resizeEvent(event);
+        relayoutActions();
         updateLabels();
+    }
+
+    QStringList TopAppBar::overflowedActions() const
+    {
+        QStringList names;
+        for (int i = m_actions.size() - m_folded; i < m_actions.size(); ++i) {
+            names.append(m_actions.at(i).name);
+        }
+        return names;
+    }
+
+    QAbstractButton* TopAppBar::overflowButton() const
+    {
+        return m_overflowButton;
+    }
+
+    QMenu* TopAppBar::overflowMenu() const
+    {
+        return m_overflowMenu;
+    }
+
+    void TopAppBar::relayoutActions()
+    {
+        if (m_relayouting || m_actions.isEmpty()) {
+            return;
+        }
+        m_relayouting = true;
+
+        // What the row needs besides the action buttons, at their minimums:
+        // the paddings, the title column, the search field and Save.
+        const QMargins margins = m_layout->contentsMargins();
+        int fixed = margins.left() + margins.right();
+        int items = 0;
+        auto count = [&](QWidget* widget, int minimum) {
+            if (widget && !widget->isHidden()) {
+                fixed += minimum;
+                ++items;
+            }
+        };
+        count(m_titleColumn, m_search && m_searchVisible ? qMin(TitleMaxWidth, m_titleColumn->minimumWidth()) : 120);
+        if (m_search && m_searchVisible) {
+            count(m_search, qMax(m_search->minimumWidth(), m_search->minimumSizeHint().width()));
+        }
+        count(m_saveButton, m_saveButton->sizeHint().width());
+
+        const int total = m_actions.size();
+        int folded = 0;
+        for (; folded < total; ++folded) {
+            const int shown = total - folded;
+            const int overflow = folded > 0 ? 1 : 0;
+            const int buttons = shown + overflow;
+            const int need = fixed + buttons * Layout::IconButtonSize + (items + buttons - 1) * Spacing;
+            if (need <= width()) {
+                break;
+            }
+        }
+        // Folding a single action gains nothing: the overflow button takes
+        // its place. Fold two or none.
+        if (folded == 1 && total >= 2) {
+            folded = 2;
+        }
+
+        if (folded != m_folded) {
+            m_folded = folded;
+            m_overflowMenu->clear();
+            for (int i = 0; i < total; ++i) {
+                const bool inMenu = i >= total - folded;
+                m_actions.at(i).button->setVisible(!inMenu);
+                if (inMenu) {
+                    m_overflowMenu->addAction(m_actions.at(i).action);
+                }
+            }
+            m_overflowButton->setVisible(folded > 0);
+        }
+        m_relayouting = false;
     }
 
     void TopAppBar::applyTheme()

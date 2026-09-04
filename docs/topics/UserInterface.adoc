@@ -42,7 +42,7 @@ image::toolbar.png[]
 *(E) Search*
 
 === Screenshot Security
-By default, KeePassXC prevents recordings and screenshots of the application window on Windows and macOS. This prevents inadvertent spillage of information during meetings and disallows other applications to capture the window contents. If you would like to enable screen capture temporarily, navigate to _View_ menu and select _Allow Screen Capture_. Alternatively, you can start the application with the `--allow-screencapture` command line flag.
+By default, KeePassXC allows recordings and screenshots of the application window. To exclude the window from screen capture on Windows and macOS (for example during meetings), open the _View_ menu and untick _Allow Screen Capture_; the choice is remembered across restarts. The `--prevent-screencapture` and `--allow-screencapture` command line flags override the remembered setting for a single run.
 
 
 === View Options
@@ -85,6 +85,7 @@ Options:
   --pw-stdin                   read password of the database from stdin
   --debug-info                 Displays debugging information.
   --allow-screencapture        Allow screen recording and screenshots
+  --prevent-screencapture      Exclude the application from screen recording and screenshots
 
 Arguments:
   filename(s)                  filenames of the password databases to open (*.kdbx)

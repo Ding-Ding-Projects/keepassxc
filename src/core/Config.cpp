@@ -108,6 +108,8 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_HideGroupPanel, {QS("GUI/HideGroupPanel"), Roaming, false}},
     {Config::GUI_HidePreviewPanel, {QS("GUI/HidePreviewPanel"), Roaming, false}},
     {Config::GUI_AlwaysOnTop, {QS("GUI/GUI_AlwaysOnTop"), Local, false}},
+    {Config::GUI_AllowScreenCapture, {QS("GUI/AllowScreenCapture"), Roaming, true}},
+    {Config::GUI_MaterialVaultSplitterState, {QS("GUI/MaterialVaultSplitterState"), Local, {}}},
     {Config::GUI_ToolButtonStyle, {QS("GUI/ToolButtonStyle"), Roaming, Qt::ToolButtonIconOnly}},
     {Config::GUI_LaunchAtStartup, {QS("GUI/LaunchAtStartup"), Roaming, false}},
     {Config::GUI_ShowTrayIcon, {QS("GUI/ShowTrayIcon"), Roaming, false}},
@@ -183,8 +185,8 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::Security_IconDownloadFallback, {QS("Security/IconDownloadFallback"), Roaming, false}},
     {Config::Security_NoConfirmMoveEntryToRecycleBin,{QS("Security/NoConfirmMoveEntryToRecycleBin"), Roaming, true}},
     {Config::Security_EnableCopyOnDoubleClick,{QS("Security/EnableCopyOnDoubleClick"), Roaming, false}},
-    {Config::Security_QuickUnlock, {QS("Security/QuickUnlock"), Local, true}},
-    {Config::Security_QuickUnlockRemember, {QS("Security/QuickUnlockRemember"), Local, true}},
+    {Config::Security_QuickUnlock, {QS("Security/QuickUnlock"), Local, false}},
+    {Config::Security_QuickUnlockRemember, {QS("Security/QuickUnlockRemember"), Local, false}},
 
     // Browser
     {Config::Browser_Enabled, {QS("Browser/Enabled"), Roaming, false}},

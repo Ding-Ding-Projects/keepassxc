@@ -714,7 +714,7 @@ namespace Material
         setFrameShape(QFrame::NoFrame);
         setWidgetResizable(true);
         setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-        setFixedWidth(Layout::DetailPaneWidth);
+        setMinimumWidth(280);
         // Keep the viewport clear of the left border the pane paints itself.
         setViewportMargins(1, 0, 0, 0);
 

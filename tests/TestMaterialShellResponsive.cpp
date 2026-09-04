@@ -9,6 +9,12 @@
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSpecSheet.h"
 #include "gui/material/MaterialSwitch.h"
+#include "gui/material/MaterialTopAppBar.h"
+
+#include "core/Config.h"
+
+#include <QAbstractButton>
+#include <QAction>
 
 #include <QApplication>
 #include <QMenu>
@@ -219,26 +225,39 @@ void TestMaterialShellResponsive::appliesVaultPaneContract()
     vault.show();
     QApplication::processEvents();
 
+    // With no remembered splitter the reference widths apply; the panes are
+    // user-resizable from there, never fixed.
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
     vault.setBreakpoint(Breakpoint::ExtraLarge);
+    QApplication::processEvents();
     QVERIFY(vault.groupPaneVisible());
     QCOMPARE(vault.sidebar()->width(), 250);
     QVERIFY(vault.detailPaneInline());
     QCOMPARE(vault.detail()->width(), 392);
     QVERIFY(!vault.groupScopeButton()->isVisible());
     QVERIFY(!vault.detailSheetButton()->isVisible());
+    QVERIFY(vault.sidebar()->minimumWidth() > 0);
+    QVERIFY(vault.sidebar()->maximumWidth() == QWIDGETSIZE_MAX);
+    QVERIFY(vault.detail()->maximumWidth() == QWIDGETSIZE_MAX);
 
     vault.setBreakpoint(Breakpoint::Large);
+    QApplication::processEvents();
     QVERIFY(vault.groupPaneVisible());
     QCOMPARE(vault.sidebar()->width(), 216);
     QVERIFY(vault.detailPaneInline());
     QCOMPARE(vault.detail()->width(), 360);
 
+    // Expanded shows every pane: a window sized for the detail is sized for
+    // the groups too, and the three fit side by side at 840 px.
+    vault.resize(840 - 88, 800);
     vault.setBreakpoint(Breakpoint::Expanded);
-    QVERIFY(!vault.groupPaneVisible());
-    QVERIFY(vault.groupScopeButton()->isVisible());
-    QVERIFY(!vault.groupScopeButton()->accessibleName().isEmpty());
+    QApplication::processEvents();
+    QVERIFY(vault.groupPaneVisible());
+    QVERIFY(!vault.groupScopeButton()->isVisible());
     QVERIFY(vault.detailPaneInline());
-    QCOMPARE(vault.detail()->width(), 340);
+    QVERIFY(vault.sidebar()->width() >= vault.sidebar()->minimumWidth());
+    QVERIFY(vault.detail()->width() >= vault.detail()->minimumWidth());
+    vault.resize(1500, 800);
 
     vault.setBreakpoint(Breakpoint::Medium);
     QVERIFY(!vault.groupPaneVisible());
@@ -251,6 +270,44 @@ void TestMaterialShellResponsive::appliesVaultPaneContract()
     QVERIFY(!vault.detailPaneInline());
     QVERIFY(vault.groupScopeButton()->isVisible());
     QVERIFY(vault.detailSheetButton()->isVisible());
+}
+
+void TestMaterialShellResponsive::appBarFoldsActionsIntoOverflow()
+{
+    TopAppBar bar;
+    bar.setTitle(QStringLiteral("Personal.kdbx"));
+    bar.resize(1200, 64);
+    bar.show();
+    QApplication::processEvents();
+    QVERIFY(bar.overflowedActions().isEmpty());
+    QVERIFY(!bar.overflowButton()->isVisible());
+
+    // Too narrow for every button: the trailing actions fold into the menu,
+    // last first, and nothing is clipped off the right edge.
+    bar.resize(360, 64);
+    QApplication::processEvents();
+    const QStringList folded = bar.overflowedActions();
+    QVERIFY(!folded.isEmpty());
+    QVERIFY(bar.overflowButton()->isVisible());
+    QCOMPARE(bar.overflowMenu()->actions().size(), folded.size());
+    QCOMPARE(bar.overflowMenu()->actions().last()->text(), folded.last());
+    QVERIFY(bar.rect().contains(bar.overflowButton()->geometry()));
+    for (auto* button : bar.findChildren<QAbstractButton*>()) {
+        if (button->isVisible()) {
+            QVERIFY(bar.rect().contains(button->geometry()));
+        }
+    }
+
+    // The folded command still fires from the menu.
+    QSignalSpy spy(&bar, &TopAppBar::notificationsRequested);
+    bar.overflowMenu()->actions().last()->trigger();
+    QCOMPARE(spy.count(), 1);
+
+    // Room again: everything comes back.
+    bar.resize(1200, 64);
+    QApplication::processEvents();
+    QVERIFY(bar.overflowedActions().isEmpty());
+    QVERIFY(!bar.overflowButton()->isVisible());
 }
 
 void TestMaterialShellResponsive::settingsPageScrollsFromContentAndContainsScrollbar()

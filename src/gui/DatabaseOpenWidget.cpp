@@ -122,7 +122,10 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     m_ui->quickUnlockButton->setIcon(
         icons()->icon("fingerprint", true, palette().color(QPalette::Active, QPalette::HighlightedText)));
 
-    connect(m_ui->quickUnlockButton, &QPushButton::pressed, this, [this] { openDatabase(); });
+    // clicked, not pressed: a press that lands on the button while the window
+    // is activating, or a space on a focused button, must not summon the
+    // platform's authentication prompt on its own.
+    connect(m_ui->quickUnlockButton, &QPushButton::clicked, this, [this] { openDatabase(); });
     connect(m_ui->resetQuickUnlockButton, &QPushButton::pressed, this, [this] { resetQuickUnlock(); });
     connect(m_ui->closeQuickUnlockButton, &QPushButton::pressed, this, [this] { reject(); });
     m_ui->resetQuickUnlockButton->setShortcut(Qt::Key_Escape);
@@ -182,68 +185,6 @@ void DatabaseOpenWidget::keyPressEvent(QKeyEvent* event)
     } else {
         DialogyWidget::keyPressEvent(event);
     }
-}
-
-bool DatabaseOpenWidget::event(QEvent* event)
-{
-    bool ret = DialogyWidget::event(event);
-    auto type = event->type();
-
-    if (type == QEvent::Show || type == QEvent::WindowActivate) {
-        if (isOnQuickUnlockScreen() && !canPerformQuickUnlock()) {
-            resetQuickUnlock();
-        }
-        toggleQuickUnlockScreen();
-
-        if (type == QEvent::Show) {
-#ifdef Q_OS_WIN
-            m_deviceListener->registerHotplugCallback(true,
-                                                      true,
-                                                      YubiKeyInterfaceUSB::YUBICO_USB_VID,
-                                                      DeviceListener::MATCH_ANY,
-                                                      &DeviceListenerWin::DEV_CLS_KEYBOARD);
-            m_deviceListener->registerHotplugCallback(true,
-                                                      true,
-                                                      YubiKeyInterfaceUSB::ONLYKEY_USB_VID,
-                                                      DeviceListener::MATCH_ANY,
-                                                      &DeviceListenerWin::DEV_CLS_KEYBOARD);
-#else
-            m_deviceListener->registerHotplugCallback(true, true, YubiKeyInterfaceUSB::YUBICO_USB_VID);
-            m_deviceListener->registerHotplugCallback(true, true, YubiKeyInterfaceUSB::ONLYKEY_USB_VID);
-#endif
-        }
-
-        if (isVisible()) {
-            m_fileExistsTimer.start();
-            m_hideTimer.stop();
-            pollHardwareKey();
-        }
-
-        ret = true;
-    } else if (type == QEvent::Hide || type == QEvent::WindowDeactivate) {
-        // Schedule form clearing if we are hidden
-        if (!m_hideTimer.isActive()) {
-            m_hideTimer.start();
-        }
-
-        if (type == QEvent::Hide) {
-            m_deviceListener->deregisterAllHotplugCallbacks();
-        }
-
-        ret = true;
-    }
-
-    return ret;
-}
-
-bool DatabaseOpenWidget::unlockingDatabase()
-{
-    return m_unlockingDatabase;
-}
-
-void DatabaseOpenWidget::showMessage(const QString& text, MessageWidget::MessageType type, int autoHideTimeout)
-{
-    m_ui->messageWidget->showMessage(text, type, autoHideTimeout);
 }
 
 bool DatabaseOpenWidget::event(QEvent* event)
@@ -360,7 +301,12 @@ void DatabaseOpenWidget::load(const QString& filename)
     }
 
     toggleQuickUnlockScreen();
-    m_ui->enableQuickUnlockCheckBox->setChecked(config()->get(Config::Security_QuickUnlock).toBool());
+    // Quick Unlock is opt in. The box is only pre-ticked once the user has
+    // turned it on in the settings; a password-only database must never enrol
+    // Windows Hello or Touch ID behind the user's back on its first unlock.
+    m_ui->enableQuickUnlockCheckBox->setChecked(isQuickUnlockAvailable()
+                                                && config()->get(Config::Security_QuickUnlock).toBool());
+    m_ui->enableQuickUnlockCheckBox->setVisible(isQuickUnlockAvailable());
 
     // Do initial auto-poll
     pollHardwareKey();

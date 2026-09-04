@@ -74,6 +74,13 @@ namespace Material
         void installFrameless(QWidget* window);
 
         /**
+         * Pop the desktop's own system menu for the top-level window of
+         * @p window at @p globalPos (logical, global coordinates), the way a
+         * right click on a native caption would.
+         */
+        void showSystemMenu(QWidget* window, const QPoint& globalPos);
+
+        /**
          * Answer the native messages a frameless window has to answer itself:
          * WM_NCCALCSIZE (no caption, the client area starts at the top edge)
          * and WM_NCHITTEST (resize borders, then the caption strip, then the
@@ -81,6 +88,12 @@ namespace Material
          *
          * @p captionTest is asked, with a point in @p window coordinates,
          * whether that point is caption; it is the TitleBar's isCaptionArea().
+         * Pass an empty function when there is no bar to ask: the top 44
+         * logical pixels then count as caption so the window stays movable.
+         *
+         * Self-healing: if the message arrives from a handle other than the
+         * one installFrameless() last configured (Qt recreates the native
+         * window on setWindowFlags()), the frame change is repeated first.
          */
         bool handleNativeEvent(QWidget* window,
                                void* message,

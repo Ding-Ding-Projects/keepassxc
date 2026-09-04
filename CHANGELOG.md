@@ -1,5 +1,9 @@
 # Changelog
 
+- Window: Keep the frameless title bar draggable and the edges resizable after the native window is recreated (View ▸ Always on Top) or the shell is not there to ask; right-clicking the bar opens the system menu.
+- Capture: Allow screenshots and screen recording by default, remember the View ▸ Allow Screen Capture choice, and add `--prevent-screencapture`; capture affinity is no longer re-applied to every popup on every focus change.
+- Layout: Open at 1280x800 (never narrower than the Expanded class), show the group pane from 840 px, put the vault's three panes in a persistent splitter, and fold the app bar's trailing actions into a More menu instead of squeezing them.
+- Unlock: Quick Unlock (Windows Hello / Touch ID) is opt in; a password-only database no longer enrols the platform credential on its first unlock.
 - Interface: Replace every stock combo box, slider and date field on the Material screens with searchable Material selects (list box plus search bar and regex builder), Material 3 sliders and Material date fields with a calendar picker.
 - Interface: Draw a frameless Material title bar with its own window controls instead of the operating-system caption bar.
 - Appearance: Add a per-element appearance editor (Shift+right-click or Ctrl+Shift+E) with typography, colour, shape and preset tabs, an infinite colour picker with notation translator, contrast readout and an animated rainbow option, plus preset export and import.

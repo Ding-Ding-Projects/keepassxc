@@ -58,7 +58,7 @@ public:
 
     QList<DatabaseWidget*> getOpenDatabases();
     void restoreConfigState();
-    void setAllowScreenCapture(bool state);
+    void setAllowScreenCapture(bool state, bool persist = true);
 
     /**
      * Land on a design-parity capture screen: a shell destination, an
@@ -180,6 +180,12 @@ private slots:
 
 private:
     static const QString BaseWindowTitle;
+    // The reference window: wide enough for the rail, the group pane, the
+    // entry list and the inline detail side by side (the shell's Expanded
+    // class begins at 840 px), tall enough for the detail pane's fields.
+    static constexpr int DefaultWindowWidth = 1280;
+    static constexpr int DefaultWindowHeight = 800;
+    static constexpr int ExpandedWindowWidth = 840;
 
     void saveWindowInformation();
     void restoreWindowInformation();
@@ -234,7 +240,7 @@ private:
     QSet<QString> m_sessionPinnedTabs;
     bool m_contextMenuFocusLock = false;
     bool m_showToolbarSeparator = false;
-    bool m_allowScreenCapture = false;
+    bool m_allowScreenCapture = true;
     qint64 m_lastFocusOutTime = 0;
     qint64 m_lastShowTime = 0;
     QTimer m_updateCheckTimer;

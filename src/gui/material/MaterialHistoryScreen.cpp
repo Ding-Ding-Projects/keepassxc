@@ -70,7 +70,7 @@ namespace Material
         constexpr int SearchMaximumWidth = 520;
         constexpr int DetailWidth = 392;
         constexpr int DetailRadius = 28;
-        constexpr int DetailBreakpoint = 900;
+        constexpr int DetailBreakpoint = 840; // the shell's Expanded class
         constexpr int ColumnGapWide = 16;
         constexpr int BadgeChipHeight = 24;
         constexpr int DiffRadius = 12;
