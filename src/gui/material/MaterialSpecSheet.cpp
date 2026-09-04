@@ -325,7 +325,8 @@ namespace Material
         auto* titleLabel = new QLabel(m_title, m_content);
 
         m_search = new SearchBar(SearchBar::Variant::Surface, m_content);
-        m_search->setFixedWidth(PageSearchWidth);
+        m_search->setMaximumWidth(PageSearchWidth);
+        m_search->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
         m_search->setPlaceholder(tr("Search this surface"));
         m_search->setIdentity(QStringLiteral("sheet.%1").arg(m_id), tr("%1 search").arg(m_title));
 

@@ -48,7 +48,7 @@ namespace Material
 {
     namespace
     {
-        constexpr int SheetWidth = 840;
+        constexpr int SheetWidth = 720; // under the 840 px minimum window, so it is never clamped
         constexpr int SheetMaxHeight = 720;
         // The palette hangs below the top of the window; it is not centred.
         constexpr int SheetTopMargin = 90;

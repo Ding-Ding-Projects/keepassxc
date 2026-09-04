@@ -70,6 +70,15 @@ namespace Material
         void clearActions();
 
         /**
+         * A widget between the supporting text and the actions - a "do not
+         * ask again" switch, a field. The dialog takes ownership.
+         */
+        void addContent(QWidget* widget);
+
+        /** Whether Escape and a click on the scrim count as rejection. */
+        void setDismissable(bool dismissable);
+
+        /**
          * A Cancel / @p confirmLabel sheet parented to @p parent, error-tinted
          * when @p destructive. It deletes itself once closed, so connect to
          * accepted() before calling openOverlay().

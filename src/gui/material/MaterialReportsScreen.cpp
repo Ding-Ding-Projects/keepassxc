@@ -178,7 +178,7 @@ namespace Material
 
                 painter.setFont(theme()->font(FixLabelRole));
                 painter.setPen(contentColor());
-                painter.drawText(rect(), Qt::AlignCenter, text());
+                painter.drawText(rect(), Qt::AlignCenter, painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 8));
             }
         };
 
@@ -221,7 +221,7 @@ namespace Material
 
                 painter.setFont(theme()->font(TypeRole::LabelMedium));
                 painter.setPen(pillContentColor(pillKind()));
-                painter.drawText(rect(), Qt::AlignCenter, text());
+                painter.drawText(rect(), Qt::AlignCenter, painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 8));
             }
         };
 

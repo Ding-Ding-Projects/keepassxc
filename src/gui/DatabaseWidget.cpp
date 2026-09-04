@@ -1029,28 +1029,20 @@ void DatabaseWidget::openUrlForEntry(Entry* entry)
             if (cmdTruncated.length() > 400) {
                 cmdTruncated = cmdTruncated.left(400) + " […]";
             }
-            QMessageBox msgbox(QMessageBox::Icon::Question,
-                               tr("Execute command?"),
-                               tr("Do you really want to execute the following command?<br><br>%1<br>")
-                                   .arg(cmdTruncated.toHtmlEscaped()),
-                               QMessageBox::Yes | QMessageBox::No,
-                               this);
-            msgbox.setDefaultButton(QMessageBox::No);
+            QScopedPointer<QCheckBox> remember(new QCheckBox(tr("Remember my choice")));
+            const auto result =
+                MessageBox::question(this,
+                                     tr("Execute command?"),
+                                     tr("Do you really want to execute the following command?<br><br>%1<br>")
+                                         .arg(cmdTruncated.toHtmlEscaped()),
+                                     MessageBox::Yes | MessageBox::No,
+                                     MessageBox::No,
+                                     MessageBox::None,
+                                     remember.data());
+            launch = (result == MessageBox::Yes);
 
-            auto checkbox = new QCheckBox(tr("Remember my choice"), &msgbox);
-            msgbox.setCheckBox(checkbox);
-            bool remember = false;
-            QObject::connect(checkbox, &QCheckBox::stateChanged, [&](int state) {
-                if (static_cast<Qt::CheckState>(state) == Qt::CheckState::Checked) {
-                    remember = true;
-                }
-            });
-
-            int result = msgbox.exec();
-            launch = (result == QMessageBox::Yes);
-
-            if (remember) {
-                entry->attributes()->set(EntryAttributes::RememberCmdExecAttr, result == QMessageBox::Yes ? "1" : "0");
+            if (remember->isChecked()) {
+                entry->attributes()->set(EntryAttributes::RememberCmdExecAttr, launch ? "1" : "0");
             }
         }
 

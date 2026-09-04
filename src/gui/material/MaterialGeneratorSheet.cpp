@@ -301,7 +301,8 @@ namespace Material
             paintSurface(&painter, rect(), Shape::Small, fill, border);
             painter.setPen(content);
             painter.setFont(font());
-            painter.drawText(rect(), Qt::AlignCenter, text());
+            painter.drawText(
+                rect(), Qt::AlignCenter, painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 8));
         }
 
         void enterEvent(QEnterEvent* event) override

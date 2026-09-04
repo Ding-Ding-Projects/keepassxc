@@ -402,7 +402,8 @@ namespace Material
         explicit DetailCard(QWidget* parent = nullptr)
             : QWidget(parent)
         {
-            setFixedWidth(DetailWidth);
+            setMinimumWidth(DetailWidth * 3 / 4);
+            setMaximumWidth(DetailWidth);
             auto* column = new QVBoxLayout(this);
             column->setContentsMargins(0, 0, 0, 0);
             column->setSpacing(0);

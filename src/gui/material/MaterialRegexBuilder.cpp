@@ -291,7 +291,9 @@ namespace Material
             Icons::symbol(QStringLiteral("drag_indicator"), handle).paint(&painter, QRect(6, (height() - 14) / 2, 14, 14));
             painter.setFont(font());
             painter.setPen(theme()->color(roles.second));
-            painter.drawText(rect().adjusted(24, 0, -8, 0), Qt::AlignVCenter | Qt::AlignLeft, text());
+            painter.drawText(rect().adjusted(24, 0, -8, 0),
+                             Qt::AlignVCenter | Qt::AlignLeft,
+                             painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 32));
         }
 
         void mousePressEvent(QMouseEvent* event) override
@@ -434,7 +436,7 @@ namespace Material
             paintSurface(&painter, rect(), Shape::Small, fill, border);
             painter.setPen(content);
             painter.setFont(font());
-            painter.drawText(rect(), Qt::AlignCenter, text());
+            painter.drawText(rect(), Qt::AlignCenter, painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 8));
         }
 
         void enterEvent(QEnterEvent* event) override
@@ -611,7 +613,10 @@ namespace Material
               {QStringLiteral("|"), QStringLiteral("|"), 0, tr("alternation")}}}};
 
         auto* palette = new QWidget;
-        palette->setFixedWidth(PaletteWidth);
+        // The sheet is clamped to the window; the palette gives way first so
+        // the editor column keeps its right edge on screen.
+        palette->setMinimumWidth(PaletteWidth * 2 / 3);
+        palette->setMaximumWidth(PaletteWidth);
 
         auto* layout = new QVBoxLayout(palette);
         layout->setContentsMargins(0, 0, 0, 0);

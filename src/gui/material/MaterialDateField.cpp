@@ -99,7 +99,7 @@ namespace Material
             }
             painter.setFont(theme()->font(TypeRole::BodyMedium));
             painter.setPen(theme()->color(m_selected ? Role::OnPrimary : (m_inMonth ? Role::OnSurface : Role::Outline)));
-            painter.drawText(rect(), Qt::AlignCenter, text());
+            painter.drawText(rect(), Qt::AlignCenter, painter.fontMetrics().elidedText(text(), Qt::ElideRight, width() - 2));
         }
 
     private:

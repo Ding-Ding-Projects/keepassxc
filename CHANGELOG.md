@@ -1,5 +1,7 @@
 # Changelog
 
+- Dialogs: Every message box is a Material 3 dialog sheet inside the window (symbol badge, headline, supporting text, text and filled actions); the unlock form's Quick Unlock toggle and its Close/Unlock buttons are Material controls, and the unlock-path warnings use the same sheet.
+- Layout: Elide painted labels in report chips, generator and regex chips and calendar cells instead of clipping them; the command palette fits the minimum window; the history detail pane, spec-sheet search and regex palette give way instead of holding a fixed width; group rows follow the density setting.
 - Updates: Follow the release link's redirect (HTTPS, GitHub hosts only) when fetching the update manifest, so the automatic update check no longer fails on every run; say why an update failed instead of a generic message, and stay quiet when a background check is merely offline.
 - Window: Keep the frameless title bar draggable and the edges resizable after the native window is recreated (View ▸ Always on Top) or the shell is not there to ask; right-clicking the bar opens the system menu.
 - Capture: Allow screenshots and screen recording by default, remember the View ▸ Allow Screen Capture choice, and add `--prevent-screencapture`; capture affinity is no longer re-applied to every popup on every focus change.

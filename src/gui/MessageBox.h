@@ -60,10 +60,12 @@ public:
         Continue = 1 << 27,
         ContinueWithWeakPass = 1 << 28,
         CopyAnyway = 1 << 29,
+        OpenAnyway = 1ull << 30,
+        RetryWithEmptyPassword = 1ull << 31,
 
         // Internal loop markers. Update Last when new KeePassXC button is added
         First = Ok,
-        Last = CopyAnyway,
+        Last = RetryWithEmptyPassword,
     };
 
     enum Action
@@ -75,6 +77,14 @@ public:
     typedef uint64_t Buttons;
 
     static void initializeButtonDefs();
+    /** The Material 3 sheet behind every message; see messageBox(). */
+    static Button materialMessageBox(QWidget* host,
+                                     QMessageBox::Icon icon,
+                                     const QString& title,
+                                     const QString& text,
+                                     Buttons buttons,
+                                     Button defaultButton,
+                                     QCheckBox* checkbox);
     static void setNextAnswer(Button button);
 
     static Button critical(QWidget* parent,

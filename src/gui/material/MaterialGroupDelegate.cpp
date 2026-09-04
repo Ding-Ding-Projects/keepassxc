@@ -166,7 +166,7 @@ namespace Material
     {
         Q_UNUSED(option);
         Q_UNUSED(index);
-        return {MinimumRowWidth, RowHeight + RowGap};
+        return {MinimumRowWidth, theme()->rowHeight() + RowGap};
     }
 
 } // namespace Material

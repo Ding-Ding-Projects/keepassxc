@@ -216,6 +216,22 @@ namespace Material
         return button;
     }
 
+    void Dialog::addContent(QWidget* widget)
+    {
+        if (!widget) {
+            return;
+        }
+        widget->setParent(m_sheet);
+        // The action row is the last item; content goes just above it.
+        m_sheetLayout->insertWidget(m_sheetLayout->count() - 1, widget);
+        widget->show();
+    }
+
+    void Dialog::setDismissable(bool dismissable)
+    {
+        setCloseOnClickOutside(dismissable);
+    }
+
     void Dialog::clearActions()
     {
         // Index 0 is the stretch that keeps the row right-aligned.
