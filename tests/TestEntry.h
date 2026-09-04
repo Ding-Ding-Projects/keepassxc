@@ -40,6 +40,7 @@ private slots:
     void testResolveConversionPlaceholders();
     void testResolveReplacePlaceholders();
     void testResolveClonedEntry();
+    void testCrossDatabaseReferences();
     void testIsRecycled();
     void testMoveUpDown();
     void testPreviousParentGroup();
