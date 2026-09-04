@@ -57,6 +57,7 @@
 - [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
 - [x] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding (three named records: widths 50 tuples, languages and themes 60 tuples at the expanded width, scales 30 tuples; 20 findings repaired; all three at 0 at `693367d1`).
 - [ ] Turn every row of the fail-closed feature inventory (`docs/features/inventory.json`) green; `scripts/check-feature-inventory.mjs` currently reports 0/172.
+- [x] Make the feature-inventory guard reject duplicate canonical rows and malformed row values instead of silently accepting or crashing on them.
 
 ## Installer and updater
 

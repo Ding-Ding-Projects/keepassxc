@@ -28,7 +28,9 @@ expectNewRed('canonical row removed', inv => { inv.rows = inv.rows.filter(r => r
 expectNewRed('row status downgraded', inv => { const r = inv.rows.find(x => x.id === implemented.id && x.surface === implemented.surface); r.status = 'missing'; r.note = 'probe'; });
 expectNewRed('implementation anchor renamed', inv => { const r = inv.rows.find(x => x.id === implemented.id && x.surface === implemented.surface); r.implementation.anchor = r.implementation.anchor + 'Renamed'; });
 expectNewRed('implementation file missing', inv => { const r = inv.rows.find(x => x.id === implemented.id && x.surface === implemented.surface); r.implementation.file = r.implementation.file + '.gone'; });
+expectNewRed('canonical row duplicated', inv => { inv.rows.push(JSON.parse(JSON.stringify(implemented))); });
 expectNewRed('non-canonical id added', inv => { inv.rows.push({ id: 'not-a-feature', surface: 'app', title: 'x', status: 'implemented' }); });
+expectNewRed('malformed row added', inv => { inv.rows.push(null); });
 
 // A commented-out symbol must not satisfy a line-anchored implementation anchor.
 const scratch = mkdtempSync(join(tmpdir(), 'kpxc-inventory-guard-'));
