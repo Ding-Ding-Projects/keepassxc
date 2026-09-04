@@ -38,6 +38,7 @@
 namespace
 {
     constexpr int clearFormsDelay = 30000;
+    constexpr int fileExistsCheckInterval = 5000;
 
     bool isQuickUnlockAvailable()
     {
@@ -200,6 +201,7 @@ bool DatabaseOpenWidget::event(QEvent* event)
         }
 
         if (isVisible()) {
+            m_fileExistsTimer.start();
             m_hideTimer.stop();
             pollHardwareKey();
         }

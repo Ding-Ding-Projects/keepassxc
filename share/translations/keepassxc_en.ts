@@ -2664,10 +2664,6 @@ This is definitely a bug, please report it to the developers.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Failed to open %1. It either does not exist or is not accessible.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>CSV file</source>
         <translation type="unfinished"></translation>
     </message>
