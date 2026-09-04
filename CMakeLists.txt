@@ -97,6 +97,16 @@ add_feature_info("Networking" KPXC_FEATURE_NETWORK "Code that can reach out to e
 add_feature_info("Update Checks" KPXC_FEATURE_UPDATES "Periodic update checks can be performed")
 add_feature_info("Documentation" KPXC_FEATURE_DOCS "Offline documentation")
 
+# VCPKG features (must come before project())
+if(WITH_BUILD_QT)
+    list(APPEND VCPKG_MANIFEST_FEATURES qt)
+    unset(ENV{Qt6_DIR})
+endif()
+
+# Initialize project
+project(KeePassXC)
+set(APP_ID "org.keepassxc.${PROJECT_NAME}")
+
 # Retrieve git HEAD revision hash
 set(GIT_HEAD_OVERRIDE "" CACHE STRING "Manually set the Git HEAD hash when missing (eg, when no .git folder exists)")
 execute_process(COMMAND git rev-parse --short=7 HEAD
