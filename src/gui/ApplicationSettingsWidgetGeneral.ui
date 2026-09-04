@@ -1172,6 +1172,9 @@
                   <property name="enabled">
                    <bool>false</bool>
                   </property>
+                  <property name="focusPolicy">
+                   <enum>Qt::FocusPolicy::StrongFocus</enum>
+                  </property>
                   <property name="sizeAdjustPolicy">
                    <enum>QComboBox::SizeAdjustPolicy::AdjustToContents</enum>
                   </property>
