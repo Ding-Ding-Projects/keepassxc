@@ -721,10 +721,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Enable database quick unlock (Touch ID / Windows Hello)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Lock databases when session is locked or lid is closed</source>
         <translation type="unfinished"></translation>
     </message>
@@ -766,6 +762,14 @@
     </message>
     <message>
         <source>Hide notes in the entry preview panel</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enable database quick unlock by default</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Remember quick unlock after database is closed</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -1729,10 +1733,6 @@ Backup database located at %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Cancel</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Unlock</source>
         <translation type="unfinished"></translation>
     </message>
@@ -1807,10 +1807,6 @@ To prevent this error from appearing, you must go to &quot;Database Settings / S
     </message>
     <message>
         <source>Cannot use database file as key file</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>authenticate to access the database</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9201,43 +9197,7 @@ This option is deprecated, use --set-key-file instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>AES initialization failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AES encrypt failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to store in Linux Keyring</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Polkit returned an error: %1</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not locate key in keyring</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Could not read key in keyring</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>AES decrypt failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Polkit authentication agent was available</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Polkit authorization failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>No Quick Unlock provider is available</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9246,10 +9206,6 @@ This option is deprecated, use --set-key-file instead.</source>
     </message>
     <message>
         <source>Failed to encrypt key data.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Failed to get Windows Hello credential.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -9739,7 +9695,35 @@ This option is deprecated, use --set-key-file instead.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Format to use when exporting. Available choices are &apos;xml&apos;, &apos;csv&apos; or &apos;html&apos;. Defaults to &apos;xml&apos;.</source>
+        <source>Quick Unlock Pin Entry</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin setup was canceled. Quick unlock has not been enabled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Failed to get credentials for quick unlock.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Enter quick unlock pin (%1 of %2 attempts):</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Pin entry was canceled.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>No Polkit authentication agent was available.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Polkit authorization failed.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <source>Windows Hello setup was canceled or failed. Quick unlock has not been enabled.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
