@@ -7873,10 +7873,6 @@ Do you want to overwrite it?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>ERROR: Please specify one of --attribute or --totp, not both.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Entry with path %1 has no TOTP set up.</source>
         <translation type="unfinished"></translation>
     </message>
@@ -8586,15 +8582,7 @@ Available commands:
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Show the entry&apos;s current TOTP.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Show the protected attributes in clear text.</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Show all the attributes of the entry.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
