@@ -162,6 +162,8 @@ public:
     void setDefaultAttribute(const QString& attribute, const QString& value);
     void setExpires(const bool& value);
     void setExpiryTime(const QDateTime& dateTime);
+    void setExtendsExpirationOnPwdChange(const bool& value);
+    void setExpirationExtension(const QString& quantity, const QString& magnitude);
     void setTotp(QSharedPointer<Totp::Settings> settings);
     void setPreviousParentGroup(const Group* group);
     void setPreviousParentGroupUuid(const QUuid& uuid);

@@ -24,6 +24,7 @@
 #include "core/Group.h"
 #include "core/Metadata.h"
 #include "core/PasswordHealth.h"
+#include "core/TimeDelta.h"
 #include "core/Tools.h"
 #include "core/Totp.h"
 
@@ -846,6 +847,20 @@ void Entry::setExpiryTime(const QDateTime& dateTime)
         m_data.timeInfo.setExpiryTime(dateTime);
         emitModified();
     }
+}
+
+void Entry::setExtendsExpirationOnPwdChange(const bool& value)
+{
+    if (m_customData->value("ExpirationExtension").toInt() != value) {
+        m_customData->set("ExpirationExtension", QString::number(value));
+        emit entryModified();
+    }
+}
+
+void Entry::setExpirationExtension(const QString& quantity, const QString& magnitude)
+{
+    m_customData->set("ExpirationExtensionQuantity", quantity);
+    m_customData->set("ExpirationExtensionMagnitude", magnitude);
 }
 
 QList<Entry*> Entry::historyItems()
