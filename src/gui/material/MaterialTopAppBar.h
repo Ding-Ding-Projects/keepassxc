@@ -18,9 +18,12 @@
 #ifndef KEEPASSXC_MATERIALTOPAPPBAR_H
 #define KEEPASSXC_MATERIALTOPAPPBAR_H
 
+#include <QList>
 #include <QString>
+#include <QStringList>
 #include <QWidget>
 
+class QAbstractButton;
 class QHBoxLayout;
 class QAction;
 class QLabel;
