@@ -30,7 +30,7 @@
 #include "PasskeyUtils.h"
 #include "core/EntryAttributes.h"
 #include "core/Tools.h"
-#include "core/UrlTools.h"
+#include "gui/UrlTools.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
 #include "gui/UrlTools.h"
