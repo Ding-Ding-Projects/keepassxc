@@ -270,6 +270,15 @@ MessageBox::Button MessageBox::materialMessageBox(QWidget* host,
         }
         loop.quit();
     });
+    // The host may go away with the sheet still up (a lock, a tray hide, a
+    // quit); the loop must not outlive the dialog it is waiting on.
+    QObject::connect(dialog, &QObject::destroyed, &loop, [&] {
+        if (!answered) {
+            answer = dismiss;
+            answered = true;
+        }
+        loop.quit();
+    });
     dialog->setDismissable(dismiss != NoButton);
 
     dialog->openOverlay();

@@ -23,6 +23,7 @@
 
 #include <QCursor>
 #include <QEvent>
+#include <QHash>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
@@ -704,7 +705,15 @@ namespace Material
         }
 
         painter.setOpacity(isEnabled() ? 1.0 : DisabledOpacity);
-        const QIcon glyph = icon();
+        QIcon glyph = icon();
+        if (glyph.isNull() && arrowType() != Qt::NoArrow) {
+            // A bare arrow button (list scrollers) gets the matching chevron.
+            static const QHash<Qt::ArrowType, QString> arrows = {{Qt::UpArrow, QStringLiteral("expand_less")},
+                                                                 {Qt::DownArrow, QStringLiteral("expand_more")},
+                                                                 {Qt::LeftArrow, QStringLiteral("chevron_left")},
+                                                                 {Qt::RightArrow, QStringLiteral("chevron_right")}};
+            glyph = Icons::symbol(arrows.value(arrowType()), tint);
+        }
         const QIcon::Mode mode = isEnabled() ? QIcon::Normal : QIcon::Disabled;
         if (toolButtonStyle() == Qt::ToolButtonTextUnderIcon) {
             if (!glyph.isNull()) {
