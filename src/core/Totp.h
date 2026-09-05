@@ -95,6 +95,8 @@ namespace Totp
     QString checkValidSettings(const QSharedPointer<Totp::Settings>& settings);
     QString
     generateTotp(const QSharedPointer<Totp::Settings>& settings, bool* isValid = nullptr, const quint64 time = 0ull);
+    /** Seconds left in the current step of @p settings. */
+    quint64 secondsLeft(const QSharedPointer<Totp::Settings>& settings);
 
     bool hasCustomSettings(const QSharedPointer<Totp::Settings>& settings);
 

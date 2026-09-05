@@ -110,6 +110,8 @@ public:
     QString notes() const;
     QString attribute(const QString& key) const;
     QString totp(bool* isValid = nullptr) const;
+    /** Seconds until the current TOTP code rolls over; zero without TOTP. */
+    quint64 totpSecondsLeft() const;
     QString totpSettingsString() const;
     QSharedPointer<Totp::Settings> totpSettings() const;
     Group* previousParentGroup();

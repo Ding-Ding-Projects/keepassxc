@@ -81,6 +81,11 @@ private slots:
     void resetQuickUnlock();
 
 private:
+    bool isQuickUnlockAvailable() const;
+    bool canPerformQuickUnlock() const;
+    bool isOnQuickUnlockScreen() const;
+    void toggleQuickUnlockScreen();
+
     QPointer<DeviceListener> m_deviceListener;
     bool m_pollingHardwareKey = false;
     bool m_manualHardwareKeyRefresh = false;

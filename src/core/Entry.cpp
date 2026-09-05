@@ -853,7 +853,7 @@ void Entry::setExtendsExpirationOnPwdChange(const bool& value)
 {
     if (m_customData->value("ExpirationExtension").toInt() != value) {
         m_customData->set("ExpirationExtension", QString::number(value));
-        emit entryModified();
+        emit modified();
     }
 }
 

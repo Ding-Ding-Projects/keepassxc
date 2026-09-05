@@ -228,6 +228,15 @@ QString Totp::checkValidSettings(const QSharedPointer<Totp::Settings>& settings)
     return {};
 }
 
+quint64 Totp::secondsLeft(const QSharedPointer<Totp::Settings>& settings)
+{
+    if (!settings || settings->step == 0) {
+        return 0;
+    }
+    const auto now = static_cast<quint64>(Clock::currentSecondsSinceEpoch());
+    return settings->step - (now % settings->step);
+}
+
 QString Totp::generateTotp(const QSharedPointer<Totp::Settings>& settings, bool* isValid, const quint64 time)
 {
     auto error = checkValidSettings(settings);
