@@ -41,13 +41,6 @@ namespace
     constexpr int clearFormsDelay = 30000;
     constexpr int fileExistsCheckInterval = 5000;
 
-    bool isQuickUnlockAvailable()
-    {
-        if (config()->get(Config::Security_QuickUnlock).toBool()) {
-            return getQuickUnlock()->isAvailable();
-        }
-        return false;
-    }
 } // namespace
 
 DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
@@ -117,7 +110,6 @@ DatabaseOpenWidget::DatabaseOpenWidget(QWidget* parent)
     });
 
     // QuickUnlock components
-    m_ui->quickUnlockButton->setFont(largeFont);
     m_ui->quickUnlockButton->setIcon(
         icons()->icon("fingerprint", true, palette().color(QPalette::Active, QPalette::HighlightedText)));
 
