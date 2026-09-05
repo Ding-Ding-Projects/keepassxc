@@ -17,6 +17,8 @@
  */
 
 #include "DatabaseSettingsDialog.h"
+
+#include "gui/material/MaterialControls.h"
 #include "DatabaseSettingsWidgetDatabaseKey.h"
 #include "DatabaseSettingsWidgetEncryption.h"
 #include "DatabaseSettingsWidgetGeneral.h"
@@ -36,7 +38,7 @@
 DatabaseSettingsDialog::DatabaseSettingsDialog(QWidget* parent)
     : EditWidget(parent)
     , m_generalWidget(new DatabaseSettingsWidgetGeneral(this))
-    , m_securityTabWidget(new QTabWidget(this))
+    , m_securityTabWidget(new Material::TabWidget(this))
     , m_databaseKeyWidget(new DatabaseSettingsWidgetDatabaseKey(this))
     , m_encryptionWidget(new DatabaseSettingsWidgetEncryption(this))
 #ifdef KPXC_FEATURE_BROWSER

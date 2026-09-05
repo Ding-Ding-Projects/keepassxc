@@ -32,13 +32,13 @@
       <number>12</number>
      </property>
      <item>
-      <widget class="QGroupBox" name="ColumnAssociation">
+      <widget class="Material::GroupBox" name="ColumnAssociation">
        <property name="title">
         <string>Column Association</string>
        </property>
        <layout class="QGridLayout" name="gridLayout">
         <item row="4" column="1">
-         <widget class="QComboBox" name="urlCombo">
+         <widget class="Material::ComboBox" name="urlCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -51,7 +51,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QComboBox" name="usernameCombo">
+         <widget class="Material::ComboBox" name="usernameCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -103,7 +103,7 @@
          </widget>
         </item>
         <item row="3" column="4">
-         <widget class="QComboBox" name="lastModifiedCombo">
+         <widget class="Material::ComboBox" name="lastModifiedCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -116,7 +116,7 @@
          </widget>
         </item>
         <item row="2" column="4">
-         <widget class="QComboBox" name="iconCombo">
+         <widget class="Material::ComboBox" name="iconCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -129,7 +129,7 @@
          </widget>
         </item>
         <item row="1" column="4">
-         <widget class="QComboBox" name="totpCombo">
+         <widget class="Material::ComboBox" name="totpCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -155,7 +155,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QComboBox" name="titleCombo">
+         <widget class="Material::ComboBox" name="titleCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -168,7 +168,7 @@
          </widget>
         </item>
         <item row="0" column="4">
-         <widget class="QComboBox" name="notesCombo">
+         <widget class="Material::ComboBox" name="notesCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -223,7 +223,7 @@
          </widget>
         </item>
         <item row="4" column="4">
-         <widget class="QComboBox" name="createdCombo">
+         <widget class="Material::ComboBox" name="createdCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -262,7 +262,7 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QComboBox" name="passwordCombo">
+         <widget class="Material::ComboBox" name="passwordCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -301,7 +301,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QComboBox" name="groupCombo">
+         <widget class="Material::ComboBox" name="groupCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -324,7 +324,7 @@
          </widget>
         </item>
         <item row="5" column="1">
-         <widget class="QComboBox" name="tagsCombo">
+         <widget class="Material::ComboBox" name="tagsCombo">
           <property name="maximumSize">
            <size>
             <width>200</width>
@@ -340,7 +340,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="Encoding">
+      <widget class="Material::GroupBox" name="Encoding">
        <property name="title">
         <string>Encoding</string>
        </property>
@@ -356,7 +356,7 @@
          </widget>
         </item>
         <item row="0" column="1">
-         <widget class="QComboBox" name="comboBoxCodec">
+         <widget class="Material::ComboBox" name="comboBoxCodec">
           <property name="accessibleName">
            <string>Codec</string>
           </property>
@@ -399,7 +399,7 @@
          </widget>
         </item>
         <item row="1" column="1">
-         <widget class="QComboBox" name="comboBoxTextQualifier">
+         <widget class="Material::ComboBox" name="comboBoxTextQualifier">
           <property name="accessibleName">
            <string>Text qualification</string>
           </property>
@@ -447,7 +447,7 @@
          </widget>
         </item>
         <item row="2" column="1">
-         <widget class="QComboBox" name="comboBoxFieldSeparator">
+         <widget class="Material::ComboBox" name="comboBoxFieldSeparator">
           <property name="accessibleName">
            <string>Field separation</string>
           </property>
@@ -500,7 +500,7 @@
          </widget>
         </item>
         <item row="3" column="1">
-         <widget class="QComboBox" name="comboBoxComment">
+         <widget class="Material::ComboBox" name="comboBoxComment">
           <property name="accessibleName">
            <string>Comments start with</string>
           </property>
@@ -543,7 +543,7 @@
          </widget>
         </item>
         <item row="4" column="1">
-         <widget class="QSpinBox" name="spinBoxSkip">
+         <widget class="Material::SpinBox" name="spinBoxSkip">
           <property name="accessibleName">
            <string>Number of header lines to discard</string>
           </property>
@@ -605,7 +605,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QGroupBox" name="previewLayout">
+    <widget class="Material::GroupBox" name="previewLayout">
      <property name="title">
       <string>Preview</string>
      </property>
@@ -664,6 +664,22 @@
   <tabstop>tableViewFields</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::Switch</class>
    <extends>QAbstractButton</extends>

@@ -20,7 +20,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QDialogButtonBox" name="buttonBox">
+      <widget class="Material::ButtonBox" name="buttonBox">
        <property name="standardButtons">
         <set>QDialogButtonBox::Close</set>
        </property>
@@ -31,6 +31,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ButtonBox</class>
+   <extends>QDialogButtonBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>CategoryListWidget</class>
    <extends>QWidget</extends>

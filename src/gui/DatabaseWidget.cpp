@@ -17,6 +17,7 @@
  */
 
 #include "DatabaseWidget.h"
+#include "gui/material/MaterialControls.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -1029,7 +1030,7 @@ void DatabaseWidget::openUrlForEntry(Entry* entry)
             if (cmdTruncated.length() > 400) {
                 cmdTruncated = cmdTruncated.left(400) + " […]";
             }
-            QScopedPointer<QCheckBox> remember(new QCheckBox(tr("Remember my choice")));
+            QScopedPointer<QCheckBox> remember(new Material::CheckBox(tr("Remember my choice")));
             const auto result =
                 MessageBox::question(this,
                                      tr("Execute command?"),

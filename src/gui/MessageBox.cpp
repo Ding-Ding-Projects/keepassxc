@@ -118,6 +118,8 @@ void MessageBox::initializeButtonDefs()
         {CopyAnyway, {QMessageBox::tr("Copy anyway"), QMessageBox::ButtonRole::DestructiveRole}},
         {OpenAnyway, {QMessageBox::tr("Open database anyway"), QMessageBox::ButtonRole::AcceptRole}},
         {RetryWithEmptyPassword, {QMessageBox::tr("Retry with empty password"), QMessageBox::ButtonRole::AcceptRole}},
+        {ContinueWithoutPassword, {QMessageBox::tr("Continue without password"), QMessageBox::ButtonRole::AcceptRole}},
+        {KeepNumber, {QMessageBox::tr("Understood, keep number"), QMessageBox::ButtonRole::AcceptRole}},
     };
 }
 

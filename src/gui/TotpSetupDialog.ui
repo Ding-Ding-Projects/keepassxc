@@ -104,7 +104,7 @@
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <widget class="QRadioButton" name="radioDefault">
+       <widget class="Material::RadioButton" name="radioDefault">
         <property name="text">
          <string>Default settings (RFC 6238)</string>
         </property>
@@ -117,7 +117,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioSteam">
+       <widget class="Material::RadioButton" name="radioSteam">
         <property name="text">
          <string>Steam® settings</string>
         </property>
@@ -127,7 +127,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QRadioButton" name="radioCustom">
+       <widget class="Material::RadioButton" name="radioCustom">
         <property name="text">
          <string>Custom settings:</string>
         </property>
@@ -140,7 +140,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="customSettingsGroup">
+    <widget class="Material::GroupBox" name="customSettingsGroup">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -177,7 +177,7 @@
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QComboBox" name="algorithmComboBox"/>
+       <widget class="Material::ComboBox" name="algorithmComboBox"/>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="stepLabel">
@@ -187,7 +187,7 @@
        </widget>
       </item>
       <item row="2" column="1">
-       <widget class="QSpinBox" name="stepSpinBox">
+       <widget class="Material::SpinBox" name="stepSpinBox">
         <property name="accessibleName">
          <string>Time step field</string>
         </property>
@@ -213,7 +213,7 @@
        </widget>
       </item>
       <item row="3" column="1">
-       <widget class="QSpinBox" name="digitsSpinBox">
+       <widget class="Material::SpinBox" name="digitsSpinBox">
         <property name="suffix">
          <string> digits</string>
         </property>
@@ -232,7 +232,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="Material::ButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
@@ -247,6 +247,34 @@
   <zorder>groupBox</zorder>
   <zorder>invalidKeyLabel</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::ButtonBox</class>
+   <extends>QDialogButtonBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::RadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>seedEdit</tabstop>
   <tabstop>radioDefault</tabstop>

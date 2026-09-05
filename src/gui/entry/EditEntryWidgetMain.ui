@@ -136,7 +136,7 @@
      </widget>
     </item>
     <item row="1" column="1">
-     <widget class="QComboBox" name="usernameComboBox">
+     <widget class="Material::ComboBox" name="usernameComboBox">
       <property name="focusPolicy">
        <enum>Qt::StrongFocus</enum>
       </property>
@@ -239,7 +239,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QToolButton" name="fetchFaviconButton">
+       <widget class="Material::ToolButton" name="fetchFaviconButton">
         <property name="toolTip">
          <string>Download favicon for URL</string>
         </property>
@@ -284,7 +284,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QToolButton" name="revealNotesButton">
+         <widget class="Material::ToolButton" name="revealNotesButton">
           <property name="toolTip">
            <string>Toggle notes visibility</string>
           </property>
@@ -375,6 +375,16 @@
   </widget>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>TagsEdit</class>
    <extends>QWidget</extends>

@@ -55,7 +55,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,0">
      <item>
-      <widget class="QGroupBox" name="groupBox_2">
+      <widget class="Material::GroupBox" name="groupBox_2">
        <property name="title">
         <string>Modifiers</string>
        </property>
@@ -136,7 +136,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox">
+      <widget class="Material::GroupBox" name="groupBox">
        <property name="title">
         <string>Fields</string>
        </property>
@@ -222,7 +222,7 @@
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout">
      <item>
-      <widget class="QGroupBox" name="groupBox_4">
+      <widget class="Material::GroupBox" name="groupBox_4">
        <property name="title">
         <string>Term Wildcards</string>
        </property>
@@ -303,7 +303,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QGroupBox" name="groupBox_3">
+      <widget class="Material::GroupBox" name="groupBox_3">
        <property name="title">
         <string>Examples</string>
        </property>
@@ -354,6 +354,14 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>

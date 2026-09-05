@@ -217,7 +217,14 @@ namespace Material
         }
 
         QColor result;
-        if (hasContainer()) {
+        if (isCheckable() && isChecked() && !m_rolesOverridden) {
+            // A selected toggle reads as a secondary container whatever its
+            // resting variant, the way Material's selected segments do.
+            result = theme()->color(Role::SecondaryContainer);
+            if (state > 0.0) {
+                result = blend(theme()->color(Role::OnSecondaryContainer), result, state);
+            }
+        } else if (hasContainer()) {
             result = theme()->color(m_rolesOverridden ? m_containerRole : containerRole());
             if (state > 0.0) {
                 result = blend(theme()->color(Role::OnSurface), result, state);
@@ -235,7 +242,9 @@ namespace Material
 
     QColor ButtonBase::contentColor() const
     {
-        QColor result = theme()->color(m_rolesOverridden ? m_contentRole : contentRole());
+        QColor result = theme()->color(isCheckable() && isChecked() && !m_rolesOverridden
+                                           ? Role::OnSecondaryContainer
+                                           : (m_rolesOverridden ? m_contentRole : contentRole()));
         if (!isEnabled()) {
             result.setAlphaF(static_cast<float>(DisabledOpacity));
         }

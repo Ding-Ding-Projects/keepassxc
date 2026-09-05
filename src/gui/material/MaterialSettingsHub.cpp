@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSettingsHub.h"
+#include "MaterialControls.h"
 
 #include "MaterialButtons.h"
 #include "MaterialDialog.h"
@@ -216,7 +217,7 @@ namespace Material
 
             void buildNumber(int value, int minimum, int maximum, const QString& suffix)
             {
-                auto* spin = new QSpinBox(m_panel);
+                auto* spin = new Material::SpinBox(m_panel);
                 spin->setRange(minimum, maximum);
                 spin->setValue(qBound(minimum, value, maximum));
                 spin->setSuffix(suffix.isEmpty() ? QString() : QStringLiteral(" ") + suffix);

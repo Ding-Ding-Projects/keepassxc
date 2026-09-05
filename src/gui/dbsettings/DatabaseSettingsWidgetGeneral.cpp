@@ -16,6 +16,7 @@
  */
 
 #include "DatabaseSettingsWidgetGeneral.h"
+#include "gui/material/MaterialControls.h"
 #include "ui_DatabaseSettingsWidgetGeneral.h"
 
 #include <QColorDialog>
@@ -244,7 +245,7 @@ void DatabaseSettingsWidgetGeneral::pickPublicIcon()
         iconList->setCurrentIndex(iconModel->index(0, 0));
     }
 
-    auto buttonBox = new QDialogButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
+    auto buttonBox = new Material::ButtonBox(QDialogButtonBox::Ok | QDialogButtonBox::Cancel);
     auto layout = new QVBoxLayout(&dialog);
     layout->setContentsMargins(24, 24, 24, 24);
     layout->setSpacing(12);

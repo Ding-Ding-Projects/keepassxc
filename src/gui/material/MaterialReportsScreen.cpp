@@ -16,6 +16,7 @@
  */
 
 #include "MaterialReportsScreen.h"
+#include "MaterialControls.h"
 
 #include "MaterialSelect.h"
 
@@ -306,7 +307,7 @@ namespace Material
                 auto layout = new QHBoxLayout(this);
                 layout->setContentsMargins(0, 0, 0, 0);
                 layout->setSpacing(ColumnGap);
-                m_select = new QCheckBox(this);
+                m_select = new Material::CheckBox(this);
                 m_select->setAccessibleName(ReportsScreen::tr("Select finding: %1").arg(m_row.title));
                 layout->addWidget(m_select);
                 layout->addStretch(1);
@@ -525,7 +526,7 @@ namespace Material
         m_stateLabel->setObjectName(QStringLiteral("reportsState"));
         m_stateLabel->setAccessibleName(tr("Report state"));
         m_stateLabel->setWordWrap(true);
-        m_progress = new QProgressBar;
+        m_progress = new Material::LinearProgress;
         m_progress->setObjectName(QStringLiteral("reportsProgress"));
         m_progress->setAccessibleName(tr("Report progress"));
         m_progress->hide();

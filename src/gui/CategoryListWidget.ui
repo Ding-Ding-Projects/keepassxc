@@ -33,7 +33,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QToolButton" name="scrollUp">
+    <widget class="Material::ToolButton" name="scrollUp">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -89,7 +89,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QToolButton" name="scrollDown">
+    <widget class="Material::ToolButton" name="scrollDown">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
        <horstretch>0</horstretch>
@@ -112,6 +112,13 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>scrollUp</tabstop>
   <tabstop>categoryList</tabstop>

@@ -40,7 +40,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="dialogButtons">
+    <widget class="Material::ButtonBox" name="dialogButtons">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
@@ -49,6 +49,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ButtonBox</class>
+   <extends>QDialogButtonBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>AttachmentWidget</class>
    <extends>QWidget</extends>

@@ -81,7 +81,7 @@
     </layout>
    </item>
    <item>
-    <widget class="QTabWidget" name="tabWidget">
+    <widget class="Material::TabWidget" name="tabWidget">
      <property name="currentIndex">
       <number>0</number>
      </property>
@@ -340,7 +340,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="Material::ButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Close</set>
      </property>
@@ -355,6 +355,17 @@
   <tabstop>copyToClipboard</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::ButtonBox</class>
+   <extends>QDialogButtonBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>Material::OutlinedButton</class>
    <extends>QPushButton</extends>

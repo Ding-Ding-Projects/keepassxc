@@ -24,7 +24,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QCheckBox" name="enableButton">
+    <widget class="Material::CheckBox" name="enableButton">
      <property name="text">
       <string>Enable Auto-Type for this entry</string>
      </property>
@@ -47,14 +47,14 @@
     </spacer>
    </item>
    <item>
-    <widget class="QRadioButton" name="inheritSequenceButton">
+    <widget class="Material::RadioButton" name="inheritSequenceButton">
      <property name="text">
       <string>Inherit default Auto-Type sequence from the group</string>
      </property>
     </widget>
    </item>
    <item>
-    <widget class="QRadioButton" name="customSequenceButton">
+    <widget class="Material::RadioButton" name="customSequenceButton">
      <property name="text">
       <string>Use custom Auto-Type sequence:</string>
      </property>
@@ -89,7 +89,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QToolButton" name="openHelpButton">
+      <widget class="Material::ToolButton" name="openHelpButton">
        <property name="toolTip">
         <string>Open Auto-Type help webpage</string>
        </property>
@@ -120,7 +120,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QGroupBox" name="windowsBox">
+    <widget class="Material::GroupBox" name="windowsBox">
      <property name="title">
       <string>Window Associations</string>
      </property>
@@ -162,7 +162,7 @@
            </spacer>
           </item>
           <item>
-           <widget class="QToolButton" name="assocAddButton">
+           <widget class="Material::ToolButton" name="assocAddButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -190,7 +190,7 @@
            </widget>
           </item>
           <item>
-           <widget class="QToolButton" name="assocRemoveButton">
+           <widget class="Material::ToolButton" name="assocRemoveButton">
             <property name="enabled">
              <bool>false</bool>
             </property>
@@ -260,7 +260,7 @@
          </spacer>
         </item>
         <item>
-         <widget class="QCheckBox" name="customWindowSequenceButton">
+         <widget class="Material::CheckBox" name="customWindowSequenceButton">
           <property name="text">
            <string>Use a specific sequence for this association:</string>
           </property>
@@ -317,6 +317,27 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::CheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::RadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>WindowSelectComboBox</class>
    <extends>QComboBox</extends>

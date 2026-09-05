@@ -16,6 +16,7 @@
  */
 
 #include "MaterialVaultScreen.h"
+#include "MaterialControls.h"
 
 #include "core/Config.h"
 
@@ -691,7 +692,7 @@ namespace Material
         sheet->setAccessibleName(tr("Entry details"));
         auto* sheetLayout = new QVBoxLayout(sheet);
         sheetLayout->setContentsMargins(12, 12, 12, 12);
-        auto* close = new QToolButton(sheet);
+        auto* close = new Material::ToolButton(sheet);
         close->setText(tr("Close entry details"));
         close->setAccessibleName(close->text());
         connect(close, &QToolButton::clicked, m_detailOverlay, &Overlay::closeOverlay);
@@ -769,7 +770,7 @@ namespace Material
         m_resultLabel = new QLabel(summaryRow);
         summaryLayout->addWidget(m_resultLabel, 1);
 
-        m_groupScopeButton = new QToolButton(summaryRow);
+        m_groupScopeButton = new Material::ToolButton(summaryRow);
         m_groupScopeButton->setObjectName(QStringLiteral("materialVaultGroupScope"));
         m_groupScopeButton->setText(tr("Groups"));
         m_groupScopeButton->setAccessibleName(tr("Choose a vault group"));
@@ -793,7 +794,7 @@ namespace Material
         connect(m_groupScopeMenu, &QMenu::aboutToShow, this, &VaultScreen::rebuildGroupScopeMenu);
         summaryLayout->addWidget(m_groupScopeButton, 0);
 
-        m_detailSheetButton = new QToolButton(summaryRow);
+        m_detailSheetButton = new Material::ToolButton(summaryRow);
         m_detailSheetButton->setObjectName(QStringLiteral("materialVaultDetailSheetButton"));
         m_detailSheetButton->setText(tr("Details"));
         m_detailSheetButton->setAccessibleName(tr("Open entry details"));

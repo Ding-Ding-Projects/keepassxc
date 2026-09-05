@@ -16,6 +16,7 @@
  */
 
 #include "MaterialChangelogScreen.h"
+#include "MaterialControls.h"
 
 #include "MaterialDateField.h"
 
@@ -459,7 +460,7 @@ namespace Material
         m_stateLabel->setObjectName(QStringLiteral("changelogState"));
         m_stateLabel->setAccessibleName(tr("Changelog state"));
         contentLayout()->addWidget(m_stateLabel);
-        m_progress = new QProgressBar;
+        m_progress = new Material::LinearProgress;
         m_progress->setObjectName(QStringLiteral("changelogProgress"));
         m_progress->setAccessibleName(tr("Changelog progress"));
         m_progress->hide();

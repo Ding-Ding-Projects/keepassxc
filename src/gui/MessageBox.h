@@ -62,10 +62,12 @@ public:
         CopyAnyway = 1 << 29,
         OpenAnyway = 1ull << 30,
         RetryWithEmptyPassword = 1ull << 31,
+        ContinueWithoutPassword = 1ull << 32,
+        KeepNumber = 1ull << 33,
 
         // Internal loop markers. Update Last when new KeePassXC button is added
         First = Ok,
-        Last = RetryWithEmptyPassword,
+        Last = KeepNumber,
     };
 
     enum Action

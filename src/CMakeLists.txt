@@ -109,6 +109,7 @@ set(gui_SOURCES
         gui/material/MaterialChangelogScreen.cpp
         gui/material/MaterialChip.cpp
         gui/material/MaterialCommandPalette.cpp
+        gui/material/MaterialControls.cpp
         gui/material/MaterialDialog.cpp
         gui/material/MaterialCaptureRoute.cpp
         gui/material/MaterialDimSum.cpp

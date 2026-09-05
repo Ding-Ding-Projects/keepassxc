@@ -39,7 +39,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="Material::GroupBox" name="groupBox">
      <property name="title">
       <string>Database Metadata</string>
      </property>
@@ -99,7 +99,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_4">
+    <widget class="Material::GroupBox" name="groupBox_4">
      <property name="title">
       <string>Public Database Metadata</string>
      </property>
@@ -161,7 +161,7 @@
            <number>12</number>
           </property>
           <item>
-           <widget class="QPushButton" name="dbPublicColorButton">
+           <widget class="Material::OutlinedButton" name="dbPublicColorButton">
             <property name="minimumSize">
              <size>
               <width>40</width>
@@ -229,7 +229,7 @@
            <number>12</number>
           </property>
           <item>
-           <widget class="QPushButton" name="dbPublicIconButton">
+           <widget class="Material::OutlinedButton" name="dbPublicIconButton">
             <property name="minimumSize">
              <size>
               <width>40</width>
@@ -284,7 +284,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="Material::GroupBox" name="groupBox_2">
      <property name="title">
       <string>History Settings</string>
      </property>
@@ -296,7 +296,7 @@
        <number>12</number>
       </property>
       <item row="0" column="0">
-       <widget class="QCheckBox" name="historyMaxItemsCheckBox">
+       <widget class="Material::CheckBox" name="historyMaxItemsCheckBox">
         <property name="toolTip">
          <string>When saving this setting or editing an entry
 the oldest history items of an entry will be
@@ -309,7 +309,7 @@ of entries remain at most.</string>
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QSpinBox" name="historyMaxItemsSpinBox">
+       <widget class="Material::SpinBox" name="historyMaxItemsSpinBox">
         <property name="toolTip">
          <string>Maximum number of history items per entry</string>
         </property>
@@ -322,7 +322,7 @@ of entries remain at most.</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="historyMaxSizeCheckBox">
+       <widget class="Material::CheckBox" name="historyMaxSizeCheckBox">
         <property name="toolTip">
          <string>When saving this setting or editing an entry
 the oldest history items of an entry will be
@@ -335,7 +335,7 @@ add up to the specified amount at most.</string>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="historyMaxSizeSpinBox">
+       <widget class="Material::SpinBox" name="historyMaxSizeSpinBox">
         <property name="toolTip">
          <string>Maximum size of history per entry</string>
         </property>
@@ -396,7 +396,7 @@ removed from the database.</string>
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="Material::GroupBox" name="groupBox_3">
      <property name="title">
       <string>Additional Database Settings</string>
      </property>
@@ -425,7 +425,7 @@ removed from the database.</string>
        </widget>
       </item>
       <item row="1" column="0">
-       <widget class="QCheckBox" name="autosaveDelayCheckBox">
+       <widget class="Material::CheckBox" name="autosaveDelayCheckBox">
         <property name="toolTip">
          <string>Autosave delay since last change</string>
         </property>
@@ -438,7 +438,7 @@ removed from the database.</string>
        </widget>
       </item>
       <item row="1" column="1">
-       <widget class="QSpinBox" name="autosaveDelaySpinBox">
+       <widget class="Material::SpinBox" name="autosaveDelaySpinBox">
         <property name="toolTip">
          <string>Autosave delay since last change in minutes</string>
         </property>
@@ -491,6 +491,27 @@ removed from the database.</string>
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::CheckBox</class>
+   <extends>QCheckBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::OutlinedButton</class>
+   <extends>QPushButton</extends>
+   <header>gui/material/MaterialButtons.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::TextButton</class>
    <extends>QPushButton</extends>

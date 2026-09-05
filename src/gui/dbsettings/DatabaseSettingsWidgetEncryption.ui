@@ -63,7 +63,7 @@
           </widget>
          </item>
          <item row="0" column="1">
-          <widget class="QComboBox" name="compatibilitySelection">
+          <widget class="Material::ComboBox" name="compatibilitySelection">
            <property name="sizePolicy">
             <sizepolicy hsizetype="MinimumExpanding" vsizetype="Fixed">
              <horstretch>0</horstretch>
@@ -125,7 +125,7 @@
         </widget>
        </item>
        <item>
-        <widget class="QTabWidget" name="encryptionSettingsTabWidget">
+        <widget class="Material::TabWidget" name="encryptionSettingsTabWidget">
          <property name="tabPosition">
           <enum>QTabWidget::North</enum>
          </property>
@@ -202,7 +202,7 @@
                <number>9</number>
               </property>
               <item>
-               <widget class="QSlider" name="decryptionTimeSlider">
+               <widget class="Material::Slider" name="decryptionTimeSlider">
                 <property name="accessibleName">
                  <string>Decryption time in seconds</string>
                 </property>
@@ -316,7 +316,7 @@
             </spacer>
            </item>
            <item row="4" column="1">
-            <widget class="QSpinBox" name="parallelismSpinBox">
+            <widget class="Material::SpinBox" name="parallelismSpinBox">
              <property name="minimumSize">
               <size>
                <width>150</width>
@@ -348,7 +348,7 @@
             </widget>
            </item>
            <item row="3" column="1">
-            <widget class="QSpinBox" name="memorySpinBox">
+            <widget class="Material::SpinBox" name="memorySpinBox">
              <property name="minimumSize">
               <size>
                <width>150</width>
@@ -382,7 +382,7 @@
            <item row="2" column="1">
             <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="40,40,0">
              <item>
-              <widget class="QSpinBox" name="transformRoundsSpinBox">
+              <widget class="Material::SpinBox" name="transformRoundsSpinBox">
                <property name="minimumSize">
                 <size>
                  <width>150</width>
@@ -410,7 +410,7 @@
               </widget>
              </item>
              <item>
-              <widget class="QToolButton" name="transformBenchmarkButton">
+              <widget class="Material::ToolButton" name="transformBenchmarkButton">
                <property name="focusPolicy">
                 <enum>Qt::WheelFocus</enum>
                </property>
@@ -439,7 +439,7 @@
             </widget>
            </item>
            <item row="1" column="1">
-            <widget class="QComboBox" name="kdfComboBox">
+            <widget class="Material::ComboBox" name="kdfComboBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -459,7 +459,7 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QComboBox" name="algorithmComboBox">
+            <widget class="Material::ComboBox" name="algorithmComboBox">
              <property name="sizePolicy">
               <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
                <horstretch>0</horstretch>
@@ -511,6 +511,34 @@
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>Material::TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::Slider</class>
+   <extends>QSlider</extends>
+   <header>gui/material/MaterialSlider.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+ </customwidgets>
  <tabstops>
   <tabstop>decryptionTimeSlider</tabstop>
   <tabstop>algorithmComboBox</tabstop>

@@ -27,13 +27,13 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="Material::GroupBox" name="groupBox">
      <property name="title">
       <string>Timeouts</string>
      </property>
      <layout class="QGridLayout" name="gridLayout" columnstretch="0,0,1">
       <item row="1" column="1">
-       <widget class="QSpinBox" name="lockDatabaseIdleSpinBox">
+       <widget class="Material::SpinBox" name="lockDatabaseIdleSpinBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -159,7 +159,7 @@
        </layout>
       </item>
       <item row="2" column="1">
-       <widget class="QSpinBox" name="clearSearchSpinBox">
+       <widget class="Material::SpinBox" name="clearSearchSpinBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -187,7 +187,7 @@
        </widget>
       </item>
       <item row="0" column="1">
-       <widget class="QSpinBox" name="clearClipboardSpinBox">
+       <widget class="Material::SpinBox" name="clearClipboardSpinBox">
         <property name="enabled">
          <bool>false</bool>
         </property>
@@ -280,7 +280,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="lockOptionsGroup">
+    <widget class="Material::GroupBox" name="lockOptionsGroup">
      <property name="title">
       <string>Lock Options</string>
      </property>
@@ -487,7 +487,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="lockOptionsGroup">
+    <widget class="Material::GroupBox" name="lockOptionsGroup">
      <property name="title">
       <string>Lock Options</string>
      </property>
@@ -643,7 +643,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="Material::GroupBox" name="groupBox_2">
      <property name="title">
       <string>Convenience</string>
      </property>
@@ -750,7 +750,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="privacy">
+    <widget class="Material::GroupBox" name="privacy">
      <property name="title">
       <string>Privacy</string>
      </property>
@@ -844,6 +844,17 @@
   <tabstop>fallbackToSearch</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::Switch</class>
    <extends>QAbstractButton</extends>

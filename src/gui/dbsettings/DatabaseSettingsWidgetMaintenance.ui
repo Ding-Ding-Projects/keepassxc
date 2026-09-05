@@ -39,7 +39,7 @@
     <number>0</number>
    </property>
    <item>
-    <widget class="QGroupBox" name="groupBox">
+    <widget class="Material::GroupBox" name="groupBox">
      <property name="title">
       <string>Manage Custom Icons</string>
      </property>
@@ -137,6 +137,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>Material::TonalButton</class>
    <extends>QPushButton</extends>

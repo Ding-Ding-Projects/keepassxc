@@ -147,7 +147,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QProgressBar" name="entryTotpProgress">
+             <widget class="Material::LinearProgress" name="entryTotpProgress">
               <property name="maximumSize">
                <size>
                 <width>57</width>
@@ -166,7 +166,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="entryTotpButton">
+          <widget class="Material::ToolButton" name="entryTotpButton">
            <property name="toolTip">
             <string>Display current TOTP value</string>
            </property>
@@ -182,7 +182,7 @@
           </widget>
          </item>
          <item>
-          <widget class="QToolButton" name="entryCloseButton">
+          <widget class="Material::ToolButton" name="entryCloseButton">
            <property name="toolTip">
             <string>Close</string>
            </property>
@@ -194,7 +194,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTabWidget" name="entryTabWidget">
+        <widget class="Material::TabWidget" name="entryTabWidget">
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -236,7 +236,7 @@
               <item row="1" column="1" colspan="2">
                <layout class="QHBoxLayout" name="horizontalLayout_7">
                 <item>
-                 <widget class="QToolButton" name="togglePasswordButton">
+                 <widget class="Material::ToolButton" name="togglePasswordButton">
                   <property name="text">
                    <string notr="true"/>
                   </property>
@@ -387,7 +387,7 @@
                  <number>6</number>
                 </property>
                 <item alignment="Qt::AlignTop">
-                 <widget class="QToolButton" name="toggleEntryNotesButton">
+                 <widget class="Material::ToolButton" name="toggleEntryNotesButton">
                   <property name="text">
                    <string/>
                   </property>
@@ -451,7 +451,7 @@
                  <number>8</number>
                 </property>
                 <item>
-                 <widget class="QToolButton" name="toggleUsernameButton">
+                 <widget class="Material::ToolButton" name="toggleUsernameButton">
                   <property name="text">
                    <string/>
                   </property>
@@ -895,7 +895,7 @@
           </layout>
          </item>
          <item>
-          <widget class="QToolButton" name="groupCloseButton">
+          <widget class="Material::ToolButton" name="groupCloseButton">
            <property name="toolTip">
             <string>Close</string>
            </property>
@@ -907,7 +907,7 @@
         </layout>
        </item>
        <item>
-        <widget class="QTabWidget" name="groupTabWidget">
+        <widget class="Material::TabWidget" name="groupTabWidget">
          <property name="currentIndex">
           <number>0</number>
          </property>
@@ -1030,7 +1030,7 @@
                  <number>6</number>
                 </property>
                 <item alignment="Qt::AlignTop">
-                 <widget class="QToolButton" name="toggleGroupNotesButton">
+                 <widget class="Material::ToolButton" name="toggleGroupNotesButton">
                   <property name="text">
                    <string/>
                   </property>
@@ -1161,6 +1161,22 @@
   </action>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::LinearProgress</class>
+   <extends>QProgressBar</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::ToolButton</class>
+   <extends>QToolButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>EntryAttachmentsWidget</class>
    <extends>QWidget</extends>

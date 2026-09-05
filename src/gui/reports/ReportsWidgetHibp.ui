@@ -118,7 +118,7 @@
         </spacer>
        </item>
        <item>
-        <widget class="QProgressBar" name="progressBar">
+        <widget class="Material::LinearProgress" name="progressBar">
          <property name="value">
           <number>0</number>
          </property>
@@ -266,6 +266,11 @@
   <tabstop>validationButton</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::LinearProgress</class>
+   <extends>QProgressBar</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::FilledButton</class>
    <extends>QPushButton</extends>

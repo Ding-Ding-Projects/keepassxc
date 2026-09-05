@@ -17,6 +17,7 @@
  */
 
 #include "DatabaseOpenWidget.h"
+#include "gui/material/MaterialControls.h"
 #include "ui_DatabaseOpenWidget.h"
 
 #include "gui/FileDialog.h"
@@ -470,7 +471,7 @@ QSharedPointer<CompositeKey> DatabaseOpenWidget::buildDatabaseKey()
         }
         if (key->type() != FileKey::KeePass2XMLv2 && key->type() != FileKey::Hashed
             && !config()->get(Config::Messages_NoLegacyKeyFileWarning).toBool()) {
-            QScopedPointer<QCheckBox> dontAskAgain(new QCheckBox(tr("Don't show this warning again")));
+            QScopedPointer<QCheckBox> dontAskAgain(new Material::CheckBox(tr("Don't show this warning again")));
             MessageBox::warning(this,
                                 tr("Old key file format"),
                                 tr("You are using an old key file format which KeePassXC may<br>"

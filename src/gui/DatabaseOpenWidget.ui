@@ -208,7 +208,7 @@
                   </widget>
                  </item>
                  <item>
-                  <widget class="QProgressBar" name="hardwareKeyProgress">
+                  <widget class="Material::LinearProgress" name="hardwareKeyProgress">
                    <property name="maximumSize">
                     <size>
                      <width>16777215</width>
@@ -384,7 +384,7 @@
                    </layout>
                   </item>
                   <item>
-                   <widget class="QComboBox" name="hardwareKeyCombo">
+                   <widget class="Material::ComboBox" name="hardwareKeyCombo">
                     <property name="enabled">
                      <bool>false</bool>
                     </property>
@@ -745,6 +745,16 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::LinearProgress</class>
+   <extends>QProgressBar</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>PasswordWidget</class>
    <extends>QWidget</extends>

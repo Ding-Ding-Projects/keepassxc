@@ -20,7 +20,9 @@
 #include "core/Totp.h"
 #include "gui/Clipboard.h"
 #include "gui/MainWindow.h"
+#include "gui/MessageBox.h"
 #include "gui/SquareSvgWidget.h"
+#include "gui/material/MaterialControls.h"
 #include "qrcode/QrCode.h"
 
 #include <QBoxLayout>
@@ -40,7 +42,7 @@ TotpExportSettingsDialog::TotpExportSettingsDialog(DatabaseWidget* parent, Entry
     , m_totpSvgWidget(new SquareSvgWidget(m_totpSvgContainerWidget))
     , m_countDown(new QLabel())
     , m_warningLabel(new QLabel())
-    , m_buttonBox(new QDialogButtonBox(QDialogButtonBox::Close | QDialogButtonBox::Ok))
+    , m_buttonBox(new Material::ButtonBox(QDialogButtonBox::Close | QDialogButtonBox::Ok))
 {
     setObjectName("entryQrCodeWidget");
     m_totpSvgContainerWidget->addWidget(m_totpSvgWidget);
@@ -90,11 +92,7 @@ TotpExportSettingsDialog::TotpExportSettingsDialog(DatabaseWidget* parent, Entry
         const auto minsize = static_cast<int>(logicalDpiX() * 2.5);
         m_totpSvgWidget->setMinimumSize(minsize, minsize);
     } else {
-        auto errorBox = new QMessageBox(parent);
-        errorBox->setAttribute(Qt::WA_DeleteOnClose);
-        errorBox->setIcon(QMessageBox::Warning);
-        errorBox->setText(tr("There was an error creating the QR code."));
-        errorBox->exec();
+        MessageBox::warning(parent, tr("TOTP QR code"), tr("There was an error creating the QR code."));
         close();
     }
 }

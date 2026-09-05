@@ -16,6 +16,7 @@
  */
 
 #include "MaterialShell.h"
+#include "MaterialControls.h"
 
 #include "MaterialIcons.h"
 #include "MaterialNavigationRail.h"
@@ -112,7 +113,7 @@ namespace Material
         connect(m_moreMenu, &QMenu::aboutToShow, this, [this] {
             m_moreSearch->lineEdit()->setFocus(Qt::PopupFocusReason);
         });
-        m_moreButton = new QToolButton(m_bottomBar);
+        m_moreButton = new Material::ToolButton(m_bottomBar);
         m_moreButton->setObjectName(QStringLiteral("materialBottomNavigationMore"));
         m_moreButton->setMinimumSize(48, 48);
         m_moreButton->setText(tr("More"));
@@ -256,7 +257,7 @@ namespace Material
         m_goToMenu->addAction(command);
 
         if (m_order.size() <= 5) {
-            auto* button = new QToolButton(m_bottomBar);
+            auto* button = new Material::ToolButton(m_bottomBar);
             button->setDefaultAction(command);
             button->setObjectName(QStringLiteral("materialBottomDestination_") + id);
             button->setMinimumSize(48, 48);

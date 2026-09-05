@@ -16,6 +16,7 @@
  */
 
 #include "MaterialHistoryScreen.h"
+#include "MaterialControls.h"
 
 #include "MaterialDateField.h"
 #include "MaterialSelect.h"
@@ -164,7 +165,7 @@ namespace Material
                 auto layout = new QHBoxLayout(this);
                 layout->setContentsMargins(RowPaddingX, RowPaddingY, RowPaddingX, RowPaddingY);
                 layout->setSpacing(ActionGap);
-                m_select = new QCheckBox(this);
+                m_select = new Material::CheckBox(this);
                 m_select->setAccessibleName(HistoryScreen::tr("Select revision: %1").arg(revision.label));
                 m_select->setObjectName(QStringLiteral("historySelect_%1").arg(revision.id));
                 m_select->setEnabled(!revision.id.isEmpty());
@@ -807,20 +808,20 @@ namespace Material
         m_stateLabel = new QLabel;
         m_stateLabel->setObjectName(QStringLiteral("historyState"));
         m_stateLabel->setAccessibleName(tr("History state"));
-        m_progress = new QProgressBar;
+        m_progress = new Material::LinearProgress;
         m_progress->setObjectName(QStringLiteral("historyProgress"));
         m_progress->setAccessibleName(tr("History progress"));
         m_progress->hide();
         contentLayout()->addWidget(m_stateLabel);
         contentLayout()->addWidget(m_progress);
 
-        m_exportSelected = new QToolButton;
+        m_exportSelected = new Material::ToolButton;
         m_exportSelected->setObjectName(QStringLiteral("historyExportSelected"));
         m_exportSelected->setAccessibleName(tr("Export selected history revisions"));
         m_exportSelected->setEnabled(false);
         connect(m_exportSelected, &QToolButton::clicked, this, [this] { emit exportRequested(selectedRevisionIds()); });
         insertHeaderWidget(0, m_exportSelected);
-        m_deleteUnavailable = new QToolButton;
+        m_deleteUnavailable = new Material::ToolButton;
         m_deleteUnavailable->setText(tr("Delete unavailable"));
         m_deleteUnavailable->setEnabled(false);
         m_deleteUnavailable->setToolTip(tr("History is append-only; deletion is not supported."));

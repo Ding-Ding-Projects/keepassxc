@@ -166,7 +166,7 @@
     </spacer>
    </item>
    <item>
-    <widget class="QDialogButtonBox" name="buttonBox">
+    <widget class="Material::ButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
@@ -175,6 +175,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ButtonBox</class>
+   <extends>QDialogButtonBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::Switch</class>
    <extends>QAbstractButton</extends>

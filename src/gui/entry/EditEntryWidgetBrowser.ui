@@ -41,7 +41,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_2">
+    <widget class="Material::GroupBox" name="groupBox_2">
      <property name="title">
       <string>General</string>
      </property>
@@ -210,7 +210,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="groupBox_3">
+    <widget class="Material::GroupBox" name="groupBox_3">
      <property name="title">
       <string>Additional URLs</string>
      </property>
@@ -293,6 +293,12 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
   <customwidget>
    <class>MessageWidget</class>
    <extends>QWidget</extends>

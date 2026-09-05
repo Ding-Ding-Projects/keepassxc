@@ -48,7 +48,7 @@
       <enum>QLayout::SetDefaultConstraint</enum>
      </property>
      <item>
-      <widget class="QProgressBar" name="progressBar">
+      <widget class="Material::LinearProgress" name="progressBar">
        <property name="value">
         <number>0</number>
        </property>
@@ -170,6 +170,11 @@ You can enable the DuckDuckGo website icon service in the security section of th
   <tabstop>closeButton</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::LinearProgress</class>
+   <extends>QProgressBar</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::TextButton</class>
    <extends>QPushButton</extends>

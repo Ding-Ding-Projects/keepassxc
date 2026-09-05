@@ -16,6 +16,7 @@
  */
 
 #include "ShortcutSettingsPage.h"
+#include "gui/material/MaterialControls.h"
 
 #include "core/Config.h"
 #include "gui/ActionCollection.h"
@@ -41,7 +42,7 @@ public:
     explicit KeySequenceDialog(QWidget* parent = nullptr)
         : QDialog(parent)
         , m_keySeqEdit(new ShortcutWidget(this))
-        , m_btnBox(new QDialogButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel
+        , m_btnBox(new Material::ButtonBox(QDialogButtonBox::Save | QDialogButtonBox::Cancel
                                             | QDialogButtonBox::RestoreDefaults,
                                         this))
     {

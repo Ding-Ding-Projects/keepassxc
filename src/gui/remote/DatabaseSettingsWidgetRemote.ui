@@ -46,7 +46,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="syncCommandsGroupBox">
+    <widget class="Material::GroupBox" name="syncCommandsGroupBox">
      <property name="title">
       <string>Sync Commands</string>
      </property>
@@ -88,7 +88,7 @@
     </widget>
    </item>
    <item>
-    <widget class="QGroupBox" name="commandSettingsGroupBox">
+    <widget class="Material::GroupBox" name="commandSettingsGroupBox">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
        <horstretch>0</horstretch>
@@ -129,7 +129,7 @@
          </layout>
         </item>
         <item row="1" column="1">
-         <widget class="QTabWidget" name="commandTabWidget">
+         <widget class="Material::TabWidget" name="commandTabWidget">
           <property name="currentIndex">
            <number>0</number>
           </property>
@@ -203,7 +203,7 @@ The command has to exit. In case of `sftp` as last command `exit` has to be sent
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="downloadTimeoutSec">
+             <widget class="Material::SpinBox" name="downloadTimeoutSec">
               <property name="suffix">
                <string> seconds</string>
               </property>
@@ -276,7 +276,7 @@ The command has to exit. In case of `sftp` as last command `exit` has to be sent
              </widget>
             </item>
             <item row="2" column="1">
-             <widget class="QSpinBox" name="uploadTimeoutSec">
+             <widget class="Material::SpinBox" name="uploadTimeoutSec">
               <property name="suffix">
                <string> seconds</string>
               </property>
@@ -303,6 +303,23 @@ The command has to exit. In case of `sftp` as last command `exit` has to be sent
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::TabWidget</class>
+   <extends>QTabWidget</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::GroupBox</class>
+   <extends>QGroupBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>Material::SpinBox</class>
+   <extends>QSpinBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>MessageWidget</class>
    <extends>QWidget</extends>

@@ -39,7 +39,7 @@
       </widget>
      </item>
      <item>
-      <widget class="QComboBox" name="zoomComboBox">
+      <widget class="Material::ComboBox" name="zoomComboBox">
        <property name="sizePolicy">
         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
          <horstretch>0</horstretch>
@@ -79,6 +79,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>ImageAttachmentsView</class>
    <extends>QGraphicsView</extends>

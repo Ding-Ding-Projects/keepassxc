@@ -114,7 +114,7 @@
      </widget>
     </item>
     <item row="6" column="1">
-     <widget class="QRadioButton" name="autoTypeSequenceInherit">
+     <widget class="Material::RadioButton" name="autoTypeSequenceInherit">
       <property name="text">
        <string>Use default Auto-Type sequence of parent group</string>
       </property>
@@ -141,7 +141,7 @@
      </widget>
     </item>
     <item row="5" column="1">
-     <widget class="QComboBox" name="autotypeComboBox">
+     <widget class="Material::ComboBox" name="autotypeComboBox">
       <property name="accessibleName">
        <string>Auto-Type toggle for this and sub groups</string>
       </property>
@@ -237,14 +237,14 @@
      </widget>
     </item>
     <item row="7" column="1">
-     <widget class="QRadioButton" name="autoTypeSequenceCustomRadio">
+     <widget class="Material::RadioButton" name="autoTypeSequenceCustomRadio">
       <property name="text">
        <string>Set default Auto-Type sequence</string>
       </property>
      </widget>
     </item>
     <item row="4" column="1">
-     <widget class="QComboBox" name="searchComboBox">
+     <widget class="Material::ComboBox" name="searchComboBox">
       <property name="accessibleName">
        <string>Search toggle for this and sub groups</string>
       </property>
@@ -278,6 +278,16 @@
   <tabstop>autoTypeSequenceCustomEdit</tabstop>
  </tabstops>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
+  <customwidget>
+   <class>Material::RadioButton</class>
+   <extends>QRadioButton</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>Material::Switch</class>
    <extends>QAbstractButton</extends>
