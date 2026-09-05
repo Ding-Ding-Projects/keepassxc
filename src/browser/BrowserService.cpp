@@ -104,8 +104,7 @@ void BrowserService::setEnabled(bool enabled)
         // A profile restored from an older Squirrel installation can retain the global browser-integration
         // preference while losing every native-messaging registration. When automatic extension setup is enabled,
         // repair that unusable state without requiring the user to discover the per-browser checkboxes first.
-        if (browserSettings()->autoInstallExtension()
-            && !browserSettings()->browserSupport(BrowserShared::CHROME)
+        if (browserSettings()->autoInstallExtension() && !browserSettings()->browserSupport(BrowserShared::CHROME)
             && !browserSettings()->browserSupport(BrowserShared::FIREFOX)
             && !browserSettings()->browserSupport(BrowserShared::EDGE)) {
             browserSettings()->setBrowserSupport(BrowserShared::CHROME, true);
@@ -1066,13 +1065,6 @@ QList<Entry*> BrowserService::searchEntries(const QSharedPointer<Database>& db,
                 continue;
             }
 
-#ifdef WITH_XC_BROWSER_PASSKEYS
-            // With Passkeys, check for the Relying Party instead of URL
-            if (passkey && entry->attributes()->value(EntryAttributes::KPEX_PASSKEY_RELYING_PARTY) != siteUrl) {
-                continue;
-            }
-#endif
-
             // Additional URL check may have already inserted the entry to the list
             if (!entries.contains(entry)) {
                 entries.append(entry);
@@ -1131,11 +1123,6 @@ QList<Entry*> BrowserService::searchEntries(const QString& siteUrl,
     } while (entries.isEmpty() && removeFirstDomain(hostname));
 
     return entries;
-}
-
-QString BrowserService::decodeCustomDataRestrictKey(const QString& key)
-{
-    return key.isEmpty() ? tr("Disable") : key;
 }
 
 QString BrowserService::decodeCustomDataRestrictKey(const QString& key)

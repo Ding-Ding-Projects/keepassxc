@@ -27,10 +27,6 @@
 #include "ReportsWidgetBrowserStatistics.h"
 #include "ReportsWidgetPasskeys.h"
 #endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
-#include "ReportsPagePasskeys.h"
-#include "ReportsWidgetPasskeys.h"
-#endif
 #include "ReportsWidgetHealthcheck.h"
 #include "ReportsWidgetHibp.h"
 
@@ -69,9 +65,6 @@ ReportsDialog::ReportsDialog(QWidget* parent)
     , m_browserStatPage(new ReportsPageBrowserStatistics())
     , m_passkeysPage(new ReportsPagePasskeys())
 #endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
-    , m_passkeysPage(new ReportsPagePasskeys())
-#endif
     , m_editEntryWidget(new EditEntryWidget(this))
 {
     m_ui->setupUi(this);
@@ -99,10 +92,6 @@ ReportsDialog::ReportsDialog(QWidget* parent)
     connect(m_browserStatPage->m_browserWidget,
             SIGNAL(entryActivated(Entry*)),
             SLOT(entryActivationSignalReceived(Entry*)));
-    connect(
-        m_passkeysPage->m_passkeysWidget, SIGNAL(entryActivated(Entry*)), SLOT(entryActivationSignalReceived(Entry*)));
-#endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
     connect(
         m_passkeysPage->m_passkeysWidget, SIGNAL(entryActivated(Entry*)), SLOT(entryActivationSignalReceived(Entry*)));
 #endif
@@ -180,11 +169,6 @@ void ReportsDialog::switchToMainView(bool previousDialogAccepted)
             m_browserStatPage->m_browserWidget->calculateBrowserStatistics();
         }
 
-        if (m_sender == m_passkeysPage->m_passkeysWidget) {
-            m_passkeysPage->m_passkeysWidget->updateEntries();
-        }
-#endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
         if (m_sender == m_passkeysPage->m_passkeysWidget) {
             m_passkeysPage->m_passkeysWidget->updateEntries();
         }

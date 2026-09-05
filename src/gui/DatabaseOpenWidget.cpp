@@ -198,7 +198,6 @@ bool DatabaseOpenWidget::event(QEvent* event)
         toggleQuickUnlockScreen();
 
         if (type == QEvent::Show) {
-#ifdef WITH_XC_YUBIKEY
 #ifdef Q_OS_WIN
             m_deviceListener->registerHotplugCallback(true,
                                                       true,
@@ -214,7 +213,6 @@ bool DatabaseOpenWidget::event(QEvent* event)
             m_deviceListener->registerHotplugCallback(true, true, YubiKeyInterfaceUSB::YUBICO_USB_VID);
             m_deviceListener->registerHotplugCallback(true, true, YubiKeyInterfaceUSB::ONLYKEY_USB_VID);
 #endif
-#endif
         }
 
         if (isVisible()) {
@@ -229,11 +227,9 @@ bool DatabaseOpenWidget::event(QEvent* event)
             m_hideTimer.start();
         }
 
-#ifdef WITH_XC_YUBIKEY
         if (type == QEvent::Hide) {
             m_deviceListener->deregisterAllHotplugCallbacks();
         }
-#endif
 
         ret = true;
     }

@@ -76,6 +76,14 @@ public:
     virtual bool clearClipboardText(const QString& text);
     virtual bool isClipboardAvailable();
 
+    /**
+     * Platform specific secrets storage/handling
+     */
+    virtual bool saveSecret(const QString& key, const QByteArray& secretData) const = 0;
+    virtual bool getSecret(const QString& key, QByteArray& secretData) const = 0;
+    virtual bool removeSecret(const QString& key) const = 0;
+    virtual bool removeAllSecrets() const = 0;
+
     virtual bool externalGlobalShortcutsConfigurator()
     {
         return false;

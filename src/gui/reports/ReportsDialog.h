@@ -33,9 +33,6 @@ class ReportsPageStatistics;
 class ReportsPageBrowserStatistics;
 class ReportsPagePasskeys;
 #endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
-class ReportsPagePasskeys;
-#endif
 
 namespace Ui
 {
@@ -64,9 +61,6 @@ public:
 
     void load(const QSharedPointer<Database>& db);
     void addPage(QSharedPointer<IReportsPage> page);
-    void activatePasskeysPage();
-    bool onPassKeysPage();
-
 #ifdef KPXC_FEATURE_BROWSER
     void activatePasskeysPage();
     bool onPassKeysPage();
@@ -88,9 +82,6 @@ private:
     const QSharedPointer<ReportsPageStatistics> m_statPage;
 #ifdef KPXC_FEATURE_BROWSER
     const QSharedPointer<ReportsPageBrowserStatistics> m_browserStatPage;
-    const QSharedPointer<ReportsPagePasskeys> m_passkeysPage;
-#endif
-#ifdef WITH_XC_BROWSER_PASSKEYS
     const QSharedPointer<ReportsPagePasskeys> m_passkeysPage;
 #endif
     QPointer<EditEntryWidget> m_editEntryWidget;

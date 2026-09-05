@@ -233,47 +233,6 @@ QWidget* EditEntryWidget::widgetForPage(Page page) const
     return nullptr;
 }
 
-bool EditEntryWidget::switchToPage(Page page)
-{
-    auto index = pageIndex(widgetForPage(page));
-    if (index >= 0) {
-        setCurrentPage(index);
-        return true;
-    }
-    return false;
-}
-
-QWidget* EditEntryWidget::widgetForPage(Page page) const
-{
-    switch (page) {
-    case Page::Main:
-        return m_mainWidget;
-    case Page::Advanced:
-        return m_advancedWidget;
-    case Page::Icon:
-        return m_iconsWidget;
-    case Page::AutoType:
-        return m_autoTypeWidget;
-    case Page::Browser:
-#ifdef WITH_XC_BROWSER
-        return m_browserWidget;
-#else
-        return nullptr;
-#endif
-    case Page::SSHAgent:
-#ifdef WITH_XC_SSHAGENT
-        return m_sshAgentWidget;
-#else
-        return nullptr;
-#endif
-    case Page::Properties:
-        return m_editWidgetProperties;
-    case Page::History:
-        return m_historyWidget;
-    }
-    return nullptr;
-}
-
 void EditEntryWidget::setupMain()
 {
     m_mainUi->setupUi(m_mainWidget);
@@ -892,13 +851,6 @@ void EditEntryWidget::toKeeAgentSettings(KeeAgentSettings& settings) const
 
     // we don't use this either but we don't want it to dirty flag the config
     settings.setSaveAttachmentToTempFile(m_sshAgentSettings.saveAttachmentToTempFile());
-}
-
-void EditEntryWidget::updateTotp()
-{
-    if (m_entry) {
-        m_attributesModel->setEntryAttributes(m_entry->attributes());
-    }
 }
 
 void EditEntryWidget::browsePrivateKey()

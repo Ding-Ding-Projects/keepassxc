@@ -1647,13 +1647,13 @@ void MainWindow::updateMenuActionState()
     m_ui->actionEntryTotpQRCode->setEnabled(singleEntrySelected && dbWidget->currentEntryHasTotp());
     m_ui->actionEntryDownloadIcon->setEnabled((multiEntrySelected && !singleEntrySelected)
                                               || (singleEntrySelected && dbWidget->currentEntryHasUrl()));
-#ifdef WITH_XC_BROWSER_PASSKEYS
+#ifdef KPXC_FEATURE_BROWSER
     m_ui->actionEntryImportPasskey->setVisible(singleEntrySelected);
     m_ui->actionEntryImportPasskey->setEnabled(singleEntrySelected);
     m_ui->actionEntryRemovePasskey->setVisible(singleEntrySelected && dbWidget->currentEntryHasPasskey());
     m_ui->actionEntryRemovePasskey->setEnabled(singleEntrySelected && dbWidget->currentEntryHasPasskey());
 #endif
-#ifdef WITH_XC_SSHAGENT
+#ifdef KPXC_FEATURE_SSHAGENT
     bool hasSSHKey = singleEntrySelected && sshAgent()->isEnabled() && dbWidget->currentEntryHasSshKey();
     m_ui->actionEntryAddToAgent->setVisible(hasSSHKey);
     m_ui->actionEntryAddToAgent->setEnabled(hasSSHKey);
@@ -1673,7 +1673,7 @@ void MainWindow::updateMenuActionState()
     m_ui->actionGroupSortDesc->setEnabled(groupHasChildren);
     m_ui->actionGroupEmptyRecycleBin->setVisible(inRecycleBin);
     m_ui->actionGroupEmptyRecycleBin->setEnabled(inRecycleBin);
-#ifdef WITH_XC_NETWORKING
+#ifdef KPXC_FEATURE_NETWORK
     m_ui->actionGroupDownloadFavicons->setVisible(!inRecycleBin);
 #endif
     m_ui->actionGroupDownloadFavicons->setEnabled(groupSelected && groupHasEntries && !inRecycleBin);
@@ -1691,7 +1691,7 @@ void MainWindow::updateMenuActionState()
     m_ui->actionReports->setEnabled(inDatabase || inReports);
     m_ui->menuExport->setEnabled(inDatabase);
     m_ui->actionDatabaseMerge->setEnabled(inDatabase);
-#ifdef WITH_XC_BROWSER_PASSKEYS
+#ifdef KPXC_FEATURE_BROWSER
     m_ui->actionPasskeys->setEnabled(inDatabase || inReports);
     m_ui->actionImportPasskey->setEnabled(inDatabase);
 #endif
@@ -2574,17 +2574,6 @@ void MainWindow::updateEntryCountLabel()
     // The rail's Vault tile carries the same count under its label.
     if (auto* materialShell = shell()) {
         materialShell->rail()->setSublabel(QStringLiteral("vault"), vaultSublabel);
-    }
-}
-
-void MainWindow::updateEntryCountLabel()
-{
-    auto dbWidget = m_ui->tabWidget->currentDatabaseWidget();
-    if (dbWidget && dbWidget->currentMode() == DatabaseWidget::Mode::ViewMode) {
-        int numEntries = dbWidget->entryView()->model()->rowCount();
-        m_statusBarLabel->setText(tr("%1 Entry(s)", "", numEntries).arg(numEntries));
-    } else {
-        m_statusBarLabel->setText("");
     }
 }
 

@@ -120,18 +120,6 @@ bool EntryPreviewWidget::eventFilter(QObject* object, QEvent* event)
     return QWidget::eventFilter(object, event);
 }
 
-bool EntryPreviewWidget::eventFilter(QObject* object, QEvent* event)
-{
-    if (object == m_ui->entryTotpLabel && event->type() == QEvent::MouseButtonDblClick) {
-        if (m_currentEntry && m_currentEntry->hasTotp()) {
-            emit copyTextRequested(m_currentEntry->totp());
-            m_ui->entryTotpLabel->clearFocus();
-            return true;
-        }
-    }
-    return QWidget::eventFilter(object, event);
-}
-
 void EntryPreviewWidget::clear()
 {
     hide();
