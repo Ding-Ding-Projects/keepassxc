@@ -24,8 +24,6 @@
 #include "core/Endian.h"
 #include "crypto/CryptoHash.h"
 #include "format/KeePass2RandomStream.h"
-#include "keeshare/KeeShare.h"
-#include "keeshare/KeeShareSettings.h"
 #include "streams/qtiocompressor.h"
 
 /**
