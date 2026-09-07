@@ -55,8 +55,8 @@ export function replaceTiming(body, block) {
     if (start < 0 || end < start) fail('Release body has no owned timing block.');
     return `${body.slice(0, start)}${block}${body.slice(end + timingEnd.length)}`;
 }
-function jsonLinesFromGh(endpoint) {
-    return runGh(['api', '--paginate', endpoint, '--jq', '.[] | @base64']).trim().split(/\r?\n/).filter(Boolean)
+function jsonLinesFromGh(endpoint, selector = '.[]') {
+    return runGh(['api', '--paginate', endpoint, '--jq', `${selector} | @base64`]).trim().split(/\r?\n/).filter(Boolean)
         .map((line) => JSON.parse(Buffer.from(line, 'base64').toString('utf8')));
 }
 function ensureReleaseIdentity(release, runId, tag, target) {
@@ -92,7 +92,7 @@ function finalize(repository, runId) {
         console.log(`Release ${tag} has no finalizer marker for workflow run ${run.id}; skipping finalization.`);
         return;
     }
-    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`);
+    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, '.jobs[]');
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
     const publication = releaseJob?.steps?.find((step) => step.name === 'Create the GitHub Release');
