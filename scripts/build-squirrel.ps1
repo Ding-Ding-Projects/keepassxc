@@ -4,16 +4,33 @@ param(
     [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '2.8.0',
     [string]$StageDirectory = 'stage\app',
     [string]$ArtifactDirectory = 'dist\squirrel-windows',
+    [string]$BuildDirectory = 'build-windows',
+    [switch]$UseExistingStage,
+    [string]$StageProvenancePath,
     [string]$ReleaseBaseUrl
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$stage = [IO.Path]::GetFullPath((Join-Path $root $StageDirectory))
-$output = [IO.Path]::GetFullPath((Join-Path $root $ArtifactDirectory))
-$scratch = [IO.Path]::GetFullPath((Join-Path $root 'stage\squirrel'))
+. (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
+. (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
+$stage = Resolve-KpxcDirectory $root $StageDirectory
+$destination = Resolve-KpxcDirectory $root $ArtifactDirectory
+$build = Resolve-KpxcDirectory $root $BuildDirectory
+$scratchRoot = Resolve-KpxcDirectory $root 'stage\squirrel'
+Assert-KpxcBuildPaths $root @($stage, $destination, $build, $scratchRoot)
+Assert-KpxcOutputOwnership $root $destination
+$commit = (& git -C $root rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or (& git -C $root status --porcelain)) { throw 'Packaging requires a clean, committed source checkout.' }
+if (-not $StageProvenancePath) { $StageProvenancePath = Join-Path $build 'stage-provenance.json' }
+elseif (-not [IO.Path]::IsPathRooted($StageProvenancePath)) { $StageProvenancePath = Join-Path $root $StageProvenancePath }
+$scratch = Join-Path $scratchRoot ([Guid]::NewGuid().ToString('N'))
+$output = Join-Path $scratch 'release'
 function Get-Sha256([string]$Path) { $s=[IO.File]::OpenRead($Path); try {$h=[Security.Cryptography.SHA256]::Create(); try {return ([BitConverter]::ToString($h.ComputeHash($s))).Replace('-','').ToLowerInvariant()} finally {$h.Dispose()}} finally {$s.Dispose()} }
-& (Join-Path $PSScriptRoot 'build-windows.ps1') -Silent -Version $Version -WithTests:$false -InstallDirectory $StageDirectory
+if (-not $UseExistingStage) {
+    & (Join-Path $PSScriptRoot 'build-windows.ps1') -Silent -Version $Version -WithTests:$false -BuildDirectory $build -InstallDirectory $stage
+}
+$stageReceipt = Assert-KpxcStageReceipt $stage $StageProvenancePath $commit $Version
 & (Join-Path $PSScriptRoot 'download-dependencies.ps1') -Silent | Out-Null
 $manifest = Get-Content -Raw -LiteralPath (Join-Path $root 'packaging\squirrel\toolchain.json') | ConvertFrom-Json
 $toolRoot = Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain'
@@ -22,13 +39,12 @@ $squirrelExe = Join-Path $toolRoot "squirrel-windows-$($manifest.squirrelWindows
 $appExe = Join-Path $stage 'KeePassXC.exe'
 if (-not (Test-Path $appExe)) { throw "Staged executable not found at $appExe." }
 New-Item -ItemType Directory -Force -Path $scratch, $output | Out-Null
-Get-ChildItem -LiteralPath $output -Force -ErrorAction SilentlyContinue | Remove-Item -Force -Recurse
 $nuspec = Join-Path $scratch 'KeePassXC.Material.nuspec'
 @"
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata><id>KeePassXC.Material</id><version>$Version</version><title>KeePassXC Material</title><authors>KeePassXC Team</authors><owners>KeePassXC Team</owners><requireLicenseAcceptance>false</requireLicenseAcceptance><description>Windows-only KeePassXC Material desktop application.</description></metadata>
-  <files><file src="$stage\**\*" target="lib\net45" /></files>
+  <files><file src="$([Security.SecurityElement]::Escape($stage))\**\*" target="lib\net45" /></files>
 </package>
 "@ | Set-Content -LiteralPath $nuspec -Encoding UTF8
 & $nugetExe pack $nuspec -OutputDirectory $scratch -NoPackageAnalysis -NonInteractive
@@ -53,8 +69,9 @@ do {
     if ($stableObservations -lt 2) { Start-Sleep -Milliseconds 500 }
 } while ($stableObservations -lt 2 -and [DateTime]::UtcNow -lt $deadline)
 if ($stableObservations -lt 2) { throw 'Squirrel did not produce a size-stable Setup.exe, RELEASES, and full package within two minutes.' }
-$commit = (& git -C $root rev-parse HEAD).Trim()
-$provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Version; architecture='x64'; packageId='KeePassXC.Material'; packagingTool=@{name='squirrel.windows';version=$manifest.squirrelWindows.version;maintenanceStatus=$manifest.squirrelWindows.maintenanceStatus}; stagedExecutable=@{path=$appExe;sha256=(Get-Sha256 $appExe)}; generatedAtUtc=[DateTime]::UtcNow.ToString('o') }
+Assert-KpxcStageReceipt $stage $StageProvenancePath $commit $Version | Out-Null
+if ((& git -C $root rev-parse HEAD).Trim() -cne $commit -or (& git -C $root status --porcelain)) { throw 'Source changed during packaging; candidate outputs were retained without publication.' }
+$provenance = [ordered]@{ schemaVersion=1; sourceCommit=$commit; version=$Version; architecture='x64'; packageId='KeePassXC.Material'; packagingTool=@{name='squirrel.windows';version=$manifest.squirrelWindows.version;maintenanceStatus=$manifest.squirrelWindows.maintenanceStatus}; stagedExecutable=@{path='KeePassXC.exe';sha256=(Get-Sha256 $appExe)}; msvcRuntime=$stageReceipt.msvcRuntime; generatedAtUtc=[DateTime]::UtcNow.ToString('o') }
 $provenancePath = Join-Path $output 'build-provenance.json'
 $provenance | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $provenancePath -Encoding UTF8
 & (Join-Path $PSScriptRoot 'verify-squirrel-artifacts.ps1') -ArtifactDirectory $output -ProvenancePath $provenancePath -ExpectedCommit $commit -ExpectedVersion $Version -ExpectedPackageId 'KeePassXC.Material' -ExpectedArchitecture x64 -RequiredPackageEntry 'lib/net45/KeePassXC.exe' -OutputPath (Join-Path $output 'artifact-receipt.json')
@@ -77,6 +94,7 @@ $manifestOutput = [ordered]@{
     executableSha256 = $provenance.stagedExecutable.sha256
 }
 $manifestOutput | ConvertTo-Json -Depth 4 | Set-Content -LiteralPath (Join-Path $output 'update-manifest-v1.json') -Encoding UTF8
+Publish-KpxcOutput $root $output $destination
 Write-Host 'Unsigned Squirrel.Windows artifacts were built successfully.'
 Write-Host 'They may trigger Unknown Publisher or SmartScreen warnings.'
-Get-ChildItem $output -File | Select-Object Name,Length,@{Name='SHA256';Expression={Get-Sha256 $_.FullName}}
+Get-ChildItem $destination -File | Select-Object Name,Length,@{Name='SHA256';Expression={Get-Sha256 $_.FullName}}

@@ -9,8 +9,19 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$build = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted($BuildDirectory)) { $BuildDirectory } else { Join-Path $root $BuildDirectory }))
-$stage = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted($InstallDirectory)) { $InstallDirectory } else { Join-Path $root $InstallDirectory }))
+. (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
+. (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
+$build = Resolve-KpxcDirectory $root $BuildDirectory
+$stage = Resolve-KpxcDirectory $root $InstallDirectory
+Assert-KpxcBuildPaths $root @($build, $stage)
+Assert-KpxcBuildCache $root $build
+$sourceCommit = (& git -C $root rev-parse HEAD).Trim()
+if ($LASTEXITCODE -ne 0 -or (& git -C $root status --porcelain)) { throw 'Build provenance requires a clean, committed source checkout.' }
+$stageReceiptPath = Join-Path $build 'stage-provenance.json'
+if ((Test-Path -LiteralPath $stage) -and @(Get-ChildItem -LiteralPath $stage -Force).Count) {
+    $previous = Assert-KpxcStageReceipt $stage $stageReceiptPath $sourceCommit $Version
+    if ($previous.ownerKey -cne (Get-KpxcOwnerKey $root $stage)) { throw 'Existing stage is not owned by this build. Choose an empty InstallDirectory.' }
+}
 $started = Get-Date
 function Phase([string]$Message) { if (-not $Silent) { Write-Host "[build] $Message" } }
 function Invoke-Native([string]$File, [string[]]$Arguments) { & $File @Arguments; if ($LASTEXITCODE -ne 0) { throw "$File exited with $LASTEXITCODE." } }
@@ -84,9 +95,10 @@ if (-not (Get-Command cl.exe -ErrorAction SilentlyContinue)) {
     if (-not (Get-Command cl.exe -ErrorAction SilentlyContinue)) { throw "vcvars64.bat did not put cl.exe on PATH: $vcvars" }
 }
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
+$compilerPath = (Get-Command cl.exe -ErrorAction Stop).Source
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
-Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot")
+Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot","-DCMAKE_C_COMPILER=$compilerPath","-DCMAKE_CXX_COMPILER=$compilerPath")
 if ($WithTests) {
     Phase 'Building the native application and local test targets.'
     Invoke-Native cmake @('--build',$build,'--parallel')
@@ -99,6 +111,23 @@ New-Item -ItemType Directory -Force -Path $stage | Out-Null
 Invoke-Native cmake @('--install',$build,'--prefix',$stage)
 $exe = Join-Path $stage 'KeePassXC.exe'
 if (-not (Test-Path -LiteralPath $exe)) { throw "The staged application is missing $exe." }
+$runtime = @(Copy-KpxcMsvcRuntime $stage $compilerPath $env:VCToolsRedistDir)
+Assert-KpxcPeX64 $exe
+$versionInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
+Assert-KpxcExecutableVersion -FileVersion $versionInfo.FileVersion -ProductVersion $versionInfo.ProductVersion -ExpectedVersion $Version
+$builtExe = Join-Path $build 'src\KeePassXC.exe'
+if ((Get-KpxcHash $exe) -cne (Get-KpxcHash $builtExe)) { throw 'Installed executable differs from the current build output.' }
+$generatedConfig = Get-Content -Raw -LiteralPath (Join-Path $build 'src\config-keepassx.h')
+if ($generatedConfig -notmatch '(?m)^#define KEEPASSXC_GIT_HEAD "([0-9a-f]+)"\r?$' -or
+    $Matches[1].Length -lt 7 -or -not $sourceCommit.StartsWith($Matches[1], [StringComparison]::Ordinal)) { throw 'CMake provenance does not name the current source commit.' }
+$compiledHead = $Matches[1]
+$binaryText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($exe))
+if (-not $binaryText.Contains($compiledHead)) { throw 'The staged executable does not contain its configured source identifier.' }
+if ((& git -C $root rev-parse HEAD).Trim() -cne $sourceCommit -or (& git -C $root status --porcelain)) { throw 'Source changed during the build; no stage receipt was issued.' }
+$receipt = @{schemaVersion=1;sourceCommit=$sourceCommit;compiledHead=$compiledHead;version=$Version;architecture='x64';stageDirectory=$stage;ownerKey=(Get-KpxcOwnerKey $root $stage);executableSha256=(Get-KpxcHash $exe);msvcRuntime=$runtime;files=@(Get-KpxcDirectoryFiles $stage | ForEach-Object { @{path=$_.FullName.Substring($stage.Length + 1).Replace('\','/');sha256=(Get-KpxcHash $_.FullName)} })}
+$receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $stageReceiptPath -Encoding UTF8
+Assert-KpxcStageReceipt $stage $stageReceiptPath $sourceCommit $Version | Out-Null
+Write-Host "Stage provenance: $stageReceiptPath"
 Write-Host "Built application: $exe"
 Write-Host "SHA-256: $(Get-Sha256 $exe)"
 Write-Host "Elapsed: $([int]((Get-Date)-$started).TotalSeconds)s"
