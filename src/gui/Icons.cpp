@@ -33,6 +33,10 @@
 
 #include <algorithm>
 
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
+
 #include "config-keepassx.h"
 #include "core/Config.h"
 #include "core/Database.h"
@@ -55,6 +59,8 @@ private:
 };
 
 Icons* Icons::m_instance(nullptr);
+QString Icons::m_testLogoCacheDirectory;
+int Icons::m_testLogoFailureStage = 0;
 
 Icons::Icons() = default;
 
@@ -83,18 +89,80 @@ namespace
         return format.compare("png", Qt::CaseInsensitive) == 0 || format.compare("jpeg", Qt::CaseInsensitive) == 0
                || format.compare("jpg", Qt::CaseInsensitive) == 0;
     }
+
+    bool isReparseOrLink(const QString& path)
+    {
+        const QFileInfo info(path);
+        if (info.exists() && info.isSymLink()) return true;
+#ifdef Q_OS_WIN
+        const auto attributes = GetFileAttributesW(reinterpret_cast<LPCWSTR>(path.utf16()));
+        return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_REPARSE_POINT);
+#else
+        return false;
+#endif
+    }
+
+    bool isContainedPath(const QString& child, const QString& parent)
+    {
+        const auto cleanChild = QDir::cleanPath(child);
+        const auto cleanParent = QDir::cleanPath(parent);
+#ifdef Q_OS_WIN
+        return cleanChild.startsWith(cleanParent + QLatin1Char('/'), Qt::CaseInsensitive);
+#else
+        return cleanChild.startsWith(cleanParent + QLatin1Char('/'));
+#endif
+    }
+}
+
+QString Icons::applicationLogoCacheDirectory() const
+{
+    if (!m_testLogoCacheDirectory.isEmpty()) return m_testLogoCacheDirectory;
+    return QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath(QStringLiteral("logos"));
+}
+
+void Icons::setApplicationLogoCacheDirectoryForTests(const QString& path)
+{
+    m_testLogoCacheDirectory = path;
+}
+
+void Icons::setApplicationLogoFailureStageForTests(int stage)
+{
+    m_testLogoFailureStage = stage;
 }
 
 QString Icons::applicationLogoPath() const
 {
-    const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    return QDir(base).filePath(QStringLiteral("logos/application-logo.png"));
+    return QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo.png"));
 }
 
 QString Icons::applicationLogoSourcePath() const
 {
-    const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
-    return QDir(base).filePath(QStringLiteral("logos/application-logo-source.png"));
+    return QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo-source.png"));
+}
+
+bool Icons::ensureApplicationLogoCache(QString* error) const
+{
+    auto fail = [error](const QString& message) {
+        if (error) *error = message;
+        return false;
+    };
+    const auto appData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    if (appData.isEmpty() || (m_testLogoCacheDirectory.isEmpty() && isReparseOrLink(appData))) {
+        return fail(QStringLiteral("The private logo cache location is unavailable or linked."));
+    }
+    const auto cache = applicationLogoCacheDirectory();
+    if (QFileInfo::exists(cache) && isReparseOrLink(cache)) {
+        return fail(QStringLiteral("The private logo cache directory is linked and cannot be used."));
+    }
+    if (!QDir().mkpath(cache) || isReparseOrLink(cache)) {
+        return fail(QStringLiteral("The private logo cache could not be created safely."));
+    }
+    const auto canonicalCache = QFileInfo(cache).canonicalFilePath();
+    if (canonicalCache.isEmpty() || !isContainedPath(applicationLogoPath(), canonicalCache)
+        || !isContainedPath(applicationLogoSourcePath(), canonicalCache)) {
+        return fail(QStringLiteral("The private logo cache path failed containment validation."));
+    }
+    return true;
 }
 
 bool Icons::hasCustomApplicationLogo() const
@@ -147,52 +215,140 @@ bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
         return fail(QStringLiteral("The selected logo is malformed or could not be decoded."));
     }
 
-    const QFileInfo destination(applicationLogoSourcePath());
-    if (!QDir().mkpath(destination.dir().absolutePath())) {
-        return fail(QStringLiteral("The private logo cache could not be created."));
-    }
-    QSaveFile output(destination.absoluteFilePath());
+    if (!ensureApplicationLogoCache(error)) return false;
+
+    const auto stagedSource = QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo-source.pending.png"));
+    QSaveFile output(stagedSource);
     if (!output.open(QIODevice::WriteOnly) || !image.save(&output, "PNG") || !output.commit()) {
-        return fail(QStringLiteral("The selected logo could not be converted into the private PNG cache."));
+        return fail(QStringLiteral("The selected logo could not be converted into the private source staging cache."));
     }
+    if (!renderApplicationLogo(image,
+                                config()->get(Config::GUI_CustomLogoFitMode).toString(),
+                                QColor(config()->get(Config::GUI_CustomLogoBackground).toString()),
+                                error)) {
+        QFile::remove(stagedSource);
+        return false;
+    }
+
+    if (m_testLogoFailureStage == 1) {
+        QFile::remove(stagedSource);
+        QFile::remove(QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo.pending.png")));
+        return fail(QStringLiteral("The selected logo could not complete its second private cache write."));
+    }
+
+    const auto source = applicationLogoSourcePath();
+    const auto display = applicationLogoPath();
+    const auto sourceBackup = source + QStringLiteral(".previous");
+    const auto displayBackup = display + QStringLiteral(".previous");
+    const auto stagedDisplay = QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo.pending.png"));
+    QFile::remove(sourceBackup);
+    QFile::remove(displayBackup);
+    const bool sourceBackedUp = !QFileInfo::exists(source) || QFile::rename(source, sourceBackup);
+    const bool sourceActivated = sourceBackedUp && QFile::rename(stagedSource, source);
+    const bool displayBackedUp = sourceActivated && (!QFileInfo::exists(display) || QFile::rename(display, displayBackup));
+    const bool displayActivated = displayBackedUp && QFile::rename(stagedDisplay, display);
+    if (!displayActivated) {
+        if (sourceActivated) {
+            QFile::remove(source);
+            if (QFileInfo::exists(sourceBackup)) QFile::rename(sourceBackup, source);
+        }
+        if (displayBackedUp && QFileInfo::exists(displayBackup)) QFile::rename(displayBackup, display);
+        QFile::remove(stagedSource);
+        QFile::remove(stagedDisplay);
+        return fail(QStringLiteral("The new logo could not replace the active private cache; the previous logo remains active."));
+    }
+    QFile::remove(sourceBackup);
+    QFile::remove(displayBackup);
     config()->set(Config::GUI_CustomLogoEnabled, true);
-    return refreshApplicationLogo(error);
+    refreshApplicationIcon();
+    return true;
 }
 
 bool Icons::refreshApplicationLogo(QString* error)
 {
-    auto fail = [error](const QString& message) {
-        if (error) *error = message;
-        return false;
-    };
+    return setApplicationLogoPresentation(config()->get(Config::GUI_CustomLogoFitMode).toString(),
+                                          QColor(config()->get(Config::GUI_CustomLogoBackground).toString()), error);
+}
+
+bool Icons::setApplicationLogoPresentation(const QString& fitMode, const QColor& background, QString* error)
+{
+    auto fail = [error](const QString& message) { if (error) *error = message; return false; };
+    if (fitMode != QLatin1String("fit") && fitMode != QLatin1String("crop")) return fail(QStringLiteral("The logo fit mode is invalid."));
+    if (!background.isValid() || !ensureApplicationLogoCache(error)) return false;
     QImage source(applicationLogoSourcePath());
     if (source.isNull()) {
         return fail(QStringLiteral("The private source image is unavailable. Choose a logo again."));
     }
+    if (!renderApplicationLogo(source, fitMode, background, error)) return false;
+    const auto staged = QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo.pending.png"));
+    const auto active = applicationLogoPath();
+    const auto backup = active + QStringLiteral(".previous");
+    if (m_testLogoFailureStage == 4) {
+        QFile::remove(staged);
+        return fail(QStringLiteral("The updated logo could not replace the active cache; settings were not changed."));
+    }
+    QFile::remove(backup);
+    if (QFileInfo::exists(active) && !QFile::rename(active, backup)) {
+        QFile::remove(staged);
+        return fail(QStringLiteral("The active logo cache could not be staged for replacement."));
+    }
+    if (!QFile::rename(staged, active)) {
+        if (QFileInfo::exists(backup)) QFile::rename(backup, active);
+        return fail(QStringLiteral("The updated logo could not replace the active cache; settings were not changed."));
+    }
+    QFile::remove(backup);
+    config()->set(Config::GUI_CustomLogoFitMode, fitMode);
+    config()->set(Config::GUI_CustomLogoBackground, background.name(QColor::HexArgb));
+    refreshApplicationIcon();
+    return true;
+}
+
+bool Icons::renderApplicationLogo(const QImage& source, const QString& fitMode, const QColor& background, QString* error)
+{
+    auto fail = [error](const QString& message) { if (error) *error = message; return false; };
     const int edge = qMax(source.width(), source.height());
     QImage canvas(edge, edge, QImage::Format_ARGB32_Premultiplied);
-    canvas.fill(QColor(config()->get(Config::GUI_CustomLogoBackground).toString()).rgba());
+    canvas.fill(background.rgba());
     QPainter painter(&canvas);
-    const bool crop = config()->get(Config::GUI_CustomLogoFitMode).toString() == QLatin1String("crop");
+    const bool crop = fitMode == QLatin1String("crop");
     const auto scaled = source.scaled(edge, edge, crop ? Qt::KeepAspectRatioByExpanding : Qt::KeepAspectRatio,
                                       Qt::SmoothTransformation);
     painter.drawImage((edge - scaled.width()) / 2, (edge - scaled.height()) / 2, scaled);
     painter.end();
 
-    QSaveFile output(applicationLogoPath());
+    const auto stagedDisplay = QDir(applicationLogoCacheDirectory()).filePath(QStringLiteral("application-logo.pending.png"));
+    QFile::remove(stagedDisplay);
+    if (m_testLogoFailureStage == 2) return fail(QStringLiteral("The selected logo could not complete its second private cache write."));
+    QSaveFile output(stagedDisplay);
     if (!output.open(QIODevice::WriteOnly) || !canvas.save(&output, "PNG") || !output.commit()) {
         return fail(QStringLiteral("The selected logo could not be converted into the private display cache."));
     }
-    refreshApplicationIcon();
     return true;
 }
 
-void Icons::resetApplicationLogo()
+bool Icons::resetApplicationLogo(QString* error)
 {
-    QFile::remove(applicationLogoPath());
-    QFile::remove(applicationLogoSourcePath());
+    auto fail = [error](const QString& message) { if (error) *error = message; return false; };
+    if (!ensureApplicationLogoCache(error)) return false;
+    const auto display = applicationLogoPath();
+    const auto source = applicationLogoSourcePath();
+    const auto displayBackup = display + QStringLiteral(".removing");
+    const auto sourceBackup = source + QStringLiteral(".removing");
+    QFile::remove(displayBackup);
+    QFile::remove(sourceBackup);
+    const bool displayStaged = !QFileInfo::exists(display) || QFile::rename(display, displayBackup);
+    const bool sourceStaged = displayStaged && (!QFileInfo::exists(source) || QFile::rename(source, sourceBackup));
+    const bool removed = sourceStaged && m_testLogoFailureStage != 3
+        && (!QFileInfo::exists(displayBackup) || QFile::remove(displayBackup))
+        && (!QFileInfo::exists(sourceBackup) || QFile::remove(sourceBackup));
+    if (!removed || QFileInfo::exists(display) || QFileInfo::exists(source)) {
+        if (QFileInfo::exists(displayBackup)) QFile::rename(displayBackup, display);
+        if (QFileInfo::exists(sourceBackup)) QFile::rename(sourceBackup, source);
+        return fail(QStringLiteral("The custom logo could not be removed, so the shipped logo was not restored."));
+    }
     config()->set(Config::GUI_CustomLogoEnabled, false);
     refreshApplicationIcon();
+    return true;
 }
 
 void Icons::refreshApplicationIcon()

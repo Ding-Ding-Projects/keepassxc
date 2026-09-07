@@ -20,6 +20,10 @@ private slots:
     void importsValidatedLocalImageAndPersistsOnlyDerivedPath();
     void rejectsInvalidAndOversizedSourcesWithoutReplacingActiveLogo();
     void fitAndBackgroundRegenerateThenReset();
+    void secondWriteFailureKeepsPriorLogoAndSettings();
+    void presentationFailureKeepsPriorSettings();
+    void resetFailureKeepsActiveLogo();
+    void linkedCacheDirectoryIsRefusedWithoutTouchingExternalTarget();
 };
 
 #endif // KEEPASSXC_TESTAPPLICATIONLOGO_H

@@ -4,9 +4,9 @@ The Material Settings screen includes an **Application logo** card. It keeps the
 
 ## Local-only conversion boundary
 
-The picker accepts only actual PNG and JPEG bytes. Its validator checks the decoded format instead of the filename, rejects unreadable files, images larger than 5 MiB, dimensions larger than 4096 pixels, images above 16 megapixels, and animated input. The accepted pixels are normalized to PNG under the application's private app-data `logos/` cache. The selected source pathname is never stored in configuration, history, exports, telemetry, logs, screenshots, prompts, or project records.
+The picker accepts only actual PNG and JPEG bytes. Its validator checks the decoded format instead of the filename, rejects unreadable files, images larger than 5 MiB, dimensions larger than 4096 pixels, images above 16 megapixels, and animated input. The accepted pixels are normalized to PNG under the application's private app-data `logos/` cache. The cache refuses symbolic links and Windows reparse-point directories, verifies canonical containment before writing or removing files, and never follows a linked `logos/` directory. The selected source pathname is never stored in configuration, history, exports, telemetry, logs, screenshots, prompts, or project records.
 
-The card stores only three local presentation settings: whether a custom mark is active, `fit` or `crop`, and the background colour. A normalized private source image permits a fit, crop, or background change to regenerate the display derivative without reopening the original. A conversion failure leaves the existing valid mark in place. Reset removes both private derived images and returns to the shipped mark.
+The card stores only three local presentation settings: whether a custom mark is active, `fit` or `crop`, and the background colour. A normalized private source image permits a fit, crop, or background change to regenerate the display derivative without reopening the original. The source and display files are staged separately, then activated with rollback before the enabled state or presentation settings are committed. A conversion failure leaves the existing valid mark and settings in place. Reset confirms both private files are gone before declaring the shipped mark active, and reports a failure without changing the enabled state when removal cannot complete.
 
 ## Accessible controls
 
@@ -14,7 +14,7 @@ The card supplies an accessible live preview and status text, a searchable fit-m
 
 ## Verification
 
-`TestApplicationLogo` creates neutral generated fixtures only. It covers validated import, stored-path privacy, malformed and oversized rejection, preservation of the active derivative after rejection, fit/background regeneration, persistence settings, reset, and cache removal. The focused target requires this registration in `tests/CMakeLists.txt`:
+`TestApplicationLogo` creates neutral generated fixtures only. It covers validated import, stored-path privacy, malformed and oversized rejection, second-write fault injection with prior-state retention, staged presentation-setting rollback, reset failure retention, linked-cache refusal without external-target writes, fit/background regeneration, persistence settings, reset, and cache removal. The focused target requires this registration in `tests/CMakeLists.txt`:
 
 ```cmake
 add_unit_test(NAME testapplicationlogo SOURCES TestApplicationLogo.cpp

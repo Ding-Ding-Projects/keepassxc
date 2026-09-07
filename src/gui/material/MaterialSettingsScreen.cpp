@@ -697,11 +697,15 @@ namespace Material
         m_logoFitMode->addItem(tr("Crop to fill"), QStringLiteral("crop"));
         m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
         connect(m_logoFitMode, &Select::currentIndexChanged, this, [this](int) {
-            config()->set(Config::GUI_CustomLogoFitMode, m_logoFitMode->currentData().toString());
             QString error;
-            const bool rebuilt = !icons()->hasCustomApplicationLogo() || icons()->refreshApplicationLogo(&error);
+            const bool rebuilt = !icons()->hasCustomApplicationLogo()
+                || icons()->setApplicationLogoPresentation(m_logoFitMode->currentData().toString(),
+                                                           QColor(config()->get(Config::GUI_CustomLogoBackground).toString()), &error);
             refreshLogoPreview();
-            if (!rebuilt) m_logoStatus->setText(error);
+            if (!rebuilt) {
+                m_logoStatus->setText(error);
+                m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
+            }
         });
         content->addWidget(m_logoFitMode);
 
@@ -712,9 +716,9 @@ namespace Material
             const auto current = QColor(config()->get(Config::GUI_CustomLogoBackground).toString());
             const auto chosen = QColorDialog::getColor(current, this, tr("Application logo background"), QColorDialog::ShowAlphaChannel);
             if (!chosen.isValid()) return;
-            config()->set(Config::GUI_CustomLogoBackground, chosen.name(QColor::HexArgb));
             QString error;
-            const bool rebuilt = !icons()->hasCustomApplicationLogo() || icons()->refreshApplicationLogo(&error);
+            const bool rebuilt = !icons()->hasCustomApplicationLogo()
+                || icons()->setApplicationLogoPresentation(config()->get(Config::GUI_CustomLogoFitMode).toString(), chosen, &error);
             refreshLogoPreview();
             if (!rebuilt) m_logoStatus->setText(error);
         });
@@ -739,8 +743,10 @@ namespace Material
         m_logoReset->setObjectName(QStringLiteral("applicationLogoReset"));
         m_logoReset->setAccessibleName(tr("Remove custom application logo and restore the shipped logo"));
         connect(m_logoReset, &QPushButton::clicked, this, [this] {
-            icons()->resetApplicationLogo();
+            QString error;
+            const bool reset = icons()->resetApplicationLogo(&error);
             refreshLogoPreview();
+            if (!reset) m_logoStatus->setText(error);
         });
         content->addWidget(m_logoReset);
 
