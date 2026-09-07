@@ -92,6 +92,11 @@ int Clipboard::secondsToClear()
     return m_secondsToClear;
 }
 
+int Clipboard::secondsElapsed()
+{
+    return config()->get(Config::Security_ClearClipboardTimeout).toInt() - m_secondsToClear;
+}
+
 void Clipboard::clearCopiedText()
 {
     m_timer->stop();

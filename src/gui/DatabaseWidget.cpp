@@ -842,6 +842,16 @@ void DatabaseWidget::setClipboardTextAndMinimize(const QString& text)
     }
 }
 
+void DatabaseWidget::pollToptOrStopAndDisconnect(Entry* entry)
+{
+    const auto clipboardTimeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
+    if (clipboard()->secondsElapsed() < clipboardTimeout) {
+        setClipboardTextAndMinimize(entry->totp());
+    }
+    m_totpTimer->stop();
+    disconnect(m_totpTimer);
+}
+
 #ifdef KPXC_FEATURE_SSHAGENT
 void DatabaseWidget::addToAgent()
 {
