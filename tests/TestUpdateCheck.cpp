@@ -268,9 +268,10 @@ void TestUpdateCheck::testPrereleaseManifestSelection()
     checker.checkForUpdates(true);
     QCOMPARE(manager.replies.size(), 1);
     QVERIFY(manager.replies.at(0)->url().path().endsWith(QStringLiteral("/releases")));
-    manager.replies.at(0)->complete(R"([{"draft":false,"prerelease":true,"assets":[{"name":"update-manifest-v1.json","browser_download_url":"https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v999.0.0/update-manifest-v1.json"}]}])");
+    manager.replies.at(0)->complete(R"([{"draft":false,"prerelease":true,"tag_name":"v2.9.0-beta1","assets":[{"name":"update-manifest-v1.json","browser_download_url":"https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.9.0-beta1/update-manifest-v1.json"}]},{"draft":false,"prerelease":false,"tag_name":"v3.0.0","assets":[{"name":"update-manifest-v1.json","browser_download_url":"https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v3.0.0/update-manifest-v1.json"}]}])");
     QCOMPARE(manager.replies.size(), 2);
     QCOMPARE(manager.replies.at(1)->url().fileName(), QStringLiteral("update-manifest-v1.json"));
+    QVERIFY(manager.replies.at(1)->url().path().contains(QStringLiteral("v3.0.0")));
     manager.replies.at(1)->complete(availableManifest());
     QCOMPARE(checker.state(), UpdateChecker::State::Available);
     config()->set(Config::GUI_CheckForUpdatesIncludeBetas, false);

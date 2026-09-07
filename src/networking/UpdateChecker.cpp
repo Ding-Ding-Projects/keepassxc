@@ -149,22 +149,34 @@ void UpdateChecker::fetchFinished()
         QJsonParseError parseError;
         const auto document = QJsonDocument::fromJson(m_bytesReceived, &parseError);
         QUrl manifestUrl;
+        QString selectedVersion;
         if (parseError.error == QJsonParseError::NoError && document.isArray()) {
             for (const auto value : document.array()) {
                 const auto release = value.toObject();
-                if (!release.value(QStringLiteral("prerelease")).toBool() || release.value(QStringLiteral("draft")).toBool()) continue;
+                if (release.value(QStringLiteral("draft")).toBool()) continue;
+                QString version = release.value(QStringLiteral("tag_name")).toString();
+                if (version.startsWith(QLatin1Char('v'))) version.remove(0, 1);
+                static const QRegularExpression versionPattern(QStringLiteral("^\\d+\\.\\d+\\.\\d+(?:-beta\\d*)?$"));
+                if (!versionPattern.match(version).hasMatch()) continue;
                 for (const auto asset : release.value(QStringLiteral("assets")).toArray()) {
                     const auto object = asset.toObject();
                     if (object.value(QStringLiteral("name")).toString() == QStringLiteral("update-manifest-v1.json")) {
-                        manifestUrl = QUrl(object.value(QStringLiteral("browser_download_url")).toString());
+                        const QUrl candidateUrl(object.value(QStringLiteral("browser_download_url")).toString());
+                        if ((!selectedVersion.isEmpty() && !compareVersions(selectedVersion, version))
+                            || !candidateUrl.isValid() || candidateUrl.scheme() != QStringLiteral("https") || !redirectAllowed(candidateUrl)) {
+                            break;
+                        }
+                        selectedVersion = version;
+                        manifestUrl = candidateUrl;
                         break;
                     }
                 }
-                if (manifestUrl.isValid()) break;
             }
         }
-        if (!manifestUrl.isValid() || manifestUrl.scheme() != QStringLiteral("https") || !redirectAllowed(manifestUrl)) {
-            failCheck(Failure::MalformedManifest);
+        if (!manifestUrl.isValid()) {
+            m_bytesReceived.clear();
+            m_redirectRejected = false;
+            beginManifestRequest(ManifestUrl);
             return;
         }
         m_bytesReceived.clear();

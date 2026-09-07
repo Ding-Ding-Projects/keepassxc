@@ -8,7 +8,7 @@ Feature id: `auto-updates` · Category: Build, install and update
 
 ## Configuration
 
-Update checks and beta inclusion are configuration keys; stable checks use the latest stable manifest, while beta inclusion first reads the bounded project release index and then requests the selected prerelease manifest over HTTPS. The feed is unsigned by policy.
+Update checks and beta inclusion are configuration keys; stable checks use the latest stable manifest, while beta inclusion first reads the bounded project release index and requests the highest eligible stable or prerelease manifest over HTTPS. If the index has no eligible manifest, it falls back to the stable manifest. The feed is unsigned by policy.
 
 ## Failure modes
 
