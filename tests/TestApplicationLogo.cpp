@@ -202,7 +202,7 @@ void TestApplicationLogo::linkedCacheDirectoryIsRefusedWithoutTouchingExternalTa
     const auto linked = directory.filePath(QStringLiteral("linked-cache"));
     QVERIFY(QDir().mkpath(external));
     if (!CreateSymbolicLinkW(reinterpret_cast<LPCWSTR>(linked.utf16()), reinterpret_cast<LPCWSTR>(external.utf16()),
-                             SYMBOLIC_LINK_FLAG_DIRECTORY)) {
+                             SYMBOLIC_LINK_FLAG_DIRECTORY | SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE)) {
         QSKIP("The test account cannot create a directory link.");
     }
     Icons::setApplicationLogoCacheDirectoryForTests(linked);
@@ -229,7 +229,7 @@ void TestApplicationLogo::linkedActiveEntryIsRefusedWithoutTouchingExternalTarge
     externalFile.close();
     QVERIFY(QFile::remove(icons()->applicationLogoPath()));
     if (!CreateSymbolicLinkW(reinterpret_cast<LPCWSTR>(icons()->applicationLogoPath().utf16()),
-                             reinterpret_cast<LPCWSTR>(external.utf16()), 0)) {
+                             reinterpret_cast<LPCWSTR>(external.utf16()), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE)) {
         QSKIP("The test account cannot create a file link.");
     }
     QVERIFY(!icons()->hasCustomApplicationLogo());
@@ -252,7 +252,7 @@ void TestApplicationLogo::danglingActiveLinkIsRefused()
     QVERIFY(QFile::remove(icons()->applicationLogoPath()));
     const auto missing = directory.filePath(QStringLiteral("does-not-exist.png"));
     if (!CreateSymbolicLinkW(reinterpret_cast<LPCWSTR>(icons()->applicationLogoPath().utf16()),
-                             reinterpret_cast<LPCWSTR>(missing.utf16()), 0)) {
+                             reinterpret_cast<LPCWSTR>(missing.utf16()), SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE)) {
         QSKIP("The test account cannot create a file link.");
     }
     QVERIFY(!icons()->hasCustomApplicationLogo());
