@@ -1,6 +1,6 @@
 # September 2026 repair verification
 
-The native and website repairs are integrated into `main` at `ecd0f93a1b14aec2fefcf9bb9bbef96caea63fcd`. This record distinguishes source integration, local verification, publication, and installed behavior.
+The native and website repairs are integrated into `main` at `7dabb1c9327e07cab490439f5ed9f44d6bd5a437`. This record distinguishes source integration, local verification, publication, and installed behavior.
 
 ## Native checks
 
@@ -36,13 +36,17 @@ The public deployment of `ecd0f93a` succeeded in run [34149596020](https://githu
 
 The release projector requires exact release-tag, build and installer-receipt source identity; a `NotSigned` installer verdict; matching package hashes and byte counts; and exact project-owned URLs. Nineteen invalid-input mutations and missing-receipt rejection passed. Headless interaction confirmed language/theme persistence, narrow layout observations, explicit navigation focus transfer and invalid regex clearing. The regex worker terminates after 250 ms. These are focused observations, not a full accessibility, language, display-scale or canonical-feature acceptance matrix.
 
+## Final published release
+
+Release [`v2.8.21501`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21501) is non-draft, stable, and targets `7dabb1c9327e07cab490439f5ed9f44d6bd5a437`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,600 bytes with SHA-256 `fcea8d5dfa126d1a198cb105bb30e2b2610aabcc5db29e0c239124e6f8b2b963`, and the full package is 72,918,819 bytes with SHA-256 `b94506549c2a7946bab415bcae750bae13e0e0bebb668af9e67973c75a7158fe`. The verified workflow timing is 00:37:38, from `2026-09-07T18:30:44Z` through `2026-09-07T19:08:22Z`. The finalizer marked this numeric release as `Latest`.
+
 ## Remaining acceptance
 
 - Actual title-bar, restored-window, tab, entry and group drag gestures.
 - Installation in a disposable normal user session, followed by older-to-newer update download, staging, explicit restart and unsaved-work protection.
 - Full applicable local suites, per-click evidence and complete per-surface feature inventory. The current inventory remains **1 of 172 rows green**.
-- Final release asset, timing, tag, download and installed-behavior verification.
-- Finalizer workflow execution that replaces the owned timing placeholder after the successful publication step and marks the highest numeric stable release as `Latest`.
+- Installed-user behavior and older-to-newer update execution.
+- End-to-end native title-bar and content-drag proof through the complete MainWindow.
 - Backup-verified, ancestry-proven cleanup after active work is complete.
 
 Windowless Windows Sandbox system execution was available, but its normal-user execution returned `0x80070520` because no login session existed. No host user installation was substituted. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence.
