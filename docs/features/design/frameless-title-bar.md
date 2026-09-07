@@ -14,7 +14,7 @@ None. Launching with `--native-caption` keeps the desktop's caption for diagnosi
 
 ## How it works
 
-`Material::WindowChrome::installFrameless()` (`src/gui/material/MaterialWindowChrome.cpp`) asks the window manager to recompute the frame, and `MainWindow::nativeEvent` answers two messages through `WindowChrome::handleNativeEvent()`: `WM_NCCALCSIZE` returns a client area that starts at the top edge (inset by the frame thickness when maximised so the first row is not lost off-screen), and `WM_NCHITTEST` reports the resize borders, then the bar minus its buttons as caption, then client. The bar itself only emits requests; the window decides.
+`Material::WindowChrome::installFrameless()` (`src/gui/material/MaterialWindowChrome.cpp`) asks the window manager to recompute the frame, and `MainWindow::nativeEvent` answers two messages through `WindowChrome::handleNativeEvent()`: `WM_NCCALCSIZE` returns a client area that starts at the top edge (inset by the frame thickness when maximised so the first row is not lost off-screen), and `WM_NCHITTEST` reports the resize borders, then the bar minus its buttons as caption, then client. Coordinates are converted from the native message's device pixels before the title bar decides, so caption controls and client content remain interactive across display scales and after a maximised window restores. The Material shell bypasses the legacy toolbar and tab-bar movement filter, leaving pointer ownership with the caption hit test, tabs, and content. The bar itself only emits requests; the window decides.
 
 ## Failure modes
 

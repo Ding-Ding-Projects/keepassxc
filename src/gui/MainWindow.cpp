@@ -3138,6 +3138,14 @@ bool MainWindowEventFilter::eventFilter(QObject* watched, QEvent* event)
         return QObject::eventFilter(watched, event);
     }
 
+    // The Material shell owns the whole visible surface. Its title bar is
+    // classified by the native hit test, while its tabs and content own their
+    // pointer drags. Letting the legacy empty-area filter see these events can
+    // turn an ordinary content drag into a window move.
+    if (Material::Shell::instance()) {
+        return QObject::eventFilter(watched, event);
+    }
+
     auto eventType = event->type();
     if (eventType == QEvent::MouseButtonPress) {
         auto mouseEvent = dynamic_cast<QMouseEvent*>(event);

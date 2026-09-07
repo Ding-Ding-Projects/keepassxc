@@ -20,6 +20,10 @@
 #include "gui/material/MaterialNavigationRail.h"
 #include "gui/material/MaterialShell.h"
 #include "gui/material/MaterialTitleBar.h"
+#ifdef Q_OS_WIN
+#include "gui/material/MaterialWindowChrome.h"
+#include <windows.h>
+#endif
 
 #include <QAbstractButton>
 #include <QCoreApplication>
@@ -117,3 +121,38 @@ void TestMaterialTitleBar::narrowWidthKeepsEveryButton()
     }
     QVERIFY(bar.minimumSizeHint().width() <= 320);
 }
+
+#ifdef Q_OS_WIN
+void TestMaterialTitleBar::nativeHitTestKeepsControlsAndClientContentInteractive()
+{
+    QWidget window;
+    window.resize(800, 600);
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+    WindowChrome::installFrameless(&window);
+
+    TitleBar titleBar(&window);
+    titleBar.setGeometry(0, 0, window.width(), TitleBar::Height);
+    titleBar.show();
+
+    const auto hitTest = [&window, &titleBar](const QPoint& local) {
+        return titleBar.isCaptionArea(titleBar.mapFrom(&window, local));
+    };
+    const auto nativeHit = [&window, &hitTest](const QPoint& local, qintptr* result) {
+        const QPoint global = window.mapToGlobal(local);
+        MSG message{};
+        message.hwnd = reinterpret_cast<HWND>(window.winId());
+        message.message = WM_NCHITTEST;
+        message.lParam = MAKELPARAM(global.x(), global.y());
+        return WindowChrome::handleNativeEvent(&window, &message, result, hitTest);
+    };
+
+    qintptr result = 0;
+    QVERIFY(nativeHit(QPoint(48, 24), &result));
+    QCOMPARE(result, qintptr(HTCAPTION));
+    QVERIFY(nativeHit(QPoint(titleBar.closeButton()->geometry().center().x(), 24), &result));
+    QCOMPARE(result, qintptr(HTCLIENT));
+    QVERIFY(nativeHit(QPoint(160, TitleBar::Height + 48), &result));
+    QCOMPARE(result, qintptr(HTCLIENT));
+}
+#endif
