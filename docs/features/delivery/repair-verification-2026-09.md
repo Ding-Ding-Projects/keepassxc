@@ -1,6 +1,6 @@
 # September 2026 repair verification
 
-The native and website repairs were integrated into `main` at `614c58fca2cc0f86c4270d5ef83cbaedf1d9731b`. This record distinguishes source integration, local verification, publication, and installed behavior.
+The native and website repairs are integrated into `main` at `ecd0f93a1b14aec2fefcf9bb9bbef96caea63fcd`. This record distinguishes source integration, local verification, publication, and installed behavior.
 
 ## Native checks
 
@@ -14,6 +14,8 @@ At `5c8066aec083cdc28f373faf2cb977afaed0fe78`, the production application, CLI a
 | Selected testgui cases | 14 | 0 | 0 |
 
 Counts include suite initialization and cleanup. The selected GUI process exited with code zero. They cover delayed TOTP ownership, timer rollover, database replacement and teardown, native title-bar hit testing, tab event ownership, and update request lifecycle. They are not the complete project test suite and do not establish actual drag gestures or installed updates.
+
+The reviewed candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` then passed the focused repairs on a fresh verification Gerk Tong Hui: `testmaterialreports` passed 5/0/0 in 20 ms, `testupdatecheck` passed 101/0/0 in 47 ms, `testmaterialtitlebar` passed 8/0/0 in 98 ms, and `testmaterialtabs` passed 6/0/0 in 8 ms. Production linking exited 0 with executable SHA-256 `1F23A6697F08C07E6CB5EECF0D916D1E1F1B5C226C76109191318BFA57E864D1`. These checks remain bounded component and controller evidence. They do not establish end-to-end native window movement, full MainWindow content ownership, installation, or update execution.
 
 ## Local package
 
@@ -30,7 +32,7 @@ Packaging safety passed 52 focused checks, including interrupted-process recover
 
 ## Website
 
-The public deployment of `614c58fc` succeeded in run [34090392214](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34090392214). Reading the live provenance returned that exact commit. At verification time, downloads still correctly referred to published `v2.8.13201` while the next installer delivery was running.
+The public deployment of `ecd0f93a` succeeded in run [34149596020](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34149596020). The installer delivery for that commit was still running when this record was refreshed, so no final release tag or package claim is made here.
 
 The release projector requires exact release-tag, build and installer-receipt source identity; a `NotSigned` installer verdict; matching package hashes and byte counts; and exact project-owned URLs. Nineteen invalid-input mutations and missing-receipt rejection passed. Headless interaction confirmed language/theme persistence, narrow layout observations, explicit navigation focus transfer and invalid regex clearing. The regex worker terminates after 250 ms. These are focused observations, not a full accessibility, language, display-scale or canonical-feature acceptance matrix.
 
@@ -40,6 +42,7 @@ The release projector requires exact release-tag, build and installer-receipt so
 - Installation in a disposable normal user session, followed by older-to-newer update download, staging, explicit restart and unsaved-work protection.
 - Full applicable local suites, per-click evidence and complete per-surface feature inventory. The current inventory remains **1 of 172 rows green**.
 - Final release asset, timing, tag, download and installed-behavior verification.
+- Finalizer workflow execution that replaces the owned timing placeholder after the successful publication step and marks the highest numeric stable release as `Latest`.
 - Backup-verified, ancestry-proven cleanup after active work is complete.
 
 Windowless Windows Sandbox system execution was available, but its normal-user execution returned `0x80070520` because no login session existed. No host user installation was substituted. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence.
