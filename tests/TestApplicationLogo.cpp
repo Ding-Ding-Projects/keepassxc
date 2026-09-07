@@ -15,6 +15,7 @@
 #include <QApplication>
 #include <QDir>
 #include <QFile>
+#include <QFileInfo>
 #include <QImage>
 #include <QTemporaryDir>
 #include <QTest>
@@ -222,4 +223,54 @@ void TestApplicationLogo::linkedActiveEntryIsRefusedWithoutTouchingExternalTarge
 #else
     QSKIP("The reparse-point regression is specific to Windows.");
 #endif
+}
+
+void TestApplicationLogo::danglingActiveLinkIsRefused()
+{
+#ifdef Q_OS_WIN
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
+    QVERIFY(QFile::remove(icons()->applicationLogoPath()));
+    const auto missing = directory.filePath(QStringLiteral("does-not-exist.png"));
+    if (!CreateSymbolicLinkW(reinterpret_cast<LPCWSTR>(icons()->applicationLogoPath().utf16()),
+                             reinterpret_cast<LPCWSTR>(missing.utf16()), 0)) {
+        QSKIP("The test account cannot create a file link.");
+    }
+    QVERIFY(!icons()->hasCustomApplicationLogo());
+    QVERIFY(!icons()->resetApplicationLogo(&error));
+#else
+    QSKIP("The reparse-point regression is specific to Windows.");
+#endif
+}
+
+void TestApplicationLogo::activationCleanupFailureIsReportedAndRetryable()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
+    Icons::setApplicationLogoFailureStageForTests(6);
+    QVERIFY(!icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("new.png"), {48, 24}), &error));
+    QVERIFY(icons()->hasCustomApplicationLogo());
+    QVERIFY(QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".previous")));
+    Icons::setApplicationLogoFailureStageForTests(0);
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("retry.png")), &error), qPrintable(error));
+    QVERIFY(!QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".previous")));
+}
+
+void TestApplicationLogo::rollbackRenameFailureLeavesResidualState()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
+    Icons::setApplicationLogoFailureStageForTests(8);
+    QVERIFY(!icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("new.png"), {48, 24}), &error));
+    const auto sourceBackup = QFileInfo(icons()->applicationLogoPath()).dir().filePath(QStringLiteral("application-logo-source.png.previous"));
+    QVERIFY(QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".previous")) || QFile::exists(sourceBackup));
 }

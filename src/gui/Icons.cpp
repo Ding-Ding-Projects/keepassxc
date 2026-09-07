@@ -93,7 +93,7 @@ namespace
     bool isReparseOrLink(const QString& path)
     {
         const QFileInfo info(path);
-        if (info.exists() && info.isSymLink()) return true;
+        if (info.isSymLink()) return true;
 #ifdef Q_OS_WIN
         const auto attributes = GetFileAttributesW(reinterpret_cast<LPCWSTR>(path.utf16()));
         return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_REPARSE_POINT);
@@ -260,11 +260,13 @@ bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
     const bool sourceBackedUp = !QFileInfo::exists(source) || QFile::rename(source, sourceBackup);
     const bool sourceActivated = sourceBackedUp && QFile::rename(stagedSource, source);
     const bool displayBackedUp = sourceActivated && (!QFileInfo::exists(display) || QFile::rename(display, displayBackup));
-    const bool displayActivated = displayBackedUp && QFile::rename(stagedDisplay, display);
+    const bool displayActivated = displayBackedUp && m_testLogoFailureStage != 7 && m_testLogoFailureStage != 8
+        && QFile::rename(stagedDisplay, display);
     if (!displayActivated) {
         bool rollbackOk = true;
         if (sourceActivated) {
-            rollbackOk = QFile::remove(source) && (!QFileInfo::exists(sourceBackup) || QFile::rename(sourceBackup, source));
+            rollbackOk = QFile::remove(source) && (!QFileInfo::exists(sourceBackup)
+                                                    || (m_testLogoFailureStage != 8 && QFile::rename(sourceBackup, source)));
         }
         if (displayBackedUp && QFileInfo::exists(displayBackup)) rollbackOk = QFile::rename(displayBackup, display) && rollbackOk;
         const bool stageSourceRemoved = !QFileInfo::exists(stagedSource) || QFile::remove(stagedSource);
@@ -273,8 +275,10 @@ bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
                         ? QStringLiteral("The new logo could not replace the active private cache; the previous logo remains active.")
                         : QStringLiteral("The new logo could not replace the active cache and rollback left residual private data."));
     }
-    QFile::remove(sourceBackup);
-    QFile::remove(displayBackup);
+    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(sourceBackup) && !QFile::remove(sourceBackup))
+        || (QFileInfo::exists(displayBackup) && !QFile::remove(displayBackup))) {
+        return fail(QStringLiteral("The new logo is active, but private rollback cleanup left residual data. Retry the replacement or reset."));
+    }
     config()->set(Config::GUI_CustomLogoEnabled, true);
     refreshApplicationIcon();
     return true;
@@ -316,7 +320,9 @@ bool Icons::setApplicationLogoPresentation(const QString& fitMode, const QColor&
         return fail(restored ? QStringLiteral("The updated logo could not replace the active cache; settings were not changed.")
                              : QStringLiteral("The updated logo could not replace the active cache and rollback left residual private data."));
     }
-    QFile::remove(backup);
+    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(backup) && !QFile::remove(backup))) {
+        return fail(QStringLiteral("The updated logo is active, but private rollback cleanup left residual data. Retry the replacement or reset."));
+    }
     config()->set(Config::GUI_CustomLogoFitMode, fitMode);
     config()->set(Config::GUI_CustomLogoBackground, background.name(QColor::HexArgb));
     refreshApplicationIcon();

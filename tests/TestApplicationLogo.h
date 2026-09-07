@@ -26,6 +26,9 @@ private slots:
     void secondDeleteFailureReportsResidualDataAndCanRetry();
     void linkedCacheDirectoryIsRefusedWithoutTouchingExternalTarget();
     void linkedActiveEntryIsRefusedWithoutTouchingExternalTarget();
+    void danglingActiveLinkIsRefused();
+    void activationCleanupFailureIsReportedAndRetryable();
+    void rollbackRenameFailureLeavesResidualState();
 };
 
 #endif // KEEPASSXC_TESTAPPLICATIONLOGO_H
