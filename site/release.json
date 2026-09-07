@@ -8,7 +8,8 @@
   "notesUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.13201",
   "installer": {
     "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.13201/Setup.exe",
-    "bytes": 72627200
+    "bytes": 72627200,
+    "sha256": "c89244f4653dfc35cf939c6787a5594f197b618a7bf891d2458fcd1c86dad7a8"
   },
   "package": {
     "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.13201/KeePassXC.Material-2.8.13201-full.nupkg",

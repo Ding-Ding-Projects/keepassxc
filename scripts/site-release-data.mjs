@@ -9,7 +9,7 @@ function requireValue(condition, message) {
     if (!condition) throw new Error(message);
 }
 
-export function buildReleaseData(release, provenance, manifest) {
+export function buildReleaseData(release, provenance, manifest, receipt) {
     requireValue(release && release.isDraft === false && release.isPrerelease === false, 'A published stable release is required.');
     requireValue(/^v\d+\.\d+\.\d+$/.test(release.tagName), 'Invalid release version.');
     const version = release.tagName.slice(1);
@@ -19,6 +19,9 @@ export function buildReleaseData(release, provenance, manifest) {
         requireValue(record.packageId === 'KeePassXC.Material' && record.architecture === 'x64', 'Unexpected package identity or architecture.');
     }
     requireValue(commit.test(provenance.sourceCommit), 'Missing source commit provenance.');
+    requireValue(commit.test(release.targetCommit) && release.targetCommit === provenance.sourceCommit, 'Release tag commit differs from build provenance.');
+    requireValue(receipt?.schemaVersion === 1 && receipt.sourceCommit === provenance.sourceCommit && receipt.version === version && receipt.packageId === provenance.packageId && receipt.architecture === provenance.architecture, 'Installer receipt identity differs from build provenance.');
+    requireValue(receipt.setup?.name === 'Setup.exe' && receipt.setup.signingStatus === 'NotSigned' && sha256.test(receipt.setup.sha256), 'Unsigned installer evidence is missing or contradictory.');
     const timestamp = provenance.generatedAtUtc;
     requireValue(typeof timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(timestamp) && Number.isFinite(Date.parse(timestamp)) && new Date(timestamp).toISOString().slice(0,19) === timestamp.slice(0,19), 'Missing or invalid build timestamp provenance.');
     requireValue(sha256.test(manifest.sha256) && sha256.test(manifest.executableSha256), 'Invalid package or executable digest.');
@@ -38,6 +41,9 @@ export function buildReleaseData(release, provenance, manifest) {
         assets[name] = { url: asset.url, bytes: asset.size };
     }
     requireValue(assets[expectedPackage].bytes === manifest.bytes, 'Package byte count differs from release metadata.');
+    requireValue(receipt.setup.bytes === assets['Setup.exe'].bytes, 'Installer receipt byte count differs from release metadata.');
+    const packageReceipts=receipt.fullPackages?.filter(item=>item.name===expectedPackage);
+    requireValue(packageReceipts?.length===1 && packageReceipts[0].bytes===manifest.bytes && packageReceipts[0].sha256?.toLowerCase()===manifest.sha256.toLowerCase(), 'Package receipt differs from update metadata.');
     return {
         schemaVersion: 1,
         version,
@@ -46,7 +52,7 @@ export function buildReleaseData(release, provenance, manifest) {
         updatedAtUtc: timestamp,
         updatedAtSource: 'build-provenance.generatedAtUtc',
         notesUrl: manifest.notesUrl,
-        installer: assets['Setup.exe'],
+        installer: {...assets['Setup.exe'],sha256:receipt.setup.sha256},
         package: { ...assets[expectedPackage], sha256: manifest.sha256 },
         unsigned: true,
     };
@@ -74,9 +80,9 @@ function readBoundedJson(filename) {
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
-    const [release, provenance, manifest, destination] = process.argv.slice(2);
-    requireValue(release && provenance && manifest && destination, 'Usage: node scripts/site-release-data.mjs RELEASE_JSON PROVENANCE_JSON MANIFEST_JSON OUTPUT_JSON');
-    const data = buildReleaseData(readBoundedJson(release), readBoundedJson(provenance), readBoundedJson(manifest));
+    const [release, provenance, manifest, receipt, destination] = process.argv.slice(2);
+    requireValue(release && provenance && manifest && receipt && destination, 'Usage: node scripts/site-release-data.mjs RELEASE_JSON PROVENANCE_JSON MANIFEST_JSON RECEIPT_JSON OUTPUT_JSON');
+    const data = buildReleaseData(readBoundedJson(release), readBoundedJson(provenance), readBoundedJson(manifest), readBoundedJson(receipt));
     writeFileSync(destination, JSON.stringify(data, null, 2) + '\n');
     console.log(`Validated website release metadata for ${data.version}.`);
 }

@@ -37,7 +37,7 @@ function renderLanguage(){
   $('#doc-search').label=text('search');$('#language').label=text('language');$('#regex-pattern').label=text('pattern');$('#regex-flags').label=text('flags');$('#theme-switch').ariaLabel=text('darkTheme');
   renderProvenance();searchDocs();
 }
-function selectPanel(index,focus=false){state.panel=index;$('#navigation').activeTabIndex=index;panels.forEach((id,i)=>$('#'+id).hidden=i!==index);save();if(focus)$('#'+panels[index]).querySelector('h2')?.scrollIntoView({block:'nearest'});}
+function selectPanel(index,focus=false){state.panel=index;$('#navigation').activeTabIndex=index;panels.forEach((id,i)=>$('#'+id).hidden=i!==index);save();if(focus){const heading=$('#'+panels[index]).querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'nearest'});}}}
 $('#navigation').addEventListener('change',()=>selectPanel($('#navigation').activeTabIndex));
 $('#show-docs').addEventListener('click',()=>selectPanel(2,true));
 $('#language').value=state.language;$('#language').addEventListener('change',()=>{state.language=$('#language').value;save();renderLanguage();});
