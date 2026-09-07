@@ -32,13 +32,13 @@ Packaging safety passed 52 focused checks, including interrupted-process recover
 
 ## Website
 
-The public deployment of `ecd0f93a` succeeded in run [34149596020](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34149596020). The installer delivery for that commit was still running when this record was refreshed, so no final release tag or package claim is made here.
+The public deployment of `7bf379fd` succeeded in run [34154701931](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34154701931). The final Squirrel delivery run [34154701913](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34154701913) also completed successfully.
 
 The release projector requires exact release-tag, build and installer-receipt source identity; a `NotSigned` installer verdict; matching package hashes and byte counts; and exact project-owned URLs. Nineteen invalid-input mutations and missing-receipt rejection passed. Headless interaction confirmed language/theme persistence, narrow layout observations, explicit navigation focus transfer and invalid regex clearing. The regex worker terminates after 250 ms. These are focused observations, not a full accessibility, language, display-scale or canonical-feature acceptance matrix.
 
 ## Final published release
 
-Release [`v2.8.21501`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21501) is non-draft, stable, and targets `7dabb1c9327e07cab490439f5ed9f44d6bd5a437`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,600 bytes with SHA-256 `fcea8d5dfa126d1a198cb105bb30e2b2610aabcc5db29e0c239124e6f8b2b963`, and the full package is 72,918,819 bytes with SHA-256 `b94506549c2a7946bab415bcae750bae13e0e0bebb668af9e67973c75a7158fe`. The verified workflow timing is 00:37:38, from `2026-09-07T18:30:44Z` through `2026-09-07T19:08:22Z`. The finalizer marked this numeric release as `Latest`.
+Release [`v2.8.21701`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21701) is non-draft, stable, and targets `7bf379fdf92cb4109a173915227ece5164960aa7`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,600 bytes with SHA-256 `05721229565506efce09862b885f22ca89a6691f866505d567338e4725f98432`, and the full package is 72,919,069 bytes with SHA-256 `5a1e5e495d4b58be187a86c9468d795d14a79aa5bd74fb08ed2f770a3ce4b0ee`. The verified workflow timing is 00:37:17, from `2026-09-07T19:12:49Z` through `2026-09-07T19:50:06Z`. The finalizer run [34157090857](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34157090857) marked this numeric release as `Latest`.
 
 ## Remaining acceptance
 

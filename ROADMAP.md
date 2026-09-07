@@ -3,13 +3,13 @@
 ## Repair and release verification
 
 - [x] Validate website release metadata against published package and build provenance, including BOM and malformed-input regressions.
-- [x] Render verified downloads and provenance in the website and refresh them during publication (live main deployment `614c58fc`, run `34090392214`).
+- [x] Render verified downloads and provenance in the website and refresh them during publication (live main deployment `7bf379fd`, run `34154701931`).
 - [x] Compile the repaired native targets and pass the focused update, title-bar, tab and selected GUI suites at `5c8066ae`.
 - [x] Produce and byte-verify local unsigned Squirrel packages at `877f4434`; installed behavior remains separate.
 - [x] Integrate and locally verify the reviewed updater and report repairs at `4530d541` (`testupdatecheck` 101 passed, `testmaterialreports` 5 passed).
 - [x] Verify title-bar and tab ownership checks at `4530d541` (`testmaterialtitlebar` 8 passed, `testmaterialtabs` 6 passed).
-- [x] Add post-publication release timing and numeric Latest reconciliation at `ecd0f93a`; final workflow execution remains pending.
-- [x] Publish and verify the final stable release `v2.8.21501` targeting `7dabb1c9`, including timing, hashes, package metadata and required photo asset.
+- [x] Add post-publication release timing and numeric Latest reconciliation at `7dabb1c9`; finalizer run `34157090857` passed.
+- [x] Publish and verify the final stable release `v2.8.21701` targeting `7bf379fd`, including timing, hashes, package metadata and required photo asset.
 - [ ] Verify the repaired Windows build, window/content dragging, and installed automatic update lifecycle.
 - [ ] Complete the per-surface inventory and real runtime evidence before declaring release-grade completion.
 

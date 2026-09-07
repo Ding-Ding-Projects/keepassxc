@@ -1,16 +1,16 @@
 # Current repair handoff, September 2026
 
-Native and website repairs are integrated at `614c58fca2cc0f86c4270d5ef83cbaedf1d9731b`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The website publication is verified; final installer delivery and installed behavior are not yet complete. The full feature inventory remains 1/172 green.
+Native and website repairs are integrated at `7bf379fdf92cb4109a173915227ece5164960aa7`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed behavior and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
 
 Historical sections below describe only their named earlier commits. Their capture and parity claims are not a fresh verdict about the current candidate. The old package and clipping records remain for auditability.
 
 ## Current candidate, September 7, 2026
 
-`main` is dewed at `ecd0f93a1b14aec2fefcf9bb9bbef96caea63fcd`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, and the release timing finalizer. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
+`main` is dewed at `7bf379fdf92cb4109a173915227ece5164960aa7`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, and the release timing finalizer. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
 
-The final Squirrel release is [`v2.8.21501`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21501), targeting `7dabb1c9327e07cab490439f5ed9f44d6bd5a437`, with verified timing `00:37:38`, unsigned receipt state, required assets and numeric `Latest` selection. The Pages run [34152641613](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34152641613) succeeded. No installed-user proof, end-to-end drag proof, or full 172-row feature inventory claim is made.
+The final Squirrel release is [`v2.8.21701`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21701), targeting `7bf379fdf92cb4109a173915227ece5164960aa7`, with verified timing `00:37:17`, unsigned receipt state, required assets and numeric `Latest` selection. The Pages run [34154701931](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34154701931) and finalizer run [34157090857](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34157090857) succeeded. No installed-user proof, end-to-end drag proof, or full 172-row feature inventory claim is made.
 
-The exact remaining blockers are a normal-user Squirrel installation and update run, end-to-end title-bar and content dragging through the real MainWindow, the complete per-surface inventory and interaction ledger, and the backup-verified task-owned Cup Chun. Active or uncertain Gerk Tong Huis remain preserved.
+The exact remaining blockers are a normal-user Squirrel installation and update run, end-to-end title-bar and content dragging through the real MainWindow, and the complete per-surface inventory and interaction ledger. Active or uncertain pre-existing jers remain preserved.
 
 # Handoff — Windows-native Material rewrite and Squirrel distribution
 
