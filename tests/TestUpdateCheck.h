@@ -19,6 +19,7 @@
 #define KEEPASSX_TESTUPDATECHECK_H
 
 #include <QObject>
+#include <QTemporaryDir>
 
 class TestUpdateCheck : public QObject
 {
@@ -26,10 +27,22 @@ class TestUpdateCheck : public QObject
 
 private slots:
     void initTestCase();
+    void init();
     void testCompareVersion();
     void testStateTransitions();
     void testManifestContract();
     void testPrereleaseManifestSelection();
+    void testPrereleaseManifestSelection_data();
+    void testStableManifestRoute();
+    void testReleaseResponseFailures_data();
+    void testReleaseResponseFailures();
+    void testSelectedManifestIdentity_data();
+    void testSelectedManifestIdentity();
+    void testIndexReplacementLifecycle();
+    void testReentrantStateChangeKeepsRequestContext();
+    void testReentrantFailureClearsSelection();
+    void testDestroyedIndexAndSelectedManifest();
+    void testCheckerDestructionAbortsIndex();
     void testRedirectPolicy();
     void testPackageContract();
     void testRestartCommandContract();
@@ -37,6 +50,9 @@ private slots:
     void testRejectedPackageRedirectReportsDiagnostic();
     void testDestroyedNetworkManagerClearsActiveReplies();
     void testDeferredManifestDeletionDoesNotFailReplacementCheck();
+
+private:
+    QTemporaryDir m_configDirectory;
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H

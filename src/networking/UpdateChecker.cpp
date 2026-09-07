@@ -40,6 +40,7 @@
 #include <QProcess>
 #include <QCoreApplication>
 #include <QUuid>
+#include <QTimer>
 
 #include <../minizip/unzip.h>
 
@@ -49,6 +50,14 @@ namespace
     constexpr qsizetype MaxReleaseIndexBytes = 256 * 1024;
     const QUrl ManifestUrl(QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/latest/download/update-manifest-v1.json"));
     const QUrl ReleasesUrl(QStringLiteral("https://api.github.com/repos/Ding-Ding-Projects/keepassxc/releases?per_page=20"));
+
+    bool packageVersionAllowed(const QString& version)
+    {
+        static const QRegularExpression pattern(QStringLiteral("^(0|[1-9][0-9]{0,4})[.](0|[1-9][0-9]{0,4})[.](0|[1-9][0-9]{0,4})$"));
+        const auto match = pattern.match(version);
+        return match.hasMatch() && match.capturedLength() == version.size() && match.captured(1).toUInt() <= 65535
+               && match.captured(2).toUInt() <= 65535 && match.captured(3).toUInt() <= 65535;
+    }
 }
 
 const QString UpdateChecker::ErrorVersion("error");
@@ -64,6 +73,12 @@ UpdateChecker::UpdateChecker(QObject* parent)
 
 UpdateChecker::~UpdateChecker()
 {
+    ++m_manifestGeneration;
+    if (m_reply) {
+        m_reply->disconnect(this);
+        m_reply->abort();
+        m_reply->deleteLater();
+    }
     cancelDownload();
 }
 
@@ -80,8 +95,14 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
 
     if (m_isManuallyRequested || Clock::currentSecondsSinceEpoch() >= nextCheck) {
         m_bytesReceived.clear();
+        m_expectedReleaseVersion.clear();
+        m_candidate = {};
         m_redirectRejected = false;
+        QPointer<UpdateChecker> self(this);
         setState(State::Checking);
+        if (!self) {
+            return;
+        }
         beginManifestRequest(config()->get(Config::GUI_CheckForUpdatesIncludeBetas).toBool() ? ReleasesUrl : ManifestUrl,
                              config()->get(Config::GUI_CheckForUpdatesIncludeBetas).toBool());
     }
@@ -89,151 +110,188 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
 
 void UpdateChecker::beginManifestRequest(const QUrl& url, bool prereleaseIndex)
 {
-        m_fetchingPrereleaseIndex = prereleaseIndex;
-        QNetworkRequest request(url);
-        request.setRawHeader("Accept", prereleaseIndex ? "application/vnd.github+json" : "application/json");
-        request.setRawHeader("User-Agent", "KeePassXC-Material-Updater/1");
-        // The release's "latest/download" link answers with a redirect to the
-        // asset; follow it, but only to HTTPS on GitHub's own hosts.
-        request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
-        request.setMaximumRedirectsAllowed(5);
-        request.setTransferTimeout(30000);
+    m_fetchingPrereleaseIndex = prereleaseIndex;
+    m_bytesReceived.clear();
+    m_redirectRejected = false;
+    QNetworkRequest request(url);
+    request.setRawHeader("Accept", prereleaseIndex ? "application/vnd.github+json" : "application/json");
+    request.setRawHeader("User-Agent", "KeePassXC-Material-Updater/1");
+    // Validate the destination before Qt sends the redirected request.
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::UserVerifiedRedirectPolicy);
+    request.setMaximumRedirectsAllowed(5);
+    request.setTransferTimeout(30000);
 
-        const quint64 generation = ++m_manifestGeneration;
-        m_reply = networkManager()->get(request);
-        QNetworkReply* const reply = m_reply;
-
-        connect(m_reply, &QNetworkReply::redirected, this, [this](const QUrl& target) {
-            if (m_reply && !redirectAllowed(target)) {
-                m_redirectRejected = true;
-                m_reply->abort();
+    const quint64 generation = ++m_manifestGeneration;
+    m_reply = networkManager()->get(request);
+    QNetworkReply* const reply = m_reply;
+    reply->setReadBufferSize((prereleaseIndex ? MaxReleaseIndexBytes : MaxManifestBytes) + 1);
+    // Transfer timeout is an inactivity limit. Bound the whole request too,
+    // including a peer that trickles data without ever becoming idle.
+    QTimer::singleShot(30000, this, [this, generation, reply] {
+        if (generation == m_manifestGeneration && m_reply == reply) {
+            reply->abort();
+        }
+    });
+    connect(reply, &QNetworkReply::redirected, this, [this, generation, reply, prereleaseIndex](const QUrl& target) {
+        if (generation != m_manifestGeneration || m_reply != reply) {
+            return;
+        }
+        // The fixed REST endpoint needs no redirects. Asset requests may
+        // redirect to GitHub storage or this repository's download path.
+        bool repositoryAsset = true;
+        QString redirectedVersion;
+        if (target.host() == QStringLiteral("github.com")) {
+            const QString prefix = QStringLiteral("/Ding-Ding-Projects/keepassxc/releases/download/v");
+            const QString suffix = QStringLiteral("/update-manifest-v1.json");
+            const QString path = target.path();
+            redirectedVersion = path.mid(prefix.size(), path.size() - prefix.size() - suffix.size());
+            repositoryAsset = path.startsWith(prefix) && path.endsWith(suffix)
+                && packageVersionAllowed(redirectedVersion) && !target.hasQuery()
+                && (m_expectedReleaseVersion.isEmpty() || redirectedVersion == m_expectedReleaseVersion);
+        }
+        if (prereleaseIndex || !redirectAllowed(target) || !repositoryAsset) {
+            m_redirectRejected = true;
+            reply->abort();
+        } else {
+            if (!redirectedVersion.isEmpty()) {
+                m_expectedReleaseVersion = redirectedVersion;
             }
-        });
-        connect(m_reply, &QNetworkReply::finished, this, &UpdateChecker::fetchFinished);
-        connect(m_reply, &QIODevice::readyRead, this, &UpdateChecker::fetchReadyRead);
-        connect(reply, &QObject::destroyed, this, [this, generation] {
-            if (generation == m_manifestGeneration && m_state == State::Checking) {
-                m_reply = nullptr;
-                failCheck(Failure::Offline);
-            }
-        });
+            reply->redirectAllowed();
+        }
+    });
+    connect(reply, &QNetworkReply::finished, this, [this, generation, reply] {
+        if (generation == m_manifestGeneration && m_reply == reply) {
+            fetchFinished();
+        }
+    });
+    connect(reply, &QIODevice::readyRead, this, [this, generation, reply] {
+        if (generation == m_manifestGeneration && m_reply == reply) {
+            fetchReadyRead();
+        }
+    });
+    connect(reply, &QObject::destroyed, this, [this, generation] {
+        if (generation == m_manifestGeneration && m_state == State::Checking) {
+            ++m_manifestGeneration;
+            m_reply = nullptr;
+            failCheck(Failure::Offline);
+        }
+    });
 }
 
 void UpdateChecker::fetchReadyRead()
 {
-    m_bytesReceived += m_reply->readAll();
-    if (m_bytesReceived.size() > (m_fetchingPrereleaseIndex ? MaxReleaseIndexBytes : MaxManifestBytes)) {
+    if (!m_reply) {
+        return;
+    }
+    // Retain only the bound plus one sentinel byte, even for a single huge chunk.
+    const qsizetype limit = m_fetchingPrereleaseIndex ? MaxReleaseIndexBytes : MaxManifestBytes;
+    m_bytesReceived += m_reply->read(limit + 1 - m_bytesReceived.size());
+    if (m_bytesReceived.size() > limit) {
         m_reply->abort();
     }
 }
 
 void UpdateChecker::fetchFinished()
 {
-    bool error = (m_reply->error() != QNetworkReply::NoError);
-    const bool timedOut = m_reply->error() == QNetworkReply::TimeoutError
-                          || m_reply->error() == QNetworkReply::OperationCanceledError;
-    bool hasNewVersion = false;
-    QString version = "";
-    const bool redirected = m_redirectRejected;
     const bool prereleaseIndex = m_fetchingPrereleaseIndex;
-
+    const qsizetype limit = prereleaseIndex ? MaxReleaseIndexBytes : MaxManifestBytes;
+    // A reply may expose its final bytes only with finished(). Do not abort
+    // recursively while processing this terminal signal.
+    m_bytesReceived += m_reply->read(limit + 1 - m_bytesReceived.size());
+    const auto networkError = m_reply->error();
+    const int status = m_reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
     ++m_manifestGeneration;
+    m_reply->disconnect(this);
     m_reply->deleteLater();
     m_reply = nullptr;
 
+    if (m_redirectRejected) {
+        failCheck(Failure::RedirectRejected);
+        return;
+    }
+    if (m_bytesReceived.size() > limit) {
+        failCheck(Failure::OversizedManifest);
+        return;
+    }
+    if (networkError == QNetworkReply::TimeoutError || networkError == QNetworkReply::OperationCanceledError) {
+        failCheck(Failure::Timeout);
+        return;
+    }
+    // Rate limits, missing assets and server errors never become a successful
+    // stable fallback, even when their bodies happen to contain valid JSON.
+    if (networkError != QNetworkReply::NoError || status != 200) {
+        failCheck(Failure::Offline);
+        return;
+    }
     if (prereleaseIndex) {
-        m_fetchingPrereleaseIndex = false;
-        if (error || redirected || m_bytesReceived.size() > MaxReleaseIndexBytes) {
-            failCheck(redirected ? Failure::RedirectRejected : (timedOut ? Failure::Timeout : (m_bytesReceived.size() > MaxReleaseIndexBytes ? Failure::OversizedManifest : Failure::Offline)));
-            return;
-        }
         QJsonParseError parseError;
         const auto document = QJsonDocument::fromJson(m_bytesReceived, &parseError);
+        if (parseError.error != QJsonParseError::NoError || !document.isArray() || document.array().size() > 20) {
+            failCheck(Failure::MalformedManifest);
+            return;
+        }
         QUrl manifestUrl;
         QString selectedVersion;
-        if (parseError.error == QJsonParseError::NoError && document.isArray()) {
-            for (const auto value : document.array()) {
-                const auto release = value.toObject();
-                if (release.value(QStringLiteral("draft")).toBool()) continue;
-                QString version = release.value(QStringLiteral("tag_name")).toString();
-                if (version.startsWith(QLatin1Char('v'))) version.remove(0, 1);
-                static const QRegularExpression versionPattern(QStringLiteral("^\\d+\\.\\d+\\.\\d+$"));
-                if (!versionPattern.match(version).hasMatch()) continue;
-                for (const auto asset : release.value(QStringLiteral("assets")).toArray()) {
-                    const auto object = asset.toObject();
-                    if (object.value(QStringLiteral("name")).toString() == QStringLiteral("update-manifest-v1.json")) {
-                        const QUrl candidateUrl(object.value(QStringLiteral("browser_download_url")).toString());
-                        if ((!selectedVersion.isEmpty() && !compareVersions(selectedVersion, version))
-                            || !candidateUrl.isValid() || candidateUrl.scheme() != QStringLiteral("https") || !redirectAllowed(candidateUrl)) {
-                            break;
-                        }
-                        selectedVersion = version;
-                        manifestUrl = candidateUrl;
-                        break;
-                    }
+        for (const auto value : document.array()) {
+            if (!value.isObject()) {
+                failCheck(Failure::MalformedManifest);
+                return;
+            }
+            const auto release = value.toObject();
+            if (!release.value(QStringLiteral("draft")).isBool()
+                || !release.value(QStringLiteral("prerelease")).isBool()
+                || !release.value(QStringLiteral("tag_name")).isString()
+                || !release.value(QStringLiteral("assets")).isArray()) {
+                failCheck(Failure::MalformedManifest);
+                return;
+            }
+            if (release.value(QStringLiteral("draft")).toBool()) {
+                continue;
+            }
+            const QString tag = release.value(QStringLiteral("tag_name")).toString();
+            const QString version = tag.mid(1);
+            if (!tag.startsWith(QLatin1Char('v')) || !packageVersionAllowed(version)) {
+                continue;
+            }
+            const QString expectedUrl = QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/download/%1/update-manifest-v1.json").arg(tag);
+            for (const auto asset : release.value(QStringLiteral("assets")).toArray()) {
+                const auto object = asset.toObject();
+                if (object.value(QStringLiteral("name")).toString() == QStringLiteral("update-manifest-v1.json")
+                    && object.value(QStringLiteral("browser_download_url")).toString() == expectedUrl
+                    && (selectedVersion.isEmpty() || compareVersions(selectedVersion, version))) {
+                    selectedVersion = version;
+                    manifestUrl = QUrl(expectedUrl);
                 }
             }
         }
-        if (!manifestUrl.isValid()) {
-            m_bytesReceived.clear();
-            m_redirectRejected = false;
-            beginManifestRequest(ManifestUrl);
-            return;
-        }
-        m_bytesReceived.clear();
-        m_redirectRejected = false;
         m_expectedReleaseVersion = selectedVersion;
-        beginManifestRequest(manifestUrl);
+        beginManifestRequest(selectedVersion.isEmpty() ? ManifestUrl : manifestUrl);
         return;
     }
 
-    if (!error && !redirected) {
-        Candidate parsed;
-        Failure failure = Failure::None;
-        if (parseManifest(m_bytesReceived, parsed, failure)) {
-            const QString releaseRoot = QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/");
-            if (!m_expectedReleaseVersion.isEmpty()
-                && (parsed.version != m_expectedReleaseVersion
-                    || parsed.notesUrl != releaseRoot + QStringLiteral("tag/v") + m_expectedReleaseVersion
-                    || parsed.packageUrl != releaseRoot + QStringLiteral("download/v") + m_expectedReleaseVersion + QLatin1Char('/') + parsed.packageFile)) {
-                failure = Failure::MalformedManifest;
-            }
-            m_expectedReleaseVersion.clear();
-            if (failure != Failure::None) {
-                error = true;
-                version = ErrorVersion;
-                setState(State::Failed, failure);
-            } else {
-            m_candidate = parsed;
-            version = parsed.version;
-            hasNewVersion = compareVersions(QString(KEEPASSXC_VERSION), version);
-            setState(hasNewVersion ? State::Available : State::NoUpdate);
-            }
-        } else {
-            error = true;
-            version = ErrorVersion;
-            setState(State::Failed, failure);
-        }
-
-        if (!error) {
-            // Check again in 7 days only after a validated manifest response.
-            config()->set(Config::GUI_CheckForUpdatesNextCheck,
-                          Clock::currentDateTime().addDays(7).toSecsSinceEpoch());
-        }
-    } else {
-        version = ErrorVersion;
-        if (redirected) {
-            setState(State::Failed, Failure::RedirectRejected);
-        } else if (m_bytesReceived.size() > MaxManifestBytes) {
-            setState(State::Failed, Failure::OversizedManifest);
-        } else if (timedOut) {
-            setState(State::Failed, Failure::Timeout);
-        } else {
-            setState(State::Failed, Failure::Offline);
-        }
+    Candidate parsed;
+    Failure failure = Failure::None;
+    if (!parseManifest(m_bytesReceived, parsed, failure)) {
+        failCheck(failure);
+        return;
     }
-
-    emit updateCheckFinished(hasNewVersion, version, m_isManuallyRequested);
+    if (!m_expectedReleaseVersion.isEmpty() && parsed.version != m_expectedReleaseVersion) {
+        failCheck(Failure::MalformedManifest);
+        return;
+    }
+    m_expectedReleaseVersion.clear();
+    m_bytesReceived.clear();
+    m_candidate = parsed;
+    const bool hasNewVersion = compareVersions(QString(KEEPASSXC_VERSION), parsed.version);
+    const bool manuallyRequested = m_isManuallyRequested;
+    // Complete bookkeeping before stateChanged: a receiver can immediately
+    // start another check and replace the active request's context.
+    config()->set(Config::GUI_CheckForUpdatesNextCheck, Clock::currentDateTime().addDays(7).toSecsSinceEpoch());
+    QPointer<UpdateChecker> self(this);
+    setState(hasNewVersion ? State::Available : State::NoUpdate);
+    if (self) {
+        emit updateCheckFinished(hasNewVersion, parsed.version, manuallyRequested);
+    }
 }
 
 void UpdateChecker::downloadAvailableUpdate()
@@ -384,9 +442,16 @@ void UpdateChecker::failDownload(Failure failure)
 void UpdateChecker::failCheck(Failure failure)
 {
     m_bytesReceived.clear();
+    m_expectedReleaseVersion.clear();
+    m_fetchingPrereleaseIndex = false;
     m_redirectRejected = false;
+    m_candidate = {};
+    const bool manuallyRequested = m_isManuallyRequested;
+    QPointer<UpdateChecker> self(this);
     setState(State::Failed, failure);
-    emit updateCheckFinished(false, ErrorVersion, m_isManuallyRequested);
+    if (self) {
+        emit updateCheckFinished(false, ErrorVersion, manuallyRequested);
+    }
 }
 
 void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)
@@ -632,11 +697,18 @@ bool UpdateChecker::parseManifest(const QByteArray& bytes, Candidate& candidate,
     candidate.releasesSha1 = object.value(QStringLiteral("releasesSha1")).toString().toLower();
     candidate.executableSha256 = object.value(QStringLiteral("executableSha256")).toString().toLower();
     candidate.bytes = object.value(QStringLiteral("bytes")).toVariant().toULongLong();
-    static const QRegularExpression version(QStringLiteral("^\\d+\\.\\d+\\.\\d+$"));
     static const QRegularExpression sha256(QStringLiteral("^[0-9a-f]{64}$"));
     static const QRegularExpression sha1(QStringLiteral("^[0-9a-f]{40}$"));
     const QUrl notes(candidate.notesUrl), package(candidate.packageUrl);
-    if (!version.match(candidate.version).hasMatch()) { failure = Failure::InvalidVersion; return false; }
+    if (!packageVersionAllowed(candidate.version)) { failure = Failure::InvalidVersion; return false; }
+    const QString expectedFile = QStringLiteral("KeePassXC.Material-%1-full.nupkg").arg(candidate.version);
+    const QString releaseRoot = QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/");
+    if (candidate.packageFile != expectedFile
+        || candidate.notesUrl != releaseRoot + QStringLiteral("tag/v") + candidate.version
+        || candidate.packageUrl != releaseRoot + QStringLiteral("download/v") + candidate.version + QLatin1Char('/') + expectedFile) {
+        failure = Failure::MalformedManifest;
+        return false;
+    }
     if (!notes.isValid() || notes.scheme() != QStringLiteral("https") || !package.isValid() || package.scheme() != QStringLiteral("https") || candidate.packageFile.isEmpty() || candidate.packageFile.contains(QLatin1Char('/')) || candidate.packageFile.contains(QLatin1Char('\\')) || candidate.packageFile.contains(QStringLiteral("..")) || candidate.bytes == 0 || candidate.bytes > 1610612736ULL || !sha256.match(candidate.sha256).hasMatch() || !sha256.match(candidate.executableSha256).hasMatch() || !sha1.match(candidate.releasesSha1).hasMatch()) { failure = Failure::MalformedManifest; return false; }
     failure = Failure::None;
     return true;
@@ -758,12 +830,13 @@ bool UpdateChecker::verifyPackage(const QString& path, const Candidate& candidat
 
 bool UpdateChecker::redirectAllowed(const QUrl& target)
 {
-    if (!target.isValid() || target.scheme() != QStringLiteral("https")) {
+    if (!target.isValid() || target.scheme() != QStringLiteral("https") || !target.userInfo().isEmpty()
+        || (target.port() != -1 && target.port() != 443) || target.hasFragment()) {
         return false;
     }
     const QString host = target.host().toLower();
-    return host == QStringLiteral("github.com") || host.endsWith(QStringLiteral(".github.com"))
-           || host.endsWith(QStringLiteral(".githubusercontent.com"));
+    return host == QStringLiteral("github.com") || host == QStringLiteral("objects.githubusercontent.com")
+           || host == QStringLiteral("release-assets.githubusercontent.com");
 }
 
 bool UpdateChecker::isManuallyRequested() const
@@ -824,6 +897,10 @@ bool UpdateChecker::compareVersions(const QString& localVersion, const QString& 
 
     auto lmatch = verRegex.match(localVersion);
     auto rmatch = verRegex.match(remoteVersion);
+
+    if (!lmatch.hasMatch() || !rmatch.hasMatch()) {
+        return false;
+    }
 
     auto lVersion = lmatch.captured(1).split(".");
     auto lSuffix = lmatch.captured(2);
