@@ -4,6 +4,14 @@ Native and website repairs are integrated at `614c58fca2cc0f86c4270d5ef83cbaedf1
 
 Historical sections below describe only their named earlier commits. Their capture and parity claims are not a fresh verdict about the current candidate. The old package and clipping records remain for auditability.
 
+## Current candidate, September 7, 2026
+
+`main` is dewed at `ecd0f93a1b14aec2fefcf9bb9bbef96caea63fcd`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, and the release timing finalizer. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
+
+The current package delivery run is [34149596107](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34149596107), still running when this handoff was refreshed. The Pages run [34149596020](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34149596020) succeeded. The post-completion finalizer is expected to replace the timing placeholder only after the release publication step has a real completion timestamp. No final release verdict, installed-user proof, end-to-end drag proof, or full 172-row feature inventory claim is made yet.
+
+The exact remaining blockers are a normal-user Squirrel installation and update run, end-to-end title-bar and content dragging through the real MainWindow, the complete per-surface inventory and interaction ledger, final release and timing verification, and the backup-verified task-owned Cup Chun. Active or uncertain Gerk Tong Huis remain preserved.
+
 # Handoff — Windows-native Material rewrite and Squirrel distribution
 
 Last verified: 2026-09-02 on the `codex/parity-capture` lane; `main` was fast-forwarded to it at the end of the pass (see the final section). Every claim names the commit it was measured at.
