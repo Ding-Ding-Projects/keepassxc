@@ -4,6 +4,11 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSelect.h"
 #include "gui/material/MaterialSearchRegistry.h"
+#include "gui/material/MaterialSwitch.h"
+#include "gui/reports/ReportsWidgetBrowserStatistics.h"
+#include "gui/reports/ReportsWidgetHealthcheck.h"
+#include "gui/reports/ReportsWidgetPasskeys.h"
+#include "core/Database.h"
 #include <QCheckBox>
 #include <QLineEdit>
 #include <QProgressBar>
@@ -11,6 +16,7 @@
 #include <QTest>
 #include <QAbstractButton>
 #include <QToolButton>
+#include <QTableView>
 
 using namespace Material;
 
@@ -105,6 +111,27 @@ void TestMaterialReports::searchRegistrationAndResponsiveLayout()
     screen.setSearchValidation(false, QStringLiteral("Invalid regular expression"));
     QCOMPARE(screen.state(), ReportsScreen::State::Warning);
     QVERIFY(screen.searchBar()->lineEdit()->accessibleDescription().contains(QStringLiteral("Invalid")));
+}
+
+void TestMaterialReports::productionExpiredFiltersRebuildTheirModels()
+{
+    auto database = QSharedPointer<Database>::create();
+    auto verify = [database](QWidget& report, const char* tableName, auto load) {
+        load();
+        auto* toggle = report.findChild<Switch*>(QStringLiteral("showExpired"));
+        auto* table = report.findChild<QTableView*>(QString::fromLatin1(tableName));
+        QVERIFY(toggle && table && table->model());
+        QSignalSpy resetSpy(table->model(), &QAbstractItemModel::modelReset);
+        toggle->click();
+        QVERIFY(resetSpy.count() > 0);
+    };
+
+    ReportsWidgetBrowserStatistics browser;
+    verify(browser, "browserStatisticsTableView", [&] { browser.loadSettings(database); });
+    ReportsWidgetHealthcheck health;
+    verify(health, "healthcheckTableView", [&] { health.loadSettings(database); });
+    ReportsWidgetPasskeys passkeys;
+    verify(passkeys, "passkeysTableView", [&] { passkeys.loadSettings(database); });
 }
 
 QTEST_MAIN(TestMaterialReports)

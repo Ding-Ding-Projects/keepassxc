@@ -7,5 +7,6 @@ class TestMaterialReports : public QObject
 private slots:
     void statesSelectionAndAccessibility();
     void searchRegistrationAndResponsiveLayout();
+    void productionExpiredFiltersRebuildTheirModels();
 };
 #endif
