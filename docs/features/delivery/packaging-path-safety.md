@@ -27,6 +27,10 @@ an extra staged file, modified bytes, another commit, or another requested versi
 stops packaging. A receipt provides build consistency evidence; it is not a code
 signature or an authenticity guarantee.
 
+The package verifier also hashes the executable and every declared compiler-runtime
+entry inside the full package. Matching version resources alone cannot accept older
+or different executable bytes, and a package missing a runtime DLL is rejected.
+
 ## App-local Microsoft compiler runtime
 
 The selected MSVC x64 compiler determines the permitted Visual Studio installation.

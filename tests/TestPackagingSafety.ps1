@@ -144,6 +144,30 @@ if ($CompilerPath -and $RedistDirectory) {
         $receipt.files[0].path='../external-sentinel/untouched.txt'
         $receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $receiptPath
         Check 'traversing receipt path is rejected without touching outside content' { Reject { Assert-KpxcStageReceipt $runtimeStage $receiptPath $StageCommit '2.8.0' }; Require ((Get-KpxcHash (Join-Path $external 'untouched.txt')) -eq $externalHash) }
+        Add-Type -AssemblyName System.IO.Compression.FileSystem
+        $package=Join-Path $testRoot 'payload-fixture.zip'
+        $archive=[IO.Compression.ZipFile]::Open($package,[IO.Compression.ZipArchiveMode]::Create)
+        try {
+            foreach ($file in Get-ChildItem -LiteralPath $runtimeStage -File) {
+                [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$file.FullName,('lib/net45/'+$file.Name)) | Out-Null
+            }
+        } finally { $archive.Dispose() }
+        $payload=@{stagedExecutable=@{sha256=(Get-KpxcHash (Join-Path $runtimeStage 'KeePassXC.exe'))};msvcRuntime=$script:runtime}
+        Check 'packaged executable and runtime bytes match the verified stage' {
+            $archive=[IO.Compression.ZipFile]::OpenRead($package)
+            try { Assert-KpxcPackagedPayload $archive $payload } finally { $archive.Dispose() }
+        }
+        Check 'different executable bytes are rejected despite matching version metadata' {
+            $wrong=@{stagedExecutable=@{sha256=('0'*64)};msvcRuntime=$script:runtime}
+            $archive=[IO.Compression.ZipFile]::OpenRead($package)
+            try { Reject { Assert-KpxcPackagedPayload $archive $wrong } } finally { $archive.Dispose() }
+        }
+        $archive=[IO.Compression.ZipFile]::Open($package,[IO.Compression.ZipArchiveMode]::Update)
+        try { $archive.GetEntry('lib/net45/msvcp140.dll').Delete() } finally { $archive.Dispose() }
+        Check 'a missing packaged compiler runtime is rejected' {
+            $archive=[IO.Compression.ZipFile]::OpenRead($package)
+            try { Reject { Assert-KpxcPackagedPayload $archive $payload } } finally { $archive.Dispose() }
+        }
     }
 }
 Write-Host "Totals: $script:passed passed, 0 failed. Owned test data retained at $testRoot"

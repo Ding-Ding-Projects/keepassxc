@@ -271,3 +271,26 @@ function Assert-KpxcStageReceipt([string]$Stage, [string]$ReceiptPath, [string]$
     }
     return $receipt
 }
+
+function Assert-KpxcPackagedPayload($Archive, $Provenance) {
+    $expected = @{'lib/net45/KeePassXC.exe'=$Provenance.stagedExecutable.sha256}
+    foreach ($required in @('msvcp140.dll','msvcp140_1.dll','msvcp140_2.dll','msvcp140_atomic_wait.dll','msvcp140_codecvt_ids.dll','vcruntime140.dll','vcruntime140_1.dll','concrt140.dll')) {
+        if ($required -notin $Provenance.msvcRuntime.name) { throw "Package runtime provenance is incomplete: $required" }
+    }
+    foreach ($runtime in $Provenance.msvcRuntime) {
+        if (-not $runtime.name -or [IO.Path]::GetFileName($runtime.name) -cne $runtime.name) { throw 'Invalid packaged runtime filename.' }
+        $name = 'lib/net45/' + $runtime.name
+        if ($expected.ContainsKey($name)) { throw 'Duplicate packaged runtime provenance.' }
+        $expected[$name] = $runtime.sha256
+    }
+    foreach ($name in $expected.Keys) {
+        if ($expected[$name] -notmatch '^[0-9a-fA-F]{64}$') { throw 'Package payload SHA-256 provenance is missing or malformed.' }
+        $entries = @($Archive.Entries | Where-Object { $_.FullName.Replace('\','/').Equals($name, [StringComparison]::OrdinalIgnoreCase) })
+        if ($entries.Count -ne 1) { throw "Required package payload is missing or duplicated: $name" }
+        $input = $entries[0].Open()
+        $hash = [Security.Cryptography.SHA256]::Create()
+        try { $actual = ([BitConverter]::ToString($hash.ComputeHash($input))).Replace('-','').ToLowerInvariant() }
+        finally { $hash.Dispose(); $input.Dispose() }
+        if ($actual -ine $expected[$name]) { throw "Packaged bytes differ from the verified stage: $name" }
+    }
+}
