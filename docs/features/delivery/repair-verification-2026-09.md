@@ -1,6 +1,6 @@
 # September 2026 repair verification
 
-The native and website repairs are integrated into `main` at `7dabb1c9327e07cab490439f5ed9f44d6bd5a437`. This record distinguishes source integration, local verification, publication, and installed behavior.
+The native and website repairs are integrated into `main` at `20715a93302038ea49b2d55edfc32f800d0d81e5`. This record distinguishes source integration, local verification, publication, and installed behavior.
 
 ## Native checks
 
@@ -15,7 +15,7 @@ At `5c8066aec083cdc28f373faf2cb977afaed0fe78`, the production application, CLI a
 
 Counts include suite initialization and cleanup. The selected GUI process exited with code zero. They cover delayed TOTP ownership, timer rollover, database replacement and teardown, native title-bar hit testing, tab event ownership, and update request lifecycle. They are not the complete project test suite and do not establish actual drag gestures or installed updates.
 
-The reviewed candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` then passed the focused repairs on a fresh verification Gerk Tong Hui: `testmaterialreports` passed 5/0/0 in 20 ms, `testupdatecheck` passed 101/0/0 in 47 ms, `testmaterialtitlebar` passed 8/0/0 in 98 ms, and `testmaterialtabs` passed 6/0/0 in 8 ms. Production linking exited 0 with executable SHA-256 `1F23A6697F08C07E6CB5EECF0D916D1E1F1B5C226C76109191318BFA57E864D1`. These checks remain bounded component and controller evidence. They do not establish end-to-end native window movement, full MainWindow content ownership, installation, or update execution.
+The reviewed candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` then passed the focused repairs in a fresh verification checkout: `testmaterialreports` passed 5/0/0 in 20 ms, `testupdatecheck` passed 101/0/0 in 47 ms, `testmaterialtitlebar` passed 8/0/0 in 98 ms, and `testmaterialtabs` passed 6/0/0 in 8 ms. Production linking exited 0 with executable SHA-256 `1F23A6697F08C07E6CB5EECF0D916D1E1F1B5C226C76109191318BFA57E864D1`. These checks remain bounded component and controller evidence. They do not establish end-to-end native window movement, full MainWindow content ownership, installation, or update execution.
 
 ## Local package
 
@@ -38,15 +38,15 @@ The release projector requires exact release-tag, build and installer-receipt so
 
 ## Final published release
 
-Release [`v2.8.21701`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21701) is non-draft, stable, and targets `7bf379fdf92cb4109a173915227ece5164960aa7`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,600 bytes with SHA-256 `05721229565506efce09862b885f22ca89a6691f866505d567338e4725f98432`, and the full package is 72,919,069 bytes with SHA-256 `5a1e5e495d4b58be187a86c9468d795d14a79aa5bd74fb08ed2f770a3ce4b0ee`. The verified workflow timing is 00:37:17, from `2026-09-07T19:12:49Z` through `2026-09-07T19:50:06Z`. The finalizer run [34157090857](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34157090857) marked this numeric release as `Latest`.
+Release [`v2.8.21901`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21901) is non-draft, stable, and targets `20715a93302038ea49b2d55edfc32f800d0d81e5`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,088 bytes with SHA-256 `53fa98b80e8d8d976750e69730f80e9b095915da3fded7de83f332b488597138`, and the full package is 72,918,749 bytes with SHA-256 `c49182a3f4c90902e9ff4c1733dbe9b4dc3b21738586e4885bd203cdd0c1d367`. The verified workflow timing is 01:02:20, from `2026-09-07T20:08:42Z` through `2026-09-07T21:11:02Z`. The finalizer run [34162194141](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34162194141) marked this numeric release as `Latest`, and Pages run [34162194202](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34162194202) succeeded.
 
 ## Remaining acceptance
 
 - Actual title-bar, restored-window, tab, entry and group drag gestures.
-- Installation in a disposable normal user session, followed by older-to-newer update download, staging, explicit restart and unsaved-work protection.
+- Older-to-newer update download, staging, explicit restart and unsaved-work protection after the normal-user package install proof.
 - Full applicable local suites, per-click evidence and complete per-surface feature inventory. The current inventory remains **1 of 172 rows green**.
 - Installed-user behavior and older-to-newer update execution.
 - End-to-end native title-bar and content-drag proof through the complete MainWindow.
 - Backup-verified, ancestry-proven cleanup after active work is complete.
 
-Windowless Windows Sandbox system execution was available, but its normal-user execution returned `0x80070520` because no login session existed. No host user installation was substituted. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence.
+Windowless Windows Sandbox system execution was available, and a disposable normal-user session later installed `v2.8.21901` with exit code 0, reporting the expected version and ten app-local MSVC runtime DLLs. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence. The minimize regression at `6d7f344f` is preserved on its branch, but its fresh compile stopped in the Botan dependency before the new assertions were compiled.

@@ -1,20 +1,20 @@
 # Current repair handoff, September 2026
 
-Native and website repairs are integrated at `7bf379fdf92cb4109a173915227ece5164960aa7`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed behavior and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
+Native and website repairs are integrated at `20715a93302038ea49b2d55edfc32f800d0d81e5`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed update behavior, complete drag gestures and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
 
 Historical sections below describe only their named earlier commits. Their capture and parity claims are not a fresh verdict about the current candidate. The old package and clipping records remain for auditability.
 
 ## Current candidate, September 7, 2026
 
-`main` is dewed at `7bf379fdf92cb4109a173915227ece5164960aa7`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, and the release timing finalizer. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
+`main` is pushed at `20715a93302038ea49b2d55edfc32f800d0d81e5`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, the release timing finalizer, and the final release record. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
 
-The final Squirrel release is [`v2.8.21701`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21701), targeting `7bf379fdf92cb4109a173915227ece5164960aa7`, with verified timing `00:37:17`, unsigned receipt state, required assets and numeric `Latest` selection. The Pages run [34154701931](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34154701931) and finalizer run [34157090857](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34157090857) succeeded. No installed-user proof, end-to-end drag proof, or full 172-row feature inventory claim is made.
+The final Squirrel release is [`v2.8.21901`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.21901), targeting `20715a93302038ea49b2d55edfc32f800d0d81e5`, with verified timing `01:02:20`, unsigned receipt state, required assets and numeric `Latest` selection. The delivery run [34158268551](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34158268551), finalizer run [34162194141](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34162194141), and Pages run [34162194202](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34162194202) succeeded. The normal-user install proved version and app-local runtime files; GUI update execution and end-to-end drag proof remain unverified.
 
-The exact remaining blockers are a normal-user Squirrel installation and update run, end-to-end title-bar and content dragging through the real MainWindow, and the complete per-surface inventory and interaction ledger. Active or uncertain pre-existing jers remain preserved.
+The exact remaining blockers are the older-to-newer GUI update run, end-to-end title-bar and content dragging through the real MainWindow, the complete per-surface inventory and interaction ledger, and the minimize issue's compiled regression proof. Active or uncertain pre-existing branches remain preserved.
 
-# Handoff — Windows-native Material rewrite and Squirrel distribution
+# Handoff: Windows-native Material rewrite and Squirrel distribution
 
-Last verified: 2026-09-02 on the `codex/parity-capture` lane; `main` was fast-forwarded to it at the end of the pass (see the final section). Every claim names the commit it was measured at.
+Last verified: 2026-09-07 at `20715a93302038ea49b2d55edfc32f800d0d81e5`. Historical sections below retain the commit they were measured at, while the current continuation above names the latest release and verification state.
 
 ## Follow-up guard repair (2026-09-03)
 
@@ -63,7 +63,7 @@ The probe flags a wrapping label whose `heightForWidth(width())` exceeds its hei
 
 ### Fail-closed feature inventory
 
-`docs/features/inventory.json` names 86 canonical features on two surfaces; `node scripts/check-feature-inventory.mjs` is red on any row that is not `implemented` with every link resolving, and `scripts/test-feature-inventory-guard.mjs` proves single-item removals red. Verdict at `693367d1`: **0 of 172 rows green** (honest red). Partial rows now carry implementation anchors, tests and captures for: dropdown search, per-element appearance editor, infinite colour picker, rainbow colour, personal vocabulary upload, regex builder, tab strip, title bar. Rows marked `missing` are not built: School mode, narrator and voice pickers, scheduled and external settings sources, toy locks, Support Tickets, unlock ladder, authenticator and QR pairing, tab docking/groups/searches/bulk-close, super confirmation, bulk actions, export-everything and archives, offline docs browser, the documentation site's feature set, ADHD modes, app-logo customization, file converter, Ollama manager, Status Hub row, browser-extension download dialogs, and the release-evidence rows that need captures.
+`docs/features/inventory.json` names 86 canonical features on two surfaces; `node scripts/check-feature-inventory.mjs` is red on any row that is not `implemented` with every link resolving, and `scripts/test-feature-inventory-guard.mjs` proves single-item removals red. Verdict at `20715a93`: **1 of 172 rows green** (honest red). Partial rows now carry implementation anchors, tests and captures for: dropdown search, per-element appearance editor, infinite colour picker, rainbow colour, personal vocabulary upload, regex builder, tab strip, title bar. Rows marked `missing` are not built: School mode, narrator and voice pickers, scheduled and external settings sources, toy locks, Support Tickets, unlock ladder, authenticator and QR pairing, tab docking/groups/searches/bulk-close, super confirmation, bulk actions, export-everything and archives, offline docs browser, the documentation site's feature set, ADHD modes, app-logo customization, file converter, Ollama manager, Status Hub row, browser-extension download dialogs, and the release-evidence rows that need captures.
 
 ### Release evidence
 
@@ -90,12 +90,12 @@ The probe flags a wrapping label whose `heightForWidth(width())` exceeds its hei
 - A commented-out or renamed wiring line still satisfies a substring guard; anchor guards to the start of a line and watch them fail.
 - The Settings validator once demanded a `replacements` member while the canonical vocabulary file carries `entries`; the contract is `entries`, with the old name accepted.
 
-## Final state of this pass
+## Historical final state of the September 2 pass
 
 The pass was closed early at the owner's request (usage limit reached), with the task-owned cleanup authorised.
 
-- Lane tip `325ffc63` on `codex/parity-capture`; `main` fast-forwarded to it and pushed at closeout. Full lane suite at `325ffc63`: 29 of 29 passed (`testmaterial*`, `testdimsum`, `testwelcomeprovenance`, `testrepaircontracts`, `testupdatecheck`, `testsquirrellifecycle`, `testpasskeys`, `testdesignparityguard`, `testfeatureinventoryguard`, `testentrymodel`, `testpersonalvocabulary`).
+- Lane tip `325ffc63` on `codex/parity-capture`; `main` was fast-forwarded to it during that historical pass. Full lane suite at `325ffc63`: 29 of 29 passed (`testmaterial*`, `testdimsum`, `testwelcomeprovenance`, `testrepaircontracts`, `testupdatecheck`, `testsquirrellifecycle`, `testpasskeys`, `testdesignparityguard`, `testfeatureinventoryguard`, `testentrymodel`, `testpersonalvocabulary`).
 - Widths record after repair: `matrix-widths.json`, 50 tuples, 0 errors, 0 findings (`693367d1`).
 - Remote CI: Material Squirrel Build and Release green for every lane push through `fbc19318` (releases v2.8.11301 … v2.8.11901 published with code name, timing and line-count table); the run for `325ffc63` and the `main` runs (release, CodeQL, Pages) were still in progress when this was written. Verify them before calling the closeout release shipped: `gh run list -R Ding-Ding-Projects/keepassxc` and `gh release view <tag>`.
-- Not done in this pass: a local `build-installer.bat /s` run with `NotSigned` verification, the isolated silent install and launch proof on a hidden desktop, the complete per-click UI drive ledger across every feature flow, README capture matrix and screen recording, and the 171 inventory rows still red (see the inventory section). Issues #8, #9 and #11 still need their capture proof.
+- Not done in that historical pass: a local `build-installer.bat /s` run with `NotSigned` verification, the isolated silent install and launch proof on a hidden desktop, the complete per-click UI drive ledger across every feature flow, README capture matrix and screen recording, and the 171 inventory rows still red (see the inventory section). Issues #8, #9 and #11 still need their capture proof.
 - Cleanup: the task-owned lane branch and its linked worktree are removed by the closeout after proving the tip is an ancestor of the pushed `main`; the 22 pre-existing remote branches (`copilot/*`, `dependabot/*`, `feature/*`, `fix/*`, `release/2.7.x`, `fork_keepassx_core`, `gh-pages`) are not task-owned and are retained. The exact result is recorded on issue #12.
