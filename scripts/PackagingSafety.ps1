@@ -310,7 +310,7 @@ function Assert-KpxcPeX64([string]$Path) {
 }
 
 function Test-KpxcMsvcEnvironment([string]$CompilerPath) {
-    if (-not $env:INCLUDE -or -not $env:LIB -or -not $env:VCToolsRedistDir -or -not $env:VCToolsInstallDir) { return $false }
+    if (-not $env:INCLUDE -or -not $env:LIB -or -not $env:VCToolsRedistDir -or -not $env:VCToolsInstallDir -or -not $env:WindowsSdkDir -or -not $env:WindowsSDKVersion) { return $false }
     if ($CompilerPath -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/]([0-9.]+)[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$') { return $false }
     $installation=$Matches[1]
     $toolsetVersion=$Matches[2]
@@ -329,7 +329,25 @@ function Test-KpxcMsvcEnvironment([string]$CompilerPath) {
         foreach($path in @($includes)+@($libraries)){if(-not (Test-KpxcContains $toolset $path)){return $false}}
         $normalizedIncludes=@($includes | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
         $normalizedLibraries=@($libraries | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
-        return (Join-Path $toolset 'include') -iin $normalizedIncludes -and (Join-Path $toolset 'lib\x64') -iin $normalizedLibraries
+        if((Join-Path $toolset 'include') -inotIn $normalizedIncludes -or (Join-Path $toolset 'lib\x64') -inotIn $normalizedLibraries){return $false}
+        $sdkVersion=$env:WindowsSDKVersion.TrimEnd([char[]]'\/')
+        if($sdkVersion -notmatch '^[0-9]{1,5}[.][0-9]{1,5}[.][0-9]{1,5}[.][0-9]{1,5}$' -or -not [IO.Path]::IsPathRooted($env:WindowsSdkDir)){return $false}
+        $sdkRoot=[IO.Path]::GetFullPath($env:WindowsSdkDir).TrimEnd([char[]]'\/')
+        Assert-KpxcNoLinks $sdkRoot
+        $allIncludes=@($env:INCLUDE.Split(';') | Where-Object {$_} | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
+        $allLibraries=@($env:LIB.Split(';') | Where-Object {$_} | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
+        foreach($component in @('ucrt','shared','um','winrt')){
+            $path=Join-Path $sdkRoot ('Include\'+$sdkVersion+'\'+$component)
+            if($path -inotIn $allIncludes -or -not (Test-Path -LiteralPath $path -PathType Container)){return $false}
+        }
+        foreach($component in @('ucrt','um')){
+            $path=Join-Path $sdkRoot ('Lib\'+$sdkVersion+'\'+$component+'\x64')
+            if($path -inotIn $allLibraries -or -not (Test-Path -LiteralPath $path -PathType Container)){return $false}
+        }
+        foreach($file in @("Include\$sdkVersion\um\windows.h","Include\$sdkVersion\ucrt\stdio.h","Lib\$sdkVersion\um\x64\kernel32.lib","Lib\$sdkVersion\ucrt\x64\ucrt.lib")){
+            if(-not (Test-Path -LiteralPath (Join-Path $sdkRoot $file) -PathType Leaf)){return $false}
+        }
+        return $true
     } catch { return $false }
 }
 
@@ -340,7 +358,6 @@ function Initialize-KpxcMsvcEnvironment {
     $vcvars=$null
     if($command){
         $expectedCompiler=$command.Source
-        if(Test-KpxcMsvcEnvironment $expectedCompiler){return $expectedCompiler}
         if($expectedCompiler -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/]([0-9.]+)[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$'){throw 'The discovered cl.exe is not a supported MSVC x64 compiler.'}
         $vcvars=Join-Path $Matches[1] 'VC\Auxiliary\Build\vcvars64.bat'
         $versionArgument=' -vcvars_ver=' + $Matches[2]
@@ -359,13 +376,10 @@ function Initialize-KpxcMsvcEnvironment {
     }
     if(-not $vcvars -or -not (Test-Path -LiteralPath $vcvars -PathType Leaf)){throw 'The matching MSVC x64 environment initializer is unavailable.'}
     Assert-KpxcNoLinks $vcvars
-    # vcvars appends existing include/library values. Discard only the invalid
-    # MSVC environment in this build process before importing the selected toolset.
-    $env:INCLUDE=$null
-    $env:LIB=$null
-    $env:VCToolsInstallDir=$null
-    $env:VCToolsRedistDir=$null
-    cmd.exe /d /s /c "call `"$vcvars`"$versionArgument >nul && set" | ForEach-Object {
+    # Always activate the selected toolset in a fresh child. Reset its inherited
+    # initialization markers only there; never modify user or machine settings.
+    $reset='set INCLUDE=&set LIB=&set LIBPATH=&set VSCMD_VER=&set __VSCMD_PREINIT_PATH=&set VCToolsInstallDir=&set VCToolsVersion=&set VCToolsRedistDir=&set WindowsSdkDir=&set WindowsSDKVersion=&set UniversalCRTSdkDir=&set UCRTVersion=&'
+    cmd.exe /d /s /c "$reset call `"$vcvars`"$versionArgument >nul && set" | ForEach-Object {
         if($_ -match '^([^=]+)=(.*)$'){[Environment]::SetEnvironmentVariable($Matches[1],$Matches[2],'Process')}
     }
     if($LASTEXITCODE -ne 0){throw 'The matching MSVC environment initializer failed.'}

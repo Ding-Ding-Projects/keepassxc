@@ -207,13 +207,18 @@ Check 'abrupt stage publication recovers application and receipt as one generati
 if ($CompilerPath -and $RedistDirectory) {
     $environmentChild=Join-Path $testRoot 'repair-msvc-environment.ps1'
 @'
-param($Helper,$Compiler,[switch]$Inconsistent)
+param($Helper,$Compiler,[switch]$Inconsistent,[switch]$MissingSdk)
 $ErrorActionPreference='Stop'
 . $Helper
 $env:PATH=(Split-Path -Parent $Compiler)+';'+$env:PATH
 $env:INCLUDE=$null
 $env:LIB=$null
 $env:VCToolsRedistDir=$null
+if($MissingSdk){
+    Initialize-KpxcMsvcEnvironment | Out-Null
+    $env:INCLUDE=Join-Path $env:VCToolsInstallDir 'include'
+    $env:LIB=Join-Path $env:VCToolsInstallDir 'lib\x64'
+}
 if($Inconsistent){
     $env:INCLUDE='C:\inconsistent\VC\Tools\MSVC\14.00.00000\include'
     $env:LIB='C:\inconsistent\VC\Tools\MSVC\14.00.00000\lib\x64'
@@ -231,6 +236,10 @@ if([IO.Path]::GetFullPath($resolved) -ine [IO.Path]::GetFullPath($Compiler) -or 
     }
     Check 'wrapper initializer repairs inconsistent MSVC environment without changing compiler' {
         & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $environmentChild (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $CompilerPath -Inconsistent
+        Require ($LASTEXITCODE -eq 0)
+    }
+    Check 'wrapper initializer repairs a valid VC environment missing Windows SDK paths' {
+        & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $environmentChild (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $CompilerPath -MissingSdk
         Require ($LASTEXITCODE -eq 0)
     }
     $runtimeStage=Join-Path $testRoot 'runtime-stage'
