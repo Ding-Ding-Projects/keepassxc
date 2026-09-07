@@ -1254,6 +1254,10 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+    // Child removal events can still reach filters after our UI member dies.
+    if (g_MainWindow == this) {
+        g_MainWindow = nullptr;
+    }
 #ifdef KPXC_FEATURE_SSHAGENT
     sshAgent()->removeAllIdentities();
 #endif

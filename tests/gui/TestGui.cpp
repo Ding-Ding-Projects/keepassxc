@@ -187,6 +187,8 @@ void TestGui::cleanup()
 
 void TestGui::cleanupTestCase()
 {
+    m_mainWindow.reset();
+    QVERIFY(getMainWindow() == nullptr);
     m_dbFile.remove();
 }
 

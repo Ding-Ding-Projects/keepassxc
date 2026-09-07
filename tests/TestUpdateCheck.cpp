@@ -212,7 +212,7 @@ void TestUpdateCheck::testStateTransitions()
     QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::ReadyToRestart));
     QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Downloading));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Checking));
-    QVERIFY(!UpdateChecker::transitionAllowed(State::Available, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Available, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Verifying, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Applying, State::Checking));

@@ -125,15 +125,38 @@ void TestMaterialTitleBar::narrowWidthKeepsEveryButton()
 #ifdef Q_OS_WIN
 void TestMaterialTitleBar::nativeHitTestKeepsControlsAndClientContentInteractive()
 {
-    QWidget window;
+    class ChromeWindow final : public QWidget
+    {
+    protected:
+        bool nativeEvent(const QByteArray& type, void* message, qintptr* result) override
+        {
+            return WindowChrome::handleNativeEvent(this, message, result, {})
+                   || QWidget::nativeEvent(type, message, result);
+        }
+    } window;
     window.resize(800, 600);
     window.show();
     QVERIFY(QTest::qWaitForWindowExposed(&window));
+    const auto logNativeGeometry = [&window](const char* phase) {
+        const auto handle = reinterpret_cast<HWND>(window.winId());
+        RECT bounds{};
+        ::GetWindowRect(handle, &bounds);
+        POINT clientOrigin{};
+        ::ClientToScreen(handle, &clientOrigin);
+        qWarning() << phase << "bounds" << bounds.left << bounds.top << bounds.right << bounds.bottom
+                   << "clientOrigin" << clientOrigin.x << clientOrigin.y << "dpi" << ::GetDpiForWindow(handle)
+                   << "qtRatio" << window.devicePixelRatioF() << "qtOrigin" << window.mapToGlobal(QPoint());
+    };
+    logNativeGeometry("stock-frame");
     WindowChrome::installFrameless(&window);
+    logNativeGeometry("installed-frame");
 
     TitleBar titleBar(&window);
     titleBar.setGeometry(0, 0, window.width(), TitleBar::Height);
     titleBar.show();
+    qWarning() << "caption-geometry" << titleBar.geometry() << "local" << QPoint(48, 24)
+               << "qtGlobal" << window.mapToGlobal(QPoint(48, 24))
+               << "captionPredicate" << titleBar.isCaptionArea(QPoint(48, 24));
 
     const auto hitTest = [&window, &titleBar](const QPoint& local) {
         return titleBar.isCaptionArea(titleBar.mapFrom(&window, local));
