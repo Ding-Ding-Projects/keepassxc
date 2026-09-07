@@ -61,9 +61,13 @@ function jsonLinesFromGh(endpoint) {
 }
 function ensureReleaseIdentity(release, runId, tag, target) {
     const marker = `${identityPrefix}run=${runId};tag=${tag};target=${target} -->`;
-    if (release.isDraft || release.targetCommitish !== target || !release.body.includes(marker)) {
+    if (!release.body.includes(marker)) {
+        return false;
+    }
+    if (release.isDraft || release.targetCommitish !== target) {
         fail('Release does not match its workflow run, tag, and target commit.');
     }
+    return true;
 }
 function selectLatest(repository) {
     const releases = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`)
@@ -77,8 +81,17 @@ function finalize(repository, runId) {
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`]);
     if (run.conclusion !== 'success') fail('Only successful workflow runs can finalize a release.');
     const tag = `v${packageVersion(run.run_number, run.run_attempt)}`;
-    const release = jsonGh(['release', 'view', tag, '--repo', repository, '--json', 'body,targetCommitish,isDraft']);
-    ensureReleaseIdentity(release, run.id, tag, run.head_sha);
+    let release;
+    try {
+        release = jsonGh(['release', 'view', tag, '--repo', repository, '--json', 'body,targetCommitish,isDraft']);
+    } catch {
+        console.log(`No release ${tag} exists for workflow run ${run.id}; skipping finalization.`);
+        return;
+    }
+    if (!ensureReleaseIdentity(release, run.id, tag, run.head_sha)) {
+        console.log(`Release ${tag} has no finalizer marker for workflow run ${run.id}; skipping finalization.`);
+        return;
+    }
     const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`);
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
