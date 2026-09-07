@@ -93,11 +93,16 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     , m_databaseOpenWidget(new DatabaseOpenWidget(this))
     , m_groupView(new GroupView(m_db.data(), this))
     , m_tagView(new TagView(this))
+    , m_totpTimer(new QTimer(this))
     , m_saveAttempts(0)
     , m_remoteSettings(new RemoteSettings(m_db, this))
     , m_entrySearcher(new EntrySearcher(false))
 {
     Q_ASSERT(m_db);
+    connect(this, &DatabaseWidget::databaseLockRequested, this, [this] {
+        m_totpTimer->stop();
+        m_totpTimer->disconnect();
+    });
 
     // Read public headers if the database hasn't been opened yet
     if (!m_db->isInitialized()) {
@@ -844,6 +849,11 @@ void DatabaseWidget::setClipboardTextAndMinimize(const QString& text)
 
 void DatabaseWidget::pollToptOrStopAndDisconnect(Entry* entry)
 {
+    if (!entry || !m_db->isInitialized()) {
+        m_totpTimer->stop();
+        m_totpTimer->disconnect();
+        return;
+    }
     const auto clipboardTimeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
     if (clipboard()->secondsElapsed() < clipboardTimeout) {
         setClipboardTextAndMinimize(entry->totp());
@@ -1575,8 +1585,11 @@ void DatabaseWidget::entryActivationSignalReceived(Entry* entry, EntryModel::Mod
     case EntryModel::Totp:
         if (entry->hasValidTotp()) {
             setClipboardTextAndMinimize(entry->totp());
+            m_totpTimer->stop();
+            m_totpTimer->disconnect();
+            const QPointer<Entry> guardedEntry(entry);
             m_totpTimer->start(entry->totpSecondsLeft() * 1000);
-            connect(m_totpTimer, &QTimer::timeout, this, [=]() { this->pollToptOrStopAndDisconnect(entry); });
+            connect(m_totpTimer, &QTimer::timeout, this, [this, guardedEntry] { pollToptOrStopAndDisconnect(guardedEntry); });
         } else {
             setupTotp();
         }

@@ -58,6 +58,7 @@ private:
 
     QTimer* m_timer;
     int m_secondsToClear = 0;
+    QElapsedTimer m_clearElapsedTimer;
 
 #ifdef Q_OS_MACOS
     // This object lives for the whole program lifetime and we cannot delete it on exit,

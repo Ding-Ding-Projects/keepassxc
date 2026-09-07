@@ -78,6 +78,7 @@ void Clipboard::setText(const QString& text, bool clear)
             int timeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
             if (timeout > 0) {
                 m_secondsToClear = timeout;
+                m_clearElapsedTimer.restart();
                 sendCountdownStatus();
                 m_timer->start(1000);
             } else {
@@ -94,12 +95,13 @@ int Clipboard::secondsToClear()
 
 int Clipboard::secondsElapsed()
 {
-    return config()->get(Config::Security_ClearClipboardTimeout).toInt() - m_secondsToClear;
+    return m_clearElapsedTimer.isValid() ? static_cast<int>(m_clearElapsedTimer.elapsed() / 1000) : 0;
 }
 
 void Clipboard::clearCopiedText()
 {
     m_timer->stop();
+    m_clearElapsedTimer.invalidate();
     emit updateCountdown(-1, "");
 
     auto* clipboard = QApplication::clipboard();
