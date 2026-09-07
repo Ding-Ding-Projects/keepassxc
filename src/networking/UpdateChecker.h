@@ -104,10 +104,10 @@ private slots:
     void fetchReadyRead();
 
 private:
-    QNetworkReply* m_reply;
+    QPointer<QNetworkReply> m_reply;
     bool m_redirectRejected = false;
     bool m_downloadRedirectRejected = false;
-    QNetworkReply* m_downloadReply = nullptr;
+    QPointer<QNetworkReply> m_downloadReply;
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;
     QProcess* m_applyProcess = nullptr;

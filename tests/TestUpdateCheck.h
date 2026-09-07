@@ -34,6 +34,7 @@ private slots:
     void testRestartCommandContract();
     void testConcurrentCheckKeepsDownloadActive();
     void testRejectedPackageRedirectReportsDiagnostic();
+    void testDestroyedNetworkManagerClearsActiveReplies();
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H

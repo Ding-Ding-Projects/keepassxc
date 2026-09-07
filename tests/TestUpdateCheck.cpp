@@ -393,3 +393,35 @@ void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
     QCOMPARE(checker.failure(), UpdateChecker::Failure::RedirectRejected);
     QVERIFY(!UpdateChecker::describeFailure(checker.failure()).isEmpty());
 }
+
+void TestUpdateCheck::testDestroyedNetworkManagerClearsActiveReplies()
+{
+    UpdateChecker checker;
+    auto* manager = new ControlledNetworkAccessManager;
+    checker.setNetworkAccessManagerForTests(manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager->replies.size(), 1);
+    delete manager;
+
+    checker.checkForUpdates(true);
+    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+
+    auto* downloadManager = new ControlledNetworkAccessManager;
+    checker.setNetworkAccessManagerForTests(downloadManager);
+    checker.checkForUpdates(true);
+    QCOMPARE(downloadManager->replies.size(), 0);
+
+    UpdateChecker downloading;
+    downloading.setNetworkAccessManagerForTests(downloadManager);
+    downloading.checkForUpdates(true);
+    QCOMPARE(downloadManager->replies.size(), 1);
+    downloadManager->replies.at(0)->complete(availableManifest());
+    downloading.downloadAvailableUpdate();
+    QCOMPARE(downloadManager->replies.size(), 2);
+    delete downloadManager;
+
+    downloading.cancelDownload();
+    QCOMPARE(downloading.state(), UpdateChecker::State::Failed);
+    QCOMPARE(downloading.failure(), UpdateChecker::Failure::Cancelled);
+}
