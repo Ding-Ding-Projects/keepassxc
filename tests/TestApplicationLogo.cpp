@@ -33,16 +33,32 @@ namespace
         const auto path = directory.filePath(name);
         QImage image(size, QImage::Format_ARGB32_Premultiplied);
         image.fill(QColor(12, 34, 56, 128));
-        Q_ASSERT(image.save(path, "PNG"));
+        if (!image.save(path, "PNG")) {
+            return {};
+        }
         return path;
     }
+}
+
+void TestApplicationLogo::initTestCase()
+{
+    QVERIFY(m_configDirectory.isValid());
+    Config::createConfigFromFile(m_configDirectory.filePath(QStringLiteral("config.ini")),
+                                 m_configDirectory.filePath(QStringLiteral("local.ini")));
+    Icons::setApplicationLogoCacheDirectoryForTests(m_configDirectory.filePath(QStringLiteral("default-logos")));
+}
+
+void TestApplicationLogo::cleanupTestCase()
+{
+    config()->sync();
+    Icons::setApplicationLogoCacheDirectoryForTests({});
 }
 
 void TestApplicationLogo::cleanup()
 {
     Icons::setApplicationLogoFailureStageForTests(0);
     icons()->resetApplicationLogo();
-    Icons::setApplicationLogoCacheDirectoryForTests({});
+    Icons::setApplicationLogoCacheDirectoryForTests(m_configDirectory.filePath(QStringLiteral("default-logos")));
     config()->set(Config::GUI_CustomLogoEnabled, false);
     config()->set(Config::GUI_CustomLogoFitMode, QStringLiteral("fit"));
     config()->set(Config::GUI_CustomLogoBackground, QStringLiteral("#00000000"));

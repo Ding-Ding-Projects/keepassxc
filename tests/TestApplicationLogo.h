@@ -11,11 +11,14 @@
 #define KEEPASSXC_TESTAPPLICATIONLOGO_H
 
 #include <QObject>
+#include <QTemporaryDir>
 
 class TestApplicationLogo : public QObject
 {
     Q_OBJECT
 private slots:
+    void initTestCase();
+    void cleanupTestCase();
     void cleanup();
     void importsValidatedLocalImageAndPersistsOnlyDerivedPath();
     void rejectsInvalidAndOversizedSourcesWithoutReplacingActiveLogo();
@@ -31,6 +34,8 @@ private slots:
     void firstActivationCleanupWarningCommitsEnabledState();
     void presentationCleanupWarningCommitsSettings();
     void rollbackRenameFailureLeavesResidualState();
+private:
+    QTemporaryDir m_configDirectory;
 };
 
 #endif // KEEPASSXC_TESTAPPLICATIONLOGO_H
