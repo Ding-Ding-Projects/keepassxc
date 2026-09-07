@@ -1316,7 +1316,7 @@ void TestGui::testTotpRefreshOwnership()
     QVERIFY(timer->isActive());
     const auto originalGeneration = clipboard()->copyGeneration();
     const auto originalText = QApplication::clipboard()->text();
-    QCOMPARE(originalText, entry->totp());
+    QVERIFY(originalText == entry->totp());
     auto retainedDatabase = m_db;
     QScopedPointer<Group> retainedRoot;
     if (change == "password") {
@@ -1380,10 +1380,10 @@ void TestGui::testTotpRefreshOwnership()
     }
     if (change == "none" || change == "timeout") {
         QVERIFY(clipboard()->copyGeneration() > originalGeneration);
-        QCOMPARE(QApplication::clipboard()->text(), entry->totp());
+        QVERIFY(QApplication::clipboard()->text() == entry->totp());
     } else {
         QCOMPARE(clipboard()->copyGeneration(), generationBeforeDelivery);
-        QCOMPARE(QApplication::clipboard()->text(), beforeDelivery);
+        QVERIFY(QApplication::clipboard()->text() == beforeDelivery);
     }
     clipboard()->clearCopiedText();
 }
