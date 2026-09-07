@@ -149,6 +149,7 @@ namespace Material
 
         Card* createAppearanceCard();
         Card* createTypographyCard();
+        Card* createLogoCard();
         Card* createOverridesCard();
         Card* createLanguageCard();
         Card* createBehaviourCard();
@@ -166,6 +167,7 @@ namespace Material
         void commitVoiceLevels();
         /** Pull the voice controls back in line with the stored settings. */
         void refreshFromVoice();
+        void refreshLogoPreview();
 
         QList<SearchableCard> m_cards;
         SegmentedButton* m_themeSegment = nullptr;
@@ -179,6 +181,12 @@ namespace Material
         QSlider* m_fontScale = nullptr;
         QLabel* m_fontScaleValue = nullptr;
         QLabel* m_fontPreview = nullptr;
+        QLabel* m_logoPreview = nullptr;
+        QLabel* m_logoStatus = nullptr;
+        Select* m_logoFitMode = nullptr;
+        QPushButton* m_logoBackground = nullptr;
+        QPushButton* m_logoChoose = nullptr;
+        QPushButton* m_logoReset = nullptr;
         Select* m_overrideElement = nullptr;
         QSlider* m_overrideHeight = nullptr;
         QSlider* m_overrideRadius = nullptr;

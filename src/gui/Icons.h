@@ -29,6 +29,17 @@ class Icons
 public:
     QString applicationIconName();
     QIcon applicationIcon();
+    /**
+     * Validate and import a local PNG or JPEG as the presentation logo. The source path is never
+     * persisted: the accepted pixels are normalised into the private app-data cache instead.
+     */
+    bool importApplicationLogo(const QString& sourcePath, QString* error = nullptr);
+    /** Rebuild the derived display icon after a local presentation option changed. */
+    bool refreshApplicationLogo(QString* error = nullptr);
+    /** Remove the local derived logo and restore the shipped application mark. */
+    void resetApplicationLogo();
+    bool hasCustomApplicationLogo() const;
+    QString applicationLogoPath() const;
     QIcon trayIcon(bool unlocked = true);
     QString trayIconAppearance() const;
     QIcon icon(const QString& name, bool recolor = true, const QColor& overrideColor = QColor::Invalid);
@@ -46,6 +57,10 @@ public:
 
 private:
     Icons();
+
+    QIcon customApplicationIcon() const;
+    QString applicationLogoSourcePath() const;
+    void refreshApplicationIcon();
 
     static Icons* m_instance;
 

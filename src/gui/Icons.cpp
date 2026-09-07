@@ -19,10 +19,17 @@
 #include "Icons.h"
 
 #include <QBuffer>
+#include <QApplication>
+#include <QDir>
+#include <QFile>
+#include <QFileInfo>
 #include <QIconEngine>
 #include <QImageReader>
 #include <QPaintDevice>
 #include <QPainter>
+#include <QSaveFile>
+#include <QStandardPaths>
+#include <QWidget>
 
 #include <algorithm>
 
@@ -58,7 +65,144 @@ QString Icons::applicationIconName()
 
 QIcon Icons::applicationIcon()
 {
+    const auto customIcon = customApplicationIcon();
+    if (!customIcon.isNull()) {
+        return customIcon;
+    }
     return icon(applicationIconName(), false);
+}
+
+namespace
+{
+    constexpr qint64 CustomLogoMaximumBytes = 5 * 1024 * 1024;
+    constexpr int CustomLogoMaximumDimension = 4096;
+    constexpr qint64 CustomLogoMaximumPixels = 16LL * 1024 * 1024;
+
+    bool isAllowedLogoFormat(const QByteArray& format)
+    {
+        return format.compare("png", Qt::CaseInsensitive) == 0 || format.compare("jpeg", Qt::CaseInsensitive) == 0
+               || format.compare("jpg", Qt::CaseInsensitive) == 0;
+    }
+}
+
+QString Icons::applicationLogoPath() const
+{
+    const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    return QDir(base).filePath(QStringLiteral("logos/application-logo.png"));
+}
+
+QString Icons::applicationLogoSourcePath() const
+{
+    const auto base = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    return QDir(base).filePath(QStringLiteral("logos/application-logo-source.png"));
+}
+
+bool Icons::hasCustomApplicationLogo() const
+{
+    return config()->get(Config::GUI_CustomLogoEnabled).toBool() && QFileInfo::isFile(applicationLogoPath());
+}
+
+QIcon Icons::customApplicationIcon() const
+{
+    if (!hasCustomApplicationLogo()) {
+        return {};
+    }
+    QImageReader reader(applicationLogoPath());
+    reader.setAutoTransform(true);
+    const auto image = reader.read();
+    return image.isNull() ? QIcon() : QIcon(QPixmap::fromImage(image));
+}
+
+bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
+{
+    auto fail = [error](const QString& message) {
+        if (error) *error = message;
+        return false;
+    };
+
+    QFile source(sourcePath);
+    if (!source.exists() || !source.open(QIODevice::ReadOnly)) {
+        return fail(QStringLiteral("The selected logo cannot be read."));
+    }
+    if (source.size() <= 0 || source.size() > CustomLogoMaximumBytes) {
+        return fail(QStringLiteral("The selected logo must be between 1 byte and 5 MiB."));
+    }
+
+    QImageReader reader(&source);
+    reader.setAutoTransform(true);
+    const auto format = reader.format();
+    if (!isAllowedLogoFormat(format)) {
+        return fail(QStringLiteral("Choose a PNG or JPEG logo. The file contents did not match a supported logo format."));
+    }
+    if (reader.supportsAnimation() && reader.imageCount() != 1) {
+        return fail(QStringLiteral("Animated images cannot be used as an application logo."));
+    }
+    const auto size = reader.size();
+    if (!size.isValid() || size.width() > CustomLogoMaximumDimension || size.height() > CustomLogoMaximumDimension
+        || qint64(size.width()) * size.height() > CustomLogoMaximumPixels) {
+        return fail(QStringLiteral("The selected logo exceeds the 4096 px or 16 megapixel safety limit."));
+    }
+    const auto image = reader.read();
+    if (image.isNull()) {
+        return fail(QStringLiteral("The selected logo is malformed or could not be decoded."));
+    }
+
+    const QFileInfo destination(applicationLogoSourcePath());
+    if (!QDir().mkpath(destination.dir().absolutePath())) {
+        return fail(QStringLiteral("The private logo cache could not be created."));
+    }
+    QSaveFile output(destination.absoluteFilePath());
+    if (!output.open(QIODevice::WriteOnly) || !image.save(&output, "PNG") || !output.commit()) {
+        return fail(QStringLiteral("The selected logo could not be converted into the private PNG cache."));
+    }
+    config()->set(Config::GUI_CustomLogoEnabled, true);
+    return refreshApplicationLogo(error);
+}
+
+bool Icons::refreshApplicationLogo(QString* error)
+{
+    auto fail = [error](const QString& message) {
+        if (error) *error = message;
+        return false;
+    };
+    QImage source(applicationLogoSourcePath());
+    if (source.isNull()) {
+        return fail(QStringLiteral("The private source image is unavailable. Choose a logo again."));
+    }
+    const int edge = qMax(source.width(), source.height());
+    QImage canvas(edge, edge, QImage::Format_ARGB32_Premultiplied);
+    canvas.fill(QColor(config()->get(Config::GUI_CustomLogoBackground).toString()).rgba());
+    QPainter painter(&canvas);
+    const bool crop = config()->get(Config::GUI_CustomLogoFitMode).toString() == QLatin1String("crop");
+    const auto scaled = source.scaled(edge, edge, crop ? Qt::KeepAspectRatioByExpanding : Qt::KeepAspectRatio,
+                                      Qt::SmoothTransformation);
+    painter.drawImage((edge - scaled.width()) / 2, (edge - scaled.height()) / 2, scaled);
+    painter.end();
+
+    QSaveFile output(applicationLogoPath());
+    if (!output.open(QIODevice::WriteOnly) || !canvas.save(&output, "PNG") || !output.commit()) {
+        return fail(QStringLiteral("The selected logo could not be converted into the private display cache."));
+    }
+    refreshApplicationIcon();
+    return true;
+}
+
+void Icons::resetApplicationLogo()
+{
+    QFile::remove(applicationLogoPath());
+    QFile::remove(applicationLogoSourcePath());
+    config()->set(Config::GUI_CustomLogoEnabled, false);
+    refreshApplicationIcon();
+}
+
+void Icons::refreshApplicationIcon()
+{
+    m_iconCache.clear();
+    const auto refreshed = applicationIcon();
+    QApplication::setWindowIcon(refreshed);
+    for (auto* widget : QApplication::topLevelWidgets()) {
+        if (widget) widget->setWindowIcon(refreshed);
+    }
 }
 
 QString Icons::trayIconAppearance() const
