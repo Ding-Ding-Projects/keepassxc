@@ -390,14 +390,6 @@ void ApplicationSettingsWidget::loadSettings()
     m_secUi->hideNotesCheckBox->setChecked(config()->get(Config::Security_HideNotes).toBool());
 
     m_secUi->quickUnlockCheckBox->setChecked(config()->get(Config::Security_QuickUnlock).toBool());
-    m_secUi->quickUnlockRememberCheckBox->setChecked(config()->get(Config::Security_QuickUnlockRemember).toBool());
-#ifdef Q_OS_LINUX
-    // Remembering quick unlock is not supported on Linux
-    m_secUi->quickUnlockRememberCheckBox->setVisible(false);
-#else
-    // Only show this option if Touch ID or Windows Hello are available for use
-    m_secUi->quickUnlockRememberCheckBox->setVisible(getQuickUnlock()->isNativeAvailable());
-#endif
 
     for (const ExtraPage& page : asConst(m_extraPages)) {
         page.loadSettings();
@@ -520,7 +512,6 @@ void ApplicationSettingsWidget::saveSettings()
     config()->set(Config::Security_HideNotes, m_secUi->hideNotesCheckBox->isChecked());
 
     config()->set(Config::Security_QuickUnlock, m_secUi->quickUnlockCheckBox->isChecked());
-    config()->set(Config::Security_QuickUnlockRemember, m_secUi->quickUnlockRememberCheckBox->isChecked());
 
     // Security: clear storage if related settings are disabled
     if (!config()->get(Config::RememberLastDatabases).toBool()) {
