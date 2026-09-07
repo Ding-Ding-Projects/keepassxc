@@ -16,7 +16,7 @@ const cantonese = {
 const extra = {
   unavailable:['Version and timestamp unavailable.','版本同時間未能取得。'],
   website:['Website','網頁'],updated:['Updated','更新時間'],release:['Released version','已發佈版本'],source:['Source commit','來源 commit'],packageHash:['Package SHA-256','套件 SHA-256'],installerSize:['Installer bytes','安裝程式位元組'],
-  search:['Search documentation','搜尋使用文件'],language:['Language','語言'],pattern:['Pattern','模式'],flags:['Flags','旗標'],plain:['Plain text','純文字'],matches:['matching articles','篇符合文章'],noMatch:['No matching articles.','冇符合嘅文章。'],
+  search:['Search','搜尋'],language:['Language','語言'],pattern:['Pattern','模式'],flags:['Flags','旗標'],plain:['Plain text','純文字'],matches:['matching articles','篇符合文章'],noMatch:['No matching articles.','冇符合嘅文章。'],
   searchFailed:['The expression is invalid or exceeded its time limit.','運算式無效或者超過時限。'],preferenceFailed:['Browser storage is unavailable. Changes apply for this visit only.','瀏覽器儲存空間未能使用，修改只會喺今次瀏覽生效。'],
 };
 let state = {language:'en',dark:matchMedia('(prefers-color-scheme: dark)').matches,panel:0};
@@ -33,7 +33,7 @@ function renderProvenance(){
 }
 function renderLanguage(){
   document.documentElement.lang=state.language==='yue'?'yue-Hant':'en';
-  document.querySelectorAll('[data-copy]').forEach(element=>element.textContent=text(element.dataset.copy));
+  document.querySelectorAll('[data-copy]').forEach(element=>{const value=text(element.dataset.copy);if(element.tagName.endsWith('-BUTTON')){const label=document.createElement('span');label.className='button-copy';label.textContent=value;element.replaceChildren(label);}else{element.textContent=value;}});
   $('#doc-search').label=text('search');$('#language').label=text('language');$('#regex-pattern').label=text('pattern');$('#regex-flags').label=text('flags');$('#theme-switch').ariaLabel=text('darkTheme');
   renderProvenance();searchDocs();
 }
@@ -47,7 +47,7 @@ const articles=[
   ['Automatic updates','自動更新','delivery/auto-updates.md'],['Squirrel.Windows installer','Squirrel.Windows 安裝程式','delivery/squirrel-installer.md'],['Build scripts','建置指令','delivery/build-scripts.md'],['Website release provenance','網頁版本來源','delivery/website-release-provenance.md'],['Window title bar','視窗標題列','design/frameless-title-bar.md'],['Tabs and navigation','分頁同導覽','navigation/tabs.md'],['Appearance customization','自訂外觀','design/material-3-appearance.md'],['Local history','本機歷史','records/local-history.md'],['Language modes','語言模式','messaging/language-modes.md'],['Regex workbench','正規運算式工作台','search/regex-builder.md'],
 ];
 const articleLabel=(article)=>state.language==='both'?`${article[0]} · ${article[1]}`:article[state.language==='yue'?1:0];
-function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href='https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/'+articles[index][2];button.textContent=articleLabel(articles[index]);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
+function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href='https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/'+articles[index][2];const label=document.createElement('span');label.className='button-copy';label.textContent=articleLabel(articles[index]);button.append(label);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
 function searchDocs(){
   clearTimeout(timer);if(worker){worker.terminate();worker=null;}
   const query=$('#doc-search').value||'';
