@@ -112,7 +112,7 @@ ReportsWidgetBrowserStatistics::ReportsWidgetBrowserStatistics(QWidget* parent)
         m_ui->browserStatisticsTableView, SIGNAL(doubleClicked(QModelIndex)), SLOT(emitEntryActivated(QModelIndex)));
     connect(m_ui->showEntriesWithUrlOnlyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(calculateBrowserStatistics()));
     connect(m_ui->showAllowDenyCheckBox, SIGNAL(stateChanged(int)), this, SLOT(calculateBrowserStatistics()));
-    connect(m_ui->showExpired, SIGNAL(stateChanged(int)), this, SLOT(calculateBrowserStatistics()));
+    connect(m_ui->showExpired, &QAbstractButton::toggled, this, &ReportsWidgetBrowserStatistics::calculateBrowserStatistics);
 
     new QShortcut(Qt::Key_Delete, this, SLOT(deleteSelectedEntries()));
 }
