@@ -302,7 +302,7 @@ private:
     void openDatabaseFromEntry(const Entry* entry, bool inBackground = true);
     void performIconDownloads(const QList<Entry*>& entries, bool force = false, bool downloadInBackground = false);
     bool performSave(QString& errorMessage, const QString& fileName = {});
-    void pollToptOrStopAndDisconnect(Entry* entry);
+    void pollToptOrStopAndDisconnect(Entry* entry, quint64 clipboardGeneration, const QString& copiedTotp);
 
     QSharedPointer<Database> m_db;
 

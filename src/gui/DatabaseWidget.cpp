@@ -847,17 +847,15 @@ void DatabaseWidget::setClipboardTextAndMinimize(const QString& text)
     }
 }
 
-void DatabaseWidget::pollToptOrStopAndDisconnect(Entry* entry)
+void DatabaseWidget::pollToptOrStopAndDisconnect(Entry* entry, quint64 clipboardGeneration, const QString& copiedTotp)
 {
-    if (!entry || !m_db->isInitialized()) {
+    if (!entry || entry->database() != m_db.data() || !m_db->isInitialized()
+        || !clipboard()->isManagedCopyCurrent(clipboardGeneration, copiedTotp)) {
         m_totpTimer->stop();
         m_totpTimer->disconnect();
         return;
     }
-    const auto clipboardTimeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
-    if (clipboard()->secondsElapsed() < clipboardTimeout) {
-        setClipboardTextAndMinimize(entry->totp());
-    }
+    setClipboardTextAndMinimize(entry->totp());
     m_totpTimer->stop();
     disconnect(m_totpTimer);
 }
@@ -1584,12 +1582,16 @@ void DatabaseWidget::entryActivationSignalReceived(Entry* entry, EntryModel::Mod
         break;
     case EntryModel::Totp:
         if (entry->hasValidTotp()) {
-            setClipboardTextAndMinimize(entry->totp());
+            const QString copiedTotp = entry->totp();
+            setClipboardTextAndMinimize(copiedTotp);
             m_totpTimer->stop();
             m_totpTimer->disconnect();
             const QPointer<Entry> guardedEntry(entry);
+            const auto clipboardGeneration = clipboard()->copyGeneration();
             m_totpTimer->start(entry->totpSecondsLeft() * 1000);
-            connect(m_totpTimer, &QTimer::timeout, this, [this, guardedEntry] { pollToptOrStopAndDisconnect(guardedEntry); });
+            connect(m_totpTimer, &QTimer::timeout, this, [this, guardedEntry, clipboardGeneration, copiedTotp] {
+                pollToptOrStopAndDisconnect(guardedEntry, clipboardGeneration, copiedTotp);
+            });
         } else {
             setupTotp();
         }

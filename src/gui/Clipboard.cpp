@@ -47,6 +47,7 @@ Clipboard::Clipboard(QObject* parent)
 
 void Clipboard::setText(const QString& text, bool clear)
 {
+    ++m_copyGeneration;
     if (!osUtils->setClipboardText(text)) {
         auto* clipboard = QApplication::clipboard();
         if (!clipboard) {
@@ -98,8 +99,23 @@ int Clipboard::secondsElapsed()
     return m_clearElapsedTimer.isValid() ? static_cast<int>(m_clearElapsedTimer.elapsed() / 1000) : 0;
 }
 
+quint64 Clipboard::copyGeneration() const
+{
+    return m_copyGeneration;
+}
+
+bool Clipboard::isManagedCopyCurrent(quint64 generation, const QString& text) const
+{
+    if (generation != m_copyGeneration || m_lastCopied != text || !m_clearElapsedTimer.isValid()) {
+        return false;
+    }
+    auto* systemClipboard = QApplication::clipboard();
+    return systemClipboard && systemClipboard->text(QClipboard::Clipboard) == text;
+}
+
 void Clipboard::clearCopiedText()
 {
+    ++m_copyGeneration;
     m_timer->stop();
     m_clearElapsedTimer.invalidate();
     emit updateCountdown(-1, "");

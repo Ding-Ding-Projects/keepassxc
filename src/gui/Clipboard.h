@@ -39,6 +39,8 @@ public:
     static Clipboard* instance();
 
     int secondsElapsed();
+    quint64 copyGeneration() const;
+    bool isManagedCopyCurrent(quint64 generation, const QString& text) const;
 
 public slots:
     void clearCopiedText();
@@ -59,6 +61,7 @@ private:
     QTimer* m_timer;
     int m_secondsToClear = 0;
     QElapsedTimer m_clearElapsedTimer;
+    quint64 m_copyGeneration = 0;
 
 #ifdef Q_OS_MACOS
     // This object lives for the whole program lifetime and we cannot delete it on exit,
