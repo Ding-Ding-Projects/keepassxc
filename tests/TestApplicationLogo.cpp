@@ -209,6 +209,8 @@ void TestApplicationLogo::linkedCacheDirectoryIsRefusedWithoutTouchingExternalTa
     QString error;
     QVERIFY(!icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("neutral.png")), &error));
     QVERIFY(QDir(external).entryList(QDir::Files | QDir::NoDotAndDotDot).isEmpty());
+    QVERIFY(RemoveDirectoryW(reinterpret_cast<LPCWSTR>(linked.utf16())));
+    Icons::setApplicationLogoCacheDirectoryForTests(m_configDirectory.filePath(QStringLiteral("default-logos")));
 #else
     QSKIP("The reparse-point regression is specific to Windows.");
 #endif
