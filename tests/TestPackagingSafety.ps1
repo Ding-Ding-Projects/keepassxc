@@ -205,6 +205,23 @@ Check 'abrupt stage publication recovers application and receipt as one generati
     Require (-not (Test-Path -LiteralPath (Get-KpxcTransactionPath $transactionStage)))
 }
 if ($CompilerPath -and $RedistDirectory) {
+    $compilerCaseBuild=Join-Path $testRoot 'compiler-case-cache'
+    New-Item -ItemType Directory -Path $compilerCaseBuild | Out-Null
+    $lowerCompiler=$CompilerPath -replace 'Hostx64','Hostx64'
+    $upperCompiler=$CompilerPath -replace 'Hostx64','HostX64'
+    [IO.File]::WriteAllText((Join-Path $compilerCaseBuild 'CMakeCache.txt'),"CMAKE_C_COMPILER:FILEPATH=$lowerCompiler`nCMAKE_CXX_COMPILER:UNINITIALIZED=$upperCompiler`n")
+    Check 'Hostx64 and HostX64 spellings identify the same filesystem executable' { Require (Test-KpxcSameFileIdentity $lowerCompiler $upperCompiler) }
+    Check 'each equivalent cached compiler spelling is retained independently' {
+        $arguments=@(Get-KpxcCmakeCompilerArguments $compilerCaseBuild $upperCompiler)
+        Require ($arguments[0] -ceq "-DCMAKE_C_COMPILER=$lowerCompiler")
+        Require ($arguments[1] -ceq "-DCMAKE_CXX_COMPILER=$upperCompiler")
+    }
+    $differentCompiler=Join-Path $testRoot 'different-cl.exe'
+    Copy-Item -LiteralPath $CompilerPath -Destination $differentCompiler
+    Check 'identical compiler bytes at a different filesystem file are not reused' {
+        Require (-not (Test-KpxcSameFileIdentity $CompilerPath $differentCompiler))
+        Reject { Get-KpxcCmakeCompilerArguments $compilerCaseBuild $differentCompiler }
+    }
     $environmentChild=Join-Path $testRoot 'repair-msvc-environment.ps1'
 @'
 param($Helper,$Compiler,[switch]$Inconsistent,[switch]$MissingSdk)

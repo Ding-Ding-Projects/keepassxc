@@ -7,6 +7,13 @@ building or changing output. Filesystem roots, checkout ancestors, overlapping
 directories, device and network paths, alternate streams, and linked path components
 are rejected. An existing build cache must name this exact source checkout.
 
+For a warm cache, the builder preserves each cached C and C++ compiler path spelling
+only when it is case-insensitively equivalent to the selected path and both open
+handles report the same filesystem file identity. This avoids CMake silently resetting
+its cache for `Hostx64` versus `HostX64` and losing version or vcpkg configuration.
+A different compiler requires an explicitly selected fresh build directory; equal
+executable bytes at a different path are not treated as the same file.
+
 An existing stage must carry a valid ownership and complete-file receipt. A new
 commit or version is installed into a fresh same-volume candidate directory,
 including runtime files and its new receipt. Only a completely validated candidate

@@ -294,6 +294,65 @@ function Assert-KpxcBuildCache([string]$Root, [string]$Directory) {
         [IO.Path]::GetFullPath($Matches[1].Trim()).TrimEnd([char[]]'\/') -ine [IO.Path]::GetFullPath($Root).TrimEnd([char[]]'\/')) { throw 'Build cache belongs to another source checkout.' }
 }
 
+function Test-KpxcSameFileIdentity([string]$Left, [string]$Right) {
+    Assert-KpxcNoLinks $Left
+    Assert-KpxcNoLinks $Right
+    if(-not ('KeePassXCPackagingFileIdentity' -as [type])) {
+        Add-Type -TypeDefinition @'
+using System;
+using System.ComponentModel;
+using System.IO;
+using System.Runtime.InteropServices;
+using Microsoft.Win32.SafeHandles;
+public static class KeePassXCPackagingFileIdentity {
+    [StructLayout(LayoutKind.Sequential)]
+    private struct Information {
+        public uint Attributes;
+        public System.Runtime.InteropServices.ComTypes.FILETIME Creation;
+        public System.Runtime.InteropServices.ComTypes.FILETIME Access;
+        public System.Runtime.InteropServices.ComTypes.FILETIME Write;
+        public uint VolumeSerial, SizeHigh, SizeLow, Links, IndexHigh, IndexLow;
+    }
+    [DllImport("kernel32.dll", SetLastError=true)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool GetFileInformationByHandle(SafeFileHandle handle, out Information info);
+    public static bool Same(string left, string right) {
+        using (var a = new FileStream(left, FileMode.Open, FileAccess.Read, FileShare.Read))
+        using (var b = new FileStream(right, FileMode.Open, FileAccess.Read, FileShare.Read)) {
+            Information x, y;
+            if (!GetFileInformationByHandle(a.SafeFileHandle, out x) ||
+                !GetFileInformationByHandle(b.SafeFileHandle, out y))
+                throw new Win32Exception(Marshal.GetLastWin32Error());
+            return x.VolumeSerial == y.VolumeSerial && x.IndexHigh == y.IndexHigh && x.IndexLow == y.IndexLow;
+        }
+    }
+}
+'@
+    }
+    return [KeePassXCPackagingFileIdentity]::Same($Left,$Right)
+}
+
+function Get-KpxcCmakeCompilerArguments([string]$BuildDirectory, [string]$SelectedCompiler) {
+    $cachePath=Join-Path $BuildDirectory 'CMakeCache.txt'
+    $cache=''
+    if(Test-Path -LiteralPath $cachePath){Assert-KpxcNoLinks $cachePath;$cache=Get-Content -Raw -LiteralPath $cachePath}
+    foreach($language in @('C','CXX')) {
+        $chosen=$SelectedCompiler
+        $matches=[regex]::Matches($cache,('(?m)^CMAKE_'+$language+'_COMPILER:(?:FILEPATH|STRING|UNINITIALIZED)=(.+)\r?$'))
+        if($matches.Count -gt 1){throw 'Compiler cache contains duplicate definitions.'}
+        if($matches.Count -eq 1) {
+            $cached=$matches[0].Groups[1].Value.Trim()
+            if(-not [IO.Path]::IsPathRooted($cached) -or [IO.Path]::GetFullPath($cached) -ine [IO.Path]::GetFullPath($SelectedCompiler)) {
+                throw "Cached $language compiler differs from the selected executable. Use a new BuildDirectory for an explicit toolchain change."
+            }
+            if(-not (Test-KpxcSameFileIdentity $cached $SelectedCompiler)){throw "Cached $language compiler is not the same filesystem executable."}
+            # CMake compares cached compiler spellings even on case-insensitive filesystems.
+            $chosen=$cached
+        }
+        "-DCMAKE_${language}_COMPILER=$chosen"
+    }
+}
+
 function Assert-KpxcPeX64([string]$Path) {
     $stream = [IO.File]::OpenRead($Path)
     $reader = [IO.BinaryReader]::new($stream)
