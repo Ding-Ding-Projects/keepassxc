@@ -1280,6 +1280,90 @@ void TestGui::testClipboardCopyOwnership()
     managed->clearCopiedText();
 }
 
+void TestGui::testTotpRefreshOwnership_data()
+{
+    QTest::addColumn<QString>("change");
+    for (const auto* change : {"none", "password", "text", "same-text", "external", "delete", "lock", "replace", "timeout"}) {
+        QTest::newRow(change) << QString::fromLatin1(change);
+    }
+}
+
+void TestGui::testTotpRefreshOwnership()
+{
+    QFETCH(QString, change);
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 60);
+    config()->set(Config::Security_EnableCopyOnDoubleClick, true);
+    auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
+    QVERIFY(entryView);
+    auto* entry = entryView->entryFromIndex(entryView->model()->index(0, 0));
+    QVERIFY(entry);
+    entry->setTotp(Totp::createSettings("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"));
+    QVERIFY(entry->hasValidTotp());
+    // Exercise the production activation connection and real timer event delivery.
+    emit entryView->entryActivated(entry, EntryModel::Totp);
+    auto* timer = m_dbWidget->findChild<QTimer*>("totpRefreshTimer");
+    QVERIFY(timer);
+    QVERIFY(timer->isActive());
+    const auto originalGeneration = clipboard()->copyGeneration();
+    const auto originalText = QApplication::clipboard()->text();
+    QCOMPARE(originalText, entry->totp());
+    auto retainedDatabase = m_db;
+    if (change == "password") {
+        entry->setPassword("fixture-password-B");
+        emit entryView->entryActivated(entry, EntryModel::Password);
+    } else if (change == "text") {
+        clipboard()->setText("fixture-text-B", false);
+    } else if (change == "same-text") {
+        clipboard()->setText(originalText);
+    } else if (change == "external") {
+        QApplication::clipboard()->setText("fixture-external-B");
+    } else if (change == "delete") {
+        delete entry;
+        entry = nullptr;
+    } else if (change == "lock") {
+        m_db->markAsClean();
+        QVERIFY(m_dbWidget->lock());
+        QVERIFY(m_dbWidget->isLocked());
+    } else if (change == "replace") {
+        auto replacement = QSharedPointer<Database>::create();
+        replacement->setKey(m_db->key());
+        m_dbWidget->replaceDatabase(replacement);
+        QVERIFY(entry->database() == retainedDatabase.data());
+        QVERIFY(entry->database() != m_dbWidget->database().data());
+    } else if (change == "timeout") {
+        config()->set(Config::Security_ClearClipboardTimeout, 1);
+    }
+    const auto beforeDelivery = QApplication::clipboard()->text();
+    const auto generationBeforeDelivery = clipboard()->copyGeneration();
+    QSignalSpy delivered(timer, &QTimer::timeout);
+    timer->setInterval(1);
+    QTRY_COMPARE(delivered.count(), 1);
+    QVERIFY(!timer->isActive());
+    if (change == "none" || change == "timeout") {
+        QVERIFY(clipboard()->copyGeneration() > originalGeneration);
+        QCOMPARE(QApplication::clipboard()->text(), entry->totp());
+    } else {
+        QCOMPARE(clipboard()->copyGeneration(), generationBeforeDelivery);
+        QCOMPARE(QApplication::clipboard()->text(), beforeDelivery);
+    }
+    clipboard()->clearCopiedText();
+}
+
+void TestGui::testClipboardTimeoutChange()
+{
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 60);
+    clipboard()->setText("fixture-countdown");
+    QSignalSpy countdown(clipboard(), &Clipboard::updateCountdown);
+    config()->set(Config::Security_ClearClipboardTimeout, 0);
+    QVERIFY(QMetaObject::invokeMethod(clipboard(), "countdownTick", Qt::DirectConnection));
+    QCOMPARE(countdown.count(), 1);
+    QCOMPARE(countdown.first().first().toInt(), 98);
+    QCOMPARE(clipboard()->secondsToClear(), 59);
+    clipboard()->clearCopiedText();
+}
+
 void TestGui::testSearch()
 {
     // Add canned entries for consistent testing

@@ -79,6 +79,7 @@ void Clipboard::setText(const QString& text, bool clear)
             int timeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
             if (timeout > 0) {
                 m_secondsToClear = timeout;
+                m_clearTimeout = timeout;
                 m_clearElapsedTimer.restart();
                 sendCountdownStatus();
                 m_timer->start(1000);
@@ -155,7 +156,7 @@ void Clipboard::countdownTick()
 void Clipboard::sendCountdownStatus()
 {
     emit updateCountdown(
-        100 * m_secondsToClear / config()->get(Config::Security_ClearClipboardTimeout).toInt(),
+        static_cast<int>(100LL * m_secondsToClear / qMax(1, m_clearTimeout)),
         QObject::tr("Clearing the clipboard in %1 second(s)…", "", m_secondsToClear).arg(m_secondsToClear));
 }
 

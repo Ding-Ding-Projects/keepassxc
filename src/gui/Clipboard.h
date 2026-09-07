@@ -60,6 +60,7 @@ private:
 
     QTimer* m_timer;
     int m_secondsToClear = 0;
+    int m_clearTimeout = 0;
     QElapsedTimer m_clearElapsedTimer;
     quint64 m_copyGeneration = 0;
 

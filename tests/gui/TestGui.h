@@ -55,6 +55,9 @@ private slots:
     void testDicewareEntryEntropy();
     void testTotp();
     void testClipboardCopyOwnership();
+    void testTotpRefreshOwnership_data();
+    void testTotpRefreshOwnership();
+    void testClipboardTimeoutChange();
     void testSearch();
     void testDeleteEntry();
     void testCloneEntry();
