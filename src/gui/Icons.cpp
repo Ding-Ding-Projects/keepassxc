@@ -179,7 +179,7 @@ bool Icons::ensureApplicationLogoCache(QString* error) const
 bool Icons::hasCustomApplicationLogo() const
 {
     return config()->get(Config::GUI_CustomLogoEnabled).toBool() && !isReparseOrLink(applicationLogoPath())
-        && QFileInfo::isFile(applicationLogoPath());
+        && QFileInfo(applicationLogoPath()).isFile();
 }
 
 QIcon Icons::customApplicationIcon() const
@@ -200,15 +200,15 @@ bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
         return false;
     };
 
-    QFile source(sourcePath);
-    if (!source.exists() || !source.open(QIODevice::ReadOnly)) {
+    QFile inputFile(sourcePath);
+    if (!inputFile.exists() || !inputFile.open(QIODevice::ReadOnly)) {
         return fail(QStringLiteral("The selected logo cannot be read."));
     }
-    if (source.size() <= 0 || source.size() > CustomLogoMaximumBytes) {
+    if (inputFile.size() <= 0 || inputFile.size() > CustomLogoMaximumBytes) {
         return fail(QStringLiteral("The selected logo must be between 1 byte and 5 MiB."));
     }
 
-    QImageReader reader(&source);
+    QImageReader reader(&inputFile);
     reader.setAutoTransform(true);
     const auto format = reader.format();
     if (!isAllowedLogoFormat(format)) {
