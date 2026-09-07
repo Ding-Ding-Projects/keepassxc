@@ -1,0 +1,15 @@
+import {build} from 'esbuild';
+import {mkdirSync,copyFileSync,readFileSync,writeFileSync} from 'node:fs';
+import {execFileSync} from 'node:child_process';
+import {fileURLToPath} from 'node:url';
+const root=fileURLToPath(new URL('.',import.meta.url));
+const sourceCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:root,encoding:'utf8'}).trim();
+const changes=execFileSync('git',['status','--porcelain','--untracked-files=normal','--','site'],{cwd:fileURLToPath(new URL('../',import.meta.url)),encoding:'utf8'}).trim();
+if(changes)throw Error('Commit website source before producing its versioned build.');
+const version=JSON.parse(readFileSync(new URL('package.json',import.meta.url),'utf8')).version;
+mkdirSync(new URL('dist/',import.meta.url),{recursive:true});
+await build({absWorkingDir:root,entryPoints:['app.js','search-worker.js'],outdir:'dist',bundle:true,format:'esm',target:'es2022',minify:true});
+for(const file of ['index.html','styles.css','release.json'])copyFileSync(new URL(file,import.meta.url),new URL('dist/'+file,import.meta.url));
+copyFileSync(new URL('../social-preview.png',import.meta.url),new URL('dist/social-preview.png',import.meta.url));
+writeFileSync(new URL('dist/build-provenance.json',import.meta.url),JSON.stringify({schemaVersion:1,version,sourceCommit,updatedAtUtc:new Date().toISOString()},null,2)+'\n');
+console.log(`Built website ${version} from ${sourceCommit}.`);

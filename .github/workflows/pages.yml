@@ -29,13 +29,24 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24.19.0'
+          cache: npm
+          cache-dependency-path: site/package-lock.json
+
+      - name: Build the locally bundled website
+        run: |
+          npm ci --prefix site --ignore-scripts
+          npm run build --prefix site
+
       - name: Assemble the site with its social preview
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p public
-          cp -R site/. public/
-          cp social-preview.png public/social-preview.png
+          cp -R site/dist/. public/
           touch public/.nojekyll
           # The served copy must be byte-identical to the root master.
           cmp social-preview.png public/social-preview.png
