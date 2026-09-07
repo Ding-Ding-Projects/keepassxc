@@ -42,6 +42,7 @@ void TestApplicationLogo::cleanup()
     Icons::setApplicationLogoFailureStageForTests(0);
     icons()->resetApplicationLogo();
     Icons::setApplicationLogoCacheDirectoryForTests({});
+    config()->set(Config::GUI_CustomLogoEnabled, false);
     config()->set(Config::GUI_CustomLogoFitMode, QStringLiteral("fit"));
     config()->set(Config::GUI_CustomLogoBackground, QStringLiteral("#00000000"));
 }
@@ -158,6 +159,23 @@ void TestApplicationLogo::resetFailureKeepsActiveLogo()
     QVERIFY(QFile::exists(icons()->applicationLogoPath()));
 }
 
+void TestApplicationLogo::secondDeleteFailureReportsResidualDataAndCanRetry()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
+    Icons::setApplicationLogoFailureStageForTests(5);
+    QVERIFY(!icons()->resetApplicationLogo(&error));
+    QVERIFY(!config()->get(Config::GUI_CustomLogoEnabled).toBool());
+    QVERIFY(!QFile::exists(icons()->applicationLogoPath()));
+    QVERIFY(QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".removing")));
+    Icons::setApplicationLogoFailureStageForTests(0);
+    QVERIFY2(icons()->resetApplicationLogo(&error), qPrintable(error));
+    QVERIFY(!QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".removing")));
+}
+
 void TestApplicationLogo::linkedCacheDirectoryIsRefusedWithoutTouchingExternalTarget()
 {
 #ifdef Q_OS_WIN
@@ -174,6 +192,33 @@ void TestApplicationLogo::linkedCacheDirectoryIsRefusedWithoutTouchingExternalTa
     QString error;
     QVERIFY(!icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("neutral.png")), &error));
     QVERIFY(QDir(external).entryList(QDir::Files | QDir::NoDotAndDotDot).isEmpty());
+#else
+    QSKIP("The reparse-point regression is specific to Windows.");
+#endif
+}
+
+void TestApplicationLogo::linkedActiveEntryIsRefusedWithoutTouchingExternalTarget()
+{
+#ifdef Q_OS_WIN
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
+    const auto external = writeFixture(directory, QStringLiteral("external.png"));
+    QFile externalFile(external);
+    QVERIFY(externalFile.open(QIODevice::ReadOnly));
+    const auto externalBytes = externalFile.readAll();
+    externalFile.close();
+    QVERIFY(QFile::remove(icons()->applicationLogoPath()));
+    if (!CreateSymbolicLinkW(reinterpret_cast<LPCWSTR>(icons()->applicationLogoPath().utf16()),
+                             reinterpret_cast<LPCWSTR>(external.utf16()), 0)) {
+        QSKIP("The test account cannot create a file link.");
+    }
+    QVERIFY(!icons()->hasCustomApplicationLogo());
+    QVERIFY(!icons()->resetApplicationLogo(&error));
+    QVERIFY(externalFile.open(QIODevice::ReadOnly));
+    QCOMPARE(externalFile.readAll(), externalBytes);
 #else
     QSKIP("The reparse-point regression is specific to Windows.");
 #endif

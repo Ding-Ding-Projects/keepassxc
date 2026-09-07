@@ -23,7 +23,9 @@ private slots:
     void secondWriteFailureKeepsPriorLogoAndSettings();
     void presentationFailureKeepsPriorSettings();
     void resetFailureKeepsActiveLogo();
+    void secondDeleteFailureReportsResidualDataAndCanRetry();
     void linkedCacheDirectoryIsRefusedWithoutTouchingExternalTarget();
+    void linkedActiveEntryIsRefusedWithoutTouchingExternalTarget();
 };
 
 #endif // KEEPASSXC_TESTAPPLICATIONLOGO_H
