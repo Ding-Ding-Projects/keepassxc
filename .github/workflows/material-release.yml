@@ -200,23 +200,6 @@ jobs:
           echo "DIM_SUM_ID=$(node -e "console.log(require('./dim-sum.json').id)")" >> "$GITHUB_ENV"
           echo "DIM_SUM_PHOTO_URL=${asset_url}" >> "$GITHUB_ENV"
 
-      - name: Measure end-to-end workflow timing
-        shell: bash
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN || github.token }}
-        run: |
-          set -euo pipefail
-          # From the first job's real start to this step, which is the publication
-          # boundary. A missing value fails here rather than becoming an estimate.
-          started=$(gh api "repos/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}/jobs" --jq '[.jobs[].started_at] | sort | .[0]')
-          test -n "$started" && test "$started" != "null"
-          completed=$(date -u +%Y-%m-%dT%H:%M:%SZ)
-          seconds=$(( $(date -u -d "$completed" +%s) - $(date -u -d "$started" +%s) ))
-          printf -v duration '%02d:%02d:%02d' $((seconds/3600)) $((seconds%3600/60)) $((seconds%60))
-          echo "WORKFLOW_STARTED=${started}" >> "$GITHUB_ENV"
-          echo "WORKFLOW_COMPLETED=${completed}" >> "$GITHUB_ENV"
-          echo "WORKFLOW_DURATION=${duration}" >> "$GITHUB_ENV"
-
       - name: Verify required release assets
         shell: bash
         run: |
@@ -250,9 +233,10 @@ jobs:
           Code name: **${DIM_SUM_TITLE}** (\`${DIM_SUM_ID}\`, [public photo](${DIM_SUM_PHOTO_URL}), attached as \`${DIM_SUM_ASSET}\`). Code names come from the public dim-sum catalog and are used once per project.
 
           Workflow run: ${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}
-          Workflow started: ${WORKFLOW_STARTED}
-          Workflow completed: ${WORKFLOW_COMPLETED}
-          Workflow duration: ${WORKFLOW_DURATION}
+          <!-- kpxc-release-finalization:run=${GITHUB_RUN_ID};tag=${RELEASE_TAG};target=${GITHUB_SHA} -->
+          <!-- kpxc-workflow-timing:start -->
+          Workflow timing finalization pending the successful Create GitHub Release step.
+          <!-- kpxc-workflow-timing:end -->
 
           ## Lines of code at \`${GITHUB_SHA}\`
 

@@ -1,0 +1,24 @@
+{
+  "run": {
+    "id": 34148441129,
+    "run_number": 199,
+    "run_attempt": 1,
+    "head_sha": "1c7d0e5f7912eefbb040ab33b0738e6bb30f5fc9"
+  },
+  "jobs": [
+    {
+      "name": "Package unsigned Windows x64 installer",
+      "started_at": "2026-09-07T06:00:00Z"
+    },
+    {
+      "name": "Publish Squirrel.Windows release",
+      "steps": [
+        {
+          "name": "Create the GitHub Release",
+          "conclusion": "success",
+          "completed_at": "2026-09-07T07:11:31Z"
+        }
+      ]
+    }
+  ]
+}
