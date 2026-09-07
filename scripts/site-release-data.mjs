@@ -20,7 +20,7 @@ export function buildReleaseData(release, provenance, manifest) {
     }
     requireValue(commit.test(provenance.sourceCommit), 'Missing source commit provenance.');
     const timestamp = provenance.generatedAtUtc;
-    requireValue(typeof timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T.*Z$/.test(timestamp) && Number.isFinite(Date.parse(timestamp)), 'Missing build timestamp provenance.');
+    requireValue(typeof timestamp === 'string' && /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}(?:\.\d{1,9})?Z$/.test(timestamp) && Number.isFinite(Date.parse(timestamp)) && new Date(timestamp).toISOString().slice(0,19) === timestamp.slice(0,19), 'Missing or invalid build timestamp provenance.');
     requireValue(sha256.test(manifest.sha256) && sha256.test(manifest.executableSha256), 'Invalid package or executable digest.');
     requireValue(provenance.stagedExecutable?.sha256?.toLowerCase() === manifest.executableSha256.toLowerCase(), 'Executable provenance differs from update manifest.');
     const base = `${releaseRoot}download/${release.tagName}/`;

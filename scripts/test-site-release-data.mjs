@@ -23,6 +23,7 @@ for (const mutate of [
     (r) => { r.assets[0].url = 'https://example.com/Setup.exe'; },
     (r, p) => { p.sourceCommit = ''; },
     (r, p) => { p.generatedAtUtc = 'not-a-date'; },
+    (r, p) => { p.generatedAtUtc = '2026-02-30T00:54:48Z'; },
     (r, p) => { p.stagedExecutable.sha256 = 'd'.repeat(64); },
     (r, p, m) => { m.architecture = 'arm64'; },
     (r, p, m) => { m.bytes = 51; },

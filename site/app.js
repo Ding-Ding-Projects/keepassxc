@@ -52,10 +52,11 @@ function searchDocs(){
   clearTimeout(timer);if(worker){worker.terminate();worker=null;}
   const query=$('#doc-search').value||'';
   if(!regex){renderArticles(articles.flatMap((article,index)=>articleLabel(article).toLocaleLowerCase().includes(query.toLocaleLowerCase())?[index]:[]));return;}
+  const reportFailure=()=>{$('#doc-list').replaceChildren();$('#search-status').textContent=text('searchFailed');};
   const active=new Worker(new URL('./search-worker.js',import.meta.url),{type:'module'});worker=active;
-  timer=setTimeout(()=>{active.terminate();if(worker===active){worker=null;$('#search-status').textContent=text('searchFailed');}},250);
-  active.onmessage=event=>{if(worker!==active)return;clearTimeout(timer);active.terminate();worker=null;if(event.data.error){$('#search-status').textContent=text('searchFailed');return;}renderArticles(event.data.indices);};
-  active.onerror=()=>{clearTimeout(timer);active.terminate();if(worker===active){worker=null;$('#search-status').textContent=text('searchFailed');}};
+  timer=setTimeout(()=>{active.terminate();if(worker===active){worker=null;reportFailure();}},250);
+  active.onmessage=event=>{if(worker!==active)return;clearTimeout(timer);active.terminate();worker=null;if(event.data.error){reportFailure();return;}renderArticles(event.data.indices);};
+  active.onerror=()=>{clearTimeout(timer);active.terminate();if(worker===active){worker=null;reportFailure();}};
   active.postMessage({pattern:query,flags:regex.flags,items:articles.map(articleLabel)});
 }
 $('#doc-search').addEventListener('input',searchDocs);
