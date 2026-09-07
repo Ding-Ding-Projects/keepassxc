@@ -205,6 +205,34 @@ Check 'abrupt stage publication recovers application and receipt as one generati
     Require (-not (Test-Path -LiteralPath (Get-KpxcTransactionPath $transactionStage)))
 }
 if ($CompilerPath -and $RedistDirectory) {
+    $environmentChild=Join-Path $testRoot 'repair-msvc-environment.ps1'
+@'
+param($Helper,$Compiler,[switch]$Inconsistent)
+$ErrorActionPreference='Stop'
+. $Helper
+$env:PATH=(Split-Path -Parent $Compiler)+';'+$env:PATH
+$env:INCLUDE=$null
+$env:LIB=$null
+$env:VCToolsRedistDir=$null
+if($Inconsistent){
+    $env:INCLUDE='C:\inconsistent\VC\Tools\MSVC\14.00.00000\include'
+    $env:LIB='C:\inconsistent\VC\Tools\MSVC\14.00.00000\lib\x64'
+    $env:VCToolsRedistDir='C:\inconsistent\VC\Redist\MSVC\14.00.00000'
+    $env:VCToolsInstallDir='C:\inconsistent\VC\Tools\MSVC\14.00.00000'
+}
+if(-not (Get-Command cl.exe -ErrorAction SilentlyContinue)){throw 'Fixture must retain cl.exe on PATH.'}
+if(Test-KpxcMsvcEnvironment $Compiler){throw 'Fixture unexpectedly has a complete environment.'}
+$resolved=Initialize-KpxcMsvcEnvironment
+if([IO.Path]::GetFullPath($resolved) -ine [IO.Path]::GetFullPath($Compiler) -or -not (Test-KpxcMsvcEnvironment $resolved)){throw 'Selected compiler environment was not repaired.'}
+'@ | Set-Content -LiteralPath $environmentChild
+    Check 'wrapper initializer repairs missing MSVC environment with cl already on PATH' {
+        & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $environmentChild (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $CompilerPath
+        Require ($LASTEXITCODE -eq 0)
+    }
+    Check 'wrapper initializer repairs inconsistent MSVC environment without changing compiler' {
+        & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $environmentChild (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $CompilerPath -Inconsistent
+        Require ($LASTEXITCODE -eq 0)
+    }
     $runtimeStage=Join-Path $testRoot 'runtime-stage'
     New-Item -ItemType Directory -Path $runtimeStage | Out-Null
     Check 'real pinned x64 runtime DLLs are copied and hash verified' { $script:runtime=@(Copy-KpxcMsvcRuntime $runtimeStage $CompilerPath $RedistDirectory); Require ($script:runtime.Count -ge 8) }

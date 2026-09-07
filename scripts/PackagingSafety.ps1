@@ -309,6 +309,72 @@ function Assert-KpxcPeX64([string]$Path) {
     } finally { $reader.Dispose(); $stream.Dispose() }
 }
 
+function Test-KpxcMsvcEnvironment([string]$CompilerPath) {
+    if (-not $env:INCLUDE -or -not $env:LIB -or -not $env:VCToolsRedistDir -or -not $env:VCToolsInstallDir) { return $false }
+    if ($CompilerPath -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/]([0-9.]+)[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$') { return $false }
+    $installation=$Matches[1]
+    $toolsetVersion=$Matches[2]
+    $toolset=Join-Path $installation ('VC\Tools\MSVC\' + $toolsetVersion)
+    try {
+        if ([IO.Path]::GetFullPath($env:VCToolsInstallDir).TrimEnd([char[]]'\/') -ine $toolset) { return $false }
+        if (-not (Test-KpxcContains (Join-Path $installation 'VC\Redist\MSVC') $env:VCToolsRedistDir)) { return $false }
+        $runtime=Join-Path $env:VCToolsRedistDir 'x64\Microsoft.VC143.CRT\msvcp140.dll'
+        Assert-KpxcNoLinks $runtime
+        if(-not (Test-Path -LiteralPath $runtime -PathType Leaf)){return $false}
+        $runtimeVersion=[Diagnostics.FileVersionInfo]::GetVersionInfo($runtime)
+        if($runtimeVersion.FileMajorPart -ne 14 -or $runtimeVersion.FileMinorPart -ne [int]$toolsetVersion.Split('.')[1]){return $false}
+        $includes=@($env:INCLUDE.Split(';') | Where-Object { $_ -match '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]' })
+        $libraries=@($env:LIB.Split(';') | Where-Object { $_ -match '[\\/]VC[\\/]Tools[\\/]MSVC[\\/]' })
+        if (-not $includes.Count -or -not $libraries.Count) { return $false }
+        foreach($path in @($includes)+@($libraries)){if(-not (Test-KpxcContains $toolset $path)){return $false}}
+        $normalizedIncludes=@($includes | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
+        $normalizedLibraries=@($libraries | ForEach-Object {[IO.Path]::GetFullPath($_).TrimEnd([char[]]'\/')})
+        return (Join-Path $toolset 'include') -iin $normalizedIncludes -and (Join-Path $toolset 'lib\x64') -iin $normalizedLibraries
+    } catch { return $false }
+}
+
+function Initialize-KpxcMsvcEnvironment {
+    $command=Get-Command cl.exe -ErrorAction SilentlyContinue
+    $expectedCompiler=$null
+    $versionArgument=''
+    $vcvars=$null
+    if($command){
+        $expectedCompiler=$command.Source
+        if(Test-KpxcMsvcEnvironment $expectedCompiler){return $expectedCompiler}
+        if($expectedCompiler -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/]([0-9.]+)[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$'){throw 'The discovered cl.exe is not a supported MSVC x64 compiler.'}
+        $vcvars=Join-Path $Matches[1] 'VC\Auxiliary\Build\vcvars64.bat'
+        $versionArgument=' -vcvars_ver=' + $Matches[2]
+    } else {
+        $vswhere=Join-Path ${env:ProgramFiles(x86)} 'Microsoft Visual Studio\Installer\vswhere.exe'
+        if(Test-Path -LiteralPath $vswhere){
+            $installation=& $vswhere -latest -products * -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath
+            if($installation){$vcvars=Join-Path $installation 'VC\Auxiliary\Build\vcvars64.bat'}
+        }
+        if(-not $vcvars -or -not (Test-Path -LiteralPath $vcvars)){
+            $vcvars=@(
+                (Join-Path $env:LOCALAPPDATA 'KeePassXCMaterial\toolchain\BuildTools\VC\Auxiliary\Build\vcvars64.bat'),
+                (Join-Path $env:LOCALAPPDATA 'material-virtualbox-toolchain\BuildTools\VC\Auxiliary\Build\vcvars64.bat')
+            ) | Where-Object {Test-Path -LiteralPath $_ -PathType Leaf} | Select-Object -First 1
+        }
+    }
+    if(-not $vcvars -or -not (Test-Path -LiteralPath $vcvars -PathType Leaf)){throw 'The matching MSVC x64 environment initializer is unavailable.'}
+    Assert-KpxcNoLinks $vcvars
+    # vcvars appends existing include/library values. Discard only the invalid
+    # MSVC environment in this build process before importing the selected toolset.
+    $env:INCLUDE=$null
+    $env:LIB=$null
+    $env:VCToolsInstallDir=$null
+    $env:VCToolsRedistDir=$null
+    cmd.exe /d /s /c "call `"$vcvars`"$versionArgument >nul && set" | ForEach-Object {
+        if($_ -match '^([^=]+)=(.*)$'){[Environment]::SetEnvironmentVariable($Matches[1],$Matches[2],'Process')}
+    }
+    if($LASTEXITCODE -ne 0){throw 'The matching MSVC environment initializer failed.'}
+    $resolved=(Get-Command cl.exe -ErrorAction Stop).Source
+    if($expectedCompiler -and $resolved -ine $expectedCompiler){throw 'MSVC initialization changed the selected compiler instead of repairing its environment.'}
+    if(-not (Test-KpxcMsvcEnvironment $resolved)){throw 'MSVC headers, libraries, or runtime source remain inconsistent after initialization.'}
+    return $resolved
+}
+
 function Copy-KpxcMsvcRuntime([string]$Stage, [string]$CompilerPath, [string]$RedistDirectory) {
     if ($CompilerPath -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/](14[.][0-9]+)[.][^\\/]+[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$') {
         throw 'The runtime source must be bound to the selected MSVC x64 compiler.'

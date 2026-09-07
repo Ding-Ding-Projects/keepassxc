@@ -38,6 +38,10 @@ or different executable bytes, and a package missing a runtime DLL is rejected.
 ## App-local Microsoft compiler runtime
 
 The selected MSVC x64 compiler determines the permitted Visual Studio installation.
+When `cl.exe` is already discoverable but its include paths, library paths, or
+runtime source are absent or inconsistent, the builder imports that exact toolset's
+`vcvars64.bat` before configuration and rechecks the selected compiler. Invalid
+MSVC environment values are reset only in the current build process.
 `VCToolsRedistDir`, exported by its `vcvars64.bat`, must remain below that installation's
 `VC/Redist/MSVC` directory. The build copies the x64 `Microsoft.VC143.CRT` DLL set
 beside `KeePassXC.exe`, including the MSVCP helpers, VCRUNTIME helpers, and concurrency
