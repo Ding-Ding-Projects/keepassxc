@@ -3127,6 +3127,13 @@ MainWindowEventFilter::MainWindowEventFilter(QObject* parent)
     });
 }
 
+bool MainWindowEventFilter::suppressLegacyWindowMove(QEvent::Type eventType,
+                                                     bool materialShellActive,
+                                                     bool legacyMovementSurface)
+{
+    return eventType == QEvent::MouseButtonPress && materialShellActive && legacyMovementSurface;
+}
+
 /**
  * MainWindow event filter to initiate empty-area drag on the toolbar, menubar, and tabbar.
  * Also shows menubar with Alt when menubar itself is hidden.
@@ -3138,11 +3145,13 @@ bool MainWindowEventFilter::eventFilter(QObject* watched, QEvent* event)
         return QObject::eventFilter(watched, event);
     }
 
-    // The Material shell owns the whole visible surface. Its title bar is
-    // classified by the native hit test, while its tabs and content own their
-    // pointer drags. Letting the legacy empty-area filter see these events can
-    // turn an ordinary content drag into a window move.
-    if (Material::Shell::instance()) {
+    // The Material shell owns pointer presses on the visible surface. Its
+    // title bar is classified by the native hit test, while its tabs and
+    // content own their pointer drags. Keep keyboard releases below intact:
+    // they still drive Alt menu access and the Windows AltGr cooldown.
+    const bool legacyMovementSurface = watched == mainWindow->m_ui->menubar || watched == mainWindow->m_ui->toolBar
+                                       || watched == mainWindow->m_ui->tabWidget->tabBar();
+    if (suppressLegacyWindowMove(event->type(), Material::Shell::instance(), legacyMovementSurface)) {
         return QObject::eventFilter(watched, event);
     }
 

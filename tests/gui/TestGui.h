@@ -73,6 +73,7 @@ private slots:
     void testTrayRestoreHide();
     void testShortcutConfig();
     void testMenuActionStates();
+    void testMaterialPointerOwnershipKeepsAltMenuAccess();
     void testDeleteEntryDuringModalDialog();
 
 private:

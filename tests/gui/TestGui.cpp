@@ -63,6 +63,7 @@
 #include "gui/entry/EntryView.h"
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialShell.h"
 #include "gui/passkeys/PasskeyImportDialog.h"
 #include "gui/group/EditGroupWidget.h"
 #include "gui/group/GroupModel.h"
@@ -2610,6 +2611,24 @@ void TestGui::testMenuActionStates()
     QVERIFY(isActionEnabled("actionImport"));
     QVERIFY(isActionEnabled("actionSettings"));
     QVERIFY(isActionEnabled("actionPasswordGenerator"));
+}
+
+void TestGui::testMaterialPointerOwnershipKeepsAltMenuAccess()
+{
+    QVERIFY(Material::Shell::instance());
+    QVERIFY(MainWindowEventFilter::suppressLegacyWindowMove(QEvent::MouseButtonPress, true, true));
+    QVERIFY(!MainWindowEventFilter::suppressLegacyWindowMove(QEvent::MouseButtonPress, true, false));
+    QVERIFY(!MainWindowEventFilter::suppressLegacyWindowMove(QEvent::KeyRelease, true, true));
+
+    auto* menuBar = m_mainWindow->menuBar();
+    QVERIFY(menuBar);
+    config()->set(Config::GUI_HideMenubar, true);
+    menuBar->setMaximumHeight(0);
+
+    MainWindowEventFilter filter(m_mainWindow.data());
+    QKeyEvent altRelease(QEvent::KeyRelease, Qt::Key_Alt, Qt::NoModifier);
+    QVERIFY(filter.eventFilter(m_mainWindow.data(), &altRelease));
+    QTRY_VERIFY(menuBar->maximumHeight() > 0);
 }
 
 void TestGui::testDeleteEntryDuringModalDialog()

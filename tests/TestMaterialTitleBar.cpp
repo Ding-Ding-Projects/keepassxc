@@ -138,8 +138,7 @@ void TestMaterialTitleBar::nativeHitTestKeepsControlsAndClientContentInteractive
     const auto hitTest = [&window, &titleBar](const QPoint& local) {
         return titleBar.isCaptionArea(titleBar.mapFrom(&window, local));
     };
-    const auto nativeHit = [&window, &hitTest](const QPoint& local, qintptr* result) {
-        const QPoint global = window.mapToGlobal(local);
+    const auto nativeHit = [&window, &hitTest](const QPoint& global, qintptr* result) {
         MSG message{};
         message.hwnd = reinterpret_cast<HWND>(window.winId());
         message.message = WM_NCHITTEST;
@@ -148,11 +147,32 @@ void TestMaterialTitleBar::nativeHitTestKeepsControlsAndClientContentInteractive
     };
 
     qintptr result = 0;
-    QVERIFY(nativeHit(QPoint(48, 24), &result));
+    QVERIFY(nativeHit(window.mapToGlobal(QPoint(48, 24)), &result));
     QCOMPARE(result, qintptr(HTCAPTION));
-    QVERIFY(nativeHit(QPoint(titleBar.closeButton()->geometry().center().x(), 24), &result));
+    for (QAbstractButton* button : {titleBar.minimizeButton(), titleBar.maximizeButton(), titleBar.closeButton()}) {
+        QVERIFY(nativeHit(window.mapToGlobal(button->geometry().center()), &result));
+        QCOMPARE(result, qintptr(HTCLIENT));
+    }
+    QVERIFY(nativeHit(window.mapToGlobal(QPoint(160, TitleBar::Height + 48)), &result));
     QCOMPARE(result, qintptr(HTCLIENT));
-    QVERIFY(nativeHit(QPoint(160, TitleBar::Height + 48), &result));
-    QCOMPARE(result, qintptr(HTCLIENT));
+
+    RECT bounds{};
+    QVERIFY(::GetWindowRect(reinterpret_cast<HWND>(window.winId()), &bounds));
+    const int middleX = (bounds.left + bounds.right) / 2;
+    const int middleY = (bounds.top + bounds.bottom) / 2;
+    const QList<QPair<QPoint, qintptr>> resizeCases{
+        {{bounds.left + 1, middleY}, HTLEFT},
+        {{bounds.right - 1, middleY}, HTRIGHT},
+        {{middleX, bounds.top + 1}, HTTOP},
+        {{middleX, bounds.bottom - 1}, HTBOTTOM},
+        {{bounds.left + 1, bounds.top + 1}, HTTOPLEFT},
+        {{bounds.right - 1, bounds.top + 1}, HTTOPRIGHT},
+        {{bounds.left + 1, bounds.bottom - 1}, HTBOTTOMLEFT},
+        {{bounds.right - 1, bounds.bottom - 1}, HTBOTTOMRIGHT},
+    };
+    for (const auto& resizeCase : resizeCases) {
+        QVERIFY(nativeHit(resizeCase.first, &result));
+        QCOMPARE(result, resizeCase.second);
+    }
 }
 #endif
