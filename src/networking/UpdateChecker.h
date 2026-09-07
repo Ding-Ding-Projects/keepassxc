@@ -18,11 +18,13 @@
 #ifndef KEEPASSXC_UPDATECHECK_H
 #define KEEPASSXC_UPDATECHECK_H
 #include <QObject>
+#include <QPointer>
 #include <QUrl>
 
 #include <functional>
 
 class QNetworkReply;
+class QNetworkAccessManager;
 class QSaveFile;
 class QCryptographicHash;
 class QProcess;
@@ -68,6 +70,7 @@ public:
                                      const QString& workingDirectory);
     static void setRestartLauncherForTests(RestartLauncher launcher);
     static void resetRestartLauncherForTests();
+    void setNetworkAccessManagerForTests(QNetworkAccessManager* manager);
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;
@@ -101,13 +104,16 @@ private slots:
     void fetchReadyRead();
 
 private:
-    QNetworkReply* m_reply;
+    QPointer<QNetworkReply> m_reply;
     bool m_redirectRejected = false;
-    QNetworkReply* m_downloadReply = nullptr;
+    bool m_downloadRedirectRejected = false;
+    QPointer<QNetworkReply> m_downloadReply;
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;
     QProcess* m_applyProcess = nullptr;
+    QPointer<QNetworkAccessManager> m_networkManager;
     quint64 m_downloadBytes = 0;
+    quint64 m_manifestGeneration = 0;
     quint64 m_generation = 0;
     QByteArray m_bytesReceived;
     bool m_isManuallyRequested;
@@ -118,6 +124,8 @@ private:
     void setState(State state, Failure failure = Failure::None);
     void finishDownload(quint64 generation);
     void failDownload(Failure failure);
+    void failCheck(Failure failure);
+    QNetworkAccessManager* networkManager() const;
 
     static UpdateChecker* m_instance;
     static RestartLauncher m_restartLauncher;

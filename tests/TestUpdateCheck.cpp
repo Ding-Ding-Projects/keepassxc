@@ -21,13 +21,116 @@
 
 #include <QTest>
 #include <QCryptographicHash>
+#include <QCoreApplication>
+#include <QEvent>
 #include <QFile>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QPointer>
 #include <QTemporaryDir>
+
+#include <algorithm>
+#include <cstring>
 
 #include <../minizip/zip.h>
 
 namespace
 {
+    class ControlledReply final : public QNetworkReply
+    {
+    public:
+        explicit ControlledReply(const QNetworkRequest& request, QObject* parent)
+            : QNetworkReply(parent)
+        {
+            setRequest(request);
+            setUrl(request.url());
+            open(QIODevice::ReadOnly | QIODevice::Unbuffered);
+        }
+
+        void complete(const QByteArray& body = {})
+        {
+            if (m_finished) {
+                return;
+            }
+            m_finished = true;
+            m_body = body;
+            emit readyRead();
+            emit finished();
+        }
+
+        void redirectTo(const QUrl& target)
+        {
+            emit redirected(target);
+        }
+
+        void abort() override
+        {
+            if (m_finished) {
+                return;
+            }
+            m_finished = true;
+            setError(QNetworkReply::OperationCanceledError, QStringLiteral("aborted by test reply"));
+            emit finished();
+        }
+
+    protected:
+        qint64 readData(char* data, qint64 maxSize) override
+        {
+            const qint64 remaining = m_body.size() - m_position;
+            const qint64 count = qMin(maxSize, remaining);
+            if (count <= 0) {
+                return -1;
+            }
+            memcpy(data, m_body.constData() + m_position, size_t(count));
+            m_position += count;
+            return count;
+        }
+
+    private:
+        QByteArray m_body;
+        qint64 m_position = 0;
+        bool m_finished = false;
+    };
+
+    class ControlledNetworkAccessManager final : public QNetworkAccessManager
+    {
+    public:
+        QVector<QPointer<ControlledReply>> replies;
+
+        int liveReplyCount() const
+        {
+            return std::count_if(replies.cbegin(), replies.cend(), [](const auto& reply) { return !reply.isNull(); });
+        }
+
+    protected:
+        QNetworkReply* createRequest(Operation operation, const QNetworkRequest& request, QIODevice* outgoingData) override
+        {
+            Q_UNUSED(operation)
+            Q_UNUSED(outgoingData)
+            auto* reply = new ControlledReply(request, this);
+            replies.append(reply);
+            return reply;
+        }
+    };
+
+    QByteArray availableManifest()
+    {
+        return R"({
+            "schemaVersion": 1,
+            "packageId": "KeePassXC.Material",
+            "architecture": "x64",
+            "version": "999.0.0",
+            "notesUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v999.0.0",
+            "packageUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v999.0.0/KeePassXC.Material-999.0.0-full.nupkg",
+            "packageFile": "KeePassXC.Material-999.0.0-full.nupkg",
+            "bytes": 1,
+            "sha256": "35b271ebbf16fad19c43afb0861408b0ef09b3cba281fa73c60629365aa843f7",
+            "releasesSha1": "0123456789abcdef0123456789abcdef01234567",
+            "executableSha256": "8a291e5160cc6e31c5a8aa49f20c8f214529be8790f204fcfcd84beea1c52a1a"
+        })";
+    }
+
     bool addZipEntry(zipFile archive, const QByteArray& name, const QByteArray& data)
     {
         if (zipOpenNewFileInZip64(archive, name.constData(), nullptr, nullptr, 0, nullptr, 0, nullptr,
@@ -103,9 +206,20 @@ void TestUpdateCheck::testStateTransitions()
     QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Restarting));
     QVERIFY(UpdateChecker::transitionAllowed(State::Deferred, State::Restarting));
     QVERIFY(UpdateChecker::transitionAllowed(State::Failed, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::NoUpdate, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Deferred, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Applying));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::ReadyToRestart));
     QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Downloading));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Available, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Verifying, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Applying, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Restarting, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Disabled, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::NotSquirrelInstalled, State::Checking));
 }
 
 void TestUpdateCheck::testManifestContract()
@@ -236,4 +350,108 @@ void TestUpdateCheck::testRestartCommandContract()
                                            workingDirectory));
     QVERIFY(QFile::remove(updater.fileName()));
     QVERIFY(!UpdateChecker::restartCommand(appDirectory, program, arguments, workingDirectory));
+}
+
+void TestUpdateCheck::testConcurrentCheckKeepsDownloadActive()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+
+    checker.downloadAvailableUpdate();
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Downloading);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Downloading);
+
+    checker.cancelDownload();
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Cancelled);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(manager.liveReplyCount(), 0);
+}
+
+void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+
+    checker.downloadAvailableUpdate();
+    QCOMPARE(manager.replies.size(), 2);
+    manager.replies.at(1)->redirectTo(QUrl(QStringLiteral("https://example.com/unsafe.nupkg")));
+
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::RedirectRejected);
+    QVERIFY(!UpdateChecker::describeFailure(checker.failure()).isEmpty());
+}
+
+void TestUpdateCheck::testDestroyedNetworkManagerClearsActiveReplies()
+{
+    UpdateChecker checker;
+    auto* manager = new ControlledNetworkAccessManager;
+    checker.setNetworkAccessManagerForTests(manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager->replies.size(), 1);
+    delete manager;
+
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Offline);
+
+    auto* retryManager = new ControlledNetworkAccessManager;
+    checker.setNetworkAccessManagerForTests(retryManager);
+    checker.checkForUpdates(true);
+    QCOMPARE(retryManager->replies.size(), 1);
+    delete retryManager;
+
+    auto* downloadManager = new ControlledNetworkAccessManager;
+    UpdateChecker downloading;
+    downloading.setNetworkAccessManagerForTests(downloadManager);
+    downloading.checkForUpdates(true);
+    QCOMPARE(downloadManager->replies.size(), 1);
+    downloadManager->replies.at(0)->complete(availableManifest());
+    downloading.downloadAvailableUpdate();
+    QCOMPARE(downloadManager->replies.size(), 2);
+    delete downloadManager;
+
+    QCOMPARE(downloading.state(), UpdateChecker::State::Failed);
+    QCOMPARE(downloading.failure(), UpdateChecker::Failure::Offline);
+}
+
+void TestUpdateCheck::testDeferredManifestDeletionDoesNotFailReplacementCheck()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+    connect(&checker, &UpdateChecker::updateCheckFinished, &checker, [&checker, &manager] {
+        if (manager.replies.size() == 1) {
+            checker.checkForUpdates(true);
+        }
+    });
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+
+    manager.replies.at(1)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
 }
