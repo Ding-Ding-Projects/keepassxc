@@ -9,8 +9,8 @@ param(
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
-$build = [IO.Path]::GetFullPath((Join-Path $root $BuildDirectory))
-$stage = [IO.Path]::GetFullPath((Join-Path $root $InstallDirectory))
+$build = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted($BuildDirectory)) { $BuildDirectory } else { Join-Path $root $BuildDirectory }))
+$stage = [IO.Path]::GetFullPath($(if ([IO.Path]::IsPathRooted($InstallDirectory)) { $InstallDirectory } else { Join-Path $root $InstallDirectory }))
 $started = Get-Date
 function Phase([string]$Message) { if (-not $Silent) { Write-Host "[build] $Message" } }
 function Invoke-Native([string]$File, [string[]]$Arguments) { & $File @Arguments; if ($LASTEXITCODE -ne 0) { throw "$File exited with $LASTEXITCODE." } }
