@@ -30,6 +30,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSignalSpy>
+#include <QScopeGuard>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QTest>
@@ -39,11 +40,13 @@
 #include "core/PasswordHealth.h"
 #include "core/EntryAttributes.h"
 #include "core/Tools.h"
+#include "core/Totp.h"
 #include "crypto/Crypto.h"
 #include "gui/ActionCollection.h"
 #include "gui/ApplicationSettingsWidget.h"
 #include "gui/CategoryListWidget.h"
 #include "gui/CloneDialog.h"
+#include "gui/Clipboard.h"
 #include "gui/DatabaseTabWidget.h"
 #include "gui/EntryPreviewWidget.h"
 #include "gui/FileDialog.h"
@@ -63,6 +66,7 @@
 #include "gui/entry/EntryView.h"
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialShell.h"
 #include "gui/passkeys/PasskeyImportDialog.h"
 #include "gui/group/EditGroupWidget.h"
 #include "gui/group/GroupModel.h"
@@ -72,6 +76,7 @@
 #include "gui/wizard/NewDatabaseWizard.h"
 #include "keys/FileKey.h"
 #include "mock/MockRemoteProcess.h"
+#include "mock/MockClock.h"
 
 #define TEST_MODAL_NO_WAIT(TEST_CODE)                                                                                  \
     bool dialogFinished = false;                                                                                       \
@@ -184,6 +189,8 @@ void TestGui::cleanup()
 
 void TestGui::cleanupTestCase()
 {
+    m_mainWindow.reset();
+    QVERIFY(getMainWindow() == nullptr);
     m_dbFile.remove();
 }
 
@@ -1256,6 +1263,143 @@ void TestGui::testTotp()
     qrCodeDialog->setFixedSize(800, 600);
     QVERIFY2(qrCodeWidget->geometry().width() == qrCodeWidget->geometry().height(), "Resized QR code is not square");
     QTest::keyClick(qrCodeDialog, Qt::Key_Escape);
+}
+
+void TestGui::testClipboardCopyOwnership()
+{
+    auto* managed = clipboard();
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 30);
+    managed->setText(QStringLiteral("totp-A"));
+    const auto generation = managed->copyGeneration();
+    QVERIFY(managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    config()->set(Config::Security_ClearClipboardTimeout, 1);
+    QVERIFY(managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    QApplication::clipboard()->setText(QStringLiteral("external-B"));
+    QVERIFY(!managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    managed->setText(QStringLiteral("password-B"));
+    QVERIFY(managed->copyGeneration() != generation);
+    QVERIFY(!managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+    managed->clearCopiedText();
+}
+
+void TestGui::testTotpRefreshOwnership_data()
+{
+    QTest::addColumn<QString>("change");
+    for (const auto* change : {"none", "password", "text", "same-text", "external", "delete", "lock", "replace", "timeout"}) {
+        QTest::newRow(change) << QString::fromLatin1(change);
+    }
+}
+
+void TestGui::testTotpRefreshOwnership()
+{
+    QFETCH(QString, change);
+    auto* fixedClock = new MockClock(2020, 1, 1, 0, 0, 5);
+    MockClock::setup(fixedClock);
+    const auto restoreClock = qScopeGuard([] { MockClock::teardown(); });
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 60);
+    config()->set(Config::Security_EnableCopyOnDoubleClick, true);
+    auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
+    QVERIFY(entryView);
+    auto* entry = entryView->entryFromIndex(entryView->model()->index(0, 0));
+    QVERIFY(entry);
+    entry->setTotp(Totp::createSettings("GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQ"));
+    QVERIFY(entry->hasValidTotp());
+    // Exercise the production activation connection and real timer event delivery.
+    emit entryView->entryActivated(entry, EntryModel::Totp);
+    auto* timer = m_dbWidget->findChild<QTimer*>("totpRefreshTimer");
+    QVERIFY(timer);
+    QVERIFY(timer->isActive());
+    const auto originalGeneration = clipboard()->copyGeneration();
+    const auto originalText = QApplication::clipboard()->text();
+    QVERIFY(originalText == entry->totp());
+    auto retainedDatabase = m_db;
+    QScopedPointer<Group> retainedRoot;
+    if (change == "password") {
+        entry->setPassword("fixture-password-B");
+        emit entryView->entryActivated(entry, EntryModel::Password);
+    } else if (change == "text") {
+        clipboard()->setText("fixture-text-B", false);
+    } else if (change == "same-text") {
+        clipboard()->setText(originalText);
+    } else if (change == "external") {
+        QApplication::clipboard()->setText("fixture-external-B");
+    } else if (change == "delete") {
+        delete entry;
+        entry = nullptr;
+    } else if (change == "lock") {
+        m_db->markAsClean();
+        QVERIFY(m_dbWidget->lock());
+        QVERIFY(m_dbWidget->isLocked());
+    } else if (change == "replace") {
+        // Replacement releases the old database's current root even when its
+        // shared pointer survives. Retain the old root explicitly to keep the
+        // timer's entry alive and exercise database identity, not deletion.
+        retainedRoot.reset(m_db->setRootGroup(new Group()));
+        const QPointer<Entry> retainedEntry(entry);
+        auto replacement = QSharedPointer<Database>::create();
+        replacement->setKey(m_db->key());
+        m_dbWidget->replaceDatabase(replacement);
+        QVERIFY(retainedEntry);
+        QVERIFY(entry->database() == retainedDatabase.data());
+        QVERIFY(entry->database() != m_dbWidget->database().data());
+    } else if (change == "timeout") {
+        config()->set(Config::Security_ClearClipboardTimeout, 1);
+    }
+    const auto beforeDelivery = QApplication::clipboard()->text();
+    const auto generationBeforeDelivery = clipboard()->copyGeneration();
+    fixedClock->advanceSecond(30);
+    if (change == "none" || change == "timeout") {
+        QVERIFY(entry->totp() != originalText);
+    }
+    struct TimerDeliveryCounter final : QObject
+    {
+        int count = 0;
+        bool eventFilter(QObject*, QEvent* event) override
+        {
+            if (event->type() == QEvent::Timer) {
+                ++count;
+            }
+            return false;
+        }
+    } delivered;
+    timer->installEventFilter(&delivered);
+    if (change == "lock") {
+        QVERIFY(!timer->isActive());
+        QTest::qWait(20);
+        QCOMPARE(delivered.count, 0);
+    } else {
+        QVERIFY(timer->isActive());
+        timer->setInterval(1);
+        QTRY_VERIFY(!timer->isActive());
+        QCOMPARE(delivered.count, 1);
+    }
+    if (change == "none" || change == "timeout") {
+        QVERIFY(clipboard()->copyGeneration() > originalGeneration);
+        QVERIFY(QApplication::clipboard()->text() == entry->totp());
+    } else {
+        QCOMPARE(clipboard()->copyGeneration(), generationBeforeDelivery);
+        QVERIFY(QApplication::clipboard()->text() == beforeDelivery);
+    }
+    clipboard()->clearCopiedText();
+}
+
+void TestGui::testClipboardTimeoutChange()
+{
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 60);
+    clipboard()->setText("fixture-countdown");
+    QSignalSpy countdown(clipboard(), &Clipboard::updateCountdown);
+    config()->set(Config::Security_ClearClipboardTimeout, 0);
+    QVERIFY(QMetaObject::invokeMethod(clipboard(), "countdownTick", Qt::DirectConnection));
+    QCOMPARE(countdown.count(), 1);
+    QCOMPARE(countdown.first().first().toInt(), 98);
+    QCOMPARE(clipboard()->secondsToClear(), 59);
+    clipboard()->clearCopiedText();
 }
 
 void TestGui::testSearch()
@@ -2610,6 +2754,27 @@ void TestGui::testMenuActionStates()
     QVERIFY(isActionEnabled("actionImport"));
     QVERIFY(isActionEnabled("actionSettings"));
     QVERIFY(isActionEnabled("actionPasswordGenerator"));
+}
+
+void TestGui::testMaterialPointerOwnershipKeepsAltMenuAccess()
+{
+    QVERIFY(Material::Shell::instance());
+    QVERIFY(MainWindowEventFilter::suppressLegacyWindowMove(QEvent::MouseButtonPress, true, true));
+    QVERIFY(!MainWindowEventFilter::suppressLegacyWindowMove(QEvent::MouseButtonPress, true, false));
+    QVERIFY(!MainWindowEventFilter::suppressLegacyWindowMove(QEvent::KeyRelease, true, true));
+
+    auto* menuBar = m_mainWindow->menuBar();
+    QVERIFY(menuBar);
+    config()->set(Config::GUI_HideMenubar, true);
+    menuBar->setMaximumHeight(0);
+
+    // QKeyEvent normalizes modifier-key transitions. Its constructor needs the
+    // state before releasing Alt so modifiers() reports no remaining modifiers.
+    QKeyEvent altRelease(QEvent::KeyRelease, Qt::Key_Alt, Qt::AltModifier);
+    QVERIFY(altRelease.modifiers() == Qt::NoModifier);
+    QVERIFY(getMainWindow() == m_mainWindow.data());
+    QApplication::sendEvent(m_mainWindow.data(), &altRelease);
+    QTRY_VERIFY(menuBar->maximumHeight() > 0);
 }
 
 void TestGui::testDeleteEntryDuringModalDialog()

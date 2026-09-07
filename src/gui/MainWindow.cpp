@@ -617,7 +617,9 @@ MainWindow::MainWindow()
     connect(m_ui->actionUserGuide, SIGNAL(triggered()), SLOT(openUserGuide()));
     connect(m_ui->actionOnlineHelp, SIGNAL(triggered()), SLOT(openOnlineHelp()));
     connect(m_ui->actionKeyboardShortcuts, SIGNAL(triggered()), SLOT(openKeyboardShortcuts()));
-    connect(m_ui->actionAllowScreenCapture, &QAction::toggled, this, &MainWindow::setAllowScreenCapture);
+    connect(m_ui->actionAllowScreenCapture, &QAction::toggled, this, [this](bool allowed) {
+        setAllowScreenCapture(allowed, true);
+    });
 
     connect(osUtils, &OSUtilsBase::statusbarThemeChanged, this, &MainWindow::updateTrayIcon);
 
@@ -1252,6 +1254,13 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+    // Release native focus and active menus while callbacks can still use m_ui.
+    // QWidget's base destructor would otherwise hide us after members are gone.
+    hide();
+    // Child removal events can still reach filters after our UI member dies.
+    if (g_MainWindow == this) {
+        g_MainWindow = nullptr;
+    }
 #ifdef KPXC_FEATURE_SSHAGENT
     sshAgent()->removeAllIdentities();
 #endif
@@ -3125,6 +3134,13 @@ MainWindowEventFilter::MainWindowEventFilter(QObject* parent)
     });
 }
 
+bool MainWindowEventFilter::suppressLegacyWindowMove(QEvent::Type eventType,
+                                                     bool materialShellActive,
+                                                     bool legacyMovementSurface)
+{
+    return eventType == QEvent::MouseButtonPress && materialShellActive && legacyMovementSurface;
+}
+
 /**
  * MainWindow event filter to initiate empty-area drag on the toolbar, menubar, and tabbar.
  * Also shows menubar with Alt when menubar itself is hidden.
@@ -3133,6 +3149,16 @@ bool MainWindowEventFilter::eventFilter(QObject* watched, QEvent* event)
 {
     auto* mainWindow = getMainWindow();
     if (!mainWindow || !mainWindow->m_ui) {
+        return QObject::eventFilter(watched, event);
+    }
+
+    // The Material shell owns pointer presses on the visible surface. Its
+    // title bar is classified by the native hit test, while its tabs and
+    // content own their pointer drags. Keep keyboard releases below intact:
+    // they still drive Alt menu access and the Windows AltGr cooldown.
+    const bool legacyMovementSurface = watched == mainWindow->m_ui->menubar || watched == mainWindow->m_ui->toolBar
+                                       || watched == mainWindow->m_ui->tabWidget->tabBar();
+    if (suppressLegacyWindowMove(event->type(), Material::Shell::instance(), legacyMovementSurface)) {
         return QObject::eventFilter(watched, event);
     }
 
@@ -3175,7 +3201,7 @@ bool MainWindowEventFilter::eventFilter(QObject* watched, QEvent* event)
             auto menubar = mainWindow->m_ui->menubar;
             menubar->setMaximumHeight(menubar->maximumHeight() > 0 ? 0 : QWIDGETSIZE_MAX);
             if (menubar->maximumHeight() > 0) {
-                QTimer::singleShot(0, [menubar, mainWindow] {
+                QTimer::singleShot(0, mainWindow, [menubar, mainWindow] {
                     // Run this with a singleshot timer so it's after menubar->setMaximumHeight() has taken effect,
                     // otherwise it won't be selected and menubarTimer will hide the menubar instantly
                     menubar->setActiveAction(mainWindow->m_ui->menuFile->menuAction());

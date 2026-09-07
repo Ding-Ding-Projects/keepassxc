@@ -47,6 +47,7 @@ Clipboard::Clipboard(QObject* parent)
 
 void Clipboard::setText(const QString& text, bool clear)
 {
+    ++m_copyGeneration;
     if (!osUtils->setClipboardText(text)) {
         auto* clipboard = QApplication::clipboard();
         if (!clipboard) {
@@ -78,6 +79,8 @@ void Clipboard::setText(const QString& text, bool clear)
             int timeout = config()->get(Config::Security_ClearClipboardTimeout).toInt();
             if (timeout > 0) {
                 m_secondsToClear = timeout;
+                m_clearTimeout = timeout;
+                m_clearElapsedTimer.restart();
                 sendCountdownStatus();
                 m_timer->start(1000);
             } else {
@@ -92,9 +95,30 @@ int Clipboard::secondsToClear()
     return m_secondsToClear;
 }
 
+int Clipboard::secondsElapsed()
+{
+    return m_clearElapsedTimer.isValid() ? static_cast<int>(m_clearElapsedTimer.elapsed() / 1000) : 0;
+}
+
+quint64 Clipboard::copyGeneration() const
+{
+    return m_copyGeneration;
+}
+
+bool Clipboard::isManagedCopyCurrent(quint64 generation, const QString& text) const
+{
+    if (generation != m_copyGeneration || m_lastCopied != text || !m_clearElapsedTimer.isValid()) {
+        return false;
+    }
+    auto* systemClipboard = QApplication::clipboard();
+    return systemClipboard && systemClipboard->text(QClipboard::Clipboard) == text;
+}
+
 void Clipboard::clearCopiedText()
 {
+    ++m_copyGeneration;
     m_timer->stop();
+    m_clearElapsedTimer.invalidate();
     emit updateCountdown(-1, "");
 
     auto* clipboard = QApplication::clipboard();
@@ -132,7 +156,7 @@ void Clipboard::countdownTick()
 void Clipboard::sendCountdownStatus()
 {
     emit updateCountdown(
-        100 * m_secondsToClear / config()->get(Config::Security_ClearClipboardTimeout).toInt(),
+        static_cast<int>(100LL * m_secondsToClear / qMax(1, m_clearTimeout)),
         QObject::tr("Clearing the clipboard in %1 second(s)…", "", m_secondsToClear).arg(m_secondsToClear));
 }
 

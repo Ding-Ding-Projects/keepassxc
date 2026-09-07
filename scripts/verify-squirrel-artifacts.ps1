@@ -13,6 +13,7 @@ param(
 
 $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
+. (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
 $securityModule = Join-Path $PSHOME 'Modules\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.psd1'
 if (Test-Path -LiteralPath $securityModule) { Import-Module $securityModule -ErrorAction Stop }
 $dir = [IO.Path]::GetFullPath($ArtifactDirectory)
@@ -48,6 +49,7 @@ $packagedExecutable = $null
 $versionInfo = $null
 $squirrelAwareExecutables = @()
 try {
+    Assert-KpxcPackagedPayload $zip $provenance
     $seen = @{}
     foreach ($item in $zip.Entries) {
         $normalized = $item.FullName.Replace('\','/').ToLowerInvariant()

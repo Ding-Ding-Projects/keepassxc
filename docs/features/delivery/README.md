@@ -9,5 +9,6 @@ Build scripts, the Squirrel.Windows installer, automatic updates and release evi
 | Line count in every release | [line-count-release.md](line-count-release.md) |
 | One-click build and installer scripts | [build-scripts.md](build-scripts.md) |
 | Unsigned Squirrel.Windows installer | [squirrel-installer.md](squirrel-installer.md) |
+| Packaging paths, provenance, and app-local compiler runtime | [packaging-path-safety.md](packaging-path-safety.md) |
 | Front-screen version and updated-at provenance | [in-app-version-provenance.md](in-app-version-provenance.md) |
 | Social preview embed graphic | [social-preview.md](social-preview.md) |

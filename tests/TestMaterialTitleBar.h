@@ -31,6 +31,9 @@ private slots:
     void maximizedStateSwapsTheGlyph();
     void shellHostsTheBarAboveEverything();
     void narrowWidthKeepsEveryButton();
+#ifdef Q_OS_WIN
+    void nativeHitTestKeepsControlsAndClientContentInteractive();
+#endif
 };
 
 #endif // KEEPASSXC_TESTMATERIALTITLEBAR_H

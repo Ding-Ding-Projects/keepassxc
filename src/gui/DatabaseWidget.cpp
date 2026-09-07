@@ -93,11 +93,17 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     , m_databaseOpenWidget(new DatabaseOpenWidget(this))
     , m_groupView(new GroupView(m_db.data(), this))
     , m_tagView(new TagView(this))
+    , m_totpTimer(new QTimer(this))
     , m_saveAttempts(0)
     , m_remoteSettings(new RemoteSettings(m_db, this))
     , m_entrySearcher(new EntrySearcher(false))
 {
     Q_ASSERT(m_db);
+    m_totpTimer->setObjectName(QStringLiteral("totpRefreshTimer"));
+    connect(this, &DatabaseWidget::databaseLockRequested, this, [this] {
+        m_totpTimer->stop();
+        m_totpTimer->disconnect();
+    });
 
     // Read public headers if the database hasn't been opened yet
     if (!m_db->isInitialized()) {
@@ -842,6 +848,19 @@ void DatabaseWidget::setClipboardTextAndMinimize(const QString& text)
     }
 }
 
+void DatabaseWidget::pollToptOrStopAndDisconnect(Entry* entry, quint64 clipboardGeneration, const QString& copiedTotp)
+{
+    if (!entry || entry->database() != m_db.data() || !m_db->isInitialized()
+        || !clipboard()->isManagedCopyCurrent(clipboardGeneration, copiedTotp)) {
+        m_totpTimer->stop();
+        m_totpTimer->disconnect();
+        return;
+    }
+    setClipboardTextAndMinimize(entry->totp());
+    m_totpTimer->stop();
+    disconnect(m_totpTimer);
+}
+
 #ifdef KPXC_FEATURE_SSHAGENT
 void DatabaseWidget::addToAgent()
 {
@@ -1564,9 +1583,16 @@ void DatabaseWidget::entryActivationSignalReceived(Entry* entry, EntryModel::Mod
         break;
     case EntryModel::Totp:
         if (entry->hasValidTotp()) {
-            setClipboardTextAndMinimize(entry->totp());
+            const QString copiedTotp = entry->totp();
+            setClipboardTextAndMinimize(copiedTotp);
+            m_totpTimer->stop();
+            m_totpTimer->disconnect();
+            const QPointer<Entry> guardedEntry(entry);
+            const auto clipboardGeneration = clipboard()->copyGeneration();
             m_totpTimer->start(entry->totpSecondsLeft() * 1000);
-            connect(m_totpTimer, &QTimer::timeout, this, [=]() { this->pollToptOrStopAndDisconnect(entry); });
+            connect(m_totpTimer, &QTimer::timeout, this, [this, guardedEntry, clipboardGeneration, copiedTotp] {
+                pollToptOrStopAndDisconnect(guardedEntry, clipboardGeneration, copiedTotp);
+            });
         } else {
             setupTotp();
         }

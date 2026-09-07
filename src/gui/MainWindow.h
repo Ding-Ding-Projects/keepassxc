@@ -21,6 +21,7 @@
 
 #include <QActionGroup>
 #include <QLabel>
+#include <QEvent>
 #include <QMainWindow>
 #include <QPointer>
 #include <QProgressBar>
@@ -257,6 +258,7 @@ class MainWindowEventFilter : public QObject
 public:
     explicit MainWindowEventFilter(QObject* parent);
     bool eventFilter(QObject* watched, QEvent* event) override;
+    static bool suppressLegacyWindowMove(QEvent::Type eventType, bool materialShellActive, bool legacyMovementSurface);
 
 private:
     QTimer m_menubarTimer;

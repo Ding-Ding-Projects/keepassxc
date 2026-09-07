@@ -11,6 +11,7 @@ private slots:
     void persistenceIdentity();
     void atomicReconciliation();
     void searchableOverflow();
+    void pointerDragRequestsReorder();
 };
 
 #endif

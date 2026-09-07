@@ -171,7 +171,12 @@ void DatabaseOpenWidget::closeDatabase()
 
 void DatabaseOpenWidget::keyPressEvent(QKeyEvent* event)
 {
-    if (event->key() == Qt::Key_Escape) {
+    if ((event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter)
+        && (event->modifiers() == Qt::NoModifier || event->modifiers() == Qt::KeypadModifier)
+        && m_ui->unlockButton->isVisible() && m_ui->unlockButton->isEnabled()) {
+        m_ui->unlockButton->click();
+        event->accept();
+    } else if (event->key() == Qt::Key_Escape) {
         closeDatabase();
     } else {
         DialogyWidget::keyPressEvent(event);

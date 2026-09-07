@@ -54,6 +54,10 @@ private slots:
     void testPasswordEntryEntropy_data();
     void testDicewareEntryEntropy();
     void testTotp();
+    void testClipboardCopyOwnership();
+    void testTotpRefreshOwnership_data();
+    void testTotpRefreshOwnership();
+    void testClipboardTimeoutChange();
     void testSearch();
     void testDeleteEntry();
     void testCloneEntry();
@@ -73,6 +77,7 @@ private slots:
     void testTrayRestoreHide();
     void testShortcutConfig();
     void testMenuActionStates();
+    void testMaterialPointerOwnershipKeepsAltMenuAccess();
     void testDeleteEntryDuringModalDialog();
 
 private:
