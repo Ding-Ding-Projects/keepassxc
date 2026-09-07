@@ -74,7 +74,8 @@ $compilerPath = Initialize-KpxcMsvcEnvironment
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
-Invoke-Native cmake @('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot","-DCMAKE_C_COMPILER=$compilerPath","-DCMAKE_CXX_COMPILER=$compilerPath")
+$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
+Invoke-Native cmake $configureArguments
 if ($WithTests) {
     Phase 'Building the native application and local test targets.'
     Invoke-Native cmake @('--build',$build,'--parallel')

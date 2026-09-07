@@ -26,7 +26,7 @@ The combined candidate `877f4434eea7d8411837b24ede6aaf6126fa4d07` produced genui
 
 The setup signature verdict was `NotSigned`. No delta was generated for this fresh output directory. This package was not installed during these checks. Its version is a local candidate version, not a claim that the final published release uses that number.
 
-Packaging safety passed 52 focused checks, including interrupted-process recovery. An actual warm-cache compiler-path casing change caused CMake to reset without retaining the toolchain configuration. A complete fresh configuration recovered the build; a dedicated wrapper correction remains in progress.
+Packaging safety passed 52 focused checks, including interrupted-process recovery. An actual warm-cache compiler-path casing change caused CMake to reset without retaining the toolchain configuration. A complete fresh configuration recovered the build. The dedicated correction at `cbbd85b9a8d8f0110a16028f2fca8a4102ba9e36` retains equivalent cached compiler spellings only after Win32 file-identity proof. All 55 focused checks passed. A real same-cache configure retained the requested version and toolchain, exited zero, and did not reset the cache.
 
 ## Website
 
