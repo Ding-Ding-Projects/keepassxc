@@ -21,6 +21,7 @@
 
 #include <QActionGroup>
 #include <QLabel>
+#include <QEvent>
 #include <QMainWindow>
 #include <QPointer>
 #include <QProgressBar>
