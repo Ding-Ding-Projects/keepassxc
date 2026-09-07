@@ -8,14 +8,15 @@ const changes=execFileSync('git',['status','--porcelain','--untracked-files=norm
 if(changes)throw Error('Commit website source before producing its versioned build.');
 const version=JSON.parse(readFileSync(new URL('package.json',import.meta.url),'utf8')).version;
 mkdirSync(new URL('dist/',import.meta.url),{recursive:true});
-await build({absWorkingDir:root,entryPoints:['app.js','search-worker.js'],outdir:'dist',bundle:true,format:'esm',target:'es2022',minify:true});
+const bundled=await build({absWorkingDir:root,entryPoints:['app.js','search-worker.js'],outdir:'dist',bundle:true,format:'esm',target:'es2022',minify:true,metafile:true});
 for(const file of ['index.html','styles.css','release.json'])copyFileSync(new URL(file,import.meta.url),new URL('dist/'+file,import.meta.url));
 if(process.env.KPXC_REFRESH_RELEASE==='1')execFileSync(process.execPath,[fileURLToPath(new URL('../scripts/fetch-site-release-data.mjs',import.meta.url)),fileURLToPath(new URL('dist/release.json',import.meta.url))],{cwd:root,stdio:'inherit',timeout:100000});
 copyFileSync(new URL('../social-preview.png',import.meta.url),new URL('dist/social-preview.png',import.meta.url));
 const licenseDirectory=new URL('dist/licenses/',import.meta.url);
 mkdirSync(licenseDirectory,{recursive:true});
 const licenseIndex=[];
-for(const name of ['@material/web','lit','lit-html','lit-element','@lit/reactive-element','@lit-labs/ssr-dom-shim','tslib']){
+const runtimePackages=[...new Set(Object.keys(bundled.metafile.inputs).filter(path=>path.startsWith('node_modules/')).map(path=>{const parts=path.split('/');return parts.slice(1,parts[1].startsWith('@')?3:2).join('/');}))].sort();
+for(const name of runtimePackages){
   const directory=new URL('node_modules/'+name+'/',import.meta.url);
   const files=readdirSync(directory).filter(file=>/^(?:licen[sc]e|notice)(?:[._-].*)?$/i.test(file));
   if(!files.length)throw Error('Missing runtime license: '+name);
