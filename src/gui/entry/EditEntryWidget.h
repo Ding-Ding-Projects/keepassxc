@@ -170,7 +170,6 @@ private:
 
     void setForms(Entry* entry, bool restore = false);
     QMenu* createPresetsMenu();
-    QMenu* createExtendByMenu();
     void updateEntryData(Entry* entry) const;
     void updateBrowserIntegrationToggle(QAbstractButton* toggle, bool enabled, bool value, const QString& option);
 #ifdef KPXC_FEATURE_SSHAGENT
@@ -183,9 +182,6 @@ private:
 
     QPointer<Entry> m_entry;
     QSharedPointer<Database> m_db;
-
-    std::tuple<unsigned, TimeDelta> m_extensionOnPwUpdate;
-    qint64 m_daysRandomizeExtension;
 
     bool m_create;
     bool m_history;
