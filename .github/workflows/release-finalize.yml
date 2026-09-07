@@ -17,10 +17,8 @@ jobs:
     runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
-      - name: Checkout the completed run's source
+      - name: Checkout the committed finalizer from the default jer
         uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event.workflow_run.head_sha }}
 
       - name: Finalize exact publication timing and latest release
         env:
