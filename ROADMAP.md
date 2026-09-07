@@ -1,5 +1,12 @@
 # Roadmap
 
+## Repair and release verification
+
+- [x] Validate website release metadata against published package and build provenance, including BOM and malformed-input regressions.
+- [ ] Render verified downloads and provenance in the website and refresh them during publication.
+- [ ] Verify the repaired Windows build, window/content dragging, and installed automatic update lifecycle.
+- [ ] Complete the per-surface inventory and real runtime evidence before declaring release-grade completion.
+
 ## Windows-only foundation
 
 - [x] Rename the fork default branch to `main` without changing upstream or Transifex resource names.

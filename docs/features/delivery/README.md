@@ -11,3 +11,4 @@ Build scripts, the Squirrel.Windows installer, automatic updates and release evi
 | Unsigned Squirrel.Windows installer | [squirrel-installer.md](squirrel-installer.md) |
 | Front-screen version and updated-at provenance | [in-app-version-provenance.md](in-app-version-provenance.md) |
 | Social preview embed graphic | [social-preview.md](social-preview.md) |
+| Website download and build provenance | [website-release-provenance.md](website-release-provenance.md) |
