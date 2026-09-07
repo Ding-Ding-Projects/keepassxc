@@ -52,6 +52,8 @@ Check 'prefix siblings remain distinct' { Assert-KpxcBuildPaths $repo @($output,
 Check 'device paths are rejected' { Reject { Resolve-KpxcDirectory $repo '\\?\C:\unsafe' } }
 Check 'drive-relative paths are rejected' { Reject { Resolve-KpxcDirectory $repo 'C:unsafe' } }
 Check 'alternate streams are rejected' { Reject { Resolve-KpxcDirectory $repo ($output + ':stream') } }
+Check 'short-name aliases cannot hide a protected ancestor' { Reject { Resolve-KpxcDirectory $repo 'C:\SOURCE~1\output' } }
+Check 'trailing-dot and reserved-name aliases are rejected' { Reject { Resolve-KpxcDirectory $repo ($output + '.') }; Reject { Resolve-KpxcDirectory $repo (Join-Path $testRoot 'NUL') } }
 $sentinel = Join-Path $output 'unrelated.txt'
 [IO.File]::WriteAllText($sentinel,'preserve this unrelated output')
 $sentinelHash = Get-KpxcHash $sentinel
@@ -72,16 +74,49 @@ Check 'injected preparation copy failure preserves previous output' {
 }
 [IO.File]::WriteAllText((Join-Path $candidate 'Setup.exe'),'new setup fixture')
 Check 'injected publication move failure restores previous output' {
-    function Move-Item {
-        param([string]$LiteralPath,[string]$Destination,[string]$ErrorAction)
-        if ([IO.Path]::GetFileName($LiteralPath) -eq 'Setup.exe') { throw 'Injected publication failure.' }
-        Microsoft.PowerShell.Management\Move-Item @PSBoundParameters
-    }
-    try { Reject { Publish-KpxcOutput $repo $candidate $output } } finally { Remove-Item Function:Move-Item }
+    Reject { Publish-KpxcOutput $repo $candidate $output {throw 'Injected failure after preserving the old generation.'} }
     Require ((Get-KpxcHash (Join-Path $output 'Setup.exe')) -eq $original)
     Assert-KpxcOutputOwnership $repo $output
 }
 Check 'verified owned output can be replaced' { Publish-KpxcOutput $repo $candidate $output; Assert-KpxcOutputOwnership $repo $output; Require ((Get-KpxcHash (Join-Path $output 'Setup.exe')) -eq (Get-KpxcHash (Join-Path $candidate 'Setup.exe'))) }
+$previousOutputHash=Get-KpxcHash (Join-Path $output 'Setup.exe')
+[IO.File]::WriteAllText((Join-Path $candidate 'Setup.exe'),'interrupted publication fixture')
+$childScript=Join-Path $testRoot 'interrupt-publication.ps1'
+@'
+param($Helper,$Root,$Candidate,$Output)
+$ErrorActionPreference='Stop'
+. $Helper
+Publish-KpxcOutput $Root $Candidate $Output {[Environment]::Exit(86)}
+'@ | Set-Content -LiteralPath $childScript
+Check 'abrupt process exit is recovered from the durable release journal' {
+    & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $childScript (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $repo $candidate $output
+    Require ($LASTEXITCODE -eq 86)
+    $journalPath=Get-KpxcTransactionPath $output
+    $journal=Get-Content -Raw -LiteralPath $journalPath | ConvertFrom-Json
+    $backup=Join-Path (Split-Path -Parent $output) ('.keepassxc-previous-' + (Split-Path -Leaf $output) + '-' + $journal.id)
+    Require ((Get-KpxcHash (Join-Path $backup 'Setup.exe')) -eq $previousOutputHash)
+    Repair-KpxcDirectoryPublication $repo $output
+    Assert-KpxcOutputOwnership $repo $output
+    Require ((Get-KpxcHash (Join-Path $output 'Setup.exe')) -eq (Get-KpxcHash (Join-Path $candidate 'Setup.exe')))
+    Require (-not (Test-Path -LiteralPath $journalPath))
+    Require ((Get-KpxcHash (Join-Path $backup 'Setup.exe')) -eq $previousOutputHash)
+}
+Check 'recovery restores the verified previous output when the new generation is unavailable' {
+    $before=Get-KpxcHash (Join-Path $output 'Setup.exe')
+    [IO.File]::WriteAllText((Join-Path $candidate 'Setup.exe'),'unavailable new generation')
+    & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $childScript (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $repo $candidate $output
+    Require ($LASTEXITCODE -eq 86)
+    $journalPath=Get-KpxcTransactionPath $output
+    $journal=Get-Content -Raw -LiteralPath $journalPath | ConvertFrom-Json
+    $prepared=Join-Path $testRoot ('.keepassxc-candidate-' + (Split-Path -Leaf $output) + '-' + $journal.id)
+    $retained=Join-Path $testRoot ('retained-unavailable-' + $journal.id)
+    Require ((Test-KpxcContains $testRoot $prepared) -and (Test-KpxcContains $testRoot $retained))
+    [IO.Directory]::Move($prepared,$retained)
+    Repair-KpxcDirectoryPublication $repo $output
+    Assert-KpxcOutputOwnership $repo $output
+    Require ((Get-KpxcHash (Join-Path $output 'Setup.exe')) -eq $before)
+    Require (-not (Test-Path -LiteralPath $journalPath))
+}
 $preserved = Get-KpxcHash (Join-Path $output 'Setup.exe')
 Check 'silent copy corruption is rejected before replacing prior output' {
     function Copy-Item {
@@ -124,6 +159,51 @@ $bytes[68]=0x4c;$bytes[69]=0x01;[IO.File]::WriteAllBytes($pe,$bytes)
 Check 'x86 architecture header is rejected' { Reject { Assert-KpxcPeX64 $pe } }
 [IO.File]::WriteAllText($pe,'not an executable')
 Check 'malformed PE header is rejected' { Reject { Assert-KpxcPeX64 $pe } }
+$transactionStage=Join-Path $testRoot 'transaction-stage'
+New-Item -ItemType Directory -Path $transactionStage | Out-Null
+[IO.File]::WriteAllText((Join-Path $transactionStage 'application.bin'),'previous application')
+[IO.File]::WriteAllText((Join-Path $transactionStage '.keepassxc-stage-provenance.json'),'previous receipt')
+$originalStage=@(Get-KpxcTreeManifest $transactionStage)
+foreach($failurePhase in @('install','runtime','receipt')) {
+    Check "failed stage $failurePhase preserves the original application and receipt" {
+        Reject {
+            Publish-KpxcStageGeneration -Root $repo -Stage $transactionStage -ValidateExisting {} -Validate {} -Install {param($path)
+                [IO.File]::WriteAllText((Join-Path $path 'application.bin'),'candidate application')
+                if($failurePhase -eq 'install'){throw 'Injected install failure.'}
+            } -Runtime {param($path)
+                [IO.File]::WriteAllText((Join-Path $path 'runtime.bin'),'candidate runtime')
+                if($failurePhase -eq 'runtime'){throw 'Injected runtime failure.'}
+            } -Receipt {param($path)
+                [IO.File]::WriteAllText((Join-Path $path '.keepassxc-stage-provenance.json'),'candidate receipt')
+                if($failurePhase -eq 'receipt'){throw 'Injected receipt failure.'}
+            }
+        }
+        Require (Test-KpxcTreeManifest $transactionStage $originalStage)
+    }
+}
+$stageChild=Join-Path $testRoot 'interrupt-stage.ps1'
+@'
+param($Helper,$Root,$Stage)
+$ErrorActionPreference='Stop'
+. $Helper
+Publish-KpxcStageGeneration -Root $Root -Stage $Stage -ValidateExisting {} -Validate {} -Install {param($p)
+    [IO.File]::WriteAllText((Join-Path $p 'application.bin'),'complete new application')
+} -Runtime {param($p)
+    New-Item -ItemType Directory -Path (Join-Path $p 'plugins') | Out-Null
+    [IO.File]::WriteAllText((Join-Path $p 'plugins/runtime.bin'),'complete new runtime')
+} -Receipt {param($p)
+    [IO.File]::WriteAllText((Join-Path $p '.keepassxc-stage-provenance.json'),'complete new receipt')
+} -AfterFirstRename {[Environment]::Exit(87)}
+'@ | Set-Content -LiteralPath $stageChild
+Check 'abrupt stage publication recovers application and receipt as one generation' {
+    & (Join-Path $PSHOME 'pwsh.exe') -NoProfile -File $stageChild (Join-Path $PSScriptRoot '..\scripts\PackagingSafety.ps1') $repo $transactionStage
+    Require ($LASTEXITCODE -eq 87)
+    Repair-KpxcDirectoryPublication $repo $transactionStage
+    Require ([IO.File]::ReadAllText((Join-Path $transactionStage 'application.bin')) -eq 'complete new application')
+    Require ([IO.File]::ReadAllText((Join-Path $transactionStage '.keepassxc-stage-provenance.json')) -eq 'complete new receipt')
+    Require (Test-Path -LiteralPath (Join-Path $transactionStage 'plugins/runtime.bin'))
+    Require (-not (Test-Path -LiteralPath (Get-KpxcTransactionPath $transactionStage)))
+}
 if ($CompilerPath -and $RedistDirectory) {
     $runtimeStage=Join-Path $testRoot 'runtime-stage'
     New-Item -ItemType Directory -Path $runtimeStage | Out-Null
@@ -132,10 +212,13 @@ if ($CompilerPath -and $RedistDirectory) {
     Check 'a fabricated compiler path cannot authorize runtime staging' { Reject { Copy-KpxcMsvcRuntime $runtimeStage (Join-Path $testRoot 'VC\Tools\MSVC\14.44.35207\bin\Hostx64\x64\cl.exe') $RedistDirectory } }
     if ($StageExePath -and $StageCommit) {
         Copy-Item -LiteralPath $StageExePath -Destination (Join-Path $runtimeStage 'KeePassXC.exe')
-        $receipt=@{schemaVersion=1;sourceCommit=$StageCommit;compiledHead=$StageCommit.Substring(0,7);version='2.8.0';architecture='x64';stageDirectory=$runtimeStage;executableSha256=(Get-KpxcHash (Join-Path $runtimeStage 'KeePassXC.exe'));msvcRuntime=$script:runtime;files=@(Get-KpxcDirectoryFiles $runtimeStage | ForEach-Object { @{path=$_.Name;sha256=(Get-KpxcHash $_.FullName)} })}
+        $receipt=@{schemaVersion=1;sourceCommit=$StageCommit;compiledHead=$StageCommit.Substring(0,7);version='2.8.0';architecture='x64';stageDirectory=$runtimeStage;ownerKey=(Get-KpxcOwnerKey $repo $runtimeStage);executableSha256=(Get-KpxcHash (Join-Path $runtimeStage 'KeePassXC.exe'));msvcRuntime=$script:runtime;files=@(Get-KpxcDirectoryFiles $runtimeStage | ForEach-Object { @{path=$_.Name;sha256=(Get-KpxcHash $_.FullName)} })}
         $receiptPath=Join-Path $testRoot 'stage-fixture-receipt.json'
         $receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $receiptPath
         Check 'real executable version and source identity match fixture receipt' { Assert-KpxcStageReceipt $runtimeStage $receiptPath $StageCommit '2.8.0' | Out-Null }
+        $canonicalReceipt=Join-Path $runtimeStage '.keepassxc-stage-provenance.json'
+        $receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $canonicalReceipt
+        Check 'canonical stage receipt is validated with the application generation' { Assert-KpxcStageOwnership $repo $runtimeStage $null }
         Check 'another requested version is rejected before packaging' { Reject { Assert-KpxcStageReceipt $runtimeStage $receiptPath $StageCommit '2.8.1' } }
         Check 'another source commit is rejected before packaging' { Reject { Assert-KpxcStageReceipt $runtimeStage $receiptPath ('0' * 40) '2.8.0' } }
         [IO.File]::WriteAllText((Join-Path $runtimeStage 'unrelated.txt'),'unexpected stage content')
@@ -148,7 +231,7 @@ if ($CompilerPath -and $RedistDirectory) {
         $package=Join-Path $testRoot 'payload-fixture.zip'
         $archive=[IO.Compression.ZipFile]::Open($package,[IO.Compression.ZipArchiveMode]::Create)
         try {
-            foreach ($file in Get-ChildItem -LiteralPath $runtimeStage -File) {
+            foreach ($file in Get-ChildItem -LiteralPath $runtimeStage -File | Where-Object { $_.Name -ne '.keepassxc-stage-provenance.json' }) {
                 [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$file.FullName,('lib/net45/'+$file.Name)) | Out-Null
             }
         } finally { $archive.Dispose() }
@@ -163,7 +246,13 @@ if ($CompilerPath -and $RedistDirectory) {
             try { Reject { Assert-KpxcPackagedPayload $archive $wrong } } finally { $archive.Dispose() }
         }
         $archive=[IO.Compression.ZipFile]::Open($package,[IO.Compression.ZipArchiveMode]::Update)
-        try { $archive.GetEntry('lib/net45/msvcp140.dll').Delete() } finally { $archive.Dispose() }
+        try { [IO.Compression.ZipFileExtensions]::CreateEntryFromFile($archive,$canonicalReceipt,'lib/net45/.keepassxc-stage-provenance.json') | Out-Null } finally { $archive.Dispose() }
+        Check 'private stage provenance is rejected if accidentally packaged' {
+            $archive=[IO.Compression.ZipFile]::OpenRead($package)
+            try { Reject { Assert-KpxcPackagedPayload $archive $payload } } finally { $archive.Dispose() }
+        }
+        $archive=[IO.Compression.ZipFile]::Open($package,[IO.Compression.ZipArchiveMode]::Update)
+        try { $archive.GetEntry('lib/net45/.keepassxc-stage-provenance.json').Delete(); $archive.GetEntry('lib/net45/msvcp140.dll').Delete() } finally { $archive.Dispose() }
         Check 'a missing packaged compiler runtime is rejected' {
             $archive=[IO.Compression.ZipFile]::OpenRead($package)
             try { Reject { Assert-KpxcPackagedPayload $archive $payload } } finally { $archive.Dispose() }

@@ -7,6 +7,9 @@ function Resolve-KpxcDirectory([string]$Root, [string]$Path) {
     if ([string]::IsNullOrWhiteSpace($Path)) { throw 'An output directory is required.' }
     if ([IO.Path]::IsPathRooted($Path) -and $Path -notmatch '^[A-Za-z]:[\\/]') { throw 'Use a fully qualified local drive path, not a device, network, or drive-relative path.' }
     if (-not [IO.Path]::IsPathRooted($Path)) { $Path = Join-Path $Root $Path }
+    foreach ($segment in $Path.Substring(3).Split([char[]]'\/')) {
+        if ($segment -notin @('.','..') -and $segment -match '[. ]$|~[0-9]+(?:[.].*)?$|^(?i:con|prn|aux|nul|com[1-9]|lpt[1-9])(?:[.]|$)') { throw 'Ambiguous Windows path aliases and reserved names are not build directories.' }
+    }
     $resolved = [IO.Path]::GetFullPath($Path)
     if ($resolved.Substring(2).Contains(':')) { throw 'Alternate data streams are not build directories.' }
     if ($resolved -eq [IO.Path]::GetPathRoot($resolved)) { throw 'A filesystem root is not a build directory.' }
@@ -104,76 +107,184 @@ function Assert-KpxcOutputOwnership([string]$Root, [string]$Directory) {
     if ($expected.Count) { throw 'Owned release output is incomplete; it was preserved.' }
 }
 
-function Publish-KpxcOutput([string]$Root, [string]$Candidate, [string]$Directory) {
-    $Candidate = Resolve-KpxcDirectory $Root $Candidate
-    $Directory = Resolve-KpxcDirectory $Root $Directory
-    Assert-KpxcBuildPaths $Root @($Candidate, $Directory)
-    Assert-KpxcOutputOwnership $Root $Directory
-    $newFiles = @(Get-KpxcDirectoryFiles $Candidate)
-    if (-not $newFiles.Count -or @(Get-ChildItem -LiteralPath $Candidate -Directory -Force).Count) { throw 'Release candidate must contain regular files only.' }
-    if ('.keepassxc-output-owner.json' -in $newFiles.Name) { throw 'Candidate cannot provide its own output ownership marker.' }
-    New-Item -ItemType Directory -Force -Path $Directory | Out-Null
-    $oldFiles = @(Get-ChildItem -LiteralPath $Directory -File -Force)
-    $oldHashes = @{}
-    foreach ($file in $oldFiles) { $oldHashes[$file.Name] = Get-KpxcHash $file.FullName }
-    $owner = @{schemaVersion=1;ownerKey=(Get-KpxcOwnerKey $Root $Directory);files=@($newFiles | ForEach-Object { @{name=$_.Name;sha256=(Get-KpxcHash $_.FullName)} })}
-    $prepared = Join-Path $Directory ('.publish-' + [Guid]::NewGuid().ToString('N'))
-    $backup = Join-Path (Split-Path -Parent $Candidate) ('previous-output-' + [Guid]::NewGuid().ToString('N'))
-    Assert-KpxcNoLinks $backup
-    $newNames = @($newFiles.Name) + @('.keepassxc-output-owner.json')
-    $startedReplacement = $false
-    try {
-        New-Item -ItemType Directory -Path $prepared, $backup -ErrorAction Stop | Out-Null
-        foreach ($file in $newFiles) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $prepared $file.Name) -ErrorAction Stop }
-        foreach ($file in $newFiles) {
-            if ((Get-KpxcHash (Join-Path $prepared $file.Name)) -cne (Get-KpxcHash $file.FullName)) { throw 'Prepared publication bytes differ from the verified candidate.' }
-        }
-        $owner | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $prepared '.keepassxc-output-owner.json') -Encoding UTF8
-        foreach ($file in $oldFiles) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $backup $file.Name) -ErrorAction Stop }
-        if (@(Get-ChildItem -LiteralPath $Directory -Force | Where-Object { $_.FullName -ne $prepared }).Count -ne $oldFiles.Count) { throw 'Release output changed during preparation.' }
-        foreach ($file in $oldFiles) {
-            Assert-KpxcNoLinks $file.FullName
-            if ((Get-KpxcHash $file.FullName) -cne $oldHashes[$file.Name]) { throw 'Release output changed during preparation.' }
-            if ((Get-KpxcHash (Join-Path $backup $file.Name)) -cne $oldHashes[$file.Name]) { throw 'Previous output backup did not preserve the original bytes.' }
-        }
-        $startedReplacement = $true
-        # No recursive deletion. Every old file was copied and matched by hash.
-        foreach ($file in $oldFiles) { Assert-KpxcNoLinks $file.FullName; Remove-Item -LiteralPath $file.FullName -Force -ErrorAction Stop }
-        foreach ($name in $newNames) {
-            $source = [IO.Path]::GetFullPath((Join-Path $prepared $name))
-            $target = [IO.Path]::GetFullPath((Join-Path $Directory $name))
-            if (-not (Test-KpxcContains $prepared $source) -or -not (Test-KpxcContains $Directory $target)) { throw 'Publication escaped its verified directories.' }
-            Assert-KpxcNoLinks $source
-            Assert-KpxcNoLinks $target
-            Move-Item -LiteralPath $source -Destination $target -ErrorAction Stop
-        }
-    } catch {
-        if ($startedReplacement) {
-            foreach ($name in $newNames) {
-                $target = Join-Path $Directory $name
-                Assert-KpxcNoLinks $target
-                if (Test-Path -LiteralPath $target -PathType Leaf) { Remove-Item -LiteralPath $target -Force -ErrorAction Stop }
-            }
-            foreach ($file in $oldFiles) {
-                Assert-KpxcNoLinks $file.FullName
-                Assert-KpxcNoLinks (Join-Path $backup $file.Name)
-                Copy-Item -LiteralPath (Join-Path $backup $file.Name) -Destination $file.FullName -Force -ErrorAction Stop
-            }
-        }
-        throw
-    } finally {
-        # Remove only filenames created by this attempt, never unknown contents.
-        foreach ($name in $newNames) {
-            $temporary = Join-Path $prepared $name
-            Assert-KpxcNoLinks $temporary
-            if (Test-Path -LiteralPath $temporary -PathType Leaf) { Remove-Item -LiteralPath $temporary -Force -ErrorAction Stop }
-        }
-        if ((Test-Path -LiteralPath $prepared) -and @(Get-ChildItem -LiteralPath $prepared -Force).Count -eq 0) {
-            Remove-Item -LiteralPath $prepared -Force -ErrorAction Stop
+function Get-KpxcTreeManifest([string]$Directory) {
+    $entries = @()
+    $queue = [Collections.Generic.Queue[string]]::new()
+    Assert-KpxcNoLinks $Directory
+    $queue.Enqueue($Directory)
+    while ($queue.Count) {
+        foreach ($item in Get-ChildItem -LiteralPath $queue.Dequeue() -Force -ErrorAction Stop) {
+            Assert-KpxcNoLinks $item.FullName
+            $relative = $item.FullName.Substring($Directory.Length + 1).Replace('\','/')
+            if ($item.PSIsContainer) {
+                $entries += @{path=$relative;type='directory';sha256=''}
+                $queue.Enqueue($item.FullName)
+            } else { $entries += @{path=$relative;type='file';sha256=(Get-KpxcHash $item.FullName)} }
         }
     }
+    return $entries
 }
 
+function Test-KpxcTreeManifest([string]$Directory, $Entries) {
+    if (-not (Test-Path -LiteralPath $Directory -PathType Container)) { return $false }
+    $actual = @(Get-KpxcTreeManifest $Directory)
+    if ($actual.Count -ne @($Entries).Count) { return $false }
+    $expected = @{}
+    foreach ($entry in $Entries) {
+        if (-not $entry.path -or $entry.type -notin @('file','directory') -or $expected.ContainsKey($entry.path)) { throw 'Invalid transaction inventory.' }
+        $expected[$entry.path] = $entry.type + '|' + $entry.sha256
+    }
+    foreach ($entry in $actual) {
+        if (-not $expected.ContainsKey($entry.path) -or $expected[$entry.path] -cne ($entry.type + '|' + $entry.sha256)) { return $false }
+    }
+    return $true
+}
+
+function Get-KpxcTransactionPath([string]$Directory) {
+    return Join-Path (Split-Path -Parent $Directory) ('.' + (Split-Path -Leaf $Directory) + '.keepassxc-transaction.json')
+}
+
+function New-KpxcDirectoryCandidate([string]$Root, [string]$Directory) {
+    $Directory = Resolve-KpxcDirectory $Root $Directory
+    Assert-KpxcBuildPaths $Root @($Directory)
+    $path = Join-Path (Split-Path -Parent $Directory) ('.keepassxc-candidate-' + (Split-Path -Leaf $Directory) + '-' + [Guid]::NewGuid().ToString('N'))
+    Assert-KpxcNoLinks $path
+    New-Item -ItemType Directory -Path $path -ErrorAction Stop | Out-Null
+    return $path
+}
+
+function Move-KpxcTransactionDirectory([string]$Source, [string]$Destination, [string]$Parent) {
+    $Source = [IO.Path]::GetFullPath($Source)
+    $Destination = [IO.Path]::GetFullPath($Destination)
+    if ((Split-Path -Parent $Source) -ine $Parent -or (Split-Path -Parent $Destination) -ine $Parent -or $Source -ieq $Destination) { throw 'Transaction rename escaped its verified parent.' }
+    Assert-KpxcNoLinks $Source
+    Assert-KpxcNoLinks $Destination
+    [IO.Directory]::Move($Source,$Destination)
+}
+
+function Repair-KpxcDirectoryPublicationCore([string]$Root, [string]$Directory) {
+    $journalPath = Get-KpxcTransactionPath $Directory
+    if (-not (Test-Path -LiteralPath $journalPath)) { return }
+    Assert-KpxcNoLinks $journalPath
+    $journal = Get-Content -Raw -LiteralPath $journalPath | ConvertFrom-Json
+    $parent = Split-Path -Parent $Directory
+    $leaf = Split-Path -Leaf $Directory
+    if ($journal.schemaVersion -ne 1 -or $journal.ownerKey -cne (Get-KpxcOwnerKey $Root $Directory) -or $journal.directory -ine $Directory -or $journal.id -notmatch '^[0-9a-f]{32}$') { throw 'Transaction journal does not belong to this directory.' }
+    $candidate = Join-Path $parent ('.keepassxc-candidate-' + $leaf + '-' + $journal.id)
+    $backup = Join-Path $parent ('.keepassxc-previous-' + $leaf + '-' + $journal.id)
+    Assert-KpxcNoLinks $candidate
+    Assert-KpxcNoLinks $backup
+    $oldAtDestination = $journal.hadOld -and (Test-KpxcTreeManifest $Directory $journal.oldEntries)
+    $newAtCandidate = Test-KpxcTreeManifest $candidate $journal.newEntries
+    if ($oldAtDestination -and $newAtCandidate -and -not (Test-Path -LiteralPath $backup)) {
+        Move-KpxcTransactionDirectory $Directory $backup $parent
+    }
+    if (-not (Test-Path -LiteralPath $Directory) -and $newAtCandidate -and
+        (-not $journal.hadOld -or (Test-KpxcTreeManifest $backup $journal.oldEntries))) {
+        Move-KpxcTransactionDirectory $candidate $Directory $parent
+    }
+    if (Test-KpxcTreeManifest $Directory $journal.newEntries) {
+        if ($journal.hadOld -and -not (Test-KpxcTreeManifest $backup $journal.oldEntries)) { throw 'Previous generation is not preserved; transaction was retained.' }
+        Remove-Item -LiteralPath $journalPath -Force -ErrorAction Stop
+        return
+    }
+    # If preparation was lost, restore only a fully verified previous generation.
+    if (-not (Test-Path -LiteralPath $Directory) -and $journal.hadOld -and (Test-KpxcTreeManifest $backup $journal.oldEntries)) {
+        Move-KpxcTransactionDirectory $backup $Directory $parent
+        Remove-Item -LiteralPath $journalPath -Force -ErrorAction Stop
+        return
+    }
+    if ($oldAtDestination -and -not (Test-Path -LiteralPath $backup)) {
+        Remove-Item -LiteralPath $journalPath -Force -ErrorAction Stop
+        return
+    }
+    throw 'Transaction contents do not match the recorded generations; all paths were preserved.'
+}
+
+function Repair-KpxcDirectoryPublication([string]$Root, [string]$Directory) {
+    $Directory = Resolve-KpxcDirectory $Root $Directory
+    Assert-KpxcBuildPaths $Root @($Directory)
+    $mutex = [Threading.Mutex]::new($false,('Local\KeePassXC.BuildDirectory.' + (Get-KpxcOwnerKey $Directory $Directory)))
+    $held = $false
+    try {
+        try { $held=$mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $held=$true }
+        if (-not $held) { throw 'Another publication owns this directory.' }
+        Repair-KpxcDirectoryPublicationCore $Root $Directory
+    } finally { if ($held) { $mutex.ReleaseMutex() }; $mutex.Dispose() }
+}
+
+function Publish-KpxcDirectory([string]$Root, [string]$Candidate, [string]$Directory, [scriptblock]$ValidateExisting, [scriptblock]$AfterFirstRename) {
+    $Directory = Resolve-KpxcDirectory $Root $Directory
+    $Candidate = Resolve-KpxcDirectory $Root $Candidate
+    Assert-KpxcBuildPaths $Root @($Candidate,$Directory)
+    $parent = Split-Path -Parent $Directory
+    $leaf = Split-Path -Leaf $Directory
+    if ((Split-Path -Parent $Candidate) -ine $parent -or (Split-Path -Leaf $Candidate) -notmatch ('^[.]keepassxc-candidate-' + [regex]::Escape($leaf) + '-([0-9a-f]{32})$')) { throw 'Candidate must be a generated same-volume sibling.' }
+    $id=$Matches[1]
+    $backup=Join-Path $parent ('.keepassxc-previous-' + $leaf + '-' + $id)
+    $journalPath=Get-KpxcTransactionPath $Directory
+    $mutex=[Threading.Mutex]::new($false,('Local\KeePassXC.BuildDirectory.' + (Get-KpxcOwnerKey $Directory $Directory)))
+    $held=$false
+    $journal=$null
+    $journalPublished=$false
+    try {
+        try { $held=$mutex.WaitOne(0) } catch [Threading.AbandonedMutexException] { $held=$true }
+        if (-not $held) { throw 'Another publication owns this directory.' }
+        Repair-KpxcDirectoryPublicationCore $Root $Directory
+        & $ValidateExisting
+        $hadOld=Test-Path -LiteralPath $Directory
+        $oldEntries=@(); if($hadOld){$oldEntries=@(Get-KpxcTreeManifest $Directory)}
+        $journal=@{schemaVersion=1;id=$id;directory=$Directory;ownerKey=(Get-KpxcOwnerKey $Root $Directory);hadOld=$hadOld;oldEntries=$oldEntries;newEntries=@(Get-KpxcTreeManifest $Candidate)}
+        Assert-KpxcNoLinks $journalPath
+        Assert-KpxcNoLinks $backup
+        $bytes=[Text.Encoding]::UTF8.GetBytes(($journal | ConvertTo-Json -Depth 8))
+        $temporaryJournal=$journalPath + '.tmp.' + $id
+        Assert-KpxcNoLinks $temporaryJournal
+        $stream=[IO.FileStream]::new($temporaryJournal,[IO.FileMode]::CreateNew,[IO.FileAccess]::Write,[IO.FileShare]::Read)
+        try { $stream.Write($bytes,0,$bytes.Length); $stream.Flush($true) } finally { $stream.Dispose() }
+        [IO.File]::Move($temporaryJournal,$journalPath)
+        $journalPublished=$true
+        if($hadOld){Move-KpxcTransactionDirectory $Directory $backup $parent}
+        if($AfterFirstRename){& $AfterFirstRename}
+        Move-KpxcTransactionDirectory $Candidate $Directory $parent
+        if(-not (Test-KpxcTreeManifest $Directory $journal.newEntries)){throw 'Published generation hash verification failed.'}
+        Remove-Item -LiteralPath $journalPath -Force -ErrorAction Stop
+    } catch {
+        $originalError=$_
+        if($journalPublished -and (Test-Path -LiteralPath $journalPath)) {
+            if(Test-KpxcTreeManifest $Directory $journal.newEntries) {
+                if(Test-Path -LiteralPath $Candidate){throw 'Rollback candidate already exists; transaction was retained.'}
+                Move-KpxcTransactionDirectory $Directory $Candidate $parent
+            }
+            if($journal.hadOld -and -not (Test-Path -LiteralPath $Directory) -and (Test-KpxcTreeManifest $backup $journal.oldEntries)) {
+                Move-KpxcTransactionDirectory $backup $Directory $parent
+            }
+            if(($journal.hadOld -and (Test-KpxcTreeManifest $Directory $journal.oldEntries)) -or (-not $journal.hadOld -and -not (Test-Path -LiteralPath $Directory))) {
+                Remove-Item -LiteralPath $journalPath -Force -ErrorAction Stop
+            }
+        }
+        throw $originalError
+    } finally { if($held){$mutex.ReleaseMutex()};$mutex.Dispose() }
+}
+
+function Publish-KpxcOutput([string]$Root, [string]$Candidate, [string]$Directory, [scriptblock]$AfterFirstRename) {
+    $Candidate=Resolve-KpxcDirectory $Root $Candidate
+    $Directory=Resolve-KpxcDirectory $Root $Directory
+    Assert-KpxcBuildPaths $Root @($Candidate,$Directory)
+    Repair-KpxcDirectoryPublication $Root $Directory
+    Assert-KpxcOutputOwnership $Root $Directory
+    $files=@(Get-KpxcDirectoryFiles $Candidate)
+    if(-not $files.Count -or @(Get-ChildItem -LiteralPath $Candidate -Directory -Force).Count -or '.keepassxc-output-owner.json' -in $files.Name){throw 'Release candidate must contain regular payload files only.'}
+    $prepared=New-KpxcDirectoryCandidate $Root $Directory
+    foreach($file in $files){
+        $target=Join-Path $prepared $file.Name
+        Copy-Item -LiteralPath $file.FullName -Destination $target -ErrorAction Stop
+        if((Get-KpxcHash $target) -cne (Get-KpxcHash $file.FullName)){throw 'Prepared publication bytes differ from the verified candidate.'}
+    }
+    $owner=@{schemaVersion=1;ownerKey=(Get-KpxcOwnerKey $Root $Directory);files=@($files | ForEach-Object {@{name=$_.Name;sha256=(Get-KpxcHash $_.FullName)}})}
+    $owner | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath (Join-Path $prepared '.keepassxc-output-owner.json') -Encoding UTF8
+    Publish-KpxcDirectory $Root $prepared $Directory {Assert-KpxcOutputOwnership $Root $Directory} $AfterFirstRename
+}
 function Assert-KpxcBuildCache([string]$Root, [string]$Directory) {
     if (-not (Test-Path -LiteralPath $Directory) -or @(Get-ChildItem -LiteralPath $Directory -Force).Count -eq 0) { return }
     $cache = Join-Path $Directory 'CMakeCache.txt'
@@ -235,12 +346,12 @@ function Copy-KpxcMsvcRuntime([string]$Stage, [string]$CompilerPath, [string]$Re
     return @($files | ForEach-Object { @{name=$_.Name;sha256=(Get-KpxcHash $_.FullName);version=$_.VersionInfo.FileVersion;architecture='x64'} })
 }
 
-function Assert-KpxcStageReceipt([string]$Stage, [string]$ReceiptPath, [string]$ExpectedCommit, [string]$Version) {
+function Assert-KpxcStageReceipt([string]$Stage, [string]$ReceiptPath, [string]$ExpectedCommit, [string]$Version, [string]$RecordedStageDirectory = $Stage) {
     Assert-KpxcNoLinks $Stage
     Assert-KpxcNoLinks $ReceiptPath
     $receipt = Get-Content -Raw -LiteralPath $ReceiptPath -ErrorAction Stop | ConvertFrom-Json
     if ($receipt.schemaVersion -ne 1 -or $receipt.sourceCommit -cne $ExpectedCommit -or $receipt.version -cne $Version -or
-        $receipt.architecture -ne 'x64' -or $receipt.stageDirectory -ine $Stage) { throw 'Stage provenance does not match the requested source, version, architecture, and directory.' }
+        $receipt.architecture -ne 'x64' -or $receipt.stageDirectory -ine $RecordedStageDirectory) { throw 'Stage provenance does not match the requested source, version, architecture, and directory.' }
     $exe = Join-Path $Stage 'KeePassXC.exe'
     Assert-KpxcPeX64 $exe
     if ((Get-KpxcHash $exe) -cne $receipt.executableSha256) { throw 'Staged executable differs from its build receipt.' }
@@ -248,7 +359,7 @@ function Assert-KpxcStageReceipt([string]$Stage, [string]$ReceiptPath, [string]$
         -not ([Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($exe))).Contains($receipt.compiledHead)) { throw 'Executable source identity does not match the stage receipt.' }
     $info = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
     Assert-KpxcExecutableVersion -FileVersion $info.FileVersion -ProductVersion $info.ProductVersion -ExpectedVersion $Version
-    $files = @(Get-KpxcDirectoryFiles $Stage)
+    $files = @(Get-KpxcDirectoryFiles $Stage | Where-Object { $_.FullName -ine (Join-Path $Stage '.keepassxc-stage-provenance.json') })
     if ($files.Count -ne @($receipt.files).Count) { throw 'Stage contains missing or additional files.' }
     $seen = @{}
     foreach ($entry in $receipt.files) {
@@ -272,7 +383,29 @@ function Assert-KpxcStageReceipt([string]$Stage, [string]$ReceiptPath, [string]$
     return $receipt
 }
 
+function Assert-KpxcStageOwnership([string]$Root, [string]$Stage, [string]$LegacyReceiptPath) {
+    if (-not (Test-Path -LiteralPath $Stage) -or @(Get-ChildItem -LiteralPath $Stage -Force).Count -eq 0) { return }
+    $receiptPath=Join-Path $Stage '.keepassxc-stage-provenance.json'
+    if(-not (Test-Path -LiteralPath $receiptPath) -and $LegacyReceiptPath){$receiptPath=$LegacyReceiptPath}
+    Assert-KpxcNoLinks $receiptPath
+    $previous=Get-Content -Raw -LiteralPath $receiptPath -ErrorAction Stop | ConvertFrom-Json
+    Assert-KpxcStageReceipt $Stage $receiptPath $previous.sourceCommit $previous.version | Out-Null
+    if($previous.ownerKey -cne (Get-KpxcOwnerKey $Root $Stage)){throw 'Existing stage is not owned by this checkout.'}
+}
+
+function Publish-KpxcStageGeneration([string]$Root, [string]$Stage, [scriptblock]$Install, [scriptblock]$Runtime, [scriptblock]$Receipt, [scriptblock]$Validate, [scriptblock]$ValidateExisting, [scriptblock]$AfterFirstRename) {
+    Repair-KpxcDirectoryPublication $Root $Stage
+    & $ValidateExisting
+    $candidate=New-KpxcDirectoryCandidate $Root $Stage
+    & $Install $candidate
+    & $Runtime $candidate
+    & $Receipt $candidate
+    & $Validate $candidate
+    Publish-KpxcDirectory $Root $candidate $Stage $ValidateExisting $AfterFirstRename
+}
+
 function Assert-KpxcPackagedPayload($Archive, $Provenance) {
+    if(@($Archive.Entries | Where-Object { [IO.Path]::GetFileName($_.FullName.Replace('/','\')) -eq '.keepassxc-stage-provenance.json' }).Count){throw 'Private stage provenance must not enter the package.'}
     $expected = @{'lib/net45/KeePassXC.exe'=$Provenance.stagedExecutable.sha256}
     foreach ($required in @('msvcp140.dll','msvcp140_1.dll','msvcp140_2.dll','msvcp140_atomic_wait.dll','msvcp140_codecvt_ids.dll','vcruntime140.dll','vcruntime140_1.dll','concrt140.dll')) {
         if ($required -notin $Provenance.msvcRuntime.name) { throw "Package runtime provenance is incomplete: $required" }

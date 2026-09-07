@@ -7,21 +7,25 @@ building or changing output. Filesystem roots, checkout ancestors, overlapping
 directories, device and network paths, alternate streams, and linked path components
 are rejected. An existing build cache must name this exact source checkout.
 
-Use an empty stage for a new source commit or version. A stage can be reused only
-when its complete build receipt still matches the same source commit, version,
-directory, executable, runtime files, and all staged file hashes. Reusing a warm
-build directory does not authorize relabelling an older executable.
+An existing stage must carry a valid ownership and complete-file receipt. A new
+commit or version is installed into a fresh same-volume candidate directory,
+including runtime files and its new receipt. Only a completely validated candidate
+replaces the existing stage. Reusing a warm build directory does not authorize
+relabelling an older executable.
 
 ## Candidate provenance
 
-The native build writes `stage-provenance.json` in the build directory, outside the
-application payload. It binds the full source commit, generated compiled revision,
+The native build writes `.keepassxc-stage-provenance.json` inside the stage so the
+application and its receipt move as one directory generation. NuGet explicitly
+excludes this private receipt, and the package verifier rejects its presence. The
+receipt binds the full source commit, generated compiled revision,
 requested version, x64 executable header, executable version resources, installed
 executable hash, and complete staged file inventory. The installed executable must
 match the current build output. Source changes during a build or packaging run are
 rejected.
 
-`-UseExistingStage` skips compilation only after validating this receipt. The
+`-UseExistingStage` skips compilation only after validating this receipt against the
+current commit and requested version. The
 optional `-StageProvenancePath` selects a receipt explicitly. Missing provenance,
 an extra staged file, modified bytes, another commit, or another requested version
 stops packaging. A receipt provides build consistency evidence; it is not a code
@@ -52,19 +56,30 @@ The final output directory must be empty, or carry this checkout's matching
 `.keepassxc-output-owner.json` and unchanged hashes for every existing file.
 Unexpected files or directories stop publication before deletion.
 
-Publication prepares and hash-checks the replacement files first. Existing verified
-outputs are backed up in the unique packaging scratch directory before replacement.
-A reported replacement failure triggers restoration of those prior outputs. An
-abrupt process termination or a failed restoration retains the backup for manual
-recovery; a subsequent run refuses incomplete or mismatched output. Only individually
-verified files are removed; the scripts never recursively clear a caller-selected
-directory. Scratch candidates and previous-output backups remain available for diagnosis.
+Stage and release publication use the same directory transaction. Candidates and
+previous generations are named siblings of the destination, ensuring same-volume
+renames. A complete, flushed journal is atomically published before the first
+rename. A directory-scoped mutex serializes cooperating publishers. The old
+generation is renamed to its backup, then the verified candidate becomes the
+destination. Application files and the canonical stage receipt are never updated
+independently.
+
+A reported operation failure restores the old generation. After abrupt process
+termination, the next invocation recovers the journal before ownership validation:
+it completes a verified candidate or restores the verified previous generation if
+the candidate is unavailable. Unexpected or modified contents fail closed and are
+preserved. Successful recovery retires the journal automatically. Previous
+generations and failed candidates remain available for diagnosis; no directory is
+recursively cleared.
 
 ## Verification
 
 `tests/TestPackagingSafety.ps1` checks external and default paths, overlap and ancestor
 refusal, junction containment, output ownership, modified-file preservation, injected
-copy and move failures, silent copy corruption, warm-cache ownership, and PE headers.
+copy and rename failures, silent copy corruption, warm-cache ownership, and PE headers.
+Real subprocess interruption tests exit after the first destructive rename and prove
+that a fresh invocation recovers release output and a stage together with its receipt.
+Injected install, runtime, and receipt failures prove the previous stage is unchanged.
 Supplying `-CompilerPath` and `-RedistDirectory` additionally verifies the real pinned
 runtime copy. `-StageExePath` and `-StageCommit` exercise executable provenance with
 a copied test fixture, including version, commit, extra-file, and path-traversal

@@ -17,11 +17,9 @@ Assert-KpxcBuildPaths $root @($build, $stage)
 Assert-KpxcBuildCache $root $build
 $sourceCommit = (& git -C $root rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or (& git -C $root status --porcelain)) { throw 'Build provenance requires a clean, committed source checkout.' }
-$stageReceiptPath = Join-Path $build 'stage-provenance.json'
-if ((Test-Path -LiteralPath $stage) -and @(Get-ChildItem -LiteralPath $stage -Force).Count) {
-    $previous = Assert-KpxcStageReceipt $stage $stageReceiptPath $sourceCommit $Version
-    if ($previous.ownerKey -cne (Get-KpxcOwnerKey $root $stage)) { throw 'Existing stage is not owned by this build. Choose an empty InstallDirectory.' }
-}
+$stageReceiptPath = Join-Path $stage '.keepassxc-stage-provenance.json'
+Repair-KpxcDirectoryPublication $root $stage
+Assert-KpxcStageOwnership $root $stage (Join-Path $build 'stage-provenance.json')
 $started = Get-Date
 function Phase([string]$Message) { if (-not $Silent) { Write-Host "[build] $Message" } }
 function Invoke-Native([string]$File, [string[]]$Arguments) { & $File @Arguments; if ($LASTEXITCODE -ne 0) { throw "$File exited with $LASTEXITCODE." } }
@@ -107,11 +105,17 @@ if ($WithTests) {
     Invoke-Native cmake @('--build',$build,'--parallel','--target','KeePassXC','keepassxc-cli','keepassxc-proxy','docs')
 }
 Phase "Installing to $stage."
-New-Item -ItemType Directory -Force -Path $stage | Out-Null
-Invoke-Native cmake @('--install',$build,'--prefix',$stage)
-$exe = Join-Path $stage 'KeePassXC.exe'
+$stageBuildState=@{}
+Publish-KpxcStageGeneration -Root $root -Stage $stage -ValidateExisting {
+    Assert-KpxcStageOwnership $root $stage (Join-Path $build 'stage-provenance.json')
+} -Install { param($candidateStage)
+    Invoke-Native cmake @('--install',$build,'--prefix',$candidateStage)
+} -Runtime { param($candidateStage)
+    $stageBuildState.runtime=@(Copy-KpxcMsvcRuntime $candidateStage $compilerPath $env:VCToolsRedistDir)
+} -Receipt { param($candidateStage)
+$exe = Join-Path $candidateStage 'KeePassXC.exe'
 if (-not (Test-Path -LiteralPath $exe)) { throw "The staged application is missing $exe." }
-$runtime = @(Copy-KpxcMsvcRuntime $stage $compilerPath $env:VCToolsRedistDir)
+$runtime = $stageBuildState.runtime
 Assert-KpxcPeX64 $exe
 $versionInfo = [Diagnostics.FileVersionInfo]::GetVersionInfo($exe)
 Assert-KpxcExecutableVersion -FileVersion $versionInfo.FileVersion -ProductVersion $versionInfo.ProductVersion -ExpectedVersion $Version
@@ -124,8 +128,12 @@ $compiledHead = $Matches[1]
 $binaryText = [Text.Encoding]::ASCII.GetString([IO.File]::ReadAllBytes($exe))
 if (-not $binaryText.Contains($compiledHead)) { throw 'The staged executable does not contain its configured source identifier.' }
 if ((& git -C $root rev-parse HEAD).Trim() -cne $sourceCommit -or (& git -C $root status --porcelain)) { throw 'Source changed during the build; no stage receipt was issued.' }
-$receipt = @{schemaVersion=1;sourceCommit=$sourceCommit;compiledHead=$compiledHead;version=$Version;architecture='x64';stageDirectory=$stage;ownerKey=(Get-KpxcOwnerKey $root $stage);executableSha256=(Get-KpxcHash $exe);msvcRuntime=$runtime;files=@(Get-KpxcDirectoryFiles $stage | ForEach-Object { @{path=$_.FullName.Substring($stage.Length + 1).Replace('\','/');sha256=(Get-KpxcHash $_.FullName)} })}
-$receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath $stageReceiptPath -Encoding UTF8
+$receipt = @{schemaVersion=1;sourceCommit=$sourceCommit;compiledHead=$compiledHead;version=$Version;architecture='x64';stageDirectory=$stage;ownerKey=(Get-KpxcOwnerKey $root $stage);executableSha256=(Get-KpxcHash $exe);msvcRuntime=$runtime;files=@(Get-KpxcDirectoryFiles $candidateStage | ForEach-Object { @{path=$_.FullName.Substring($candidateStage.Length + 1).Replace('\','/');sha256=(Get-KpxcHash $_.FullName)} })}
+$receipt | ConvertTo-Json -Depth 6 | Set-Content -LiteralPath (Join-Path $candidateStage '.keepassxc-stage-provenance.json') -Encoding UTF8
+} -Validate { param($candidateStage)
+    Assert-KpxcStageReceipt $candidateStage (Join-Path $candidateStage '.keepassxc-stage-provenance.json') $sourceCommit $Version $stage | Out-Null
+}
+$exe = Join-Path $stage 'KeePassXC.exe'
 Assert-KpxcStageReceipt $stage $stageReceiptPath $sourceCommit $Version | Out-Null
 Write-Host "Stage provenance: $stageReceiptPath"
 Write-Host "Built application: $exe"

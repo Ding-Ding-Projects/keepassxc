@@ -11,6 +11,7 @@ param(
 )
 
 $ErrorActionPreference = 'Stop'
+if (-not $UseExistingStage -and $PSBoundParameters.ContainsKey('StageProvenancePath')) { throw 'StageProvenancePath is supported only with UseExistingStage; a new build publishes its canonical stage receipt.' }
 $root = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
 . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
@@ -19,10 +20,12 @@ $destination = Resolve-KpxcDirectory $root $ArtifactDirectory
 $build = Resolve-KpxcDirectory $root $BuildDirectory
 $scratchRoot = Resolve-KpxcDirectory $root 'stage\squirrel'
 Assert-KpxcBuildPaths $root @($stage, $destination, $build, $scratchRoot)
+Repair-KpxcDirectoryPublication $root $destination
+Repair-KpxcDirectoryPublication $root $stage
 Assert-KpxcOutputOwnership $root $destination
 $commit = (& git -C $root rev-parse HEAD).Trim()
 if ($LASTEXITCODE -ne 0 -or (& git -C $root status --porcelain)) { throw 'Packaging requires a clean, committed source checkout.' }
-if (-not $StageProvenancePath) { $StageProvenancePath = Join-Path $build 'stage-provenance.json' }
+if (-not $StageProvenancePath) { $StageProvenancePath = Join-Path $stage '.keepassxc-stage-provenance.json' }
 elseif (-not [IO.Path]::IsPathRooted($StageProvenancePath)) { $StageProvenancePath = Join-Path $root $StageProvenancePath }
 $scratch = Join-Path $scratchRoot ([Guid]::NewGuid().ToString('N'))
 $output = Join-Path $scratch 'release'
@@ -44,7 +47,7 @@ $nuspec = Join-Path $scratch 'KeePassXC.Material.nuspec'
 <?xml version="1.0"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
   <metadata><id>KeePassXC.Material</id><version>$Version</version><title>KeePassXC Material</title><authors>KeePassXC Team</authors><owners>KeePassXC Team</owners><requireLicenseAcceptance>false</requireLicenseAcceptance><description>Windows-only KeePassXC Material desktop application.</description></metadata>
-  <files><file src="$([Security.SecurityElement]::Escape($stage))\**\*" target="lib\net45" /></files>
+  <files><file src="$([Security.SecurityElement]::Escape($stage))\**\*" exclude="$([Security.SecurityElement]::Escape($stage))\.keepassxc-stage-provenance.json" target="lib\net45" /></files>
 </package>
 "@ | Set-Content -LiteralPath $nuspec -Encoding UTF8
 & $nugetExe pack $nuspec -OutputDirectory $scratch -NoPackageAnalysis -NonInteractive
