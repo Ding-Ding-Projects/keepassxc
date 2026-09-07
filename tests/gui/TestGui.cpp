@@ -30,6 +30,7 @@
 #include <QPushButton>
 #include <QRadioButton>
 #include <QSignalSpy>
+#include <QScopeGuard>
 #include <QSpinBox>
 #include <QTableWidget>
 #include <QTest>
@@ -75,6 +76,7 @@
 #include "gui/wizard/NewDatabaseWizard.h"
 #include "keys/FileKey.h"
 #include "mock/MockRemoteProcess.h"
+#include "mock/MockClock.h"
 
 #define TEST_MODAL_NO_WAIT(TEST_CODE)                                                                                  \
     bool dialogFinished = false;                                                                                       \
@@ -1295,6 +1297,9 @@ void TestGui::testTotpRefreshOwnership_data()
 void TestGui::testTotpRefreshOwnership()
 {
     QFETCH(QString, change);
+    auto* fixedClock = new MockClock(2020, 1, 1, 0, 0, 5);
+    MockClock::setup(fixedClock);
+    const auto restoreClock = qScopeGuard([] { MockClock::teardown(); });
     config()->set(Config::Security_ClearClipboard, true);
     config()->set(Config::Security_ClearClipboardTimeout, 60);
     config()->set(Config::Security_EnableCopyOnDoubleClick, true);
@@ -1347,6 +1352,10 @@ void TestGui::testTotpRefreshOwnership()
     }
     const auto beforeDelivery = QApplication::clipboard()->text();
     const auto generationBeforeDelivery = clipboard()->copyGeneration();
+    fixedClock->advanceSecond(30);
+    if (change == "none" || change == "timeout") {
+        QVERIFY(entry->totp() != originalText);
+    }
     struct TimerDeliveryCounter final : QObject
     {
         int count = 0;
