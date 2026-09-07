@@ -99,6 +99,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     , m_entrySearcher(new EntrySearcher(false))
 {
     Q_ASSERT(m_db);
+    m_totpTimer->setObjectName(QStringLiteral("totpRefreshTimer"));
     connect(this, &DatabaseWidget::databaseLockRequested, this, [this] {
         m_totpTimer->stop();
         m_totpTimer->disconnect();

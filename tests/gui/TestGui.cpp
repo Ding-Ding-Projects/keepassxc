@@ -1259,6 +1259,27 @@ void TestGui::testTotp()
     QTest::keyClick(qrCodeDialog, Qt::Key_Escape);
 }
 
+void TestGui::testClipboardCopyOwnership()
+{
+    auto* managed = clipboard();
+    config()->set(Config::Security_ClearClipboard, true);
+    config()->set(Config::Security_ClearClipboardTimeout, 30);
+    managed->setText(QStringLiteral("totp-A"));
+    const auto generation = managed->copyGeneration();
+    QVERIFY(managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    config()->set(Config::Security_ClearClipboardTimeout, 1);
+    QVERIFY(managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    QApplication::clipboard()->setText(QStringLiteral("external-B"));
+    QVERIFY(!managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+
+    managed->setText(QStringLiteral("password-B"));
+    QVERIFY(managed->copyGeneration() != generation);
+    QVERIFY(!managed->isManagedCopyCurrent(generation, QStringLiteral("totp-A")));
+    managed->clearCopiedText();
+}
+
 void TestGui::testSearch()
 {
     // Add canned entries for consistent testing
