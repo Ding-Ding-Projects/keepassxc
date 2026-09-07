@@ -275,12 +275,12 @@ bool Icons::importApplicationLogo(const QString& sourcePath, QString* error)
                         ? QStringLiteral("The new logo could not replace the active private cache; the previous logo remains active.")
                         : QStringLiteral("The new logo could not replace the active cache and rollback left residual private data."));
     }
-    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(sourceBackup) && !QFile::remove(sourceBackup))
-        || (QFileInfo::exists(displayBackup) && !QFile::remove(displayBackup))) {
-        return fail(QStringLiteral("The new logo is active, but private rollback cleanup left residual data. Retry the replacement or reset."));
-    }
     config()->set(Config::GUI_CustomLogoEnabled, true);
     refreshApplicationIcon();
+    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(sourceBackup) && !QFile::remove(sourceBackup))
+        || (QFileInfo::exists(displayBackup) && !QFile::remove(displayBackup))) {
+        if (error) *error = QStringLiteral("The new logo is active, but private rollback cleanup left residual data. Retry the replacement or reset.");
+    }
     return true;
 }
 
@@ -320,12 +320,12 @@ bool Icons::setApplicationLogoPresentation(const QString& fitMode, const QColor&
         return fail(restored ? QStringLiteral("The updated logo could not replace the active cache; settings were not changed.")
                              : QStringLiteral("The updated logo could not replace the active cache and rollback left residual private data."));
     }
-    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(backup) && !QFile::remove(backup))) {
-        return fail(QStringLiteral("The updated logo is active, but private rollback cleanup left residual data. Retry the replacement or reset."));
-    }
     config()->set(Config::GUI_CustomLogoFitMode, fitMode);
     config()->set(Config::GUI_CustomLogoBackground, background.name(QColor::HexArgb));
     refreshApplicationIcon();
+    if (m_testLogoFailureStage == 6 || (QFileInfo::exists(backup) && !QFile::remove(backup))) {
+        if (error) *error = QStringLiteral("The updated logo is active, but private rollback cleanup left residual data. Retry the replacement or reset.");
+    }
     return true;
 }
 

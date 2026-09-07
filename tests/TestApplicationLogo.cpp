@@ -254,12 +254,42 @@ void TestApplicationLogo::activationCleanupFailureIsReportedAndRetryable()
     QString error;
     QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("old.png")), &error), qPrintable(error));
     Icons::setApplicationLogoFailureStageForTests(6);
-    QVERIFY(!icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("new.png"), {48, 24}), &error));
+    QVERIFY(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("new.png"), {48, 24}), &error));
+    QVERIFY(!error.isEmpty());
     QVERIFY(icons()->hasCustomApplicationLogo());
     QVERIFY(QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".previous")));
     Icons::setApplicationLogoFailureStageForTests(0);
     QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("retry.png")), &error), qPrintable(error));
     QVERIFY(!QFile::exists(icons()->applicationLogoPath() + QStringLiteral(".previous")));
+}
+
+void TestApplicationLogo::firstActivationCleanupWarningCommitsEnabledState()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    Icons::setApplicationLogoFailureStageForTests(6);
+    QString error;
+    QVERIFY(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("first.png")), &error));
+    QVERIFY(!error.isEmpty());
+    QVERIFY(config()->get(Config::GUI_CustomLogoEnabled).toBool());
+    QVERIFY(icons()->hasCustomApplicationLogo());
+    QVERIFY(!QImage(icons()->applicationLogoPath()).isNull());
+}
+
+void TestApplicationLogo::presentationCleanupWarningCommitsSettings()
+{
+    QTemporaryDir directory;
+    QVERIFY(directory.isValid());
+    Icons::setApplicationLogoCacheDirectoryForTests(directory.filePath(QStringLiteral("private-logos")));
+    QString error;
+    QVERIFY2(icons()->importApplicationLogo(writeFixture(directory, QStringLiteral("first.png")), &error), qPrintable(error));
+    Icons::setApplicationLogoFailureStageForTests(6);
+    QVERIFY(icons()->setApplicationLogoPresentation(QStringLiteral("crop"), QColor(QStringLiteral("#ff112233")), &error));
+    QVERIFY(!error.isEmpty());
+    QCOMPARE(config()->get(Config::GUI_CustomLogoFitMode).toString(), QStringLiteral("crop"));
+    QCOMPARE(config()->get(Config::GUI_CustomLogoBackground).toString(), QStringLiteral("#ff112233"));
+    QVERIFY(!icons()->applicationIcon().isNull());
 }
 
 void TestApplicationLogo::rollbackRenameFailureLeavesResidualState()

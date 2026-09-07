@@ -28,6 +28,8 @@ private slots:
     void linkedActiveEntryIsRefusedWithoutTouchingExternalTarget();
     void danglingActiveLinkIsRefused();
     void activationCleanupFailureIsReportedAndRetryable();
+    void firstActivationCleanupWarningCommitsEnabledState();
+    void presentationCleanupWarningCommitsSettings();
     void rollbackRenameFailureLeavesResidualState();
 };
 

@@ -710,6 +710,7 @@ namespace Material
                 m_logoStatus->setText(error);
                 m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
             }
+            if (rebuilt && !error.isEmpty()) m_logoStatus->setText(error);
         });
         content->addWidget(m_logoFitMode);
 
@@ -729,6 +730,7 @@ namespace Material
             }
             refreshLogoPreview();
             if (!rebuilt) m_logoStatus->setText(error);
+            if (rebuilt && !error.isEmpty()) m_logoStatus->setText(error);
         });
         content->addWidget(m_logoBackground);
 
@@ -744,6 +746,7 @@ namespace Material
                 m_logoStatus->setText(error);
             }
             refreshLogoPreview();
+            if (!error.isEmpty()) m_logoStatus->setText(error);
         });
         content->addWidget(m_logoChoose);
 
