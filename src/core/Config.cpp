@@ -140,6 +140,11 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_FontWeight, {QS("GUI/FontWeight"), Local, 400}},
     {Config::GUI_ElementOverrides, {QS("GUI/ElementOverrides"), Local, QS("{}")}},
     {Config::GUI_AppearancePresets, {QS("GUI/AppearancePresets"), Local, QS("{}")}},
+    // The selected image itself is deliberately not a configuration value. Icons stores only a
+    // validated, normalised PNG under the application's private data location.
+    {Config::GUI_CustomLogoEnabled, {QS("GUI/CustomLogoEnabled"), Local, false}},
+    {Config::GUI_CustomLogoFitMode, {QS("GUI/CustomLogoFitMode"), Local, QS("fit")}},
+    {Config::GUI_CustomLogoBackground, {QS("GUI/CustomLogoBackground"), Local, QS("#00000000")}},
     // Retired: the dim sum surprise has no opt-out. The key stays registered so
     // an old profile still parses; nothing reads it.
     {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},

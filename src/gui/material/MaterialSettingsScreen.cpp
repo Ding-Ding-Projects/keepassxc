@@ -36,8 +36,11 @@
 #include "core/Config.h"
 #include "keys/drivers/YubiKey.h"
 #include "gui/Application.h"
+#include "gui/Icons.h"
 
 #include <QEnterEvent>
+#include <QColorDialog>
+#include <QFileDialog>
 #include <QFontDatabase>
 #include <QFontInfo>
 #include <QFrame>
@@ -535,12 +538,14 @@ namespace Material
         m_grid->setVerticalSpacing(16);
         m_grid->setColumnStretch(0, 1);
         m_grid->setColumnStretch(1, 1);
+        m_grid->setColumnStretch(2, 1);
         m_grid->addWidget(createAppearanceCard(), 0, 0, Qt::AlignTop);
         m_grid->addWidget(createTypographyCard(), 0, 1, Qt::AlignTop);
+        m_grid->addWidget(createLogoCard(), 0, 2, Qt::AlignTop);
         m_grid->addWidget(createLanguageCard(), 1, 0, Qt::AlignTop);
         m_grid->addWidget(createOverridesCard(), 1, 1, Qt::AlignTop);
-        m_grid->addWidget(createBehaviourCard(), 2, 0, Qt::AlignTop);
-        m_grid->addWidget(createIntegrationsCard(), 2, 1, Qt::AlignTop);
+        m_grid->addWidget(createBehaviourCard(), 1, 2, Qt::AlignTop);
+        m_grid->addWidget(createIntegrationsCard(), 2, 0, Qt::AlignTop);
         m_grid->setRowStretch(3, 1);
 
         // The design's grid stops growing at 1180px; a host carries the cap,
@@ -661,6 +666,119 @@ namespace Material
 
         m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
         return card;
+    }
+
+    Card* SettingsScreen::createLogoCard()
+    {
+        auto* card = new SettingsCard;
+        card->setTitleText(tr("Application logo"));
+        auto* content = card->contentLayout();
+        content->setSpacing(10);
+        QStringList haystack{tr("Application logo custom image upload PNG JPEG fit crop background replace reset local private")};
+
+        m_logoPreview = new QLabel;
+        m_logoPreview->setObjectName(QStringLiteral("applicationLogoPreview"));
+        m_logoPreview->setAccessibleName(tr("Live application logo preview"));
+        m_logoPreview->setAlignment(Qt::AlignCenter);
+        m_logoPreview->setMinimumHeight(88);
+        content->addWidget(m_logoPreview);
+
+        m_logoStatus = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurfaceVariant);
+        m_logoStatus->setObjectName(QStringLiteral("applicationLogoStatus"));
+        m_logoStatus->setAccessibleName(tr("Application logo status"));
+        m_logoStatus->setWordWrap(true);
+        content->addWidget(m_logoStatus);
+
+        m_logoFitMode = new Select;
+        m_logoFitMode->setObjectName(QStringLiteral("applicationLogoFitMode"));
+        m_logoFitMode->setAccessibleName(tr("Application logo fit mode"));
+        m_logoFitMode->setSearchIdentity(QStringLiteral("appearance.application-logo-fit"), tr("Application logo fit mode search"));
+        m_logoFitMode->addItem(tr("Fit inside"), QStringLiteral("fit"));
+        m_logoFitMode->addItem(tr("Crop to fill"), QStringLiteral("crop"));
+        m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
+        connect(m_logoFitMode, &Select::currentIndexChanged, this, [this](int) {
+            QString error;
+            bool rebuilt = true;
+            if (icons()->hasCustomApplicationLogo()) {
+                rebuilt = icons()->setApplicationLogoPresentation(m_logoFitMode->currentData().toString(),
+                                                                   QColor(config()->get(Config::GUI_CustomLogoBackground).toString()), &error);
+            } else {
+                config()->set(Config::GUI_CustomLogoFitMode, m_logoFitMode->currentData().toString());
+            }
+            refreshLogoPreview();
+            if (!rebuilt) {
+                m_logoStatus->setText(error);
+                m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
+            }
+            if (rebuilt && !error.isEmpty()) m_logoStatus->setText(error);
+        });
+        content->addWidget(m_logoFitMode);
+
+        m_logoBackground = new OutlinedButton(QStringLiteral("format_color_fill"), tr("Transparent background"));
+        m_logoBackground->setObjectName(QStringLiteral("applicationLogoBackground"));
+        m_logoBackground->setAccessibleName(tr("Choose application logo background colour"));
+        connect(m_logoBackground, &QPushButton::clicked, this, [this] {
+            const auto current = QColor(config()->get(Config::GUI_CustomLogoBackground).toString());
+            const auto chosen = QColorDialog::getColor(current, this, tr("Application logo background"), QColorDialog::ShowAlphaChannel);
+            if (!chosen.isValid()) return;
+            QString error;
+            bool rebuilt = true;
+            if (icons()->hasCustomApplicationLogo()) {
+                rebuilt = icons()->setApplicationLogoPresentation(config()->get(Config::GUI_CustomLogoFitMode).toString(), chosen, &error);
+            } else {
+                config()->set(Config::GUI_CustomLogoBackground, chosen.name(QColor::HexArgb));
+            }
+            refreshLogoPreview();
+            if (!rebuilt) m_logoStatus->setText(error);
+            if (rebuilt && !error.isEmpty()) m_logoStatus->setText(error);
+        });
+        content->addWidget(m_logoBackground);
+
+        m_logoChoose = new FilledButton(QStringLiteral("upload"), tr("Choose local logo"));
+        m_logoChoose->setObjectName(QStringLiteral("applicationLogoChoose"));
+        m_logoChoose->setAccessibleName(tr("Choose a local PNG or JPEG application logo"));
+        connect(m_logoChoose, &QPushButton::clicked, this, [this] {
+            const auto file = QFileDialog::getOpenFileName(this, tr("Choose local application logo"), {},
+                                                           tr("Images (*.png *.jpg *.jpeg)"));
+            if (file.isEmpty()) return;
+            QString error;
+            if (!icons()->importApplicationLogo(file, &error)) {
+                m_logoStatus->setText(error);
+            }
+            refreshLogoPreview();
+            if (!error.isEmpty()) m_logoStatus->setText(error);
+        });
+        content->addWidget(m_logoChoose);
+
+        m_logoReset = new OutlinedButton(QStringLiteral("restart_alt"), tr("Reset to shipped logo"));
+        m_logoReset->setObjectName(QStringLiteral("applicationLogoReset"));
+        m_logoReset->setAccessibleName(tr("Remove custom application logo and restore the shipped logo"));
+        connect(m_logoReset, &QPushButton::clicked, this, [this] {
+            QString error;
+            const bool reset = icons()->resetApplicationLogo(&error);
+            refreshLogoPreview();
+            if (!reset) m_logoStatus->setText(error);
+        });
+        content->addWidget(m_logoReset);
+
+        m_cards.append({card, haystack.join(QLatin1Char(' ')).toLower()});
+        refreshLogoPreview();
+        return card;
+    }
+
+    void SettingsScreen::refreshLogoPreview()
+    {
+        if (!m_logoPreview || !m_logoStatus) return;
+        const bool custom = icons()->hasCustomApplicationLogo();
+        m_logoPreview->setPixmap(icons()->applicationIcon().pixmap(64, 64));
+        m_logoStatus->setText(custom ? tr("Custom logo is stored only in this device's private application data.")
+                                     : tr("Using the shipped KeePassXC logo. Choose a local PNG or JPEG to replace it."));
+        if (m_logoBackground) {
+            const auto background = config()->get(Config::GUI_CustomLogoBackground).toString();
+            m_logoBackground->setText(background == QLatin1String("#00000000") ? tr("Transparent background")
+                                                                              : tr("Background: %1").arg(background));
+        }
+        if (m_logoReset) m_logoReset->setEnabled(custom);
     }
 
     Card* SettingsScreen::createTypographyCard()
