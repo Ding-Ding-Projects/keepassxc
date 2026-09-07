@@ -23,6 +23,7 @@
 #include <functional>
 
 class QNetworkReply;
+class QNetworkAccessManager;
 class QSaveFile;
 class QCryptographicHash;
 class QProcess;
@@ -68,6 +69,7 @@ public:
                                      const QString& workingDirectory);
     static void setRestartLauncherForTests(RestartLauncher launcher);
     static void resetRestartLauncherForTests();
+    void setNetworkAccessManagerForTests(QNetworkAccessManager* manager);
     static bool compareVersions(const QString& localVersion, const QString& remoteVersion);
     static UpdateChecker* instance();
     State state() const;
@@ -103,10 +105,12 @@ private slots:
 private:
     QNetworkReply* m_reply;
     bool m_redirectRejected = false;
+    bool m_downloadRedirectRejected = false;
     QNetworkReply* m_downloadReply = nullptr;
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;
     QProcess* m_applyProcess = nullptr;
+    QNetworkAccessManager* m_networkManager = nullptr;
     quint64 m_downloadBytes = 0;
     quint64 m_generation = 0;
     QByteArray m_bytesReceived;
@@ -118,6 +122,7 @@ private:
     void setState(State state, Failure failure = Failure::None);
     void finishDownload(quint64 generation);
     void failDownload(Failure failure);
+    QNetworkAccessManager* networkManager() const;
 
     static UpdateChecker* m_instance;
     static RestartLauncher m_restartLauncher;

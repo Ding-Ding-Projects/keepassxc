@@ -26,6 +26,7 @@
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
+#include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QRegularExpression>
 #include <QCryptographicHash>
@@ -66,8 +67,9 @@ UpdateChecker::~UpdateChecker()
 
 void UpdateChecker::checkForUpdates(bool manuallyRequested)
 {
-    // Skip update if we are already performing one
-    if (m_reply) {
+    // A manifest query cannot safely replace an active package transfer or
+    // updater process. Keep the active operation and its state authoritative.
+    if (m_reply || m_downloadReply || m_applyProcess) {
         return;
     }
 
@@ -86,7 +88,7 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         request.setMaximumRedirectsAllowed(5);
         request.setTransferTimeout(30000);
 
-        m_reply = getNetMgr()->get(request);
+        m_reply = networkManager()->get(request);
 
         connect(m_reply, &QNetworkReply::redirected, this, [this](const QUrl& target) {
             if (m_reply && !redirectAllowed(target)) {
@@ -189,10 +191,12 @@ void UpdateChecker::downloadAvailableUpdate()
     request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
     request.setMaximumRedirectsAllowed(5);
     request.setTransferTimeout(30000);
-    m_downloadReply = getNetMgr()->get(request);
+    m_downloadRedirectRejected = false;
+    m_downloadReply = networkManager()->get(request);
     setState(State::Downloading);
     connect(m_downloadReply, &QNetworkReply::redirected, this, [this, generation](const QUrl& target) {
         if (generation == m_generation && m_downloadReply && !redirectAllowed(target)) {
+            m_downloadRedirectRejected = true;
             m_downloadReply->abort();
         }
     });
@@ -231,6 +235,7 @@ void UpdateChecker::cancelDownload()
     delete m_downloadHash;
     m_downloadHash = nullptr;
     m_downloadBytes = 0;
+    m_downloadRedirectRejected = false;
     if (m_state == State::Downloading) {
         setState(State::Failed, Failure::Cancelled);
     }
@@ -242,10 +247,13 @@ void UpdateChecker::finishDownload(quint64 generation)
         return;
     }
     const bool networkOk = m_downloadReply->error() == QNetworkReply::NoError;
+    const bool redirected = m_downloadRedirectRejected;
     m_downloadReply->deleteLater();
     m_downloadReply = nullptr;
+    m_downloadRedirectRejected = false;
     if (!networkOk || m_downloadBytes != m_candidate.bytes) {
-        failDownload(networkOk ? Failure::ByteCountMismatch : Failure::Offline);
+        failDownload(redirected ? Failure::RedirectRejected
+                                : (networkOk ? Failure::ByteCountMismatch : Failure::Offline));
         return;
     }
     const QString sha256 = QString::fromLatin1(m_downloadHash->result().toHex());
@@ -282,6 +290,7 @@ void UpdateChecker::failDownload(Failure failure)
     delete m_downloadHash;
     m_downloadHash = nullptr;
     m_downloadBytes = 0;
+    m_downloadRedirectRejected = false;
     setState(State::Failed, failure);
 }
 
@@ -466,6 +475,17 @@ void UpdateChecker::setRestartLauncherForTests(RestartLauncher launcher)
 void UpdateChecker::resetRestartLauncherForTests()
 {
     m_restartLauncher = {};
+}
+
+void UpdateChecker::setNetworkAccessManagerForTests(QNetworkAccessManager* manager)
+{
+    Q_ASSERT(!m_reply && !m_downloadReply);
+    m_networkManager = manager;
+}
+
+QNetworkAccessManager* UpdateChecker::networkManager() const
+{
+    return m_networkManager ? m_networkManager : getNetMgr();
 }
 
 UpdateChecker::State UpdateChecker::state() const { return m_state; }
