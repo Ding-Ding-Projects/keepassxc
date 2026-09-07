@@ -91,7 +91,8 @@ void UpdateChecker::beginManifestRequest(const QUrl& url, bool prereleaseIndex)
 {
         m_fetchingPrereleaseIndex = prereleaseIndex;
         QNetworkRequest request(url);
-        request.setRawHeader("Accept", "application/json");
+        request.setRawHeader("Accept", prereleaseIndex ? "application/vnd.github+json" : "application/json");
+        request.setRawHeader("User-Agent", "KeePassXC-Material-Updater/1");
         // The release's "latest/download" link answers with a redirect to the
         // asset; follow it, but only to HTTPS on GitHub's own hosts.
         request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
@@ -156,7 +157,7 @@ void UpdateChecker::fetchFinished()
                 if (release.value(QStringLiteral("draft")).toBool()) continue;
                 QString version = release.value(QStringLiteral("tag_name")).toString();
                 if (version.startsWith(QLatin1Char('v'))) version.remove(0, 1);
-                static const QRegularExpression versionPattern(QStringLiteral("^\\d+\\.\\d+\\.\\d+(?:-beta\\d*)?$"));
+                static const QRegularExpression versionPattern(QStringLiteral("^\\d+\\.\\d+\\.\\d+$"));
                 if (!versionPattern.match(version).hasMatch()) continue;
                 for (const auto asset : release.value(QStringLiteral("assets")).toArray()) {
                     const auto object = asset.toObject();
@@ -181,6 +182,7 @@ void UpdateChecker::fetchFinished()
         }
         m_bytesReceived.clear();
         m_redirectRejected = false;
+        m_expectedReleaseVersion = selectedVersion;
         beginManifestRequest(manifestUrl);
         return;
     }
@@ -189,10 +191,24 @@ void UpdateChecker::fetchFinished()
         Candidate parsed;
         Failure failure = Failure::None;
         if (parseManifest(m_bytesReceived, parsed, failure)) {
+            const QString releaseRoot = QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/");
+            if (!m_expectedReleaseVersion.isEmpty()
+                && (parsed.version != m_expectedReleaseVersion
+                    || parsed.notesUrl != releaseRoot + QStringLiteral("tag/v") + m_expectedReleaseVersion
+                    || parsed.packageUrl != releaseRoot + QStringLiteral("download/v") + m_expectedReleaseVersion + QLatin1Char('/') + parsed.packageFile)) {
+                failure = Failure::MalformedManifest;
+            }
+            m_expectedReleaseVersion.clear();
+            if (failure != Failure::None) {
+                error = true;
+                version = ErrorVersion;
+                setState(State::Failed, failure);
+            } else {
             m_candidate = parsed;
             version = parsed.version;
             hasNewVersion = compareVersions(QString(KEEPASSXC_VERSION), version);
             setState(hasNewVersion ? State::Available : State::NoUpdate);
+            }
         } else {
             error = true;
             version = ErrorVersion;

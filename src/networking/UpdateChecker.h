@@ -121,6 +121,7 @@ private:
     State m_state = State::Idle;
     Failure m_failure = Failure::None;
     Candidate m_candidate;
+    QString m_expectedReleaseVersion;
 
     void setState(State state, Failure failure = Failure::None);
     void finishDownload(quint64 generation);
