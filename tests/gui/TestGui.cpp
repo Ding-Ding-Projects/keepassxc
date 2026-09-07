@@ -1336,10 +1336,28 @@ void TestGui::testTotpRefreshOwnership()
     }
     const auto beforeDelivery = QApplication::clipboard()->text();
     const auto generationBeforeDelivery = clipboard()->copyGeneration();
-    QSignalSpy delivered(timer, &QTimer::timeout);
-    timer->setInterval(1);
-    QTRY_COMPARE(delivered.count(), 1);
-    QVERIFY(!timer->isActive());
+    struct TimerDeliveryCounter final : QObject
+    {
+        int count = 0;
+        bool eventFilter(QObject*, QEvent* event) override
+        {
+            if (event->type() == QEvent::Timer) {
+                ++count;
+            }
+            return false;
+        }
+    } delivered;
+    timer->installEventFilter(&delivered);
+    if (change == "lock") {
+        QVERIFY(!timer->isActive());
+        QTest::qWait(20);
+        QCOMPARE(delivered.count, 0);
+    } else {
+        QVERIFY(timer->isActive());
+        timer->setInterval(1);
+        QTRY_VERIFY(!timer->isActive());
+        QCOMPARE(delivered.count, 1);
+    }
     if (change == "none" || change == "timeout") {
         QVERIFY(clipboard()->copyGeneration() > originalGeneration);
         QCOMPARE(QApplication::clipboard()->text(), entry->totp());

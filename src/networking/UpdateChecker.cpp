@@ -509,7 +509,7 @@ void UpdateChecker::setNetworkAccessManagerForTests(QNetworkAccessManager* manag
 
 QNetworkAccessManager* UpdateChecker::networkManager() const
 {
-    return m_networkManager ? m_networkManager : getNetMgr();
+    return m_networkManager ? m_networkManager.data() : getNetMgr();
 }
 
 UpdateChecker::State UpdateChecker::state() const { return m_state; }
