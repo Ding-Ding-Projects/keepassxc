@@ -1254,6 +1254,9 @@ MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
+    // Release native focus and active menus while callbacks can still use m_ui.
+    // QWidget's base destructor would otherwise hide us after members are gone.
+    hide();
     // Child removal events can still reach filters after our UI member dies.
     if (g_MainWindow == this) {
         g_MainWindow = nullptr;
@@ -3198,7 +3201,7 @@ bool MainWindowEventFilter::eventFilter(QObject* watched, QEvent* event)
             auto menubar = mainWindow->m_ui->menubar;
             menubar->setMaximumHeight(menubar->maximumHeight() > 0 ? 0 : QWIDGETSIZE_MAX);
             if (menubar->maximumHeight() > 0) {
-                QTimer::singleShot(0, [menubar, mainWindow] {
+                QTimer::singleShot(0, mainWindow, [menubar, mainWindow] {
                     // Run this with a singleshot timer so it's after menubar->setMaximumHeight() has taken effect,
                     // otherwise it won't be selected and menubarTimer will hide the menubar instantly
                     menubar->setActiveAction(mainWindow->m_ui->menuFile->menuAction());
