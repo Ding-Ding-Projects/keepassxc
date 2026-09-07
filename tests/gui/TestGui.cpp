@@ -2759,9 +2759,12 @@ void TestGui::testMaterialPointerOwnershipKeepsAltMenuAccess()
     config()->set(Config::GUI_HideMenubar, true);
     menuBar->setMaximumHeight(0);
 
-    // Deliver a complete key gesture through the installed filter. A manually
-    // constructed Alt release normalizes modifiers differently from this path.
-    QTest::keyClick(m_mainWindow.data(), Qt::Key_Alt);
+    // QKeyEvent normalizes modifier-key transitions. Its constructor needs the
+    // state before releasing Alt so modifiers() reports no remaining modifiers.
+    QKeyEvent altRelease(QEvent::KeyRelease, Qt::Key_Alt, Qt::AltModifier);
+    QVERIFY(altRelease.modifiers() == Qt::NoModifier);
+    QVERIFY(getMainWindow() == m_mainWindow.data());
+    QApplication::sendEvent(m_mainWindow.data(), &altRelease);
     QTRY_VERIFY(menuBar->maximumHeight() > 0);
 }
 
