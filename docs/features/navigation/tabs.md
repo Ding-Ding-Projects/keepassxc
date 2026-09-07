@@ -4,7 +4,7 @@ Feature id: `tabs` · Category: Navigation
 
 ## Behaviour
 
-Databases open as browser-style tabs in `Material::TabStrip` (`src/gui/material/MaterialTabStrip.h`) with stable runtime ids, keyboard navigation and reordering, pointer drag with insertion markers, pin partition, a registered searchable overflow surface and persisted order.
+Databases open as browser-style tabs in `Material::TabStrip` (`src/gui/material/MaterialTabStrip.h`) with stable runtime ids, keyboard navigation and reordering, pointer drag with insertion markers, pin partition, a registered searchable overflow surface and persisted order. A tab pointer drag emits a tab move request only after it crosses the drag threshold and lands in the same pin partition; it never starts a window move.
 
 ## Configuration
 

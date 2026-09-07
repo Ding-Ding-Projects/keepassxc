@@ -20,6 +20,10 @@
 #include "gui/material/MaterialNavigationRail.h"
 #include "gui/material/MaterialShell.h"
 #include "gui/material/MaterialTitleBar.h"
+#ifdef Q_OS_WIN
+#include "gui/material/MaterialWindowChrome.h"
+#include <windows.h>
+#endif
 
 #include <QAbstractButton>
 #include <QCoreApplication>
@@ -117,3 +121,58 @@ void TestMaterialTitleBar::narrowWidthKeepsEveryButton()
     }
     QVERIFY(bar.minimumSizeHint().width() <= 320);
 }
+
+#ifdef Q_OS_WIN
+void TestMaterialTitleBar::nativeHitTestKeepsControlsAndClientContentInteractive()
+{
+    QWidget window;
+    window.resize(800, 600);
+    window.show();
+    QVERIFY(QTest::qWaitForWindowExposed(&window));
+    WindowChrome::installFrameless(&window);
+
+    TitleBar titleBar(&window);
+    titleBar.setGeometry(0, 0, window.width(), TitleBar::Height);
+    titleBar.show();
+
+    const auto hitTest = [&window, &titleBar](const QPoint& local) {
+        return titleBar.isCaptionArea(titleBar.mapFrom(&window, local));
+    };
+    const auto nativeHit = [&window, &hitTest](const QPoint& global, qintptr* result) {
+        MSG message{};
+        message.hwnd = reinterpret_cast<HWND>(window.winId());
+        message.message = WM_NCHITTEST;
+        message.lParam = MAKELPARAM(global.x(), global.y());
+        return WindowChrome::handleNativeEvent(&window, &message, result, hitTest);
+    };
+
+    qintptr result = 0;
+    QVERIFY(nativeHit(window.mapToGlobal(QPoint(48, 24)), &result));
+    QCOMPARE(result, qintptr(HTCAPTION));
+    for (QAbstractButton* button : {titleBar.minimizeButton(), titleBar.maximizeButton(), titleBar.closeButton()}) {
+        QVERIFY(nativeHit(window.mapToGlobal(button->geometry().center()), &result));
+        QCOMPARE(result, qintptr(HTCLIENT));
+    }
+    QVERIFY(nativeHit(window.mapToGlobal(QPoint(160, TitleBar::Height + 48)), &result));
+    QCOMPARE(result, qintptr(HTCLIENT));
+
+    RECT bounds{};
+    QVERIFY(::GetWindowRect(reinterpret_cast<HWND>(window.winId()), &bounds));
+    const int middleX = (bounds.left + bounds.right) / 2;
+    const int middleY = (bounds.top + bounds.bottom) / 2;
+    const QList<QPair<QPoint, qintptr>> resizeCases{
+        {{bounds.left + 1, middleY}, HTLEFT},
+        {{bounds.right - 1, middleY}, HTRIGHT},
+        {{middleX, bounds.top + 1}, HTTOP},
+        {{middleX, bounds.bottom - 1}, HTBOTTOM},
+        {{bounds.left + 1, bounds.top + 1}, HTTOPLEFT},
+        {{bounds.right - 1, bounds.top + 1}, HTTOPRIGHT},
+        {{bounds.left + 1, bounds.bottom - 1}, HTBOTTOMLEFT},
+        {{bounds.right - 1, bounds.bottom - 1}, HTBOTTOMRIGHT},
+    };
+    for (const auto& resizeCase : resizeCases) {
+        QVERIFY(nativeHit(resizeCase.first, &result));
+        QCOMPARE(result, resizeCase.second);
+    }
+}
+#endif
