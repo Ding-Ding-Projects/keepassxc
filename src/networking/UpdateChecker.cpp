@@ -89,6 +89,7 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         request.setTransferTimeout(30000);
 
         m_reply = networkManager()->get(request);
+        QNetworkReply* const reply = m_reply;
 
         connect(m_reply, &QNetworkReply::redirected, this, [this](const QUrl& target) {
             if (m_reply && !redirectAllowed(target)) {
@@ -98,6 +99,12 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         });
         connect(m_reply, &QNetworkReply::finished, this, &UpdateChecker::fetchFinished);
         connect(m_reply, &QIODevice::readyRead, this, &UpdateChecker::fetchReadyRead);
+        connect(reply, &QObject::destroyed, this, [this] {
+            if (m_state == State::Checking) {
+                m_reply = nullptr;
+                failCheck(Failure::Offline);
+            }
+        });
     }
 }
 
@@ -193,6 +200,7 @@ void UpdateChecker::downloadAvailableUpdate()
     request.setTransferTimeout(30000);
     m_downloadRedirectRejected = false;
     m_downloadReply = networkManager()->get(request);
+    QNetworkReply* const reply = m_downloadReply;
     setState(State::Downloading);
     connect(m_downloadReply, &QNetworkReply::redirected, this, [this, generation](const QUrl& target) {
         if (generation == m_generation && m_downloadReply && !redirectAllowed(target)) {
@@ -214,6 +222,12 @@ void UpdateChecker::downloadAvailableUpdate()
         emit downloadProgress(m_downloadBytes, m_candidate.bytes);
     });
     connect(m_downloadReply, &QNetworkReply::finished, this, [this, generation] { finishDownload(generation); });
+    connect(reply, &QObject::destroyed, this, [this, generation] {
+        if (generation == m_generation && m_state == State::Downloading) {
+            m_downloadReply = nullptr;
+            failDownload(Failure::Offline);
+        }
+    });
 }
 
 void UpdateChecker::cancelDownload()
@@ -292,6 +306,14 @@ void UpdateChecker::failDownload(Failure failure)
     m_downloadBytes = 0;
     m_downloadRedirectRejected = false;
     setState(State::Failed, failure);
+}
+
+void UpdateChecker::failCheck(Failure failure)
+{
+    m_bytesReceived.clear();
+    m_redirectRejected = false;
+    setState(State::Failed, failure);
+    emit updateCheckFinished(false, ErrorVersion, m_isManuallyRequested);
 }
 
 void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)

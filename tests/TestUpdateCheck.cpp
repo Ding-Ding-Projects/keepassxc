@@ -50,6 +50,10 @@ namespace
 
         void complete(const QByteArray& body = {})
         {
+            if (m_finished) {
+                return;
+            }
+            m_finished = true;
             m_body = body;
             emit readyRead();
             emit finished();
@@ -404,14 +408,16 @@ void TestUpdateCheck::testDestroyedNetworkManagerClearsActiveReplies()
     QCOMPARE(manager->replies.size(), 1);
     delete manager;
 
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Offline);
+
+    auto* retryManager = new ControlledNetworkAccessManager;
+    checker.setNetworkAccessManagerForTests(retryManager);
     checker.checkForUpdates(true);
-    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+    QCOMPARE(retryManager->replies.size(), 1);
+    delete retryManager;
 
     auto* downloadManager = new ControlledNetworkAccessManager;
-    checker.setNetworkAccessManagerForTests(downloadManager);
-    checker.checkForUpdates(true);
-    QCOMPARE(downloadManager->replies.size(), 0);
-
     UpdateChecker downloading;
     downloading.setNetworkAccessManagerForTests(downloadManager);
     downloading.checkForUpdates(true);
@@ -421,7 +427,6 @@ void TestUpdateCheck::testDestroyedNetworkManagerClearsActiveReplies()
     QCOMPARE(downloadManager->replies.size(), 2);
     delete downloadManager;
 
-    downloading.cancelDownload();
     QCOMPARE(downloading.state(), UpdateChecker::State::Failed);
-    QCOMPARE(downloading.failure(), UpdateChecker::Failure::Cancelled);
+    QCOMPARE(downloading.failure(), UpdateChecker::Failure::Offline);
 }

@@ -123,6 +123,7 @@ private:
     void setState(State state, Failure failure = Failure::None);
     void finishDownload(quint64 generation);
     void failDownload(Failure failure);
+    void failCheck(Failure failure);
     QNetworkAccessManager* networkManager() const;
 
     static UpdateChecker* m_instance;
