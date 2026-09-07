@@ -1313,6 +1313,7 @@ void TestGui::testTotpRefreshOwnership()
     const auto originalText = QApplication::clipboard()->text();
     QCOMPARE(originalText, entry->totp());
     auto retainedDatabase = m_db;
+    QScopedPointer<Group> retainedRoot;
     if (change == "password") {
         entry->setPassword("fixture-password-B");
         emit entryView->entryActivated(entry, EntryModel::Password);
@@ -1330,9 +1331,15 @@ void TestGui::testTotpRefreshOwnership()
         QVERIFY(m_dbWidget->lock());
         QVERIFY(m_dbWidget->isLocked());
     } else if (change == "replace") {
+        // Replacement releases the old database's current root even when its
+        // shared pointer survives. Retain the old root explicitly to keep the
+        // timer's entry alive and exercise database identity, not deletion.
+        retainedRoot.reset(m_db->setRootGroup(new Group()));
+        const QPointer<Entry> retainedEntry(entry);
         auto replacement = QSharedPointer<Database>::create();
         replacement->setKey(m_db->key());
         m_dbWidget->replaceDatabase(replacement);
+        QVERIFY(retainedEntry);
         QVERIFY(entry->database() == retainedDatabase.data());
         QVERIFY(entry->database() != m_dbWidget->database().data());
     } else if (change == "timeout") {
@@ -2752,9 +2759,9 @@ void TestGui::testMaterialPointerOwnershipKeepsAltMenuAccess()
     config()->set(Config::GUI_HideMenubar, true);
     menuBar->setMaximumHeight(0);
 
-    MainWindowEventFilter filter(m_mainWindow.data());
-    QKeyEvent altRelease(QEvent::KeyRelease, Qt::Key_Alt, Qt::NoModifier);
-    QVERIFY(filter.eventFilter(m_mainWindow.data(), &altRelease));
+    // Deliver a complete key gesture through the installed filter. A manually
+    // constructed Alt release normalizes modifiers differently from this path.
+    QTest::keyClick(m_mainWindow.data(), Qt::Key_Alt);
     QTRY_VERIFY(menuBar->maximumHeight() > 0);
 }
 
