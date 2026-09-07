@@ -617,7 +617,9 @@ MainWindow::MainWindow()
     connect(m_ui->actionUserGuide, SIGNAL(triggered()), SLOT(openUserGuide()));
     connect(m_ui->actionOnlineHelp, SIGNAL(triggered()), SLOT(openOnlineHelp()));
     connect(m_ui->actionKeyboardShortcuts, SIGNAL(triggered()), SLOT(openKeyboardShortcuts()));
-    connect(m_ui->actionAllowScreenCapture, &QAction::toggled, this, &MainWindow::setAllowScreenCapture);
+    connect(m_ui->actionAllowScreenCapture, &QAction::toggled, this, [this](bool allowed) {
+        setAllowScreenCapture(allowed, true);
+    });
 
     connect(osUtils, &OSUtilsBase::statusbarThemeChanged, this, &MainWindow::updateTrayIcon);
 
