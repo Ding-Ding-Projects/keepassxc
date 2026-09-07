@@ -17,6 +17,7 @@
 
 #include "TestUpdateCheck.h"
 #include "crypto/Crypto.h"
+#include "core/Config.h"
 #include "networking/UpdateChecker.h"
 
 #include <QTest>
@@ -256,6 +257,23 @@ void TestUpdateCheck::testManifestContract()
     QByteArray oversized(64 * 1024 + 1, 'x');
     QVERIFY(!UpdateChecker::parseManifest(oversized, candidate, failure));
     QCOMPARE(failure, UpdateChecker::Failure::OversizedManifest);
+}
+
+void TestUpdateCheck::testPrereleaseManifestSelection()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+    config()->set(Config::GUI_CheckForUpdatesIncludeBetas, true);
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    QVERIFY(manager.replies.at(0)->url().path().endsWith(QStringLiteral("/releases")));
+    manager.replies.at(0)->complete(R"([{"draft":false,"prerelease":true,"assets":[{"name":"update-manifest-v1.json","browser_download_url":"https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v999.0.0/update-manifest-v1.json"}]}])");
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(manager.replies.at(1)->url().fileName(), QStringLiteral("update-manifest-v1.json"));
+    manager.replies.at(1)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+    config()->set(Config::GUI_CheckForUpdatesIncludeBetas, false);
 }
 
 void TestUpdateCheck::testRedirectPolicy()

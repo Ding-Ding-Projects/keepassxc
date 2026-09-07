@@ -106,6 +106,7 @@ private slots:
 private:
     QPointer<QNetworkReply> m_reply;
     bool m_redirectRejected = false;
+    bool m_fetchingPrereleaseIndex = false;
     bool m_downloadRedirectRejected = false;
     QPointer<QNetworkReply> m_downloadReply;
     QSaveFile* m_downloadFile = nullptr;
@@ -125,6 +126,7 @@ private:
     void finishDownload(quint64 generation);
     void failDownload(Failure failure);
     void failCheck(Failure failure);
+    void beginManifestRequest(const QUrl& url, bool prereleaseIndex = false);
     QNetworkAccessManager* networkManager() const;
 
     static UpdateChecker* m_instance;

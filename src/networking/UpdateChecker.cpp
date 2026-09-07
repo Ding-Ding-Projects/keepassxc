@@ -46,7 +46,9 @@
 namespace
 {
     constexpr qsizetype MaxManifestBytes = 64 * 1024;
+    constexpr qsizetype MaxReleaseIndexBytes = 256 * 1024;
     const QUrl ManifestUrl(QStringLiteral("https://github.com/Ding-Ding-Projects/keepassxc/releases/latest/download/update-manifest-v1.json"));
+    const QUrl ReleasesUrl(QStringLiteral("https://api.github.com/repos/Ding-Ding-Projects/keepassxc/releases?per_page=20"));
 }
 
 const QString UpdateChecker::ErrorVersion("error");
@@ -80,7 +82,15 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         m_bytesReceived.clear();
         m_redirectRejected = false;
         setState(State::Checking);
-        QNetworkRequest request(ManifestUrl);
+        beginManifestRequest(config()->get(Config::GUI_CheckForUpdatesIncludeBetas).toBool() ? ReleasesUrl : ManifestUrl,
+                             config()->get(Config::GUI_CheckForUpdatesIncludeBetas).toBool());
+    }
+}
+
+void UpdateChecker::beginManifestRequest(const QUrl& url, bool prereleaseIndex)
+{
+        m_fetchingPrereleaseIndex = prereleaseIndex;
+        QNetworkRequest request(url);
         request.setRawHeader("Accept", "application/json");
         // The release's "latest/download" link answers with a redirect to the
         // asset; follow it, but only to HTTPS on GitHub's own hosts.
@@ -106,13 +116,12 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
                 failCheck(Failure::Offline);
             }
         });
-    }
 }
 
 void UpdateChecker::fetchReadyRead()
 {
     m_bytesReceived += m_reply->readAll();
-    if (m_bytesReceived.size() > MaxManifestBytes) {
+    if (m_bytesReceived.size() > (m_fetchingPrereleaseIndex ? MaxReleaseIndexBytes : MaxManifestBytes)) {
         m_reply->abort();
     }
 }
@@ -125,10 +134,44 @@ void UpdateChecker::fetchFinished()
     bool hasNewVersion = false;
     QString version = "";
     const bool redirected = m_redirectRejected;
+    const bool prereleaseIndex = m_fetchingPrereleaseIndex;
 
     ++m_manifestGeneration;
     m_reply->deleteLater();
     m_reply = nullptr;
+
+    if (prereleaseIndex) {
+        m_fetchingPrereleaseIndex = false;
+        if (error || redirected || m_bytesReceived.size() > MaxReleaseIndexBytes) {
+            failCheck(redirected ? Failure::RedirectRejected : (timedOut ? Failure::Timeout : (m_bytesReceived.size() > MaxReleaseIndexBytes ? Failure::OversizedManifest : Failure::Offline)));
+            return;
+        }
+        QJsonParseError parseError;
+        const auto document = QJsonDocument::fromJson(m_bytesReceived, &parseError);
+        QUrl manifestUrl;
+        if (parseError.error == QJsonParseError::NoError && document.isArray()) {
+            for (const auto value : document.array()) {
+                const auto release = value.toObject();
+                if (!release.value(QStringLiteral("prerelease")).toBool() || release.value(QStringLiteral("draft")).toBool()) continue;
+                for (const auto asset : release.value(QStringLiteral("assets")).toArray()) {
+                    const auto object = asset.toObject();
+                    if (object.value(QStringLiteral("name")).toString() == QStringLiteral("update-manifest-v1.json")) {
+                        manifestUrl = QUrl(object.value(QStringLiteral("browser_download_url")).toString());
+                        break;
+                    }
+                }
+                if (manifestUrl.isValid()) break;
+            }
+        }
+        if (!manifestUrl.isValid() || manifestUrl.scheme() != QStringLiteral("https") || !redirectAllowed(manifestUrl)) {
+            failCheck(Failure::MalformedManifest);
+            return;
+        }
+        m_bytesReceived.clear();
+        m_redirectRejected = false;
+        beginManifestRequest(manifestUrl);
+        return;
+    }
 
     if (!error && !redirected) {
         Candidate parsed;
