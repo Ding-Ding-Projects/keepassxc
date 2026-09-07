@@ -109,8 +109,8 @@ function finalize(repository, runId) {
     for (let attempt = 0; attempt < 3; ++attempt) {
         const latest = selectLatest(repository);
         runGh(['release', 'edit', latest.tag_name, '--repo', repository, '--latest']);
-        const verified = jsonGh(['release', 'view', latest.tag_name, '--repo', repository, '--json', 'isLatest']);
-        if (verified.isLatest) return;
+        const verified = jsonGh(['api', `repos/${repository}/releases/latest`]);
+        if (verified.tag_name === latest.tag_name) return;
     }
     fail('Could not verify the highest numeric stable release as latest after three attempts.');
 }
