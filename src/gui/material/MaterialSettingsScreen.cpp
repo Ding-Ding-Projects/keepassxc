@@ -698,9 +698,13 @@ namespace Material
         m_logoFitMode->setCurrentIndex(qMax(0, m_logoFitMode->findData(config()->get(Config::GUI_CustomLogoFitMode).toString())));
         connect(m_logoFitMode, &Select::currentIndexChanged, this, [this](int) {
             QString error;
-            const bool rebuilt = !icons()->hasCustomApplicationLogo()
-                || icons()->setApplicationLogoPresentation(m_logoFitMode->currentData().toString(),
-                                                           QColor(config()->get(Config::GUI_CustomLogoBackground).toString()), &error);
+            bool rebuilt = true;
+            if (icons()->hasCustomApplicationLogo()) {
+                rebuilt = icons()->setApplicationLogoPresentation(m_logoFitMode->currentData().toString(),
+                                                                   QColor(config()->get(Config::GUI_CustomLogoBackground).toString()), &error);
+            } else {
+                config()->set(Config::GUI_CustomLogoFitMode, m_logoFitMode->currentData().toString());
+            }
             refreshLogoPreview();
             if (!rebuilt) {
                 m_logoStatus->setText(error);
@@ -717,8 +721,12 @@ namespace Material
             const auto chosen = QColorDialog::getColor(current, this, tr("Application logo background"), QColorDialog::ShowAlphaChannel);
             if (!chosen.isValid()) return;
             QString error;
-            const bool rebuilt = !icons()->hasCustomApplicationLogo()
-                || icons()->setApplicationLogoPresentation(config()->get(Config::GUI_CustomLogoFitMode).toString(), chosen, &error);
+            bool rebuilt = true;
+            if (icons()->hasCustomApplicationLogo()) {
+                rebuilt = icons()->setApplicationLogoPresentation(config()->get(Config::GUI_CustomLogoFitMode).toString(), chosen, &error);
+            } else {
+                config()->set(Config::GUI_CustomLogoBackground, chosen.name(QColor::HexArgb));
+            }
             refreshLogoPreview();
             if (!rebuilt) m_logoStatus->setText(error);
         });
