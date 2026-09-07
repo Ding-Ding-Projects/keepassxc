@@ -11,6 +11,10 @@ toolchain. Each accepts `/s` or `--silent`.
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
+The [September repair verification record](docs/features/delivery/repair-verification-2026-09.md)
+separates the passing focused native checks and published website from still-unverified installed
+dragging, updates, and the incomplete full feature inventory.
+
 The cryptography, the KDBX format handling, the browser and SSH integrations and the command line
 tool are upstream KeePassXC and are deliberately untouched. What changed is what you look at: the
 stock Qt styling — `BaseStyle` (4 860 lines), `LightStyle`, `DarkStyle`, `phantomcolor` and all

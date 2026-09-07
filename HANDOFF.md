@@ -1,3 +1,9 @@
+# Current repair handoff, September 2026
+
+Native and website repairs are integrated at `614c58fca2cc0f86c4270d5ef83cbaedf1d9731b`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The website publication is verified; final installer delivery and installed behavior are not yet complete. The full feature inventory remains 1/172 green.
+
+Historical sections below describe only their named earlier commits. Their capture and parity claims are not a fresh verdict about the current candidate. The old package and clipping records remain for auditability.
+
 # Handoff — Windows-native Material rewrite and Squirrel distribution
 
 Last verified: 2026-09-02 on the `codex/parity-capture` lane; `main` was fast-forwarded to it at the end of the pass (see the final section). Every claim names the commit it was measured at.

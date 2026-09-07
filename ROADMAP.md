@@ -3,7 +3,9 @@
 ## Repair and release verification
 
 - [x] Validate website release metadata against published package and build provenance, including BOM and malformed-input regressions.
-- [ ] Render verified downloads and provenance in the website and refresh them during publication.
+- [x] Render verified downloads and provenance in the website and refresh them during publication (live main deployment `614c58fc`, run `34090392214`).
+- [x] Compile the repaired native targets and pass the focused update, title-bar, tab and selected GUI suites at `5c8066ae`.
+- [x] Produce and byte-verify local unsigned Squirrel packages at `877f4434`; installed behavior remains separate.
 - [ ] Verify the repaired Windows build, window/content dragging, and installed automatic update lifecycle.
 - [ ] Complete the per-surface inventory and real runtime evidence before declaring release-grade completion.
 

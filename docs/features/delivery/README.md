@@ -13,3 +13,4 @@ Build scripts, the Squirrel.Windows installer, automatic updates and release evi
 | Front-screen version and updated-at provenance | [in-app-version-provenance.md](in-app-version-provenance.md) |
 | Social preview embed graphic | [social-preview.md](social-preview.md) |
 | Website download and build provenance | [website-release-provenance.md](website-release-provenance.md) |
+| September 2026 repair verification and remaining acceptance | [repair-verification-2026-09.md](repair-verification-2026-09.md) |
