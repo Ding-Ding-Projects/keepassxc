@@ -113,6 +113,7 @@ private:
     QProcess* m_applyProcess = nullptr;
     QPointer<QNetworkAccessManager> m_networkManager;
     quint64 m_downloadBytes = 0;
+    quint64 m_manifestGeneration = 0;
     quint64 m_generation = 0;
     QByteArray m_bytesReceived;
     bool m_isManuallyRequested;

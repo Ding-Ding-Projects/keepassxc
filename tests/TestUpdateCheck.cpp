@@ -430,3 +430,28 @@ void TestUpdateCheck::testDestroyedNetworkManagerClearsActiveReplies()
     QCOMPARE(downloading.state(), UpdateChecker::State::Failed);
     QCOMPARE(downloading.failure(), UpdateChecker::Failure::Offline);
 }
+
+void TestUpdateCheck::testDeferredManifestDeletionDoesNotFailReplacementCheck()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+    connect(&checker, &UpdateChecker::updateCheckFinished, &checker, [&checker, &manager] {
+        if (manager.replies.size() == 1) {
+            checker.checkForUpdates(true);
+        }
+    });
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(manager.replies.size(), 2);
+    QCOMPARE(checker.state(), UpdateChecker::State::Checking);
+
+    manager.replies.at(1)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+}

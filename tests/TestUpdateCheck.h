@@ -35,6 +35,7 @@ private slots:
     void testConcurrentCheckKeepsDownloadActive();
     void testRejectedPackageRedirectReportsDiagnostic();
     void testDestroyedNetworkManagerClearsActiveReplies();
+    void testDeferredManifestDeletionDoesNotFailReplacementCheck();
 };
 
 #endif // #define KEEPASSX_TESTUPDATECHECK_H

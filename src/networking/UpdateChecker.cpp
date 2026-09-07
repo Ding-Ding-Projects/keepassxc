@@ -88,6 +88,7 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         request.setMaximumRedirectsAllowed(5);
         request.setTransferTimeout(30000);
 
+        const quint64 generation = ++m_manifestGeneration;
         m_reply = networkManager()->get(request);
         QNetworkReply* const reply = m_reply;
 
@@ -99,8 +100,8 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
         });
         connect(m_reply, &QNetworkReply::finished, this, &UpdateChecker::fetchFinished);
         connect(m_reply, &QIODevice::readyRead, this, &UpdateChecker::fetchReadyRead);
-        connect(reply, &QObject::destroyed, this, [this] {
-            if (m_state == State::Checking) {
+        connect(reply, &QObject::destroyed, this, [this, generation] {
+            if (generation == m_manifestGeneration && m_state == State::Checking) {
                 m_reply = nullptr;
                 failCheck(Failure::Offline);
             }
@@ -125,6 +126,7 @@ void UpdateChecker::fetchFinished()
     QString version = "";
     const bool redirected = m_redirectRejected;
 
+    ++m_manifestGeneration;
     m_reply->deleteLater();
     m_reply = nullptr;
 
