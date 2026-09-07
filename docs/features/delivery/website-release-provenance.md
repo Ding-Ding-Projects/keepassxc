@@ -8,4 +8,8 @@ Validation requires a stable version, x64 `KeePassXC.Material` identity, a sourc
 
 This is metadata consistency validation. It does not prove installer execution, drag behavior, updater behavior, or authenticity. Packages remain unsigned. A future website view must render an unavailable state when this metadata is missing or invalid and must not invent a version or timestamp.
 
-`node scripts/test-site-release-data.mjs` verifies a valid projection, private build-path omission, BOM handling, the byte limit, and twelve invalid-input cases. Website rendering and automatic refresh during publication remain pending.
+`node scripts/test-site-release-data.mjs` verifies a valid projection, private build-path omission, BOM handling, the byte limit, and thirteen invalid-input cases. `node scripts/fetch-site-release-data.mjs OUTPUT_JSON [TAG]` retrieves the selected published metadata through the GitHub CLI and applies the same validation. Set `KPXC_REFRESH_RELEASE=1` when building to retrieve the latest stable release directly into generated output, leaving tracked source unchanged. Missing or inconsistent release metadata fails publication instead of presenting invented downloads.
+
+The Pages workflow refreshes on main-branch changes, manual dispatch, and successful completion of the main-branch delivery workflow. Publication creates no source commit, so it cannot trigger a source-push loop. Focused rendering evidence exists; the updated publication workflow still requires a real deployment verdict.
+
+The website build includes license and notice files for its locally bundled runtime dependencies in `licenses/`. Build tooling is not loaded by the visitor's browser.
