@@ -29,6 +29,22 @@ class Icons
 public:
     QString applicationIconName();
     QIcon applicationIcon();
+    /**
+     * Validate and import a local PNG or JPEG as the presentation logo. The source path is never
+     * persisted: the accepted pixels are normalised into the private app-data cache instead.
+     */
+    bool importApplicationLogo(const QString& sourcePath, QString* error = nullptr);
+    /** Rebuild the current derived display icon using the stored presentation settings. */
+    bool refreshApplicationLogo(QString* error = nullptr);
+    /** Stage fit/background rendering and commit both settings only after a successful rebuild. */
+    bool setApplicationLogoPresentation(const QString& fitMode, const QColor& background, QString* error = nullptr);
+    /** Remove the local derived logo and restore the shipped application mark. */
+    bool resetApplicationLogo(QString* error = nullptr);
+    bool hasCustomApplicationLogo() const;
+    QString applicationLogoPath() const;
+    // Test-only fault controls exercise transactional storage failures without using real personal files.
+    static void setApplicationLogoCacheDirectoryForTests(const QString& path);
+    static void setApplicationLogoFailureStageForTests(int stage);
     QIcon trayIcon(bool unlocked = true);
     QString trayIconAppearance() const;
     QIcon icon(const QString& name, bool recolor = true, const QColor& overrideColor = QColor::Invalid);
@@ -47,7 +63,16 @@ public:
 private:
     Icons();
 
+    QIcon customApplicationIcon() const;
+    QString applicationLogoSourcePath() const;
+    QString applicationLogoCacheDirectory() const;
+    bool ensureApplicationLogoCache(QString* error) const;
+    bool renderApplicationLogo(const QImage& source, const QString& fitMode, const QColor& background, QString* error);
+    void refreshApplicationIcon();
+
     static Icons* m_instance;
+    static QString m_testLogoCacheDirectory;
+    static int m_testLogoFailureStage;
 
     QHash<QString, QIcon> m_iconCache;
 
