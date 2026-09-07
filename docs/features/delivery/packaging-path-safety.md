@@ -54,9 +54,11 @@ Unexpected files or directories stop publication before deletion.
 
 Publication prepares and hash-checks the replacement files first. Existing verified
 outputs are backed up in the unique packaging scratch directory before replacement.
-An interrupted replacement restores those prior outputs. Only individually verified
-files are removed; the scripts never recursively clear a caller-selected directory.
-Scratch candidates and previous-output backups remain available for diagnosis.
+A reported replacement failure triggers restoration of those prior outputs. An
+abrupt process termination or a failed restoration retains the backup for manual
+recovery; a subsequent run refuses incomplete or mismatched output. Only individually
+verified files are removed; the scripts never recursively clear a caller-selected
+directory. Scratch candidates and previous-output backups remain available for diagnosis.
 
 ## Verification
 
