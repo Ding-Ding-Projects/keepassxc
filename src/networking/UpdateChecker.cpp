@@ -69,7 +69,7 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
 {
     // A manifest query cannot safely replace an active package transfer or
     // updater process. Keep the active operation and its state authoritative.
-    if (m_reply || m_downloadReply || m_applyProcess) {
+    if (m_reply || m_downloadReply || m_applyProcess || !transitionAllowed(m_state, State::Checking)) {
         return;
     }
 

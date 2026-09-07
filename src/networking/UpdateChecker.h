@@ -18,6 +18,7 @@
 #ifndef KEEPASSXC_UPDATECHECK_H
 #define KEEPASSXC_UPDATECHECK_H
 #include <QObject>
+#include <QPointer>
 #include <QUrl>
 
 #include <functional>
@@ -110,7 +111,7 @@ private:
     QSaveFile* m_downloadFile = nullptr;
     QCryptographicHash* m_downloadHash = nullptr;
     QProcess* m_applyProcess = nullptr;
-    QNetworkAccessManager* m_networkManager = nullptr;
+    QPointer<QNetworkAccessManager> m_networkManager;
     quint64 m_downloadBytes = 0;
     quint64 m_generation = 0;
     QByteArray m_bytesReceived;

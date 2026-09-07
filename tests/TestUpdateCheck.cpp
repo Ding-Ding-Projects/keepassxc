@@ -21,12 +21,16 @@
 
 #include <QTest>
 #include <QCryptographicHash>
+#include <QCoreApplication>
+#include <QEvent>
 #include <QFile>
 #include <QNetworkAccessManager>
 #include <QNetworkReply>
 #include <QNetworkRequest>
+#include <QPointer>
 #include <QTemporaryDir>
 
+#include <algorithm>
 #include <cstring>
 
 #include <../minizip/zip.h>
@@ -88,7 +92,12 @@ namespace
     class ControlledNetworkAccessManager final : public QNetworkAccessManager
     {
     public:
-        QVector<ControlledReply*> replies;
+        QVector<QPointer<ControlledReply>> replies;
+
+        int liveReplyCount() const
+        {
+            return std::count_if(replies.cbegin(), replies.cend(), [](const auto& reply) { return !reply.isNull(); });
+        }
 
     protected:
         QNetworkReply* createRequest(Operation operation, const QNetworkRequest& request, QIODevice* outgoingData) override
@@ -193,9 +202,20 @@ void TestUpdateCheck::testStateTransitions()
     QVERIFY(UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Restarting));
     QVERIFY(UpdateChecker::transitionAllowed(State::Deferred, State::Restarting));
     QVERIFY(UpdateChecker::transitionAllowed(State::Failed, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::NoUpdate, State::Checking));
+    QVERIFY(UpdateChecker::transitionAllowed(State::Deferred, State::Checking));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Applying));
     QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::ReadyToRestart));
     QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Downloading));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Checking, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Available, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Downloading, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Verifying, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Applying, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::ReadyToRestart, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Restarting, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::Disabled, State::Checking));
+    QVERIFY(!UpdateChecker::transitionAllowed(State::NotSquirrelInstalled, State::Checking));
 }
 
 void TestUpdateCheck::testManifestContract()
@@ -346,6 +366,12 @@ void TestUpdateCheck::testConcurrentCheckKeepsDownloadActive()
     checker.checkForUpdates(true);
     QCOMPARE(manager.replies.size(), 2);
     QCOMPARE(checker.state(), UpdateChecker::State::Downloading);
+
+    checker.cancelDownload();
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Cancelled);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(manager.liveReplyCount(), 0);
 }
 
 void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
