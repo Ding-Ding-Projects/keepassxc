@@ -41,7 +41,7 @@ function positiveSafeInteger(value) {
 function utcSeconds(value) {
     if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) fail(`Invalid UTC timestamp: ${value}`);
     const seconds = Date.parse(value) / 1000;
-    if (!Number.isFinite(seconds)) fail(`Invalid UTC timestamp: ${value}`);
+    if (!Number.isFinite(seconds) || new Date(seconds * 1000).toISOString() !== value.replace('Z', '.000Z')) fail(`Invalid UTC timestamp: ${value}`);
     return seconds;
 }
 function duration(seconds) {
@@ -49,7 +49,7 @@ function duration(seconds) {
         .map((part) => String(part).padStart(2, '0')).join(':');
 }
 export function packageVersion(runNumber, runAttempt) {
-    if (!Number.isInteger(runNumber) || runNumber < 1 || !Number.isInteger(runAttempt) || runAttempt < 1) fail('Invalid run number or attempt.');
+    if (!Number.isSafeInteger(runNumber) || runNumber < 1 || !Number.isSafeInteger(runAttempt) || runAttempt < 1) fail('Invalid run number or attempt.');
     const ordinal = runNumber * 100 + runAttempt;
     const patch = ordinal % 65536;
     const minorOrdinal = 8 + Math.floor(ordinal / 65536);
@@ -149,10 +149,10 @@ export function finalize(repository, runId, expectedAttempt, runner = runGh) {
     if (!numericRunId || !numericAttempt) {
         fail('Numeric WORKFLOW_RUN_ID and positive WORKFLOW_RUN_ATTEMPT are required.');
     }
-    const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`], runner);
+    const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}/attempts/${expectedAttempt}`], runner);
     if (!run || typeof run !== 'object' || !Number.isSafeInteger(run.id) || run.id !== numericRunId
         || !Number.isSafeInteger(run.run_attempt) || run.run_attempt !== numericAttempt
-        || !Number.isInteger(run.run_number) || run.run_number < 1 || run.conclusion !== 'success'
+        || !Number.isSafeInteger(run.run_number) || run.run_number < 1 || run.conclusion !== 'success'
         || typeof run.head_sha !== 'string' || !run.head_sha.trim()) {
         fail('Workflow run metadata does not match the requested successful attempt.');
     }

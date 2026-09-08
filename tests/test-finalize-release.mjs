@@ -17,10 +17,16 @@ assert.match(
 assert.doesNotMatch(workflow, /^  queue:/m, 'the finalizer uses a per-run concurrency group instead of a queue extension');
 assert.match(workflow, /^          WORKFLOW_RUN_ATTEMPT: \$\{\{ github\.event\.workflow_run\.run_attempt \}\}\r?$/m);
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
+assert.equal(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65408');
+assert.throws(() => packageVersion(Number.MAX_SAFE_INTEGER + 1, 1), /Invalid run number/);
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];
 const block = timingBlock(fixture.jobs[0].started_at, publication.completed_at);
 assert.match(block, /Workflow duration: 01:11:31/);
+assert.match(timingBlock('2024-02-29T00:00:00Z', '2024-02-29T00:00:01Z'), /Workflow duration: 00:00:01/);
+for (const invalidUtc of ['2025-02-29T00:00:00Z', '2024-02-30T00:00:00Z', '2024-04-31T00:00:00Z', '2024-01-01T24:00:00Z', '2024-01-01T00:60:00Z', '2024-01-01T00:00:60Z']) {
+    assert.throws(() => timingBlock(invalidUtc, '2024-03-01T00:00:00Z'), /Invalid UTC timestamp/);
+}
 const marker = `<!-- kpxc-release-finalization:run=${fixture.run.id};tag=v2.8.19901;target=${fixture.run.head_sha} -->`;
 const body = `${marker}\n<!-- kpxc-workflow-timing:start -->\nWorkflow timing finalization pending the successful Create GitHub Release step.\n<!-- kpxc-workflow-timing:end -->`;
 assert.match(replaceTiming(body, block), /Workflow completed: 2026-09-07T07:11:31Z/);
@@ -145,7 +151,7 @@ function makeFinalizerRunner(mode = '', calls = [], evidence = {}) {
             return '';
         }
         if (args[0] === 'release') return '';
-        if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') {
+        if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42/attempts/1') {
             if (mode === 'run-id-mismatch') return JSON.stringify({ ...finalizerRun, id: 43 });
             if (mode === 'run-attempt-mismatch') return JSON.stringify({ ...finalizerRun, run_attempt: 2 });
             if (mode === 'run-empty-sha') return JSON.stringify({ ...finalizerRun, head_sha: '' });
@@ -173,6 +179,7 @@ function makeFinalizerRunner(mode = '', calls = [], evidence = {}) {
 }
 const finalizerEvidence = {};
 finalize('example/project', '42', '1', makeFinalizerRunner('', finalizerCalls, finalizerEvidence));
+assert.deepEqual(finalizerCalls[0], ['api', 'repos/example/project/actions/runs/42/attempts/1']);
 assert.deepEqual(finalizerCalls[2], paginatedBase64Query('repos/example/project/actions/runs/42/attempts/1/jobs?per_page=100', jobsSelector));
 assert.deepEqual(finalizerCalls[3].slice(0, 5), ['release', 'edit', 'v2.8.20001', '--repo', 'example/project']);
 assert.ok(finalizerCalls[3].includes('--notes-file'), 'timing notes must be edited before latest designation');
