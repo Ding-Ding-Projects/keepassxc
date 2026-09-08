@@ -53,12 +53,16 @@ namespace
             setUrl(request.url());
             setAttribute(QNetworkRequest::HttpStatusCodeAttribute, 200);
             open(QIODevice::ReadOnly | QIODevice::Unbuffered);
+            connect(this, &QNetworkReply::redirectAllowed, this, [this] {
+                ++m_redirectApprovalCount;
+                m_redirectPending = false;
+            });
         }
 
         void complete(const QByteArray& body = {}, int status = 200,
                       NetworkError error = NoError, bool signalReady = true)
         {
-            if (m_finished) {
+            if (m_finished || m_redirectPending) {
                 return;
             }
             m_finished = true;
@@ -88,7 +92,13 @@ namespace
 
         void redirectTo(const QUrl& target)
         {
+            m_redirectPending = true;
             emit redirected(target);
+        }
+
+        int redirectApprovalCount() const
+        {
+            return m_redirectApprovalCount;
         }
 
         void abort() override
@@ -118,6 +128,8 @@ namespace
         QByteArray m_body;
         qint64 m_position = 0;
         bool m_finished = false;
+        bool m_redirectPending = false;
+        int m_redirectApprovalCount = 0;
     };
 
     class ControlledNetworkAccessManager final : public QNetworkAccessManager
@@ -832,6 +844,31 @@ void TestUpdateCheck::testConcurrentCheckKeepsDownloadActive()
     QCOMPARE(manager.liveReplyCount(), 0);
 }
 
+void TestUpdateCheck::testPackageRedirectRequiresExplicitApproval()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+
+    checker.downloadAvailableUpdate();
+    QCOMPARE(manager.replies.size(), 2);
+    const auto redirectPolicy = manager.replies.at(1)->request().attribute(QNetworkRequest::RedirectPolicyAttribute);
+    QCOMPARE(redirectPolicy.toInt(), int(QNetworkRequest::UserVerifiedRedirectPolicy));
+
+    manager.replies.at(1)->redirectTo(QUrl(QStringLiteral("https://release-assets.githubusercontent.com/package")));
+    QCOMPARE(manager.replies.at(1)->redirectApprovalCount(), 1);
+    QCOMPARE(checker.state(), UpdateChecker::State::Downloading);
+
+    checker.cancelDownload();
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Cancelled);
+}
+
 void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
 {
     ControlledNetworkAccessManager manager;
@@ -847,6 +884,7 @@ void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
     QCOMPARE(manager.replies.size(), 2);
     manager.replies.at(1)->redirectTo(QUrl(QStringLiteral("https://example.com/unsafe.nupkg")));
 
+    QCOMPARE(manager.replies.at(1)->redirectApprovalCount(), 0);
     QCOMPARE(checker.state(), UpdateChecker::State::Failed);
     QCOMPARE(checker.failure(), UpdateChecker::Failure::RedirectRejected);
     QVERIFY(!UpdateChecker::describeFailure(checker.failure()).isEmpty());
