@@ -31,7 +31,7 @@ export function runGh(args, spawn = spawnSync) {
     if (result.status !== 0) throw new GhCommandError(args, result);
     return result.stdout;
 }
-function jsonGh(args) { return JSON.parse(runGh(args)); }
+function jsonGh(args, runner = runGh) { return JSON.parse(runner(args)); }
 function utcSeconds(value) {
     const seconds = Date.parse(value) / 1000;
     if (!Number.isFinite(seconds)) fail(`Invalid UTC timestamp: ${value}`);
@@ -81,8 +81,11 @@ export const latestReleaseSelector = 'map({tag_name, draft, prerelease})[]';
 export const jobsSelector = '.jobs[] | {name, started_at, steps: [.steps[] | {name, completed_at, conclusion}]}';
 export function parseBase64JsonLines(output) {
     if (typeof output !== 'string') fail('GitHub API output must be text.');
-    return output.trim().split(/\r?\n/).filter(Boolean).map((line) => {
-        if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(line)) {
+    if (output === '') return [];
+    const lines = output.split(/\r?\n/);
+    if (lines.at(-1) === '') lines.pop();
+    return lines.map((line) => {
+        if (!line || !/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(line)) {
             fail('GitHub API returned a non-base64 release record.');
         }
         const bytes = Buffer.from(line, 'base64');
@@ -92,10 +95,13 @@ export function parseBase64JsonLines(output) {
         catch { fail('GitHub API returned base64 data that is not JSON.'); }
     });
 }
-function jsonLinesFromGh(endpoint, selector = '.[]') {
-    return parseBase64JsonLines(runGh(paginatedBase64Query(endpoint, selector)));
+function jsonLinesFromGh(endpoint, selector = '.[]', runner = runGh) {
+    return parseBase64JsonLines(runner(paginatedBase64Query(endpoint, selector)));
 }
 function ensureReleaseIdentity(release, runId, tag, target) {
+    if (!release || typeof release.body !== 'string' || typeof release.isDraft !== 'boolean' || typeof release.targetCommitish !== 'string') {
+        fail('Release metadata has an invalid finalization schema.');
+    }
     const marker = `${identityPrefix}run=${runId};tag=${tag};target=${target} -->`;
     if (!release.body.includes(marker)) {
         return false;
@@ -120,22 +126,24 @@ export function selectLatestRelease(releases) {
     if (!stable.length) fail('No stable numeric release exists.');
     return stable.reduce((best, current) => compareVersions(current.version, best.version) > 0 ? current : best).release;
 }
-function selectLatest(repository) {
-    return selectLatestRelease(jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector));
+function selectLatest(repository, runner = runGh) {
+    return selectLatestRelease(jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector, runner));
 }
 export function latestSelectionIsCurrent(selected, releases) {
     return Boolean(selected) && selectLatestRelease(releases).tag_name === selected.tag_name;
 }
 export function isNotFoundReleaseError(error) {
-    return error instanceof GhCommandError && error.status !== 0 && /(?:\bHTTP 404\b|\brelease not found\b)/i.test(error.stderr);
+    const diagnostic = error instanceof GhCommandError ? error.stderr.trim() : '';
+    return error instanceof GhCommandError && error.status !== 0
+        && (diagnostic === 'release not found' || /^HTTP 404: Not Found$/i.test(diagnostic));
 }
-function finalize(repository, runId) {
-    const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`]);
+export function finalize(repository, runId, runner = runGh) {
+    const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`], runner);
     if (run.conclusion !== 'success') fail('Only successful workflow runs can finalize a release.');
     const tag = `v${packageVersion(run.run_number, run.run_attempt)}`;
     let release;
     try {
-        release = jsonGh(['release', 'view', tag, '--repo', repository, '--json', 'body,targetCommitish,isDraft']);
+        release = jsonGh(['release', 'view', tag, '--repo', repository, '--json', 'body,targetCommitish,isDraft'], runner);
     } catch (error) {
         if (!isNotFoundReleaseError(error)) throw error;
         console.log(`No release ${tag} exists for workflow run ${run.id}; skipping finalization.`);
@@ -145,7 +153,7 @@ function finalize(repository, runId) {
         console.log(`Release ${tag} has no finalizer marker for workflow run ${run.id}; skipping finalization.`);
         return;
     }
-    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, jobsSelector);
+    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, jobsSelector, runner);
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
     const publication = releaseJob?.steps?.find((step) => step.name === 'Create the GitHub Release');
@@ -157,14 +165,14 @@ function finalize(repository, runId) {
     try {
         const notes = join(scratch, 'notes.md');
         writeFileSync(notes, updatedBody, 'utf8');
-        runGh(['release', 'edit', tag, '--repo', repository, '--notes-file', notes]);
+        runner(['release', 'edit', tag, '--repo', repository, '--notes-file', notes]);
     } finally { rmSync(scratch, { recursive: true, force: true }); }
     for (let attempt = 0; attempt < 3; ++attempt) {
-        const latest = selectLatest(repository);
-        runGh(['release', 'edit', latest.tag_name, '--repo', repository, '--latest']);
-        const afterEdit = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector);
+        const latest = selectLatest(repository, runner);
+        runner(['release', 'edit', latest.tag_name, '--repo', repository, '--latest']);
+        const afterEdit = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector, runner);
         if (!latestSelectionIsCurrent(latest, afterEdit)) continue;
-        const verified = jsonGh(['api', `repos/${repository}/releases/latest`]);
+        const verified = jsonGh(['api', `repos/${repository}/releases/latest`], runner);
         if (verified.tag_name === latest.tag_name) return;
     }
     fail('Could not verify the highest numeric stable release as latest after three attempts.');

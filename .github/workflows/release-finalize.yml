@@ -10,9 +10,8 @@ permissions:
   contents: write
 
 concurrency:
-  group: release-finalizer-${{ github.repository }}
+  group: release-finalizer-${{ github.repository }}-${{ github.event.workflow_run.id }}
   cancel-in-progress: false
-  queue: max
 
 jobs:
   finalize:

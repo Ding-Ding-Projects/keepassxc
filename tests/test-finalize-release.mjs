@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-    compareVersions, GhCommandError, ghOutputLimitBytes, isNotFoundReleaseError,
+    compareVersions, finalize, GhCommandError, ghOutputLimitBytes, isNotFoundReleaseError,
     jobsSelector, latestReleaseSelector, latestSelectionIsCurrent, packageVersion,
     paginatedBase64Query, parseBase64JsonLines, parseVersion, replaceTiming, runGh,
     selectLatestRelease, timingBlock
@@ -11,9 +11,10 @@ const fixture = JSON.parse(readFileSync(new URL('./fixtures/release-finalize/pub
 const workflow = readFileSync(new URL('../.github/workflows/release-finalize.yml', import.meta.url), 'utf8');
 assert.match(
     workflow,
-    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}\r?\n  cancel-in-progress: false\r?\n  queue: max\r?$/m,
-    'finalizer runs must serialize without cancelling an in-flight publication finalizer'
+    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}-\$\{\{ github\.event\.workflow_run\.id \}\}\r?\n  cancel-in-progress: false\r?$/m,
+    'each finalizer run must keep its own uncancelled workflow concurrency group'
 );
+assert.doesNotMatch(workflow, /^  queue:/m, 'GitHub Actions concurrency permits no queue key');
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];
@@ -46,6 +47,7 @@ const apiReleases = [
 ];
 const encoded = apiReleases.map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
 assert.deepEqual(parseBase64JsonLines(encoded), apiReleases);
+assert.deepEqual(parseBase64JsonLines(`${encoded}\r\n`), apiReleases);
 const pageOne = apiReleases.slice(0, 2).map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
 const pageTwo = apiReleases.slice(2).map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
 assert.deepEqual(parseBase64JsonLines(`${pageOne}\n${pageTwo}`), apiReleases, 'paginated gh output must retain records from every page');
@@ -54,6 +56,9 @@ assert.throws(() => parseBase64JsonLines('A==='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AAAA='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AAAA===='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AA=A'), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines(` ${encoded}`), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines(`${encoded} `), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines(`${encoded}\n\n`), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AB=='), /noncanonical base64 release data/);
 assert.throws(() => parseBase64JsonLines('AAB='), /noncanonical base64 release data/);
 assert.throws(() => parseBase64JsonLines(Buffer.from('not json').toString('base64')), /not JSON/);
@@ -85,6 +90,8 @@ assert.ok(notFound instanceof GhCommandError);
 assert.equal(isNotFoundReleaseError(notFound), true);
 const namedNotFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'release not found' })));
 assert.equal(isNotFoundReleaseError(namedNotFound), true);
+const misleadingNotFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 403: release not found' })));
+assert.equal(isNotFoundReleaseError(misleadingNotFound), false);
 const denied = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' })));
 assert.equal(isNotFoundReleaseError(denied), false);
 const unavailable = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'network connection refused' })));
@@ -95,4 +102,49 @@ assert.throws(() => runGh(['api', 'repos/example/project/releases'], () => ({
 assert.throws(() => runGh(['api', 'repos/example/project/releases'], () => ({
     status: 0, stdout: 'x'.repeat(ghOutputLimitBytes + 1), stderr: ''
 })), /output limit/);
+
+let spawnOptions;
+assert.equal(runGh(['api', 'repos/example/project/releases'], (_command, _args, options) => {
+    spawnOptions = options;
+    return { status: 0, stdout: '{}', stderr: '' };
+}), '{}');
+assert.deepEqual(spawnOptions, { encoding: 'utf8', maxBuffer: ghOutputLimitBytes });
+
+const base64Line = (value) => Buffer.from(JSON.stringify(value)).toString('base64');
+const finalizerRun = { conclusion: 'success', run_number: 200, run_attempt: 1, id: 42, head_sha: 'abc123' };
+const finalizerRelease = {
+    isDraft: false, targetCommitish: 'abc123',
+    body: '<!-- kpxc-release-finalization:run=42;tag=v2.8.20001;target=abc123 -->\n<!-- kpxc-workflow-timing:start -->\npending\n<!-- kpxc-workflow-timing:end -->'
+};
+const finalizerReleases = `${base64Line({ tag_name: 'v2.8.20001', draft: false, prerelease: false })}\n`;
+const finalizerJobs = `${base64Line({
+    name: 'Publish Squirrel.Windows release', started_at: '2026-09-07T06:00:00Z',
+    steps: [{ name: 'Create the GitHub Release', completed_at: '2026-09-07T07:11:31Z', conclusion: 'success' }]
+})}\n`;
+function fakeFinalizerRunner(args, mode = '') {
+    if (args[0] === 'release' && args[1] === 'view') {
+        if (mode === 'notfound') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'release not found' });
+        if (mode === 'auth') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' });
+        if (mode === 'network') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'network connection refused' });
+        if (mode === 'malformed') return 'not-json';
+        if (mode === 'metadata') return JSON.stringify({ isDraft: false, targetCommitish: 'abc123' });
+        return JSON.stringify(finalizerRelease);
+    }
+    if (args[0] === 'release') return '';
+    if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') return JSON.stringify(finalizerRun);
+    if (args[0] === 'api' && args[1] === 'repos/example/project/releases/latest') return JSON.stringify({ tag_name: 'v2.8.20001' });
+    if (args[0] === 'api' && args[2] === 'repos/example/project/actions/runs/42/jobs?per_page=100') return finalizerJobs;
+    if (args[0] === 'api' && args[2] === 'repos/example/project/releases?per_page=100') return finalizerReleases;
+    assert.fail(`Unexpected finalizer command: ${args.join(' ')}`);
+}
+const finalizerCalls = [];
+finalize('example/project', '42', (args) => {
+    finalizerCalls.push(args);
+    return fakeFinalizerRunner(args);
+});
+assert.ok(finalizerCalls.some((args) => args[0] === 'release' && args[1] === 'edit' && args.includes('--latest')));
+for (const mode of ['auth', 'network', 'malformed', 'metadata']) {
+    assert.throws(() => finalize('example/project', '42', (args) => fakeFinalizerRunner(args, mode)));
+}
+assert.doesNotThrow(() => finalize('example/project', '42', (args) => fakeFinalizerRunner(args, 'notfound')));
 process.stdout.write('test-finalize-release: PASS\n');
