@@ -14,7 +14,7 @@ assert.match(
     /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}-\$\{\{ github\.event\.workflow_run\.id \}\}\r?\n  cancel-in-progress: false\r?$/m,
     'each finalizer run must keep its own uncancelled workflow concurrency group'
 );
-assert.doesNotMatch(workflow, /^  queue:/m, 'GitHub Actions concurrency permits no queue key');
+assert.doesNotMatch(workflow, /^  queue:/m, 'the finalizer uses a per-run concurrency group instead of a queue extension');
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];
