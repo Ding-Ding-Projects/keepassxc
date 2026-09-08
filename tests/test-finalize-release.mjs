@@ -1,8 +1,10 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import {
-    compareVersions, latestReleaseSelector, packageVersion, paginatedBase64Query,
-    parseBase64JsonLines, parseVersion, replaceTiming, selectLatestRelease, timingBlock
+    compareVersions, GhCommandError, ghOutputLimitBytes, isNotFoundReleaseError,
+    jobsSelector, latestReleaseSelector, latestSelectionIsCurrent, packageVersion,
+    paginatedBase64Query, parseBase64JsonLines, parseVersion, replaceTiming, runGh,
+    selectLatestRelease, timingBlock
 } from '../scripts/finalize-release.mjs';
 
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/release-finalize/publication.json', import.meta.url)));
@@ -25,6 +27,10 @@ assert.deepEqual(
     paginatedBase64Query('repos/example/project/releases?per_page=100', latestReleaseSelector),
     ['api', '--paginate', 'repos/example/project/releases?per_page=100', '--jq', 'map({tag_name, draft, prerelease})[] | @base64']
 );
+assert.deepEqual(
+    paginatedBase64Query('repos/example/project/actions/runs/1/jobs?per_page=100', jobsSelector),
+    ['api', '--paginate', 'repos/example/project/actions/runs/1/jobs?per_page=100', '--jq', '.jobs[] | {name, started_at, steps: [.steps[] | {name, completed_at, conclusion}]} | @base64']
+);
 const apiReleases = [
     { tag_name: 'v2.8.19901', draft: false, prerelease: false },
     { tag_name: 'v2.9.1', draft: true, prerelease: false },
@@ -35,9 +41,16 @@ const apiReleases = [
 const encoded = apiReleases.map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
 assert.deepEqual(parseBase64JsonLines(encoded), apiReleases);
 assert.throws(() => parseBase64JsonLines('gh: unknown flag: |'), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines('A==='), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines('AAAA='), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines('AAAA===='), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines('AA=A'), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines(Buffer.from('not json').toString('base64')), /not JSON/);
 assert.equal(selectLatestRelease(parseBase64JsonLines(encoded)).tag_name, 'v2.8.20001');
 assert.throws(() => selectLatestRelease([{ tag_name: 'v3.0.0', draft: true, prerelease: false }]), /No stable numeric release/);
+assert.throws(() => selectLatestRelease([{ tag_name: 'v3.0.0', draft: null, prerelease: false }]), /invalid selection schema/);
+assert.throws(() => selectLatestRelease([{ tag_name: 'v3.0.0', draft: false }]), /invalid selection schema/);
+assert.ok(compareVersions(parseVersion('v9007199254740993.0.0'), parseVersion('v9007199254740992.999999999999999999.999999999999999999')) > 0);
 
 const oversizedRelease = {
     tag_name: 'v99.0.0', draft: false, prerelease: false,
@@ -46,4 +59,25 @@ const oversizedRelease = {
 const projectedRelease = (({ tag_name, draft, prerelease }) => ({ tag_name, draft, prerelease }))(oversizedRelease);
 assert.equal(Buffer.byteLength(JSON.stringify(projectedRelease)) < 100, true, 'latest selection must not buffer release bodies or assets');
 assert.equal(selectLatestRelease([projectedRelease, ...apiReleases]).tag_name, 'v99.0.0');
+assert.equal(latestSelectionIsCurrent({ tag_name: 'v2.8.20001' }, apiReleases), true);
+assert.equal(latestSelectionIsCurrent({ tag_name: 'v2.8.20001' }, [
+    ...apiReleases, { tag_name: 'v2.8.20002', draft: false, prerelease: false }
+]), false, 'a newer release after the edit must trigger a bounded retry');
+
+function captureThrow(action) {
+    try { action(); }
+    catch (error) { return error; }
+    assert.fail('Expected action to throw.');
+}
+const notFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 404: Not Found' })));
+assert.ok(notFound instanceof GhCommandError);
+assert.equal(isNotFoundReleaseError(notFound), true);
+const denied = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' })));
+assert.equal(isNotFoundReleaseError(denied), false);
+assert.throws(() => runGh(['api', 'repos/example/project/releases'], () => ({
+    status: null, stdout: '', stderr: '', error: Object.assign(new Error('spawn ENOBUFS'), { code: 'ENOBUFS' })
+})), /output limit/);
+assert.throws(() => runGh(['api', 'repos/example/project/releases'], () => ({
+    status: 0, stdout: 'x'.repeat(ghOutputLimitBytes + 1), stderr: ''
+})), /output limit/);
 process.stdout.write('test-finalize-release: PASS\n');

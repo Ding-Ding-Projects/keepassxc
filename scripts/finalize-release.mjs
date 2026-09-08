@@ -9,12 +9,26 @@ import { spawnSync } from 'node:child_process';
 const timingStart = '<!-- kpxc-workflow-timing:start -->';
 const timingEnd = '<!-- kpxc-workflow-timing:end -->';
 const identityPrefix = '<!-- kpxc-release-finalization:';
+export const ghOutputLimitBytes = 512 * 1024;
 
 function fail(message) { throw new Error(message); }
-function runGh(args) {
-    const result = spawnSync('gh', args, { encoding: 'utf8' });
-    if (result.error) fail(`gh ${args.join(' ')} could not start: ${result.error.message}`);
-    if (result.status !== 0) fail(`gh ${args.join(' ')} failed: ${(result.stderr || result.stdout).trim()}`);
+export class GhCommandError extends Error {
+    constructor(args, result) {
+        super(`gh ${args.join(' ')} failed: ${(result.stderr || result.stdout || result.error?.message || 'unknown error').trim()}`);
+        this.args = args;
+        this.status = result.status;
+        this.stderr = result.stderr || '';
+        this.code = result.error?.code;
+    }
+}
+export function runGh(args, spawn = spawnSync) {
+    const result = spawn('gh', args, { encoding: 'utf8', maxBuffer: ghOutputLimitBytes });
+    if (result.error?.code === 'ENOBUFS') fail(`gh ${args.join(' ')} exceeded the ${ghOutputLimitBytes}-byte output limit.`);
+    if (result.error) throw new GhCommandError(args, result);
+    if (Buffer.byteLength(result.stdout || '', 'utf8') > ghOutputLimitBytes) {
+        fail(`gh ${args.join(' ')} exceeded the ${ghOutputLimitBytes}-byte output limit.`);
+    }
+    if (result.status !== 0) throw new GhCommandError(args, result);
     return result.stdout;
 }
 function jsonGh(args) { return JSON.parse(runGh(args)); }
@@ -37,11 +51,11 @@ export function packageVersion(runNumber, runAttempt) {
 export function parseVersion(tag) {
     const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(tag);
     if (!match) return null;
-    return match.slice(1).map((part) => Number(part));
+    return match.slice(1).map((part) => BigInt(part));
 }
 export function compareVersions(left, right) {
     for (let index = 0; index < 3; ++index) {
-        if (left[index] !== right[index]) return left[index] - right[index];
+        if (left[index] !== right[index]) return left[index] > right[index] ? 1 : -1;
     }
     return 0;
 }
@@ -64,13 +78,14 @@ export function paginatedBase64Query(endpoint, selector = '.[]') {
     return ['api', '--paginate', endpoint, '--jq', `${selector} | @base64`];
 }
 export const latestReleaseSelector = 'map({tag_name, draft, prerelease})[]';
+export const jobsSelector = '.jobs[] | {name, started_at, steps: [.steps[] | {name, completed_at, conclusion}]}';
 export function parseBase64JsonLines(output) {
     if (typeof output !== 'string') fail('GitHub API output must be text.');
     return output.trim().split(/\r?\n/).filter(Boolean).map((line) => {
-        const decoded = Buffer.from(line, 'base64').toString('utf8');
-        if (!decoded || Buffer.from(decoded, 'utf8').toString('base64').replace(/=+$/, '') !== line.replace(/=+$/, '')) {
+        if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(line)) {
             fail('GitHub API returned a non-base64 release record.');
         }
+        const decoded = Buffer.from(line, 'base64').toString('utf8');
         try { return JSON.parse(decoded); }
         catch { fail('GitHub API returned base64 data that is not JSON.'); }
     });
@@ -90,15 +105,27 @@ function ensureReleaseIdentity(release, runId, tag, target) {
 }
 export function selectLatestRelease(releases) {
     if (!Array.isArray(releases)) fail('Release records must be an array.');
-    const stable = releases
-        .filter((release) => !release.draft && !release.prerelease)
-        .map((release) => ({ release, version: parseVersion(release.tag_name) }))
+    const candidates = releases.map((release) => {
+        if (!release || typeof release !== 'object' || Array.isArray(release)
+            || typeof release.tag_name !== 'string' || typeof release.draft !== 'boolean' || typeof release.prerelease !== 'boolean') {
+            fail('Release record has an invalid selection schema.');
+        }
+        return { release, version: parseVersion(release.tag_name) };
+    });
+    const stable = candidates
+        .filter(({ release }) => !release.draft && !release.prerelease)
         .filter(({ version }) => version);
     if (!stable.length) fail('No stable numeric release exists.');
     return stable.reduce((best, current) => compareVersions(current.version, best.version) > 0 ? current : best).release;
 }
 function selectLatest(repository) {
     return selectLatestRelease(jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector));
+}
+export function latestSelectionIsCurrent(selected, releases) {
+    return Boolean(selected) && selectLatestRelease(releases).tag_name === selected.tag_name;
+}
+export function isNotFoundReleaseError(error) {
+    return error instanceof GhCommandError && error.status !== 0 && /\bHTTP 404\b/i.test(error.stderr);
 }
 function finalize(repository, runId) {
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`]);
@@ -107,7 +134,8 @@ function finalize(repository, runId) {
     let release;
     try {
         release = jsonGh(['release', 'view', tag, '--repo', repository, '--json', 'body,targetCommitish,isDraft']);
-    } catch {
+    } catch (error) {
+        if (!isNotFoundReleaseError(error)) throw error;
         console.log(`No release ${tag} exists for workflow run ${run.id}; skipping finalization.`);
         return;
     }
@@ -115,7 +143,7 @@ function finalize(repository, runId) {
         console.log(`Release ${tag} has no finalizer marker for workflow run ${run.id}; skipping finalization.`);
         return;
     }
-    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, '.jobs[]');
+    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, jobsSelector);
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
     const publication = releaseJob?.steps?.find((step) => step.name === 'Create the GitHub Release');
@@ -132,6 +160,8 @@ function finalize(repository, runId) {
     for (let attempt = 0; attempt < 3; ++attempt) {
         const latest = selectLatest(repository);
         runGh(['release', 'edit', latest.tag_name, '--repo', repository, '--latest']);
+        const afterEdit = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector);
+        if (!latestSelectionIsCurrent(latest, afterEdit)) continue;
         const verified = jsonGh(['api', `repos/${repository}/releases/latest`]);
         if (verified.tag_name === latest.tag_name) return;
     }
