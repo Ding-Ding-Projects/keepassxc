@@ -178,9 +178,14 @@ function runManifestSchemaProbe(manifest){
   const firstFeatureId=duplicateAcrossArticles.articles[0].statusProvenance.featureIds[0];
   duplicateAcrossArticles.articles[1].statusProvenance.featureIds.push(firstFeatureId);
   expectFailure(()=>validateContentManifest(duplicateAcrossArticles),'Cross-record duplicate status provenance feature ID','Content manifest maps one status provenance feature ID to multiple article records.');
-  const evidenceBlob='1'.repeat(40),currentBlob='2'.repeat(40);
-  expectFailure(()=>assertArticleBlobIdentity('evidence','article.md','source','article.md',revision=>revision==='evidence'?evidenceBlob:currentBlob),'Changed article bytes','Current article bytes differ from immutable evidence.');
-  assertArticleBlobIdentity('evidence','article.md','source','article.md',()=>evidenceBlob);
+  const changedCommit='a30d109626b35fff6331e5c4450b3f98da5d8837';
+  const changedPath='docs/features/delivery/repair-verification-2026-09.md';
+  requireValue(isAncestor(changedCommit,buildSourceCommit)&&blobAt(changedCommit,changedPath)!==blobAt(buildSourceCommit,changedPath),'Changed article fixture no longer has distinct evidence bytes.');
+  const changedArticle=structuredClone(manifest);
+  changedArticle.evidenceCommit=changedCommit;
+  changedArticle.articles.forEach(entry=>{entry.evidence.ref=changedCommit;entry.evidence.url=`https://github.com/${repositoryName}/blob/${changedCommit}/${entry.article}`;});
+  expectFailure(()=>validateContentManifest(changedArticle,documentationDirectory,readGitJson(manifest.evidenceCommit,manifestInventoryPath)),'Changed article bytes','Current article bytes differ from immutable evidence.');
+  validateContentManifest(manifest);
   validateContentManifest(manifest);
 }
 const buildProbe=process.env.KPXC_BUILD_PROBE;
