@@ -59,9 +59,7 @@ $('#show-docs').addEventListener('click',()=>selectPanel(state.tabs.order.indexO
 $('#language').value=state.language;$('#language').addEventListener('change',()=>{state.language=$('#language').value;save();renderLanguage();});
 function theme(){document.documentElement.dataset.theme=state.dark?'dark':'light';$('#theme-switch').selected=state.dark;}
 $('#theme-switch').addEventListener('change',()=>{state.dark=$('#theme-switch').selected;theme();save();});
-const articles=[
-  ['Automatic updates','自動更新','delivery/auto-updates.md'],['Squirrel.Windows installer','Squirrel.Windows 安裝程式','delivery/squirrel-installer.md'],['Build scripts','建置指令','delivery/build-scripts.md'],['Website release provenance','網頁版本來源','delivery/website-release-provenance.md'],['Window title bar','視窗標題列','design/frameless-title-bar.md'],['Tabs and navigation','分頁同導覽','navigation/tabs.md'],['Appearance customization','自訂外觀','design/material-3-appearance.md'],['Local history','本機歷史','records/local-history.md'],['Language modes','語言模式','messaging/language-modes.md'],['Regex workbench','正規運算式工作台','search/regex-builder.md'],
-];
+let articles=[];
 const articleLabel=(article)=>state.language==='both'?`${article[0]} · ${article[1]}`:article[state.language==='yue'?1:0];
 function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href='https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/'+articles[index][2];const label=document.createElement('span');label.className='button-copy';label.textContent=articleLabel(articles[index]);button.append(label);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
 function searchDocs(){
@@ -81,9 +79,14 @@ $('#regex-cancel').addEventListener('click',()=>$('#regex-dialog').close());
 $('#regex-clear').addEventListener('click',()=>{regex=null;$('#regex-dialog').close();searchDocs();});
 $('#regex-apply').addEventListener('click',()=>{const pattern=$('#regex-pattern').value||'',flags=regexFlags();if(pattern.length>300||!/^[dgimsuvy]*$/.test(flags)||new Set(flags).size!==flags.length){$('#regex-error').textContent=text('searchFailed');return;}regex={flags};$('#doc-search').value=pattern;$('#regex-dialog').close();searchDocs();});
 async function readJson(path){const response=await fetch(path,{cache:'no-cache'});if(!response.ok)throw Error('Metadata unavailable');const reader=response.body.getReader();const chunks=[];let total=0;while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>32768){await reader.cancel();throw Error('Metadata too large');}chunks.push(value);}const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
+function loadContentManifest(data){
+  if(data?.schemaVersion!==1||!Array.isArray(data.articles)||data.articles.length>100||data.articles.some(entry=>typeof entry?.article!=='string'||!/^docs\/features\/[a-z0-9/_-]+\.md$/i.test(entry.article)||typeof entry.title?.en!=='string'||typeof entry.title?.['zh-Hant']!=='string'||!entry.title.en||!entry.title['zh-Hant']))throw Error('Invalid content manifest');
+  articles=data.articles.map(entry=>[entry.title.en,entry.title['zh-Hant'],entry.article.slice('docs/features/'.length)]);
+}
 const validTime=value=>typeof value==='string'&&Number.isFinite(Date.parse(value));
 readJson('./build-provenance.json').then(data=>{if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||!validTime(data.updatedAtUtc)||!/^[a-f0-9]{40}$/.test(data.sourceCommit))throw Error('Invalid build metadata');buildData=data;renderProvenance();}).catch(()=>renderProvenance());
 readJson('./release.json').then(data=>{const base=`https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v${data.version}/`;if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||data.unsigned!==true||!validTime(data.updatedAtUtc)||data.installer?.url!==base+'Setup.exe'||!Number.isSafeInteger(data.installer.bytes)||data.installer.bytes<=0||!/^[a-f0-9]{40}$/i.test(data.sourceCommit)||!/^[a-f0-9]{64}$/i.test(data.package?.sha256)||data.notesUrl!==`https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v${data.version}`)throw Error('Invalid release metadata');releaseData=data;document.querySelectorAll('.installer').forEach(button=>{button.href=data.installer.url;button.disabled=false;});$('#release-notes').href=data.notesUrl;$('#release-notes').disabled=false;renderProvenance();}).catch(()=>renderProvenance());
+readJson('./content-manifest.json').then(data=>{loadContentManifest(data);searchDocs();}).catch(()=>{articles=[];searchDocs();});
 theme();selectPanel(state.panel);renderLanguage();
 
 // The page remains useful without a server. These controls retain only browser-local preferences
