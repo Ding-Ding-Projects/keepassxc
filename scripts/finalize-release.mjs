@@ -13,6 +13,7 @@ const identityPrefix = '<!-- kpxc-release-finalization:';
 function fail(message) { throw new Error(message); }
 function runGh(args) {
     const result = spawnSync('gh', args, { encoding: 'utf8' });
+    if (result.error) fail(`gh ${args.join(' ')} could not start: ${result.error.message}`);
     if (result.status !== 0) fail(`gh ${args.join(' ')} failed: ${(result.stderr || result.stdout).trim()}`);
     return result.stdout;
 }
@@ -55,9 +56,27 @@ export function replaceTiming(body, block) {
     if (start < 0 || end < start) fail('Release body has no owned timing block.');
     return `${body.slice(0, start)}${block}${body.slice(end + timingEnd.length)}`;
 }
+export function paginatedBase64Query(endpoint, selector = '.[]') {
+    if (typeof endpoint !== 'string' || !endpoint) fail('A GitHub API endpoint is required.');
+    if (typeof selector !== 'string' || !selector) fail('A jq selector is required.');
+    // Keep the complete jq program in one argv element. Passing `|` and
+    // `@base64` as separate arguments makes gh treat them as extra operands.
+    return ['api', '--paginate', endpoint, '--jq', `${selector} | @base64`];
+}
+export const latestReleaseSelector = 'map({tag_name, draft, prerelease})[]';
+export function parseBase64JsonLines(output) {
+    if (typeof output !== 'string') fail('GitHub API output must be text.');
+    return output.trim().split(/\r?\n/).filter(Boolean).map((line) => {
+        const decoded = Buffer.from(line, 'base64').toString('utf8');
+        if (!decoded || Buffer.from(decoded, 'utf8').toString('base64').replace(/=+$/, '') !== line.replace(/=+$/, '')) {
+            fail('GitHub API returned a non-base64 release record.');
+        }
+        try { return JSON.parse(decoded); }
+        catch { fail('GitHub API returned base64 data that is not JSON.'); }
+    });
+}
 function jsonLinesFromGh(endpoint, selector = '.[]') {
-    return runGh(['api', '--paginate', endpoint, '--jq', `${selector} | @base64`]).trim().split(/\r?\n/).filter(Boolean)
-        .map((line) => JSON.parse(Buffer.from(line, 'base64').toString('utf8')));
+    return parseBase64JsonLines(runGh(paginatedBase64Query(endpoint, selector)));
 }
 function ensureReleaseIdentity(release, runId, tag, target) {
     const marker = `${identityPrefix}run=${runId};tag=${tag};target=${target} -->`;
@@ -69,13 +88,17 @@ function ensureReleaseIdentity(release, runId, tag, target) {
     }
     return true;
 }
-function selectLatest(repository) {
-    const releases = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`)
+export function selectLatestRelease(releases) {
+    if (!Array.isArray(releases)) fail('Release records must be an array.');
+    const stable = releases
         .filter((release) => !release.draft && !release.prerelease)
         .map((release) => ({ release, version: parseVersion(release.tag_name) }))
         .filter(({ version }) => version);
-    if (!releases.length) fail('No stable numeric release exists.');
-    return releases.reduce((best, current) => compareVersions(current.version, best.version) > 0 ? current : best).release;
+    if (!stable.length) fail('No stable numeric release exists.');
+    return stable.reduce((best, current) => compareVersions(current.version, best.version) > 0 ? current : best).release;
+}
+function selectLatest(repository) {
+    return selectLatestRelease(jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector));
 }
 function finalize(repository, runId) {
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`]);
