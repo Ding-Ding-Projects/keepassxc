@@ -32,7 +32,14 @@ export function runGh(args, spawn = spawnSync) {
     return result.stdout;
 }
 function jsonGh(args, runner = runGh) { return JSON.parse(runner(args)); }
+function positiveSafeInteger(value) {
+    if (typeof value === 'number') return Number.isSafeInteger(value) && value > 0 ? value : null;
+    if (typeof value !== 'string' || !/^[1-9]\d*$/.test(value)) return null;
+    const number = Number(value);
+    return Number.isSafeInteger(number) ? number : null;
+}
 function utcSeconds(value) {
+    if (typeof value !== 'string' || !/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}Z$/.test(value)) fail(`Invalid UTC timestamp: ${value}`);
     const seconds = Date.parse(value) / 1000;
     if (!Number.isFinite(seconds)) fail(`Invalid UTC timestamp: ${value}`);
     return seconds;
@@ -137,12 +144,14 @@ export function isNotFoundReleaseError(error) {
     return error instanceof GhCommandError && error.status !== 0 && diagnostic === 'release not found';
 }
 export function finalize(repository, runId, expectedAttempt, runner = runGh) {
-    if (!/^\d+$/.test(String(runId)) || !/^\d+$/.test(String(expectedAttempt)) || Number(expectedAttempt) < 1) {
+    const numericRunId = positiveSafeInteger(runId);
+    const numericAttempt = positiveSafeInteger(expectedAttempt);
+    if (!numericRunId || !numericAttempt) {
         fail('Numeric WORKFLOW_RUN_ID and positive WORKFLOW_RUN_ATTEMPT are required.');
     }
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`], runner);
-    if (!run || typeof run !== 'object' || !Number.isSafeInteger(run.id) || run.id !== Number(runId)
-        || !Number.isInteger(run.run_attempt) || run.run_attempt !== Number(expectedAttempt)
+    if (!run || typeof run !== 'object' || !Number.isSafeInteger(run.id) || run.id !== numericRunId
+        || !Number.isSafeInteger(run.run_attempt) || run.run_attempt !== numericAttempt
         || !Number.isInteger(run.run_number) || run.run_number < 1 || run.conclusion !== 'success'
         || typeof run.head_sha !== 'string' || !run.head_sha.trim()) {
         fail('Workflow run metadata does not match the requested successful attempt.');
@@ -162,22 +171,24 @@ export function finalize(repository, runId, expectedAttempt, runner = runGh) {
     }
     const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/attempts/${expectedAttempt}/jobs?per_page=100`, jobsSelector, runner);
     for (const job of jobs) {
-        if (!job || typeof job !== 'object' || typeof job.name !== 'string' || typeof job.started_at !== 'string' || !Array.isArray(job.steps)) {
+        if (!job || typeof job !== 'object' || typeof job.name !== 'string'
+            || (job.started_at !== null && typeof job.started_at !== 'string') || !Array.isArray(job.steps)) {
             fail('Workflow job metadata has an invalid timing schema.');
         }
-        utcSeconds(job.started_at);
+        if (job.started_at !== null) utcSeconds(job.started_at);
         for (const step of job.steps) {
             if (!step || typeof step !== 'object' || typeof step.name !== 'string'
-                || typeof step.completed_at !== 'string' || typeof step.conclusion !== 'string') {
+                || (step.completed_at !== null && typeof step.completed_at !== 'string')
+                || (step.conclusion !== null && typeof step.conclusion !== 'string')) {
                 fail('Workflow step metadata has an invalid timing schema.');
             }
-            utcSeconds(step.completed_at);
+            if (step.completed_at !== null) utcSeconds(step.completed_at);
         }
     }
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
     const publication = releaseJob?.steps?.find((step) => step.name === 'Create the GitHub Release');
-    if (!starts.length || !publication?.completed_at || publication.conclusion !== 'success') {
+    if (!starts.length || typeof releaseJob?.started_at !== 'string' || typeof publication?.completed_at !== 'string' || publication.conclusion !== 'success') {
         fail('Workflow timing is unavailable because the release publication step lacks a successful completion timestamp.');
     }
     const updatedBody = replaceTiming(release.body, timingBlock(starts[0], publication.completed_at));

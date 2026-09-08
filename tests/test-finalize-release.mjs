@@ -121,7 +121,7 @@ const finalizerReleases = `${base64Line({ tag_name: 'v2.8.20001', draft: false, 
 const finalizerJobs = `${base64Line({
     name: 'Publish Squirrel.Windows release', started_at: '2026-09-07T06:00:00Z',
     steps: [{ name: 'Create the GitHub Release', completed_at: '2026-09-07T07:11:31Z', conclusion: 'success' }]
-})}\n`;
+})}\n${base64Line({ name: 'Skipped auxiliary job', started_at: null, steps: [{ name: 'Skipped step', completed_at: null, conclusion: null }] })}\n`;
 const finalizerCalls = [];
 function makeFinalizerRunner(mode = '', calls = [], evidence = {}) {
     let releaseListReads = 0;
@@ -192,6 +192,9 @@ assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner('
 assert.equal(staleExhaustedCalls.filter((args) => args[0] === 'release' && args.includes('--latest')).length, 3);
 for (const mode of ['run-id-mismatch', 'run-attempt-mismatch', 'run-empty-sha', 'auth', 'network', 'malformed', 'metadata', 'wrong-target', 'draft', 'jobs-invalid', 'latest-invalid']) {
     assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner(mode)));
+}
+for (const invalidAttempt of ['0', '01', '9007199254740992']) {
+    assert.throws(() => finalize('example/project', '42', invalidAttempt, makeFinalizerRunner()));
 }
 const missingMarkerCalls = [];
 assert.doesNotThrow(() => finalize('example/project', '42', '1', makeFinalizerRunner('missing-marker', missingMarkerCalls)));
