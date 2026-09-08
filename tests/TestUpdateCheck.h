@@ -47,6 +47,7 @@ private slots:
     void testPackageContract();
     void testRestartCommandContract();
     void testConcurrentCheckKeepsDownloadActive();
+    void testPackageRedirectRequiresExplicitApproval();
     void testRejectedPackageRedirectReportsDiagnostic();
     void testDestroyedNetworkManagerClearsActiveReplies();
     void testDeferredManifestDeletionDoesNotFailReplacementCheck();

@@ -832,6 +832,30 @@ void TestUpdateCheck::testConcurrentCheckKeepsDownloadActive()
     QCOMPARE(manager.liveReplyCount(), 0);
 }
 
+void TestUpdateCheck::testPackageRedirectRequiresExplicitApproval()
+{
+    ControlledNetworkAccessManager manager;
+    UpdateChecker checker;
+    checker.setNetworkAccessManagerForTests(&manager);
+
+    checker.checkForUpdates(true);
+    QCOMPARE(manager.replies.size(), 1);
+    manager.replies.at(0)->complete(availableManifest());
+    QCOMPARE(checker.state(), UpdateChecker::State::Available);
+
+    checker.downloadAvailableUpdate();
+    QCOMPARE(manager.replies.size(), 2);
+    const auto redirectPolicy = manager.replies.at(1)->request().attribute(QNetworkRequest::RedirectPolicyAttribute);
+    QCOMPARE(redirectPolicy.toInt(), int(QNetworkRequest::UserVerifiedRedirectPolicy));
+
+    manager.replies.at(1)->redirectTo(QUrl(QStringLiteral("https://release-assets.githubusercontent.com/package")));
+    QCOMPARE(checker.state(), UpdateChecker::State::Downloading);
+
+    checker.cancelDownload();
+    QCOMPARE(checker.state(), UpdateChecker::State::Failed);
+    QCOMPARE(checker.failure(), UpdateChecker::Failure::Cancelled);
+}
+
 void TestUpdateCheck::testRejectedPackageRedirectReportsDiagnostic()
 {
     ControlledNetworkAccessManager manager;

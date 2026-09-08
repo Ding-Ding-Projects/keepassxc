@@ -326,7 +326,11 @@ void UpdateChecker::downloadAvailableUpdate()
     m_downloadBytes = 0;
     const quint64 generation = ++m_generation;
     QNetworkRequest request(packageUrl);
-    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::NoLessSafeRedirectPolicy);
+    // A package is an executable update payload. Do not let Qt follow an
+    // arbitrary HTTPS redirect just because it is not less secure at the
+    // transport layer. The redirect callback below authorizes only the
+    // repository's release hosts before the next request is sent.
+    request.setAttribute(QNetworkRequest::RedirectPolicyAttribute, QNetworkRequest::UserVerifiedRedirectPolicy);
     request.setMaximumRedirectsAllowed(5);
     request.setTransferTimeout(30000);
     m_downloadRedirectRejected = false;
@@ -334,10 +338,15 @@ void UpdateChecker::downloadAvailableUpdate()
     QNetworkReply* const reply = m_downloadReply;
     setState(State::Downloading);
     connect(m_downloadReply, &QNetworkReply::redirected, this, [this, generation](const QUrl& target) {
-        if (generation == m_generation && m_downloadReply && !redirectAllowed(target)) {
+        if (generation != m_generation || !m_downloadReply) {
+            return;
+        }
+        if (!redirectAllowed(target)) {
             m_downloadRedirectRejected = true;
             m_downloadReply->abort();
+            return;
         }
+        m_downloadReply->redirectAllowed();
     });
     connect(m_downloadReply, &QIODevice::readyRead, this, [this, generation] {
         if (generation != m_generation || !m_downloadReply || !m_downloadFile) {
