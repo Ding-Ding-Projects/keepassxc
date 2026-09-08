@@ -40,6 +40,9 @@ const apiReleases = [
 ];
 const encoded = apiReleases.map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
 assert.deepEqual(parseBase64JsonLines(encoded), apiReleases);
+const pageOne = apiReleases.slice(0, 2).map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
+const pageTwo = apiReleases.slice(2).map((release) => Buffer.from(JSON.stringify(release)).toString('base64')).join('\n');
+assert.deepEqual(parseBase64JsonLines(`${pageOne}\n${pageTwo}`), apiReleases, 'paginated gh output must retain records from every page');
 assert.throws(() => parseBase64JsonLines('gh: unknown flag: |'), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('A==='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AAAA='), /non-base64 release record/);
