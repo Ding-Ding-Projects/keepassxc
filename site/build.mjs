@@ -38,6 +38,7 @@ function assertAbsent(filename,label){requireValue(!existsSync(filename),`${labe
 
 const changes=execFileSync('git',['status','--porcelain','--untracked-files=normal','--','site','docs/features','social-preview.png'],{cwd:repository,encoding:'utf8'}).trim();
 if(changes)throw Error('Commit every website, documentation, and social-preview input before producing its versioned build.');
+const buildSourceCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim();
 
 function validateRelease(release){
   exactKeys(release,['schemaVersion','version','tag','sourceCommit','updatedAtUtc','updatedAtSource','notesUrl','installer','package','unsigned'],'Release metadata');
@@ -78,14 +79,18 @@ function documentationArticles(directory=documentationDirectory){
   }
   return entries.sort();
 }
-function validateContentManifest(manifest,directory=documentationDirectory){
+function blobAt(revision,filename){return execFileSync('git',['rev-parse',`${revision}:${filename}`],{cwd:repository,encoding:'utf8'}).trim();}
+function isAncestor(ancestor,descendant){try{execFileSync('git',['merge-base','--is-ancestor',ancestor,descendant],{cwd:repository,stdio:'ignore'});return true;}catch{return false;}}
+function validateContentManifest(manifest,directory=documentationDirectory,inventoryOverride){
   exactKeys(manifest,['schemaVersion','evidenceCommit','articles'],'Content manifest');
   requireValue(manifest.schemaVersion===2&&commit.test(manifest.evidenceCommit)&&Array.isArray(manifest.articles)&&manifest.articles.length,'Content manifest must contain a valid evidence commit and documented articles.');
   execFileSync('git',['cat-file','-e',`${manifest.evidenceCommit}^{commit}`],{cwd:repository,stdio:'ignore'});
-  const inventory=readGitJson(manifest.evidenceCommit,manifestInventoryPath);
+  requireValue(isAncestor(manifest.evidenceCommit,buildSourceCommit),'Evidence commit is not an ancestor of the build source commit.');
+  const inventory=inventoryOverride??readGitJson(manifest.evidenceCommit,manifestInventoryPath);
   requireValue(Array.isArray(inventory.rows),'Feature inventory must contain rows.');
   const expected=documentationArticles(directory),actual=[];
   const ids=[];
+  const claimedFeatureIds=new Set();
   for(const entry of manifest.articles){
     exactKeys(entry,['id','article','category','title','implementationStatus','statusProvenance','evidence'],'Content manifest article');
     requireValue(typeof entry.id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.id)&&typeof entry.article==='string'&&entry.article===entry.article.replaceAll('\\','/')&&!entry.article.split('/').includes('..')&&typeof entry.category==='string'&&categories.has(entry.category)&&entry.article.startsWith(`docs/features/${entry.category}/`)&&entry.article.endsWith('.md')&&statuses.has(entry.implementationStatus),'Content manifest article has invalid identity or status.');
@@ -93,17 +98,21 @@ function validateContentManifest(manifest,directory=documentationDirectory){
     exactKeys(entry.title,['en','zh-Hant'],'Content manifest localized title');
     requireValue(Object.values(entry.title).every(value=>typeof value==='string'&&value.trim().length>0),'Content manifest localized titles must be non-empty.');
     exactKeys(entry.statusProvenance,['sourcePath','mapping','featureIds'],'Content manifest status provenance');
-    requireValue(entry.statusProvenance.sourcePath===manifestInventoryPath&&entry.statusProvenance.mapping==='article'&&Array.isArray(entry.statusProvenance.featureIds)&&entry.statusProvenance.featureIds.every(id=>typeof id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)),'Content manifest status provenance is invalid.');
+    requireValue(entry.statusProvenance.sourcePath===manifestInventoryPath&&entry.statusProvenance.mapping==='article'&&Array.isArray(entry.statusProvenance.featureIds)&&entry.statusProvenance.featureIds.every(id=>typeof id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id))&&new Set(entry.statusProvenance.featureIds).size===entry.statusProvenance.featureIds.length,'Content manifest status provenance is invalid.');
     const mappedRows=inventory.rows.filter(row=>row.article?.file===entry.article);
+    const mappedRowKeys=mappedRows.map(row=>`${row.id}\u0000${row.surface??''}`);
+    requireValue(new Set(mappedRowKeys).size===mappedRowKeys.length,'Feature inventory contains duplicate mapped IDs for one surface.');
     const mappedIds=[...new Set(mappedRows.map(row=>row.id))].sort();
     const listedIds=[...new Set(entry.statusProvenance.featureIds)].sort();
     requireValue(mappedIds.length===listedIds.length&&mappedIds.every((id,index)=>id===listedIds[index]),'Content manifest feature inventory mapping differs from the article record.');
+    for(const featureId of listedIds){requireValue(!claimedFeatureIds.has(featureId),'Content manifest maps one status provenance feature ID to multiple article records.');claimedFeatureIds.add(featureId);}
     const mappedStatuses=[...new Set(mappedRows.map(row=>row.status))];
     const expectedStatus=mappedStatuses.length===0?'not-tracked':mappedStatuses.length===1?mappedStatuses[0]:'mixed';
     requireValue(entry.implementationStatus===expectedStatus,'Content manifest status differs from the mapped feature inventory.');
     exactKeys(entry.evidence,['repository','ref','path','url'],'Content manifest evidence provenance');
-    requireValue(entry.evidence.repository===repositoryName&&entry.evidence.ref==='main'&&entry.evidence.path===entry.article&&entry.evidence.url===documentationRoot+entry.article,'Content manifest evidence provenance is invalid.');
+    requireValue(entry.evidence.repository===repositoryName&&entry.evidence.ref===manifest.evidenceCommit&&entry.evidence.path===entry.article&&entry.evidence.url===`https://github.com/${repositoryName}/blob/${manifest.evidenceCommit}/${entry.article}`,'Content manifest evidence provenance is invalid.');
     execFileSync('git',['cat-file','-e',`${manifest.evidenceCommit}:${entry.evidence.path}`],{cwd:repository,stdio:'ignore'});
+    requireValue(blobAt(manifest.evidenceCommit,entry.evidence.path)===blobAt(buildSourceCommit,entry.article),'Current article bytes differ from immutable evidence.');
     actual.push(entry.article);
     ids.push(entry.id);
   }
@@ -142,6 +151,39 @@ function runManifestSchemaProbe(manifest){
   const fabricated=structuredClone(manifest);
   fabricated.articles[0].evidence.path='docs/features/../outside.md';
   expectFailure(()=>validateContentManifest(fabricated),'Escaping evidence provenance');
+  const mutableRef=structuredClone(manifest);
+  mutableRef.articles[0].evidence.ref='main';
+  mutableRef.articles[0].evidence.url=`${documentationRoot}${mutableRef.articles[0].article}`;
+  expectFailure(()=>validateContentManifest(mutableRef),'Mutable evidence ref');
+  const mutableUrl=structuredClone(manifest);
+  mutableUrl.articles[0].evidence.url=`${documentationRoot}${mutableUrl.articles[0].article}`;
+  expectFailure(()=>validateContentManifest(mutableUrl),'Mutable evidence URL');
+  const duplicateFeatureId=structuredClone(manifest);
+  duplicateFeatureId.articles[0].statusProvenance.featureIds.push(duplicateFeatureId.articles[0].statusProvenance.featureIds[0]);
+  expectFailure(()=>validateContentManifest(duplicateFeatureId),'Duplicate status provenance feature ID');
+  const unrelatedEvidence=structuredClone(manifest);
+  const unrelatedCommit='6d7f344f0c98876bbc47a4db3f5daa3696863e42';
+  execFileSync('git',['cat-file','-e',`${unrelatedCommit}^{commit}`],{cwd:repository,stdio:'ignore'});
+  requireValue(!isAncestor(unrelatedCommit,buildSourceCommit),'Unrelated evidence fixture unexpectedly became an ancestor.');
+  unrelatedEvidence.evidenceCommit=unrelatedCommit;
+  unrelatedEvidence.articles.forEach(entry=>{entry.evidence.ref=unrelatedEvidence.evidenceCommit;entry.evidence.url=`https://github.com/${repositoryName}/blob/${unrelatedEvidence.evidenceCommit}/${entry.article}`;});
+  expectFailure(()=>validateContentManifest(unrelatedEvidence),'Unrelated evidence history');
+  const duplicateInventory=structuredClone(readGitJson(manifest.evidenceCommit,manifestInventoryPath));
+  duplicateInventory.rows.push(structuredClone(duplicateInventory.rows.find(row=>row.article?.file===manifest.articles[0].article)));
+  expectFailure(()=>validateContentManifest(manifest,documentationDirectory,duplicateInventory),'Duplicate mapped inventory ID');
+  const duplicateAcrossArticles=structuredClone(manifest);
+  const inventoryForDuplicateAcross=structuredClone(readGitJson(manifest.evidenceCommit,manifestInventoryPath));
+  const firstFeatureId=duplicateAcrossArticles.articles[0].statusProvenance.featureIds[0];
+  duplicateAcrossArticles.articles[1].statusProvenance.featureIds=[firstFeatureId];
+  inventoryForDuplicateAcross.rows.find(row=>row.article?.file===duplicateAcrossArticles.articles[1].article).id=firstFeatureId;
+  expectFailure(()=>validateContentManifest(duplicateAcrossArticles,documentationDirectory,inventoryForDuplicateAcross),'Cross-record duplicate status provenance feature ID');
+  const changedArticle=structuredClone(manifest);
+  const changedCommit='84ccf5e0a7a782b90f46b37bd2dd464117590173';
+  const changedPath='docs/features/design/app-logo-customization.md';
+  requireValue(isAncestor(changedCommit,buildSourceCommit)&&blobAt(changedCommit,changedPath)!==blobAt(buildSourceCommit,changedPath),'Changed article fixture no longer has distinct evidence bytes.');
+  changedArticle.evidenceCommit=changedCommit;
+  changedArticle.articles.forEach(entry=>{entry.evidence.ref=changedCommit;entry.evidence.url=`https://github.com/${repositoryName}/blob/${changedCommit}/${entry.article}`;});
+  expectFailure(()=>validateContentManifest(changedArticle,documentationDirectory,readGitJson(manifest.evidenceCommit,manifestInventoryPath)),'Changed article bytes');
   validateContentManifest(manifest);
 }
 const buildProbe=process.env.KPXC_BUILD_PROBE;
