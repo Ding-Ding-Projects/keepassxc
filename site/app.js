@@ -132,7 +132,7 @@ function wirePreferences(){
   $('#narrator-switch').addEventListener('change',event=>{state.narrator.enabled=event.target.selected&&!state.school;save();enqueueNarration('Narrator preference saved.');note('Narrator preference saved.');});
   $('#english-narrator-voice').addEventListener('change',event=>{state.narrator.enVoice=event.target.value;save();});
   $('#cantonese-narrator-voice').addEventListener('change',event=>{state.narrator.yueVoice=event.target.value;save();});
-  let input=$('#personal-vocabulary-file');if(!input){input=document.createElement('input');input.id='personal-vocabulary-file';input.type='file';input.accept='application/json,.json';input.hidden=true;$('#personal-vocabulary-upload').after(input);}
+  const input=$('#personal-vocabulary-file');if(!input)throw Error('Missing checked-in personal vocabulary file input');
   $('#personal-vocabulary-upload').addEventListener('click',()=>input.click());
   input.addEventListener('change',async()=>{const file=input.files?.[0];if(!file)return;try{const vocabulary=parseBoundedJson(await file.text());if(!validVocabulary(vocabulary))throw Error('invalid vocabulary');state.vocabulary=vocabulary;save();renderLanguage();note('Local vocabulary applied in this browser.');}catch{input.value='';note('Vocabulary file was refused.');}});
   $('#personal-vocabulary-reset').addEventListener('click',()=>{state.vocabulary=structuredClone(defaults.vocabulary);input.value='';save();renderLanguage();note('Local vocabulary cleared.');});
