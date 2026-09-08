@@ -1,6 +1,6 @@
 # September 2026 repair verification
 
-The native and website repairs are integrated into `main` at `95e580d6d3ef83007dbeb2935e5b7495516790ca`. This record distinguishes source integration, local verification, publication, and installed behavior.
+The native and website repairs are integrated into `main` at `a30d109626b35fff6331e5c4450b3f98da5d8837`. This record distinguishes source integration, local verification, publication, and installed behavior.
 
 ## Native checks
 
@@ -38,7 +38,7 @@ The release projector requires exact release-tag, build and installer-receipt so
 
 ## Final published release
 
-Release [`v2.8.22101`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.22101) is non-draft, stable, and targets `95e580d6d3ef83007dbeb2935e5b7495516790ca`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,600 bytes with SHA-256 `bf600765a8517e002b42571f141673caf23f5778bf3aa36fe47924d605710af9`, and the full package is 72,919,158 bytes with SHA-256 `75c83803828ec6af2600114f71a9746898f613f90f89a5f3a4db0fbb734dc821`. The verified workflow timing is 00:38:38, from `2026-09-07T22:02:59Z` through `2026-09-07T22:41:37Z`. The finalizer run [34167536082](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34167536082) marked this numeric release as `Latest`, and Pages run [34167536072](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34167536072) succeeded.
+Release [`v2.8.22201`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.22201) is non-draft, stable, and targets `a30d109626b35fff6331e5c4450b3f98da5d8837`. It contains `Setup.exe`, `RELEASES`, the full package, `artifact-receipt.json`, `build-provenance.json`, `update-manifest-v1.json`, and the required dim-sum photo. The receipt reports `NotSigned`, `Setup.exe` is 73,753,088 bytes with SHA-256 `ed6fbcd246c2c7ec12ad9cd94b6897ae2c5be8412cce82377b5f9a03a29db583`, and the full package is 72,918,757 bytes with SHA-256 `2e210f0e1531cc7597aabf464c6f4cd8f44f2afb0ca222b541a9af651675ff1c`. The verified workflow timing is 00:38:15, from `2026-09-08T18:33:58Z` through `2026-09-08T19:12:13Z`. The finalizer run [34267581765](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34267581765) marked this numeric release as `Latest`, and Pages run [34267581768](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34267581768) succeeded.
 
 ## Remaining acceptance
 
@@ -49,4 +49,4 @@ Release [`v2.8.22101`](https://github.com/Ding-Ding-Projects/keepassxc/releases/
 - End-to-end native title-bar and content-drag proof through the complete MainWindow.
 - Backup-verified, ancestry-proven cleanup after active work is complete.
 
-Windowless Windows Sandbox system execution was available, and a disposable normal-user session later installed `v2.8.21901` with exit code 0, reporting the expected version and ten app-local MSVC runtime DLLs. The newer `v2.8.22101` package carries the exact `95e580d6` provenance above. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence. The minimize regression at `6d7f344f` is preserved on its branch, but its fresh compile stopped in the Botan dependency before the new assertions were compiled.
+Windowless Windows Sandbox system execution was available, and a disposable normal-user session later installed `v2.8.21901` with exit code 0, reporting the expected version and ten app-local MSVC runtime DLLs. The newer `v2.8.22201` package carries the exact `a30d1096` provenance above. A background input probe used prohibited cursor APIs and was stopped; its effect on the visible cursor was not established. Those probes are not accepted as drag evidence. The minimize regression at `6d7f344f` is preserved on its branch, but its fresh compile stopped in the Botan dependency before the new assertions were compiled.

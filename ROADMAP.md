@@ -9,7 +9,7 @@
 - [x] Integrate and locally verify the reviewed updater and report repairs at `4530d541` (`testupdatecheck` 101 passed, `testmaterialreports` 5 passed).
 - [x] Verify title-bar and tab ownership checks at `4530d541` (`testmaterialtitlebar` 8 passed, `testmaterialtabs` 6 passed).
 - [x] Add post-publication release timing and numeric Latest reconciliation at `7dabb1c9`; finalizer run `34157090857` passed.
-- [x] Publish and verify the final stable release `v2.8.22101` targeting `95e580d6`, including timing, hashes, package metadata and required photo asset.
+- [x] Publish and verify the final stable release `v2.8.22201` targeting `a30d1096`, including timing, hashes, package metadata and required photo asset.
 - [ ] Verify the repaired Windows build, window/content dragging, and installed automatic update lifecycle. The normal-user install now proves the installed version and ten app-local MSVC runtime DLLs; GUI update execution remains unverified.
 - [ ] Complete the per-surface inventory and real runtime evidence before declaring release-grade completion.
 

@@ -1,20 +1,20 @@
 # Current repair handoff, September 2026
 
-Native and website repairs are integrated at `95e580d6d3ef83007dbeb2935e5b7495516790ca`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed update behavior, complete drag gestures and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
+Native and website repairs are integrated at `a30d109626b35fff6331e5c4450b3f98da5d8837`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed update behavior, complete drag gestures and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
 
 Historical sections below describe only their named earlier commits. Their capture and parity claims are not a fresh verdict about the current candidate. The old package and clipping records remain for auditability.
 
 ## Current candidate, September 7, 2026
 
-`main` is pushed at `95e580d6d3ef83007dbeb2935e5b7495516790ca`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, the release timing finalizer, the final release record, and the verified handoff metadata update. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
+`main` is pushed at `a30d109626b35fff6331e5c4450b3f98da5d8837`. It includes the reviewed updater index selection and binding repair, the three report-switch repairs, the release timing finalizer, the final release record, and the verified handoff metadata update. The native candidate `4530d54111251b522c6df9d054a2cef026ecc6d7` passed `testupdatecheck` 101/0/0, `testmaterialreports` 5/0/0, `testmaterialtitlebar` 8/0/0, and `testmaterialtabs` 6/0/0. Production linking exited 0.
 
-The final Squirrel release is [`v2.8.22101`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.22101), targeting `95e580d6d3ef83007dbeb2935e5b7495516790ca`, with verified timing `00:38:38`, unsigned receipt state, required assets and numeric `Latest` selection. The delivery run [34165285006](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34165285006), finalizer run [34167536082](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34167536082), and Pages run [34167536072](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34167536072) succeeded. The normal-user install proved version and app-local runtime files; GUI update execution and end-to-end drag proof remain unverified.
+The final Squirrel release is [`v2.8.22201`](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.22201), targeting `a30d109626b35fff6331e5c4450b3f98da5d8837`, with verified timing `00:38:15`, unsigned receipt state, required assets and numeric `Latest` selection. The delivery run [34263785080](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34263785080), finalizer run [34267581765](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34267581765), and Pages run [34267581768](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34267581768) succeeded. The normal-user install proved version and app-local runtime files; GUI update execution and end-to-end drag proof remain unverified.
 
 The exact remaining blockers are the older-to-newer GUI update run, end-to-end title-bar and content dragging through the real MainWindow, the complete per-surface inventory and interaction ledger, and the minimize issue's compiled regression proof. Active or uncertain pre-existing branches remain preserved.
 
 # Handoff: Windows-native Material rewrite and Squirrel distribution
 
-Last verified: 2026-09-08 at `95e580d6d3ef83007dbeb2935e5b7495516790ca`. Historical sections below retain the commit they were measured at, while the current continuation above names the latest release and verification state.
+Last verified: 2026-09-08 at `a30d109626b35fff6331e5c4450b3f98da5d8837`. Historical sections below retain the commit they were measured at, while the current continuation above names the latest release and verification state.
 
 ## Follow-up guard repair (2026-09-03)
 
