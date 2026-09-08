@@ -87,7 +87,7 @@ function captureThrow(action) {
 }
 const notFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 404: Not Found' })));
 assert.ok(notFound instanceof GhCommandError);
-assert.equal(isNotFoundReleaseError(notFound), true);
+assert.equal(isNotFoundReleaseError(notFound), false);
 const namedNotFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'release not found' })));
 assert.equal(isNotFoundReleaseError(namedNotFound), true);
 const misleadingNotFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 403: release not found' })));
@@ -121,30 +121,58 @@ const finalizerJobs = `${base64Line({
     name: 'Publish Squirrel.Windows release', started_at: '2026-09-07T06:00:00Z',
     steps: [{ name: 'Create the GitHub Release', completed_at: '2026-09-07T07:11:31Z', conclusion: 'success' }]
 })}\n`;
-function fakeFinalizerRunner(args, mode = '') {
-    if (args[0] === 'release' && args[1] === 'view') {
-        if (mode === 'notfound') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'release not found' });
-        if (mode === 'auth') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' });
-        if (mode === 'network') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'network connection refused' });
-        if (mode === 'malformed') return 'not-json';
-        if (mode === 'metadata') return JSON.stringify({ isDraft: false, targetCommitish: 'abc123' });
-        return JSON.stringify(finalizerRelease);
-    }
-    if (args[0] === 'release') return '';
-    if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') return JSON.stringify(finalizerRun);
-    if (args[0] === 'api' && args[1] === 'repos/example/project/releases/latest') return JSON.stringify({ tag_name: 'v2.8.20001' });
-    if (args[0] === 'api' && args[2] === 'repos/example/project/actions/runs/42/jobs?per_page=100') return finalizerJobs;
-    if (args[0] === 'api' && args[2] === 'repos/example/project/releases?per_page=100') return finalizerReleases;
-    assert.fail(`Unexpected finalizer command: ${args.join(' ')}`);
-}
 const finalizerCalls = [];
-finalize('example/project', '42', (args) => {
-    finalizerCalls.push(args);
-    return fakeFinalizerRunner(args);
-});
-assert.ok(finalizerCalls.some((args) => args[0] === 'release' && args[1] === 'edit' && args.includes('--latest')));
-for (const mode of ['auth', 'network', 'malformed', 'metadata']) {
-    assert.throws(() => finalize('example/project', '42', (args) => fakeFinalizerRunner(args, mode)));
+function makeFinalizerRunner(mode = '', calls = []) {
+    let releaseListReads = 0;
+    return (args) => {
+        calls.push(args);
+        if (args[0] === 'release' && args[1] === 'view') {
+            if (mode === 'notfound') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'release not found' });
+            if (mode === 'auth') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' });
+            if (mode === 'network') throw new GhCommandError(args, { status: 1, stdout: '', stderr: 'network connection refused' });
+            if (mode === 'malformed') return 'not-json';
+            if (mode === 'metadata') return JSON.stringify({ isDraft: false, targetCommitish: 'abc123' });
+            if (mode === 'missing-marker') return JSON.stringify({ ...finalizerRelease, body: finalizerRelease.body.replace('kpxc-release-finalization', 'missing-marker') });
+            if (mode === 'wrong-target') return JSON.stringify({ ...finalizerRelease, targetCommitish: 'wrong-target' });
+            if (mode === 'draft') return JSON.stringify({ ...finalizerRelease, isDraft: true });
+            return JSON.stringify(finalizerRelease);
+        }
+        if (args[0] === 'release') return '';
+        if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') return JSON.stringify(finalizerRun);
+        if (args[0] === 'api' && args[1] === 'repos/example/project/releases/latest') {
+            return JSON.stringify({ tag_name: mode === 'stale' ? 'v2.8.20002' : 'v2.8.20001' });
+        }
+        if (args[0] === 'api' && args[2] === 'repos/example/project/actions/runs/42/jobs?per_page=100') return finalizerJobs;
+        if (args[0] === 'api' && args[2] === 'repos/example/project/releases?per_page=100') {
+            releaseListReads += 1;
+            if (mode === 'stale' && releaseListReads === 2) {
+                return `${base64Line({ tag_name: 'v2.8.20002', draft: false, prerelease: false })}\n`;
+            }
+            return mode === 'stale' && releaseListReads > 2
+                ? `${base64Line({ tag_name: 'v2.8.20002', draft: false, prerelease: false })}\n`
+                : finalizerReleases;
+        }
+        assert.fail(`Unexpected finalizer command: ${args.join(' ')}`);
+    };
 }
-assert.doesNotThrow(() => finalize('example/project', '42', (args) => fakeFinalizerRunner(args, 'notfound')));
+finalize('example/project', '42', makeFinalizerRunner('', finalizerCalls));
+assert.deepEqual(finalizerCalls[2], paginatedBase64Query('repos/example/project/actions/runs/42/jobs?per_page=100', jobsSelector));
+assert.deepEqual(finalizerCalls[3].slice(0, 5), ['release', 'edit', 'v2.8.20001', '--repo', 'example/project']);
+assert.ok(finalizerCalls[3].includes('--notes-file'), 'timing notes must be edited before latest designation');
+assert.deepEqual(finalizerCalls[4], paginatedBase64Query('repos/example/project/releases?per_page=100', latestReleaseSelector));
+assert.deepEqual(finalizerCalls[5], ['release', 'edit', 'v2.8.20001', '--repo', 'example/project', '--latest']);
+assert.deepEqual(finalizerCalls[6], paginatedBase64Query('repos/example/project/releases?per_page=100', latestReleaseSelector));
+assert.deepEqual(finalizerCalls[7], ['api', 'repos/example/project/releases/latest']);
+
+const staleCalls = [];
+assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('stale', staleCalls)));
+assert.equal(staleCalls.filter((args) => args[0] === 'release' && args.includes('--latest')).length, 2, 'a stale first selection must retry');
+assert.deepEqual(staleCalls.at(-1), ['api', 'repos/example/project/releases/latest']);
+for (const mode of ['auth', 'network', 'malformed', 'metadata', 'wrong-target', 'draft']) {
+    assert.throws(() => finalize('example/project', '42', makeFinalizerRunner(mode)));
+}
+const missingMarkerCalls = [];
+assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('missing-marker', missingMarkerCalls)));
+assert.equal(missingMarkerCalls.some((args) => args[0] === 'release' && args[1] === 'edit'), false);
+assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('notfound')));
 process.stdout.write('test-finalize-release: PASS\n');

@@ -134,8 +134,7 @@ export function latestSelectionIsCurrent(selected, releases) {
 }
 export function isNotFoundReleaseError(error) {
     const diagnostic = error instanceof GhCommandError ? error.stderr.trim() : '';
-    return error instanceof GhCommandError && error.status !== 0
-        && (diagnostic === 'release not found' || /^HTTP 404: Not Found$/i.test(diagnostic));
+    return error instanceof GhCommandError && error.status !== 0 && diagnostic === 'release not found';
 }
 export function finalize(repository, runId, runner = runGh) {
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`], runner);
