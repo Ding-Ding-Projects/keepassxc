@@ -85,7 +85,9 @@ export function parseBase64JsonLines(output) {
         if (!/^(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=)?$/.test(line)) {
             fail('GitHub API returned a non-base64 release record.');
         }
-        const decoded = Buffer.from(line, 'base64').toString('utf8');
+        const bytes = Buffer.from(line, 'base64');
+        if (bytes.toString('base64') !== line) fail('GitHub API returned noncanonical base64 release data.');
+        const decoded = bytes.toString('utf8');
         try { return JSON.parse(decoded); }
         catch { fail('GitHub API returned base64 data that is not JSON.'); }
     });
@@ -125,7 +127,7 @@ export function latestSelectionIsCurrent(selected, releases) {
     return Boolean(selected) && selectLatestRelease(releases).tag_name === selected.tag_name;
 }
 export function isNotFoundReleaseError(error) {
-    return error instanceof GhCommandError && error.status !== 0 && /\bHTTP 404\b/i.test(error.stderr);
+    return error instanceof GhCommandError && error.status !== 0 && /(?:\bHTTP 404\b|\brelease not found\b)/i.test(error.stderr);
 }
 function finalize(repository, runId) {
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`]);

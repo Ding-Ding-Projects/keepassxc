@@ -11,7 +11,7 @@ const fixture = JSON.parse(readFileSync(new URL('./fixtures/release-finalize/pub
 const workflow = readFileSync(new URL('../.github/workflows/release-finalize.yml', import.meta.url), 'utf8');
 assert.match(
     workflow,
-    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}\r?\n  cancel-in-progress: false\r?$/m,
+    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}\r?\n  cancel-in-progress: false\r?\n  queue: max\r?$/m,
     'finalizer runs must serialize without cancelling an in-flight publication finalizer'
 );
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
@@ -54,6 +54,8 @@ assert.throws(() => parseBase64JsonLines('A==='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AAAA='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AAAA===='), /non-base64 release record/);
 assert.throws(() => parseBase64JsonLines('AA=A'), /non-base64 release record/);
+assert.throws(() => parseBase64JsonLines('AB=='), /noncanonical base64 release data/);
+assert.throws(() => parseBase64JsonLines('AAB='), /noncanonical base64 release data/);
 assert.throws(() => parseBase64JsonLines(Buffer.from('not json').toString('base64')), /not JSON/);
 assert.equal(selectLatestRelease(parseBase64JsonLines(encoded)).tag_name, 'v2.8.20001');
 assert.throws(() => selectLatestRelease([{ tag_name: 'v3.0.0', draft: true, prerelease: false }]), /No stable numeric release/);
@@ -81,8 +83,12 @@ function captureThrow(action) {
 const notFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 404: Not Found' })));
 assert.ok(notFound instanceof GhCommandError);
 assert.equal(isNotFoundReleaseError(notFound), true);
+const namedNotFound = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'release not found' })));
+assert.equal(isNotFoundReleaseError(namedNotFound), true);
 const denied = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'HTTP 403: Resource not accessible' })));
 assert.equal(isNotFoundReleaseError(denied), false);
+const unavailable = captureThrow(() => runGh(['release', 'view', 'v1'], () => ({ status: 1, stdout: '', stderr: 'network connection refused' })));
+assert.equal(isNotFoundReleaseError(unavailable), false);
 assert.throws(() => runGh(['api', 'repos/example/project/releases'], () => ({
     status: null, stdout: '', stderr: '', error: Object.assign(new Error('spawn ENOBUFS'), { code: 'ENOBUFS' })
 })), /output limit/);

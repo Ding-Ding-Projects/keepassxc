@@ -12,6 +12,7 @@ permissions:
 concurrency:
   group: release-finalizer-${{ github.repository }}
   cancel-in-progress: false
+  queue: max
 
 jobs:
   finalize:
