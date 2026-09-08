@@ -49,7 +49,7 @@ function duration(seconds) {
         .map((part) => String(part).padStart(2, '0')).join(':');
 }
 export function packageVersion(runNumber, runAttempt) {
-    if (!Number.isSafeInteger(runNumber) || runNumber < 1 || !Number.isSafeInteger(runAttempt) || runAttempt < 1 || runAttempt > 99) fail('Invalid run number or attempt.');
+    if (!Number.isSafeInteger(runNumber) || runNumber < 1 || !Number.isSafeInteger(runAttempt) || runAttempt < 1 || runAttempt > 100) fail('Invalid run number or attempt.');
     const ordinal = BigInt(runNumber) * 100n + BigInt(runAttempt);
     const patch = ordinal % 65536n;
     const minorOrdinal = 8n + ordinal / 65536n;
@@ -146,7 +146,7 @@ export function isNotFoundReleaseError(error) {
 export function finalize(repository, runId, expectedAttempt, runner = runGh) {
     const numericRunId = positiveSafeInteger(runId);
     const numericAttempt = positiveSafeInteger(expectedAttempt);
-    if (!numericRunId || !numericAttempt || numericAttempt > 99) {
+    if (!numericRunId || !numericAttempt || numericAttempt > 100) {
         fail('Numeric WORKFLOW_RUN_ID and positive WORKFLOW_RUN_ATTEMPT are required.');
     }
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}/attempts/${expectedAttempt}`], runner);
