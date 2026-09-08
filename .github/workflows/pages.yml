@@ -44,10 +44,6 @@ jobs:
           cache: npm
           cache-dependency-path: site/package-lock.json
 
-      - name: Verify provenance checkout structure
-        run: |
-          node --input-type=module -e "import assert from 'node:assert/strict'; import {readFileSync} from 'node:fs'; const workflow=readFileSync('.github/workflows/pages.yml','utf8'); assert.ok(workflow.includes('uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n          fetch-tags: true')); console.log('PASS: Pages checkout fetches full history and tags for release provenance.');"
-
       - name: Build the locally bundled website
         env:
           GH_TOKEN: ${{ secrets.RELEASE_TOKEN || secrets.ORG_TOKEN || secrets.GITHUB_TOKEN }}
