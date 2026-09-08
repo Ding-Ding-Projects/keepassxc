@@ -336,38 +336,49 @@ void UpdateChecker::downloadAvailableUpdate()
     m_downloadRedirectRejected = false;
     m_downloadReply = networkManager()->get(request);
     QNetworkReply* const reply = m_downloadReply;
-    setState(State::Downloading);
-    connect(m_downloadReply, &QNetworkReply::redirected, this, [this, generation](const QUrl& target) {
-        if (generation != m_generation || !m_downloadReply) {
+    const QPointer<QNetworkReply> guardedReply(reply);
+    connect(reply, &QNetworkReply::redirected, this, [this, generation, guardedReply](const QUrl& target) {
+        if (generation != m_generation || !guardedReply || m_downloadReply != guardedReply) {
             return;
         }
         if (!redirectAllowed(target)) {
             m_downloadRedirectRejected = true;
-            m_downloadReply->abort();
+            guardedReply->abort();
             return;
         }
-        m_downloadReply->redirectAllowed();
+        guardedReply->redirectAllowed();
     });
-    connect(m_downloadReply, &QIODevice::readyRead, this, [this, generation] {
-        if (generation != m_generation || !m_downloadReply || !m_downloadFile) {
+    connect(reply, &QIODevice::readyRead, this, [this, generation, guardedReply] {
+        if (generation != m_generation || !guardedReply || m_downloadReply != guardedReply || !m_downloadFile) {
             return;
         }
-        const QByteArray chunk = m_downloadReply->readAll();
+        const QByteArray chunk = guardedReply->readAll();
         m_downloadBytes += quint64(chunk.size());
         if (m_downloadBytes > m_candidate.bytes || m_downloadFile->write(chunk) != chunk.size()) {
-            m_downloadReply->abort();
+            guardedReply->abort();
             return;
         }
         m_downloadHash->addData(chunk);
         emit downloadProgress(m_downloadBytes, m_candidate.bytes);
     });
-    connect(m_downloadReply, &QNetworkReply::finished, this, [this, generation] { finishDownload(generation); });
+    connect(reply, &QNetworkReply::finished, this, [this, generation, guardedReply] {
+        if (generation == m_generation && guardedReply && m_downloadReply == guardedReply) {
+            finishDownload(generation);
+        }
+    });
     connect(reply, &QObject::destroyed, this, [this, generation] {
         if (generation == m_generation && m_state == State::Downloading) {
             m_downloadReply = nullptr;
             failDownload(Failure::Offline);
         }
     });
+    // State observers may synchronously cancel the download or destroy this
+    // checker. Every reply callback is already connected before that happens.
+    QPointer<UpdateChecker> self(this);
+    setState(State::Downloading);
+    if (!self || generation != m_generation || !guardedReply || m_downloadReply != guardedReply) {
+        return;
+    }
 }
 
 void UpdateChecker::cancelDownload()
