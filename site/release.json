@@ -1,20 +1,20 @@
 {
   "schemaVersion": 1,
-  "version": "2.8.21901",
-  "tag": "v2.8.21901",
-  "sourceCommit": "20715a93302038ea49b2d55edfc32f800d0d81e5",
-  "updatedAtUtc": "2026-09-07T20:45:18.7951577Z",
+  "version": "2.8.22101",
+  "tag": "v2.8.22101",
+  "sourceCommit": "95e580d6d3ef83007dbeb2935e5b7495516790ca",
+  "updatedAtUtc": "2026-09-07T22:40:26.9412324Z",
   "updatedAtSource": "build-provenance.generatedAtUtc",
-  "notesUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.13201",
+  "notesUrl": "https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.22101",
   "installer": {
-    "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.21901/Setup.exe",
-    "bytes": 73753088,
-    "sha256": "53fa98b80e8d8d976750e69730f80e9b095915da3fded7de83f332b488597138"
+    "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.22101/Setup.exe",
+    "bytes": 73753600,
+    "sha256": "bf600765a8517e002b42571f141673caf23f5778bf3aa36fe47924d605710af9"
   },
   "package": {
-    "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.21901/KeePassXC.Material-2.8.21901-full.nupkg",
-    "bytes": 72918749,
-    "sha256": "c49182a3f4c90902e9ff4c1733dbe9b4dc3b21738586e4885bd203cdd0c1d367"
+    "url": "https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v2.8.22101/KeePassXC.Material-2.8.22101-full.nupkg",
+    "bytes": 72919158,
+    "sha256": "75c83803828ec6af2600114f71a9746898f613f90f89a5f3a4db0fbb734dc821"
   },
   "unsigned": true
 }
