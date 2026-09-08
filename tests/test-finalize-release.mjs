@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import {
     compareVersions, finalize, GhCommandError, ghOutputLimitBytes, isNotFoundReleaseError,
     jobsSelector, latestReleaseSelector, latestSelectionIsCurrent, packageVersion,
@@ -11,10 +11,11 @@ const fixture = JSON.parse(readFileSync(new URL('./fixtures/release-finalize/pub
 const workflow = readFileSync(new URL('../.github/workflows/release-finalize.yml', import.meta.url), 'utf8');
 assert.match(
     workflow,
-    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}-\$\{\{ github\.event\.workflow_run\.id \}\}\r?\n  cancel-in-progress: false\r?$/m,
+    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}-\$\{\{ github\.event\.workflow_run\.id \}\}-\$\{\{ github\.event\.workflow_run\.run_attempt \}\}\r?\n  cancel-in-progress: false\r?$/m,
     'each finalizer run must keep its own uncancelled workflow concurrency group'
 );
 assert.doesNotMatch(workflow, /^  queue:/m, 'the finalizer uses a per-run concurrency group instead of a queue extension');
+assert.match(workflow, /^          WORKFLOW_RUN_ATTEMPT: \$\{\{ github\.event\.workflow_run\.run_attempt \}\}\r?$/m);
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];
@@ -122,7 +123,7 @@ const finalizerJobs = `${base64Line({
     steps: [{ name: 'Create the GitHub Release', completed_at: '2026-09-07T07:11:31Z', conclusion: 'success' }]
 })}\n`;
 const finalizerCalls = [];
-function makeFinalizerRunner(mode = '', calls = []) {
+function makeFinalizerRunner(mode = '', calls = [], evidence = {}) {
     let releaseListReads = 0;
     return (args) => {
         calls.push(args);
@@ -137,15 +138,30 @@ function makeFinalizerRunner(mode = '', calls = []) {
             if (mode === 'draft') return JSON.stringify({ ...finalizerRelease, isDraft: true });
             return JSON.stringify(finalizerRelease);
         }
+        if (args[0] === 'release' && args[1] === 'edit' && args.includes('--notes-file')) {
+            evidence.notesPath = args[args.indexOf('--notes-file') + 1];
+            evidence.notes = readFileSync(evidence.notesPath, 'utf8');
+            if (mode === 'notes-fail') throw new Error('notes edit failed');
+            return '';
+        }
         if (args[0] === 'release') return '';
-        if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') return JSON.stringify(finalizerRun);
+        if (args[0] === 'api' && args[1] === 'repos/example/project/actions/runs/42') {
+            if (mode === 'run-id-mismatch') return JSON.stringify({ ...finalizerRun, id: 43 });
+            if (mode === 'run-attempt-mismatch') return JSON.stringify({ ...finalizerRun, run_attempt: 2 });
+            if (mode === 'run-empty-sha') return JSON.stringify({ ...finalizerRun, head_sha: '' });
+            return JSON.stringify(finalizerRun);
+        }
         if (args[0] === 'api' && args[1] === 'repos/example/project/releases/latest') {
+            if (mode === 'latest-invalid') return JSON.stringify({});
             return JSON.stringify({ tag_name: mode === 'stale' ? 'v2.8.20002' : 'v2.8.20001' });
         }
-        if (args[0] === 'api' && args[2] === 'repos/example/project/actions/runs/42/jobs?per_page=100') return finalizerJobs;
+        if (args[0] === 'api' && args[2] === 'repos/example/project/actions/runs/42/attempts/1/jobs?per_page=100') {
+            if (mode === 'jobs-invalid') return `${base64Line({ name: 'Publish Squirrel.Windows release', started_at: 'invalid', steps: [] })}\n`;
+            return finalizerJobs;
+        }
         if (args[0] === 'api' && args[2] === 'repos/example/project/releases?per_page=100') {
             releaseListReads += 1;
-            if (mode === 'stale' && releaseListReads === 2) {
+            if ((mode === 'stale' || mode === 'stale-exhausted') && releaseListReads % 2 === 0) {
                 return `${base64Line({ tag_name: 'v2.8.20002', draft: false, prerelease: false })}\n`;
             }
             return mode === 'stale' && releaseListReads > 2
@@ -155,24 +171,33 @@ function makeFinalizerRunner(mode = '', calls = []) {
         assert.fail(`Unexpected finalizer command: ${args.join(' ')}`);
     };
 }
-finalize('example/project', '42', makeFinalizerRunner('', finalizerCalls));
-assert.deepEqual(finalizerCalls[2], paginatedBase64Query('repos/example/project/actions/runs/42/jobs?per_page=100', jobsSelector));
+const finalizerEvidence = {};
+finalize('example/project', '42', '1', makeFinalizerRunner('', finalizerCalls, finalizerEvidence));
+assert.deepEqual(finalizerCalls[2], paginatedBase64Query('repos/example/project/actions/runs/42/attempts/1/jobs?per_page=100', jobsSelector));
 assert.deepEqual(finalizerCalls[3].slice(0, 5), ['release', 'edit', 'v2.8.20001', '--repo', 'example/project']);
 assert.ok(finalizerCalls[3].includes('--notes-file'), 'timing notes must be edited before latest designation');
+assert.match(finalizerEvidence.notes, /Workflow duration: 01:11:31/);
+assert.equal(existsSync(finalizerEvidence.notesPath), false, 'successful notes edit must remove its scratch file');
 assert.deepEqual(finalizerCalls[4], paginatedBase64Query('repos/example/project/releases?per_page=100', latestReleaseSelector));
 assert.deepEqual(finalizerCalls[5], ['release', 'edit', 'v2.8.20001', '--repo', 'example/project', '--latest']);
 assert.deepEqual(finalizerCalls[6], paginatedBase64Query('repos/example/project/releases?per_page=100', latestReleaseSelector));
 assert.deepEqual(finalizerCalls[7], ['api', 'repos/example/project/releases/latest']);
 
 const staleCalls = [];
-assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('stale', staleCalls)));
+assert.doesNotThrow(() => finalize('example/project', '42', '1', makeFinalizerRunner('stale', staleCalls)));
 assert.equal(staleCalls.filter((args) => args[0] === 'release' && args.includes('--latest')).length, 2, 'a stale first selection must retry');
 assert.deepEqual(staleCalls.at(-1), ['api', 'repos/example/project/releases/latest']);
-for (const mode of ['auth', 'network', 'malformed', 'metadata', 'wrong-target', 'draft']) {
-    assert.throws(() => finalize('example/project', '42', makeFinalizerRunner(mode)));
+const staleExhaustedCalls = [];
+assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner('stale-exhausted', staleExhaustedCalls)), /after three attempts/);
+assert.equal(staleExhaustedCalls.filter((args) => args[0] === 'release' && args.includes('--latest')).length, 3);
+for (const mode of ['run-id-mismatch', 'run-attempt-mismatch', 'run-empty-sha', 'auth', 'network', 'malformed', 'metadata', 'wrong-target', 'draft', 'jobs-invalid', 'latest-invalid']) {
+    assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner(mode)));
 }
 const missingMarkerCalls = [];
-assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('missing-marker', missingMarkerCalls)));
+assert.doesNotThrow(() => finalize('example/project', '42', '1', makeFinalizerRunner('missing-marker', missingMarkerCalls)));
 assert.equal(missingMarkerCalls.some((args) => args[0] === 'release' && args[1] === 'edit'), false);
-assert.doesNotThrow(() => finalize('example/project', '42', makeFinalizerRunner('notfound')));
+assert.doesNotThrow(() => finalize('example/project', '42', '1', makeFinalizerRunner('notfound')));
+const notesFailureEvidence = {};
+assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner('notes-fail', [], notesFailureEvidence)), /notes edit failed/);
+assert.equal(existsSync(notesFailureEvidence.notesPath), false, 'failed notes edit must remove its scratch file');
 process.stdout.write('test-finalize-release: PASS\n');

@@ -136,9 +136,17 @@ export function isNotFoundReleaseError(error) {
     const diagnostic = error instanceof GhCommandError ? error.stderr.trim() : '';
     return error instanceof GhCommandError && error.status !== 0 && diagnostic === 'release not found';
 }
-export function finalize(repository, runId, runner = runGh) {
+export function finalize(repository, runId, expectedAttempt, runner = runGh) {
+    if (!/^\d+$/.test(String(runId)) || !/^\d+$/.test(String(expectedAttempt)) || Number(expectedAttempt) < 1) {
+        fail('Numeric WORKFLOW_RUN_ID and positive WORKFLOW_RUN_ATTEMPT are required.');
+    }
     const run = jsonGh(['api', `repos/${repository}/actions/runs/${runId}`], runner);
-    if (run.conclusion !== 'success') fail('Only successful workflow runs can finalize a release.');
+    if (!run || typeof run !== 'object' || !Number.isSafeInteger(run.id) || run.id !== Number(runId)
+        || !Number.isInteger(run.run_attempt) || run.run_attempt !== Number(expectedAttempt)
+        || !Number.isInteger(run.run_number) || run.run_number < 1 || run.conclusion !== 'success'
+        || typeof run.head_sha !== 'string' || !run.head_sha.trim()) {
+        fail('Workflow run metadata does not match the requested successful attempt.');
+    }
     const tag = `v${packageVersion(run.run_number, run.run_attempt)}`;
     let release;
     try {
@@ -152,7 +160,20 @@ export function finalize(repository, runId, runner = runGh) {
         console.log(`Release ${tag} has no finalizer marker for workflow run ${run.id}; skipping finalization.`);
         return;
     }
-    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/jobs?per_page=100`, jobsSelector, runner);
+    const jobs = jsonLinesFromGh(`repos/${repository}/actions/runs/${runId}/attempts/${expectedAttempt}/jobs?per_page=100`, jobsSelector, runner);
+    for (const job of jobs) {
+        if (!job || typeof job !== 'object' || typeof job.name !== 'string' || typeof job.started_at !== 'string' || !Array.isArray(job.steps)) {
+            fail('Workflow job metadata has an invalid timing schema.');
+        }
+        utcSeconds(job.started_at);
+        for (const step of job.steps) {
+            if (!step || typeof step !== 'object' || typeof step.name !== 'string'
+                || typeof step.completed_at !== 'string' || typeof step.conclusion !== 'string') {
+                fail('Workflow step metadata has an invalid timing schema.');
+            }
+            utcSeconds(step.completed_at);
+        }
+    }
     const starts = jobs.map((job) => job.started_at).filter(Boolean).sort();
     const releaseJob = jobs.find((job) => job.name === 'Publish Squirrel.Windows release');
     const publication = releaseJob?.steps?.find((step) => step.name === 'Create the GitHub Release');
@@ -172,6 +193,9 @@ export function finalize(repository, runId, runner = runGh) {
         const afterEdit = jsonLinesFromGh(`repos/${repository}/releases?per_page=100`, latestReleaseSelector, runner);
         if (!latestSelectionIsCurrent(latest, afterEdit)) continue;
         const verified = jsonGh(['api', `repos/${repository}/releases/latest`], runner);
+        if (!verified || typeof verified !== 'object' || typeof verified.tag_name !== 'string') {
+            fail('Latest release verification has an invalid schema.');
+        }
         if (verified.tag_name === latest.tag_name) return;
     }
     fail('Could not verify the highest numeric stable release as latest after three attempts.');
@@ -193,7 +217,8 @@ if (process.argv[1] && import.meta.url === pathToFileURL(resolve(process.argv[1]
     else if (process.argv.includes('--finalize')) {
         const repository = process.env.GITHUB_REPOSITORY;
         const runId = process.env.WORKFLOW_RUN_ID;
-        if (!repository || !runId || !/^\d+$/.test(runId)) fail('GITHUB_REPOSITORY and numeric WORKFLOW_RUN_ID are required.');
-        finalize(repository, runId);
+        const runAttempt = process.env.WORKFLOW_RUN_ATTEMPT;
+        if (!repository || !runId || !runAttempt) fail('GITHUB_REPOSITORY, WORKFLOW_RUN_ID, and WORKFLOW_RUN_ATTEMPT are required.');
+        finalize(repository, runId, runAttempt);
     } else fail('Use --self-test or --finalize.');
 }
