@@ -8,6 +8,12 @@ import {
 } from '../scripts/finalize-release.mjs';
 
 const fixture = JSON.parse(readFileSync(new URL('./fixtures/release-finalize/publication.json', import.meta.url)));
+const workflow = readFileSync(new URL('../.github/workflows/release-finalize.yml', import.meta.url), 'utf8');
+assert.match(
+    workflow,
+    /^concurrency:\r?\n  group: release-finalizer-\$\{\{ github\.repository \}\}\r?\n  cancel-in-progress: false\r?$/m,
+    'finalizer runs must serialize without cancelling an in-flight publication finalizer'
+);
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];

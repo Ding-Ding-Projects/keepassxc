@@ -9,6 +9,10 @@ permissions:
   actions: read
   contents: write
 
+concurrency:
+  group: release-finalizer-${{ github.repository }}
+  cancel-in-progress: false
+
 jobs:
   finalize:
     if: >-
