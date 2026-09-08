@@ -50,10 +50,10 @@ function duration(seconds) {
 }
 export function packageVersion(runNumber, runAttempt) {
     if (!Number.isSafeInteger(runNumber) || runNumber < 1 || !Number.isSafeInteger(runAttempt) || runAttempt < 1) fail('Invalid run number or attempt.');
-    const ordinal = runNumber * 100 + runAttempt;
-    const patch = ordinal % 65536;
-    const minorOrdinal = 8 + Math.floor(ordinal / 65536);
-    return `${2 + Math.floor(minorOrdinal / 65536)}.${minorOrdinal % 65536}.${patch}`;
+    const ordinal = BigInt(runNumber) * 100n + BigInt(runAttempt);
+    const patch = ordinal % 65536n;
+    const minorOrdinal = 8n + ordinal / 65536n;
+    return `${2n + minorOrdinal / 65536n}.${minorOrdinal % 65536n}.${patch}`;
 }
 export function parseVersion(tag) {
     const match = /^v(\d+)\.(\d+)\.(\d+)$/.exec(tag);

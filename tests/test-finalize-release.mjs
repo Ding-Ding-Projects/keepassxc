@@ -17,7 +17,8 @@ assert.match(
 assert.doesNotMatch(workflow, /^  queue:/m, 'the finalizer uses a per-run concurrency group instead of a queue extension');
 assert.match(workflow, /^          WORKFLOW_RUN_ATTEMPT: \$\{\{ github\.event\.workflow_run\.run_attempt \}\}\r?$/m);
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
-assert.equal(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65408');
+assert.equal(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65437');
+assert.notEqual(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65408', 'BigInt arithmetic must reject the prior rounded version');
 assert.throws(() => packageVersion(Number.MAX_SAFE_INTEGER + 1, 1), /Invalid run number/);
 assert.ok(compareVersions(parseVersion('v2.8.19901'), parseVersion('v2.8.19801')) > 0);
 const publication = fixture.jobs[1].steps[0];
