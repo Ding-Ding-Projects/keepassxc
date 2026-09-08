@@ -33,6 +33,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          fetch-tags: true
 
       - name: Install Node.js
         uses: actions/setup-node@v4
@@ -40,6 +43,10 @@ jobs:
           node-version: '24.19.0'
           cache: npm
           cache-dependency-path: site/package-lock.json
+
+      - name: Verify provenance checkout structure
+        run: |
+          node --input-type=module -e "import assert from 'node:assert/strict'; import {readFileSync} from 'node:fs'; const workflow=readFileSync('.github/workflows/pages.yml','utf8'); assert.ok(workflow.includes('uses: actions/checkout@v4\n        with:\n          fetch-depth: 0\n          fetch-tags: true')); console.log('PASS: Pages checkout fetches full history and tags for release provenance.');"
 
       - name: Build the locally bundled website
         env:
