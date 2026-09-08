@@ -17,6 +17,8 @@ assert.match(
 assert.doesNotMatch(workflow, /^  queue:/m, 'the finalizer uses a per-run concurrency group instead of a queue extension');
 assert.match(workflow, /^          WORKFLOW_RUN_ATTEMPT: \$\{\{ github\.event\.workflow_run\.run_attempt \}\}\r?$/m);
 assert.equal(packageVersion(fixture.run.run_number, fixture.run.run_attempt), '2.8.19901');
+assert.equal(packageVersion(1, 99), '2.8.199');
+assert.throws(() => packageVersion(1, 101), /Invalid run number/);
 assert.equal(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65437');
 assert.notEqual(packageVersion(Number.MAX_SAFE_INTEGER, 1), '209715202.7.65408', 'BigInt arithmetic must reject the prior rounded version');
 assert.throws(() => packageVersion(Number.MAX_SAFE_INTEGER + 1, 1), /Invalid run number/);
@@ -201,7 +203,7 @@ assert.equal(staleExhaustedCalls.filter((args) => args[0] === 'release' && args.
 for (const mode of ['run-id-mismatch', 'run-attempt-mismatch', 'run-empty-sha', 'auth', 'network', 'malformed', 'metadata', 'wrong-target', 'draft', 'jobs-invalid', 'latest-invalid']) {
     assert.throws(() => finalize('example/project', '42', '1', makeFinalizerRunner(mode)));
 }
-for (const invalidAttempt of ['0', '01', '9007199254740992']) {
+for (const invalidAttempt of ['0', '01', '100', '101', '9007199254740992']) {
     assert.throws(() => finalize('example/project', '42', invalidAttempt, makeFinalizerRunner()));
 }
 const missingMarkerCalls = [];
