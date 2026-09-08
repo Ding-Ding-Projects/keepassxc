@@ -13,13 +13,15 @@ const repositoryName='Ding-Ding-Projects/keepassxc';
 const releaseRoot=`https://github.com/${repositoryName}/releases/`;
 const documentationRoot=`https://github.com/${repositoryName}/blob/main/`;
 const categories=new Set(['delivery','design','messaging','navigation','records','search']);
-const statuses=new Set(['implemented','partial','missing','not-tracked']);
+const statuses=new Set(['implemented','partial','missing','not-tracked','mixed']);
+const manifestInventoryPath='docs/features/inventory.json';
 const commit=/^[a-f0-9]{40}$/i;
 const sha256=/^[a-f0-9]{64}$/i;
 const versionPattern=/^\d+\.\d+\.\d+$/;
 
 function requireValue(condition,message){if(!condition)throw Error(message);}
 function readJson(filename){return JSON.parse(readFileSync(filename,'utf8'));}
+function readGitJson(revision,filename){return JSON.parse(execFileSync('git',['show',`${revision}:${filename}`],{cwd:repository,encoding:'utf8',maxBuffer:1024*1024}));}
 function exactKeys(record,keys,label){
   requireValue(record&&typeof record==='object'&&!Array.isArray(record),`${label} must be an object.`);
   const actual=Object.keys(record).sort(),expected=[...keys].sort();
@@ -77,19 +79,36 @@ function documentationArticles(directory=documentationDirectory){
   return entries.sort();
 }
 function validateContentManifest(manifest,directory=documentationDirectory){
-  exactKeys(manifest,['schemaVersion','articles'],'Content manifest');
-  requireValue(manifest.schemaVersion===1&&Array.isArray(manifest.articles)&&manifest.articles.length,'Content manifest must contain documented articles.');
+  exactKeys(manifest,['schemaVersion','evidenceCommit','articles'],'Content manifest');
+  requireValue(manifest.schemaVersion===2&&commit.test(manifest.evidenceCommit)&&Array.isArray(manifest.articles)&&manifest.articles.length,'Content manifest must contain a valid evidence commit and documented articles.');
+  execFileSync('git',['cat-file','-e',`${manifest.evidenceCommit}^{commit}`],{cwd:repository,stdio:'ignore'});
+  const inventory=readGitJson(manifest.evidenceCommit,manifestInventoryPath);
+  requireValue(Array.isArray(inventory.rows),'Feature inventory must contain rows.');
   const expected=documentationArticles(directory),actual=[];
+  const ids=[];
   for(const entry of manifest.articles){
-    exactKeys(entry,['article','category','title','implementationStatus','evidenceLink'],'Content manifest article');
-    requireValue(typeof entry.article==='string'&&entry.article===entry.article.replaceAll('\\','/')&&!entry.article.split('/').includes('..')&&typeof entry.category==='string'&&categories.has(entry.category)&&entry.article.startsWith(`docs/features/${entry.category}/`)&&entry.article.endsWith('.md')&&statuses.has(entry.implementationStatus)&&entry.evidenceLink===documentationRoot+entry.article,'Content manifest article has invalid provenance.');
+    exactKeys(entry,['id','article','category','title','implementationStatus','statusProvenance','evidence'],'Content manifest article');
+    requireValue(typeof entry.id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(entry.id)&&typeof entry.article==='string'&&entry.article===entry.article.replaceAll('\\','/')&&!entry.article.split('/').includes('..')&&typeof entry.category==='string'&&categories.has(entry.category)&&entry.article.startsWith(`docs/features/${entry.category}/`)&&entry.article.endsWith('.md')&&statuses.has(entry.implementationStatus),'Content manifest article has invalid identity or status.');
     ensureContained(repository,resolve(repository,entry.article),'Content manifest article');
     exactKeys(entry.title,['en','zh-Hant'],'Content manifest localized title');
     requireValue(Object.values(entry.title).every(value=>typeof value==='string'&&value.trim().length>0),'Content manifest localized titles must be non-empty.');
+    exactKeys(entry.statusProvenance,['sourcePath','mapping','featureIds'],'Content manifest status provenance');
+    requireValue(entry.statusProvenance.sourcePath===manifestInventoryPath&&entry.statusProvenance.mapping==='article'&&Array.isArray(entry.statusProvenance.featureIds)&&entry.statusProvenance.featureIds.every(id=>typeof id==='string'&&/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(id)),'Content manifest status provenance is invalid.');
+    const mappedRows=inventory.rows.filter(row=>row.article?.file===entry.article);
+    const mappedIds=[...new Set(mappedRows.map(row=>row.id))].sort();
+    const listedIds=[...new Set(entry.statusProvenance.featureIds)].sort();
+    requireValue(mappedIds.length===listedIds.length&&mappedIds.every((id,index)=>id===listedIds[index]),'Content manifest feature inventory mapping differs from the article record.');
+    const mappedStatuses=[...new Set(mappedRows.map(row=>row.status))];
+    const expectedStatus=mappedStatuses.length===0?'not-tracked':mappedStatuses.length===1?mappedStatuses[0]:'mixed';
+    requireValue(entry.implementationStatus===expectedStatus,'Content manifest status differs from the mapped feature inventory.');
+    exactKeys(entry.evidence,['repository','ref','path','url'],'Content manifest evidence provenance');
+    requireValue(entry.evidence.repository===repositoryName&&entry.evidence.ref==='main'&&entry.evidence.path===entry.article&&entry.evidence.url===documentationRoot+entry.article,'Content manifest evidence provenance is invalid.');
+    execFileSync('git',['cat-file','-e',`${manifest.evidenceCommit}:${entry.evidence.path}`],{cwd:repository,stdio:'ignore'});
     actual.push(entry.article);
+    ids.push(entry.id);
   }
   const ordered=[...actual].sort();
-  requireValue(new Set(ordered).size===ordered.length&&ordered.length===expected.length&&ordered.every((article,index)=>article===expected[index]),'Content manifest must list every documented feature article exactly once.');
+  requireValue(new Set(ids).size===ids.length&&new Set(ordered).size===ordered.length&&ordered.length===expected.length&&ordered.every((article,index)=>article===expected[index]),'Content manifest must list every documented feature article exactly once.');
 }
 function expectFailure(task,label){let failed=false;try{task();}catch{failed=true;}requireValue(failed,`${label} did not fail closed.`);}
 function runNestedArticleProbe(){
@@ -99,8 +118,8 @@ function runNestedArticleProbe(){
     mkdirSync(nested,{recursive:true});
     writeFileSync(resolve(category,'README.md'),'# Delivery\n');
     writeFileSync(resolve(nested,'probe.md'),'# Probe\n');
-    expectFailure(()=>validateContentManifest({schemaVersion:1,articles:[]},fixture),'Nested documentation omission');
-    validateContentManifest({schemaVersion:1,articles:[{article:'docs/features/delivery/nested/probe.md',category:'delivery',title:{en:'Probe','zh-Hant':'測試'},implementationStatus:'not-tracked',evidenceLink:`${documentationRoot}docs/features/delivery/nested/probe.md`}]},fixture);
+    expectFailure(()=>requireValue(documentationArticles(fixture).length===0,'Nested documentation omission'),'Nested documentation omission');
+    requireValue(documentationArticles(fixture).length===1&&documentationArticles(fixture)[0]==='docs/features/delivery/nested/probe.md','Nested documentation discovery is incomplete.');
   }finally{rmSync(fixture,{recursive:true,force:true});}
 }
 function runStaleOutputProbe(){
@@ -113,10 +132,22 @@ function runStaleOutputProbe(){
     assertAbsent(stale,'Stale output');
   }finally{rmSync(fixture,{recursive:true,force:true});}
 }
+function runManifestSchemaProbe(manifest){
+  const duplicate=structuredClone(manifest);
+  duplicate.articles[1].id=duplicate.articles[0].id;
+  expectFailure(()=>validateContentManifest(duplicate),'Duplicate content-manifest ID');
+  const incomplete=structuredClone(manifest);
+  incomplete.articles[0].title.en='';
+  expectFailure(()=>validateContentManifest(incomplete),'Empty localized title');
+  const fabricated=structuredClone(manifest);
+  fabricated.articles[0].evidence.path='docs/features/../outside.md';
+  expectFailure(()=>validateContentManifest(fabricated),'Escaping evidence provenance');
+  validateContentManifest(manifest);
+}
 const buildProbe=process.env.KPXC_BUILD_PROBE;
 if(buildProbe==='nested-article')runNestedArticleProbe();
 else if(buildProbe==='stale-output')runStaleOutputProbe();
-else if(buildProbe&&buildProbe!=='published-release')throw Error(`Unknown build probe: ${buildProbe}`);
+else if(buildProbe&&buildProbe!=='published-release'&&buildProbe!=='manifest-schema')throw Error(`Unknown build probe: ${buildProbe}`);
 
 recreateOutputDirectory(outputDirectory);
 const bundled=await build({absWorkingDir:root,entryPoints:['app.js','search-worker.js'],outdir:'dist',bundle:true,format:'esm',target:'es2022',minify:true,metafile:true});
@@ -129,7 +160,9 @@ if(buildProbe==='published-release'){
   expectFailure(()=>validatePublishedRelease(fabricated),'Fabricated release metadata');
 }
 validatePublishedRelease(release);
-validateContentManifest(readJson(resolve(root,'content-manifest.json')));
+const contentManifest=readJson(resolve(root,'content-manifest.json'));
+validateContentManifest(contentManifest);
+if(buildProbe==='manifest-schema')runManifestSchemaProbe(contentManifest);
 copyFileSync(new URL('../social-preview.png',import.meta.url),new URL('dist/social-preview.png',import.meta.url));
 const licenseDirectory=new URL('dist/licenses/',import.meta.url);
 mkdirSync(licenseDirectory,{recursive:true});
