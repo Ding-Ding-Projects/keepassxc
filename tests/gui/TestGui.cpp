@@ -2208,6 +2208,11 @@ void TestGui::testDatabaseSettings()
 void TestGui::testDatabaseLocking()
 {
     QString origDbName = m_tabWidget->tabText(0);
+    config()->set(Config::MinimizeAfterUnlock, false);
+    config()->set(Config::GUI_MinimizeToTray, false);
+    m_mainWindow->showNormal();
+    QTRY_VERIFY(m_mainWindow->isVisible());
+    QVERIFY(!m_mainWindow->isMinimized());
 
     MessageBox::setNextAnswer(MessageBox::Cancel);
     triggerAction("actionLockAllDatabases");
@@ -2231,9 +2236,29 @@ void TestGui::testDatabaseLocking()
 
     QVERIFY(!dbWidget->isLocked());
     QCOMPARE(m_tabWidget->tabText(0), origDbName);
+    QVERIFY(m_mainWindow->isVisible());
+    QVERIFY(!m_mainWindow->isMinimized());
 
     actionDatabaseMerge = m_mainWindow->findChild<QAction*>("actionDatabaseMerge", Qt::FindChildrenRecursively);
     QCOMPARE(actionDatabaseMerge->isEnabled(), true);
+
+    config()->set(Config::MinimizeAfterUnlock, true);
+    MessageBox::setNextAnswer(MessageBox::Cancel);
+    triggerAction("actionLockAllDatabases");
+    QVERIFY(dbWidget->isLocked());
+
+    unlockDatabaseWidget = dbWidget->findChild<QWidget*>("databaseOpenWidget");
+    editPassword =
+        unlockDatabaseWidget->findChild<PasswordWidget*>("editPassword")->findChild<QLineEdit*>("passwordEdit");
+    QVERIFY(editPassword);
+    QTest::keyClicks(editPassword, "a");
+    QTest::keyClick(editPassword, Qt::Key_Enter);
+
+    QVERIFY(!dbWidget->isLocked());
+    QTRY_VERIFY(m_mainWindow->isMinimized());
+    m_mainWindow->showNormal();
+    QTRY_VERIFY(m_mainWindow->isVisible());
+    QVERIFY(!m_mainWindow->isMinimized());
 }
 
 void TestGui::testDragAndDropKdbxFiles()
