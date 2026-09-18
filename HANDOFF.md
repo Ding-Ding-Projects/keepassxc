@@ -1,6 +1,6 @@
 # Current closeout handoff, September 18, 2026
 
-The current primary checkout is on `main` at `cfd2dab5d51c6df811051ec9b303c83509c3f515` after integrating the local `codex/*` branches listed below. The checkout and every linked checkout inspected for this pass were clean before integration. No tests, builds, packaging, or release work were run as part of this closeout.
+The current primary checkout is on `main` at `cf2cf161aa5dfad9fecb08081ae7b5565b8a5e92` after integrating the local `codex/*` branches listed below. The checkout and every linked checkout inspected for this pass were clean before integration. No tests, builds, packaging, or release work were run as part of this closeout.
 
 ## Closeout integration record
 
