@@ -27,6 +27,12 @@ The required external archive must be created and verified under `<OneDrive>/Oak
 
 Archive verified before cleanup: `C:\Users\cntow\OneDrive\OakKayBackups\keepassxc\zips\keepassxc-20260918T165722Z.7z`, 330,559,655 bytes, 231 folders, 3,045 files, 408,469,097 source bytes, `.git` present, zero non-ignored untracked files, and 7-Zip test result `Everything is Ok`.
 
+## Mat Day removal receipt
+
+After the archive and remote ancestry proof, 30 clean local `codex/*` branches and their linked checkouts were removed. The removed local branches were: `codex/day-teet-hui-boundary-hardening`, `codex/day-teet-hui-build-provenance`, `codex/day-teet-hui-combined-repair`, `codex/day-teet-hui-evidence-immutable`, `codex/day-teet-hui-evidence-refresh`, `codex/day-teet-hui-interaction-corrective`, `codex/day-teet-hui-interaction-final`, `codex/day-teet-hui-interaction-findings`, `codex/day-teet-hui-interaction-last`, `codex/day-teet-hui-interaction-rescue`, `codex/day-teet-hui-interactions`, `codex/day-teet-hui-interactions-final-repair`, `codex/day-teet-hui-interactions-provenance`, `codex/day-teet-hui-interactions-repair`, `codex/day-teet-hui-interactions-repair2`, `codex/day-teet-hui-manifest-schema`, `codex/day-teet-hui-provenance`, `codex/day-teet-hui-reduced-motion`, `codex/day-teet-hui-schema2-repair`, `codex/day-teet-hui-social-preview-refresh`, `codex/dayteethui-changelog-vocabulary-hooks`, `codex/dayteethui-field-width`, `codex/dayteethui-foundation`, `codex/dayteethui-integration-20260908`, `codex/dayteethui-material-accessibility`, `codex/finalizer-api-fix`, `codex/minimize-repair`, `codex/repair-window-content-drag-r2`, `codex/updater-download-repair-2`, and `codex/updater-lifecycle-regression`.
+
+No Lap Sap Tongs existed. Remote `codex/*` refs and the non-`codex/*` refs were retained and remain dewed because remote ownership, activity, or load-bearing status was not proven for this pass. The final local state has one checkout, `main`, and no local `codex/*` branches.
+
 # Previous repair handoff, September 2026
 
 Native and website repairs are integrated at `a30d109626b35fff6331e5c4450b3f98da5d8837`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed update behavior, complete drag gestures and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
