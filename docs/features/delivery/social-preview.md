@@ -20,7 +20,7 @@ Only public branding is embedded; the crawler fetches the image anonymously.
 
 ## Verification
 
-Fetch the deployed page and read the tags back; fetch the image URL without credentials and confirm a 200 with `image/png`. Verified 2026-09-01 for `d7e8adba`.
+Fetch the deployed page and read the tags back; fetch the image URL without credentials and confirm a 200 with `image/png`. The Pages deployment for `33a1fec98bdb988b8fa59728b8f954829dfd3e38` completed successfully on 2026-09-08 in [run 34285869684](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34285869684).
 
 ## Suggested articles
 

@@ -219,5 +219,5 @@ for(const name of runtimePackages){
   for(const file of files){const target=name.replace(/[@/]/g,'_')+'-'+file;copyFileSync(new URL(file,directory),new URL(target,licenseDirectory));licenseIndex.push(`${name}: ${target}`);}
 }
 writeFileSync(new URL('README.txt',licenseDirectory),licenseIndex.join('\n')+'\n');
-writeFileSync(new URL('dist/build-provenance.json',import.meta.url),JSON.stringify({schemaVersion:1,version:release.version,sourceCommit:release.sourceCommit,updatedAtUtc:release.updatedAtUtc,updatedAtSource:release.updatedAtSource},null,2)+'\n');
-console.log(`Built website ${release.version} from published release provenance ${release.sourceCommit}.`);
+writeFileSync(new URL('dist/build-provenance.json',import.meta.url),JSON.stringify({schemaVersion:1,version:release.version,sourceCommit:buildSourceCommit,productReleaseSourceCommit:release.sourceCommit,updatedAtUtc:release.updatedAtUtc,updatedAtSource:release.updatedAtSource},null,2)+'\n');
+console.log(`Built website ${release.version} from source ${buildSourceCommit} with published release provenance ${release.sourceCommit}.`);
