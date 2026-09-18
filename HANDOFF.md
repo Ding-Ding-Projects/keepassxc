@@ -1,4 +1,33 @@
-# Current repair handoff, September 2026
+# Current closeout handoff, September 18, 2026
+
+The current primary checkout is on `main` at `cfd2dab5d51c6df811051ec9b303c83509c3f515` after integrating the local `codex/*` branches listed below. The checkout and every linked checkout inspected for this pass were clean before integration. No tests, builds, packaging, or release work were run as part of this closeout.
+
+## Closeout integration record
+
+- `codex/day-teet-hui-boundary-hardening` merged as `896a9033`.
+- `codex/day-teet-hui-build-provenance` merged as `0be529a0`.
+- `codex/day-teet-hui-combined-repair` merged as `ef932fd1` with conflicts in `site/app.js` and `site/search-worker.js`; the incoming side was selected for the final files while both parent histories remain in the merge commit.
+- `codex/day-teet-hui-interaction-corrective` merged as `2764128e` with the same automatic incoming-side resolution in both files.
+- `codex/day-teet-hui-interaction-rescue` merged as `fc41481d` with the incoming side selected in `site/app.js`.
+- `codex/day-teet-hui-interactions` merged as `818501e7` with the incoming side selected in `site/app.js`.
+- `codex/day-teet-hui-interactions-final-repair` merged as `6f11426c` with the incoming side selected in `site/app.js` and `site/search-worker.js`.
+- `codex/day-teet-hui-interactions-provenance` merged as `a713aeeb` with the incoming side selected in `site/app.js` and `site/search-worker.js`.
+- `codex/day-teet-hui-interactions-repair` merged as `f00323ce` with the incoming side selected in `site/app.js` and `site/search-worker.js`.
+- `codex/day-teet-hui-reduced-motion` merged as `bd568c5c` with the incoming side selected in `site/app.js`.
+- `codex/day-teet-hui-schema2-repair` merged as `5d01a317` with the incoming side selected in `site/app.js`.
+- The remaining local `codex/*` branches were already contained by the integrated history or merged without conflicts. The final first-parent integration commits are `8763a71f`, `e2e96dcf`, `8b320880`, and `cfd2dab5`.
+
+Every conflict was removed from the index before its merge commit. A post-merge scan found no unmerged paths and no `<<<<<<<`, `=======`, or `>>>>>>>` markers in the inspected source and handoff files. The automatic file choice is deliberately recorded here because the merge commits retain both parents, but the final file content follows the incoming lane for each conflicted path.
+
+The linked checkouts for the integrated local `codex/*` branches are still present until archive verification and ancestry checks complete. User-owned, upstream, load-bearing, active, or ownership-uncertain refs remain retained and are not inferred into this task's cleanup scope.
+
+## Archive and cleanup status
+
+The required external archive must be created and verified under `<OneDrive>/OakKayBackups/keepassxc/zips/` before any linked checkout, jer, or Lap Sap Tong is removed. The archive must contain `.git`, every tracked file, and every non-ignored untracked file, and its listing and test result must be recorded here before removal. Until that evidence is present, cleanup remains pending.
+
+Archive verified before cleanup: `C:\Users\cntow\OneDrive\OakKayBackups\keepassxc\zips\keepassxc-20260918T165722Z.7z`, 330,559,655 bytes, 231 folders, 3,045 files, 408,469,097 source bytes, `.git` present, zero non-ignored untracked files, and 7-Zip test result `Everything is Ok`.
+
+# Previous repair handoff, September 2026
 
 Native and website repairs are integrated at `a30d109626b35fff6331e5c4450b3f98da5d8837`. See [the current verification record](docs/features/delivery/repair-verification-2026-09.md) for exact commits, test counts, package hashes and remaining acceptance. The final release is verified; installed update behavior, complete drag gestures and the full feature inventory remain incomplete. The full feature inventory remains 1/172 green.
 
