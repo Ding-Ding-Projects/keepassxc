@@ -47,7 +47,7 @@ strip, and a five-destination stack. `Ctrl+Shift+F` opens a command palette list
 | --- | --- |
 | **Vault** | **Still the stock three-pane widget.** Restyled by the Material stylesheet, but the group tree / entry table / preview layout is upstream's. The Material vault screen is written and not yet wired — see [Status](#status). |
 | **Reports** | Material screen — password health, breach and reuse findings, database statistics as stat cards |
-| **History** | Material screen — local Git-backed revision history, with diff and restore |
+| **History** | Material screen — local Git-backed revision history embedded in encrypted database saves, with diff and restore |
 | **Changelog** | Material screen — every released version, searchable and date-filterable, exportable to Markdown |
 | **Settings** | Material screen — appearance, language, behaviour and integrations, plus spec sheets for individual settings |
 

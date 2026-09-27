@@ -18,6 +18,7 @@
 
 #include "DatabaseWidget.h"
 #include "gui/material/MaterialControls.h"
+#include "gui/material/MaterialHistoryStore.h"
 
 #include <QApplication>
 #include <QBoxLayout>
@@ -2660,12 +2661,28 @@ bool DatabaseWidget::performSave(QString& errorMessage, const QString& fileName)
         }
     }
 
+    auto* history = Material::HistoryStore::instance();
+    const QString destinationPath = fileName.isEmpty() ? m_db->filePath() : fileName;
+    bool historySaveStarted = history->beginDatabaseSave(m_db, destinationPath);
+    if (historySaveStarted) {
+        QString historyError;
+        if (!history->embedLatestHistory(m_db, &historyError)) {
+            history->cancelDatabaseSave(m_db);
+            historySaveStarted = false;
+            emit history->writeFailed(tr("The main database save can continue, but embedded history could not be prepared: %1")
+                                          .arg(historyError));
+        }
+    }
+
     bool ok;
     if (fileName.isEmpty()) {
         ok = m_db->save(saveAction, backupFilePath, &errorMessage);
     } else {
         ok = m_db->saveAs(fileName, saveAction, backupFilePath, &errorMessage);
     }
+
+    if (!ok && historySaveStarted) history->cancelDatabaseSave(m_db);
+    else if (ok && historySaveStarted) history->finishEmbeddedHistory(m_db, true);
 
     // Return control
     if (mainWindow) {
@@ -2708,13 +2725,28 @@ bool DatabaseWidget::saveBackup()
     bool modified = m_db->isModified();
 
     QString error;
+    auto* history = Material::HistoryStore::instance();
+    bool historySaveStarted = history->beginDatabaseSave(m_db, newFilePath);
+    if (historySaveStarted) {
+        QString historyError;
+        if (!history->embedLatestHistory(m_db, &historyError)) {
+            history->cancelDatabaseSave(m_db);
+            historySaveStarted = false;
+            emit history->writeFailed(tr("The backup can be written, but embedded history could not be prepared: %1")
+                                          .arg(historyError));
+        }
+    }
     bool ok = m_db->saveAs(newFilePath, Database::DirectWrite, {}, &error);
+    if (!ok && historySaveStarted) history->cancelDatabaseSave(m_db);
+    else if (ok && historySaveStarted) history->finishEmbeddedHistory(m_db, true);
 
     // Restore database to original state
     m_db->setFilePath(oldFilePath);
     if (modified) {
         // Source database is marked as clean when copy is saved, even if source has unsaved changes
         m_db->markAsModified();
+    } else {
+        m_db->markAsClean();
     }
 
     if (!ok) {

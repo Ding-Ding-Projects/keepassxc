@@ -1193,11 +1193,16 @@ MainWindow::MainWindow()
         }
         dbWidget->setProperty(watchedProperty, true);
         const auto database = dbWidget->database();
-        if (database && !database->filePath().isEmpty()
-            && Material::HistoryStore::instance()->revisionsFor(database->filePath()).isEmpty()) {
+        auto* history = Material::HistoryStore::instance();
+        QString historyError;
+        const bool historyReady = database && history->hydrateDatabase(database, &historyError);
+        if (database && !historyReady) {
+            emit history->writeFailed(tr("Local history could not be restored for this database: %1").arg(historyError));
+        }
+        if (database && !database->filePath().isEmpty() && history->revisionsForDatabase(database).isEmpty()) {
             // Capture the encrypted file before the first edit in this session,
             // so a delete followed by Save always has a recoverable predecessor.
-            Material::HistoryStore::instance()->recordSave(database);
+            history->recordSave(database);
         }
         connect(dbWidget, &DatabaseWidget::databaseSaved, this, [dbWidget] {
             Material::HistoryStore::instance()->recordSave(dbWidget->database());
@@ -1908,7 +1913,7 @@ void MainWindow::updateRailSublabels()
     const auto* store = Material::HistoryStore::instance();
     int revisions = 0;
     if (store) {
-        revisions = db ? store->revisionsFor(db->filePath()).size() : store->revisions().size();
+        revisions = db ? store->revisionsForDatabase(db).size() : store->revisions().size();
     }
     rail->setSublabel(QStringLiteral("history"), revisions > 0 ? QString::number(revisions) : QString());
 }

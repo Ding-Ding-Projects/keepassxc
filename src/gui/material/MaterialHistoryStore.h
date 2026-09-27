@@ -18,11 +18,16 @@
 #ifndef KEEPASSXC_MATERIALHISTORYSTORE_H
 #define KEEPASSXC_MATERIALHISTORYSTORE_H
 
+#include <QByteArray>
 #include <QDateTime>
+#include <QHash>
 #include <QObject>
 #include <QSharedPointer>
 #include <QString>
+#include <QTemporaryDir>
 #include <QVector>
+
+#include "core/CustomData.h"
 
 class Database;
 
@@ -67,6 +72,7 @@ namespace Material
         int edited = 0;
         QString snapshotPath;
         QString snapshotSha256;
+        QString contentFingerprint;
 
         bool isValid() const
         {
@@ -119,6 +125,19 @@ namespace Material
          * no root group or the log could not be written.
          */
         bool recordSave(const QSharedPointer<Database>& db);
+        /** Add the stable identity before the primary KDBX write. */
+        bool beginDatabaseSave(const QSharedPointer<Database>& db, const QString& destinationPath);
+        /** Roll back pre-save identity metadata after a failed primary save. */
+        void cancelDatabaseSave(const QSharedPointer<Database>& db, bool restoreModifiedState = false);
+        /** Prepare a bounded history bundle in encrypted KDBX custom data before the primary save. */
+        bool embedLatestHistory(const QSharedPointer<Database>& db, QString* error = nullptr);
+        /** Finalize the staged local history after the primary KDBX save. */
+        void finishEmbeddedHistory(const QSharedPointer<Database>& db, bool persisted);
+        /** Restore a database's embedded bundle into its local history repository. */
+        bool hydrateDatabase(const QSharedPointer<Database>& db, QString* error = nullptr);
+        /** Stable encrypted identity, falling back to the legacy path digest. */
+        QString databaseIdentity(const QSharedPointer<Database>& db) const;
+        QVector<HistoryRevision> revisionsForDatabase(const QSharedPointer<Database>& db) const;
         /** Record an already-completed redacted event such as restore/import/bulk. */
         bool recordEvent(const QSharedPointer<Database>& db, const QString& redactedLabel, RevisionKind kind);
         bool recordSettingsEvent(const QString& redactedLabel);
@@ -168,13 +187,51 @@ namespace Material
                                const QByteArray& fingerprint,
                                const QByteArray& encryptedSnapshot = {});
         bool migrateLegacy();
-        bool commitDatabaseRepository(const HistoryRevision& revision, const QByteArray& encryptedSnapshot);
+        HistoryRevision createSaveRevision(const QSharedPointer<Database>& db,
+                                           QByteArray* fingerprint,
+                                           QByteArray* encryptedSnapshot) const;
+        bool commitDatabaseRepository(const HistoryRevision& revision,
+                                      const QByteArray& encryptedSnapshot,
+                                      const QByteArray& fingerprint);
+        bool commitDatabaseRepositoryAt(const QString& repository,
+                                       const HistoryRevision& revision,
+                                       const QByteArray& encryptedSnapshot,
+                                       const QByteArray& fingerprint);
+        bool commitDatabaseEvent(const HistoryRevision& revision, const QByteArray& fingerprint);
+        bool mergeStagedDatabaseRepository(const QString& identity,
+                                           const QString& stagingRepository,
+                                           QString* error = nullptr);
+        bool validateDatabaseRepository(const QString& repository, const QString& databaseIdentity, QString* error = nullptr) const;
+        bool loadDatabaseRepositoryRevisions(const QString& databaseIdentity,
+                                             const QString& currentFingerprint,
+                                             QString* error = nullptr);
+
+        struct DatabaseSaveState
+        {
+            CustomData::CustomDataItem identity;
+            CustomData::CustomDataItem bundle;
+            CustomData::CustomDataItem savedBundle;
+            bool hadIdentity = false;
+            bool hadBundle = false;
+            bool hadSavedBundle = false;
+            bool wasModified = false;
+            QString databaseIdentity;
+            QSharedPointer<QTemporaryDir> stagingDirectory;
+            QString stagingRepository;
+            HistoryRevision stagedRevision;
+            QByteArray stagedSnapshot;
+            QByteArray stagedFingerprint;
+            bool staged = false;
+            bool finalizationAttempted = false;
+            bool finalizationSucceeded = false;
+        };
 
         /** Oldest first, which is the order the log is written in. */
         QVector<HistoryRevision> m_revisions;
         bool m_loaded = false;
         QString m_storageRoot;
         QString m_gitExecutable;
+        QHash<const Database*, DatabaseSaveState> m_databaseSaves;
     };
 
 } // namespace Material

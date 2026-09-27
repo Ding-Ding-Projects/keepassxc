@@ -415,21 +415,26 @@ namespace Material
         m_databaseWatch.clear();
 
         m_database = db.toWeakRef();
-        m_databasePath = db ? QDir::fromNativeSeparators(db->filePath()) : QString();
+        auto* store = HistoryStore::instance();
+        m_databasePath = db ? store->databaseIdentity(db) : QString();
         if (db) {
             // An entry gains a revision from the entry editor, from Auto-Type,
             // from a merge - none of which pass through here. Database's own
             // modified() signal is already debounced, so following it costs one
             // rebuild per burst of edits.
             m_databaseWatch.append(connect(db.data(), &Database::modified, this, &HistoryFeed::rebuild));
-            // Save As gives the file a new name, and the save log is keyed by
-            // the name: without this the rows recorded under the old one would
-            // silently stop being listed.
+            // Before the first save, legacy databases use a path-derived id.
+            // The encrypted stable id is installed before that save and stays
+            // unchanged when the file is moved with Save As.
             m_databaseWatch.append(
-                connect(db.data(), &Database::filePathChanged, this, [this](const QString&, const QString& newPath) {
-                    m_databasePath = QDir::fromNativeSeparators(newPath);
+                connect(db.data(), &Database::filePathChanged, this, [this, db, store](const QString&, const QString&) {
+                    m_databasePath = store->databaseIdentity(db);
                     rebuild();
                 }));
+            m_databaseWatch.append(connect(db.data(), &Database::databaseSaved, this, [this, db, store] {
+                m_databasePath = store->databaseIdentity(db);
+                rebuild();
+            }));
             if (db->rootGroup()) {
                 m_databaseWatch.append(
                     connect(db->rootGroup(), &QObject::destroyed, this, &HistoryFeed::forgetDatabase));

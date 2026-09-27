@@ -1,5 +1,11 @@
 # Roadmap
 
+## Embedded database history
+
+- [ ] Stage a bounded per-database Git bundle before the primary KDBX write and save the data and bundle atomically; source implementation is in progress, local build pending.
+- [ ] Merge staged history into application storage only after the KDBX write succeeds, including Save As and backup flows; source implementation is in progress.
+- [ ] Add focused KDBX and Git coverage for transfer, rollback, concurrency, replay, malformed input and size limits; tests were not added or run in this task.
+
 ## September 18, 2026 closeout
 
 - [x] Inspect the primary checkout, all linked checkouts, local and remote branches, and artifact Tongs after fetching the Git remote.

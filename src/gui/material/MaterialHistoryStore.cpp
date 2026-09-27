@@ -20,8 +20,12 @@
 #include <QJsonObject>
 #include <QLockFile>
 #include <QProcess>
+#include <QRegularExpression>
 #include <QStandardPaths>
 #include <QSaveFile>
+#include <QSet>
+#include <QSignalBlocker>
+#include <QTemporaryDir>
 #include <QThread>
 #include <QtEndian>
 #include <QUuid>
@@ -38,6 +42,14 @@ namespace Material
         const QString StateName = QStringLiteral("revisions.json");
         const QString FingerprintsName = QStringLiteral("fingerprints");
         const QString SnapshotsName = QStringLiteral("snapshots");
+        const QString DatabaseIdentityKey = QStringLiteral("KeePassXC/History/DatabaseId");
+        const QString EmbeddedHistoryKey = QStringLiteral("KeePassXC/History/BundleV1");
+        const QString DatabaseHistoryManifestName = QStringLiteral("history.json");
+        constexpr qsizetype MaximumEmbeddedBundleBytes = 64 * 1024 * 1024;
+        constexpr int MaximumEmbeddedCommits = 4096;
+        constexpr int MaximumEmbeddedObjects = 100000;
+        constexpr qint64 MaximumEmbeddedObjectBytes = 512LL * 1024 * 1024;
+        constexpr qsizetype MaximumRevisionMetadataBytes = 64 * 1024;
         constexpr int LockTimeoutMs = 3000;
 
         struct ProcessResult { bool started = false; bool timedOut = false; int exitCode = -1; QByteArray out; QByteArray err; bool ok() const { return started && !timedOut && exitCode == 0; } };
@@ -123,6 +135,11 @@ namespace Material
             return QJsonDocument(array).toJson(QJsonDocument::Compact);
         }
 
+        QString fingerprintDigest(const QByteArray& fingerprint)
+        {
+            return byteDigest(fingerprint);
+        }
+
         QHash<QString, QString> readFingerprint(const QString& path)
         {
             QHash<QString, QString> result; QFile file(path);
@@ -145,6 +162,7 @@ namespace Material
                                {QStringLiteral("entries"), v.entryCount}, {QStringLiteral("groups"), v.groupCount},
                                {QStringLiteral("added"), v.added}, {QStringLiteral("removed"), v.removed}, {QStringLiteral("edited"), v.edited}};
             if (!v.snapshotPath.isEmpty()) { object.insert(QStringLiteral("snapshot"), v.snapshotPath); object.insert(QStringLiteral("snapshotSha256"), v.snapshotSha256); }
+            if (!v.contentFingerprint.isEmpty()) object.insert(QStringLiteral("contentFingerprint"), v.contentFingerprint);
             return object;
         }
 
@@ -157,6 +175,7 @@ namespace Material
             v.entryCount = o.value(QStringLiteral("entries")).toInt(); v.groupCount = o.value(QStringLiteral("groups")).toInt();
             v.added = o.value(QStringLiteral("added")).toInt(); v.removed = o.value(QStringLiteral("removed")).toInt(); v.edited = o.value(QStringLiteral("edited")).toInt();
             v.snapshotPath = o.value(QStringLiteral("snapshot")).toString(); v.snapshotSha256 = o.value(QStringLiteral("snapshotSha256")).toString();
+            v.contentFingerprint = o.value(QStringLiteral("contentFingerprint")).toString();
             if (!v.timestamp.isValid() || v.databasePath.size() != 64) v.id.clear(); return v;
         }
 
@@ -177,6 +196,115 @@ namespace Material
                 QThread::msleep(static_cast<unsigned long>(10 * (attempt + 1)));
             }
             return false;
+        }
+
+        bool isDatabaseIdentity(const QString& value)
+        {
+            static const QRegularExpression identityPattern(QStringLiteral("^[a-f0-9]{64}$"));
+            return identityPattern.match(value).hasMatch();
+        }
+
+        QString randomDatabaseIdentity()
+        {
+            return QString::fromLatin1(QCryptographicHash::hash(QUuid::createUuid().toRfc4122(), QCryptographicHash::Sha256).toHex());
+        }
+
+        QJsonObject databaseHistoryManifest(const QString& identity)
+        {
+            return QJsonObject{{QStringLiteral("schemaVersion"), 1},
+                               {QStringLiteral("databaseId"), identity},
+                               {QStringLiteral("snapshotFormat"), QStringLiteral("encrypted-kdbx")}};
+        }
+
+        bool isRevisionId(const QString& value)
+        {
+            static const QRegularExpression idPattern(QStringLiteral("^[0-9a-fA-F-]{36}$"));
+            return idPattern.match(value).hasMatch()
+                && QUuid(value).toString(QUuid::WithoutBraces).compare(value, Qt::CaseInsensitive) == 0;
+        }
+
+        bool initializeDatabaseHistoryRepository(const QString& gitExecutable, const QString& repository)
+        {
+            if (!QDir().mkpath(repository)) return false;
+            if (!QFileInfo::exists(QDir(repository).filePath(QStringLiteral(".git")))
+                && !git(gitExecutable, repository, {QStringLiteral("init"), QStringLiteral("--quiet")}).ok()) {
+                return false;
+            }
+            const auto head = git(gitExecutable, repository, {QStringLiteral("symbolic-ref"), QStringLiteral("--short"), QStringLiteral("HEAD")});
+            if (head.ok() && head.out.trimmed() != QByteArrayLiteral("main")) {
+                if (!git(gitExecutable, repository, {QStringLiteral("branch"), QStringLiteral("-m"), QStringLiteral("main")}).ok()) return false;
+            } else if (!head.ok()) {
+                if (!git(gitExecutable, repository, {QStringLiteral("symbolic-ref"), QStringLiteral("HEAD"), QStringLiteral("refs/heads/main")}).ok()) return false;
+            }
+            if (!git(gitExecutable, repository, {QStringLiteral("config"), QStringLiteral("user.name"), QStringLiteral("KeePassXC History")}).ok()
+                || !git(gitExecutable, repository, {QStringLiteral("config"), QStringLiteral("user.email"), QStringLiteral("history@localhost")}).ok()
+                || !git(gitExecutable, repository, {QStringLiteral("config"), QStringLiteral("commit.gpgsign"), QStringLiteral("false")}).ok()) {
+                return false;
+            }
+#ifdef Q_OS_WIN
+            const QString noHooks = QStringLiteral("NUL");
+#else
+            const QString noHooks = QStringLiteral("/dev/null");
+#endif
+            return git(gitExecutable, repository, {QStringLiteral("config"), QStringLiteral("core.hooksPath"), noHooks}).ok();
+        }
+
+        QByteArray serializeDatabaseWithoutEmbeddedHistory(const QSharedPointer<Database>& db, QString* error)
+        {
+            if (!db || !db->metadata() || !db->metadata()->customData()) return {};
+            auto* customData = db->metadata()->customData();
+            const bool hadBundle = customData->contains(EmbeddedHistoryKey);
+            const auto bundle = hadBundle ? customData->item(EmbeddedHistoryKey) : CustomData::CustomDataItem{};
+            const bool wasModified = db->isModified();
+            QSignalBlocker blocker(db.data());
+            if (hadBundle) customData->remove(EmbeddedHistoryKey);
+
+            QBuffer buffer;
+            buffer.open(QIODevice::WriteOnly);
+            const bool written = db->writeDatabase(&buffer, error);
+
+            if (hadBundle) customData->set(EmbeddedHistoryKey, bundle);
+            if (wasModified) db->markAsModified();
+            else db->markAsClean();
+            return written ? buffer.data() : QByteArray{};
+        }
+
+        QString embeddedHistoryEnvelope(const QString& databaseIdentity, const QByteArray& bundle)
+        {
+            const QByteArray sha = QCryptographicHash::hash(bundle, QCryptographicHash::Sha256).toHex();
+            return QStringLiteral("1:%1:%2:%3")
+                .arg(databaseIdentity, QString::fromLatin1(sha), QString::fromLatin1(bundle.toBase64()));
+        }
+
+        bool decodeEmbeddedHistoryEnvelope(const QString& value,
+                                           const QString& expectedIdentity,
+                                           QByteArray* bundle,
+                                           QString* error)
+        {
+            const auto fail = [error](const QString& reason) {
+                if (error) *error = reason;
+                return false;
+            };
+            if (value.size() > ((MaximumEmbeddedBundleBytes + 2) / 3) * 4 + 140) {
+                return fail(QStringLiteral("The embedded history bundle exceeds its encoded size limit."));
+            }
+            const QStringList fields = value.split(QLatin1Char(':'));
+            if (fields.size() != 4 || fields.at(0) != QLatin1String("1")
+                || !isDatabaseIdentity(fields.at(1)) || fields.at(1) != expectedIdentity
+                || !QRegularExpression(QStringLiteral("^[a-f0-9]{64}$")).match(fields.at(2)).hasMatch()) {
+                return fail(QStringLiteral("The embedded history header or database identity is invalid."));
+            }
+            const QByteArray encoded = fields.at(3).toLatin1();
+            const QByteArray decoded = QByteArray::fromBase64(encoded, QByteArray::AbortOnBase64DecodingErrors);
+            if (decoded.isEmpty() || decoded.size() > MaximumEmbeddedBundleBytes || decoded.toBase64() != encoded) {
+                return fail(QStringLiteral("The embedded history bundle is malformed or exceeds its size limit."));
+            }
+            if (QCryptographicHash::hash(decoded, QCryptographicHash::Sha256).toHex() != fields.at(2).toLatin1()) {
+                return fail(QStringLiteral("The embedded history digest does not match its contents."));
+            }
+            if (bundle) *bundle = decoded;
+            if (error) error->clear();
+            return true;
         }
     }
 
@@ -199,28 +327,390 @@ namespace Material
         return QDir(historyDirectory()).filePath(QStringLiteral("databases/%1/repository").arg(id));
     }
 
-    bool HistoryStore::commitDatabaseRepository(const HistoryRevision& revision, const QByteArray& encryptedSnapshot)
+    QString HistoryStore::databaseIdentity(const QSharedPointer<Database>& db) const
     {
-        if (encryptedSnapshot.isEmpty() || revision.databasePath.size() != 64) return false;
+        if (!db || !db->metadata() || !db->metadata()->customData()) return {};
+        const QString stored = db->metadata()->customData()->value(DatabaseIdentityKey);
+        if (isDatabaseIdentity(stored)) return stored;
+        return db->filePath().isEmpty() ? QString() : databaseId(db->filePath());
+    }
+
+    bool HistoryStore::beginDatabaseSave(const QSharedPointer<Database>& db, const QString& destinationPath)
+    {
+        if (!db || !db->rootGroup() || !db->metadata() || !db->metadata()->customData() || destinationPath.isEmpty()) return false;
+        if (m_databaseSaves.contains(db.data())) cancelDatabaseSave(db);
+
+        auto* customData = db->metadata()->customData();
+        DatabaseSaveState state;
+        state.hadIdentity = customData->contains(DatabaseIdentityKey);
+        if (state.hadIdentity) state.identity = customData->item(DatabaseIdentityKey);
+        state.hadBundle = customData->contains(EmbeddedHistoryKey);
+        if (state.hadBundle) state.bundle = customData->item(EmbeddedHistoryKey);
+        state.wasModified = db->isModified();
+        const QString identity = state.hadIdentity && isDatabaseIdentity(state.identity.value)
+                                     ? state.identity.value
+                                     : (db->filePath().isEmpty() ? randomDatabaseIdentity() : databaseId(db->filePath()));
+        if (!isDatabaseIdentity(identity)) return false;
+        state.databaseIdentity = identity;
+        if (!state.hadIdentity || state.identity.value != identity) {
+            customData->set(DatabaseIdentityKey, identity);
+        }
+        state.hadSavedBundle = customData->contains(EmbeddedHistoryKey);
+        if (state.hadSavedBundle) state.savedBundle = customData->item(EmbeddedHistoryKey);
+        m_databaseSaves.insert(db.data(), state);
+        return true;
+    }
+
+    void HistoryStore::cancelDatabaseSave(const QSharedPointer<Database>& db, bool restoreModifiedState)
+    {
+        if (!db || !db->metadata() || !db->metadata()->customData()) return;
+        const auto found = m_databaseSaves.find(db.data());
+        if (found == m_databaseSaves.end()) return;
+        const DatabaseSaveState state = found.value();
+        auto* customData = db->metadata()->customData();
+        if (state.hadIdentity) customData->set(DatabaseIdentityKey, state.identity);
+        else customData->remove(DatabaseIdentityKey);
+        if (state.hadBundle) customData->set(EmbeddedHistoryKey, state.bundle);
+        else customData->remove(EmbeddedHistoryKey);
+        if (restoreModifiedState) {
+            if (state.wasModified) db->markAsModified();
+            else db->markAsClean();
+        }
+        m_databaseSaves.erase(found);
+    }
+
+    bool HistoryStore::embedLatestHistory(const QSharedPointer<Database>& db, QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!db || !db->metadata() || !db->metadata()->customData() || !m_databaseSaves.contains(db.data())) {
+            return fail(tr("No active database save is available for history embedding."));
+        }
+        const QString identity = databaseIdentity(db);
+        QByteArray fingerprint;
+        QByteArray encryptedSnapshot;
+        HistoryRevision revision = createSaveRevision(db, &fingerprint, &encryptedSnapshot);
+        if (!revision.isValid() || encryptedSnapshot.isEmpty()) return fail(tr("The encrypted database snapshot could not be prepared."));
+        auto stagingDirectory = QSharedPointer<QTemporaryDir>::create();
+        if (!stagingDirectory->isValid()) return fail(tr("A temporary directory for encrypted history staging could not be created."));
+        const QString stagingRepository = QDir(stagingDirectory->path()).filePath(QStringLiteral("repository"));
+        const QString localRepository = databaseRepositoryPath(identity);
+        const bool localRepositoryExists = QFileInfo::exists(QDir(localRepository).filePath(QStringLiteral(".git")));
+        if (localRepositoryExists) {
+            QLockFile lock(localRepository + QStringLiteral(".lock"));
+            lock.setStaleLockTime(0);
+            if (!lock.tryLock(LockTimeoutMs)) return fail(tr("The per-database history repository is in use by another save."));
+            QString repositoryError;
+            if (!validateDatabaseRepository(localRepository, identity, &repositoryError)) return fail(repositoryError);
+            const auto clone = git(m_gitExecutable,
+                                   QString(),
+                                   {QStringLiteral("clone"), QStringLiteral("--quiet"), QStringLiteral("--no-hardlinks"),
+                                    localRepository, stagingRepository});
+            if (!clone.ok()) return fail(tr("The current encrypted history could not be staged."));
+            if (!git(m_gitExecutable, stagingRepository, {QStringLiteral("remote"), QStringLiteral("remove"), QStringLiteral("origin")}).ok()) {
+                return fail(tr("The temporary history staging reference could not be removed."));
+            }
+        } else if (!initializeDatabaseHistoryRepository(m_gitExecutable, stagingRepository)) {
+            return fail(tr("A staging history repository could not be initialized."));
+        }
+        if (!commitDatabaseRepositoryAt(stagingRepository, revision, encryptedSnapshot, fingerprint)) {
+            return fail(tr("The new encrypted history revision could not be staged."));
+        }
+        QString validationError;
+        if (!validateDatabaseRepository(stagingRepository, identity, &validationError)) return fail(validationError);
+
+        const QString bundlePath = QDir(stagingDirectory->path()).filePath(QStringLiteral("history.bundle"));
+        const auto created = git(m_gitExecutable,
+                                 stagingRepository,
+                                 {QStringLiteral("bundle"), QStringLiteral("create"), bundlePath, QStringLiteral("refs/heads/main")});
+        if (!created.ok()) return fail(tr("The per-database history bundle could not be created."));
+        const auto verified = git(m_gitExecutable, stagingRepository, {QStringLiteral("bundle"), QStringLiteral("verify"), bundlePath});
+        const auto heads = git(m_gitExecutable, stagingRepository, {QStringLiteral("bundle"), QStringLiteral("list-heads"), bundlePath});
+        const QList<QByteArray> headLines = heads.out.trimmed().split('\n');
+        if (!verified.ok() || !heads.ok() || headLines.size() != 1
+            || !headLines.constFirst().trimmed().endsWith(QByteArrayLiteral(" refs/heads/main"))) {
+            return fail(tr("The per-database history bundle failed reference or object verification."));
+        }
+        QFile bundleFile(bundlePath);
+        if (!bundleFile.open(QIODevice::ReadOnly) || bundleFile.size() <= 0 || bundleFile.size() > MaximumEmbeddedBundleBytes) {
+            return fail(tr("The encrypted history bundle is empty or exceeds its 64 MiB limit."));
+        }
+        const QByteArray bundle = bundleFile.readAll();
+        if (bundle.size() != bundleFile.size()) return fail(tr("The encrypted history bundle could not be read completely."));
+        const QString envelope = embeddedHistoryEnvelope(identity, bundle);
+        QByteArray checkedBundle;
+        QString envelopeError;
+        if (!decodeEmbeddedHistoryEnvelope(envelope, identity, &checkedBundle, &envelopeError) || checkedBundle != bundle) {
+            return fail(tr("The encrypted history bundle failed its integrity check."));
+        }
+        auto state = m_databaseSaves.find(db.data());
+        state->stagingDirectory = stagingDirectory;
+        state->stagingRepository = stagingRepository;
+        state->stagedRevision = revision;
+        state->stagedSnapshot = encryptedSnapshot;
+        state->stagedFingerprint = fingerprint;
+        state->staged = true;
+        db->metadata()->customData()->set(EmbeddedHistoryKey, envelope);
+        if (error) error->clear();
+        return true;
+    }
+
+    void HistoryStore::finishEmbeddedHistory(const QSharedPointer<Database>& db, bool persisted)
+    {
+        if (!db || !db->metadata() || !db->metadata()->customData()) return;
+        const auto found = m_databaseSaves.find(db.data());
+        if (found == m_databaseSaves.end()) return;
+        if (persisted && !found->finalizationAttempted) recordSave(db);
+        if (!persisted) {
+            cancelDatabaseSave(db);
+            return;
+        }
+        db->markAsClean();
+        m_databaseSaves.erase(found);
+    }
+
+    bool HistoryStore::hydrateDatabase(const QSharedPointer<Database>& db, QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!db || !db->rootGroup() || !db->metadata() || !db->metadata()->customData() || db->filePath().isEmpty()) {
+            return fail(tr("The opened database is not ready for history recovery."));
+        }
+        const QString identity = databaseIdentity(db);
+        if (!isDatabaseIdentity(identity) || m_gitExecutable.isEmpty()) return fail(tr("The database identity or local Git executable is unavailable."));
+        QString localRepository = databaseRepositoryPath(identity);
+        if (localRepository.isEmpty()) return fail(tr("The per-database history location is unavailable."));
+
+        const auto currentFingerprint = [&db] {
+            int entryCount = 0;
+            int groupCount = 0;
+            return fingerprintDigest(fingerprintJson(fingerprintOf(db, &entryCount, &groupCount)));
+        }();
+        const auto bundleMatchesDatabase = [this, &identity, &currentFingerprint](const QString& repo, QString* reason) {
+            const QDir revisionsDirectory(QDir(repo).filePath(QStringLiteral("revisions")));
+            const QStringList files = revisionsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
+            bool hasFingerprint = false;
+            for (const QString& filename : files) {
+                QFile file(revisionsDirectory.filePath(filename));
+                if (!file.open(QIODevice::ReadOnly) || file.size() > MaximumRevisionMetadataBytes) {
+                    if (reason) *reason = tr("A history revision could not be checked against this database.");
+                    return false;
+                }
+                const auto revision = fromJson(QJsonDocument::fromJson(file.readAll()).object());
+                if (!revision.isValid() || revision.databasePath != identity) {
+                    if (reason) *reason = tr("A history revision belongs to another database.");
+                    return false;
+                }
+                if (!revision.contentFingerprint.isEmpty()) {
+                    hasFingerprint = true;
+                    if (revision.contentFingerprint == currentFingerprint) return true;
+                }
+            }
+            if (hasFingerprint && reason) *reason = tr("The embedded history is stale or replayed for the current database contents.");
+            return !hasFingerprint;
+        };
+
+        const QString encoded = db->metadata()->customData()->value(EmbeddedHistoryKey);
+        QString candidateRepository;
+        QTemporaryDir temporary;
+        if (!encoded.isEmpty()) {
+            const QString storedIdentity = db->metadata()->customData()->value(DatabaseIdentityKey);
+            if (!isDatabaseIdentity(storedIdentity) || storedIdentity != identity) {
+                return fail(tr("The embedded history has no matching encrypted database identity."));
+            }
+            QByteArray bundle;
+            QString envelopeError;
+            if (!decodeEmbeddedHistoryEnvelope(encoded, identity, &bundle, &envelopeError)) return fail(envelopeError);
+            if (!temporary.isValid()) return fail(tr("A temporary directory for history validation could not be created."));
+            const QString bundlePath = QDir(temporary.path()).filePath(QStringLiteral("incoming.bundle"));
+            if (!atomicReplace(bundlePath, bundle)) return fail(tr("The embedded history bundle could not be staged for validation."));
+            candidateRepository = QDir(temporary.path()).filePath(QStringLiteral("candidate"));
+            if (!initializeDatabaseHistoryRepository(m_gitExecutable, candidateRepository)) {
+                return fail(tr("A temporary history repository could not be initialized."));
+            }
+            const auto verified = git(m_gitExecutable, candidateRepository, {QStringLiteral("bundle"), QStringLiteral("verify"), bundlePath});
+            const auto heads = git(m_gitExecutable, candidateRepository, {QStringLiteral("bundle"), QStringLiteral("list-heads"), bundlePath});
+            const QList<QByteArray> headLines = heads.out.trimmed().split('\n');
+            if (!verified.ok() || !heads.ok() || headLines.size() != 1
+                || !headLines.constFirst().trimmed().endsWith(QByteArrayLiteral(" refs/heads/main"))) {
+                return fail(tr("The embedded history bundle has invalid references or missing objects."));
+            }
+            const auto fetched = git(m_gitExecutable,
+                                     candidateRepository,
+                                     {QStringLiteral("fetch"), QStringLiteral("--no-tags"), bundlePath,
+                                      QStringLiteral("refs/heads/main:refs/heads/main")});
+            const auto reset = fetched.ok()
+                                   ? git(m_gitExecutable,
+                                         candidateRepository,
+                                         {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("refs/heads/main")})
+                                   : ProcessResult{};
+            if (!fetched.ok() || !reset.ok()) {
+                return fail(tr("The embedded history bundle could not be imported into the validation repository."));
+            }
+            QString validationError;
+            if (!validateDatabaseRepository(candidateRepository, identity, &validationError)) return fail(validationError);
+            QString fingerprintError;
+            if (!bundleMatchesDatabase(candidateRepository, &fingerprintError)) return fail(fingerprintError);
+        }
+
+        const bool localRepositoryHasHistory = QFileInfo::exists(QDir(localRepository).filePath(QStringLiteral(".git")))
+            && git(m_gitExecutable, localRepository, {QStringLiteral("rev-parse"), QStringLiteral("--verify"), QStringLiteral("HEAD")}).ok();
+        const bool localRepositoryExists = localRepositoryHasHistory;
+        if (candidateRepository.isEmpty() && !localRepositoryExists) {
+            if (error) error->clear();
+            return true;
+        }
+        const QString lockPath = localRepository + QStringLiteral(".lock");
+        QDir().mkpath(localRepository);
+        QLockFile lock(lockPath);
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs)) return fail(tr("The per-database history repository is in use by another save."));
+        if (!initializeDatabaseHistoryRepository(m_gitExecutable, localRepository)) {
+            return fail(tr("The per-database history repository could not be initialized."));
+        }
+        if (!localRepositoryExists && !candidateRepository.isEmpty()) {
+            const auto status = git(m_gitExecutable, localRepository, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+            if (!status.ok() || !status.out.isEmpty()) return fail(tr("Unrecognized local history files were left untouched."));
+            const auto fetch = git(m_gitExecutable,
+                                   localRepository,
+                                   {QStringLiteral("fetch"), QStringLiteral("--no-tags"), candidateRepository,
+                                    QStringLiteral("refs/heads/main:refs/remotes/embedded/main")});
+            const auto reset = fetch.ok()
+                                   ? git(m_gitExecutable,
+                                         localRepository,
+                                         {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("refs/remotes/embedded/main")})
+                                   : ProcessResult{};
+            if (!fetch.ok() || !reset.ok()) return fail(tr("The validated embedded history could not initialize local history."));
+            QString validationError;
+            if (!validateDatabaseRepository(localRepository, identity, &validationError)) return fail(validationError);
+            if (!loadDatabaseRepositoryRevisions(identity, currentFingerprint, &validationError)) return fail(validationError);
+            if (error) error->clear();
+            return true;
+        }
+        const QString manifestPath = QDir(localRepository).filePath(DatabaseHistoryManifestName);
+        if (!QFileInfo::exists(manifestPath)) {
+            const auto status = git(m_gitExecutable, localRepository, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+            if (!status.ok() || !status.out.isEmpty()) return fail(tr("An unrecognized history repository has local changes and was left untouched."));
+            if (!atomicReplace(manifestPath,
+                               QJsonDocument(databaseHistoryManifest(identity)).toJson(QJsonDocument::Compact))) {
+                return fail(tr("The per-database history manifest could not be migrated."));
+            }
+            const auto add = git(m_gitExecutable, localRepository, {QStringLiteral("add"), QStringLiteral("--"), DatabaseHistoryManifestName});
+            const auto commit = add.ok()
+                                    ? git(m_gitExecutable,
+                                          localRepository,
+                                          {QStringLiteral("commit"), QStringLiteral("--quiet"), QStringLiteral("-m"),
+                                           QStringLiteral("Identify encrypted database history")})
+                                    : ProcessResult{};
+            if (!commit.ok()) return fail(tr("The legacy per-database history repository could not be identified."));
+        }
+        QString localValidationError;
+        if (!validateDatabaseRepository(localRepository, identity, &localValidationError)) return fail(localValidationError);
+
+        if (!candidateRepository.isEmpty()) {
+            const auto fetch = git(m_gitExecutable,
+                                   localRepository,
+                                   {QStringLiteral("fetch"), QStringLiteral("--no-tags"), candidateRepository,
+                                    QStringLiteral("refs/heads/main:refs/remotes/embedded/main")});
+            if (!fetch.ok()) return fail(tr("The validated encrypted history could not be merged with local history."));
+            const auto currentHead = git(m_gitExecutable, localRepository, {QStringLiteral("rev-parse"), QStringLiteral("HEAD")});
+            const auto embeddedHead = git(m_gitExecutable, localRepository, {QStringLiteral("rev-parse"), QStringLiteral("refs/remotes/embedded/main")});
+            if (!currentHead.ok() || !embeddedHead.ok()) return fail(tr("The history references could not be compared."));
+            if (currentHead.out.trimmed() != embeddedHead.out.trimmed()) {
+                const auto localBeforeIncoming = git(m_gitExecutable,
+                                                     localRepository,
+                                                     {QStringLiteral("merge-base"), QStringLiteral("--is-ancestor"), QStringLiteral("HEAD"),
+                                                      QStringLiteral("refs/remotes/embedded/main")});
+                if (localBeforeIncoming.ok()) {
+                    if (!git(m_gitExecutable, localRepository, {QStringLiteral("merge"), QStringLiteral("--ff-only"), QStringLiteral("refs/remotes/embedded/main")}).ok()) {
+                        return fail(tr("The validated history could not be advanced safely."));
+                    }
+                } else {
+                    const auto incomingBeforeLocal = git(m_gitExecutable,
+                                                         localRepository,
+                                                         {QStringLiteral("merge-base"), QStringLiteral("--is-ancestor"),
+                                                          QStringLiteral("refs/remotes/embedded/main"), QStringLiteral("HEAD")});
+                    if (incomingBeforeLocal.ok()) {
+                        QString loadError;
+                        if (!loadDatabaseRepositoryRevisions(identity, currentFingerprint, &loadError)) return fail(loadError);
+                        return fail(tr("The embedded history is older than local history and was refused as a replay."));
+                    }
+                    const auto merged = git(m_gitExecutable,
+                                            localRepository,
+                                            {QStringLiteral("merge"), QStringLiteral("--no-ff"), QStringLiteral("--no-edit"),
+                                             QStringLiteral("-m"), QStringLiteral("Merge recovered encrypted history"),
+                                             QStringLiteral("refs/remotes/embedded/main")});
+                    if (!merged.ok()) {
+                        git(m_gitExecutable, localRepository, {QStringLiteral("merge"), QStringLiteral("--abort")});
+                        return fail(tr("Divergent local and embedded history could not be merged without a conflict."));
+                    }
+                }
+            }
+            QString mergedStateError;
+            if (!bundleMatchesDatabase(localRepository, &mergedStateError)) return fail(mergedStateError);
+        } else if (QFileInfo::exists(manifestPath)) {
+            QString localStateError;
+            if (!bundleMatchesDatabase(localRepository, &localStateError)) return fail(localStateError);
+        }
+
+        QString loadError;
+        if (!loadDatabaseRepositoryRevisions(identity, currentFingerprint, &loadError)) return fail(loadError);
+        if (error) error->clear();
+        return true;
+    }
+
+    bool HistoryStore::commitDatabaseRepository(const HistoryRevision& revision,
+                                                const QByteArray& encryptedSnapshot,
+                                                const QByteArray& fingerprint)
+    {
         const QString repo = databaseRepositoryPath(revision.databasePath);
-        if (!QDir().mkpath(repo) || m_gitExecutable.isEmpty()) return false;
-        QLockFile lock(QDir(repo).filePath(QStringLiteral("repository.lock")));
+        if (repo.isEmpty() || m_gitExecutable.isEmpty()) return false;
+        if (!QDir().mkpath(repo)) return false;
+        QLockFile lock(repo + QStringLiteral(".lock"));
         lock.setStaleLockTime(0);
         if (!lock.tryLock(LockTimeoutMs)) return false;
-        if (!QFileInfo::exists(QDir(repo).filePath(QStringLiteral(".git")))) {
-            if (!git(m_gitExecutable, repo, {QStringLiteral("init"), QStringLiteral("--quiet")}).ok()) return false;
-            if (!git(m_gitExecutable, repo, {QStringLiteral("config"), QStringLiteral("user.name"), QStringLiteral("KeePassXC History")}).ok()) return false;
-            if (!git(m_gitExecutable, repo, {QStringLiteral("config"), QStringLiteral("user.email"), QStringLiteral("history@localhost")}).ok()) return false;
+        return commitDatabaseRepositoryAt(repo, revision, encryptedSnapshot, fingerprint);
+    }
+
+    bool HistoryStore::commitDatabaseRepositoryAt(const QString& repo,
+                                                  const HistoryRevision& revision,
+                                                  const QByteArray& encryptedSnapshot,
+                                                  const QByteArray& fingerprint)
+    {
+        if (encryptedSnapshot.isEmpty() || !isDatabaseIdentity(revision.databasePath) || !isRevisionId(revision.id)
+            || !isKdbx(encryptedSnapshot) || byteDigest(encryptedSnapshot) != revision.snapshotSha256
+            || fingerprint.isEmpty() || fingerprintDigest(fingerprint) != revision.contentFingerprint
+            || m_gitExecutable.isEmpty() || !initializeDatabaseHistoryRepository(m_gitExecutable, repo)) return false;
+        const auto status = git(m_gitExecutable, repo, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+        if (!status.ok() || !status.out.isEmpty()) return false;
+        const QString manifestPath = QDir(repo).filePath(DatabaseHistoryManifestName);
+        if (QFileInfo::exists(manifestPath)) {
+            QFile manifest(manifestPath);
+            if (!manifest.open(QIODevice::ReadOnly) || manifest.size() > 4096) return false;
+            const auto current = QJsonDocument::fromJson(manifest.readAll()).object();
+            if (current != databaseHistoryManifest(revision.databasePath)) return false;
+        } else if (!atomicReplace(manifestPath,
+                                  QJsonDocument(databaseHistoryManifest(revision.databasePath)).toJson(QJsonDocument::Compact))) {
+            return false;
         }
         const QString snapshotName = QStringLiteral("snapshots/%1.kdbx").arg(revision.id);
         const QString metadataName = QStringLiteral("revisions/%1.json").arg(revision.id);
+        const QString fingerprintName = QStringLiteral("fingerprints/%1.json").arg(revision.id);
+        HistoryRevision storedRevision = revision;
+        storedRevision.snapshotPath = snapshotName;
         if (!atomicReplace(QDir(repo).filePath(snapshotName), encryptedSnapshot)
-            || !atomicReplace(QDir(repo).filePath(metadataName), QJsonDocument(toJson(revision)).toJson(QJsonDocument::Compact))) {
+            || !atomicReplace(QDir(repo).filePath(metadataName),
+                              QJsonDocument(toJson(storedRevision)).toJson(QJsonDocument::Compact))
+            || !atomicReplace(QDir(repo).filePath(fingerprintName), fingerprint)) {
             return false;
         }
         const auto add = git(m_gitExecutable,
                              repo,
-                             {QStringLiteral("add"), QStringLiteral("--"), snapshotName, metadataName});
+                             {QStringLiteral("add"), QStringLiteral("--"), DatabaseHistoryManifestName, snapshotName, metadataName, fingerprintName});
         const auto commit = add.ok()
                                 ? git(m_gitExecutable,
                                       repo,
@@ -230,6 +720,362 @@ namespace Material
                                        QStringLiteral("Record encrypted database revision %1").arg(revision.id)})
                                 : ProcessResult{};
         return commit.ok();
+    }
+
+    bool HistoryStore::validateDatabaseRepository(const QString& repo, const QString& identity, QString* error) const
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!isDatabaseIdentity(identity) || m_gitExecutable.isEmpty()
+            || !QFileInfo::exists(QDir(repo).filePath(QStringLiteral(".git")))) {
+            return fail(tr("The per-database history repository is not initialized."));
+        }
+        const auto branch = git(m_gitExecutable, repo, {QStringLiteral("symbolic-ref"), QStringLiteral("--short"), QStringLiteral("HEAD")});
+        if (!branch.ok() || branch.out.trimmed() != QByteArrayLiteral("main")) {
+            return fail(tr("The per-database history repository has an unexpected reference."));
+        }
+        const auto status = git(m_gitExecutable, repo, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+        if (!status.ok() || !status.out.isEmpty()) {
+            return fail(tr("The per-database history repository has unrecorded changes."));
+        }
+
+        QFile manifest(QDir(repo).filePath(DatabaseHistoryManifestName));
+        if (!manifest.open(QIODevice::ReadOnly) || manifest.size() > 4096
+            || QJsonDocument::fromJson(manifest.readAll()).object() != databaseHistoryManifest(identity)) {
+            return fail(tr("The per-database history manifest is malformed or belongs to another database."));
+        }
+
+        const auto commitCount = git(m_gitExecutable, repo, {QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
+        bool commitCountOk = false;
+        const int commits = commitCount.out.trimmed().toInt(&commitCountOk);
+        if (!commitCount.ok() || !commitCountOk || commits <= 0 || commits > MaximumEmbeddedCommits) {
+            return fail(tr("The per-database history commit count is invalid or exceeds its limit."));
+        }
+        const auto objects = git(m_gitExecutable, repo, {QStringLiteral("rev-list"), QStringLiteral("--objects"), QStringLiteral("--all")});
+        if (!objects.ok()) return fail(tr("The per-database history object list could not be read."));
+        const QList<QByteArray> objectLines = objects.out.split('\n');
+        if (objectLines.size() > MaximumEmbeddedObjects + 1) {
+            return fail(tr("The per-database history object count exceeds its limit."));
+        }
+        const auto objectSizes = git(m_gitExecutable,
+                                     repo,
+                                     {QStringLiteral("cat-file"), QStringLiteral("--batch-all-objects"), QStringLiteral("--batch-check=%(objectsize)")});
+        if (!objectSizes.ok()) return fail(tr("The per-database history object sizes could not be checked."));
+        qint64 totalObjectBytes = 0;
+        const QList<QByteArray> sizeLines = objectSizes.out.split('\n');
+        if (sizeLines.size() > MaximumEmbeddedObjects + 1) {
+            return fail(tr("The per-database history object count exceeds its limit."));
+        }
+        for (const QByteArray& line : sizeLines) {
+            if (line.isEmpty()) continue;
+            bool sizeOk = false;
+            const qint64 size = line.trimmed().toLongLong(&sizeOk);
+            if (!sizeOk || size < 0 || size > MaximumEmbeddedObjectBytes - totalObjectBytes) {
+                return fail(tr("The per-database history expanded object data exceeds its limit."));
+            }
+            totalObjectBytes += size;
+        }
+
+        const auto tree = git(m_gitExecutable, repo, {QStringLiteral("ls-tree"), QStringLiteral("-r"), QStringLiteral("--full-tree"), QStringLiteral("HEAD")});
+        if (!tree.ok()) return fail(tr("The per-database history tree could not be read."));
+        QSet<QString> treePaths;
+        for (const QByteArray& line : tree.out.split('\n')) {
+            if (line.isEmpty()) continue;
+            const int tab = line.indexOf('\t');
+            if (tab < 0 || !line.startsWith("100644 blob ")) return fail(tr("The per-database history contains an unsupported file entry."));
+            const QString path = QString::fromUtf8(line.mid(tab + 1));
+            if (path != DatabaseHistoryManifestName
+                && !QRegularExpression(QStringLiteral("^revisions/[0-9a-fA-F-]{36}\\.json$")).match(path).hasMatch()
+                && !QRegularExpression(QStringLiteral("^snapshots/[0-9a-fA-F-]{36}\\.kdbx$")).match(path).hasMatch()
+                && !QRegularExpression(QStringLiteral("^fingerprints/[0-9a-fA-F-]{36}\\.json$")).match(path).hasMatch()) {
+                return fail(tr("The per-database history contains an unexpected path."));
+            }
+            treePaths.insert(path);
+        }
+        if (treePaths.size() < 3 || treePaths.size() > MaximumEmbeddedCommits * 3 + 1) {
+            return fail(tr("The per-database history file count is invalid."));
+        }
+
+        const QDir revisionsDirectory(QDir(repo).filePath(QStringLiteral("revisions")));
+        const QStringList revisionFiles = revisionsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
+        if (revisionFiles.isEmpty() || revisionFiles.size() > MaximumEmbeddedCommits
+            || treePaths.size() < revisionFiles.size() * 2 + 1) {
+            return fail(tr("The per-database history revision inventory is invalid."));
+        }
+        const QDir snapshotsDirectory(QDir(repo).filePath(QStringLiteral("snapshots")));
+        const QStringList snapshotFiles = snapshotsDirectory.entryList({QStringLiteral("*.kdbx")}, QDir::Files, QDir::Name);
+        const QDir fingerprintsDirectory(QDir(repo).filePath(QStringLiteral("fingerprints")));
+        const QStringList fingerprintFiles = fingerprintsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
+        if (fingerprintFiles.size() > revisionFiles.size()) return fail(tr("The per-database fingerprint inventory is invalid."));
+
+        int expectedFingerprintCount = 0;
+        int expectedSnapshotCount = 0;
+        for (const QString& filename : revisionFiles) {
+            const QString id = filename.left(filename.size() - QStringLiteral(".json").size());
+            if (!isRevisionId(id) || !treePaths.contains(QStringLiteral("revisions/%1").arg(filename))) {
+                return fail(tr("The per-database history revision path is invalid."));
+            }
+            QFile metadata(revisionsDirectory.filePath(filename));
+            if (!metadata.open(QIODevice::ReadOnly) || metadata.size() > MaximumRevisionMetadataBytes) {
+                return fail(tr("The per-database history revision metadata exceeds its limit."));
+            }
+            QJsonParseError parseError;
+            const auto document = QJsonDocument::fromJson(metadata.readAll(), &parseError);
+            const HistoryRevision revision = fromJson(document.object());
+            static const QRegularExpression digestPattern(QStringLiteral("^[a-f0-9]{64}$"));
+            if (parseError.error != QJsonParseError::NoError || !revision.isValid() || revision.id != id
+                || revision.databasePath != identity
+                || (!revision.snapshotPath.isEmpty() && !digestPattern.match(revision.snapshotSha256).hasMatch())
+                || (revision.snapshotPath.isEmpty() && !revision.snapshotSha256.isEmpty())
+                || (!revision.contentFingerprint.isEmpty() && !digestPattern.match(revision.contentFingerprint).hasMatch())) {
+                return fail(tr("The per-database history revision metadata is malformed or foreign."));
+            }
+            const QString snapshotRelativePath = QStringLiteral("snapshots/%1.kdbx").arg(id);
+            if (!revision.snapshotPath.isEmpty()) {
+                ++expectedSnapshotCount;
+                if (!digestPattern.match(revision.snapshotSha256).hasMatch() || !treePaths.contains(snapshotRelativePath)) {
+                    return fail(tr("A saved revision is missing its encrypted snapshot."));
+                }
+            } else if (!revision.snapshotSha256.isEmpty() || treePaths.contains(snapshotRelativePath)) {
+                return fail(tr("A history event has inconsistent snapshot metadata."));
+            }
+            const QString fingerprintRelativePath = QStringLiteral("fingerprints/%1.json").arg(id);
+            if (!revision.contentFingerprint.isEmpty()) {
+                ++expectedFingerprintCount;
+                if (!treePaths.contains(fingerprintRelativePath)) return fail(tr("A revision is missing its content fingerprint."));
+                QFile fingerprint(QDir(repo).filePath(fingerprintRelativePath));
+                if (!fingerprint.open(QIODevice::ReadOnly) || fingerprint.size() > 16 * 1024 * 1024) {
+                    return fail(tr("A revision fingerprint could not be read within its size limit."));
+                }
+                const QByteArray fingerprintBytes = fingerprint.readAll();
+                if (fingerprintDigest(fingerprintBytes) != revision.contentFingerprint) {
+                    return fail(tr("A revision fingerprint does not match its revision metadata."));
+                }
+                QJsonParseError fingerprintParseError;
+                const QJsonDocument fingerprintDocument = QJsonDocument::fromJson(fingerprintBytes, &fingerprintParseError);
+                if (fingerprintParseError.error != QJsonParseError::NoError || !fingerprintDocument.isArray()) {
+                    return fail(tr("A revision fingerprint is not a valid JSON array."));
+                }
+                const auto entries = fingerprintDocument.array();
+                if (entries.size() > 100000) return fail(tr("A revision fingerprint contains too many entries."));
+                static const QRegularExpression fingerprintEntryPattern(QStringLiteral("^[a-f0-9]{24}:[a-f0-9]{24}$"));
+                for (const auto& entry : entries) {
+                    if (!entry.isString() || !fingerprintEntryPattern.match(entry.toString()).hasMatch()) {
+                        return fail(tr("A revision fingerprint contains an invalid record."));
+                    }
+                }
+            } else if (treePaths.contains(fingerprintRelativePath)) {
+                return fail(tr("A revision fingerprint has no matching revision metadata."));
+            }
+            if (!revision.snapshotPath.isEmpty()) {
+                QFile snapshot(snapshotsDirectory.filePath(QStringLiteral("%1.kdbx").arg(id)));
+                if (!snapshot.open(QIODevice::ReadOnly) || snapshot.size() < 12 || snapshot.size() > MaximumEmbeddedObjectBytes) {
+                    return fail(tr("The per-database history contains an invalid encrypted snapshot size."));
+                }
+                QCryptographicHash hash(QCryptographicHash::Sha256);
+                QByteArray header;
+                while (!snapshot.atEnd()) {
+                    const QByteArray chunk = snapshot.read(1024 * 1024);
+                    if (chunk.isEmpty() && !snapshot.atEnd()) return fail(tr("A per-database history snapshot could not be read."));
+                    if (header.size() < 12) header.append(chunk.left(12 - header.size()));
+                    hash.addData(chunk);
+                }
+                if (!isKdbx(header) || QString::fromLatin1(hash.result().toHex()) != revision.snapshotSha256) {
+                    return fail(tr("A per-database history snapshot failed its container or digest check."));
+                }
+            }
+        }
+        if (snapshotFiles.size() != expectedSnapshotCount) return fail(tr("The per-database history snapshot inventory is incomplete."));
+        if (fingerprintFiles.size() != expectedFingerprintCount
+            || treePaths.size() != revisionFiles.size() + expectedSnapshotCount + expectedFingerprintCount + 1) {
+            return fail(tr("The per-database fingerprint inventory does not match its revisions."));
+        }
+        if (error) error->clear();
+        return true;
+    }
+
+    bool HistoryStore::commitDatabaseEvent(const HistoryRevision& revision, const QByteArray& fingerprint)
+    {
+        if (!isDatabaseIdentity(revision.databasePath) || !isRevisionId(revision.id) || fingerprint.isEmpty()
+            || fingerprintDigest(fingerprint) != revision.contentFingerprint || m_gitExecutable.isEmpty()) return false;
+        const QString repo = databaseRepositoryPath(revision.databasePath);
+        if (repo.isEmpty() || !QDir().mkpath(repo)) return false;
+        QLockFile lock(repo + QStringLiteral(".lock"));
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs) || !initializeDatabaseHistoryRepository(m_gitExecutable, repo)) return false;
+        const auto status = git(m_gitExecutable, repo, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+        if (!status.ok() || !status.out.isEmpty()) return false;
+        const QString manifestPath = QDir(repo).filePath(DatabaseHistoryManifestName);
+        if (QFileInfo::exists(manifestPath)) {
+            QFile manifest(manifestPath);
+            if (!manifest.open(QIODevice::ReadOnly) || manifest.size() > 4096
+                || QJsonDocument::fromJson(manifest.readAll()).object() != databaseHistoryManifest(revision.databasePath)) return false;
+        } else if (!atomicReplace(manifestPath,
+                                  QJsonDocument(databaseHistoryManifest(revision.databasePath)).toJson(QJsonDocument::Compact))) {
+            return false;
+        }
+        const QString metadataName = QStringLiteral("revisions/%1.json").arg(revision.id);
+        const QString fingerprintName = QStringLiteral("fingerprints/%1.json").arg(revision.id);
+        if (!revision.snapshotPath.isEmpty() || !revision.snapshotSha256.isEmpty()
+            || !atomicReplace(QDir(repo).filePath(metadataName), QJsonDocument(toJson(revision)).toJson(QJsonDocument::Compact))
+            || !atomicReplace(QDir(repo).filePath(fingerprintName), fingerprint)) {
+            return false;
+        }
+        const auto add = git(m_gitExecutable,
+                             repo,
+                             {QStringLiteral("add"), QStringLiteral("--"), DatabaseHistoryManifestName, metadataName, fingerprintName});
+        const auto commit = add.ok()
+                                ? git(m_gitExecutable,
+                                      repo,
+                                      {QStringLiteral("commit"), QStringLiteral("--quiet"), QStringLiteral("-m"),
+                                       QStringLiteral("Record local database history event %1").arg(revision.id)})
+                                : ProcessResult{};
+        return commit.ok();
+    }
+
+    bool HistoryStore::mergeStagedDatabaseRepository(const QString& identity,
+                                                      const QString& stagingRepository,
+                                                      QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!isDatabaseIdentity(identity) || stagingRepository.isEmpty() || m_gitExecutable.isEmpty()) {
+            return fail(tr("The staged per-database history is unavailable."));
+        }
+        const QString repository = databaseRepositoryPath(identity);
+        if (!QDir().mkpath(repository)) return fail(tr("The per-database history location could not be created."));
+        QLockFile lock(repository + QStringLiteral(".lock"));
+        lock.setStaleLockTime(0);
+        if (!lock.tryLock(LockTimeoutMs) || !initializeDatabaseHistoryRepository(m_gitExecutable, repository)) {
+            return fail(tr("The per-database history repository could not be locked or initialized."));
+        }
+        const bool hasHistory = git(m_gitExecutable, repository, {QStringLiteral("rev-parse"), QStringLiteral("--verify"), QStringLiteral("HEAD")}).ok();
+        if (!hasHistory) {
+            const auto status = git(m_gitExecutable, repository, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+            if (!status.ok() || !status.out.isEmpty()) return fail(tr("Unrecognized local history files were left untouched."));
+        } else {
+            QString validationError;
+            if (!validateDatabaseRepository(repository, identity, &validationError)) return fail(validationError);
+        }
+        const QString incomingRef = QStringLiteral("refs/remotes/prepared/main");
+        const auto fetch = git(m_gitExecutable,
+                               repository,
+                               {QStringLiteral("fetch"), QStringLiteral("--no-tags"), stagingRepository,
+                                QStringLiteral("refs/heads/main:%1").arg(incomingRef)});
+        if (!fetch.ok()) return fail(tr("The staged history could not be fetched into local history."));
+        if (!hasHistory) {
+            const auto reset = git(m_gitExecutable, repository, {QStringLiteral("reset"), QStringLiteral("--hard"), incomingRef});
+            if (!reset.ok()) return fail(tr("The staged history could not initialize local history."));
+        } else {
+            const auto currentHead = git(m_gitExecutable, repository, {QStringLiteral("rev-parse"), QStringLiteral("HEAD")});
+            const auto stagedHead = git(m_gitExecutable, repository, {QStringLiteral("rev-parse"), incomingRef});
+            if (!currentHead.ok() || !stagedHead.ok()) return fail(tr("The staged history references could not be compared."));
+            if (currentHead.out.trimmed() != stagedHead.out.trimmed()) {
+                const auto localBeforeStaged = git(m_gitExecutable,
+                                                   repository,
+                                                   {QStringLiteral("merge-base"), QStringLiteral("--is-ancestor"), QStringLiteral("HEAD"), incomingRef});
+                if (localBeforeStaged.ok()) {
+                    if (!git(m_gitExecutable, repository, {QStringLiteral("merge"), QStringLiteral("--ff-only"), incomingRef}).ok()) {
+                        return fail(tr("The staged history could not advance local history safely."));
+                    }
+                } else {
+                    const auto stagedBeforeLocal = git(m_gitExecutable,
+                                                       repository,
+                                                       {QStringLiteral("merge-base"), QStringLiteral("--is-ancestor"), incomingRef,
+                                                        QStringLiteral("HEAD")});
+                    if (!stagedBeforeLocal.ok()) {
+                        const auto merged = git(m_gitExecutable,
+                                                repository,
+                                                {QStringLiteral("merge"), QStringLiteral("--no-ff"), QStringLiteral("--no-edit"),
+                                                 QStringLiteral("-m"), QStringLiteral("Merge saved encrypted history"), incomingRef});
+                        if (!merged.ok()) {
+                            git(m_gitExecutable, repository, {QStringLiteral("merge"), QStringLiteral("--abort")});
+                            return fail(tr("Concurrent encrypted history could not be merged without a conflict."));
+                        }
+                    }
+                }
+            }
+        }
+        QString validationError;
+        if (!validateDatabaseRepository(repository, identity, &validationError)) return fail(validationError);
+        if (error) error->clear();
+        return true;
+    }
+
+    bool HistoryStore::loadDatabaseRepositoryRevisions(const QString& identity,
+                                                       const QString& currentFingerprint,
+                                                       QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!isDatabaseIdentity(identity)) return fail(tr("The database identity is invalid."));
+        load();
+        const QString repo = databaseRepositoryPath(identity);
+        if (!validateDatabaseRepository(repo, identity, error)) return false;
+        const QDir revisionsDirectory(QDir(repo).filePath(QStringLiteral("revisions")));
+        const QStringList revisionFiles = revisionsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
+        bool changed = false;
+        bool hasFingerprint = false;
+        HistoryRevision matchingRevision;
+        for (const QString& filename : revisionFiles) {
+            QFile file(revisionsDirectory.filePath(filename));
+            if (!file.open(QIODevice::ReadOnly) || file.size() > MaximumRevisionMetadataBytes) {
+                return fail(tr("The embedded history revision could not be read."));
+            }
+            const auto revision = fromJson(QJsonDocument::fromJson(file.readAll()).object());
+            if (!revision.isValid() || revision.databasePath != identity) return fail(tr("The embedded history contains a foreign revision."));
+            if (!revision.contentFingerprint.isEmpty()) {
+                hasFingerprint = true;
+                if (revision.contentFingerprint == currentFingerprint
+                    && (!matchingRevision.isValid() || revision.timestamp > matchingRevision.timestamp)) {
+                    matchingRevision = revision;
+                }
+            }
+            HistoryRevision normalized = revision;
+            normalized.snapshotPath = revision.snapshotPath.isEmpty()
+                                          ? QString()
+                                          : QStringLiteral("%1/%2/%3.kdbx").arg(SnapshotsName, identity, revision.id);
+            const auto existing = std::find_if(m_revisions.cbegin(), m_revisions.cend(), [&normalized](const HistoryRevision& value) {
+                return value.id == normalized.id;
+            });
+            if (existing != m_revisions.cend()) {
+                if (existing->databasePath != normalized.databasePath || existing->snapshotSha256 != normalized.snapshotSha256
+                    || existing->timestamp != normalized.timestamp || existing->contentFingerprint != normalized.contentFingerprint) {
+                    return fail(tr("An embedded revision conflicts with a revision already recorded on this device."));
+                }
+                continue;
+            }
+            m_revisions.append(normalized);
+            changed = true;
+        }
+        if (hasFingerprint && !matchingRevision.isValid()) {
+            return fail(tr("No embedded revision matches the current database contents."));
+        }
+        if (matchingRevision.isValid()) {
+            QFile fingerprint(QDir(repo).filePath(QStringLiteral("fingerprints/%1.json").arg(matchingRevision.id)));
+            if (!fingerprint.open(QIODevice::ReadOnly) || fingerprint.size() > 16 * 1024 * 1024) {
+                return fail(tr("The matching entry fingerprint is missing or exceeds its size limit."));
+            }
+            const QByteArray fingerprintBytes = fingerprint.readAll();
+            if (fingerprintDigest(fingerprintBytes) != currentFingerprint
+                || !atomicReplace(fingerprintPath(identity), fingerprintBytes)) {
+                return fail(tr("The matching entry fingerprint could not be restored to local history."));
+            }
+        }
+        if (changed) {
+            std::sort(m_revisions.begin(), m_revisions.end(), [](const HistoryRevision& first, const HistoryRevision& second) {
+                return first.timestamp < second.timestamp;
+            });
+            emit revisionsChanged();
+        }
+        if (error) error->clear();
+        return true;
     }
 
     bool HistoryStore::ensureRepository()
@@ -299,6 +1145,14 @@ namespace Material
             }
             committedState.close();
         }
+        for (const HistoryRevision& cached : m_revisions) {
+            if (std::none_of(committed.cbegin(), committed.cend(), [&cached](const HistoryRevision& value) { return value.id == cached.id; })) {
+                committed.append(cached);
+            }
+        }
+        std::sort(committed.begin(), committed.end(), [](const HistoryRevision& first, const HistoryRevision& second) {
+            return first.timestamp < second.timestamp;
+        });
         QVector<HistoryRevision> next = committed; next.append(revision);
         const QString statePath = QDir(repositoryPath()).filePath(StateName);
         const QString fpPath = fingerprintPath(revision.databasePath);
@@ -326,38 +1180,101 @@ namespace Material
         m_revisions = next; emit revisionsChanged(); return true;
     }
 
+    HistoryRevision HistoryStore::createSaveRevision(const QSharedPointer<Database>& db,
+                                                     QByteArray* fingerprintBytes,
+                                                     QByteArray* encryptedSnapshot) const
+    {
+        if (!db || !db->rootGroup() || db->filePath().isEmpty()) return {};
+        const_cast<HistoryStore*>(this)->load();
+        const QString identity = databaseIdentity(db);
+        if (!isDatabaseIdentity(identity)) return {};
+        int entryCount = 0;
+        int groupCount = 0;
+        const auto current = fingerprintOf(db, &entryCount, &groupCount);
+        const QByteArray currentFingerprint = fingerprintJson(current);
+        const bool hadFingerprint = QFileInfo::exists(fingerprintPath(identity));
+        const auto previous = readFingerprint(fingerprintPath(identity));
+
+        HistoryRevision revision;
+        revision.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
+        revision.timestamp = QDateTime::currentDateTimeUtc();
+        revision.databasePath = identity;
+        revision.databaseName = QStringLiteral("Database %1").arg(identity.left(8));
+        revision.entryCount = entryCount;
+        revision.groupCount = groupCount;
+        revision.contentFingerprint = fingerprintDigest(currentFingerprint);
+        const HistoryRevision last = revisionsForDatabase(db).value(0);
+        if (!hadFingerprint || !last.isValid()) {
+            revision.kind = RevisionKind::Entry;
+            revision.label = tr("First recorded save of this database - %n entry(s)", "", entryCount);
+        } else {
+            for (auto it = current.cbegin(); it != current.cend(); ++it) {
+                const auto old = previous.constFind(it.key());
+                if (old == previous.cend()) ++revision.added;
+                else if (old.value() != it.value()) ++revision.edited;
+            }
+            for (auto it = previous.cbegin(); it != previous.cend(); ++it) {
+                if (!current.contains(it.key())) ++revision.removed;
+            }
+            const int groupDelta = groupCount - last.groupCount;
+            QStringList parts;
+            if (revision.added) parts << tr("%n entry(s) added", "", revision.added);
+            if (revision.removed) parts << tr("%n entry(s) removed", "", revision.removed);
+            if (revision.edited) parts << tr("%n entry(s) edited", "", revision.edited);
+            if (groupDelta > 0) parts << tr("%n group(s) added", "", groupDelta);
+            if (groupDelta < 0) parts << tr("%n group(s) removed", "", -groupDelta);
+            revision.label = parts.isEmpty() ? tr("Saved with no entry or group changes") : parts.join(tr(", "));
+            revision.kind = revision.added + revision.removed + revision.edited > 0
+                                ? RevisionKind::Entry
+                                : groupDelta != 0 ? RevisionKind::Group : RevisionKind::Settings;
+        }
+
+        QString snapshotError;
+        const QByteArray snapshotBytes = serializeDatabaseWithoutEmbeddedHistory(db, &snapshotError);
+        QByteArray snapshot = snapshotBytes;
+        if (isKdbx(snapshot)) {
+            revision.snapshotPath = QStringLiteral("%1/%2/%3.kdbx").arg(SnapshotsName, identity, revision.id);
+            revision.snapshotSha256 = byteDigest(snapshot);
+        } else {
+            snapshot.clear();
+        }
+        if (fingerprintBytes) *fingerprintBytes = currentFingerprint;
+        if (encryptedSnapshot) *encryptedSnapshot = snapshot;
+        return revision;
+    }
+
     bool HistoryStore::recordSave(const QSharedPointer<Database>& db)
     {
         if (!db || !db->rootGroup() || db->filePath().isEmpty()) return false;
-        load(); const QString opaqueId = databaseId(db->filePath());
-        int entryCount = 0, groupCount = 0; const auto current = fingerprintOf(db, &entryCount, &groupCount);
-        const bool hadFingerprint = QFileInfo::exists(fingerprintPath(opaqueId)); const auto previous = readFingerprint(fingerprintPath(opaqueId));
-        HistoryRevision r; r.id = QUuid::createUuid().toString(QUuid::WithoutBraces); r.timestamp = QDateTime::currentDateTimeUtc(); r.databasePath = opaqueId;
-        r.databaseName = QStringLiteral("Database %1").arg(opaqueId.left(8)); r.entryCount = entryCount; r.groupCount = groupCount;
-        const auto last = revisionsFor(db->filePath()).value(0);
-        if (!hadFingerprint || !last.isValid()) { r.kind = RevisionKind::Entry; r.label = tr("First recorded save of this database - %n entry(s)", "", entryCount); }
-        else {
-            for (auto it = current.cbegin(); it != current.cend(); ++it) { const auto old = previous.constFind(it.key()); if (old == previous.cend()) ++r.added; else if (old.value() != it.value()) ++r.edited; }
-            for (auto it = previous.cbegin(); it != previous.cend(); ++it) if (!current.contains(it.key())) ++r.removed;
-            const int groupDelta = groupCount - last.groupCount; QStringList parts;
-            if (r.added) parts << tr("%n entry(s) added", "", r.added); if (r.removed) parts << tr("%n entry(s) removed", "", r.removed); if (r.edited) parts << tr("%n entry(s) edited", "", r.edited);
-            if (groupDelta > 0) parts << tr("%n group(s) added", "", groupDelta); if (groupDelta < 0) parts << tr("%n group(s) removed", "", -groupDelta);
-            r.label = parts.isEmpty() ? tr("Saved with no entry or group changes") : parts.join(tr(", "));
-            r.kind = r.added + r.removed + r.edited > 0 ? RevisionKind::Entry : groupDelta != 0 ? RevisionKind::Group : RevisionKind::Settings;
-        }
-        QByteArray encryptedSnapshot;
-        QFile databaseFile(db->filePath());
-        if (databaseFile.open(QIODevice::ReadOnly)) {
-            encryptedSnapshot = databaseFile.readAll();
-            if (isKdbx(encryptedSnapshot)) {
-                r.snapshotPath = QStringLiteral("%1/%2/%3.kdbx").arg(SnapshotsName, opaqueId, r.id);
-                r.snapshotSha256 = byteDigest(encryptedSnapshot);
-            } else {
-                encryptedSnapshot.clear();
+        auto pending = m_databaseSaves.find(db.data());
+        if (pending != m_databaseSaves.end() && pending->staged) {
+            if (pending->finalizationAttempted) return pending->finalizationSucceeded;
+            pending->finalizationAttempted = true;
+            const DatabaseSaveState state = pending.value();
+            const bool globalRecorded = commitTransaction(state.stagedRevision, state.stagedFingerprint, state.stagedSnapshot);
+            QString mergeError;
+            const bool repositoryMerged = mergeStagedDatabaseRepository(state.databaseIdentity, state.stagingRepository, &mergeError);
+            QString loadError;
+            const bool revisionsLoaded = repositoryMerged
+                                             && loadDatabaseRepositoryRevisions(state.databaseIdentity,
+                                                                                state.stagedRevision.contentFingerprint,
+                                                                                &loadError);
+            pending->finalizationSucceeded = globalRecorded && repositoryMerged && revisionsLoaded;
+            if (!globalRecorded || !repositoryMerged || !revisionsLoaded) {
+                const QString reason = !globalRecorded
+                                           ? tr("The database was saved with embedded history, but the application history index could not be updated.")
+                                           : !repositoryMerged ? mergeError : loadError;
+                emit writeFailed(reason);
+                return false;
             }
+            return true;
         }
-        if (!commitTransaction(r, fingerprintJson(current), encryptedSnapshot)
-            || !commitDatabaseRepository(r, encryptedSnapshot)) {
+        load();
+        QByteArray currentFingerprint;
+        QByteArray encryptedSnapshot;
+        const HistoryRevision revision = createSaveRevision(db, &currentFingerprint, &encryptedSnapshot);
+        if (!revision.isValid() || !commitTransaction(revision, currentFingerprint, encryptedSnapshot)
+            || !commitDatabaseRepository(revision, encryptedSnapshot, currentFingerprint)) {
             emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage."));
             return false;
         }
@@ -370,17 +1287,24 @@ namespace Material
         load();
         int entries = 0, groups = 0;
         const auto fingerprint = fingerprintOf(db, &entries, &groups);
+        const QByteArray currentFingerprint = fingerprintJson(fingerprint);
         HistoryRevision revision;
         revision.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
         revision.timestamp = QDateTime::currentDateTimeUtc();
-        revision.databasePath = databaseId(db->filePath());
+        revision.databasePath = databaseIdentity(db);
+        if (!isDatabaseIdentity(revision.databasePath)) return false;
         revision.databaseName = QStringLiteral("Database %1").arg(revision.databasePath.left(8));
         revision.label = redactedLabel;
         revision.kind = kind;
         revision.entryCount = entries;
         revision.groupCount = groups;
-        if (!commitTransaction(revision, fingerprintJson(fingerprint))) {
+        revision.contentFingerprint = fingerprintDigest(currentFingerprint);
+        if (!commitTransaction(revision, currentFingerprint)) {
             emit writeFailed(tr("Local history could not be recorded. The database operation completed; retry after checking Git and application-data storage."));
+            return false;
+        }
+        if (!commitDatabaseEvent(revision, currentFingerprint)) {
+            emit writeFailed(tr("The database operation completed, but its event could not be copied into encrypted database history."));
             return false;
         }
         return true;
@@ -415,6 +1339,10 @@ namespace Material
         const_cast<HistoryStore*>(this)->load(); const QString wanted = path.size() == 64 ? path : databaseId(path); QVector<HistoryRevision> result;
         for (int i = m_revisions.size() - 1; i >= 0; --i) if (m_revisions.at(i).databasePath == wanted) result.append(m_revisions.at(i)); return result;
     }
+    QVector<HistoryRevision> HistoryStore::revisionsForDatabase(const QSharedPointer<Database>& db) const
+    {
+        return db ? revisionsFor(databaseIdentity(db)) : QVector<HistoryRevision>();
+    }
     HistoryRevision HistoryStore::revision(const QString& id) const { const_cast<HistoryStore*>(this)->load(); for (const auto& v : m_revisions) if (v.id == id) return v; return {}; }
     HistoryRevision HistoryStore::predecessor(const QString& id) const
     {
@@ -432,8 +1360,14 @@ namespace Material
             return fail(tr("The encrypted snapshot path is outside the local history repository."));
         }
         QFile file(QDir(repositoryPath()).filePath(normalized));
-        if (!file.open(QIODevice::ReadOnly)) return fail(tr("The encrypted snapshot file is missing."));
-        const QByteArray bytes = file.readAll();
+        QByteArray bytes;
+        if (file.open(QIODevice::ReadOnly)) {
+            bytes = file.readAll();
+        } else {
+            QFile embedded(QDir(databaseRepositoryPath(value.databasePath)).filePath(QStringLiteral("snapshots/%1.kdbx").arg(value.id)));
+            if (!embedded.open(QIODevice::ReadOnly)) return fail(tr("The encrypted snapshot file is missing from local and embedded history."));
+            bytes = embedded.readAll();
+        }
         if (!isKdbx(bytes)) return fail(tr("The snapshot is not a valid KDBX container."));
         if (byteDigest(bytes) != value.snapshotSha256) return fail(tr("The encrypted snapshot hash does not match its revision."));
         if (error) error->clear();
