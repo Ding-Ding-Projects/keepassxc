@@ -51,6 +51,23 @@ jobs:
           cache: true
           set-env: true
 
+      - name: Preserve Qt installer log outside the source checkout
+        shell: powershell
+        run: |
+          $sourceLog = Join-Path $env:GITHUB_WORKSPACE 'aqtinstall.log'
+          if (-not (Test-Path -LiteralPath $sourceLog -PathType Leaf)) {
+            Write-Host 'Qt installer produced no aqtinstall.log.'
+            exit 0
+          }
+          $logDirectory = Join-Path $env:RUNNER_TEMP ("keepassxc-qt-logs\" + $env:GITHUB_RUN_ID)
+          New-Item -ItemType Directory -Path $logDirectory -ErrorAction Stop | Out-Null
+          $savedLog = Join-Path $logDirectory 'aqtinstall.log'
+          Move-Item -LiteralPath $sourceLog -Destination $savedLog -ErrorAction Stop
+          if (-not (Test-Path -LiteralPath $savedLog -PathType Leaf) -or (Test-Path -LiteralPath $sourceLog)) {
+            throw 'Qt installer log was not moved outside the source checkout.'
+          }
+          Write-Host 'Preserved aqtinstall.log outside the source checkout.'
+
       - name: Verify and export the installed Qt root
         shell: powershell
         run: |
@@ -106,6 +123,28 @@ jobs:
           $packageVersion = "$major.$minor.$patch"
           "value=$packageVersion" | Out-File -FilePath $env:GITHUB_OUTPUT -Append -Encoding utf8
           Write-Host "Package version: $packageVersion"
+
+      - name: Report safe source status before packaging
+        shell: powershell
+        run: |
+          $status = @(& git -C $env:GITHUB_WORKSPACE status --porcelain=v1 --untracked-files=all)
+          if ($LASTEXITCODE -ne 0) { throw 'Could not inspect source status before packaging.' }
+          $reported = 0
+          foreach ($entry in $status) {
+            if ($null -eq $entry -or -not ([string]$entry).Length) { continue }
+            ++$reported
+            if ($reported -gt 20) { Write-Host 'Additional source status entries omitted.'; break }
+            $line = [string]$entry
+            if ($line.Length -lt 4) { Write-Host "Source status entry $reported is malformed and its path is withheld."; continue }
+            $code = $line.Substring(0, 2)
+            $path = $line.Substring(3)
+            if ($path.Length -gt 160 -or $path -match '[\x00-\x1F\x7F]' -or
+                $path -match '(?i)(secret|token|credential|password|private|(?:^|[\\/])\.env(?:[\\/]|$)|\.(?:pem|key|p12|pfx)(?:$|[\\/]))') {
+              $path = '[redacted]'
+            }
+            Write-Host "Source status entry ${reported}: code=$code path=$path"
+          }
+          if ($reported -eq 0) { Write-Host 'Source status entries: 0' }
 
       - name: Build the unsigned Squirrel.Windows installer
         shell: cmd

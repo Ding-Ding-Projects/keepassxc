@@ -686,7 +686,7 @@
 - Enforce fixed password font in entry preview [#5454]
 - Add scrollbar when new database wizard exceeds screen size [#5560]
 - Do not mark database as modified when viewing Auto-Type associations [#5542]
-- CLI: Fix two heap-use-after-free crashes [#5368,#5470]
+- CLI: Fix two a malicious or disallowed action-use-after-free crashes [#5368,#5470]
 - Browser: Fix key exchange not working with multiple simultaneous users on Windows [#5485]
 - Browser: Fix entry retrieval when "only best matching" is enabled [#5316]
 - Browser: Ignore recycle bin on KeePassHTTP migration [#5481]

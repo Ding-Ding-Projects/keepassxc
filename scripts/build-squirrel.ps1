@@ -23,8 +23,71 @@ Assert-KpxcBuildPaths $root @($stage, $destination, $build, $scratchRoot)
 Repair-KpxcDirectoryPublication $root $destination
 Repair-KpxcDirectoryPublication $root $stage
 Assert-KpxcOutputOwnership $root $destination
-$commit = (& git -C $root rev-parse HEAD).Trim()
-if ($LASTEXITCODE -ne 0 -or (& git -C $root status --porcelain)) { throw 'Packaging requires a clean, committed source checkout.' }
+
+# BEGIN clean-source diagnostics
+function Invoke-KpxcSourceGit([string]$Root, [string[]]$Arguments, [scriptblock]$CommandRunner) {
+    if ($CommandRunner) {
+        try { return & $CommandRunner $Root $Arguments }
+        catch { return [pscustomobject]@{ ExitCode = $null; Output = @(); LaunchFailed = $true } }
+    }
+
+    $nativePreferenceWasSet = Test-Path Variable:PSNativeCommandUseErrorActionPreference
+    $previousNativePreference = $PSNativeCommandUseErrorActionPreference
+    try {
+        $PSNativeCommandUseErrorActionPreference = $false
+        $output = @(& git -C $Root @Arguments 2>$null)
+        $exitCode = $LASTEXITCODE
+    } catch {
+        return [pscustomobject]@{ ExitCode = $null; Output = @(); LaunchFailed = $true }
+    } finally {
+        if ($nativePreferenceWasSet) { $PSNativeCommandUseErrorActionPreference = $previousNativePreference }
+        else { Remove-Variable PSNativeCommandUseErrorActionPreference -ErrorAction SilentlyContinue }
+    }
+    return [pscustomobject]@{ ExitCode = [int]$exitCode; Output = [string[]]$output; LaunchFailed = $false }
+}
+
+function Get-KpxcPorcelainCounts([object[]]$Output) {
+    $tracked = 0
+    $untracked = 0
+    $unclassified = 0
+    foreach ($entry in $Output) {
+        if ($null -eq $entry) { continue }
+        $line = [string]$entry
+        if (-not $line.Length) { continue }
+        if ($line.Length -lt 3 -or $line[2] -ne ' ') { ++$unclassified; continue }
+        if ($line.Substring(0, 2) -ceq '??') { ++$untracked; continue }
+        if ($line.Substring(0, 2) -match '^[ MADRCT]{2}$') { ++$tracked; continue }
+        ++$unclassified
+    }
+    return [pscustomobject]@{ Tracked = $tracked; Untracked = $untracked; Unclassified = $unclassified }
+}
+
+function Assert-KpxcCleanSourceCheckout([string]$Root, [scriptblock]$CommandRunner) {
+    $headResult = Invoke-KpxcSourceGit $Root @('rev-parse', 'HEAD') $CommandRunner
+    if ($headResult.LaunchFailed) { throw 'Packaging could not start Git to read HEAD.' }
+    if ($null -eq $headResult.ExitCode) { throw 'Packaging did not receive an exit code while reading HEAD.' }
+    $headExitCode = [int]$headResult.ExitCode
+    if ($headExitCode -ne 0) { throw "Packaging could not read HEAD (git exit code $headExitCode)." }
+    $headLines = @($headResult.Output | Where-Object { $null -ne $_ -and ([string]$_).Length })
+    if ($headLines.Count -ne 1 -or ([string]$headLines[0]).Trim() -notmatch '^[0-9a-fA-F]{40,64}$') {
+        throw 'Packaging could not read a valid HEAD object id.'
+    }
+    $commit = ([string]$headLines[0]).Trim()
+
+    $statusResult = Invoke-KpxcSourceGit $Root @('status', '--porcelain=v1', '--untracked-files=all') $CommandRunner
+    if ($statusResult.LaunchFailed) { throw 'Packaging could not start Git to inspect source status.' }
+    if ($null -eq $statusResult.ExitCode) { throw 'Packaging did not receive an exit code while inspecting source status.' }
+    $statusExitCode = [int]$statusResult.ExitCode
+    if ($statusExitCode -ne 0) { throw "Packaging could not inspect source status (git exit code $statusExitCode)." }
+    $counts = Get-KpxcPorcelainCounts @($statusResult.Output)
+    if (($counts.Tracked + $counts.Untracked + $counts.Unclassified) -gt 0) {
+        throw "Packaging requires a clean, committed source checkout (tracked=$($counts.Tracked), untracked=$($counts.Untracked), unclassified=$($counts.Unclassified))."
+    }
+    return $commit
+}
+# END clean-source diagnostics
+
+$commit = Assert-KpxcCleanSourceCheckout $root
 if (-not $StageProvenancePath) { $StageProvenancePath = Join-Path $stage '.keepassxc-stage-provenance.json' }
 elseif (-not [IO.Path]::IsPathRooted($StageProvenancePath)) { $StageProvenancePath = Join-Path $root $StageProvenancePath }
 $scratch = Join-Path $scratchRoot ([Guid]::NewGuid().ToString('N'))

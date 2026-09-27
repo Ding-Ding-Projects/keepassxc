@@ -14,13 +14,19 @@ Version comes from `OVERRIDE_VERSION`; only the main GUI and its generated stub 
 
 Setup may trigger Unknown Publisher or SmartScreen warnings because code signing is permanently disabled.
 
+Packaging stops before building if `HEAD` cannot be read, Git cannot start or inspect source status,
+or the checkout contains tracked or untracked changes. The diagnostic separates those cases and
+reports only status counts; it never prints changed paths or command output.
+
 ## Security considerations
 
 No signing certificate is ever requested or used.
 
 ## Verification
 
-`testsquirrellifecycle`; release assets are verified again in the publish job.
+`testsquirrellifecycle` and `scripts/test-packaging-clean-source-check.ps1`; release assets are
+verified again in the publish job. The clean-source regression check covers clean state, command failures,
+tracked and untracked paths, malformed status records, and path-redaction cases.
 
 ## Suggested articles
 

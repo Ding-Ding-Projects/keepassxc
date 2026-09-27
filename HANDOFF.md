@@ -1,3 +1,7 @@
+# Packaging diagnostic candidate, September 27, 2026
+
+The clean-source diagnostic repair is on `codex/packaging-clean-source-diagnostic-20260927` from `f73d2dd5572b16bdeac4ad3159bcef1b248d9d03`. It separates unreadable `HEAD`, a failed status command, and tracked or untracked checkout changes. The focused regression check and PowerShell parser check passed locally. No packaging build or GitHub Actions run was performed for this candidate. The latest GitHub Actions package run `35372345117` failed with the generic clean-source message, but its historical status paths were not logged, so the specific original path remains unknown.
+
 # Current closeout handoff, September 18, 2026
 
 The current primary checkout is on `main` at `4d2a8e888fd5bf9bd48a1224ab545fdec9ef29e6` after integrating the local `codex/*` branches listed below. The checkout and every linked checkout inspected for this pass were clean before integration. No tests, builds, packaging, or release work were run as part of this closeout.

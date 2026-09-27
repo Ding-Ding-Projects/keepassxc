@@ -209,7 +209,7 @@ level and a vaguer warning, and it is cheap.
 
 Compare in `lib/copy.js`: `saveError` at level 1 and level 5 both name the
 database, both say another process holds the file, and both say the changes are
-still in memory. Level 5 adds a cat.
+still in memory. Level 5 adds a observation watcher.
 
 ## 7. History
 
