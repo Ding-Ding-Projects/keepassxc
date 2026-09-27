@@ -39,6 +39,35 @@ assert.match(currentConfigTest, /GUI_Language\).*QStringLiteral\("fr"\)/);
 assert.match(currentConfigTest, /GUI_ShowTrayIcon\).*toBool\(\)/);
 
 const settingsCatalogs = readdirSync(join(root, 'share/translations')).filter(name => /^keepassxc_.*\.ts$/.test(name));
+const expectedSettingsCatalogs = [
+    'keepassxc_ar.ts', 'keepassxc_be.ts', 'keepassxc_bg.ts', 'keepassxc_ca.ts', 'keepassxc_cs.ts',
+    'keepassxc_da.ts', 'keepassxc_de.ts', 'keepassxc_el.ts', 'keepassxc_en.ts', 'keepassxc_en_GB.ts',
+    'keepassxc_en_US.ts', 'keepassxc_es.ts', 'keepassxc_et.ts', 'keepassxc_fi.ts', 'keepassxc_fil.ts',
+    'keepassxc_fr.ts', 'keepassxc_fr_CA.ts', 'keepassxc_he.ts', 'keepassxc_hr.ts', 'keepassxc_hu.ts',
+    'keepassxc_id.ts', 'keepassxc_it.ts', 'keepassxc_ja.ts', 'keepassxc_km.ts', 'keepassxc_ko.ts',
+    'keepassxc_lt.ts', 'keepassxc_my.ts', 'keepassxc_nb.ts', 'keepassxc_nl.ts', 'keepassxc_pl.ts',
+    'keepassxc_pt_BR.ts', 'keepassxc_pt_PT.ts', 'keepassxc_ro.ts', 'keepassxc_ru.ts', 'keepassxc_si.ts',
+    'keepassxc_sk.ts', 'keepassxc_sl.ts', 'keepassxc_sq.ts', 'keepassxc_sr.ts', 'keepassxc_sv.ts',
+    'keepassxc_th.ts', 'keepassxc_tr.ts', 'keepassxc_uk.ts', 'keepassxc_vi.ts', 'keepassxc_zh_CN.ts',
+    'keepassxc_zh_TW.ts',
+];
+const assertCatalogInventory = (catalogs) => {
+    assert.equal(catalogs.length, 46, 'translation catalog inventory must contain exactly 46 files');
+    assert.deepEqual([...catalogs].sort(), [...expectedSettingsCatalogs].sort(), 'translation catalog inventory changed');
+};
+
+assertCatalogInventory(settingsCatalogs);
+assert.throws(
+    () => assertCatalogInventory(settingsCatalogs.filter(name => name !== 'keepassxc_en.ts')),
+    /exactly 46 files/,
+    'inventory Shek Q must turn red when a translation catalog is removed',
+);
+assert.throws(
+    () => assertCatalogInventory(settingsCatalogs.map(name => name === 'keepassxc_en.ts' ? 'keepassxc_renamed.ts' : name)),
+    /inventory changed/,
+    'inventory Shek Q must turn red when a translation catalog is renamed',
+);
+
 let translatedClassicMessages = 0;
 for (const name of settingsCatalogs) {
     const catalog = read(`share/translations/${name}`);
@@ -64,4 +93,4 @@ for (const name of settingsCatalogs) {
     }
 }
 
-process.stdout.write(`PASS: obsolete source routes are absent; ${translatedClassicMessages}/${settingsCatalogs.length * 5} classic settings messages remain translated across ${settingsCatalogs.length} catalogs (unfinished entries remain explicitly marked), with no stale toolbar-style labels.\n`);
+process.stdout.write(`PASS: obsolete source routes are absent; inventory guard caught removal and rename probes; ${translatedClassicMessages}/230 classic settings messages remain translated across 46 catalogs (unfinished entries remain explicitly marked), with no stale toolbar-style labels.\n`);
