@@ -138,3 +138,21 @@ The pass was closed early at the owner's request (usage limit reached), with the
 - Remote CI: Material Squirrel Build and Release green for every lane push through `fbc19318` (releases v2.8.11301 … v2.8.11901 published with code name, timing and line-count table); the run for `325ffc63` and the `main` runs (release, CodeQL, Pages) were still in progress when this was written. Verify them before calling the closeout release shipped: `gh run list -R Ding-Ding-Projects/keepassxc` and `gh release view <tag>`.
 - Not done in that historical pass: a local `build-installer.bat /s` run with `NotSigned` verification, the isolated silent install and launch proof on a hidden desktop, the complete per-click UI drive ledger across every feature flow, README capture matrix and screen recording, and the 171 inventory rows still red (see the inventory section). Issues #8, #9 and #11 still need their capture proof.
 - Cleanup: the task-owned lane branch and its linked worktree are removed by the closeout after proving the tip is an ancestor of the pushed `main`; the 22 pre-existing remote branches (`copilot/*`, `dependabot/*`, `feature/*`, `fix/*`, `release/2.7.x`, `fork_keepassx_core`, `gh-pages`) are not task-owned and are retained. The exact result is recorded on issue #12.
+
+# Issue #11 embedded history build, September 27, 2026
+
+## Candidate and build
+
+- Candidate commit: `c52d19a753323c6dea653fbfffb7d9078536c7a7` on `codex/issue-11-embedded-history-20260927`.
+- The production-only command `scripts/build-windows.ps1 -Silent -WithTests:$false` completed successfully in 92 seconds.
+- KeePassXC 2.8.0 x64 was staged. Its SHA-256 is `7C164611CC931F34F5515FB9AA61AE13871C660D44407BE50AA74FA9392E5959`.
+- The generated stage receipt names the candidate source commit, reports compiled head `c52d19a`, and independently matches the executable SHA-256. It records 125 staged files.
+- The code touched the Database snapshot serializer and the per-database history store. Both the complete `Metadata` definition and narrow `Database` friendship are required for the history store's member serializer to compile.
+
+## Verification boundary
+
+- Production compilation, linking, installation staging, and source provenance are verified at `c52d19a753323c6dea653fbfffb7d9078536c7a7`.
+- Test suites were not run. The focused KDBX/Git transfer, rollback, concurrency, replay, malformed-input, and size-limit cases remain open.
+- No installer, GitHub Actions run, or runtime save/reopen interaction is claimed for this candidate.
+- No visual control or layout changed in this slice. Built-runtime history behavior remains unverified.
+- Issue #11 and roadmap implementation items remain open until their independent behavioral coverage and required publication evidence are complete.

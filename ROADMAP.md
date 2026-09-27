@@ -2,9 +2,10 @@
 
 ## Embedded database history
 
-- [ ] Stage a bounded per-database Git bundle before the primary KDBX write and save the data and bundle atomically; source implementation is in progress, local build pending.
-- [ ] Merge staged history into application storage only after the KDBX write succeeds, including Save As and backup flows; source implementation is in progress.
+- [ ] Stage a bounded per-database Git bundle before the primary KDBX write and save the data and bundle atomically; source is implemented and compiles at `c52d19a753323c6dea653fbfffb7d9078536c7a7`, but runtime coverage remains open.
+- [ ] Merge staged history into application storage only after the KDBX write succeeds, including Save As and backup flows; source is implemented and compiles at `c52d19a753323c6dea653fbfffb7d9078536c7a7`, but runtime coverage remains open.
 - [ ] Add focused KDBX and Git coverage for transfer, rollback, concurrency, replay, malformed input and size limits; tests were not added or run in this task.
+- [x] Complete the production-only x64 build and verify staged executable provenance at `c52d19a753323c6dea653fbfffb7d9078536c7a7`; KeePassXC 2.8.0 staged, SHA-256 `7C164611CC931F34F5515FB9AA61AE13871C660D44407BE50AA74FA9392E5959`. Test suites were not run.
 
 ## September 18, 2026 closeout
 
