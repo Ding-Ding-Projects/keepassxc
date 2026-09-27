@@ -176,43 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Cài đặt ứng dụng</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Chung</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Bảo mật</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Lỗi truy cập tệp cấu hình %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Chỉ biểu tượng</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Chỉ văn bản</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Văn bản bên cạnh biểu tượng</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Văn bản dưới biểu tượng</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Theo kiểu</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Đơn sắc</translation>
     </message>

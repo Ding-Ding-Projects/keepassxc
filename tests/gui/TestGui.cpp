@@ -67,6 +67,8 @@
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialShell.h"
+#include "gui/material/MaterialStyle.h"
+#include "gui/material/MaterialTheme.h"
 #include "gui/passkeys/PasskeyImportDialog.h"
 #include "gui/group/EditGroupWidget.h"
 #include "gui/group/GroupModel.h"
@@ -2800,6 +2802,38 @@ void TestGui::testMaterialPointerOwnershipKeepsAltMenuAccess()
     QVERIFY(getMainWindow() == m_mainWindow.data());
     QApplication::sendEvent(m_mainWindow.data(), &altRelease);
     QTRY_VERIFY(menuBar->maximumHeight() > 0);
+}
+
+void TestGui::testMaterialStyleCannotBeDisabledByEnvironment()
+{
+    const QByteArray styleValue = qgetenv("KPXC_NO_MATERIAL_STYLE");
+    const bool hadStyleValue = qEnvironmentVariableIsSet("KPXC_NO_MATERIAL_STYLE");
+    const QByteArray sheetValue = qgetenv("KPXC_NO_MATERIAL_SHEET");
+    const bool hadSheetValue = qEnvironmentVariableIsSet("KPXC_NO_MATERIAL_SHEET");
+    const auto restoreEnvironment = qScopeGuard([&] {
+        if (hadStyleValue) {
+            qputenv("KPXC_NO_MATERIAL_STYLE", styleValue);
+        } else {
+            qunsetenv("KPXC_NO_MATERIAL_STYLE");
+        }
+        if (hadSheetValue) {
+            qputenv("KPXC_NO_MATERIAL_SHEET", sheetValue);
+        } else {
+            qunsetenv("KPXC_NO_MATERIAL_SHEET");
+        }
+        kpxcApp->applyTheme();
+    });
+
+    qputenv("KPXC_NO_MATERIAL_STYLE", "1");
+    kpxcApp->applyTheme();
+    QVERIFY(qobject_cast<Material::Style*>(qApp->style()));
+    QCOMPARE(qApp->styleSheet(), theme()->styleSheet());
+
+    qunsetenv("KPXC_NO_MATERIAL_STYLE");
+    qputenv("KPXC_NO_MATERIAL_SHEET", "1");
+    kpxcApp->applyTheme();
+    QVERIFY(qobject_cast<Material::Style*>(qApp->style()));
+    QCOMPARE(qApp->styleSheet(), theme()->styleSheet());
 }
 
 void TestGui::testDeleteEntryDuringModalDialog()

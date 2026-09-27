@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Rakenduse seaded</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Üldine</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Turvalisus</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Kuna valitud on luku avamise järel akna minimeerimine, ei saa seda valikut sisse lülitada.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Juurdepääsuviga seadistusfailil „%1”</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>ainult ikoon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>ainult tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>tekst ikooni kõrval</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>tekst ikooni all</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>stiili järgi</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>mustvalge</translation>
     </message>

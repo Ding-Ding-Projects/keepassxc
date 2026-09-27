@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Definições da aplicação</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Geral</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Segurança</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Esta definição não pode ser ativada se a opção &quot;Minimizar janela após desbloquear a base de dados&quot; estiver ativa.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Erro de acesso ao ficheiro %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Apenas ícones</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Apenas texto</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Texto ao lado dos ícones</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Texto por baixo dos ícones</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Seguir estilo</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monocromático</translation>
     </message>

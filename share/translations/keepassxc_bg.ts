@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Настройки на приложението</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Основни</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Сигурност</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Настройката не може да бъде включена докато друга настройка - скриване на прозореца при отключване е включена. </translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Грешка при достъп до файла с настройките %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Само пиктограма</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Само текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст до пиктограмите</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст под пиктограмите</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Следване на стила</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Едноцветни</translation>
     </message>

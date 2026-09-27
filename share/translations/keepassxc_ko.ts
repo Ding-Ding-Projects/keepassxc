@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>프로그램 설정</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>일반</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>보안</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>이 설정은 최소화나 잠금 해제가 활성화되어 있으면 활성화할 수 없습니다.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>설정 파일 %1에 접근할 수 없음</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>아이콘만</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>텍스트만</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>아이콘 옆에 텍스트</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>아이콘 밑에 텍스트</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>스타일 따르기</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>흑백</translation>
     </message>

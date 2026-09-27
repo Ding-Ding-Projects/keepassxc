@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Настройки приложения</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Общие</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Безопасность</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Эту настройку нельзя включить, если включена функция сворачивания при разблокировке.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Ошибка доступа к файлу конфигурации %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Только значок</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Только текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст рядом с значок</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст под значок</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Следовать стилю</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Монохромный</translation>
     </message>

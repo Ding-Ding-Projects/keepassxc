@@ -157,43 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Postavke aplikacije</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Općenito</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Sigurnost</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Pogreška pristupa za konfiguracijsku datoteku %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Samo ikone</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Samo tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst uz ikone</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst ispod ikona</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Prati stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
     </message>

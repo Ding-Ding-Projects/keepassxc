@@ -157,43 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Paràmetres de l&apos;aplicació</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Seguretat</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Error d&apos;accés al fitxer de configuració %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Només la icona</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Només text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text al costat de la icona</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text sota la icona</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Segueix l&apos;estil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monocrom</translation>
     </message>

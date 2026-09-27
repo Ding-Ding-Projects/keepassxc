@@ -82,3 +82,21 @@ void TestConfig::testURLDoubleClickMigration()
 
     tempFile2.remove();
 }
+
+void TestConfig::testRemovedToolbarStyleIsDiscarded()
+{
+    TemporaryFile tempFile;
+    tempFile.open();
+
+    QSettings oldConfig(tempFile.fileName(), QSettings::IniFormat);
+    oldConfig.setValue("GUI/ToolButtonStyle", 1);
+    oldConfig.sync();
+    tempFile.close();
+
+    Config::createConfigFromFile(tempFile.fileName());
+
+    QSettings migratedConfig(tempFile.fileName(), QSettings::IniFormat);
+    QVERIFY(!migratedConfig.contains("GUI/ToolButtonStyle"));
+
+    tempFile.remove();
+}

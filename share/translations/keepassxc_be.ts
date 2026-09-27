@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Налады праграмы</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Агульныя</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Бяспека</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Гэта налада не можа быць уключаная, калі ўключана згортванне пры разблакіраванні.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Памылка доступу да файла канфігурацыі %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Толькі значок</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Толькі тэкст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Тэкст побач са значком</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Тэкст пад значком</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Прытрымлівацца стылю</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Манахромны</translation>
     </message>

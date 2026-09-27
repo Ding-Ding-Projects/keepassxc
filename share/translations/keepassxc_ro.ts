@@ -177,47 +177,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Setări aplicație</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Securitate</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Această setare nu poate fi activată atunci când este activată funcția de minimizare la deblocare.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Eroare de acces pentru fișierul de configurare %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Doar pictograma</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Doar text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text lângă pictogramă</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text sub pictogramă</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Urmărește stilul</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
     </message>

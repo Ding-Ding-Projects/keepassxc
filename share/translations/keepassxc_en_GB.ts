@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Application Settings</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>General</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Security</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>This setting cannot be enabled when minimise on unlock is enabled.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Access error for config file %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Icon only</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Text only</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text beside icon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text under icon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Follow style</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochrome</translation>
     </message>

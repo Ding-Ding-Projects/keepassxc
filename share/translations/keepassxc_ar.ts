@@ -180,47 +180,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>إعدادات التطبيق</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>عام</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>الأمان</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>لا يمكن تمكين هذا الإعداد عندما يكون التصغير عند إلغاء القفل مفعلا.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>خطأ في الوصول إلى ملف الإعداد %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>الأيقونة فقط</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>النص فقط</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>نص بجانب الأيقونة</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>النص أسفل الأيقونة</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>تابع النمط</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>أُحاديِّ اللون</translation>
     </message>

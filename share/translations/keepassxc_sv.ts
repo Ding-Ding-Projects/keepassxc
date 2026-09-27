@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Programinställningar</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Allmänt</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Säkerhet</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Denna inställning kan inte aktiveras om minimering vid upplåsning är aktiverad.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Åtkomstfel för konfigurationsfil %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Endast Ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Endast text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text bredvid ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text under ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Följ stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
     </message>

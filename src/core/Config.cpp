@@ -110,7 +110,6 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_AlwaysOnTop, {QS("GUI/GUI_AlwaysOnTop"), Local, false}},
     {Config::GUI_AllowScreenCapture, {QS("GUI/AllowScreenCapture"), Roaming, true}},
     {Config::GUI_MaterialVaultSplitterState, {QS("GUI/MaterialVaultSplitterState"), Local, {}}},
-    {Config::GUI_ToolButtonStyle, {QS("GUI/ToolButtonStyle"), Roaming, Qt::ToolButtonIconOnly}},
     {Config::GUI_LaunchAtStartup, {QS("GUI/LaunchAtStartup"), Roaming, false}},
     {Config::GUI_ShowTrayIcon, {QS("GUI/ShowTrayIcon"), Roaming, false}},
     {Config::GUI_TrayIconAppearance, {QS("GUI/TrayIconAppearance"), Roaming, {}}},
@@ -454,7 +453,8 @@ static const QHash<QString, Config::ConfigKey> deprecationMap = {
 
     // 2.8.0
     {QS("GUI/AdvancedSettings"), Config::Deleted},
-    {QS("Security/PasswordsRepeatVisible"), Config::Deleted}};
+    {QS("Security/PasswordsRepeatVisible"), Config::Deleted},
+    {QS("GUI/ToolButtonStyle"), Config::Deleted}};
 
 /**
  * Migrate settings from previous versions.

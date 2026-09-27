@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Impostazioni applicazione</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Generale</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Sicurezza</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Questa impostazione non può essere abilitata quando è abilitata la riduzione a icona con lo sblocco.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Errore di accesso per il file di configurazione %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Testo accanto alle icone</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Testo sotto le icone</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Segui stile</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monocromatica</translation>
     </message>

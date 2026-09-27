@@ -87,7 +87,6 @@ public:
         GUI_AlwaysOnTop,
         GUI_AllowScreenCapture,
         GUI_MaterialVaultSplitterState,
-        GUI_ToolButtonStyle,
         GUI_LaunchAtStartup,
         GUI_ShowTrayIcon,
         GUI_TrayIconAppearance,

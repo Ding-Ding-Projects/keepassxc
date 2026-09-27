@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Подешавања</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Опште</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Сигурност</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Грешка приликом приступа конфигурационој датотеци %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Само иконица</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Само текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст поред иконице</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст испод иконице</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Прати стил</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Једнобојно</translation>
     </message>

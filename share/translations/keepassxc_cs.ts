@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Nastavení aplikace</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Obecné</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Zabezpečení</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Nastavení nemůže být povoleno, pokud je povoleno minimalizování okna při odemčení databáze.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Chyba přístupu k souboru s nastaveními %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Pouze ikona</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Pouze text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text vedle ikony</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text pod ikonou</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Styl následování</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Černobílá</translation>
     </message>

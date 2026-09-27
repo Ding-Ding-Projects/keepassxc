@@ -1036,17 +1036,6 @@ namespace Material
                   tr("Movable tool bar"),
                   tr("Let the stock tool bar be dragged to another edge."),
                   Config::GUI_MovableToolbar);
-        addChoice(interfacePage,
-                  window,
-                  QStringLiteral("short_text"),
-                  tr("Tool button style"),
-                  tr("Whether stock tool buttons carry a label."),
-                  Config::GUI_ToolButtonStyle,
-                  {{static_cast<int>(Qt::ToolButtonIconOnly), tr("Icon only")},
-                   {static_cast<int>(Qt::ToolButtonTextOnly), tr("Text only")},
-                   {static_cast<int>(Qt::ToolButtonTextBesideIcon), tr("Text beside icon")},
-                   {static_cast<int>(Qt::ToolButtonTextUnderIcon), tr("Text under icon")},
-                   {static_cast<int>(Qt::ToolButtonFollowStyle), tr("Follow the style")}});
         addToggle(interfacePage,
                   window,
                   QStringLiteral("folder"),

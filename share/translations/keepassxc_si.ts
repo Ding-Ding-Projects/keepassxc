@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>යෙදුමේ සැකසුම්</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>සාමාන්‍ය</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>ආරක්‍ෂාව</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>වින්‍යාස ගොනුව %1සඳහා ප්‍රවේශ දෝෂයකි</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>නිරූපකය පමණි</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>පෙළ පමණි</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>නිරූපකය අසල පෙළ</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>නිරූපකය යටතේ පෙළ</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>ශෛලිය අනුගමනය කරන්න</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>ඒකවර්ණ</translation>
     </message>

@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Sovelluksen asetukset</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Perusasetukset</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Turvallisuus</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Tätä asetusta ei voi ottaa käyttöön, kun ohjelman pienennys lukituksen avauksen jälkeen on otettu käyttöön.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Pääsyvirhe asetustiedostoon %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Vain kuvake</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Vain teksti</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Teksti kuvakkeen vieressä</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Teksti kuvakkeen alla</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Seuraa tyyliä</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Mustavalkoinen</translation>
     </message>

@@ -4,7 +4,7 @@ Feature id: `material-3-appearance` · Category: Design and appearance
 
 ## Behaviour
 
-Every widget resolves colour, typography, shape, elevation and motion through `Material::Theme` (`src/gui/material/MaterialTheme.h`). The theme owns the active scheme (seed and light/dark mode), density and type scale, applies them to the application palette and stylesheet, and emits a change signal so the live interface restyles without a restart. Seed palettes are KeePassXC blue, baseline purple, vault green and signal amber; densities are compact, comfortable and spacious with 40, 52 and 64 px rows.
+Every widget resolves colour, typography, shape, elevation and motion through `Material::Theme` (`src/gui/material/MaterialTheme.h`). The theme owns the active scheme (seed and light/dark mode), density and type scale, applies them to the application style, palette and stylesheet, and emits a change signal so the live interface restyles without a restart. These application-wide style layers are installed unconditionally; process environment settings cannot disable them. Seed palettes are KeePassXC blue, baseline purple, vault green and signal amber; densities are compact, comfortable and spacious with 40, 52 and 64 px rows.
 
 ## Configuration
 

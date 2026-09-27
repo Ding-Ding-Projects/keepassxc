@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>应用程序设置</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>常规</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>安全</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>如果启用解锁时最小化，则无法启用此设置。</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>访问配置文件 %1 错误</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>仅图标</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>仅文本</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>文本在图标旁</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>文本在图标下</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>系统风格</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>单色</translation>
     </message>

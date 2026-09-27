@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Uygulama ayarları</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Genel</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Güvenlik</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Kilit açıldığında küçültülsün seçeneği açıkken bu seçenek açılamaz.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>%1 yapılandırma dosyasına erişim sorunu</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Yalnızca simge</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Yalnızca yazı</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Simge yanında yazı</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Simge altında yazı</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Biçem izlensin</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Tek renkli</translation>
     </message>

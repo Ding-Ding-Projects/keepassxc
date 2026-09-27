@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>ការកំណត់របស់កម្មវិធី</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>ទូទៅ</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>សន្តិសុខ</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>ការកំណត់នេះមិនអាចដំណើរការទេ កាលណាដំណើរការមុខងារ minimize on unlock ។ </translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>កំហុសពេលចូលប្រើ ដោយសារឯកសារប្រមូលបាន ១% </translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>តែរូបតំណាងទេ</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>តែអត្ថបទទេ</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>អត្ថបទជិតរូបតំណាង</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>អត្ថបទក្រោមរូបតំណាង</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>តាមស្ទីល</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>ពណ៌តែមួយ</translation>
     </message>

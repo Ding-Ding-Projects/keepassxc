@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>アプリケーション設定</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>全般</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>セキュリティ</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>この設定は、ロック解除時の最小化が有効な場合は使用できません。</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>設定ファイル %1 へのアクセスエラー</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>アイコンのみ</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>テキストのみ</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>アイコンの横にテキスト</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>アイコンの下にテキスト</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>スタイルに準拠</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>モノクロ</translation>
     </message>

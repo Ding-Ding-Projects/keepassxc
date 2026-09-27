@@ -78,6 +78,7 @@ private slots:
     void testShortcutConfig();
     void testMenuActionStates();
     void testMaterialPointerOwnershipKeepsAltMenuAccess();
+    void testMaterialStyleCannotBeDisabledByEnvironment();
     void testDeleteEntryDuringModalDialog();
 
 private:

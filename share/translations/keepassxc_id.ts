@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Pengaturan Aplikasi</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Umum</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Keamanan</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Pengaturan ini tidak dapat difungsikan ketika diminimumkan saat buka kunci difungsikan.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Galat akses untuk berkas konfigurasi %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Hanya ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Hanya teks</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Teks di sebelah ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Teks di bawah ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Ikuti gaya</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
     </message>

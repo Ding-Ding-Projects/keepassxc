@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Programma-instellingen</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Algemeen</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Beveiliging</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>Deze instelling kan niet worden ingeschakeld als minimaliseren na ontgrendelen is ingeschakeld.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Toegangsfout voor configuratiebestand %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Alleen pictogram</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Alleen tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst naast pictogram</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst onder pictogram</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Themastijl volgen</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochroom</translation>
     </message>

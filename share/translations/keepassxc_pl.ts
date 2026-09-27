@@ -176,47 +176,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>Ustawienia aplikacji</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>Ogólne</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>Bezpieczeństwo</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>To ustawienie nie może być włączone, gdy włączona jest opcja minimalizacji przy odblokowaniu.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>Błąd dostępu pliku konfiguracyjnego %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Tylko ikona</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Tylko tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst obok ikony</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst pod ikoną</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Utrzymaj styl</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochromatyczny</translation>
     </message>

@@ -180,9 +180,7 @@ void Application::applyTheme()
 
     const auto env = QProcessEnvironment::systemEnvironment();
 
-    // Escape hatches for diagnosing rendering faults. KPXC_MATERIAL_DUMP writes the
-    // generated sheet out so it can be inspected; KPXC_NO_MATERIAL_SHEET and
-    // KPXC_NO_MATERIAL_STYLE isolate which of the two actually breaks a surface.
+    // KPXC_MATERIAL_DUMP writes the generated sheet out so it can be inspected.
     if (env.contains(QStringLiteral("KPXC_MATERIAL_DUMP"))) {
         QFile dump(env.value(QStringLiteral("KPXC_MATERIAL_DUMP")));
         if (dump.open(QIODevice::WriteOnly | QIODevice::Text)) {
@@ -193,13 +191,9 @@ void Application::applyTheme()
 
     // A fresh style instance forces Qt to re-polish every widget with the metrics
     // of the new density.
-    if (!env.contains(QStringLiteral("KPXC_NO_MATERIAL_STYLE"))) {
-        setStyle(new Material::Style);
-    }
+    setStyle(new Material::Style);
     setPalette(theme()->palette());
-    if (!env.contains(QStringLiteral("KPXC_NO_MATERIAL_SHEET"))) {
-        setStyleSheet(theme()->styleSheet());
-    }
+    setStyleSheet(theme()->styleSheet());
     m_darkTheme = theme()->isDark();
 
     applyFontSize();

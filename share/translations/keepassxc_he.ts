@@ -157,47 +157,7 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
-    <message>
-        <source>Application Settings</source>
-        <translation>הגדרות יישום</translation>
-    </message>
-    <message>
-        <source>General</source>
-        <translation>כללי</translation>
-    </message>
-    <message>
-        <source>Security</source>
-        <translation>אבטחה</translation>
-    </message>
-    <message>
-        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
-        <translation>לא ניתן לאפשר הגדרה זו כאשר האפשרות &apos;מזעור בעת שיחרור מנעילה&apos; מאופשרת.</translation>
-    </message>
-    <message>
-        <source>Access error for config file %1</source>
-        <translation>שגיאת גישה לקובץ התצורה %1</translation>
-    </message>
-    <message>
-        <source>Icon only</source>
-        <translation>סמל בלבד</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>מלל בלבד</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>מלל לצד סמל</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>מלל מתחת לסמל</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>עקוב אחר הסגנון</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>מונוכרום</translation>
     </message>
