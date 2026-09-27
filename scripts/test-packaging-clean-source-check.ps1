@@ -1,3 +1,8 @@
+param(
+    [switch]$NativeProcessChild,
+    [string]$FixtureRoot
+)
+
 $ErrorActionPreference = 'Stop'
 
 $root = Split-Path -Parent $PSScriptRoot
@@ -7,6 +12,14 @@ $end = $source.IndexOf('# END clean-source diagnostics', [StringComparison]::Ord
 if ($start -lt 0 -or $end -le $start) { throw 'The clean-source diagnostic seam is missing or malformed.' }
 $functions = $source.Substring($start, $end - $start)
 Invoke-Expression $functions
+
+if ($NativeProcessChild) {
+    if (-not $FixtureRoot) { throw 'The native-process fixture root is required.' }
+    $nativeHead = Assert-KpxcCleanSourceCheckout $FixtureRoot
+    if ($nativeHead -notmatch '^[0-9a-fA-F]{40,64}$') { throw 'The native process returned an invalid HEAD object id.' }
+    Write-Output "PASS:NATIVE:HEAD:${nativeHead}:STATUS:ZERO_CHANGE"
+    exit 0
+}
 
 $script:responses = @()
 $script:callIndex = 0
@@ -39,9 +52,65 @@ function Assert-Equal($Actual, $Expected, [string]$Case) {
     if ($Actual -cne $Expected) { throw "$Case expected '$Expected' but received '$Actual'." }
 }
 
+function Invoke-FixtureGit([string[]]$Arguments, [string]$Case) {
+    $output = @(& git -C $fixtureRoot @Arguments 2>$null)
+    $exitCode = $LASTEXITCODE
+    if ($exitCode -ne 0) { throw "$Case failed with exit code $exitCode." }
+    return ,$output
+}
+
+function Invoke-NativeCleanSourceChild([string]$Root) {
+    $command = Get-Command pwsh -ErrorAction Stop
+    $startInfo = [Diagnostics.ProcessStartInfo]::new()
+    $startInfo.FileName = $command.Source
+    $startInfo.UseShellExecute = $false
+    $startInfo.CreateNoWindow = $true
+    $startInfo.RedirectStandardOutput = $true
+    $startInfo.RedirectStandardError = $true
+    [void]$startInfo.ArgumentList.Add('-NoProfile')
+    [void]$startInfo.ArgumentList.Add('-File')
+    [void]$startInfo.ArgumentList.Add($PSCommandPath)
+    [void]$startInfo.ArgumentList.Add('-NativeProcessChild')
+    [void]$startInfo.ArgumentList.Add('-FixtureRoot')
+    [void]$startInfo.ArgumentList.Add($Root)
+    $process = [Diagnostics.Process]::new()
+    $process.StartInfo = $startInfo
+    try {
+        if (-not $process.Start()) { throw 'The native-process regression could not start PowerShell.' }
+        $stdoutTask = $process.StandardOutput.ReadToEndAsync()
+        $stderrTask = $process.StandardError.ReadToEndAsync()
+        $process.WaitForExit()
+        $stdout = $stdoutTask.GetAwaiter().GetResult().Trim()
+        $null = $stderrTask.GetAwaiter().GetResult()
+        if ($process.ExitCode -ne 0) { throw 'The native-process regression returned a nonzero exit code.' }
+        return $stdout
+    } finally {
+        $process.Dispose()
+    }
+}
+
 $head = 'f73d2dd5572b16bdeac4ad3159bcef1b248d9d03'
 $rootPath = 'C:\fixture\checkout'
 $calls = 0
+
+# Exercise the production Git path in a fresh PowerShell process over a disposable fixture repository.
+$fixtureRoot = Join-Path ([IO.Path]::GetTempPath()) ('kpxc-source-clean-' + [Guid]::NewGuid().ToString('N'))
+try {
+    New-Item -ItemType Directory -Path $fixtureRoot | Out-Null
+    $null = Invoke-FixtureGit @('init', '--quiet') 'fixture init'
+    $null = Invoke-FixtureGit @('config', 'user.name', 'Packaging Regression') 'fixture author name'
+    $null = Invoke-FixtureGit @('config', 'user.email', 'packaging-regression@example.invalid') 'fixture author email'
+    Set-Content -LiteralPath (Join-Path $fixtureRoot 'fixture.txt') -Value 'fixture' -NoNewline
+    $null = Invoke-FixtureGit @('add', '--', 'fixture.txt') 'fixture stage'
+    $null = Invoke-FixtureGit @('commit', '--quiet', '-m', 'Create installer regression fixture') 'fixture commit'
+    $expectedNativeHead = (Invoke-FixtureGit @('rev-parse', 'HEAD') 'fixture HEAD lookup' | Select-Object -First 1).Trim()
+    if ($expectedNativeHead -notmatch '^[0-9a-fA-F]{40,64}$') { throw 'The native-process fixture did not produce a valid HEAD.' }
+    $nativeResult = Invoke-NativeCleanSourceChild $fixtureRoot
+    if ($nativeResult -cnotmatch '^PASS:NATIVE:HEAD:([0-9a-fA-F]{40,64}):STATUS:ZERO_CHANGE$') { throw 'The native-process regression returned an invalid result marker.' }
+    if ($Matches[1] -cne $expectedNativeHead) { throw 'The native-process regression returned a different HEAD.' }
+} finally {
+    if (Test-Path -LiteralPath $fixtureRoot) { Remove-Item -LiteralPath $fixtureRoot -Recurse -Force }
+}
 
 # Clean checkout: HEAD and status are both called in order and no entry is reported.
 Set-Responses @(
@@ -111,4 +180,4 @@ Set-Responses @(
 $message = Assert-ThrowsLike { Assert-KpxcCleanSourceCheckout $rootPath $runner } 'tracked=0, untracked=0, unclassified=1' 'unclassified porcelain entry'
 if ($message.Contains('x')) { throw 'Unclassified status data leaked into diagnostics.' }
 
-Write-Output 'PASS: clean HEAD/status, command failures, tracked/untracked changes, malformed status, and sanitized path edge cases.'
+Write-Output 'PASS: clean HEAD/status, native PowerShell process path, command failures, tracked/untracked changes, malformed status, and sanitized path edge cases.'
