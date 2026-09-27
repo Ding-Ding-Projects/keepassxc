@@ -39,6 +39,11 @@ class Group;
 class Metadata;
 class QIODevice;
 
+namespace Material
+{
+    class HistoryStore;
+}
+
 struct DeletedObject
 {
     QUuid uuid;
@@ -54,6 +59,8 @@ Q_DECLARE_TYPEINFO(DeletedObject, Q_MOVABLE_TYPE);
 class Database : public ModifiableObject
 {
     Q_OBJECT
+
+    friend class Material::HistoryStore;
 
 public:
     enum CompressionAlgorithm

@@ -5,6 +5,7 @@
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "core/Metadata.h"
 #include "format/KeePass2.h"
 #include "format/KeePass2Reader.h"
 
