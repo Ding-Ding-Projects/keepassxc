@@ -51,6 +51,23 @@ jobs:
           cache: true
           set-env: true
 
+      - name: Preserve Qt installer log outside the source checkout
+        shell: powershell
+        run: |
+          $sourceLog = Join-Path $env:GITHUB_WORKSPACE 'aqtinstall.log'
+          if (-not (Test-Path -LiteralPath $sourceLog -PathType Leaf)) {
+            Write-Host 'Qt installer produced no aqtinstall.log.'
+            exit 0
+          }
+          $logDirectory = Join-Path $env:RUNNER_TEMP ("keepassxc-qt-logs\" + $env:GITHUB_RUN_ID)
+          New-Item -ItemType Directory -Path $logDirectory -ErrorAction Stop | Out-Null
+          $savedLog = Join-Path $logDirectory 'aqtinstall.log'
+          Move-Item -LiteralPath $sourceLog -Destination $savedLog -ErrorAction Stop
+          if (-not (Test-Path -LiteralPath $savedLog -PathType Leaf) -or (Test-Path -LiteralPath $sourceLog)) {
+            throw 'Qt installer log was not moved outside the source checkout.'
+          }
+          Write-Host 'Preserved aqtinstall.log outside the source checkout.'
+
       - name: Verify and export the installed Qt root
         shell: powershell
         run: |
