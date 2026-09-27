@@ -393,10 +393,6 @@
         <translation>Пользовательский интерфейс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Внешний вид кнопок панели инструментов</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Перемещаемая панель инструментов</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(перезапустить программу для активации)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Вид кнопок панели инструментов:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

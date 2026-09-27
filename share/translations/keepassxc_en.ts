@@ -422,10 +422,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -439,10 +435,6 @@
     </message>
     <message>
         <source>(restart program to activate)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

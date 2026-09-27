@@ -373,10 +373,6 @@
         <translation>Brugerflade</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knapstil på værktøjslinje</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Værktøjslinje kan flyttes</translation>
     </message>
@@ -391,10 +387,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(genstart program for at aktivere)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knapstil på værktøjslinje:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

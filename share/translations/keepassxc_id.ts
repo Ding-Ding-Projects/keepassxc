@@ -374,10 +374,6 @@
         <translation>Antarmuka Pengguna</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Gaya tombol bilah perkakas</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bilah perkakas dapat dipindah</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(mulai ulang program untuk mengaktifkan)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Gaya tombol bilah alat:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

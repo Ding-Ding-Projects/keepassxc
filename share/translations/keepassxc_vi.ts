@@ -389,10 +389,6 @@
         <translation>Giao diện người dùng</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Kiểu nút thanh công cụ</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Thanh công cụ di chuyển được</translation>
     </message>
@@ -407,10 +403,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(khởi động lại chương trình để kích hoạt)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Kiểu nút thanh công cụ:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>

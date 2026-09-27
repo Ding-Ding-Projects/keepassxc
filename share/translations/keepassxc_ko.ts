@@ -374,10 +374,6 @@
         <translation>사용자 인터페이스</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>도구 모음 단추 스타일</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>이동 가능한 도구 모음</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(다시 시작 후 적용됨)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>도구 모음 단추 스타일:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

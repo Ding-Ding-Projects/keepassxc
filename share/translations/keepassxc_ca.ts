@@ -369,10 +369,6 @@
         <translation>Interfície d&apos;usuari</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Estil dels botons de la barra d&apos;eines</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Barra d&apos;eines mòbil</translation>
     </message>
@@ -387,10 +383,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reinicieu per activar-ho)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Estil de la barra d&apos;eines</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>

@@ -394,10 +394,6 @@
         <translation>Interfața cu utilizatorul</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stilul butonului din bara de instrumente</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bara de instrumente mobilă</translation>
     </message>
@@ -412,10 +408,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reporniți programul pentru a activa)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stilul butonului din bara de instrumente:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

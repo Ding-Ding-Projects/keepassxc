@@ -393,10 +393,6 @@
         <translation>Používateľské rozhranie</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Štýl tlačidiel panela nástrojov</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Presúvateľný panel nástrojov</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reštartovať program kvôli aktivácii)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Štýl tlačidiel panela nástrojov:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

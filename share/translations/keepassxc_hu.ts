@@ -393,10 +393,6 @@
         <translation>Felhasználói felület</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Eszköztár gombstílusa</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Mozgatható eszköztár</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(újraindítás után akitválódik)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Eszköztár gombstílusa:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

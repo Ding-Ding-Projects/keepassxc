@@ -394,10 +394,6 @@
         <translation>Benutzeroberfläche</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Design der Symbolleistenschaltflächen</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bewegbare Werkzeugleiste</translation>
     </message>
@@ -412,10 +408,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(zum Aktivieren Programm neu starten)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Design der Symbolleistenschaltflächen:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

@@ -44,6 +44,7 @@ for (const name of settingsCatalogs) {
     const catalog = read(`share/translations/${name}`);
     const settingsContext = catalog.match(/<context>\r?\n\s*<name>ApplicationSettingsWidget<\/name>[\s\S]*?<\/context>/);
     assert.ok(settingsContext, `${name} lost the ApplicationSettingsWidget context`);
+    assert.doesNotMatch(catalog, /<source>Toolbar button style:?<\/source>/, `${name} retains an obsolete toolbar label`);
     assert.doesNotMatch(settingsContext[0], /<source>(?:Icon only|Text only|Text beside icon|Text under icon|Follow style)<\/source>/, `${name} retains obsolete toolbar labels`);
     for (const source of [
         'Application Settings',

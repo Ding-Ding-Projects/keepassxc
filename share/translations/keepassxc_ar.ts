@@ -397,10 +397,6 @@
         <translation>واجهة المستخدم</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation> نمط مفاتيح شريط الأدوات </translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation> شريط أدوات قابل للتحريك</translation>
     </message>
@@ -415,10 +411,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation> (للتنشيط يُرجى إعادة التشغيل) </translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>نمط أزرار شريط الأدوات</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

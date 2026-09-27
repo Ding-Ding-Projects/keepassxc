@@ -374,10 +374,6 @@
         <translation>Ndërfaqe Përdoruesi</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stil butonash paneli</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Panel i lëvizshëm</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(që të aktivizohet, rinisni programin)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stil butonash paneli:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

@@ -393,10 +393,6 @@
         <translation>Kasutajaliides</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Tööriistariba nuppude stiil</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Teisaldatav tööriistariba</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(muutmine jõustub programmi järgmisel käivitamisel)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Tööriistariba nuppude stiil:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

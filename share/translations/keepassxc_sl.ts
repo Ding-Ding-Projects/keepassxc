@@ -369,10 +369,6 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Slog gumba v orodni vrstici</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Premična orodna vrstica</translation>
     </message>
@@ -387,10 +383,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(za aktivacijo ponovno zaženi program )</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Slog gumba v orodni vrstici:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>

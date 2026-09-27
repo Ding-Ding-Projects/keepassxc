@@ -393,10 +393,6 @@
         <translation>Кориснички интерфејс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стил дугмета на траци са алаткама</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Померљива трака са алаткама</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(поново покрените програм за активирање)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стил дугмета на траци са алаткама:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

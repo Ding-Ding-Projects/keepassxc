@@ -418,10 +418,6 @@
         <translation>Interface do usuário</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo de botão da barra de ferramentas</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Barra de ferramentas móvel</translation>
     </message>
@@ -436,10 +432,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reiniciar programa para ativar)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Estilo de botão da barra de ferramentas:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

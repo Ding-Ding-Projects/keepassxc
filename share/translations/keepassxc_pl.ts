@@ -393,10 +393,6 @@
         <translation>Interfejs użytkownika</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Styl przycisków paska narzędzi</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Ruchomy pasek narzędzi</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(uruchom ponownie program, aby aktywować)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Styl przycisków paska narzędzi:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

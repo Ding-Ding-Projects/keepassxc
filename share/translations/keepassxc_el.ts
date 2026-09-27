@@ -393,10 +393,6 @@
         <translation>Διεπαφή Χρήστη</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Μετακινούμενη εργαλειοθήκη</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(επανεκκίνηση προγράμματος για ενεργοποίηση)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

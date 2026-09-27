@@ -393,10 +393,6 @@
         <translation>Användargränssnitt</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knappstil för verktygsfält</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Flyttbart verktygsfält</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(starta om programmet för att aktivera)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knappstil för verktygsfält:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

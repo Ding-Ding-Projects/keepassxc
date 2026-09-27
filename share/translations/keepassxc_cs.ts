@@ -393,10 +393,6 @@
         <translation>Uživatelské rozhraní</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Styl tlačítek na liště nástrojů</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Přesouvatelná lišta nástrojů</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(pro aktivaci je třeba aplikaci ukončit a spustit znovu)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Styl tlačítek na liště nástrojů:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

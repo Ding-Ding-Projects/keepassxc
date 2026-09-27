@@ -418,10 +418,6 @@
         <translation>Vormgeving</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knopstijl van de werkbalk</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Verplaatsbare werkbalk</translation>
     </message>
@@ -436,10 +432,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(opnieuw starten om te activeren)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knopstijl van de werkbalk:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

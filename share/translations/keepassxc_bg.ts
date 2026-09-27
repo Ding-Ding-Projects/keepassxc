@@ -374,10 +374,6 @@
         <translation>Потребителски интерфейс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стил на бутоните от лентата с инструменти</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Преместваема лента с инструменти</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(необходим рестарт)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стил на бутоните от лентата с инструменти:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

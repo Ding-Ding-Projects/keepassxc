@@ -393,10 +393,6 @@
         <translation>Kullanıcı arayüzü</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Araç çubuğu düğme biçemi</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Araç çubuğu taşınabilsin</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(uygulama yeniden başlatılmalı)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Araç çubuğu düğme biçemi:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

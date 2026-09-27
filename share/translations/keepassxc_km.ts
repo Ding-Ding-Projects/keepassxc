@@ -375,10 +375,6 @@
         <translation>ផ្ទៃមុខសម្រាប់អ្នកប្រើ</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>ស្ទីលប៊ូតុងរបារឧបករណ៍</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>របារឧបករណ៍ចល័ត</translation>
     </message>
@@ -393,10 +389,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(ចាប់ផ្តើមកម្មវិធីឡើងវិញដើម្បីដំណើរការ)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>ស្ទីលប៊ូតុងរបារឧបករណ៍៖</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

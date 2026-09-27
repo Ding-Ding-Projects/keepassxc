@@ -374,10 +374,6 @@
         <translation>Brukergrensesnitt</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knappestil på verktøylinjen</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bevegelig verktøylinje</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(start programmet på nytt for å aktivere)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knappestil på verktøylinjen:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

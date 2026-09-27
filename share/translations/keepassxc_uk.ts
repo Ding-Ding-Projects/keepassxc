@@ -374,10 +374,6 @@
         <translation>Інтерфейс користувача</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стиль кнопок панелі інструментів</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Рухома панель інструментів</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(перезапустіть програму, щоб активувати)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стиль кнопки в панелі інструментів:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

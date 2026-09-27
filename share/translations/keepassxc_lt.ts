@@ -374,10 +374,6 @@
         <translation>Naudotojo sąsaja</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Įrankių juostos mygtukų stilius</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Perkeliama įrankių juosta</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(paleiskite programą iš naujo, kad aktyvuotumėte)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Užduotinės mygtukų stilius</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

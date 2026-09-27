@@ -414,10 +414,6 @@
         <translation>အသုံးပြုသူ မြင်ရသည့်ပုံစံ</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>ရွှေ့နိုင်သော တူးလ်ဘား</translation>
     </message>
@@ -432,10 +428,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(သက်ဝင်လုပ်ဆောင်ရန် ပရိုဂရမ်ကို ပြန်လည်စတင်ပါ)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ -</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

@@ -374,10 +374,6 @@
         <translation>ユーザーインターフェース</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>ツールバーのボタンのスタイル</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>ツールバーを移動可能にする</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(再起動が必要)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>ツールバーのボタンのスタイル:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

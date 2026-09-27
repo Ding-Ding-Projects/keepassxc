@@ -374,10 +374,6 @@
         <translation>מנשק המשתמש</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>סגנון לחצן סרגל כלים</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>סרגל כלים ניתן להזזה</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(איתחול התוכנית להפעלה)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>סגנון לחצן סרגל כלים:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

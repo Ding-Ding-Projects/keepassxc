@@ -369,10 +369,6 @@
         <translation>Korisničko Sučelje</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stil gumba alatne trake</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Pokretna alatna traka</translation>
     </message>
@@ -387,10 +383,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(ponovo pokrenite program za aktivaciju)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stil gumba alatne trake:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>

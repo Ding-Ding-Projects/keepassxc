@@ -393,10 +393,6 @@
         <translation>使用者介面</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>工具列按鈕樣式</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>工具列可移動</translation>
     </message>
@@ -411,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>（程式重啟後生效）</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>工具列按鈕樣式：</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

@@ -374,10 +374,6 @@
         <translation>ส่วนติดต่อผู้ใช้</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>รูปแบบปุ่มบนแถบเครื่องมือ</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>แถบเครื่องมือที่เคลื่อนย้ายได้</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(เริ่มโปรแกรมใหม่เพื่อใช้งาน)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>รูปแบบปุ่มบนแถบเครื่องมือ:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

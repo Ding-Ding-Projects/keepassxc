@@ -374,10 +374,6 @@
         <translation>User Interface</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo ng button ng toolbar</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Naigagalaw na toolbar</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(i-restart ang program para i-activate)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Estilo ng button ng toolbar:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

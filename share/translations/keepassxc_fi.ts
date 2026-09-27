@@ -374,10 +374,6 @@
         <translation>Käyttöliittymä</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Työkalupalkin painiketyyli</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Siirrettävä työkalupalkki</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(aktivoi käynnistämällä ohjelma uudestaan)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Työkalupalkin nappien tyyli:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>

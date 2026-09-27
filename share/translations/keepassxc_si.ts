@@ -374,10 +374,6 @@
         <translation>පරිශ්‍රීලක අතුරුමුහුණත</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>චංචල මෙවලම් තීරුව</translation>
     </message>
@@ -392,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(සක්රිය කිරීමට වැඩසටහන නැවත ආරම්භ කරන්න)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
