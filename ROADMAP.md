@@ -13,6 +13,8 @@
 
 ## Repair and release verification
 
+- [x] Separate package HEAD and source-status failures, sanitize dirty-state counts, and verify clean, tracked, untracked, malformed, and command-error states in the focused regression check.
+- [ ] Run a new GitHub Actions package job after integration; the original `35372345117` path remains unavailable because that run emitted only the generic message.
 - [x] Validate website release metadata against published package and build provenance, including BOM and malformed-input regressions.
 - [x] Render verified downloads and provenance in the website and refresh them during publication (live main deployment `7bf379fd`, run `34154701931`).
 - [x] Compile the repaired native targets and pass the focused update, title-bar, tab and selected GUI suites at `5c8066ae`.

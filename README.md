@@ -8,6 +8,9 @@ Run `build.bat` for the native application, `build-installer.bat` for verified `
 `RELEASES`, and full-package output, or `download-dependencies.bat` to prepare the pinned user-scoped
 toolchain. Each accepts `/s` or `--silent`.
 
+Before packaging, the installer script verifies that `HEAD` is readable and the source checkout has
+no tracked or untracked changes. Diagnostics report bounded change counts without printing paths.
+
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
