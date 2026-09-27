@@ -250,26 +250,6 @@ namespace Material
             return git(gitExecutable, repository, {QStringLiteral("config"), QStringLiteral("core.hooksPath"), noHooks}).ok();
         }
 
-        QByteArray serializeDatabaseWithoutEmbeddedHistory(const QSharedPointer<Database>& db, QString* error)
-        {
-            if (!db || !db->metadata() || !db->metadata()->customData()) return {};
-            auto* customData = db->metadata()->customData();
-            const bool hadBundle = customData->contains(EmbeddedHistoryKey);
-            const auto bundle = hadBundle ? customData->item(EmbeddedHistoryKey) : CustomData::CustomDataItem{};
-            const bool wasModified = db->isModified();
-            QSignalBlocker blocker(db.data());
-            if (hadBundle) customData->remove(EmbeddedHistoryKey);
-
-            QBuffer buffer;
-            buffer.open(QIODevice::WriteOnly);
-            const bool written = db->writeDatabase(&buffer, error);
-
-            if (hadBundle) customData->set(EmbeddedHistoryKey, bundle);
-            if (wasModified) db->markAsModified();
-            else db->markAsClean();
-            return written ? buffer.data() : QByteArray{};
-        }
-
         QString embeddedHistoryEnvelope(const QString& databaseIdentity, const QByteArray& bundle)
         {
             const QByteArray sha = QCryptographicHash::hash(bundle, QCryptographicHash::Sha256).toHex();
@@ -313,6 +293,26 @@ namespace Material
         : m_storageRoot(storageRoot), m_gitExecutable(gitExecutable.isEmpty() ? QStandardPaths::findExecutable(QStringLiteral("git")) : gitExecutable) {}
 
     HistoryStore* HistoryStore::instance() { static HistoryStore store; return &store; }
+
+    QByteArray HistoryStore::serializeDatabaseWithoutEmbeddedHistory(const QSharedPointer<Database>& db, QString* error) const
+    {
+        if (!db || !db->metadata() || !db->metadata()->customData()) return {};
+        auto* customData = db->metadata()->customData();
+        const bool hadBundle = customData->contains(EmbeddedHistoryKey);
+        const auto bundle = hadBundle ? customData->item(EmbeddedHistoryKey) : CustomData::CustomDataItem{};
+        const bool wasModified = db->isModified();
+        QSignalBlocker blocker(db.data());
+        if (hadBundle) customData->remove(EmbeddedHistoryKey);
+
+        QBuffer buffer;
+        buffer.open(QIODevice::WriteOnly);
+        const bool written = db->writeDatabase(&buffer, error);
+
+        if (hadBundle) customData->set(EmbeddedHistoryKey, bundle);
+        if (wasModified) db->markAsModified();
+        else db->markAsClean();
+        return written ? buffer.data() : QByteArray{};
+    }
 
     QString HistoryStore::historyDirectory() const
     {

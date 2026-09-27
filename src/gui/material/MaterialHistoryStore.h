@@ -186,6 +186,7 @@ namespace Material
         bool commitTransaction(const HistoryRevision& revision,
                                const QByteArray& fingerprint,
                                const QByteArray& encryptedSnapshot = {});
+        QByteArray serializeDatabaseWithoutEmbeddedHistory(const QSharedPointer<Database>& db, QString* error) const;
         bool migrateLegacy();
         HistoryRevision createSaveRevision(const QSharedPointer<Database>& db,
                                            QByteArray* fingerprint,
