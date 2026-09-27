@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>應用程式設定</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>通用</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>安全</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>如果啟用解鎖時最小化，則無法啟用此設置。</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>設定檔 %1 存取錯誤</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>單色</translation>
@@ -1259,10 +1279,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>瀏覽器類型：</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>工具列按鈕樣式</translation>
     </message>
     <message>
         <source>Config Location:</source>

@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Configuración de la aplicación</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>General</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Seguridad</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Esta preferencia no puede ser habilitada cuando está habilitado minimizar al desbloquear.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Error de acceso al archivo de configuración %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monocromo</translation>
@@ -1402,10 +1422,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Tipo de explorador:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo de botón de barra de herramientas</translation>
     </message>
     <message>
         <source>Config Location:</source>

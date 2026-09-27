@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Ρυθμίσεις Εφαρμογής</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Γενικά</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Ασφάλεια</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Αυτή η ρύθμιση δεν μπορεί να ενεργοποιηθεί όταν είναι ενεργοποιημένη η ελαχιστοποίηση κατά το ξεκλείδωμα</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Σφάλματος πρόσβασης για αρχείο ρυθμίσεων %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Μονόχρωμο</translation>
@@ -1337,10 +1357,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Τύπος προγράμματος περιήγησης:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων</translation>
     </message>
     <message>
         <source>Config Location:</source>

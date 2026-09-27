@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Paramètres de l’application</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Général</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sécurité</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Ce paramètre ne peut pas être activé si l’option Réduire au déverrouillage est activée.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Erreur d’accès pour le fichier de configuration %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monochrome</translation>
@@ -1259,10 +1279,6 @@ Remplacer la clé dans %1 – %2 ?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Type de navigateur :</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Style des boutons de la barre d’outils</translation>
     </message>
     <message>
         <source>Config Location:</source>

@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Configurações do aplicativo</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Geral</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Segurança</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Esta configuração não pode ser habilitada quando minimizar ao desbloquear está habilitado.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Erro de acesso para o arquivo de configuração %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monocromático</translation>
@@ -1286,10 +1306,6 @@ Deseja substituir a chave de acesso em %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Tipo de navegador:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo de botão da barra de ferramentas</translation>
     </message>
     <message>
         <source>Config Location:</source>

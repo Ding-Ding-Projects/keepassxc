@@ -13,6 +13,7 @@ const currentGeneralUi = read('src/gui/ApplicationSettingsWidgetGeneral.ui');
 const currentHub = read('src/gui/material/MaterialSettingsHub.cpp');
 const currentCatalogue = read('src/gui/material/MaterialSheetCatalogue.cpp');
 const currentConfig = read('src/core/Config.cpp');
+const currentConfigTest = read('tests/TestConfig.cpp');
 
 // Negative regression: the probes must recognize representative forms of each removed route.
 const oldStyleEscape = 'if (!env.contains(QStringLiteral("KPXC_NO_MATERIAL_STYLE"))) { setStyle(new Material::Style); }';
@@ -32,14 +33,34 @@ assert.doesNotMatch(currentHub, /GUI_ToolButtonStyle|Tool button style/);
 assert.doesNotMatch(currentCatalogue, /Toolbar button style/);
 assert.doesNotMatch(currentBrowserSettings, /Toolbar button style/);
 assert.match(currentConfig, /\{QS\("GUI\/ToolButtonStyle"\), Config::Deleted\}/);
+assert.match(currentConfig, /#define CONFIG_VERSION 3/);
+assert.match(currentConfigTest, /oldConfig\.setValue\("ConfigVersion", 2\)/);
+assert.match(currentConfigTest, /GUI_Language\).*QStringLiteral\("fr"\)/);
+assert.match(currentConfigTest, /GUI_ShowTrayIcon\).*toBool\(\)/);
 
 const settingsCatalogs = readdirSync(join(root, 'share/translations')).filter(name => /^keepassxc_.*\.ts$/.test(name));
+let translatedClassicMessages = 0;
 for (const name of settingsCatalogs) {
     const catalog = read(`share/translations/${name}`);
     const settingsContext = catalog.match(/<context>\r?\n\s*<name>ApplicationSettingsWidget<\/name>[\s\S]*?<\/context>/);
-    if (settingsContext) {
-        assert.doesNotMatch(settingsContext[0], /<source>(?:Icon only|Text only|Text beside icon|Text under icon|Follow style)<\/source>/, `${name} retains obsolete toolbar labels`);
+    assert.ok(settingsContext, `${name} lost the ApplicationSettingsWidget context`);
+    assert.doesNotMatch(settingsContext[0], /<source>(?:Icon only|Text only|Text beside icon|Text under icon|Follow style)<\/source>/, `${name} retains obsolete toolbar labels`);
+    for (const source of [
+        'Application Settings',
+        'General',
+        'Security',
+        'This setting cannot be enabled when minimize on unlock is enabled.',
+        'Access error for config file %1',
+    ]) {
+        const escapedSource = source.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const message = settingsContext[0].match(new RegExp(`<message>\\s*<source>${escapedSource}<\\/source>\\s*<translation(?:\\s+[^>]*)?(?:\\/>(?:\\s*<\\/message>)|>([\\s\\S]*?)<\\/translation>\\s*<\\/message>)`));
+        assert.ok(message, `${name} lost classic settings copy: ${source}`);
+        const isExplicitlyUnfinished = /<translation\s+type="unfinished"/.test(message[0]);
+        assert.ok(isExplicitlyUnfinished || message[1]?.trim(), `${name} lost translated classic settings copy: ${source}`);
+        if (!isExplicitlyUnfinished) {
+            translatedClassicMessages++;
+        }
     }
 }
 
-process.stdout.write(`PASS: obsolete source routes are absent; ${settingsCatalogs.length} translation catalogs contain no stale toolbar-style labels in ApplicationSettingsWidget.\n`);
+process.stdout.write(`PASS: obsolete source routes are absent; ${translatedClassicMessages}/${settingsCatalogs.length * 5} classic settings messages remain translated across ${settingsCatalogs.length} catalogs (unfinished entries remain explicitly marked), with no stale toolbar-style labels.\n`);

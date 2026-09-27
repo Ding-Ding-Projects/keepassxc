@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>အက်ပလီကေးရှင်း ဆက်တင်များ</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>ယေဘုယျ</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>လုံခြုံရေး</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>အန်လော့ခ်လုပ်ချိန် မြင်ကွင်းကျုံ့ခြင်းကို ရွေးချယ်ထားချိန် ဤ‌ရွေးချယ်မှုကို ပြုလုပ်၍မရပါ။</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>ချိန်ညှိဖိုင် %1 အတွက် အသုံးပြုခွင့် ပြဿနာ</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>တစ်ရောင်တည်း</translation>
@@ -1424,10 +1444,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>ဘရောက်ဇာ အမျိုးအစား -</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ</translation>
     </message>
     <message>
         <source>Config Location:</source>

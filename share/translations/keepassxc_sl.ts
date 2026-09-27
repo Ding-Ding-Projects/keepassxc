@@ -157,6 +157,22 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Nastavitve aplikacije</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Splošno</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Varnost</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Napaka pri dostopu do konfiguracijske datoteke  %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
@@ -1066,10 +1082,6 @@ Would you like to migrate your existing settings now?</source>
     <message>
         <source>Browser type:</source>
         <translation>Vrsta spletnega brskalnika:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Slog gumba v orodni vrstici</translation>
     </message>
     <message>
         <source>Config Location:</source>

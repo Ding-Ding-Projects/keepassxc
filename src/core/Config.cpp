@@ -30,7 +30,7 @@
 
 #include <algorithm>
 
-#define CONFIG_VERSION 2
+#define CONFIG_VERSION 3
 #define QS QStringLiteral
 
 enum ConfigType

@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>프로그램 설정</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>일반</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>보안</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>이 설정은 최소화나 잠금 해제가 활성화되어 있으면 활성화할 수 없습니다.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>설정 파일 %1에 접근할 수 없음</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>흑백</translation>
@@ -1229,10 +1249,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>브라우저 종류:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>도구 모음 단추 스타일</translation>
     </message>
     <message>
         <source>Config Location:</source>

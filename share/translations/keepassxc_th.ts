@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>การตั้งค่าโปรแกรม</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>ทั่วไป</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>ความปลอดภัย</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>ไม่สามารถเปิดใช้การตั้งค่านี้เมื่อเปิดใช้การย่อขนาดเมื่อปลดล็อก</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>มีข้อผิดพลาดในการเข้าถึงแฟ้มตั้งค่า %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>สีเดียว</translation>
@@ -1225,10 +1245,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>ชนิดเบราว์เซอร์:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>รูปแบบปุ่มบนแถบเครื่องมือ</translation>
     </message>
     <message>
         <source>Config Location:</source>

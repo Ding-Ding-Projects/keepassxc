@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Настройки на приложението</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Основни</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Сигурност</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Настройката не може да бъде включена докато друга настройка - скриване на прозореца при отключване е включена. </translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Грешка при достъп до файла с настройките %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Едноцветни</translation>
@@ -1271,10 +1291,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Вид мрежов четец:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стил на бутоните в лентата с инструменти</translation>
     </message>
     <message>
         <source>Config Location:</source>

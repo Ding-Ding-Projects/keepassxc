@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Налаштування програми</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Загальні</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Безпека</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Це налаштування не можна увімкнути, якщо увімкнено згортання чи розблокування.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Помилка доступу до файлу конфігурації %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Монохромна</translation>
@@ -1240,10 +1260,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Тип браузера:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стиль кнопки в панелі інструментів</translation>
     </message>
     <message>
         <source>Config Location:</source>

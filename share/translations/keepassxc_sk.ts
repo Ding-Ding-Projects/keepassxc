@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Nastavenia aplikácie</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Všeobecné</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Bezpečnosť</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Chyba prístupu ku konfiguračnému súboru %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monochromatické</translation>
@@ -1246,10 +1266,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Typ prehliadača:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Štýl tlačidiel panela nástrojov</translation>
     </message>
     <message>
         <source>Config Location:</source>

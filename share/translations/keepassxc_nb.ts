@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Applikasjonsinnstillinger</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Generelt</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sikkerhet</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Denne innstillingen kan ikke aktiveres når minimering ved opplåsing er aktivert.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Feil ved tilgang til konfigurasjonsfilen %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Ensfarget</translation>
@@ -1319,10 +1339,6 @@ Vil du erstatte tilgangsnøkkelen i %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Type nettleser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knappestil på verktøylinjen</translation>
     </message>
     <message>
         <source>Config Location:</source>

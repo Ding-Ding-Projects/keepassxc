@@ -176,6 +176,22 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Cài đặt ứng dụng</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Chung</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Bảo mật</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Lỗi truy cập tệp cấu hình %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Đơn sắc</translation>
@@ -1323,10 +1339,6 @@ Would you like to migrate your existing settings now?</source>
     <message>
         <source>Browser type:</source>
         <translation>Loại trình duyệt:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Kiểu nút thanh công cụ</translation>
     </message>
     <message>
         <source>Config Location:</source>

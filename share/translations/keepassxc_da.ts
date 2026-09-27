@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Programindstillinger</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Generelt</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sikkerhed</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Denne indstilling kan ikke aktiveres, når minimere ved oplåsning er aktiveret.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Adgangsfejl for konfigurationsfil %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
@@ -1073,10 +1093,6 @@ Do you want to delete the entry?
     <message>
         <source>Browser type:</source>
         <translation>Browsertype:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knapstil på værktøjslinje</translation>
     </message>
     <message>
         <source>Config Location:</source>

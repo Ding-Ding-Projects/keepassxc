@@ -177,6 +177,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Anwendungseinstellungen</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Allgemein</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sicherheit</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Diese Einstellung kann nicht aktiviert werden, wenn Minimieren beim Entsperren aktiviert ist.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Zugriffsfehler bei Konfigurationsdatei %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monochrom</translation>
@@ -1286,10 +1306,6 @@ Möchten Sie den Passkey in %1 - %2 überschreiben?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Browser-Typ:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Design der Symbolleistenschaltflächen</translation>
     </message>
     <message>
         <source>Config Location:</source>

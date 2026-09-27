@@ -157,6 +157,22 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Paràmetres de l&apos;aplicació</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>General</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Seguretat</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Error d&apos;accés al fitxer de configuració %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monocrom</translation>
@@ -1068,10 +1084,6 @@ Would you like to migrate your existing settings now?</source>
     <message>
         <source>Browser type:</source>
         <translation>Tipus de navegador:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Estil dels botons de la barra d&apos;eines</translation>
     </message>
     <message>
         <source>Config Location:</source>

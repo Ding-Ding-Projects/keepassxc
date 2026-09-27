@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>ការកំណត់របស់កម្មវិធី</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>ទូទៅ</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>សន្តិសុខ</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>ការកំណត់នេះមិនអាចដំណើរការទេ កាលណាដំណើរការមុខងារ minimize on unlock ។ </translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>កំហុសពេលចូលប្រើ ដោយសារឯកសារប្រមូលបាន ១% </translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>ពណ៌តែមួយ</translation>
@@ -1228,10 +1248,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>ប្រភេទកម្មវិធីរុករកតាមអ៊ីនធឺណិត៖</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>ស្ទីលប៊ូតុងរបារឧបករណ៍</translation>
     </message>
     <message>
         <source>Config Location:</source>

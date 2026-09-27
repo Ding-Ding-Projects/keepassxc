@@ -89,7 +89,10 @@ void TestConfig::testRemovedToolbarStyleIsDiscarded()
     tempFile.open();
 
     QSettings oldConfig(tempFile.fileName(), QSettings::IniFormat);
+    oldConfig.setValue("ConfigVersion", 2);
     oldConfig.setValue("GUI/ToolButtonStyle", 1);
+    oldConfig.setValue("GUI/Language", "fr");
+    oldConfig.setValue("GUI/ShowTrayIcon", true);
     oldConfig.sync();
     tempFile.close();
 
@@ -97,6 +100,8 @@ void TestConfig::testRemovedToolbarStyleIsDiscarded()
 
     QSettings migratedConfig(tempFile.fileName(), QSettings::IniFormat);
     QVERIFY(!migratedConfig.contains("GUI/ToolButtonStyle"));
+    QCOMPARE(config()->get(Config::GUI_Language).toString(), QStringLiteral("fr"));
+    QVERIFY(config()->get(Config::GUI_ShowTrayIcon).toBool());
 
     tempFile.remove();
 }

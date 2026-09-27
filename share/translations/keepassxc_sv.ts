@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Programinställningar</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Allmänt</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Säkerhet</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Denna inställning kan inte aktiveras om minimering vid upplåsning är aktiverad.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Åtkomstfel för konfigurationsfil %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
@@ -1259,10 +1279,6 @@ Vill du skriva över passnyckeln i %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Webbläsartyp:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knappstil för verktygsfält</translation>
     </message>
     <message>
         <source>Config Location:</source>

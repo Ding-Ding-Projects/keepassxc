@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Programos nustatymai</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Bendra</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Saugumas</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Šis nustatymas negali būti įjungtas, kai įjungtas minimizavimas atrakinimo metu.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Konfigūracijos failo %1 prieigos klaida</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Vienspalvis</translation>
@@ -1226,10 +1246,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Naršyklės tipas:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Įrankių juostos mygtukų stilius</translation>
     </message>
     <message>
         <source>Config Location:</source>

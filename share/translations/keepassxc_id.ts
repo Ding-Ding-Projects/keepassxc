@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Pengaturan Aplikasi</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Umum</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Keamanan</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Pengaturan ini tidak dapat difungsikan ketika diminimumkan saat buka kunci difungsikan.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Galat akses untuk berkas konfigurasi %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
@@ -1229,10 +1249,6 @@ Apakah Anda ingin menimpa kunci akses di %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Tipe peramban:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Gaya tombol bilah perkakas</translation>
     </message>
     <message>
         <source>Config Location:</source>

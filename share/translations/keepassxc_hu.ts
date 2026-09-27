@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Alkalmazásbeállítások</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Általános</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Biztonság</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Ez a beállítás nem kapcsolható be, ha a minimalizálás feloldáskor be van kapcsolva.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Hozzáférési hiba a beállítási fájlhoz: %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monokróm</translation>
@@ -1257,10 +1277,6 @@ Felülírja az itt található jelkulcsot: %1 – %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Böngészőtípus:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Eszköztár gombstílusa</translation>
     </message>
     <message>
         <source>Config Location:</source>

@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>යෙදුමේ සැකසුම්</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>සාමාන්‍ය</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>ආරක්‍ෂාව</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation type="unfinished"/>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>වින්‍යාස ගොනුව %1සඳහා ප්‍රවේශ දෝෂයකි</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>ඒකවර්ණ</translation>
@@ -1227,10 +1247,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>බ්‍රවුසර වර්ගය:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය</translation>
     </message>
     <message>
         <source>Config Location:</source>

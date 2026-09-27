@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Uygulama ayarları</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Genel</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Güvenlik</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Kilit açıldığında küçültülsün seçeneği açıkken bu seçenek açılamaz.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>%1 yapılandırma dosyasına erişim sorunu</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Tek renkli</translation>
@@ -1259,10 +1279,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Tarayıcı türü:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Araç çubuğu düğme biçemi</translation>
     </message>
     <message>
         <source>Config Location:</source>

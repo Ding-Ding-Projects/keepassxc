@@ -176,6 +176,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Rakenduse seaded</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Üldine</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Turvalisus</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Kuna valitud on luku avamise järel akna minimeerimine, ei saa seda valikut sisse lülitada.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Juurdepääsuviga seadistusfailil „%1”</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>mustvalge</translation>
@@ -1259,10 +1279,6 @@ Kas soovid selle uue pääsuvõtmega (%2) üle kirjutada?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Brauseritüüp:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Tööriistariba nuppude stiil</translation>
     </message>
     <message>
         <source>Config Location:</source>

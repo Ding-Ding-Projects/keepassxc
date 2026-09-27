@@ -157,6 +157,22 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Postavke aplikacije</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Općenito</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sigurnost</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Pogreška pristupa za konfiguracijsku datoteku %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
@@ -1077,10 +1093,6 @@ To je potrebno za održavanje trenutnih veza preglednika.
     <message>
         <source>Browser type:</source>
         <translation>Vrsta preglednika:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Stil gumba alatne trake</translation>
     </message>
     <message>
         <source>Config Location:</source>

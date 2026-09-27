@@ -157,6 +157,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>Impostazioni applicazione</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>Generale</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>Sicurezza</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>Questa impostazione non può essere abilitata quando è abilitata la riduzione a icona con lo sblocco.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>Errore di accesso per il file di configurazione %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>Monocromatica</translation>
@@ -1230,10 +1250,6 @@ Vuoi sovrascrivere la passkey in %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Tipologia di browser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Stile pulsante barra degli strumenti</translation>
     </message>
     <message>
         <source>Config Location:</source>

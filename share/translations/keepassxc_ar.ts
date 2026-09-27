@@ -180,6 +180,26 @@
 </context>
 <context>
     <name>ApplicationSettingsWidget</name>
+    <message>
+        <source>Application Settings</source>
+        <translation>إعدادات التطبيق</translation>
+    </message>
+    <message>
+        <source>General</source>
+        <translation>عام</translation>
+    </message>
+    <message>
+        <source>Security</source>
+        <translation>الأمان</translation>
+    </message>
+    <message>
+        <source>This setting cannot be enabled when minimize on unlock is enabled.</source>
+        <translation>لا يمكن تمكين هذا الإعداد عندما يكون التصغير عند إلغاء القفل مفعلا.</translation>
+    </message>
+    <message>
+        <source>Access error for config file %1</source>
+        <translation>خطأ في الوصول إلى ملف الإعداد %1</translation>
+    </message>
                         <message>
         <source>Monochrome</source>
         <translation>أُحاديِّ اللون</translation>
@@ -1283,10 +1303,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>نوع المتصفح:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>نمط أزرار شريط الأدوات</translation>
     </message>
     <message>
         <source>Config Location:</source>
