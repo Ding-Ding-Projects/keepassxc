@@ -78,13 +78,17 @@
       "--disable-sync",
       "--disable-component-extensions-with-background-pages",
       "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
-      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-reports-default",
+      "--user-data-dir=<PROFILE_DIR>/edge-reports-default",
       "--window-size=1200,860",
       "--force-device-scale-factor=1",
       "--lang=en-HK",
       "--virtual-time-budget=12000",
-      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\reports-default\\reference.png",
+      "--screenshot=<OUTPUT_DIR>/reference.png",
       "http://127.0.0.1:43110/reference/reports-default"
+    ],
+    "redactedEdgeArgIndexes": [
+      9,
+      14
     ]
   },
   "comparison": {

@@ -10,7 +10,7 @@
 // budget so React/Babel and fonts settle before the screenshot.
 //
 // Built side: KeePassXC launched on a named off-screen Windows desktop through
-// the Cheap Version CLI with --capture-route, a throwaway configuration and the
+// the headless capture CLI with --capture-route, a throwaway configuration and the
 // key-file-only fixture database; the harness polls the JSON receipt the route
 // writes, then captures the window by HWND from that same off-screen desktop.
 import { spawn, spawnSync } from 'node:child_process';
@@ -49,7 +49,7 @@ const exists = async path => access(path).then(() => true, () => false);
 const sleep = ms => new Promise(done => setTimeout(done, ms));
 
 function cheap(tool, params) {
-  // The Cheap Version runs the same headless tools without an MCP transport.
+  // The headless capture route runs the same headless tools without an MCP transport.
   const cli = spawnSync('uv', ['run', '--directory', lowlevelDir, 'lowlevel-computer-use-cheap', tool, '--json', JSON.stringify(params)], {
     encoding: 'utf8', windowsHide: true, timeout: 120000
   });
@@ -97,7 +97,25 @@ async function captureReference(row, outDir, receipt) {
   const edge = spawnSync(edgePath, edgeArgs, { encoding: 'utf8', windowsHide: true, timeout: 120000 });
   if (!(await exists(png))) throw new Error(`Edge produced no screenshot for ${row.id}: ${edge.stderr}`);
   const bytes = await readFile(png);
-  receipt.reference = { url, png: 'reference.png', sha256: sha256(bytes), bytes: bytes.length, tool: 'msedge --headless=new --screenshot', edgeArgs };
+  const redactedEdgeArgIndexes = [];
+  const recordedEdgeArgs = edgeArgs.map((arg, index) => {
+    if (arg.startsWith('--user-data-dir=')) {
+      redactedEdgeArgIndexes.push(index);
+      return `--user-data-dir=<PROFILE_DIR>/edge-${row.id}`;
+    }
+    if (!arg.startsWith('--screenshot=')) return arg;
+    redactedEdgeArgIndexes.push(index);
+    return '--screenshot=<OUTPUT_DIR>/reference.png';
+  });
+  receipt.reference = {
+    url,
+    png: 'reference.png',
+    sha256: sha256(bytes),
+    bytes: bytes.length,
+    tool: 'msedge --headless=new --screenshot',
+    edgeArgs: recordedEdgeArgs,
+    redactedEdgeArgIndexes
+  };
   await rm(profile, { recursive: true, force: true });
 }
 

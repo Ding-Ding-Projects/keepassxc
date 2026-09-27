@@ -39,13 +39,17 @@
       "--disable-sync",
       "--disable-component-extensions-with-background-pages",
       "--disable-features=msEdgeFirstRunExperience,msEdgeSignin,msEdgeSync,Translate",
-      "--user-data-dir=C:\\Users\\cntow\\AppData\\Local\\Temp\\kpxc-parity\\edge-vault-default",
+      "--user-data-dir=<PROFILE_DIR>/edge-vault-default",
       "--window-size=1440,860",
       "--force-device-scale-factor=1",
       "--lang=en-HK",
       "--virtual-time-budget=12000",
-      "--screenshot=C:\\Users\\cntow\\Documents\\GitHub\\gerk tong hui\\keepassxc-parity-capture\\design\\parity\\evidence\\vault-default\\reference.png",
+      "--screenshot=<OUTPUT_DIR>/reference.png",
       "http://127.0.0.1:43110/reference/vault-default"
+    ],
+    "redactedEdgeArgIndexes": [
+      9,
+      14
     ]
   },
   "built": {

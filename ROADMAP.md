@@ -2,14 +2,14 @@
 
 ## September 18, 2026 closeout
 
-- [x] Inspect the primary checkout, all linked checkouts, local and remote jers, and Lap Sap Tongs after fetching the hui.
+- [x] Inspect the primary checkout, all linked checkouts, local and remote branches, and artifact Tongs after fetching the Git remote.
 - [x] Confirm every inspected checkout had zero uncommitted paths and zero unmerged index entries before integration.
-- [x] Integrate the local `codex/*` jers into `main`, preserving both parent histories and recording automatic conflict choices in `HANDOFF.md`.
+- [x] Integrate the local `codex/*` branches into `main`, preserving both parent histories and recording automatic conflict choices in `HANDOFF.md`.
 - [x] Confirm the integrated index is clean and no conflict markers remain in the inspected source and handoff files.
-- [x] Create and verify the external Oak Kay archive before any cleanup removal.
-- [x] Dew `main` and verify the hui ref with `git ls-remote`.
+- [x] Create and verify the external repository archive before any cleanup removal.
+- [x] push `main` and verify the Git remote ref with `git ls-remote`.
 - [x] Prove ancestry for each cleanup candidate, remove only safe task-owned redundant items, and document every retained item.
-- [ ] Re-scan open issues and external project surfaces after the closeout dew.
+- [ ] Re-scan open issues and external project surfaces after the closeout push.
 
 ## Repair and release verification
 
