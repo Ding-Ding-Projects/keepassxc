@@ -2,10 +2,10 @@
 
 ## Embedded database history
 
-- [ ] Stage a bounded per-database Git bundle before the primary KDBX write and save the data and bundle atomically; source is implemented and compiles at `c52d19a753323c6dea653fbfffb7d9078536c7a7`, but runtime coverage remains open.
-- [ ] Merge staged history into application storage only after the KDBX write succeeds, including Save As and backup flows; source is implemented and compiles at `c52d19a753323c6dea653fbfffb7d9078536c7a7`, but runtime coverage remains open.
-- [ ] Add focused KDBX and Git coverage for transfer, rollback, concurrency, replay, malformed input and size limits; tests were not added or run in this task.
-- [x] Complete the production-only x64 build and verify staged executable provenance at `c52d19a753323c6dea653fbfffb7d9078536c7a7`; KeePassXC 2.8.0 staged, SHA-256 `7C164611CC931F34F5515FB9AA61AE13871C660D44407BE50AA74FA9392E5959`. Test suites were not run.
+- [ ] Stage a bounded per-database history bundle before the primary KDBX write and save the data and bundle atomically; current local code adds KDBX3/KDBX4 round trips, but the full production target has not been rebuilt after the latest edits.
+- [ ] Merge staged history into application storage only after the KDBX write succeeds, including Save As and backup flows; focused Save As ancestry coverage passes, while backup and real runtime behavior remain unverified.
+- [ ] Complete focused KDBX and Git coverage for transfer, rollback, concurrency, replay, malformed input and size limits; `testmaterialhistory` passed 1/1 in 40.57 seconds, but oversized-input execution, replay, all rollback paths, foreign identity and backup coverage remain open.
+- [x] Complete the production-only x64 build and verify staged executable provenance at `c52d19a753323c6dea653fbfffb7d9078536c7a7`; KeePassXC 2.8.0 staged, SHA-256 `7C164611CC931F34F5515FB9AA61AE13871C660D44407BE50AA74FA9392E5959`. This verdict predates the current local edits and must not be applied to them.
 
 ## September 18, 2026 closeout
 

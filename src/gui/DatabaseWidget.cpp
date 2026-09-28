@@ -2726,7 +2726,7 @@ bool DatabaseWidget::saveBackup()
 
     QString error;
     auto* history = Material::HistoryStore::instance();
-    bool historySaveStarted = history->beginDatabaseSave(m_db, newFilePath);
+    bool historySaveStarted = history->beginDatabaseSave(m_db, newFilePath, true);
     if (historySaveStarted) {
         QString historyError;
         if (!history->embedLatestHistory(m_db, &historyError)) {

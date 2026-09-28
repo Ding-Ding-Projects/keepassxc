@@ -12,6 +12,11 @@ private slots:
     void gitStoreFailureDoesNotAdvanceFingerprint();
     void gitStoreMigratesLegacyOnce();
     void gitStoreSerializesConcurrentWriters();
+    void embeddedHistoryLimitsMatchTheStorageContract();
+    void embeddedHistorySurvivesKdbx3AndKdbx4RoundTrips();
+    void rejectsMalformedEmbeddedHistoryBeforeLocalImport();
+    void saveAsInheritsHistoryUnderAFreshIdentity();
+    void concurrentDatabaseHistoriesUnionWithoutMergingDatabaseContent();
     void restoresDeletedEntryFromPerDatabaseRepository();
     void feedBadgesTheCreatedStateAsCreate();
 };

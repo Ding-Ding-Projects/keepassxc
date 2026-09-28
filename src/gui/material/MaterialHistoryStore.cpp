@@ -2,6 +2,7 @@
  * SPDX-License-Identifier: GPL-2.0-or-later OR GPL-3.0-only */
 
 #include "MaterialHistoryStore.h"
+#include "MaterialHistoryLimits.h"
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
@@ -46,10 +47,6 @@ namespace Material
         const QString DatabaseIdentityKey = QStringLiteral("KeePassXC/History/DatabaseId");
         const QString EmbeddedHistoryKey = QStringLiteral("KeePassXC/History/BundleV1");
         const QString DatabaseHistoryManifestName = QStringLiteral("history.json");
-        constexpr qsizetype MaximumEmbeddedBundleBytes = 64 * 1024 * 1024;
-        constexpr int MaximumEmbeddedCommits = 4096;
-        constexpr int MaximumEmbeddedObjects = 100000;
-        constexpr qint64 MaximumEmbeddedObjectBytes = 512LL * 1024 * 1024;
         constexpr qsizetype MaximumRevisionMetadataBytes = 64 * 1024;
         constexpr int LockTimeoutMs = 3000;
 
@@ -101,6 +98,17 @@ namespace Material
             return digest(QDir::cleanPath(QDir::fromNativeSeparators(path)));
         }
 
+        QString normalizedDatabasePath(const QString& path)
+        {
+            const QFileInfo info(path);
+            QString normalized = info.canonicalFilePath();
+            if (normalized.isEmpty()) normalized = QDir::cleanPath(info.absoluteFilePath());
+#ifdef Q_OS_WIN
+            normalized = normalized.toCaseFolded();
+#endif
+            return normalized;
+        }
+
         bool isKdbx(const QByteArray& bytes)
         {
             if (bytes.size() < 12) return false;
@@ -121,7 +129,11 @@ namespace Material
                     if (entry->isRecycled()) continue;
                     ++*entries;
                     const QString uuid = entry->uuidToHex();
-                    const QString state = QStringLiteral("%1|%2|%3").arg(uuid).arg(entry->timeInfo().lastModificationTime().toMSecsSinceEpoch()).arg(group->uuidToHex());
+                // KDBX stores entry modification times at whole-second precision.
+                const QString state = QStringLiteral("%1|%2|%3")
+                                          .arg(uuid)
+                                          .arg(entry->timeInfo().lastModificationTime().toSecsSinceEpoch() * 1000)
+                                          .arg(group->uuidToHex());
                     result.insert(digest(uuid, 24), digest(state, 24));
                 }
             }
@@ -266,7 +278,7 @@ namespace Material
                 if (error) *error = reason;
                 return false;
             };
-            if (value.size() > ((MaximumEmbeddedBundleBytes + 2) / 3) * 4 + 140) {
+            if (value.size() > ((HistoryLimits::MaximumPackedBundleBytes + 2) / 3) * 4 + 140) {
                 return fail(QStringLiteral("The embedded history bundle exceeds its encoded size limit."));
             }
             const QStringList fields = value.split(QLatin1Char(':'));
@@ -277,7 +289,7 @@ namespace Material
             }
             const QByteArray encoded = fields.at(3).toLatin1();
             const QByteArray decoded = QByteArray::fromBase64(encoded, QByteArray::AbortOnBase64DecodingErrors);
-            if (decoded.isEmpty() || decoded.size() > MaximumEmbeddedBundleBytes || decoded.toBase64() != encoded) {
+            if (!HistoryLimits::withinPackedBundleLimit(decoded.size()) || decoded.toBase64() != encoded) {
                 return fail(QStringLiteral("The embedded history bundle is malformed or exceeds its size limit."));
             }
             if (QCryptographicHash::hash(decoded, QCryptographicHash::Sha256).toHex() != fields.at(2).toLatin1()) {
@@ -336,7 +348,9 @@ namespace Material
         return db->filePath().isEmpty() ? QString() : databaseId(db->filePath());
     }
 
-    bool HistoryStore::beginDatabaseSave(const QSharedPointer<Database>& db, const QString& destinationPath)
+    bool HistoryStore::beginDatabaseSave(const QSharedPointer<Database>& db,
+                                         const QString& destinationPath,
+                                         bool restoreSourceMetadataAfterCopy)
     {
         if (!db || !db->rootGroup() || !db->metadata() || !db->metadata()->customData() || destinationPath.isEmpty()) return false;
         if (m_databaseSaves.contains(db.data())) cancelDatabaseSave(db);
@@ -348,10 +362,16 @@ namespace Material
         state.hadBundle = customData->contains(EmbeddedHistoryKey);
         if (state.hadBundle) state.bundle = customData->item(EmbeddedHistoryKey);
         state.wasModified = db->isModified();
-        const QString identity = state.hadIdentity && isDatabaseIdentity(state.identity.value)
-                                     ? state.identity.value
-                                     : (db->filePath().isEmpty() ? randomDatabaseIdentity() : databaseId(db->filePath()));
+        const QString sourceIdentity = state.hadIdentity && isDatabaseIdentity(state.identity.value)
+                                           ? state.identity.value
+                                           : (db->filePath().isEmpty() ? QString() : databaseId(db->filePath()));
+        const bool isCopy = !db->filePath().isEmpty()
+            && normalizedDatabasePath(db->filePath()) != normalizedDatabasePath(destinationPath);
+        const QString identity = isCopy || sourceIdentity.isEmpty() ? randomDatabaseIdentity() : sourceIdentity;
         if (!isDatabaseIdentity(identity)) return false;
+        state.sourceDatabaseIdentity = sourceIdentity.isEmpty() ? identity : sourceIdentity;
+        state.isCopy = isCopy;
+        state.restoreSourceMetadataAfterCopy = isCopy && restoreSourceMetadataAfterCopy;
         state.databaseIdentity = identity;
         if (!state.hadIdentity || state.identity.value != identity) {
             customData->set(DatabaseIdentityKey, identity);
@@ -389,32 +409,87 @@ namespace Material
         if (!db || !db->metadata() || !db->metadata()->customData() || !m_databaseSaves.contains(db.data())) {
             return fail(tr("No active database save is available for history embedding."));
         }
-        const QString identity = databaseIdentity(db);
+        const DatabaseSaveState saveState = m_databaseSaves.value(db.data());
+        const QString identity = saveState.databaseIdentity;
+        const QString comparisonIdentity = saveState.isCopy ? saveState.sourceDatabaseIdentity : QString();
         QByteArray fingerprint;
         QByteArray encryptedSnapshot;
-        HistoryRevision revision = createSaveRevision(db, &fingerprint, &encryptedSnapshot);
+        HistoryRevision revision = createSaveRevision(db, &fingerprint, &encryptedSnapshot, comparisonIdentity);
         if (!revision.isValid() || encryptedSnapshot.isEmpty()) return fail(tr("The encrypted database snapshot could not be prepared."));
         auto stagingDirectory = QSharedPointer<QTemporaryDir>::create();
         if (!stagingDirectory->isValid()) return fail(tr("A temporary directory for encrypted history staging could not be created."));
         const QString stagingRepository = QDir(stagingDirectory->path()).filePath(QStringLiteral("repository"));
-        const QString localRepository = databaseRepositoryPath(identity);
+        const QString sourceIdentity = saveState.sourceDatabaseIdentity;
+        const QString localRepository = databaseRepositoryPath(saveState.isCopy ? sourceIdentity : identity);
         const bool localRepositoryExists = QFileInfo::exists(QDir(localRepository).filePath(QStringLiteral(".git")));
+        bool sourceRepositoryHasHistory = false;
         if (localRepositoryExists) {
             QLockFile lock(localRepository + QStringLiteral(".lock"));
             lock.setStaleLockTime(0);
             if (!lock.tryLock(LockTimeoutMs)) return fail(tr("The per-database history repository is in use by another save."));
-            QString repositoryError;
-            if (!validateDatabaseRepository(localRepository, identity, &repositoryError)) return fail(repositoryError);
-            const auto clone = git(m_gitExecutable,
-                                   QString(),
-                                   {QStringLiteral("clone"), QStringLiteral("--quiet"), QStringLiteral("--no-hardlinks"),
-                                    localRepository, stagingRepository});
-            if (!clone.ok()) return fail(tr("The current encrypted history could not be staged."));
-            if (!git(m_gitExecutable, stagingRepository, {QStringLiteral("remote"), QStringLiteral("remove"), QStringLiteral("origin")}).ok()) {
-                return fail(tr("The temporary history staging reference could not be removed."));
+            sourceRepositoryHasHistory = git(m_gitExecutable,
+                                             localRepository,
+                                             {QStringLiteral("rev-parse"), QStringLiteral("--verify"), QStringLiteral("HEAD")}).ok();
+            if (sourceRepositoryHasHistory) {
+                QString repositoryError;
+                if (!validateDatabaseRepository(localRepository,
+                                                saveState.isCopy ? sourceIdentity : identity,
+                                                &repositoryError)) {
+                    return fail(repositoryError);
+                }
+                const auto clone = git(m_gitExecutable,
+                                       QString(),
+                                       {QStringLiteral("clone"), QStringLiteral("--quiet"), QStringLiteral("--no-hardlinks"),
+                                        localRepository, stagingRepository});
+                if (!clone.ok()) return fail(tr("The current encrypted history could not be staged."));
+                if (!git(m_gitExecutable, stagingRepository, {QStringLiteral("remote"), QStringLiteral("remove"), QStringLiteral("origin")}).ok()) {
+                    return fail(tr("The temporary history staging reference could not be removed."));
+                }
             }
-        } else if (!initializeDatabaseHistoryRepository(m_gitExecutable, stagingRepository)) {
+        }
+        if (!sourceRepositoryHasHistory && !initializeDatabaseHistoryRepository(m_gitExecutable, stagingRepository)) {
             return fail(tr("A staging history repository could not be initialized."));
+        }
+        if (!sourceRepositoryHasHistory && saveState.hadBundle && !saveState.bundle.value.isEmpty()) {
+            QByteArray inheritedBundle;
+            QString envelopeError;
+            if (!decodeEmbeddedHistoryEnvelope(saveState.bundle.value, sourceIdentity, &inheritedBundle, &envelopeError)) {
+                return fail(envelopeError);
+            }
+            const QString inheritedBundlePath = QDir(stagingDirectory->path()).filePath(QStringLiteral("inherited.bundle"));
+            if (!atomicReplace(inheritedBundlePath, inheritedBundle)) {
+                return fail(tr("The inherited encrypted history could not be staged."));
+            }
+            const auto verified = git(m_gitExecutable,
+                                      stagingRepository,
+                                      {QStringLiteral("bundle"), QStringLiteral("verify"), inheritedBundlePath});
+            const auto heads = git(m_gitExecutable,
+                                   stagingRepository,
+                                   {QStringLiteral("bundle"), QStringLiteral("list-heads"), inheritedBundlePath});
+            const QList<QByteArray> headLines = heads.out.trimmed().split('\n');
+            if (!verified.ok() || !heads.ok() || headLines.size() != 1
+                || !headLines.constFirst().trimmed().endsWith(QByteArrayLiteral(" refs/heads/main"))) {
+                return fail(tr("The inherited encrypted history bundle has invalid references or missing objects."));
+            }
+            const auto fetched = git(m_gitExecutable,
+                                     stagingRepository,
+                                     {QStringLiteral("fetch"), QStringLiteral("--no-tags"), inheritedBundlePath,
+                                      QStringLiteral("refs/heads/main:refs/remotes/inherited/main")});
+            const auto reset = fetched.ok()
+                                   ? git(m_gitExecutable,
+                                         stagingRepository,
+                                         {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("refs/remotes/inherited/main")})
+                                   : ProcessResult{};
+            if (!fetched.ok() || !reset.ok()) return fail(tr("The inherited encrypted history could not be imported."));
+            QString repositoryError;
+            if (!validateDatabaseRepository(stagingRepository, sourceIdentity, &repositoryError)) return fail(repositoryError);
+            sourceRepositoryHasHistory = true;
+        }
+        if (saveState.isCopy && sourceRepositoryHasHistory) {
+            QString repositoryError;
+            if (!rebindDatabaseRepository(stagingRepository, sourceIdentity, identity, &repositoryError)) {
+                return fail(repositoryError);
+            }
         }
         if (!commitDatabaseRepositoryAt(stagingRepository, revision, encryptedSnapshot, fingerprint)) {
             return fail(tr("The new encrypted history revision could not be staged."));
@@ -435,8 +510,8 @@ namespace Material
             return fail(tr("The per-database history bundle failed reference or object verification."));
         }
         QFile bundleFile(bundlePath);
-        if (!bundleFile.open(QIODevice::ReadOnly) || bundleFile.size() <= 0 || bundleFile.size() > MaximumEmbeddedBundleBytes) {
-            return fail(tr("The encrypted history bundle is empty or exceeds its 64 MiB limit."));
+        if (!bundleFile.open(QIODevice::ReadOnly) || !HistoryLimits::withinPackedBundleLimit(bundleFile.size())) {
+            return fail(tr("The encrypted history bundle is empty or exceeds its 256 MiB limit."));
         }
         const QByteArray bundle = bundleFile.readAll();
         if (bundle.size() != bundleFile.size()) return fail(tr("The encrypted history bundle could not be read completely."));
@@ -463,10 +538,18 @@ namespace Material
         if (!db || !db->metadata() || !db->metadata()->customData()) return;
         const auto found = m_databaseSaves.find(db.data());
         if (found == m_databaseSaves.end()) return;
-        if (persisted && !found->finalizationAttempted) recordSave(db);
+        const DatabaseSaveState state = found.value();
+        if (persisted && !state.finalizationAttempted) recordSave(db);
         if (!persisted) {
             cancelDatabaseSave(db);
             return;
+        }
+        if (state.restoreSourceMetadataAfterCopy) {
+            auto* customData = db->metadata()->customData();
+            if (state.hadIdentity) customData->set(DatabaseIdentityKey, state.identity);
+            else customData->remove(DatabaseIdentityKey);
+            if (state.hadBundle) customData->set(EmbeddedHistoryKey, state.bundle);
+            else customData->remove(EmbeddedHistoryKey);
         }
         db->markAsClean();
         m_databaseSaves.erase(found);
@@ -543,11 +626,11 @@ namespace Material
             const auto fetched = git(m_gitExecutable,
                                      candidateRepository,
                                      {QStringLiteral("fetch"), QStringLiteral("--no-tags"), bundlePath,
-                                      QStringLiteral("refs/heads/main:refs/heads/main")});
+                                      QStringLiteral("refs/heads/main:refs/remotes/embedded/main")});
             const auto reset = fetched.ok()
                                    ? git(m_gitExecutable,
                                          candidateRepository,
-                                         {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("refs/heads/main")})
+                                         {QStringLiteral("reset"), QStringLiteral("--hard"), QStringLiteral("refs/remotes/embedded/main")})
                                    : ProcessResult{};
             if (!fetched.ok() || !reset.ok()) {
                 return fail(tr("The embedded history bundle could not be imported into the validation repository."));
@@ -723,6 +806,121 @@ namespace Material
         return commit.ok();
     }
 
+    bool HistoryStore::rebindDatabaseRepository(const QString& repo,
+                                                const QString& sourceIdentity,
+                                                const QString& destinationIdentity,
+                                                QString* error)
+    {
+        const auto fail = [error](const QString& message) {
+            if (error) *error = message;
+            return false;
+        };
+        if (!isDatabaseIdentity(sourceIdentity) || !isDatabaseIdentity(destinationIdentity) || sourceIdentity == destinationIdentity) {
+            return fail(tr("The copied history identities are invalid."));
+        }
+        const auto head = git(m_gitExecutable, repo, {QStringLiteral("rev-parse"), QStringLiteral("--verify"), QStringLiteral("HEAD")});
+        if (!head.ok()) {
+            if (error) error->clear();
+            return true;
+        }
+        QString validationError;
+        if (!validateDatabaseRepository(repo, sourceIdentity, &validationError)) return fail(validationError);
+        const auto status = git(m_gitExecutable,
+                                repo,
+                                {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+        if (!status.ok() || !status.out.isEmpty()) return fail(tr("The copied history staging tree has unrecorded changes."));
+
+        struct ReboundRevision
+        {
+            QString sourceId;
+            QString destinationId;
+            HistoryRevision revision;
+        };
+        const QDir revisionsDirectory(QDir(repo).filePath(QStringLiteral("revisions")));
+        const QStringList files = revisionsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
+        if (files.isEmpty() || files.size() > HistoryLimits::MaximumHistoryAncestors) {
+            return fail(tr("The copied history revision inventory exceeds its limit."));
+        }
+        QVector<ReboundRevision> revisions;
+        revisions.reserve(files.size());
+        QSet<QString> newIds;
+        for (const QString& filename : files) {
+            const QString sourceId = filename.left(filename.size() - QStringLiteral(".json").size());
+            QFile metadata(revisionsDirectory.filePath(filename));
+            if (!isRevisionId(sourceId) || !metadata.open(QIODevice::ReadOnly)
+                || metadata.size() > MaximumRevisionMetadataBytes) {
+                return fail(tr("A copied history revision could not be read safely."));
+            }
+            QJsonParseError parseError;
+            const auto document = QJsonDocument::fromJson(metadata.readAll(), &parseError);
+            HistoryRevision revision = fromJson(document.object());
+            if (parseError.error != QJsonParseError::NoError || !revision.isValid() || revision.id != sourceId
+                || revision.databasePath != sourceIdentity) {
+                return fail(tr("A copied history revision has an invalid identity."));
+            }
+            QString destinationId;
+            do {
+                destinationId = QUuid::createUuid().toString(QUuid::WithoutBraces);
+            } while (newIds.contains(destinationId));
+            newIds.insert(destinationId);
+            revision.id = destinationId;
+            revision.databasePath = destinationIdentity;
+            revision.databaseName = QStringLiteral("Database %1").arg(destinationIdentity.left(8));
+            if (!revision.snapshotPath.isEmpty()) revision.snapshotPath = QStringLiteral("snapshots/%1.kdbx").arg(destinationId);
+            revisions.append({sourceId, destinationId, revision});
+        }
+
+        const QDir snapshotDirectory(QDir(repo).filePath(QStringLiteral("snapshots")));
+        const QDir fingerprintDirectory(QDir(repo).filePath(QStringLiteral("fingerprints")));
+        for (const auto& rebound : revisions) {
+            const QString sourceMetadata = revisionsDirectory.filePath(rebound.sourceId + QStringLiteral(".json"));
+            const QString destinationMetadata = revisionsDirectory.filePath(rebound.destinationId + QStringLiteral(".json"));
+            const QString sourceFingerprint = fingerprintDirectory.filePath(rebound.sourceId + QStringLiteral(".json"));
+            const QString destinationFingerprint = fingerprintDirectory.filePath(rebound.destinationId + QStringLiteral(".json"));
+            if (QFileInfo::exists(destinationMetadata) || QFileInfo::exists(destinationFingerprint)
+                || !atomicReplace(destinationMetadata, QJsonDocument(toJson(rebound.revision)).toJson(QJsonDocument::Compact))) {
+                return fail(tr("A copied history revision could not be written under its new identity."));
+            }
+            if (!rebound.revision.contentFingerprint.isEmpty()
+                && (!QFileInfo::exists(sourceFingerprint) || !QFile::copy(sourceFingerprint, destinationFingerprint))) {
+                return fail(tr("A copied history fingerprint could not be retained."));
+            }
+            if (!rebound.revision.snapshotPath.isEmpty()) {
+                const QString sourceSnapshot = snapshotDirectory.filePath(rebound.sourceId + QStringLiteral(".kdbx"));
+                const QString destinationSnapshot = snapshotDirectory.filePath(rebound.destinationId + QStringLiteral(".kdbx"));
+                if (QFileInfo::exists(destinationSnapshot) || !QFile::copy(sourceSnapshot, destinationSnapshot)) {
+                    return fail(tr("An encrypted history snapshot could not be retained under its new identity."));
+                }
+            }
+        }
+        for (const auto& rebound : revisions) {
+            if (!QFile::remove(revisionsDirectory.filePath(rebound.sourceId + QStringLiteral(".json")))) {
+                return fail(tr("An old revision record could not be retired from the copied history."));
+            }
+            if (QFileInfo::exists(fingerprintDirectory.filePath(rebound.sourceId + QStringLiteral(".json")))
+                && !QFile::remove(fingerprintDirectory.filePath(rebound.sourceId + QStringLiteral(".json")))) {
+                return fail(tr("An old fingerprint could not be retired from the copied history."));
+            }
+            if (QFileInfo::exists(snapshotDirectory.filePath(rebound.sourceId + QStringLiteral(".kdbx")))
+                && !QFile::remove(snapshotDirectory.filePath(rebound.sourceId + QStringLiteral(".kdbx")))) {
+                return fail(tr("An old encrypted snapshot could not be retired from the copied history."));
+            }
+        }
+        if (!atomicReplace(QDir(repo).filePath(DatabaseHistoryManifestName),
+                           QJsonDocument(databaseHistoryManifest(destinationIdentity)).toJson(QJsonDocument::Compact))) {
+            return fail(tr("The copied history manifest could not be rebound."));
+        }
+        const auto add = git(m_gitExecutable, repo, {QStringLiteral("add"), QStringLiteral("--all")});
+        const auto commit = add.ok()
+                                ? git(m_gitExecutable,
+                                      repo,
+                                      {QStringLiteral("commit"), QStringLiteral("--quiet"), QStringLiteral("-m"),
+                                       QStringLiteral("Copy encrypted database history to a new identity")})
+                                : ProcessResult{};
+        if (!commit.ok()) return fail(tr("The copied history identity change could not be recorded."));
+        return validateDatabaseRepository(repo, destinationIdentity, error);
+    }
+
     bool HistoryStore::validateDatabaseRepository(const QString& repo, const QString& identity, QString* error) const
     {
         const auto fail = [error](const QString& message) {
@@ -751,13 +949,15 @@ namespace Material
         const auto commitCount = git(m_gitExecutable, repo, {QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
         bool commitCountOk = false;
         const int commits = commitCount.out.trimmed().toInt(&commitCountOk);
-        if (!commitCount.ok() || !commitCountOk || commits <= 0 || commits > MaximumEmbeddedCommits) {
+        if (!commitCount.ok() || !commitCountOk || !HistoryLimits::withinHistoryAncestorLimit(commits)) {
             return fail(tr("The per-database history commit count is invalid or exceeds its limit."));
         }
         const auto objects = git(m_gitExecutable, repo, {QStringLiteral("rev-list"), QStringLiteral("--objects"), QStringLiteral("--all")});
         if (!objects.ok()) return fail(tr("The per-database history object list could not be read."));
         const QList<QByteArray> objectLines = objects.out.split('\n');
-        if (objectLines.size() > MaximumEmbeddedObjects + 1) {
+        qint64 objectCount = objectLines.size();
+        if (!objectLines.isEmpty() && objectLines.constLast().isEmpty()) --objectCount;
+        if (!HistoryLimits::withinGitObjectLimit(objectCount)) {
             return fail(tr("The per-database history object count exceeds its limit."));
         }
         const auto objectSizes = git(m_gitExecutable,
@@ -766,14 +966,17 @@ namespace Material
         if (!objectSizes.ok()) return fail(tr("The per-database history object sizes could not be checked."));
         qint64 totalObjectBytes = 0;
         const QList<QByteArray> sizeLines = objectSizes.out.split('\n');
-        if (sizeLines.size() > MaximumEmbeddedObjects + 1) {
+        qint64 sizeCount = sizeLines.size();
+        if (!sizeLines.isEmpty() && sizeLines.constLast().isEmpty()) --sizeCount;
+        if (!HistoryLimits::withinGitObjectLimit(sizeCount)) {
             return fail(tr("The per-database history object count exceeds its limit."));
         }
         for (const QByteArray& line : sizeLines) {
             if (line.isEmpty()) continue;
             bool sizeOk = false;
             const qint64 size = line.trimmed().toLongLong(&sizeOk);
-            if (!sizeOk || size < 0 || size > MaximumEmbeddedObjectBytes - totalObjectBytes) {
+            if (!sizeOk || !HistoryLimits::withinExpandedObjectLimit(size)
+                || size > HistoryLimits::MaximumExpandedObjectBytes - totalObjectBytes) {
                 return fail(tr("The per-database history expanded object data exceeds its limit."));
             }
             totalObjectBytes += size;
@@ -787,6 +990,9 @@ namespace Material
             const int tab = line.indexOf('\t');
             if (tab < 0 || !line.startsWith("100644 blob ")) return fail(tr("The per-database history contains an unsupported file entry."));
             const QString path = QString::fromUtf8(line.mid(tab + 1));
+            if (!HistoryLimits::withinNestedTreeLevelLimit(HistoryLimits::nestedTreeLevels(path))) {
+                return fail(tr("The per-database history tree exceeds its 256-level nesting limit."));
+            }
             if (path != DatabaseHistoryManifestName
                 && !QRegularExpression(QStringLiteral("^revisions/[0-9a-fA-F-]{36}\\.json$")).match(path).hasMatch()
                 && !QRegularExpression(QStringLiteral("^snapshots/[0-9a-fA-F-]{36}\\.kdbx$")).match(path).hasMatch()
@@ -795,13 +1001,13 @@ namespace Material
             }
             treePaths.insert(path);
         }
-        if (treePaths.size() < 3 || treePaths.size() > MaximumEmbeddedCommits * 3 + 1) {
+        if (treePaths.size() < 3 || treePaths.size() > HistoryLimits::MaximumHistoryAncestors * 3 + 1) {
             return fail(tr("The per-database history file count is invalid."));
         }
 
         const QDir revisionsDirectory(QDir(repo).filePath(QStringLiteral("revisions")));
         const QStringList revisionFiles = revisionsDirectory.entryList({QStringLiteral("*.json")}, QDir::Files, QDir::Name);
-        if (revisionFiles.isEmpty() || revisionFiles.size() > MaximumEmbeddedCommits
+        if (revisionFiles.isEmpty() || revisionFiles.size() > HistoryLimits::MaximumHistoryAncestors
             || treePaths.size() < revisionFiles.size() * 2 + 1) {
             return fail(tr("The per-database history revision inventory is invalid."));
         }
@@ -860,7 +1066,9 @@ namespace Material
                     return fail(tr("A revision fingerprint is not a valid JSON array."));
                 }
                 const auto entries = fingerprintDocument.array();
-                if (entries.size() > 100000) return fail(tr("A revision fingerprint contains too many entries."));
+                if (!HistoryLimits::withinFingerprintEntryLimit(entries.size())) {
+                    return fail(tr("A revision fingerprint contains too many entries."));
+                }
                 static const QRegularExpression fingerprintEntryPattern(QStringLiteral("^[a-f0-9]{24}:[a-f0-9]{24}$"));
                 for (const auto& entry : entries) {
                     if (!entry.isString() || !fingerprintEntryPattern.match(entry.toString()).hasMatch()) {
@@ -872,7 +1080,8 @@ namespace Material
             }
             if (!revision.snapshotPath.isEmpty()) {
                 QFile snapshot(snapshotsDirectory.filePath(QStringLiteral("%1.kdbx").arg(id)));
-                if (!snapshot.open(QIODevice::ReadOnly) || snapshot.size() < 12 || snapshot.size() > MaximumEmbeddedObjectBytes) {
+                if (!snapshot.open(QIODevice::ReadOnly) || snapshot.size() < 12
+                    || !HistoryLimits::withinExpandedObjectLimit(snapshot.size())) {
                     return fail(tr("The per-database history contains an invalid encrypted snapshot size."));
                 }
                 QCryptographicHash hash(QCryptographicHash::Sha256);
@@ -1183,7 +1392,8 @@ namespace Material
 
     HistoryRevision HistoryStore::createSaveRevision(const QSharedPointer<Database>& db,
                                                      QByteArray* fingerprintBytes,
-                                                     QByteArray* encryptedSnapshot) const
+                                                     QByteArray* encryptedSnapshot,
+                                                     const QString& comparisonIdentity) const
     {
         if (!db || !db->rootGroup() || db->filePath().isEmpty()) return {};
         const_cast<HistoryStore*>(this)->load();
@@ -1193,8 +1403,9 @@ namespace Material
         int groupCount = 0;
         const auto current = fingerprintOf(db, &entryCount, &groupCount);
         const QByteArray currentFingerprint = fingerprintJson(current);
-        const bool hadFingerprint = QFileInfo::exists(fingerprintPath(identity));
-        const auto previous = readFingerprint(fingerprintPath(identity));
+        const QString previousIdentity = isDatabaseIdentity(comparisonIdentity) ? comparisonIdentity : identity;
+        const bool hadFingerprint = QFileInfo::exists(fingerprintPath(previousIdentity));
+        const auto previous = readFingerprint(fingerprintPath(previousIdentity));
 
         HistoryRevision revision;
         revision.id = QUuid::createUuid().toString(QUuid::WithoutBraces);
@@ -1204,7 +1415,7 @@ namespace Material
         revision.entryCount = entryCount;
         revision.groupCount = groupCount;
         revision.contentFingerprint = fingerprintDigest(currentFingerprint);
-        const HistoryRevision last = revisionsForDatabase(db).value(0);
+        const HistoryRevision last = revisionsFor(previousIdentity).value(0);
         if (!hadFingerprint || !last.isValid()) {
             revision.kind = RevisionKind::Entry;
             revision.label = tr("First recorded save of this database - %n entry(s)", "", entryCount);

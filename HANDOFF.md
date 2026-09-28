@@ -1,3 +1,54 @@
+# Current task handoff, September 27, 2026
+
+## Overall status
+
+The combined work for issues #8 through #12 is incomplete. This continuation preserved evidence and implementation state; it did not finish the requested installer, minimize, production-style, embedded-history, or per-surface inventory work.
+
+## Current checkout and candidate state
+
+- The primary checkout is on `main` at `66ea73457baf76696e0da17ea20dc3dc91910333`. `origin/main` is `0343eeb11b02c51507cb19988418b7ba1dd1cf30`, leaving four local commits ahead before the current uncommitted changes are recorded.
+- The current embedded-history changes touch `src/gui/DatabaseWidget.cpp`, `src/gui/material/MaterialHistoryStore.cpp`, `src/gui/material/MaterialHistoryStore.h`, `src/gui/material/MaterialHistoryLimits.h`, `tests/TestMaterialHistory.cpp`, and `tests/TestMaterialHistory.h`.
+- A local production build and source receipt were previously recorded at `66ea73457baf76696e0da17ea20dc3dc91910333`. The later uncommitted changes have not received a fresh full production build.
+- The latest `testmaterialhistory` CTest run passed 1/1 in 40.57 seconds after malformed embedded-envelope coverage was added. The focused malformed-envelope case passed 3/3. These results are for the current local source state and do not establish packaged or interactive behavior.
+- No Status Hub session record or Tidbyt update was made because those tools were unavailable in this session.
+
+## Issue state
+
+### #8, installed runtime prompt
+
+The clean-source packaging candidate `a480f44225a106f5af73dd032fc594ade9ec3ec7` is present on `origin/codex/packaging-clean-source-diagnostic-20260927`. Its focused packaging check and the latest packaging run `36341043205` passed; release `v2.8.28601` contains `Setup.exe`. Installed, missing, corrupt, wrong-architecture, and outdated-runtime interactions remain unverified. The earlier isolated-desktop attempt could not connect, so no prompt-state capture is claimed.
+
+### #9, unexpected minimize
+
+No new reproduction was established. The source review found intentional minimize settings and actions but did not justify a source change. Reproduce on clean and upgraded profiles before changing behavior.
+
+### #10, production Material style
+
+The source candidate is on local branch `codex/issue-10-production-material-boundary-20260926` at `8cf39d9d7e1fd0339a31b01153030438f696a230`. Its source and focused-check reviews are complete. The branch has no verified `origin` ref yet. Real built-app interaction and captures remain unverified because the isolated desktop endpoint was unavailable.
+
+### #11, encrypted embedded history
+
+The current local changes add versioned KDBX history transfer, fresh identity and inherited ancestry for Save As, independent identity preservation for backups, divergent history union without merging database contents, KDBX3/KDBX4 round trips, malformed-envelope rejection, and explicit resource limits. The current limits are 256 MiB packed data, 1 GiB expanded object data, 1,000,000 Git objects, 100,000 history ancestors, and 256 nested tree levels.
+
+Focused coverage now includes KDBX3/KDBX4 save and reopen, Save As identity and ancestry, divergent-history union, malformed digest and bundle rejection, and limit helper boundaries. The current focused suite passes 1/1. Full production compilation after these changes, large hostile-input execution, all rollback and replay cases, and real packaged save/reopen interaction remain unverified.
+
+### #12, per-surface feature inventory
+
+The current executable inventory result is 1/172 rows green, with 171 findings. The full application and documentation-surface implementation, interaction ledger, and real capture evidence remain incomplete.
+
+A separate publication review found nine existing built-image receipts, but each records only the PNG hash and omits the exact `KeePassXC.exe` hash. All nine were excluded from publication for that provenance gap. No project-specific public gallery or page was created, and no image-delivery claim is made.
+
+## Next actions
+
+1. Rebuild the full production target from the exact current source and run the focused persistence cases that remain, including rollback, replay, oversized bundles, foreign identities, and backup behavior.
+2. Preserve and verify the #10 source candidate, then obtain real built-app evidence before integrating its user-facing changes.
+3. Reproduce #8 with the required installed, missing, corrupt, wrong-architecture, and outdated runtime states; do not infer the prompt source from a source search.
+4. Reproduce #9 on clean and upgraded profiles before making a behavior change.
+5. Continue #12 with the hand-written inventory as the source of truth. Each row still needs its implementation, localized copy, documentation, focused check, built interaction proof, and real capture.
+6. Keep issues open until their acceptance evidence is complete. Do not remove any active or unverified checkout or branch.
+
+No screenshot evidence is claimed for the pending runtime states. Historical handoffs below remain preserved as records of their named candidates.
+
 # Packaging diagnostic candidate, September 27, 2026
 
 The clean-source diagnostic repair is on `codex/packaging-clean-source-diagnostic-20260927` from `f73d2dd5572b16bdeac4ad3159bcef1b248d9d03`. It separates unreadable `HEAD`, a failed status command, and tracked or untracked checkout changes. The focused regression check and PowerShell parser check passed locally. No packaging build or GitHub Actions run was performed for this candidate. The latest GitHub Actions package run `35372345117` failed with the generic clean-source message, but its historical status paths were not logged, so the specific original path remains unknown.

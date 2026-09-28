@@ -4,9 +4,12 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialHistoryStore.h"
+#include "gui/material/MaterialHistoryLimits.h"
 #include "core/Database.h"
 #include "core/Entry.h"
 #include "core/Group.h"
+#include "core/Metadata.h"
+#include "format/KeePass2.h"
 #include "keys/PasswordKey.h"
 #include "config-keepassx-tests.h"
 #include <QCheckBox>
@@ -21,13 +24,84 @@
 #include <QDir>
 #include <QFile>
 #include <QProcess>
+#include <QCryptographicHash>
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QStandardPaths>
 #include <QTemporaryDir>
+#include <QtEndian>
 #include <future>
 
 using namespace Material;
+
+namespace
+{
+    QSharedPointer<CompositeKey> materialHistoryTestKey(const QString& password = QStringLiteral("a"))
+    {
+        auto key = QSharedPointer<CompositeKey>::create();
+        key->addKey(QSharedPointer<PasswordKey>::create(password));
+        return key;
+    }
+
+    bool saveWithEmbeddedHistory(HistoryStore& history,
+                                 const QSharedPointer<Database>& database,
+                                 const QString& path,
+                                 QString* error,
+                                 bool restoreSourceMetadataAfterCopy = false)
+    {
+        if (!history.beginDatabaseSave(database, path, restoreSourceMetadataAfterCopy)) {
+            if (error) *error = QStringLiteral("History preparation could not start.");
+            return false;
+        }
+        if (!history.embedLatestHistory(database, error)) {
+            history.cancelDatabaseSave(database);
+            return false;
+        }
+        if (!database->saveAs(path, Database::Atomic, {}, error)) {
+            history.cancelDatabaseSave(database);
+            return false;
+        }
+        history.finishEmbeddedHistory(database, true);
+        return true;
+    }
+
+    quint32 readKdbxVersion(const QString& path)
+    {
+        QFile file(path);
+        if (!file.open(QIODevice::ReadOnly)) return 0;
+        const QByteArray header = file.read(12);
+        if (header.size() != 12) return 0;
+        return qFromLittleEndian<quint32>(reinterpret_cast<const uchar*>(header.constData() + 8));
+    }
+
+    QByteArray materialHistoryFingerprint(const QSharedPointer<Database>& database)
+    {
+        QHash<QString, QString> entries;
+        for (const Group* group : database->rootGroup()->groupsRecursive(true)) {
+            if (group->isRecycled()) continue;
+            for (const Entry* entry : group->entries()) {
+                if (entry->isRecycled()) continue;
+                const QString uuid = entry->uuidToHex();
+                const QString state = QStringLiteral("%1|%2|%3")
+                                          .arg(uuid)
+                                          .arg(entry->timeInfo().lastModificationTime().toSecsSinceEpoch() * 1000)
+                                          .arg(group->uuidToHex());
+                const auto hash = [](const QString& value) {
+                    return QString::fromLatin1(
+                        QCryptographicHash::hash(value.toUtf8(), QCryptographicHash::Sha256).toHex().left(24));
+                };
+                entries.insert(hash(uuid), hash(state));
+            }
+        }
+        QStringList keys = entries.keys();
+        keys.sort();
+        QJsonArray fingerprint;
+        for (const auto& key : keys) fingerprint.append(QStringLiteral("%1:%2").arg(key, entries.value(key)));
+        return QCryptographicHash::hash(QJsonDocument(fingerprint).toJson(QJsonDocument::Compact), QCryptographicHash::Sha256)
+            .toHex();
+    }
+}
 
 void TestMaterialHistory::surfaceStateFiltersAndSelection()
 {
@@ -178,7 +252,8 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
     auto db = QSharedPointer<Database>::create();
     const QString encryptedPath = QDir(root.path()).filePath(QStringLiteral("private-name.kdbx"));
     QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), encryptedPath));
-    db->setFilePath(encryptedPath);
+    QString error;
+    QVERIFY2(db->open(encryptedPath, materialHistoryTestKey(), &error), qPrintable(error));
     auto* entry = new Entry;
     entry->setGroup(db->rootGroup());
     entry->setTitle(QStringLiteral("secret title that must not persist"));
@@ -186,7 +261,9 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
 
     HistoryStore store(root.path(), gitExecutable);
     QVERIFY(store.recordSave(db));
+    entry->beginUpdate();
     entry->setTitle(QStringLiteral("second private title"));
+    QVERIFY(entry->endUpdate());
     QVERIFY(store.recordSave(db));
     QVERIFY(store.recordEvent(db, QStringLiteral("Restored an entry revision"), RevisionKind::Entry));
     QCOMPARE(store.revisionsFor(db->filePath()).size(), 3);
@@ -204,10 +281,15 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
     QString snapshotError;
     const QByteArray snapshot = store.snapshot(savedRevision.id, &snapshotError);
     QVERIFY2(!snapshot.isEmpty(), qPrintable(snapshotError));
-    QFile encryptedSource(encryptedPath);
-    QVERIFY(encryptedSource.open(QIODevice::ReadOnly));
-    QCOMPARE(snapshot, encryptedSource.readAll());
     QVERIFY(!snapshot.contains("secret password that must not persist"));
+    const QString snapshotPath = QDir(root.path()).filePath(QStringLiteral("history-snapshot.kdbx"));
+    QFile snapshotFile(snapshotPath);
+    QVERIFY(snapshotFile.open(QIODevice::WriteOnly));
+    QCOMPARE(snapshotFile.write(snapshot), snapshot.size());
+    snapshotFile.close();
+    auto snapshotDatabase = QSharedPointer<Database>::create();
+    QVERIFY2(snapshotDatabase->open(snapshotPath, materialHistoryTestKey(), &snapshotError), qPrintable(snapshotError));
+    QCOMPARE(snapshotDatabase->rootGroup()->entriesRecursive(false).size(), db->rootGroup()->entriesRecursive(false).size());
     QVERIFY(store.revisionsFor(db->filePath()).at(0).snapshotPath.isEmpty());
 
     QProcess gitShow;
@@ -227,7 +309,7 @@ void TestMaterialHistory::gitStoreTransactionAndRestart()
                        QStringLiteral("HEAD")});
     QVERIFY(databaseLog.waitForFinished(10000));
     QCOMPARE(databaseLog.exitCode(), 0);
-    QCOMPARE(QString::fromUtf8(databaseLog.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
+    QCOMPARE(QString::fromUtf8(databaseLog.readAllStandardOutput()).trimmed(), QStringLiteral("3"));
 
     QFile state(QDir(repository).filePath(QStringLiteral("revisions.json")));
     QVERIFY(state.open(QIODevice::ReadOnly));
@@ -254,7 +336,10 @@ void TestMaterialHistory::gitStoreFailureDoesNotAdvanceFingerprint()
     QTemporaryDir root;
     QVERIFY(root.isValid());
     auto db = QSharedPointer<Database>::create();
-    db->setFilePath(QDir(root.path()).filePath(QStringLiteral("failure.kdbx")));
+    const QString databasePath = QDir(root.path()).filePath(QStringLiteral("failure.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), databasePath));
+    QString openError;
+    QVERIFY2(db->open(databasePath, materialHistoryTestKey(), &openError), qPrintable(openError));
     HistoryStore store(root.path(), QDir(root.path()).filePath(QStringLiteral("missing-git.exe")));
     QSignalSpy failureSpy(&store, &HistoryStore::writeFailed);
     QVERIFY(!store.recordSave(db));
@@ -306,7 +391,8 @@ void TestMaterialHistory::gitStoreSerializesConcurrentWriters()
         auto db = QSharedPointer<Database>::create();
         const QString path = QDir(storage).filePath(name + QStringLiteral(".kdbx"));
         if (!QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path)) return false;
-        db->setFilePath(path);
+        QString error;
+        if (!db->open(path, materialHistoryTestKey(), &error)) return false;
         HistoryStore store(storage, gitExecutable);
         return store.recordSave(db);
     };
@@ -323,6 +409,206 @@ void TestMaterialHistory::gitStoreSerializesConcurrentWriters()
                QStringLiteral("rev-list"), QStringLiteral("--count"), QStringLiteral("HEAD")});
     QVERIFY(log.waitForFinished(10000));
     QCOMPARE(QString::fromUtf8(log.readAllStandardOutput()).trimmed(), QStringLiteral("2"));
+}
+
+void TestMaterialHistory::embeddedHistoryLimitsMatchTheStorageContract()
+{
+    QCOMPARE(HistoryLimits::MaximumPackedBundleBytes, 256LL * 1024 * 1024);
+    QCOMPARE(HistoryLimits::MaximumExpandedObjectBytes, 1024LL * 1024 * 1024);
+    QCOMPARE(HistoryLimits::MaximumGitObjects, 1'000'000LL);
+    QCOMPARE(HistoryLimits::MaximumHistoryAncestors, 100'000LL);
+    QCOMPARE(HistoryLimits::MaximumNestedTreeLevels, 256);
+
+    QVERIFY(HistoryLimits::withinPackedBundleLimit(1));
+    QVERIFY(HistoryLimits::withinPackedBundleLimit(HistoryLimits::MaximumPackedBundleBytes));
+    QVERIFY(!HistoryLimits::withinPackedBundleLimit(HistoryLimits::MaximumPackedBundleBytes + 1));
+    QVERIFY(HistoryLimits::withinExpandedObjectLimit(HistoryLimits::MaximumExpandedObjectBytes));
+    QVERIFY(!HistoryLimits::withinExpandedObjectLimit(HistoryLimits::MaximumExpandedObjectBytes + 1));
+    QVERIFY(HistoryLimits::withinGitObjectLimit(HistoryLimits::MaximumGitObjects));
+    QVERIFY(!HistoryLimits::withinGitObjectLimit(HistoryLimits::MaximumGitObjects + 1));
+    QVERIFY(HistoryLimits::withinHistoryAncestorLimit(HistoryLimits::MaximumHistoryAncestors));
+    QVERIFY(!HistoryLimits::withinHistoryAncestorLimit(HistoryLimits::MaximumHistoryAncestors + 1));
+    QVERIFY(HistoryLimits::withinNestedTreeLevelLimit(256));
+    QVERIFY(!HistoryLimits::withinNestedTreeLevelLimit(257));
+    QCOMPARE(HistoryLimits::nestedTreeLevels(QStringLiteral("revisions/one.json")), 2);
+    const QString maximumDepth = QStringLiteral("level/").repeated(255) + QStringLiteral("leaf.json");
+    const QString excessiveDepth = QStringLiteral("level/").repeated(256) + QStringLiteral("leaf.json");
+    QVERIFY(HistoryLimits::withinNestedTreeLevelLimit(HistoryLimits::nestedTreeLevels(maximumDepth)));
+    QVERIFY(!HistoryLimits::withinNestedTreeLevelLimit(HistoryLimits::nestedTreeLevels(excessiveDepth)));
+}
+
+void TestMaterialHistory::embeddedHistorySurvivesKdbx3AndKdbx4RoundTrips()
+{
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
+    struct FormatFixture
+    {
+        QString name;
+        quint32 version;
+        QString password;
+    };
+    const QList<FormatFixture> fixtures{
+        {QStringLiteral("Format300.kdbx"), KeePass2::FILE_VERSION_3, QStringLiteral("a")},
+        {QStringLiteral("Format400.kdbx"), KeePass2::FILE_VERSION_4, QStringLiteral("t")},
+    };
+    for (const auto& fixture : fixtures) {
+        QTemporaryDir root;
+        QVERIFY(root.isValid());
+        const QString path = QDir(root.path()).filePath(QStringLiteral("history-round-trip.kdbx"));
+        QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QLatin1Char('/') + fixture.name, path));
+        auto database = QSharedPointer<Database>::create();
+        QString error;
+        QVERIFY2(database->open(path, materialHistoryTestKey(fixture.password), &error), qPrintable(error));
+        QCOMPARE(readKdbxVersion(path) & 0xffff0000U, fixture.version);
+
+        HistoryStore history(QDir(root.path()).filePath(QStringLiteral("local-history")), gitExecutable);
+        QVERIFY2(saveWithEmbeddedHistory(history, database, path, &error), qPrintable(error));
+        QCOMPARE(readKdbxVersion(path) & 0xffff0000U, fixture.version);
+
+        auto reopened = QSharedPointer<Database>::create();
+        QVERIFY2(reopened->open(path, materialHistoryTestKey(fixture.password), &error), qPrintable(error));
+        QVERIFY(!reopened->metadata()->customData()->value(QStringLiteral("KeePassXC/History/BundleV1")).isEmpty());
+        HistoryStore restored(QDir(root.path()).filePath(QStringLiteral("restored-history")), gitExecutable);
+        QVERIFY2(restored.hydrateDatabase(reopened, &error), qPrintable(error));
+        QCOMPARE(restored.revisionsForDatabase(reopened).size(), 1);
+    }
+}
+
+void TestMaterialHistory::rejectsMalformedEmbeddedHistoryBeforeLocalImport()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
+    const QString path = QDir(root.path()).filePath(QStringLiteral("malformed-history.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path));
+    auto database = QSharedPointer<Database>::create();
+    QString error;
+    QVERIFY2(database->open(path, materialHistoryTestKey(), &error), qPrintable(error));
+
+    const QString identity(64, QLatin1Char('a'));
+    const QString identityKey = QStringLiteral("KeePassXC/History/DatabaseId");
+    const QString bundleKey = QStringLiteral("KeePassXC/History/BundleV1");
+    database->metadata()->customData()->set(identityKey, identity);
+    HistoryStore history(QDir(root.path()).filePath(QStringLiteral("local-history")), gitExecutable);
+    const QString localRepository = history.databaseRepositoryPath(identity);
+
+    const QByteArray invalidBundle = QByteArrayLiteral("not a git bundle");
+    const QByteArray correctDigest = QCryptographicHash::hash(invalidBundle, QCryptographicHash::Sha256).toHex();
+    const QString badDigestEnvelope = QStringLiteral("1:%1:%2:%3")
+                                         .arg(identity, QString(64, QLatin1Char('0')), QString::fromLatin1(invalidBundle.toBase64()));
+    database->metadata()->customData()->set(bundleKey, badDigestEnvelope);
+    QVERIFY(!history.hydrateDatabase(database, &error));
+    QVERIFY(!error.isEmpty());
+    QVERIFY(!QFileInfo::exists(QDir(localRepository).filePath(QStringLiteral(".git"))));
+
+    const QString invalidBundleEnvelope = QStringLiteral("1:%1:%2:%3")
+                                              .arg(identity, QString::fromLatin1(correctDigest), QString::fromLatin1(invalidBundle.toBase64()));
+    database->metadata()->customData()->set(bundleKey, invalidBundleEnvelope);
+    error.clear();
+    QVERIFY(!history.hydrateDatabase(database, &error));
+    QVERIFY(!error.isEmpty());
+    QVERIFY(!QFileInfo::exists(QDir(localRepository).filePath(QStringLiteral(".git"))));
+}
+
+void TestMaterialHistory::saveAsInheritsHistoryUnderAFreshIdentity()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
+    const QString sourcePath = QDir(root.path()).filePath(QStringLiteral("source.kdbx"));
+    const QString destinationPath = QDir(root.path()).filePath(QStringLiteral("copy.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), sourcePath));
+    auto database = QSharedPointer<Database>::create();
+    QString error;
+    QVERIFY2(database->open(sourcePath, materialHistoryTestKey(), &error), qPrintable(error));
+    HistoryStore sourceHistory(QDir(root.path()).filePath(QStringLiteral("source-history")), gitExecutable);
+    QVERIFY2(saveWithEmbeddedHistory(sourceHistory, database, sourcePath, &error), qPrintable(error));
+
+    Entry* entry = database->rootGroup()->entriesRecursive(false).value(0);
+    QVERIFY(entry);
+    entry->beginUpdate();
+    entry->setTitle(QStringLiteral("Save As copied history"));
+    QVERIFY(entry->endUpdate());
+    database->markAsModified();
+    QVERIFY2(saveWithEmbeddedHistory(sourceHistory, database, sourcePath, &error), qPrintable(error));
+    const QString sourceIdentity = sourceHistory.databaseIdentity(database);
+    QCOMPARE(sourceHistory.revisionsFor(sourceIdentity).size(), 2);
+
+    QVERIFY2(saveWithEmbeddedHistory(sourceHistory, database, destinationPath, &error), qPrintable(error));
+    const QString destinationIdentity = sourceHistory.databaseIdentity(database);
+    QVERIFY(destinationIdentity != sourceIdentity);
+    QCOMPARE(sourceHistory.revisionsFor(sourceIdentity).size(), 2);
+    QCOMPARE(sourceHistory.revisionsFor(destinationIdentity).size(), 3);
+
+    auto reopened = QSharedPointer<Database>::create();
+    QVERIFY2(reopened->open(destinationPath, materialHistoryTestKey(), &error), qPrintable(error));
+    QCOMPARE(reopened->metadata()->customData()->value(QStringLiteral("KeePassXC/History/DatabaseId")), destinationIdentity);
+    const QByteArray reopenedFingerprint = materialHistoryFingerprint(reopened);
+    const auto copiedRevisions = sourceHistory.revisionsFor(destinationIdentity);
+    bool embeddedFingerprintMatches = false;
+    QStringList recordedFingerprints;
+    for (const auto& revision : copiedRevisions) {
+        recordedFingerprints.append(revision.contentFingerprint);
+        embeddedFingerprintMatches = embeddedFingerprintMatches || revision.contentFingerprint.toLatin1() == reopenedFingerprint;
+    }
+    QVERIFY2(embeddedFingerprintMatches,
+             qPrintable(QStringLiteral("Reopened database fingerprint %1 did not match copied revisions %2")
+                            .arg(QString::fromLatin1(reopenedFingerprint), recordedFingerprints.join(QLatin1Char(',')))));
+    HistoryStore restored(QDir(root.path()).filePath(QStringLiteral("destination-history")), gitExecutable);
+    QVERIFY2(restored.hydrateDatabase(reopened, &error), qPrintable(error));
+    QCOMPARE(restored.revisionsForDatabase(reopened).size(), 3);
+    QCOMPARE(reopened->rootGroup()->entriesRecursive(false).value(0)->title(), QStringLiteral("Save As copied history"));
+
+    auto original = QSharedPointer<Database>::create();
+    QVERIFY2(original->open(sourcePath, materialHistoryTestKey(), &error), qPrintable(error));
+    QCOMPARE(original->metadata()->customData()->value(QStringLiteral("KeePassXC/History/DatabaseId")), sourceIdentity);
+}
+
+void TestMaterialHistory::concurrentDatabaseHistoriesUnionWithoutMergingDatabaseContent()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString gitExecutable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY2(!gitExecutable.isEmpty(), "The real git executable is required for this integration test");
+    const QString basePath = QDir(root.path()).filePath(QStringLiteral("base.kdbx"));
+    const QString firstPath = QDir(root.path()).filePath(QStringLiteral("copy-a.kdbx"));
+    const QString secondPath = QDir(root.path()).filePath(QStringLiteral("copy-b.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), basePath));
+    auto base = QSharedPointer<Database>::create();
+    QString error;
+    QVERIFY2(base->open(basePath, materialHistoryTestKey(), &error), qPrintable(error));
+    HistoryStore firstHistory(QDir(root.path()).filePath(QStringLiteral("device-a")), gitExecutable);
+    QVERIFY2(saveWithEmbeddedHistory(firstHistory, base, basePath, &error), qPrintable(error));
+    QVERIFY(QFile::copy(basePath, firstPath));
+    QVERIFY(QFile::copy(basePath, secondPath));
+
+    auto first = QSharedPointer<Database>::create();
+    auto second = QSharedPointer<Database>::create();
+    QVERIFY2(first->open(firstPath, materialHistoryTestKey(), &error), qPrintable(error));
+    QVERIFY2(second->open(secondPath, materialHistoryTestKey(), &error), qPrintable(error));
+    HistoryStore secondHistory(QDir(root.path()).filePath(QStringLiteral("device-b")), gitExecutable);
+    QVERIFY2(firstHistory.hydrateDatabase(first, &error), qPrintable(error));
+    QVERIFY2(secondHistory.hydrateDatabase(second, &error), qPrintable(error));
+    QCOMPARE(firstHistory.revisionsForDatabase(first).size(), 1);
+    QCOMPARE(secondHistory.revisionsForDatabase(second).size(), 1);
+
+    Entry* firstEntry = first->rootGroup()->entriesRecursive(false).value(0);
+    Entry* secondEntry = second->rootGroup()->entriesRecursive(false).value(0);
+    QVERIFY(firstEntry && secondEntry);
+    firstEntry->setTitle(QStringLiteral("Concurrent copy A"));
+    first->markAsModified();
+    QVERIFY2(saveWithEmbeddedHistory(firstHistory, first, firstPath, &error), qPrintable(error));
+    secondEntry->setTitle(QStringLiteral("Concurrent copy B"));
+    second->markAsModified();
+    QVERIFY2(saveWithEmbeddedHistory(secondHistory, second, secondPath, &error), qPrintable(error));
+
+    const QString sharedIdentity = firstHistory.databaseIdentity(first);
+    QCOMPARE(secondHistory.databaseIdentity(second), sharedIdentity);
+    QVERIFY2(firstHistory.hydrateDatabase(second, &error), qPrintable(error));
+    QCOMPARE(firstHistory.revisionsFor(sharedIdentity).size(), 3);
+    QCOMPARE(second->rootGroup()->entriesRecursive(false).value(0)->title(), QStringLiteral("Concurrent copy B"));
 }
 
 void TestMaterialHistory::restoresDeletedEntryFromPerDatabaseRepository()

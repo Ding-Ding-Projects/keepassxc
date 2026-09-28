@@ -126,7 +126,9 @@ namespace Material
          */
         bool recordSave(const QSharedPointer<Database>& db);
         /** Add the stable identity before the primary KDBX write. */
-        bool beginDatabaseSave(const QSharedPointer<Database>& db, const QString& destinationPath);
+        bool beginDatabaseSave(const QSharedPointer<Database>& db,
+                               const QString& destinationPath,
+                               bool restoreSourceMetadataAfterCopy = false);
         /** Roll back pre-save identity metadata after a failed primary save. */
         void cancelDatabaseSave(const QSharedPointer<Database>& db, bool restoreModifiedState = false);
         /** Prepare a bounded history bundle in encrypted KDBX custom data before the primary save. */
@@ -190,7 +192,8 @@ namespace Material
         bool migrateLegacy();
         HistoryRevision createSaveRevision(const QSharedPointer<Database>& db,
                                            QByteArray* fingerprint,
-                                           QByteArray* encryptedSnapshot) const;
+                                           QByteArray* encryptedSnapshot,
+                                           const QString& comparisonIdentity = {}) const;
         bool commitDatabaseRepository(const HistoryRevision& revision,
                                       const QByteArray& encryptedSnapshot,
                                       const QByteArray& fingerprint);
@@ -198,6 +201,10 @@ namespace Material
                                        const HistoryRevision& revision,
                                        const QByteArray& encryptedSnapshot,
                                        const QByteArray& fingerprint);
+        bool rebindDatabaseRepository(const QString& repository,
+                                     const QString& sourceIdentity,
+                                     const QString& destinationIdentity,
+                                     QString* error = nullptr);
         bool commitDatabaseEvent(const HistoryRevision& revision, const QByteArray& fingerprint);
         bool mergeStagedDatabaseRepository(const QString& identity,
                                            const QString& stagingRepository,
@@ -216,6 +223,9 @@ namespace Material
             bool hadBundle = false;
             bool hadSavedBundle = false;
             bool wasModified = false;
+            bool isCopy = false;
+            bool restoreSourceMetadataAfterCopy = false;
+            QString sourceDatabaseIdentity;
             QString databaseIdentity;
             QSharedPointer<QTemporaryDir> stagingDirectory;
             QString stagingRepository;
