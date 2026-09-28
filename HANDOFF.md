@@ -1,5 +1,11 @@
 # Current task handoff, September 27, 2026
 
+## Documentation publication recovery, September 28, 2026
+
+- Documentation publishing runs `36362264327` and `36363860002` failed on source `ab1e3d5622c3390c72ce144f112c580e6e7268c9` with `Current article bytes differ from immutable evidence.`
+- `site/content-manifest.json` referred to article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` had changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`. The manifest now refers to the snapshot that contains the current article bytes.
+- The updated candidate is based on `origin/main`. Local site-build verification and a new hosted documentation run are pending.
+
 ## Overall status
 
 The combined work for issues #8 through #12 is incomplete. This continuation preserved evidence and implementation state; it did not finish the requested installer, minimize, production-style, embedded-history, or per-surface inventory work.
