@@ -6,7 +6,7 @@ The combined work for issues #8 through #12 is incomplete. This continuation pre
 
 ## Current checkout and candidate state
 
-- The primary checkout is on `main` at `66ea73457baf76696e0da17ea20dc3dc91910333`. `origin/main` is `0343eeb11b02c51507cb19988418b7ba1dd1cf30`, leaving four local commits ahead before the current uncommitted changes are recorded.
+- Before preservation, the primary checkout was on `main` at `66ea73457baf76696e0da17ea20dc3dc91910333`, four commits ahead of `origin/main` at `0343eeb11b02c51507cb19988418b7ba1dd1cf30`. The current source and test changes are preserved in commit `9e4fe8bf`.
 - The current embedded-history changes touch `src/gui/DatabaseWidget.cpp`, `src/gui/material/MaterialHistoryStore.cpp`, `src/gui/material/MaterialHistoryStore.h`, `src/gui/material/MaterialHistoryLimits.h`, `tests/TestMaterialHistory.cpp`, and `tests/TestMaterialHistory.h`.
 - A local production build and source receipt were previously recorded at `66ea73457baf76696e0da17ea20dc3dc91910333`. The later uncommitted changes have not received a fresh full production build.
 - The latest `testmaterialhistory` CTest run passed 1/1 in 40.57 seconds after malformed embedded-envelope coverage was added. The focused malformed-envelope case passed 3/3. These results are for the current local source state and do not establish packaged or interactive behavior.
