@@ -4,6 +4,13 @@
 
 The combined work for issues #8 through #12 is incomplete. This continuation preserved evidence and implementation state; it did not finish the requested installer, minimize, production-style, embedded-history, or per-surface inventory work.
 
+## Current documentation publication recovery, September 28, 2026
+
+- `main` is dewed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. Documentation publication run `36362264327` is red because `site/content-manifest.json` still referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
+- The local manifest now references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`; this recovery edit has not yet been pre-dewed or locally validated. The first `npm run build --prefix site` attempt stopped at the source-commit guard because the manifest edit was still uncommitted; it produced no site output.
+- Package run `36362264321` is still running during the pinned Qt 6.8.3 installation. No terminal package result or release is claimed.
+- The focused `testmaterialhistory` CTest result remains 1/1 passed in 40.57 seconds. This does not verify the production package or interactive database-history behavior.
+
 ## Current checkout and candidate state
 
 - Before preservation, the primary checkout was on `main` at `66ea73457baf76696e0da17ea20dc3dc91910333`, four commits ahead of `origin/main` at `0343eeb11b02c51507cb19988418b7ba1dd1cf30`. The current source and test changes are preserved in commit `9e4fe8bf`.
@@ -24,7 +31,7 @@ No new reproduction was established. The source review found intentional minimiz
 
 ### #10, production Material style
 
-The source candidate is on local branch `codex/issue-10-production-material-boundary-20260926` at `8cf39d9d7e1fd0339a31b01153030438f696a230`. Its source and focused-check reviews are complete. The branch has no verified `origin` ref yet. Real built-app interaction and captures remain unverified because the isolated desktop endpoint was unavailable.
+The source candidate is on `origin/codex/issue-10-production-material-boundary-20260926` at `8cf39d9d7e1fd0339a31b01153030438f696a230`. Its source and focused-check reviews are complete. Real built-app interaction and captures remain unverified because the isolated desktop endpoint was unavailable.
 
 ### #11, encrypted embedded history
 
