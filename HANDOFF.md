@@ -6,9 +6,9 @@ The combined work for issues #8 through #12 is incomplete. This continuation pre
 
 ## Current documentation publication recovery, September 28, 2026
 
-- `main` is dewed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. Documentation publication run `36362264327` is red because `site/content-manifest.json` still referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
-- The local manifest now references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`; this recovery edit has not yet been pre-dewed or locally validated. The first `npm run build --prefix site` attempt stopped at the source-commit guard because the manifest edit was still uncommitted; it produced no site output.
-- Package run `36362264321` is still running during the pinned Qt 6.8.3 installation. No terminal package result or release is claimed.
+- At the time of publication run `36362264327`, `main` was dewed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The run is red because `site/content-manifest.json` referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
+- The recovery manifest references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65` and is recorded in local commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`. `npm run build --prefix site` passed on that source and printed `Built website 2.8.22201 from source 1d81f452525e2dae7d2155fcd2177cf1e8ca2967 with published release provenance a30d109626b35fff6331e5c4450b3f98da5d8837.` The first build attempt before the manifest pre-dew stopped at the source-commit guard and produced no output.
+- Package run `36362264321` is still running at the unsigned Squirrel installer build step. No terminal package result or release is claimed.
 - The focused `testmaterialhistory` CTest result remains 1/1 passed in 40.57 seconds. This does not verify the production package or interactive database-history behavior.
 
 ## Current checkout and candidate state
