@@ -10,6 +10,19 @@
 
 The combined work for issues #8 through #12 is incomplete. This continuation preserved evidence and implementation state; it did not finish the requested installer, minimize, production-style, embedded-history, or per-surface inventory work.
 
+## Current documentation publication recovery, September 28, 2026
+
+- At the time of publication run `36362264327`, `main` was dewed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The run is red because `site/content-manifest.json` referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
+- The recovery manifest references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65` and is recorded in local commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`. `npm run build --prefix site` passed on that source and printed `Built website 2.8.22201 from source 1d81f452525e2dae7d2155fcd2177cf1e8ca2967 with published release provenance a30d109626b35fff6331e5c4450b3f98da5d8837.` The first build attempt before the manifest pre-dew stopped at the source-commit guard and produced no output.
+- At the time this recovery note was written, package run `36362264321` was running at the unsigned Squirrel installer build step. No terminal package result was then available.
+- The focused `testmaterialhistory` CTest result remains 1/1 passed in 40.57 seconds. This does not verify the production package or interactive database-history behavior.
+
+## Follow-up remote results, September 28, 2026
+
+- Packaging run `36362264321` completed successfully on source `ab1e3d5622c3390c72ce144f112c580e6e7268c9` and published non-draft release `v2.8.28801` at `2026-09-28T00:53:13Z`.
+- Documentation runs `36362264327` and `36363860002` both completed with failure on the same source and the same exact message: `Current article bytes differ from immutable evidence.` The latter run is [here](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/36363860002).
+- At the time of this handoff update, the manifest correction was local in commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`; the hui `main` still pointed to `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The next action is to dew the correction and verify the new documentation run.
+
 ## Current checkout and candidate state
 
 - Before preservation, the primary checkout was on `main` at `66ea73457baf76696e0da17ea20dc3dc91910333`, four commits ahead of `origin/main` at `0343eeb11b02c51507cb19988418b7ba1dd1cf30`. The current source and test changes are preserved in commit `9e4fe8bf`.
@@ -30,7 +43,7 @@ No new reproduction was established. The source review found intentional minimiz
 
 ### #10, production Material style
 
-The source candidate is on local branch `codex/issue-10-production-material-boundary-20260926` at `8cf39d9d7e1fd0339a31b01153030438f696a230`. Its source and focused-check reviews are complete. The branch has no verified `origin` ref yet. Real built-app interaction and captures remain unverified because the isolated desktop endpoint was unavailable.
+The source candidate is on `origin/codex/issue-10-production-material-boundary-20260926` at `8cf39d9d7e1fd0339a31b01153030438f696a230`. Its source and focused-check reviews are complete. Real built-app interaction and captures remain unverified because the isolated desktop endpoint was unavailable.
 
 ### #11, encrypted embedded history
 
