@@ -2114,10 +2114,7 @@ void MainWindow::showEvent(QShowEvent* event)
     // fail at link time on a platform that does not compile it.
 #ifdef Q_OS_WIN
     Material::WindowChrome::install(this);
-    // The application draws its own caption; the desktop keeps the frame.
-    if (!QCoreApplication::arguments().contains(QStringLiteral("--native-caption"))) {
-        Material::WindowChrome::installFrameless(this);
-    }
+    Material::WindowChrome::installFrameless(this);
 #endif
 
     // State plainly, once, that the humour level styles warnings and errors too.
@@ -2565,13 +2562,6 @@ void MainWindow::applySettingsChanges()
     m_ui->toolBar->setMovable(false);
     addToolBar(Qt::TopToolBarArea, m_ui->toolBar);
 
-    bool isOk = false;
-    const auto toolButtonStyle =
-        static_cast<Qt::ToolButtonStyle>(config()->get(Config::GUI_ToolButtonStyle).toInt(&isOk));
-    if (isOk) {
-        m_ui->toolBar->setToolButtonStyle(toolButtonStyle);
-    }
-
     updateTrayIcon();
 
     kpxcApp->applyFontSize();
@@ -2976,9 +2966,7 @@ void MainWindow::initViewMenu()
         // setWindowFlags() recreates the native window; the chrome and the
         // frameless caption belong to the handle, so they are put back here.
         Material::WindowChrome::install(this);
-        if (!QCoreApplication::arguments().contains(QStringLiteral("--native-caption"))) {
-            Material::WindowChrome::installFrameless(this);
-        }
+        Material::WindowChrome::installFrameless(this);
 #endif
     });
     // Set checked after connecting to act on a toggle in state (default state is unchecked)

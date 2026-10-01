@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Galat akses untuk berkas konfigurasi %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Hanya ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Hanya teks</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Teks di sebelah ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Teks di bawah ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Ikuti gaya</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Antarmuka Pengguna</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Gaya tombol bilah perkakas</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bilah perkakas dapat dipindah</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(mulai ulang program untuk mengaktifkan)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Gaya tombol bilah alat:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1269,10 +1241,6 @@ Apakah Anda ingin menimpa kunci akses di %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Tipe peramban:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Gaya tombol bilah perkakas</translation>
     </message>
     <message>
         <source>Config Location:</source>

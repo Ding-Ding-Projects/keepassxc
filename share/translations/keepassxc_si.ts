@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>වින්‍යාස ගොනුව %1සඳහා ප්‍රවේශ දෝෂයකි</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>නිරූපකය පමණි</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>පෙළ පමණි</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>නිරූපකය අසල පෙළ</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>නිරූපකය යටතේ පෙළ</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>ශෛලිය අනුගමනය කරන්න</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>ඒකවර්ණ</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>පරිශ්‍රීලක අතුරුමුහුණත</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>චංචල මෙවලම් තීරුව</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(සක්රිය කිරීමට වැඩසටහන නැවත ආරම්භ කරන්න)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1267,10 +1239,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>බ්‍රවුසර වර්ගය:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>මෙවලම් තීරු බොත්තම් විලාසය</translation>
     </message>
     <message>
         <source>Config Location:</source>

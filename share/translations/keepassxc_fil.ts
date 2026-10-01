@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Error sa pag-access para sa config file na %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Icon lamang</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Text lamang</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text sa tabi ng icon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text sa ilalim ng icon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Sundin ang istilo</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochrome</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>User Interface</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo ng button ng toolbar</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Naigagalaw na toolbar</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(i-restart ang program para i-activate)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Estilo ng button ng toolbar:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1267,10 +1239,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Uri ng browser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo ng button ng toolbar</translation>
     </message>
     <message>
         <source>Config Location:</source>

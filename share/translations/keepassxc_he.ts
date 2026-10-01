@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>שגיאת גישה לקובץ התצורה %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>סמל בלבד</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>מלל בלבד</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>מלל לצד סמל</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>מלל מתחת לסמל</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>עקוב אחר הסגנון</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>מונוכרום</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>מנשק המשתמש</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>סגנון לחצן סרגל כלים</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>סרגל כלים ניתן להזזה</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(איתחול התוכנית להפעלה)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>סגנון לחצן סרגל כלים:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1307,10 +1279,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>סוג דפדפן:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>סגנון לחצן סרגל כלים</translation>
     </message>
     <message>
         <source>Config Location:</source>

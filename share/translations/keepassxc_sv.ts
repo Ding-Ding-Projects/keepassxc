@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Åtkomstfel för konfigurationsfil %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Endast Ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Endast text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text bredvid ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text under ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Följ stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Användargränssnitt</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knappstil för verktygsfält</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Flyttbart verktygsfält</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(starta om programmet för att aktivera)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knappstil för verktygsfält:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1299,10 +1271,6 @@ Vill du skriva över passnyckeln i %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Webbläsartyp:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knappstil för verktygsfält</translation>
     </message>
     <message>
         <source>Config Location:</source>

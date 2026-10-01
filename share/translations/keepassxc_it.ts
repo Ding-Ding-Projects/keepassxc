@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Errore di accesso per il file di configurazione %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Solo icone</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Testo accanto alle icone</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Testo sotto le icone</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Segui stile</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monocromatica</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Interfaccia utente</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stile pulsante barra degli strumenti</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Barra degli strumenti spostabile</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(per attivare riavvia il programma)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stile pulsanti della barra degli strumenti:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1270,10 +1242,6 @@ Vuoi sovrascrivere la passkey in %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Tipologia di browser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Stile pulsante barra degli strumenti</translation>
     </message>
     <message>
         <source>Config Location:</source>

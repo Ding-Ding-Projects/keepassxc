@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Грешка при достъп до файла с настройките %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Само пиктограма</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Само текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст до пиктограмите</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст под пиктограмите</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Следване на стила</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Едноцветни</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Потребителски интерфейс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стил на бутоните от лентата с инструменти</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Преместваема лента с инструменти</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(необходим рестарт)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стил на бутоните от лентата с инструменти:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1311,10 +1283,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Вид мрежов четец:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стил на бутоните в лентата с инструменти</translation>
     </message>
     <message>
         <source>Config Location:</source>

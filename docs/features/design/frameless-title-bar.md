@@ -10,7 +10,7 @@ Dragging the bar moves the window, double-clicking it maximises or restores, rig
 
 ## Configuration
 
-None. Launching with `--native-caption` keeps the desktop's caption for diagnosis; the bar still renders and its buttons still work.
+None. The application always installs its custom title bar and frameless caption on Windows.
 
 ## How it works
 

@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Pääsyvirhe asetustiedostoon %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Vain kuvake</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Vain teksti</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Teksti kuvakkeen vieressä</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Teksti kuvakkeen alla</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Seuraa tyyliä</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Mustavalkoinen</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Käyttöliittymä</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Työkalupalkin painiketyyli</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Siirrettävä työkalupalkki</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(aktivoi käynnistämällä ohjelma uudestaan)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Työkalupalkin nappien tyyli:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1344,10 +1316,6 @@ Haluatko ylikirjoittaa pääsyavaimen %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Selaimen tyyppi:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Työkalupalkin painiketyyli</translation>
     </message>
     <message>
         <source>Config Location:</source>

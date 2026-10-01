@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Juurdepääsuviga seadistusfailil „%1”</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>ainult ikoon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>ainult tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>tekst ikooni kõrval</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>tekst ikooni all</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>stiili järgi</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>mustvalge</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Kasutajaliides</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Tööriistariba nuppude stiil</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Teisaldatav tööriistariba</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(muutmine jõustub programmi järgmisel käivitamisel)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Tööriistariba nuppude stiil:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1299,10 +1271,6 @@ Kas soovid selle uue pääsuvõtmega (%2) üle kirjutada?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Brauseritüüp:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Tööriistariba nuppude stiil</translation>
     </message>
     <message>
         <source>Config Location:</source>

@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Σφάλματος πρόσβασης για αρχείο ρυθμίσεων %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Μόνον εικονίδιο</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Μόνον κείμενο</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Κείμενο δίπλα από το εικονίδιο</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Κείμενο κάτω από το εικονίδιο</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Ακολούθα το στυλ</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Μονόχρωμο</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Διεπαφή Χρήστη</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Μετακινούμενη εργαλειοθήκη</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(επανεκκίνηση προγράμματος για ενεργοποίηση)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1377,10 +1349,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Τύπος προγράμματος περιήγησης:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Στυλ κουμπιών γραμμής εργαλείων</translation>
     </message>
     <message>
         <source>Config Location:</source>

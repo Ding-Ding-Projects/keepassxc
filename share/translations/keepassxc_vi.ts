@@ -192,27 +192,7 @@
         <source>Access error for config file %1</source>
         <translation>Lỗi truy cập tệp cấu hình %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Chỉ biểu tượng</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Chỉ văn bản</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Văn bản bên cạnh biểu tượng</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Văn bản dưới biểu tượng</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Theo kiểu</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Đơn sắc</translation>
     </message>
@@ -409,10 +389,6 @@
         <translation>Giao diện người dùng</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Kiểu nút thanh công cụ</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Thanh công cụ di chuyển được</translation>
     </message>
@@ -427,10 +403,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(khởi động lại chương trình để kích hoạt)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Kiểu nút thanh công cụ:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>
@@ -1359,10 +1331,6 @@ Would you like to migrate your existing settings now?</source>
     <message>
         <source>Browser type:</source>
         <translation>Loại trình duyệt:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Kiểu nút thanh công cụ</translation>
     </message>
     <message>
         <source>Config Location:</source>

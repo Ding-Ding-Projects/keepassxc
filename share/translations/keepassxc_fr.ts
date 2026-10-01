@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Erreur d’accès pour le fichier de configuration %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Icône seulement</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Texte seulement</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Texte à côté de l’icône</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Texte sous l’icône</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Suivre le style</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochrome</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Interface utilisateur</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Style des boutons de la barre d’outils</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Barre d’outils mobile</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(relancer le programme pour activer)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Style des boutons de la barre d’outils :</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1299,10 +1271,6 @@ Remplacer la clé dans %1 – %2 ?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Type de navigateur :</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Style des boutons de la barre d’outils</translation>
     </message>
     <message>
         <source>Config Location:</source>

@@ -173,27 +173,7 @@
         <source>Access error for config file %1</source>
         <translation>Pogreška pristupa za konfiguracijsku datoteku %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Samo ikone</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Samo tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst uz ikone</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst ispod ikona</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Prati stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
     </message>
@@ -389,10 +369,6 @@
         <translation>Korisničko Sučelje</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stil gumba alatne trake</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Pokretna alatna traka</translation>
     </message>
@@ -407,10 +383,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(ponovo pokrenite program za aktivaciju)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stil gumba alatne trake:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>
@@ -1113,10 +1085,6 @@ To je potrebno za održavanje trenutnih veza preglednika.
     <message>
         <source>Browser type:</source>
         <translation>Vrsta preglednika:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Stil gumba alatne trake</translation>
     </message>
     <message>
         <source>Config Location:</source>

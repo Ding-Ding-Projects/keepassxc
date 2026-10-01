@@ -68,7 +68,6 @@ namespace Material
             };
             const Row settings_basic_s3[] = {
                 {"translate", "Language", "Restart program to activate", PillKind::Value, "System default"},
-                {"smart_button", "Toolbar button style", "Icon only · Text beside icon · Text under icon", PillKind::Value, "Text beside icon"},
                 {"open_with", "Movable toolbar", "", PillKind::Off, "Off"},
                 {"format_size", "Font size", "GUI_FontSizeOffset", PillKind::Value, "Default"},
                 {"view_agenda", "Show toolbar", "", PillKind::On, "On"},

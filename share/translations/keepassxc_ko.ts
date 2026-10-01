@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>설정 파일 %1에 접근할 수 없음</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>아이콘만</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>텍스트만</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>아이콘 옆에 텍스트</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>아이콘 밑에 텍스트</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>스타일 따르기</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>흑백</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>사용자 인터페이스</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>도구 모음 단추 스타일</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>이동 가능한 도구 모음</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(다시 시작 후 적용됨)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>도구 모음 단추 스타일:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1269,10 +1241,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>브라우저 종류:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>도구 모음 단추 스타일</translation>
     </message>
     <message>
         <source>Config Location:</source>

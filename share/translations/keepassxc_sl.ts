@@ -173,27 +173,7 @@
         <source>Access error for config file %1</source>
         <translation>Napaka pri dostopu do konfiguracijske datoteke  %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Samo ikone</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Samo besedilo</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Besedilo poleg ikone</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Besedilo pod ikono</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation type="unfinished"/>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation type="unfinished"/>
     </message>
@@ -389,10 +369,6 @@
         <translation type="unfinished"/>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Slog gumba v orodni vrstici</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Premična orodna vrstica</translation>
     </message>
@@ -407,10 +383,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(za aktivacijo ponovno zaženi program )</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Slog gumba v orodni vrstici:</translation>
     </message>
     <message>
         <source>Use monospaced font for notes</source>
@@ -1102,10 +1074,6 @@ Would you like to migrate your existing settings now?</source>
     <message>
         <source>Browser type:</source>
         <translation>Vrsta spletnega brskalnika:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Slog gumba v orodni vrstici</translation>
     </message>
     <message>
         <source>Config Location:</source>

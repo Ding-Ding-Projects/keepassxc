@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Грешка приликом приступа конфигурационој датотеци %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Само иконица</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Само текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст поред иконице</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст испод иконице</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Прати стил</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Једнобојно</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Кориснички интерфејс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стил дугмета на траци са алаткама</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Померљива трака са алаткама</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(поново покрените програм за активирање)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стил дугмета на траци са алаткама:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1284,10 +1256,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Тип прегледача:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стил дугмета на траци са алаткама</translation>
     </message>
     <message>
         <source>Config Location:</source>

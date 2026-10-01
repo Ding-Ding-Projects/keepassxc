@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Toegangsfout voor configuratiebestand %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Alleen pictogram</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Alleen tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst naast pictogram</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst onder pictogram</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Themastijl volgen</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochroom</translation>
     </message>
@@ -438,10 +418,6 @@
         <translation>Vormgeving</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knopstijl van de werkbalk</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Verplaatsbare werkbalk</translation>
     </message>
@@ -456,10 +432,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(opnieuw starten om te activeren)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knopstijl van de werkbalk:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1420,10 +1392,6 @@ Wil je de passkey overschrijven in %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Webbrowser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knopstijl van de werkbalk</translation>
     </message>
     <message>
         <source>Config Location:</source>

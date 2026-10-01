@@ -200,27 +200,7 @@
         <source>Access error for config file %1</source>
         <translation>خطأ في الوصول إلى ملف الإعداد %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>الأيقونة فقط</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>النص فقط</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>نص بجانب الأيقونة</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>النص أسفل الأيقونة</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>تابع النمط</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>أُحاديِّ اللون</translation>
     </message>
@@ -417,10 +397,6 @@
         <translation>واجهة المستخدم</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation> نمط مفاتيح شريط الأدوات </translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation> شريط أدوات قابل للتحريك</translation>
     </message>
@@ -435,10 +411,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation> (للتنشيط يُرجى إعادة التشغيل) </translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>نمط أزرار شريط الأدوات</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1323,10 +1295,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>نوع المتصفح:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>نمط أزرار شريط الأدوات</translation>
     </message>
     <message>
         <source>Config Location:</source>

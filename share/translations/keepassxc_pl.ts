@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Błąd dostępu pliku konfiguracyjnego %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Tylko ikona</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Tylko tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst obok ikony</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst pod ikoną</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Utrzymaj styl</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochromatyczny</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Interfejs użytkownika</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Styl przycisków paska narzędzi</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Ruchomy pasek narzędzi</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(uruchom ponownie program, aby aktywować)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Styl przycisków paska narzędzi:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1303,10 +1275,6 @@ Czy chcesz zastąpić klucz dostępu w %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Typ przeglądarki:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Styl przycisku paska narzędzi</translation>
     </message>
     <message>
         <source>Config Location:</source>

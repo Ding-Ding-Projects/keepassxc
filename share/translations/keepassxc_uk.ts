@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Помилка доступу до файлу конфігурації %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Лише піктограма</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Лише текст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Текст поруч із піктограмою</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Текст під піктограмою</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Наслідувати стиль</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Монохромна</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Інтерфейс користувача</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стиль кнопок панелі інструментів</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Рухома панель інструментів</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(перезапустіть програму, щоб активувати)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стиль кнопки в панелі інструментів:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1280,10 +1252,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Тип браузера:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стиль кнопки в панелі інструментів</translation>
     </message>
     <message>
         <source>Config Location:</source>

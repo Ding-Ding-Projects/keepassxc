@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Chyba prístupu ku konfiguračnému súboru %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Len ikona</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Len text</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text vedľa ikony</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text pod ikonou</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Štýl nasledovania</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochromatické</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Používateľské rozhranie</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Štýl tlačidiel panela nástrojov</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Presúvateľný panel nástrojov</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reštartovať program kvôli aktivácii)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Štýl tlačidiel panela nástrojov:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1286,10 +1258,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Typ prehliadača:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Štýl tlačidiel panela nástrojov</translation>
     </message>
     <message>
         <source>Config Location:</source>

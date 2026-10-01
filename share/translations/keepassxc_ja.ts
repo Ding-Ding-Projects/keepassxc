@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>設定ファイル %1 へのアクセスエラー</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>アイコンのみ</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>テキストのみ</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>アイコンの横にテキスト</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>アイコンの下にテキスト</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>スタイルに準拠</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>モノクロ</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>ユーザーインターフェース</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>ツールバーのボタンのスタイル</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>ツールバーを移動可能にする</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(再起動が必要)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>ツールバーのボタンのスタイル:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1308,10 +1280,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>ブラウザーの種類:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>ツールバーのボタンのスタイル</translation>
     </message>
     <message>
         <source>Config Location:</source>

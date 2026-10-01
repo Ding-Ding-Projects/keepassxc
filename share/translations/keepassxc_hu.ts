@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Hozzáférési hiba a beállítási fájlhoz: %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Csak ikonok</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Csak szöveg</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Szöveg az ikonok mellett</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Szöveg az ikonok alatt</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Stílus követése</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokróm</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>Felhasználói felület</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Eszköztár gombstílusa</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Mozgatható eszköztár</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(újraindítás után akitválódik)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Eszköztár gombstílusa:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1297,10 +1269,6 @@ Felülírja az itt található jelkulcsot: %1 – %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Böngészőtípus:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Eszköztár gombstílusa</translation>
     </message>
     <message>
         <source>Config Location:</source>

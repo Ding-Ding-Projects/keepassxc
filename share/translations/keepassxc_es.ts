@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Error de acceso al archivo de configuración %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Solo icono</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Solo texto</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Texto al lado del icono</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Texto debajo del icono</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Seguir estilo</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monocromo</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Interfaz de usuario</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo de botón de barra de herramientas</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Barra de herramientas desplazable</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(reiniciar aplicación para activar)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Estilo de la barra de botones:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1442,10 +1414,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Tipo de explorador:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Estilo de botón de barra de herramientas</translation>
     </message>
     <message>
         <source>Config Location:</source>

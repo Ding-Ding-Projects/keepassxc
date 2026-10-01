@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Konfigūracijos failo %1 prieigos klaida</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Tik piktograma</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Tik tekstas</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekstas šalia piktogramos</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekstas po piktograma</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Sekti stiliumi</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Vienspalvis</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Naudotojo sąsaja</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Įrankių juostos mygtukų stilius</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Perkeliama įrankių juosta</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(paleiskite programą iš naujo, kad aktyvuotumėte)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Užduotinės mygtukų stilius</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1266,10 +1238,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Naršyklės tipas:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Įrankių juostos mygtukų stilius</translation>
     </message>
     <message>
         <source>Config Location:</source>

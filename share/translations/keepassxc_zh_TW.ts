@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>設定檔 %1 存取錯誤</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>只有圖示</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>只有文字</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>文字於圖示旁邊</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>文字於圖示底下</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>跟隨樣式</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>單色</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>使用者介面</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>工具列按鈕樣式</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>工具列可移動</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>（程式重啟後生效）</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>工具列按鈕樣式：</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1299,10 +1271,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>瀏覽器類型：</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>工具列按鈕樣式</translation>
     </message>
     <message>
         <source>Config Location:</source>

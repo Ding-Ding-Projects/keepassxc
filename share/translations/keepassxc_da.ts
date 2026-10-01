@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Adgangsfejl for konfigurationsfil %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Kun ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Kun tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst ved siden af ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst uden ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Følg stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monokrom</translation>
     </message>
@@ -393,10 +373,6 @@
         <translation>Brugerflade</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knapstil på værktøjslinje</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Værktøjslinje kan flyttes</translation>
     </message>
@@ -411,10 +387,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(genstart program for at aktivere)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knapstil på værktøjslinje:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1113,10 +1085,6 @@ Do you want to delete the entry?
     <message>
         <source>Browser type:</source>
         <translation>Browsertype:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knapstil på værktøjslinje</translation>
     </message>
     <message>
         <source>Config Location:</source>

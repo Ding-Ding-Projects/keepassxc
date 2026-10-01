@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>ချိန်ညှိဖိုင် %1 အတွက် အသုံးပြုခွင့် ပြဿနာ</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>အိုင်ကွန်သီးသန့်</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>စာသားသီးသန့်</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>အိုင်ကွန်ဘေးရှိ စာသား</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>အိုင်ကွန်အောက်ရှိ စာသား</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>ပုံစံ လိုက်နာရန်</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>တစ်ရောင်တည်း</translation>
     </message>
@@ -434,10 +414,6 @@
         <translation>အသုံးပြုသူ မြင်ရသည့်ပုံစံ</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>ရွှေ့နိုင်သော တူးလ်ဘား</translation>
     </message>
@@ -452,10 +428,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(သက်ဝင်လုပ်ဆောင်ရန် ပရိုဂရမ်ကို ပြန်လည်စတင်ပါ)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ -</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1464,10 +1436,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>ဘရောက်ဇာ အမျိုးအစား -</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>တူးလ်ဘား ခလုတ် ပုံစံ</translation>
     </message>
     <message>
         <source>Config Location:</source>

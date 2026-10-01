@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Gabim hyrjeje në kartelë formësimi %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Vetëm ikonë</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Vetëm tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst në krah të ikonës</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst nën ikonë</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Ndiq stilin</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Njëngjyrësh</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Ndërfaqe Përdoruesi</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Stil butonash paneli</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Panel i lëvizshëm</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(që të aktivizohet, rinisni programin)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Stil butonash paneli:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1269,10 +1241,6 @@ Doni të mbishkruhet kyçkalimi te %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Lloj shfletuesi:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Stil butoni paneli</translation>
     </message>
     <message>
         <source>Config Location:</source>

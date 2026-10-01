@@ -196,27 +196,7 @@
         <source>Access error for config file %1</source>
         <translation>Access error for config file %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Icon only</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Text only</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Text beside icon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Text under icon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Follow style</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Monochrome</translation>
     </message>
@@ -413,10 +393,6 @@
         <translation>User Interface</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Toolbar button style</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Movable toolbar</translation>
     </message>
@@ -431,10 +407,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(restart program to activate)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Toolbar button style:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1299,10 +1271,6 @@ Do you want to overwrite the passkey in %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Browser type:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Toolbar button style</translation>
     </message>
     <message>
         <source>Config Location:</source>

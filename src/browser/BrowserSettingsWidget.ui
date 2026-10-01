@@ -1435,7 +1435,7 @@
                <enum>Qt::StrongFocus</enum>
               </property>
               <property name="accessibleName">
-               <string>Toolbar button style</string>
+               <string>Browser type:</string>
               </property>
               <property name="sizeAdjustPolicy">
                <enum>QComboBox::AdjustToContents</enum>

@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Памылка доступу да файла канфігурацыі %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Толькі значок</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Толькі тэкст</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Тэкст побач са значком</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Тэкст пад значком</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Прытрымлівацца стылю</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Манахромны</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Карыстальніцкі інтэрфейс</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Стыль кнопак панэлі інструментаў</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Панэль інструментаў, якую можна перамяшчаць</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(перазапусціце праграму, каб актываваць)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Стыль кнопак панэлі інструментаў:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1280,10 +1252,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     <message>
         <source>Browser type:</source>
         <translation>Тып браўзера:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Стыль кнопак панэлі інструментаў</translation>
     </message>
     <message>
         <source>Config Location:</source>

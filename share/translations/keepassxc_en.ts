@@ -217,27 +217,7 @@
         <source>Access error for config file %1</source>
         <translation type="unfinished"></translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation type="unfinished"></translation>
     </message>
@@ -442,10 +422,6 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation type="unfinished"></translation>
     </message>
@@ -459,10 +435,6 @@
     </message>
     <message>
         <source>(restart program to activate)</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -1374,10 +1346,6 @@ Do you want to overwrite the passkey in %1 - %2?</source>
     </message>
     <message>
         <source>Browser type:</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
         <translation type="unfinished"></translation>
     </message>
     <message>

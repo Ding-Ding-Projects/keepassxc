@@ -177,27 +177,7 @@
         <source>Access error for config file %1</source>
         <translation>Feil ved tilgang til konfigurasjonsfilen %1</translation>
     </message>
-    <message>
-        <source>Icon only</source>
-        <translation>Kun ikon</translation>
-    </message>
-    <message>
-        <source>Text only</source>
-        <translation>Kun tekst</translation>
-    </message>
-    <message>
-        <source>Text beside icon</source>
-        <translation>Tekst ved siden av ikon</translation>
-    </message>
-    <message>
-        <source>Text under icon</source>
-        <translation>Tekst under ikon</translation>
-    </message>
-    <message>
-        <source>Follow style</source>
-        <translation>Følg stil</translation>
-    </message>
-    <message>
+                        <message>
         <source>Monochrome</source>
         <translation>Ensfarget</translation>
     </message>
@@ -394,10 +374,6 @@
         <translation>Brukergrensesnitt</translation>
     </message>
     <message>
-        <source>Toolbar button style</source>
-        <translation>Knappestil på verktøylinjen</translation>
-    </message>
-    <message>
         <source>Movable toolbar</source>
         <translation>Bevegelig verktøylinje</translation>
     </message>
@@ -412,10 +388,6 @@
     <message>
         <source>(restart program to activate)</source>
         <translation>(start programmet på nytt for å aktivere)</translation>
-    </message>
-    <message>
-        <source>Toolbar button style:</source>
-        <translation>Knappestil på verktøylinjen:</translation>
     </message>
     <message>
         <source>Show passwords in color</source>
@@ -1359,10 +1331,6 @@ Vil du erstatte tilgangsnøkkelen i %1 - %2?</translation>
     <message>
         <source>Browser type:</source>
         <translation>Type nettleser:</translation>
-    </message>
-    <message>
-        <source>Toolbar button style</source>
-        <translation>Knappestil på verktøylinjen</translation>
     </message>
     <message>
         <source>Config Location:</source>
