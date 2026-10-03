@@ -94,6 +94,14 @@ namespace Material
         public:
             explicit AccessibleCombo(ComboBox* combo) : QAccessibleWidget(combo, QAccessible::ComboBox) {}
             ComboBox* combo() const { return qobject_cast<ComboBox*>(object()); }
+            QAccessibleInterface* focusChild() const override
+            {
+                // Match Qt's editable combo contract: the line editor owns
+                // accessible text/caret operations despite its focus proxy.
+                if (auto* owner = combo(); owner && owner->isEditable())
+                    return QAccessible::queryAccessibleInterface(owner->lineEdit());
+                return QAccessibleWidget::focusChild();
+            }
             QAccessible::State state() const override
             {
                 auto result = QAccessibleWidget::state();

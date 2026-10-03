@@ -596,7 +596,10 @@ namespace Material
                 QPointer<ComboBox> alive(this);
                 const QString label = selected.data(isEditable() ? Qt::EditRole : Qt::DisplayRole).toString();
                 hidePopup();
-                if (!alive || !selected.isValid() || selected.model() != model()) return;
+                // Dismissal callbacks may rebind this combo without replacing
+                // its model. Validate before writing into the new binding.
+                if (!alive || !selected.isValid() || selected.model() != model()
+                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()) return;
                 setCurrentIndex(selected.row());
                 if (!alive || !selected.isValid() || selected.model() != model()
                     || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
