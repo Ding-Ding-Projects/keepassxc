@@ -2100,7 +2100,9 @@ void TestGui::testSaveBackupPath()
 
     // Save a modified database
     auto prevName = m_db->metadata()->name();
-    m_db->metadata()->setName("testBackupPathPattern");
+    // Each data row must make a real change, even if a previous save left this name in the fixture.
+    m_db->metadata()->setName(prevName + QStringLiteral("_testBackupPathPattern"));
+    QVERIFY(m_db->metadata()->name() != prevName);
     checkSaveDatabase();
 
     // Test that the backup file has the previous database name
