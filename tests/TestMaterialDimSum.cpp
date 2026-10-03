@@ -367,6 +367,7 @@ private:
             QVERIFY2(fixture.saveAs(path, Database::DirectWrite, {}, &error), qPrintable(error));
         }
         config()->set(Config::GUI_CheckForUpdates, false);
+        config()->set(Config::GUI_VoiceDisclosureShown, true);
         config()->set(Config::Browser_Enabled, false);
         config()->set(Config::SSHAgent_Enabled, false);
         config()->set(Config::GUI_ShowTrayIcon, false);
@@ -376,6 +377,10 @@ private:
         config()->set(Config::Security_LockDatabaseIdle, false);
         if (!m_window) m_window.reset(new MainWindow);
         auto& window = *m_window;
+        // The service was constructed disabled. Changing this isolated preference
+        // does not start it, but avoids a hidden settings-page warning masking
+        // the credential-flow cancellation under test.
+        config()->set(Config::Browser_Enabled, true);
         window.resize(1024, 768);
         window.show();
         window.activateWindow();
