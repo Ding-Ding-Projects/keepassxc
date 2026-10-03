@@ -183,10 +183,10 @@ Honest state of the rewrite, measured rather than remembered:
   History and Changelog.
 - **The feature inventory is fail-closed and currently red.** The [interface completeness
   contract](docs/features/delivery/interface-completion.md) registers **89 canonical features,
-  83 named native and website surfaces, and 996 capability contracts**. All 172 original
+  95 named native and website surfaces, and 998 capability contracts**. All 172 original
   source-assessment rows and their historical links remain, with six added summaries.
-  `node scripts/check-feature-inventory.mjs --summary` reports **0 of 82,668 current
-  surface/capability cells verified**, spanning 7,387 incomplete surface/feature groups.
+  `node scripts/check-feature-inventory.mjs --summary` reports **0 of 94,810 current
+  surface/capability cells verified**, spanning 8,455 incomplete surface/feature groups.
   These are coverage obligations, not a count of distinct implementation defects. Acceptance
   requires configuration, implementation, localized copy, documentation, focused tests,
   persistence where applicable, and genuine candidate-bound interactions and captures.

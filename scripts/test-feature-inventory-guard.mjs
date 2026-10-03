@@ -6,6 +6,7 @@ import { mkdtempSync, mkdirSync, writeFileSync, readFileSync, rmSync, realpathSy
 import { tmpdir } from 'node:os';
 import { join, dirname, relative } from 'node:path';
 import { execFileSync, spawnSync } from 'node:child_process';
+import { deflateSync } from 'node:zlib';
 import { loadBundle, repoRoot, evaluateBundle, validateSchema, validateEvidence, migrateInventory } from './check-feature-inventory.mjs';
 import { sha256 } from './feature-evidence.mjs';
 import { FEATURE_CONTRACTS, SURFACE_CONTRACTS, CAPABILITY_IDS } from './feature-inventory-contract.mjs';
@@ -164,6 +165,68 @@ try {
     languages: ['english', 'cantonese', 'bilingual'], interaction: writeReceipt(receipt), capture, testResult: writeResult(testResult),
   } };
   check('simulated complete receipt passes structural validation only', () => assert.deepEqual(validateEvidence(row, options), []));
+  check('one reviewed capture can support several explicitly applicable capabilities', () => {
+    const shared = structuredClone(receipt);
+    shared.claims = [{ feature: 'language-modes', capability: 'english' }, { feature: 'clipping-matrix', capability: 'light' }];
+    const candidate = structuredClone(row);
+    candidate.feature = 'clipping-matrix'; candidate.capability = 'light';
+    candidate.evidence.interaction = writeReceipt(shared);
+    assert.deepEqual(validateEvidence(candidate, options), []);
+    row.evidence.interaction = writeReceipt(receipt);
+  });
+  // Generated blank PNGs are disposable format fixtures, never UI evidence.
+  function fixturePng(width, height) {
+    const crc32 = bytes => {
+      let crc = 0xffffffff;
+      for (const byte of bytes) { crc ^= byte; for (let bit = 0; bit < 8; bit++) crc = (crc >>> 1) ^ ((crc & 1) ? 0xedb88320 : 0); }
+      return (crc ^ 0xffffffff) >>> 0;
+    };
+    const chunk = (name, bytes) => {
+      const type = Buffer.from(name), size = Buffer.alloc(4), crc = Buffer.alloc(4);
+      size.writeUInt32BE(bytes.length); crc.writeUInt32BE(crc32(Buffer.concat([type, bytes])));
+      return Buffer.concat([size, type, bytes, crc]);
+    };
+    const header = Buffer.alloc(13); header.writeUInt32BE(width); header.writeUInt32BE(height, 4); header[8] = 8; header[9] = 6;
+    return Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), chunk('IHDR', header),
+      chunk('IDAT', deflateSync(Buffer.alloc((width * 4 + 1) * height))), chunk('IEND', Buffer.alloc(0))]);
+  }
+  const matrixRow = structuredClone(row);
+  matrixRow.feature = 'clipping-matrix'; matrixRow.capability = 'normal-minimum';
+  const matrixMembers = [];
+  for (const language of ['english', 'cantonese', 'bilingual']) for (const theme of ['light', 'dark'])
+    for (const scale of [1, 1.25, 1.5, 2]) for (const viewport of ['normal', 'minimum']) {
+      const size = viewport === 'normal' ? [640, 400] : [320, 200];
+      const file = `design/evidence/fixture-${viewport}-${scale}.png`;
+      writeFileSync(join(root, file), fixturePng(size[0] * scale, size[1] * scale));
+      const frame = ref(file), value = structuredClone(receipt);
+      value.feature = 'clipping-matrix'; value.capability = 'normal-minimum';
+      value.tuple = { ...tuple, language, theme, scale, viewport, width: size[0], height: size[1] };
+      value.steps[0].tuple = { ...value.tuple }; value.steps[0].capture = frame;
+      const receiptPath = `design/evidence/matrix-${language}-${theme}-${scale}-${viewport}.json`;
+      writeFileSync(join(root, receiptPath), JSON.stringify(value));
+      matrixMembers.push({ interaction: ref(receiptPath), capture: frame });
+    }
+  matrixRow.evidence.interaction = matrixMembers[0].interaction;
+  matrixRow.evidence.capture = matrixMembers[0].capture;
+  matrixRow.evidence.matrix = matrixMembers.slice(1);
+  check('complete 48 combination format fixture passes structural validation only', () => assert.deepEqual(validateEvidence(matrixRow, options), []));
+  check('missing bilingual dark 200 percent minimum combination remains red', () => {
+    const candidate = structuredClone(matrixRow);
+    candidate.evidence.matrix = candidate.evidence.matrix.filter(member => !member.interaction.file.endsWith('bilingual-dark-2-minimum.json'));
+    assert(validateEvidence(candidate, options).some(error => error.includes('required layout tuple missing: bilingual/dark/2/minimum')));
+  });
+  check('duplicate axis samples cannot replace a missing combination', () => {
+    const candidate = structuredClone(matrixRow);
+    candidate.evidence.matrix[candidate.evidence.matrix.length - 1] = candidate.evidence.matrix[0];
+    const errors = validateEvidence(candidate, options);
+    assert(errors.some(error => error.includes('duplicate layout tuple')));
+    assert(errors.some(error => error.includes('required layout tuple missing: bilingual/dark/2/minimum')));
+  });
+  check('additional matrix entries require full provenance and capture validation', () => {
+    const candidate = structuredClone(matrixRow);
+    candidate.evidence.matrix[0].capture.sha256 = '0'.repeat(64);
+    assert(validateEvidence(candidate, options).some(error => error.includes('final capture')));
+  });
   function evidenceMutation(name, mutate, expected) {
     check(name, () => {
       const candidate = structuredClone(row), copy = structuredClone(receipt), result = structuredClone(testResult);
@@ -257,7 +320,7 @@ check('CLI schema mode passes without declaring product complete', () => {
 });
 check('CLI product mode remains red', () => {
   const result = spawnSync(process.execPath, ['scripts/check-feature-inventory.mjs', '--summary'], { cwd: repoRoot, encoding: 'utf8' });
-  assert.equal(result.status, 1); assert.match(result.stdout, /0\/82668 current capability cells verified/);
+  assert.equal(result.status, 1); assert(result.stdout.includes(`0/${SURFACE_CONTRACTS.length * CAPABILITY_IDS.length} current capability cells verified`));
 });
 process.stdout.write(`${passed} focused contract checks passed; ${failed} failed. Registry inventory: ${baseline.inventory.rows.length} feature rows, ${baseline.surfaces.rows.length} surfaces, ${baseline.capabilities.contracts.length} capabilities. Product completeness remains incomplete.\n`);
 process.exitCode = failed ? 1 : 0;

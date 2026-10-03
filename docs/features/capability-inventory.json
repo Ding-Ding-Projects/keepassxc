@@ -5978,6 +5978,18 @@
       "feature": "element-motion",
       "section": "Appearance and motion",
       "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/at-most-once-per-launch",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-mid-task-flow",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
     }
   ],
   "rows": []

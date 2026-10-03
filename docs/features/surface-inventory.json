@@ -749,6 +749,114 @@
       "ownership": "visitor-site-state",
       "status": "source-present",
       "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.browser",
+      "platform": "app",
+      "label": "Application settings: Browser Integration",
+      "source": "src/gui/ApplicationSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.shortcuts",
+      "platform": "app",
+      "label": "Application settings: Keyboard Shortcuts",
+      "source": "src/gui/MainWindow.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.ssh-agent",
+      "platform": "app",
+      "label": "Application settings: SSH Agent",
+      "source": "src/gui/MainWindow.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.keeshare",
+      "platform": "app",
+      "label": "Application settings: KeeShare",
+      "source": "src/gui/MainWindow.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.appearance",
+      "platform": "app",
+      "label": "Application settings: appearance hub",
+      "source": "src/gui/material/MaterialSettingsScreen.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.security",
+      "platform": "app",
+      "label": "Database settings: security",
+      "source": "src/gui/dbsettings/DatabaseSettingsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.properties",
+      "platform": "app",
+      "label": "Entry editor: properties",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group.main",
+      "platform": "app",
+      "label": "Group editor: group",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group.icon",
+      "platform": "app",
+      "label": "Group editor: icon",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group.properties",
+      "platform": "app",
+      "label": "Group editor: properties",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group.browser",
+      "platform": "app",
+      "label": "Group editor: Browser Integration",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group.keeshare",
+      "platform": "app",
+      "label": "Group editor: KeeShare",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
     }
   ]
 }

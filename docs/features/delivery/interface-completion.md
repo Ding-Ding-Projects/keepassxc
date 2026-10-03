@@ -9,14 +9,17 @@ installed behavior, accessibility, or genuine current screenshots.
 
 [`scripts/feature-inventory-contract.mjs`](../../../scripts/feature-inventory-contract.mjs)
 is the hand-maintained authority, independent of runtime discovery. It names 89
-features, 83 distinct surfaces, and 996 capability subcontracts. Removing a runtime
+features, 95 distinct surfaces, and 998 capability subcontracts. Removing a runtime
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 82,668 surface/capability cells and 7,387 surface/feature
+The required matrix has 94,810 surface/capability cells and 8,455 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
-still needs its own interaction and evidence. The sparse evidence ledger currently
+still needs applicable interaction and evidence. A reviewed capture may support
+several capabilities on the same surface when the receipt explicitly declares
+those claims and each capability's tuple and evidence requirements are satisfied.
+There is no requirement for a unique image per obligation. The sparse evidence ledger currently
 contains no accepted current cells. Absence means incomplete, never exempt.
 
 | Record | Purpose |
@@ -28,7 +31,10 @@ contains no accepted current cells. Absence means incomplete, never exempt.
 | [`test-feature-inventory-guard.mjs`](../../../scripts/test-feature-inventory-guard.mjs) | Deliberate removal/corruption and restoration tests, isolated from real runtime claims. |
 
 The native list separates shell, vault, reports, history and changelog; application
-settings tabs; database settings tabs; entry editor sections; group editing;
+settings tabs (including Browser Integration, Keyboard Shortcuts, SSH Agent,
+KeeShare and the appearance hub); database settings tabs and Security container;
+entry editor sections including Properties; separate Group, Icon, Properties,
+Browser Integration and KeeShare group-editor sections;
 create/unlock/import/CSV/export/merge/clone flows; passkey and TOTP dialogs; attachment
 editing/preview; notifications, palette, appearance and regex; every application,
 tab, collection, text-editing and rendered-element menu family; dropdowns; locks,
@@ -72,7 +78,9 @@ chance per launch, no more than one display per launch, and a persisted off swit
 that is honored absolutely. The earlier installed guidance specified 10% and no
 off switch; that conflict is resolved by the current user instruction's priority.
 The explicit capabilities are `one-percent-per-launch-draw` and
-`persisted-off-switch`. Acceptance must prove disabled/restarted suppression,
+`persisted-off-switch`, `at-most-once-per-launch` and `no-mid-task-flow`.
+Current `MaterialDimSum.cpp` still uses denominator 10 and ignores the retired
+off preference, so those runtime mismatches remain open. Acceptance must prove disabled/restarted suppression,
 first-run/error/update/mid-task exclusions, bundled local images with meaningful
 dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
 motion. All behavioral evidence remains pending; this inventory lane changes no
@@ -107,6 +115,25 @@ Each capability row identifies `surface`, `feature`, `capability`, `status`, and
    artifact and test-file hash. It records command, nonzero passing count, zero
    failures, and an observed negative regression failing when broken and passing
    after restoration.
+
+Language-mode and clipping-matrix language claims must match the receipt's
+rendered language. Clipping-matrix theme and scale claims must match the actual
+tuple: a light frame cannot prove `dark`, and scale 1 cannot prove `scale-200`.
+The `normal-minimum` capability requires all 48 combinations of English,
+Cantonese and bilingual, light and dark, scales 1/1.25/1.5/2, and normal/minimum
+viewports. Tuples include `viewport: "normal"` or `"minimum"`; logical dimensions
+stay consistent for each viewport across the matrix, and minimum is smaller.
+The primary `interaction`/`capture` plus 47 additional pairs in `evidence.matrix`
+carry this proof. Every pair undergoes the full validation above. Missing or
+duplicate combinations fail, including bilingual/dark/2/minimum. Individual axis
+examples cannot substitute for the combined matrix. The real capture review must
+also confirm that the declared dimensions are the surface's supported minimum
+and normal sizes; labels alone cannot establish that runtime fact.
+
+An interaction may list additional `{ "feature", "capability" }` records in
+`claims`, all for its exact surface. Reuse preserves every claim's tuple,
+provenance and source requirements. It does not permit evidence from another
+surface or a mismatched language, scale or theme.
 
 Paths are restricted by role to relevant project source, documentation, test and
 evidence roots. Absolute paths, traversal, encoded paths, alternate streams,

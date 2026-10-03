@@ -59,7 +59,7 @@ function readJsonReference(root, ref, role) {
   return result;
 }
 function sameTuple(a, b) {
-  return plain(a) && plain(b) && ['screen', 'state', 'theme', 'language', 'scale', 'width', 'height'].every(k => a[k] === b[k]);
+  return plain(a) && plain(b) && ['screen', 'state', 'theme', 'language', 'scale', 'width', 'height', 'viewport'].every(k => a[k] === b[k]);
 }
 function checkTuple(t) {
   return plain(t) && nonempty(t.screen) && nonempty(t.state)
@@ -76,6 +76,10 @@ function checkCapture(root, ref, tuple) {
 // The receipt is externally produced by the approved capture route and reviewed.
 // Checking fields cannot establish that a self-written receipt is truthful.
 export function validateEvidence(row, options = {}) {
+  return validateEvidenceRecord(row, options);
+}
+
+function validateEvidenceRecord(row, options, matrixMember = false) {
   const errors = [];
   const root = options.root;
   const add = message => errors.push(`${row.surface}:${row.feature}/${row.capability}: ${message}`);
@@ -107,8 +111,24 @@ export function validateEvidence(row, options = {}) {
   if (interaction.schemaVersion !== 1 || interaction.kind !== 'built-ui-interaction') add('interaction schema or provenance kind unsupported');
   if (interaction.sourceCommit !== options.sourceCommit || !revision(interaction.sourceCommit)) add('stale interaction source revision');
   if (interaction.artifactSha256 !== options.artifactHashes?.[platform] || !hash(interaction.artifactSha256)) add('interaction artifact hash mismatch');
-  if (interaction.surface !== row.surface || interaction.feature !== row.feature || interaction.capability !== row.capability) add('interaction belongs to another inventory cell');
+  const claims = interaction.claims;
+  if (claims !== undefined && (!Array.isArray(claims) || !claims.length || claims.length > CAPABILITY_IDS.length
+    || claims.some(claim => !plain(claim) || !capabilitySet.has(`${claim.feature}/${claim.capability}`))
+    || new Set(claims.map(claim => `${claim.feature}/${claim.capability}`)).size !== claims.length)) add('interaction capability claims malformed');
+  const directlyClaimed = interaction.feature === row.feature && interaction.capability === row.capability;
+  const additionallyClaimed = Array.isArray(claims) && claims.some(claim => plain(claim) && claim.feature === row.feature && claim.capability === row.capability);
+  if (interaction.surface !== row.surface || (!directlyClaimed && !additionallyClaimed)) add('interaction belongs to another inventory cell');
   if (!checkTuple(interaction.tuple) || interaction.tuple?.screen !== row.surface) add('interaction tuple incomplete or wrong surface');
+  const tuple = interaction.tuple;
+  if (row.feature === 'language-modes' || row.feature === 'clipping-matrix') {
+    if (['english', 'cantonese', 'bilingual'].includes(row.capability) && tuple?.language !== row.capability) add('capability tuple language contradicts claimed mode');
+  }
+  if (row.feature === 'clipping-matrix') {
+    if (['light', 'dark'].includes(row.capability) && tuple?.theme !== row.capability) add('capability tuple theme contradicts claimed mode');
+    const expectedScale = { 'scale-100': 1, 'scale-125': 1.25, 'scale-150': 1.5, 'scale-200': 2 }[row.capability];
+    if (expectedScale && tuple?.scale !== expectedScale) add('capability tuple scale contradicts claimed mode');
+    if (row.capability === 'normal-minimum' && !['normal', 'minimum'].includes(tuple?.viewport)) add('capability tuple viewport must name normal or minimum');
+  }
   if (interaction.method !== 'lowlevel-headless-built-artifact' || interaction.hiddenDesktop !== true || interaction.fixture !== 'isolated-nonpersonal' || interaction.synthetic !== false || interaction.injected !== false) add('genuine isolated capture provenance missing');
   if (interaction.privacy?.verdict !== 'reviewed-safe' || interaction.privacy?.privateDataPresent !== false || !nonempty(interaction.privacy?.reviewer) || !nonempty(interaction.privacy?.reviewedAt)) add('privacy review absent');
   if (interaction.inspection?.verdict !== 'reviewed' || interaction.inspection?.allFramesOpened !== true || !nonempty(interaction.inspection?.reviewer)) add('visual inspection absent');
@@ -133,6 +153,40 @@ export function validateEvidence(row, options = {}) {
       || !Number.isInteger(result.passed) || result.passed < 1 || result.failed !== 0 || !nonempty(result.command)
       || result.negativeRegression?.failedWhenBroken !== true || result.negativeRegression?.passedWhenRestored !== true) add('current focused red-then-green test result absent');
   } catch (e) { add(e.message); }
+  if (row.feature === 'clipping-matrix' && row.capability === 'normal-minimum' && !matrixMember) {
+    const members = proof.matrix ?? [];
+    if (!Array.isArray(members) || members.length > 47) add('layout matrix must contain at most 47 additional interactions');
+    const tuples = [interaction.tuple];
+    if (Array.isArray(members) && members.length <= 47) for (let i = 0; i < members.length; i++) {
+      const member = members[i];
+      if (!plain(member)) { add(`layout matrix member ${i + 1} malformed`); continue; }
+      // Reuse every provenance, source, test, privacy and per-click check. A
+      // matrix entry never gets a lighter acceptance path than the primary one.
+      const memberRow = { ...row, evidence: { ...proof, interaction: member.interaction, capture: member.capture } };
+      errors.push(...validateEvidenceRecord(memberRow, options, true));
+      try { tuples.push(readJsonReference(root, member.interaction, 'interaction').tuple); }
+      catch (e) { add(`layout matrix member ${i + 1}: ${e.message}`); }
+    }
+    const covered = new Set(), sizes = new Map();
+    for (const item of tuples) {
+      if (!checkTuple(item) || !['normal', 'minimum'].includes(item.viewport)) continue;
+      const key = `${item.language}/${item.theme}/${item.scale}/${item.viewport}`;
+      if (covered.has(key)) add(`duplicate layout tuple: ${key}`);
+      covered.add(key);
+      const size = `${item.width}x${item.height}`;
+      if (sizes.has(item.viewport) && sizes.get(item.viewport) !== size) add(`layout viewport dimensions differ across matrix: ${item.viewport}`);
+      sizes.set(item.viewport, size);
+    }
+    for (const language of ['english', 'cantonese', 'bilingual']) for (const theme of ['light', 'dark'])
+      for (const scale of [1, 1.25, 1.5, 2]) for (const viewport of ['normal', 'minimum']) {
+        const key = `${language}/${theme}/${scale}/${viewport}`;
+        if (!covered.has(key)) add(`required layout tuple missing: ${key}`);
+      }
+    const normal = tuples.find(item => item?.viewport === 'normal');
+    const minimum = tuples.find(item => item?.viewport === 'minimum');
+    if (normal && minimum && (minimum.width > normal.width || minimum.height > normal.height
+      || (minimum.width === normal.width && minimum.height === normal.height))) add('minimum viewport must be smaller than normal viewport');
+  }
   return errors;
 }
 
