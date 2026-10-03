@@ -52,6 +52,7 @@ private slots:
     }
     void cleanup()
     {
+        qApp->removeEventFilter(this);
         DimSum::s_random = [](quint32 bound) { return QRandomGenerator::system()->bounded(bound); };
         DimSum::resetLaunchState();
         if (m_window) QVERIFY(m_window->findChild<DatabaseTabWidget*>()->closeAllDatabaseTabs());
@@ -331,6 +332,24 @@ private slots:
     }
 private:
     QScopedPointer<MainWindow> m_window;
+    QStringList m_excludedEvents;
+    bool eventFilter(QObject* watched, QEvent* event) override
+    {
+        if (event->type() == QEvent::KeyPress || event->type() == QEvent::MouseButtonPress
+            || event->type() == QEvent::Wheel || event->type() == QEvent::TouchBegin) {
+            m_excludedEvents.append(QString::number(event->type()));
+        } else if (event->type() == QEvent::Show) {
+            if (auto* widget = qobject_cast<QWidget*>(watched)) {
+                auto* message = qobject_cast<KMessageWidget*>(widget);
+                if (widget->isModal() || widget->windowType() == Qt::Popup
+                    || (message && message->messageType() == KMessageWidget::Error)) {
+                    m_excludedEvents.append(QString::fromLatin1(widget->metaObject()->className())
+                                            + QStringLiteral(":") + widget->objectName());
+                }
+            }
+        }
+        return false;
+    }
     void programmaticOpen(bool alreadyVisible)
     {
         QTemporaryDir databaseDirectory(QDir::tempPath() + QStringLiteral("/kds-db-XXXXXX"));
@@ -373,8 +392,11 @@ private:
         }
         // This is the same one-argument slot used by Application::openFile.
         // Queue it without keyboard, pointer, modal or single-instance IPC.
+        m_excludedEvents.clear();
+        qApp->installEventFilter(this);
         QVERIFY(QMetaObject::invokeMethod(&window, "openDatabase", Qt::QueuedConnection, Q_ARG(QString, path)));
         QTRY_COMPARE(window.getOpenDatabases().size(), 1);
+        QVERIFY2(m_excludedEvents.isEmpty(), qPrintable(m_excludedEvents.join(QStringLiteral(", "))));
         QVERIFY(window.getOpenDatabases().first()->isLocked());
         QVERIFY(!QApplication::activeModalWidget());
         QVERIFY(!QApplication::activePopupWidget());
