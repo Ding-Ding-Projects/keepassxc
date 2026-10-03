@@ -1,0 +1,5984 @@
+{
+  "schemaVersion": 1,
+  "assessmentSourceCommit": "07ce4dc158bcd7eb735cc309f009c531731f3133",
+  "note": "Explicit canonical capability contracts. Evidence rows are sparse: an omitted surface/capability cell is incomplete, never exempt or inherited from another surface. No current built interaction evidence has been accepted.",
+  "contracts": [
+    {
+      "id": "language-modes/english",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/cantonese",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/bilingual",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/live-switch",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/fallback",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/separate-copy-resources",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "language-modes/narrow-bilingual",
+      "feature": "language-modes",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/independent-slider",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/five-levels",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/default-five",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/all-message-categories",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/disclosure",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-english/factual-values",
+      "feature": "funny-level-english",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/independent-slider",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/five-levels",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/default-five",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/all-message-categories",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/respectful-copy",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "funny-level-cantonese/factual-values",
+      "feature": "funny-level-cantonese",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dialog-emoji-toggle/persisted-toggle",
+      "feature": "dialog-emoji-toggle",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dialog-emoji-toggle/dialog-decoration-only",
+      "feature": "dialog-emoji-toggle",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dialog-emoji-toggle/control-label-exclusion",
+      "feature": "dialog-emoji-toggle",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dialog-emoji-toggle/accessibility-name-exclusion",
+      "feature": "dialog-emoji-toggle",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/shared-record",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/live-propagation",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/own-control",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/rename-everywhere",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/shared-credential",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/unlock-reset",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/suppression-discovery",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/suppression-vocabulary",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/suppression-dim-sum",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/restore-prior-settings",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "school-mode/unavailable-record",
+      "feature": "school-mode",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/off-by-default",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/english",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/cantonese",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/serialized-both",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/queue",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/debounce",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/cooldown",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/superseded-line",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/screen-reader-coexistence",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/quiet-hours",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator/factual-error-narration",
+      "feature": "narrator",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/per-language-picker",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/platform-enumeration",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/late-enumeration",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/stable-identity",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/automatic-default",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/missing-voice-retained",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/network-status",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/no-voice-state",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/rate",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/pitch",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "narrator-voice-pickers/history",
+      "feature": "narrator-voice-pickers",
+      "section": "Narration",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/all-appearance-values",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/date-range",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/time-range",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/weekdays",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/timezone",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/dst",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/cross-midnight",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/precedence",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/bounded-schema",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/migration",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/restore-base",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "scheduled-settings/history",
+      "feature": "scheduled-settings",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/per-rule-source",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/validated-https",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/allowlisted-fields",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/bounded-response",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/redirect-rejection",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/credential-url-rejection",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/ssrf-protection",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/generation-cancellation",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-settings-sources/offline-recovery",
+      "feature": "external-settings-sources",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/boolean-entity",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/stable-vault-key",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/on-off-semantics",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/bounded-refresh",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/secret-exclusion",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "home-assistant-source/recovery",
+      "feature": "home-assistant-source",
+      "section": "Scheduled settings",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/startup-draw",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-first-run",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-error-flow",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-update-flow",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/nonblocking",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-focus-steal",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/correct-bilingual-dish",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/verified-public-photo",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/school-suppression",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/unresolved-frequency-control-contract",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/published-catalog-photo",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/bilingual-factual-name",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/per-project-unique",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/beside-version",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/photo-link",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "release-code-name/unavailable-catalog-honesty",
+      "feature": "release-code-name",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/visible-empty-control",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/semantic-picker",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/bounded-versioned-schema",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/duplicate-key-rejection",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/unsafe-key-rejection",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/atomic-apply",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/private-cache-revalidation",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/local-only",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/literal-boundaries",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/replace",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/clear-reset",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/palette-discovery",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/accessibility-replacement",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/export-history-log-exclusion",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/adjacent-anchor",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/isolated-field-state",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/plain-text-default",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/bidirectional-state",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/literals",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/unicode-codepoints",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/classes",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/anchors",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/named-numbered-groups",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/atomic-noncapturing-groups",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/alternation",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/quantifiers",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/lookarounds",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/backreferences",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/conditionals-subroutines",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/inline-modifiers",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/replacement-templates",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/engine-version-capabilities",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/unsupported-visible",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/explanation-tree",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/annotations",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/matches-captures",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/replacement-preview",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/case-suites",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/snippets",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/import-export",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/navigation",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/zero-width",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/timing",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/backtracking-diagnostics",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/bounded-trace",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/bounded-evaluation",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/adversarial-cases",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "regex-builder/focus-return",
+      "feature": "regex-builder",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/explicit-surface-registration",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/exact-target-scope",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/own-field",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/own-builder",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/isolated-query-pattern-flags-mode",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/isolated-history-snippets",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/no-match",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "search-bar-every-surface/result-count",
+      "feature": "search-bar-every-surface",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-search/every-settings-tab",
+      "feature": "settings-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-search/labels-descriptions-values",
+      "feature": "settings-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-search/cross-tab-location",
+      "feature": "settings-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-search/direct-focus",
+      "feature": "settings-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-search/own-anchored-builder",
+      "feature": "settings-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/select",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/combobox",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/picker",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/autocomplete",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/menu-button",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/overflow",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/font-picker",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/color-picker",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/filter-picker",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/own-search",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/own-full-builder",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/keyboard-open-navigation-clear-close",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/focus-return",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dropdown-search/unchanged-action-semantics",
+      "feature": "dropdown-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/every-rendered-element",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/states-pseudo-states",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/disabled-wrapper",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/exact-target-actions",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/edit-appearance",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/lock-element",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/own-search",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/own-full-builder",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/isolated-state",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/keyboard-equivalent",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/touch-equivalent",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "context-menu-search/no-short-menu-exemption",
+      "feature": "context-menu-search",
+      "section": "Search and regex",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/corner-anchor",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/nonblocking",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/timeout",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/persistent-errors-warnings",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/stack-no-overlap",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/actions",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/focusable",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/live-announcement",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notifications/dismiss-target",
+      "feature": "notifications",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/dismissed-review",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/local-search",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/own-builder",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/multi-select",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/range-select",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/inverse-selection",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/bulk-dismiss",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/bulk-delete-confirmation",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "notification-centre/filtered-export",
+      "feature": "notification-centre",
+      "section": "Notifications",
+      "persistenceRequired": true
+    },
+    {
+      "id": "no-nag-policy/no-startup-promotion",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/no-recurring-promotion",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/free-default",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/user-initiated-only",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/permanent-purchase-entitlement",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/accessibility-language-export-never-paywalled",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "no-nag-policy/upstream-donation-destination",
+      "feature": "no-nag-policy",
+      "section": "Notifications",
+      "persistenceRequired": false
+    },
+    {
+      "id": "material-3-appearance/registered-primitives",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/provenance",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/color-roles",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/typography",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/shape",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/elevation",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/state-layers",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/component-anatomy",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/theme",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/density",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/seed",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/live-preview",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/cjk-fallback",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "material-3-appearance/no-generic-placeholder",
+      "feature": "material-3-appearance",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/every-target",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/every-state",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/self-editing",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/right-click",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/keyboard",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/shift-tab-click",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/anchored-editor",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/anchor-tracking",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/edge-collision",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/layers",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/layer-groups",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/visibility",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/layer-lock",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/duplicate",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/rename",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/reorder",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/rectangular-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/elliptical-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/freehand-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/path-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/color-range-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/saved-selection",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/channels",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/opacity",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/blend-modes",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/clipping-masks",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/vector-masks",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/adjustment-layers",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/embedded-smart-content",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/ordered-effects",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/gradients",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/patterns",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/image-fills",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/multiple-borders",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/multiple-shadows",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/glows",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/blur-backdrop",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/transforms",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/warp",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/perspective",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/origin",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/geometry",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/crop",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/fit",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/focal-point",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/safe-area",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/filters",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/color-adjustments",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/shape-path",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/corners",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/spacing",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/layout",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/elevation",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/motion",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/state-inheritance",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/state-overrides",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/before-after-preview",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/multi-state-preview",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/zoom",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/rulers",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/guides",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/alignment",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/searchable-property-inspector",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/undo-redo",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/append-only-history",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/presets",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/copy-paste-style",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/import-export",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/property-reset",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/layer-reset",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/state-reset",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/element-reset",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/global-reset",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/contrast-diagnostics",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/reduced-motion-diagnostics",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/bounded-preview",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "per-element-appearance-editor/unsupported-visible",
+      "feature": "per-element-appearance-editor",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/continuous-field",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/numeric-entry",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/named",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/hex-hex8",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/rgb-rgba",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/hsl-hsla",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/hsv-hsb",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/hwb",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/lab-lch",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/oklab-oklch",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/cmyk",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/bidirectional",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/alpha",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/gamut",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/clipping-warning",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/contrast",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/copy",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/recent-custom-swatches",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "infinite-color-picker/self-customization",
+      "feature": "infinite-color-picker",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/picker-choice",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/sentinel-not-color",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/palette-exclusion",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/native-animation",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/saturated-hue-wheel",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/shared-phase",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/speed-level-mapping",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "rainbow-color/reduced-motion-static",
+      "feature": "rainbow-color",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/installed-bundled-fonts",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/live-face-preview",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/cjk-fallback",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/free-stepped-size",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/variable-axes",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/weight-bold",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/italic-oblique",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/underline-style-color",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/single-double-strike",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/overline",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/capitalization-smallcaps",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/super-subscript",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/text-color",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/highlight",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/outline",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/shadow",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/glow",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/character-word-spacing",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/line-height",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/baseline-offset",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/direction",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/alignment",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "font-customization/unsupported-visible",
+      "feature": "font-customization",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/live-display",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/reset",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/stable-installed-identity",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/stable-data-path",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/diagnostic-shipped-name",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-rename/history",
+      "feature": "app-rename",
+      "section": "Appearance",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/all-sectioned-surfaces",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/persistent-strip",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/settings-tabs",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/reorder",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/keyboard-roving-focus",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/roles-controls",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tabs/reduced-motion",
+      "feature": "tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/left-default",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/left",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/right",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/top",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/bottom",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/axis-aware-overflow",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/axis-aware-keys",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/orientation",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/narrow-collapse",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-docking/readable-labels",
+      "feature": "tab-docking",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-overflow/width-overflow",
+      "feature": "tab-overflow",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-overflow/height-overflow",
+      "feature": "tab-overflow",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-overflow/accessible-overflow-list",
+      "feature": "tab-overflow",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-overflow/active-tab-reveal",
+      "feature": "tab-overflow",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/pin-unpin-menu",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/keyboard",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/searchable-list",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/dedicated-region",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/pinned-reorder",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/remain-visible",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/full-accessible-name",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/bulk-close-default-exclusion",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-pinning/include-preview",
+      "feature": "tab-pinning",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/create",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/rename",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/color",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/reorder",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/collapse",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/remove",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/pointer-move",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/keyboard-move",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/membership",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/persistence",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/appearance-editor",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/all-typography",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/icon-badge",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/background-border-shape-spacing",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/state-style",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/scopes",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-groups/empty-group-choice",
+      "feature": "tab-groups",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/current-strip",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/each-group",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/group-names",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/all-owned-windows",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/own-builders",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/own-state",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/result-location",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/pinned-state",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/collapsed-reveal",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/accessible-return",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "tab-searches/actions-retain-query",
+      "feature": "tab-searches",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/contains",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/not-contains",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/shared-predicate",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/builder",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/empty-query-block",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/invalid-pattern-block",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/affected-preview",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/pinned-exclusion",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/locked-exclusion",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/explicit-include",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/unsaved-protection",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-close-tabs/partial-outcomes",
+      "feature": "bulk-close-tabs",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/single-menu-command",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/anchored-picker",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/name-color-count",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/create-group",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/empty-state",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/own-search-builder",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/keyboard",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/focus-return",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "move-into-group-picker/collapsed-preserved",
+      "feature": "move-into-group-picker",
+      "section": "Tabs",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/every-element-state",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/own-anchored-wizard",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/exact-target",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/pin",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/password",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/pin-password",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/password-totp",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/pin-totp",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/password-pin-totp",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/independent-credential-set",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/ordered-factors",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/disabled-wrapper",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/protected-action-block",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/shortcut-block",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/automation-block",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/palette-block",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/pointer",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/keyboard",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/touch",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/assistive",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/keypad",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/manual-pin",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/shared-validator",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/shared-attempt-budget",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/vault-only",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/unlock-duration",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/relock",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/locked-on-launch",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/searchable-lock-list",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/bulk-per-target",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/history-redaction",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/restore-missing-credential",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "toy-locks/recovery-disclosure",
+      "feature": "toy-locks",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/unlock-settings-help-routes",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/local-ticket-form",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/local-status",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/no-network-disclosure",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/open-data-folder",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/no-implicit-delete",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/search",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/bulk",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "support-tickets/export",
+      "feature": "support-tickets",
+      "section": "Element locks",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/dish-rung",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/sums-rung",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/mole-rung",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/clock-rung",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/wait-only",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/no-credential-unlock",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/same-attempt-budget",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/hourly-skip-budget",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/escalation-preserved",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/single-use-nonce",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/expiry",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/server-grade",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/minimum-round-time",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/unique-valid-hits",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/school-start-sums",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "unlock-ladder/keyboard-countdown",
+      "feature": "unlock-ladder",
+      "section": "Unlock ladder",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/uri-import",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/image-qr",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/clipboard-qr",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/camera-capability",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/manual-entry",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/honor-parameters",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/grouped-code",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/copy",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/countdown",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/next-code",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/searchable-list",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/reorder",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/groups",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/bulk",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/rfc6238-vectors",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/sha1",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/sha256",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/sha512",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/six-eight-digits",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/arbitrary-period",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/clock-skew",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/vault-only",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/no-network",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/redacted-export",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "authenticator/explicit-sensitive-export-confirmation",
+      "feature": "authenticator",
+      "section": "Authenticator",
+      "persistenceRequired": true
+    },
+    {
+      "id": "qr-pairing/local-qr",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/otpauth-parameters",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/manual-base32",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/parameter-display",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/explicit-reveal",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/text-alternative",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/quiet-zone",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/theme-contrast",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/confirm-current-code",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "qr-pairing/no-capture-log-history-network",
+      "feature": "qr-pairing",
+      "section": "Authenticator",
+      "persistenceRequired": false
+    },
+    {
+      "id": "secret-mutation-history/isolated-data-repository",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/stable-identity",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/each-totp-mutation",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/each-rename-mutation",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/append-only",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/password-protected-manager",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/browse-search-filter-diff-restore-label",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/retention",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/redacted-export",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/encrypted-snapshot",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/vault-key",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/missing-vault-recovery",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "secret-mutation-history/interrupted-write-recovery",
+      "feature": "secret-mutation-history",
+      "section": "Secret history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/ctrl-shift-f",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/every-command",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/every-feature",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/every-setting",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/every-appearance-control",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/rich-inline-controls",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/exact-element-teleport",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/lock-respecting",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/bounded-card-default",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/full-window",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "command-palette/own-search-builder",
+      "feature": "command-palette",
+      "section": "Command palette",
+      "persistenceRequired": true
+    },
+    {
+      "id": "super-confirmation/native-own-surface",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/exact-action-data",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/two-independent-keys",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/full-range-slider",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/progress-animation",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/completion-animation",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/emergency-exit",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/escape-back",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/no-premature-action",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/focus-return",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "super-confirmation/reduced-motion",
+      "feature": "super-confirmation",
+      "section": "Destructive confirmation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "bulk-actions/every-collection",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/click-range",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/keyboard",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/select-page",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/select-all-matches",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/inverse",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/all-single-actions",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/filtered-scope",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/preview",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/skipped-reasons",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/undo",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/cancellation",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "bulk-actions/partial-outcome",
+      "feature": "bulk-actions",
+      "section": "Bulk actions",
+      "persistenceRequired": true
+    },
+    {
+      "id": "export-everything/every-record-view-setting-output",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/json",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/jsonl",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/yaml",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/toml",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/xml",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/csv",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/tsv",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/markdown",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/html",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/sql",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/language-source",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/schema-version",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/encoding-line-endings",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/loss-disclosure",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/roundtrip",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "export-everything/secret-exclusion",
+      "feature": "export-everything",
+      "section": "Exports",
+      "persistenceRequired": false
+    },
+    {
+      "id": "archive-export/zip",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/seven-zip",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/lzma2",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/lzma",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/ppmd",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/bzip2",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/deflate",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/levels",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/dictionary-word-solid-sizes",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/solid-nonsolid",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/threads",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/split-volumes",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/aes256",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/encrypted-headers",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/relative-paths",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "archive-export/sensitive-disclosure",
+      "feature": "archive-export",
+      "section": "Exports",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/all-records-settings",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/isolated-repository",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/local-default",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/append-only-restore",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/stable-aad",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/encrypted-snapshots",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/meaningful-label",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/unchanged-noop",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/write-failure-recovery",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "local-history/discard-record",
+      "feature": "local-history",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/calendar",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/month-year-jump",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/range",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/presets",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/typed-locale-iso",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/inline-invalid",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/derived-action-filter",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/action-counts",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/multi-action",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/composed-search-date-action",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/own-builder",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "history-panel-filters/honest-empty",
+      "feature": "history-panel-filters",
+      "section": "Local history",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/every-release",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/factual-version-date-categories",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/calendar",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/typed-dates",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/composed-search",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/own-builder",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/filtered-copy-export",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/exported-range",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-viewer/current-task-refresh",
+      "feature": "changelog-viewer",
+      "section": "Changelog",
+      "persistenceRequired": true
+    },
+    {
+      "id": "changelog-commit-links/full-sha",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "changelog-commit-links/exact-forge",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "changelog-commit-links/validated-existence",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "changelog-commit-links/summary-disclosure",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "changelog-commit-links/unknown-honesty",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "changelog-commit-links/exported-sha",
+      "feature": "changelog-commit-links",
+      "section": "Changelog",
+      "persistenceRequired": false
+    },
+    {
+      "id": "external-editor/detect",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-editor/choose-register",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-editor/semantic-picker",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-editor/selected-file",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-editor/project-folder",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "external-editor/missing-editor-recovery",
+      "feature": "external-editor",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "vscode-handoff/every-export",
+      "feature": "vscode-handoff",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "vscode-handoff/one-action",
+      "feature": "vscode-handoff",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "vscode-handoff/standard-insiders-portable-detection",
+      "feature": "vscode-handoff",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "vscode-handoff/folder-workspace-root",
+      "feature": "vscode-handoff",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "vscode-handoff/missing-install-guidance",
+      "feature": "vscode-handoff",
+      "section": "External editors",
+      "persistenceRequired": true
+    },
+    {
+      "id": "offline-docs-browser/bundled-all-articles",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "offline-docs-browser/shared-isolated-markdown",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "offline-docs-browser/internal-links",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "offline-docs-browser/title-body-search",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "offline-docs-browser/own-builder",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "offline-docs-browser/bundle-completeness",
+      "feature": "offline-docs-browser",
+      "section": "Offline documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "landing-page/visible-runtime-boundary",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/visitor-owned-state",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/browser-storage-equivalents",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/every-feature-equivalent",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/verified-home-download",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/all-feature-articles",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/suggested-articles",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/local-assets",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/no-analytics",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/documented-version",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/current-content",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "landing-page/live-homepage-link",
+      "feature": "landing-page",
+      "section": "Website",
+      "persistenceRequired": true
+    },
+    {
+      "id": "social-preview/root-product-image",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/same-served-bytes",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/static-og-metadata",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/absolute-https-image",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/dimensions-alt",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/large-image-card",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/anonymous-delivery",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/versioned-url",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "social-preview/repository-preview-proof",
+      "feature": "social-preview",
+      "section": "Website",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/front-screen-before-navigation",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/exact-running-version",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/bound-build-release-time",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/timezone-seconds",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/unavailable-state",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "in-app-version-provenance/no-launch-file-time",
+      "feature": "in-app-version-provenance",
+      "section": "Delivery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/custom-frame",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/registered-window-controls",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/drag",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/resize",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/maximize",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/restore",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "frameless-material-title-bar/accessible-actions",
+      "feature": "frameless-material-title-bar",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "overlays-paint-surface/own-background-border-elevation-shape",
+      "feature": "overlays-paint-surface",
+      "section": "Overlays",
+      "persistenceRequired": false
+    },
+    {
+      "id": "overlays-paint-surface/viewport-bounds",
+      "feature": "overlays-paint-surface",
+      "section": "Overlays",
+      "persistenceRequired": false
+    },
+    {
+      "id": "overlays-paint-surface/internal-scroll",
+      "feature": "overlays-paint-surface",
+      "section": "Overlays",
+      "persistenceRequired": false
+    },
+    {
+      "id": "overlays-paint-surface/anchor-not-covered",
+      "feature": "overlays-paint-surface",
+      "section": "Overlays",
+      "persistenceRequired": false
+    },
+    {
+      "id": "overlays-paint-surface/stacking",
+      "feature": "overlays-paint-surface",
+      "section": "Overlays",
+      "persistenceRequired": false
+    },
+    {
+      "id": "resizable-panels/edge-corner-resize",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "resizable-panels/floating-header-drag",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "resizable-panels/keyboard-move-resize",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "resizable-panels/viewport-bounds",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "resizable-panels/persistence",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "resizable-panels/reset",
+      "feature": "resizable-panels",
+      "section": "Overlays",
+      "persistenceRequired": true
+    },
+    {
+      "id": "shortcut-display/actual-context-binding",
+      "feature": "shortcut-display",
+      "section": "Menus",
+      "persistenceRequired": false
+    },
+    {
+      "id": "shortcut-display/right-aligned",
+      "feature": "shortcut-display",
+      "section": "Menus",
+      "persistenceRequired": false
+    },
+    {
+      "id": "shortcut-display/platform-notation",
+      "feature": "shortcut-display",
+      "section": "Menus",
+      "persistenceRequired": false
+    },
+    {
+      "id": "shortcut-display/accessible-shortcut",
+      "feature": "shortcut-display",
+      "section": "Menus",
+      "persistenceRequired": false
+    },
+    {
+      "id": "shortcut-display/no-invented-binding",
+      "feature": "shortcut-display",
+      "section": "Menus",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/in-origin-surface",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/actual-progress",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/submit-disabled",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/handler-reentry-block",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/optional-phase-choice",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "progress-where-started/cancellation",
+      "feature": "progress-where-started",
+      "section": "Progress",
+      "persistenceRequired": false
+    },
+    {
+      "id": "recovery-reauth/at-failure-control",
+      "feature": "recovery-reauth",
+      "section": "Recovery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "recovery-reauth/actionable-diagnosis",
+      "feature": "recovery-reauth",
+      "section": "Recovery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "recovery-reauth/local-assistant-factual-prompt",
+      "feature": "recovery-reauth",
+      "section": "Recovery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "recovery-reauth/preserve-history-boundaries",
+      "feature": "recovery-reauth",
+      "section": "Recovery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "recovery-reauth/reauthentication-scope-flow",
+      "feature": "recovery-reauth",
+      "section": "Recovery",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/shared-isolated-renderer",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/markdown",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/emoji",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/relative-link-base",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/accessible-region",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/honest-empty",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rendered-provider-text/no-privileged-markup",
+      "feature": "rendered-provider-text",
+      "section": "Provider text",
+      "persistenceRequired": false
+    },
+    {
+      "id": "collapsible-filters/collapsible-search",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "collapsible-filters/filters",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "collapsible-filters/statistics",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "collapsible-filters/descriptive-default-collapsed",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "collapsible-filters/active-filter-disclosure",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "collapsible-filters/accessible-expanded-state",
+      "feature": "collapsible-filters",
+      "section": "Filters",
+      "persistenceRequired": true
+    },
+    {
+      "id": "guided-forms/real-enumerations",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/safe-suggested-default",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/inline-validation",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/disabled-reason",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/path-browse",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/equivalent-validation",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "novice-expert-controls/same-values",
+      "feature": "novice-expert-controls",
+      "section": "Guided forms",
+      "persistenceRequired": true
+    },
+    {
+      "id": "novice-expert-controls/documented-five-level-map",
+      "feature": "novice-expert-controls",
+      "section": "Guided forms",
+      "persistenceRequired": true
+    },
+    {
+      "id": "novice-expert-controls/shipped-default",
+      "feature": "novice-expert-controls",
+      "section": "Guided forms",
+      "persistenceRequired": true
+    },
+    {
+      "id": "novice-expert-controls/custom-state",
+      "feature": "novice-expert-controls",
+      "section": "Guided forms",
+      "persistenceRequired": true
+    },
+    {
+      "id": "novice-expert-controls/no-read-overwrite",
+      "feature": "novice-expert-controls",
+      "section": "Guided forms",
+      "persistenceRequired": true
+    },
+    {
+      "id": "settings-explanations/every-setting-registration",
+      "feature": "settings-explanations",
+      "section": "Settings",
+      "persistenceRequired": false
+    },
+    {
+      "id": "settings-explanations/progressive-explanation",
+      "feature": "settings-explanations",
+      "section": "Settings",
+      "persistenceRequired": false
+    },
+    {
+      "id": "settings-explanations/actual-file-or-default",
+      "feature": "settings-explanations",
+      "section": "Settings",
+      "persistenceRequired": false
+    },
+    {
+      "id": "settings-explanations/actual-default-value",
+      "feature": "settings-explanations",
+      "section": "Settings",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/same-validator",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/same-persistence",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/same-history",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/accessible-distinct-control",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/virtualized-lists",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/explicit-unsupported-reason",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "rich-controls/one-action-full-control",
+      "feature": "rich-controls",
+      "section": "Rich controls",
+      "persistenceRequired": false
+    },
+    {
+      "id": "blank-slate-presets/real-default-derived",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "blank-slate-presets/presets",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "blank-slate-presets/actual-created-values",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "blank-slate-presets/editable",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "blank-slate-presets/undo",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "blank-slate-presets/history",
+      "feature": "blank-slate-presets",
+      "section": "Presets",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/focus",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/low-stimulation",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/time-awareness",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/one-thing",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/momentum",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/independent-off-defaults",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/user-chosen-next-action",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/snooze-respected",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/no-medical-claim",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/no-guilt",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "adhd-modes/school-kids-composition",
+      "feature": "adhd-modes",
+      "section": "Attention accommodations",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/shipped-presets",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/local-upload",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/isolated-byte-decoder",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/byte-pixel-frame-resource-bounds",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/crop",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/fit",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/focal-point",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/safe-area",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/background",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/target-previews",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/derived-formats",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/roundtrip-validation",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/loss-disclosure",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/rollback",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/replace",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/reset",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/stable-installed-identity",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "app-logo-customization/private-cache",
+      "feature": "app-logo-customization",
+      "section": "Logo",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/documents-pdf",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/images",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/audio",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/video",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/archives",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/structured-data-spreadsheets",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/code-text",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/binary-encodings",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/category-search-builder",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/byte-type-detection",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/complete-adapter-catalog",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/unavailable-visible",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/bundled-offline-proof",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/no-path-enablement",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/isolated-bounded-process",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/output-validation",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-inspect",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-split",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-merge",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-extract",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-reorder",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-rotate",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-metadata",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pdf-postwrite-reopen",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/loss-metadata-disclosure",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/atomic-destination",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/source-preserved",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/batch-outcomes",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/unlimited-paged-queue",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/durable-resume",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/bounded-concurrency-backpressure",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/storage-preflight",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "file-converter/pause-resume-cancel",
+      "feature": "file-converter",
+      "section": "Converter",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/documented-loopback-api",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/privileged-bounded-requests",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/guided-real-pickers",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/bundled-troubleshooter",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/exhaustive-catalog",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/all-tags",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/all-pages",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/refresh-identity-age",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/completeness",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/installed-reconciliation",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/catalog-search-builder",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/hardware-ram",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/hardware-gpu-vram",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/driver-backend",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/architecture",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/disk",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/exact-model-metadata",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/context-overhead",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/four-fit-verdicts",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/unknown-not-zero",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/batch-pull-not-payment",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/size-disclosure",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/durable-pull-progress",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/cancel-retry-reconcile",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/streaming-chat",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/model-parameters",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/stop-regenerate",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/multi-session-history",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/capability-attachments",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/bounded-chat",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/local-private-data",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/prebuilt-profiles",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/registered-executable-picker",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/allowlisted-arguments-environment",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/no-arbitrary-shell",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/preflight-preview",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/premutation-snapshot",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/one-action-restore",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/failed-launch-rollback",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/readiness-exit-timeout",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/secret-exclusion",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "ollama-manager/offline-recovery",
+      "feature": "ollama-manager",
+      "section": "Local model manager",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/project-registration",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/application-reporting",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/own-status-surface",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/factual-evidence",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/truthful-state",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/verified-reply-route",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/no-decorative-send",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "status-hub/unreachable-honesty",
+      "feature": "status-hub",
+      "section": "Live status",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/installed-extension-handoff",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/start-decision",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/actual-queued-item",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/distinct-progress-surface",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/bytes-rate-eta",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/pause-resume-cancel",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/always-on-top-start",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/always-on-top-completion",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "browser-extension-download-dialogs/exact-outcome",
+      "feature": "browser-extension-download-dialogs",
+      "section": "Extension transfers",
+      "persistenceRequired": true
+    },
+    {
+      "id": "accessibility/keyboard-reachability",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/visible-focus",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/roles-names-values-states",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/contrast",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/touch-targets",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/screen-reader",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "accessibility/reduced-motion",
+      "feature": "accessibility",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/documented-minimum",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/normal-viewport",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/bilingual-longest",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/font-scale",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/density",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/site-320",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/portrait-landscape",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/real-touch",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "responsive-sizing/on-screen-keyboard",
+      "feature": "responsive-sizing",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/english",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/cantonese",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/bilingual",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/light",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/dark",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/scale-100",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/scale-125",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/scale-150",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/scale-200",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/normal-minimum",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/layout-probe-receipt",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "clipping-matrix/no-overflow-truncation",
+      "feature": "clipping-matrix",
+      "section": "Quality",
+      "persistenceRequired": false
+    },
+    {
+      "id": "auto-updates/verified-feed",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "auto-updates/download-stage",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "auto-updates/consent-restart",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "auto-updates/unsaved-work-preserved",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "auto-updates/truthful-progress",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "auto-updates/recovery",
+      "feature": "auto-updates",
+      "section": "Build and release",
+      "persistenceRequired": true
+    },
+    {
+      "id": "squirrel-installer/genuine-package",
+      "feature": "squirrel-installer",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "squirrel-installer/local-installable",
+      "feature": "squirrel-installer",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "squirrel-installer/unsigned-identity",
+      "feature": "squirrel-installer",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "squirrel-installer/package-provenance",
+      "feature": "squirrel-installer",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "squirrel-installer/update-assets",
+      "feature": "squirrel-installer",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "build-scripts/one-click",
+      "feature": "build-scripts",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "build-scripts/documented-supported-route",
+      "feature": "build-scripts",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "build-scripts/reproducible-inputs",
+      "feature": "build-scripts",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "build-scripts/bounded-background-build",
+      "feature": "build-scripts",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "dependency-bundling/declared-pinned-manifest",
+      "feature": "dependency-bundling",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "dependency-bundling/local-runtime",
+      "feature": "dependency-bundling",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "dependency-bundling/offline-package",
+      "feature": "dependency-bundling",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "dependency-bundling/no-host-path-assumption",
+      "feature": "dependency-bundling",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/committed-counter",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/tagged-source",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/total-nonblank",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/categories",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/exclusions",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/generated-separation",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/surviving-line-attribution",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/matching-arithmetic",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "line-count-release/human-effort-method",
+      "feature": "line-count-release",
+      "section": "Build and release",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/every-visible-surface",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/genuine-built-output",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/opened-inspected",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/provenance",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/alt-text",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/current-state",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/collapsible-index",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/real-built-window",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/hidden-desktop",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/no-monitor-recording",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/source-bound",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/real-end-to-end-path",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/retained-repository",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "screen-recording/bounded-transfer",
+      "feature": "screen-recording",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/handwritten-reference-list",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/exact-reference-renderer",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/deterministic-route",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/identical-tuple",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/raw-reference",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/raw-built",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/labelled-comparison",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/visual-diff",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/registered-primitive-audit",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/reviewed-deviation",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "design-parity/current-provenance",
+      "feature": "design-parity",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/canonical-download-script",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/all-weights-styles-subsets",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/source-ranges-preserved",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/actual-variable-axes",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/per-file-hashes",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "vendored-fonts/built-font-resolution",
+      "feature": "vendored-fonts",
+      "section": "Website assets",
+      "persistenceRequired": false
+    },
+    {
+      "id": "forge-publishing/multi-account-vault-store",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/active-account",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/owner-picker",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/account-search-builder",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/signout-refresh",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/add-account",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/copy-publish-alternative",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "forge-publishing/truthful-provider-capability",
+      "feature": "forge-publishing",
+      "section": "Publishing",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/every-rendered-element",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/state-transition",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/enter-exit",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/hover-focus",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/press-release",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/selection",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/disabled",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/loading",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/resize-drag",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/interrupt-safe",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/geometry-final-state",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/reduced-motion-static",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/no-sound-no-focus-side-effect",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    }
+  ],
+  "rows": []
+}

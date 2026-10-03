@@ -1,5 +1,24 @@
 # Current task handoff, October 3, 2026
 
+## Expanded interface objective, latest verified boundary
+
+The current request includes every canonical user-facing feature, full Material Design 3,
+an independent anchored full regex builder in every context menu, and motion for every
+rendered element. The original database lifecycle acceptance remains part of the objective.
+
+- Inventory lane: `codex/ui-evidence-inventory-20261003`, based on `07ce4dc158bcd7eb735cc309f009c531731f3133`. It owns only inventory/evidence tooling and related records. Parallel menu and motion implementation lanes remain unintegrated; neither is part of release `v2.8.29801`.
+- The hand-maintained registry names 89 features, 83 surfaces and 996 capabilities. All 172 original summary rows and their historical source/evidence references survive the migration; six new summaries bring the total to 178. Source presence, schema validity and built product completion are separate states.
+- Focused inventory verification: `scripts/test-feature-inventory-guard.mjs` passes 69 contract checks. The removal loops reject each of the 178 feature summaries, 83 surfaces and 996 capability contracts. Evidence probes reject stale revisions, wrong hashes, omitted persistence/configuration/interaction/capture/privacy, unsafe paths and legacy records. These are schema/integrity fixtures, not native runtime tests.
+- Product evidence remains **incomplete: 0/82,668 current surface/capability cells verified**, with 7,387 incomplete surface/feature groups. The sparse ledger has no current accepted built interactions. Historical screenshots were preserved without alteration or promotion.
+- Latest verified package: [v2.8.29801](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.29801), non-draft, source `07ce4dc158bcd7eb735cc309f009c531731f3133`. [Run 37147954035](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37147954035) succeeded, final update `2026-10-03T20:01:38Z`; publication timestamp `2026-10-03T20:01:34Z`. Seven assets are present. The parent lane downloaded them and passed `verify-squirrel-artifacts.ps1` plus update-manifest validation through `fetch-site-release-data.mjs`.
+- Parent-verified downloaded hashes: Setup SHA-256 `72ff97641ec249b216890401e7b64ba9fd6d8f5a8d4b472024238d246e5074f3`; packaged executable SHA-256 `ff0e81e698691806436df3d6a5499c51f9d2e7ed1eafeb0d3fa79d65fb1dbee6`. This lane independently read the run and release metadata, but did not repeat the package downloads or installed execution.
+- Earlier focused lifecycle evidence remains pinned to `97825b47b2916ced881e82763e1a49d23ed98313`: 28 processes, 99 Qt passes, zero failures/timeouts, comprising GUI 15/50, history 12/37 and database 1/12. Source/test files are unchanged in the later documentation-only package source. No broad/native rerun was performed for this inventory change.
+- The approved isolated native-control endpoint remains unavailable. No new UI drive, screenshot, ten-entry native creation, full Quit/relaunch, positional Cantonese-path opening or packaged field readback is claimed. Do not substitute visible-desktop control, install/reconfigure the endpoint, or repeatedly retry the unchanged failure.
+- The startup surprise frequency/control discrepancy remains unresolved. Inventory records the conflict explicitly and does not alter runtime behavior.
+- Next owner: the coordinating parent integrates reviewed isolated source lanes, retains their exact candidate/test identities, updates site article packaging and the public records, and obtains genuine built proof once the approved route is restored. The inventory must never stand in for missing implementation. See [the evidence schema and remaining feature families](docs/features/delivery/interface-completion.md).
+
+## Earlier lifecycle handoff snapshot
+
 ## Database lifecycle repair, native acceptance pending
 
 - Baseline: main and release v2.8.29201 source `8301d0364a4e0753f9f0ae5c700174cd3dd1e353`.

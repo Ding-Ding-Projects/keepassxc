@@ -1,5 +1,17 @@
 # Roadmap
 
+## October 2026 complete interface scope
+
+- [x] Preserve the original 172 source-assessment rows and add a versioned, explicit native/website surface and capability inventory. The focused schema/evidence regression passes 69 checks, including removal of all 178 platform rows, 83 surfaces and 996 capability contracts. This item is inventory tooling only.
+- [ ] Implement and verify every canonical capability on every named native surface and website-owned equivalent. Current product evidence remains 0/82,668 verified capability cells, not a completion claim.
+- [ ] Complete search with an independent anchored full regex workbench in every context menu, dropdown, editor and settings section, including keyboard/touch routes and menu lifetime behavior.
+- [ ] Complete genuine Material Design 3 primitives, every-element appearance and motion with reduced-motion behavior, all language modes and every supported scale. Parallel motion/menu candidates remain unintegrated and are absent from the published package below.
+- [ ] Complete the detailed language/School/narration/schedules, tabs/groups/discovery, six lock policies, authenticator/encrypted history, notifications/exports/bulk actions, converter, local model suite, logo, offline documentation, provenance and Status Hub contracts recorded in [interface completeness](docs/features/delivery/interface-completion.md).
+- [ ] Obtain candidate-bound built interactions and genuine per-click screenshots through the approved isolated-desktop route. Historical parity images remain historical; the route is currently unavailable.
+- [ ] Resolve the contradictory startup surprise frequency and control requirements before altering that behavior.
+- [x] Verify hosted packaging run `37147954035` succeeded at source `07ce4dc158bcd7eb735cc309f009c531731f3133` and published non-draft `v2.8.29801` with seven required assets. The parent lane downloaded and verified the package/update metadata. This is package evidence, not installed UI acceptance.
+- [ ] Complete the original ten-entry native save/quit/relaunch/readback acceptance, positional spaces/Cantonese filename acceptance, default-branch delivery of the new interface work, and safe task-owned cleanup.
+
 ## October 2026 database lifecycle repair
 
 - [x] Repair the history snapshot attempted before database unlock and prove its focused regression red then green. Packaged native acceptance remains below.
@@ -100,7 +112,7 @@
 - [ ] Give command palette results rich inline controls and exact-element teleport.
 - [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
 - [x] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding (three named records: widths 50 tuples, languages and themes 60 tuples at the expanded width, scales 30 tuples; 20 findings repaired; all three at 0 at `693367d1`).
-- [ ] Turn every row of the fail-closed feature inventory (`docs/features/inventory.json`) green; `scripts/check-feature-inventory.mjs` currently reports 0/172.
+- [ ] Complete every required named-surface capability in the fail-closed feature inventory; `scripts/check-feature-inventory.mjs` currently reports 0/82,668 current capability cells verified. The earlier platform-only 0/172 summary is superseded by the expanded matrix above.
 - [x] Make the feature-inventory guard reject duplicate canonical rows and malformed row values instead of silently accepting or crashing on them.
 
 ## Installer and updater

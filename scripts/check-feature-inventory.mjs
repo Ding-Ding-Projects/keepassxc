@@ -1,118 +1,50 @@
-// Fail-closed per-surface feature inventory check.
-//
-//   node scripts/check-feature-inventory.mjs            # report and exit non-zero on any red row
-//   node scripts/check-feature-inventory.mjs --summary  # counts only
-//
-// The canonical feature list below is hand-written. It is the authority: a
-// feature missing from docs/features/inventory.json is red, a row whose status
-// is not "implemented" is red, and an implemented row whose implementation
-// symbol, localized copy key, documentation article, focused test, built-artifact
-// interaction record or capture is absent or stale is red. Symbols are matched
-// with line-anchored regular expressions so a commented-out line, a descendant
-// path or a renamed symbol that still contains the old name cannot satisfy them.
-import { readFileSync, existsSync } from 'node:fs';
+// Schema success and complete product delivery are deliberately separate verdicts.
+import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-
-const here = dirname(fileURLToPath(import.meta.url));
-export const repoRoot = resolve(here, '..');
-export const inventoryPath = join(repoRoot, 'docs', 'features', 'inventory.json');
-
-// One id per canonical user-facing contract, per surface. Adding a contract to
-// the shared instructions means adding it here by hand; nothing is discovered.
-export const CANONICAL_FEATURES = [
-  'language-modes', 'funny-level-english', 'funny-level-cantonese', 'dialog-emoji-toggle', 'school-mode',
-  'narrator', 'narrator-voice-pickers', 'scheduled-settings', 'external-settings-sources', 'home-assistant-source',
-  'dim-sum-surprise', 'release-code-name', 'personal-vocabulary-upload',
-  'regex-builder', 'search-bar-every-surface', 'settings-search', 'dropdown-search', 'context-menu-search',
-  'notifications', 'notification-centre', 'no-nag-policy',
-  'material-3-appearance', 'per-element-appearance-editor', 'infinite-color-picker', 'rainbow-color', 'font-customization', 'app-rename',
-  'tabs', 'tab-docking', 'tab-overflow', 'tab-pinning', 'tab-groups', 'tab-searches', 'bulk-close-tabs', 'move-into-group-picker',
-  'toy-locks', 'support-tickets', 'unlock-ladder', 'authenticator', 'qr-pairing', 'secret-mutation-history',
-  'command-palette', 'super-confirmation', 'bulk-actions', 'export-everything', 'archive-export',
-  'local-history', 'history-panel-filters', 'changelog-viewer', 'changelog-commit-links', 'external-editor', 'vscode-handoff',
-  'offline-docs-browser', 'landing-page', 'social-preview', 'in-app-version-provenance',
-  'frameless-material-title-bar', 'overlays-paint-surface', 'resizable-panels', 'shortcut-display', 'progress-where-started', 'recovery-reauth',
-  'rendered-provider-text', 'collapsible-filters', 'guided-forms', 'novice-expert-controls', 'settings-explanations', 'rich-controls', 'blank-slate-presets',
-  'adhd-modes', 'app-logo-customization', 'file-converter', 'ollama-manager', 'status-hub', 'browser-extension-download-dialogs',
-  'accessibility', 'responsive-sizing', 'clipping-matrix',
-  'auto-updates', 'squirrel-installer', 'build-scripts', 'dependency-bundling', 'line-count-release', 'readme-captures', 'screen-recording', 'design-parity'
-];
-
-export const SURFACES = ['app', 'site'];
-
-const requiredLinks = ['implementation', 'localizedCopy', 'article', 'test', 'interaction', 'capture'];
-
-function anchoredMatch(file, pattern) {
-  const path = resolve(repoRoot, file);
-  if (!existsSync(path)) return `file missing: ${file}`;
-  const text = readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
-  let regex;
-  try { regex = new RegExp(pattern, 'm'); } catch (error) { return `invalid pattern for ${file}: ${error.message}`; }
-  if (!regex.test(text)) return `anchor not found in ${file}: ${pattern}`;
-  return null;
+import { execFileSync } from 'node:child_process';
+import { CANONICAL_FEATURES, PLATFORM_IDS, SURFACE_IDS, CAPABILITY_IDS } from './feature-inventory-contract.mjs';
+import { migrateInventory, evaluateBundle, validateSchema, validateEvidence } from './feature-evidence.mjs';
+export { CANONICAL_FEATURES, SURFACE_IDS, CAPABILITY_IDS, evaluateBundle, validateSchema, validateEvidence, migrateInventory };
+export const SURFACES = PLATFORM_IDS;
+export const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+export const inventoryPath = join(repoRoot, 'docs/features/inventory.json');
+export function loadInventory(root = repoRoot) {
+  return migrateInventory(JSON.parse(readFileSync(join(root, 'docs/features/inventory.json'), 'utf8')));
 }
-
-export function validateInventory(inventory) {
-  const errors = [];
-  const rows = Array.isArray(inventory?.rows) ? inventory.rows : [];
-  const rowsByKey = new Map();
-  for (const row of rows) {
-    if (!row || typeof row !== 'object' || Array.isArray(row)) {
-      errors.push('inventory row must be an object');
-      continue;
-    }
-    const key = `${row.surface}:${row.id}`;
-    const matches = rowsByKey.get(key) || [];
-    matches.push(row);
-    rowsByKey.set(key, matches);
-  }
-  for (const surface of SURFACES) {
-    for (const id of CANONICAL_FEATURES) {
-      const key = `${surface}:${id}`;
-      const matches = rowsByKey.get(key) || [];
-      const row = matches[0];
-      if (!row) { errors.push(`${key}: no inventory row`); continue; }
-      if (matches.length > 1) errors.push(`${key}: duplicate row (${matches.length} copies)`);
-      if (typeof row.title !== 'string' || !row.title.trim()) errors.push(`${key}: title missing`);
-      if (row.status !== 'implemented') {
-        errors.push(`${key}: status is ${row.status || 'undefined'}${row.note ? ` (${row.note})` : ''}`);
-      }
-      for (const link of requiredLinks) {
-        const value = row[link];
-        if (!value || typeof value !== 'object') { if (row.status === 'implemented') errors.push(`${key}: ${link} link missing`); continue; }
-        if (typeof value.file !== 'string' || !value.file) { errors.push(`${key}: ${link}.file missing`); continue; }
-        const pattern = value.anchor;
-        if (pattern) {
-          const problem = anchoredMatch(value.file, pattern);
-          if (problem) errors.push(`${key}: ${link} ${problem}`);
-        } else if (!existsSync(resolve(repoRoot, value.file))) {
-          errors.push(`${key}: ${link} file missing: ${value.file}`);
-        }
-      }
-      if (row.limitation && (typeof row.limitation.reason !== 'string' || typeof row.limitation.equivalent !== 'string')) {
-        errors.push(`${key}: limitation must carry reason and equivalent`);
-      }
-    }
-  }
-  for (const row of rows) {
-    if (!row || typeof row !== 'object' || Array.isArray(row)) continue;
-    if (!CANONICAL_FEATURES.includes(row.id)) errors.push(`${row.surface}:${row.id}: not a canonical feature id`);
-    if (!SURFACES.includes(row.surface)) errors.push(`${row.surface}:${row.id}: unknown surface`);
-  }
-  return errors;
+export function loadBundle(root = repoRoot) {
+  return {
+    inventory: loadInventory(root),
+    surfaces: JSON.parse(readFileSync(join(root, 'docs/features/surface-inventory.json'), 'utf8')),
+    capabilities: JSON.parse(readFileSync(join(root, 'docs/features/capability-inventory.json'), 'utf8')),
+  };
 }
-
-export function loadInventory() {
-  return JSON.parse(readFileSync(inventoryPath, 'utf8'));
+// Compatibility is fail-closed: the old two-platform file cannot establish the
+// complete named-surface product. Call evaluateBundle for structured findings.
+export function validateInventory(inventory, options = {}) {
+  const bundle = options.bundle ?? {
+    inventory, surfaces: { schemaVersion: 1, rows: [] },
+    capabilities: { schemaVersion: 1, contracts: [], rows: [] },
+  };
+  const result = evaluateBundle(bundle, { root: repoRoot, ...options });
+  return [...result.schemaErrors, ...result.statusErrors, ...result.evidenceErrors,
+    ...result.incomplete.map(r => `${r.surface}:${r.feature}: ${r.missing.length} current capability proofs absent`)];
 }
-
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const inventory = loadInventory();
-  const errors = validateInventory(inventory);
-  const total = CANONICAL_FEATURES.length * SURFACES.length;
-  const green = total - new Set(errors.map(e => e.split(':').slice(0, 2).join(':'))).size;
-  if (!process.argv.includes('--summary')) for (const error of errors) process.stdout.write(`RED ${error}\n`);
-  process.stdout.write(`${green}/${total} feature rows green, ${errors.length} finding(s).\n`);
-  process.exit(errors.length ? 1 : 0);
+  try {
+    const args = process.argv.slice(2);
+    const sourceCommit = args.find(a => a.startsWith('--source='))?.slice(9)
+      ?? execFileSync('git', ['rev-parse', 'HEAD'], { cwd: repoRoot, encoding: 'utf8' }).trim();
+    const artifactHashes = Object.fromEntries(PLATFORM_IDS.map(p => [p, args.find(a => a.startsWith(`--${p}-artifact=`))?.split('=')[1]]));
+    const result = evaluateBundle(loadBundle(), { root: repoRoot, sourceCommit, artifactHashes });
+    const schemaOnly = args.includes('--schema-only');
+    if (!args.includes('--summary')) {
+      const findings = [...result.schemaErrors, ...(schemaOnly ? [] : result.statusErrors), ...(schemaOnly ? [] : result.evidenceErrors),
+        ...(schemaOnly ? [] : result.incomplete.map(r => `${r.surface}:${r.feature}: ${r.missing.length} current capability proofs absent`))];
+      for (const problem of findings.slice(0, 30)) process.stdout.write(`RED ${problem}\n`);
+      if (findings.length > 30) process.stdout.write(`${findings.length - 30} additional findings; use the exported evaluator for the complete structured result.\n`);
+    }
+    process.stdout.write(`Schema: ${result.schemaValid ? 'PASS' : 'FAIL'} (${result.schemaErrors.length} findings). Product: ${result.productComplete ? 'PASS' : 'INCOMPLETE'}; ${result.verifiedCells}/${result.requiredCells} current capability cells verified; ${result.incomplete.length} incomplete surface-feature rows; ${result.evidenceErrors.length} invalid evidence findings.\n`);
+    process.exit(schemaOnly ? (result.schemaValid ? 0 : 1) : (result.productComplete ? 0 : 1));
+  } catch (e) { process.stderr.write(`RED inventory load/validation failed: ${e.message}\n`); process.exit(1); }
 }

@@ -1,0 +1,754 @@
+{
+  "schemaVersion": 1,
+  "assessmentSourceCommit": "07ce4dc158bcd7eb735cc309f009c531731f3133",
+  "note": "Hand-maintained surface registry. Source presence is not implementation or visual verification. Every registered capability is required on each surface, with a documented site-owned equivalent when needed.",
+  "rows": [
+    {
+      "id": "app.shell",
+      "platform": "app",
+      "label": "Main shell and welcome",
+      "source": "src/gui/MainWindow.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.vault",
+      "platform": "app",
+      "label": "Vault groups, entry list and preview",
+      "source": "src/gui/DatabaseWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports",
+      "platform": "app",
+      "label": "Reports",
+      "source": "src/gui/reports/ReportsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.history",
+      "platform": "app",
+      "label": "Local history manager",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.changelog",
+      "platform": "app",
+      "label": "Changelog viewer",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.general",
+      "platform": "app",
+      "label": "Application settings: general",
+      "source": "src/gui/ApplicationSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.security",
+      "platform": "app",
+      "label": "Application settings: security",
+      "source": "src/gui/ApplicationSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.plugins",
+      "platform": "app",
+      "label": "Application settings: plugins",
+      "source": "src/gui/SettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.settings.classic-editor",
+      "platform": "app",
+      "label": "Application settings: classic editor",
+      "source": "src/gui/SettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.general",
+      "platform": "app",
+      "label": "Database settings: general",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.credentials",
+      "platform": "app",
+      "label": "Database settings: credentials",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.encryption",
+      "platform": "app",
+      "label": "Database settings: encryption",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.remote-sync",
+      "platform": "app",
+      "label": "Database settings: remote synchronization",
+      "source": "src/gui/remote/RemoteSettings.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.browser",
+      "platform": "app",
+      "label": "Database settings: browser",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.keeshare",
+      "platform": "app",
+      "label": "Database settings: KeeShare",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.database.maintenance",
+      "platform": "app",
+      "label": "Database settings: maintenance",
+      "source": "src/gui/dbsettings/DatabaseSettingsWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.main",
+      "platform": "app",
+      "label": "Entry editor: main",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.attributes",
+      "platform": "app",
+      "label": "Entry editor: attributes",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.icons",
+      "platform": "app",
+      "label": "Entry editor: icons",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.autotype",
+      "platform": "app",
+      "label": "Entry editor: auto-type",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.browser",
+      "platform": "app",
+      "label": "Entry editor: browser",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.ssh",
+      "platform": "app",
+      "label": "Entry editor: SSH",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.entry.history",
+      "platform": "app",
+      "label": "Entry editor: history",
+      "source": "src/gui/entry/EditEntryWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.group-editor",
+      "platform": "app",
+      "label": "Group editor",
+      "source": "src/gui/group/EditGroupWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.create",
+      "platform": "app",
+      "label": "Create database wizard",
+      "source": "src/gui/wizard/NewDatabaseWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.unlock",
+      "platform": "app",
+      "label": "Database unlock",
+      "source": "src/gui/DatabaseOpenWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.import",
+      "platform": "app",
+      "label": "Import wizard",
+      "source": "src/gui/wizard/ImportWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.csv",
+      "platform": "app",
+      "label": "CSV import",
+      "source": "src/gui/csvImport/CsvImportWidget.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.export",
+      "platform": "app",
+      "label": "Export",
+      "source": "src/gui/export/ExportDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.merge",
+      "platform": "app",
+      "label": "Database merge",
+      "source": "src/gui/MergeDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.clone",
+      "platform": "app",
+      "label": "Entry clone",
+      "source": "src/gui/CloneDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.passkey.import",
+      "platform": "app",
+      "label": "Passkey import",
+      "source": "src/gui/passkeys/PasskeyImportDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.passkey.clipboard",
+      "platform": "app",
+      "label": "Passkey clipboard import",
+      "source": "src/gui/passkeys/PasskeyClipboardImportDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.passkey.export",
+      "platform": "app",
+      "label": "Passkey export",
+      "source": "src/gui/passkeys/PasskeyExportDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.totp.setup",
+      "platform": "app",
+      "label": "TOTP setup",
+      "source": "src/gui/TotpSetupDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.totp.display",
+      "platform": "app",
+      "label": "TOTP display",
+      "source": "src/gui/TotpDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.totp.export",
+      "platform": "app",
+      "label": "TOTP export",
+      "source": "src/gui/TotpExportSettingsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.attachments.editor",
+      "platform": "app",
+      "label": "Attachment editor",
+      "source": "src/gui/entry/EditEntryAttachmentsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.attachments.preview",
+      "platform": "app",
+      "label": "Attachment preview",
+      "source": "src/gui/entry/PreviewEntryAttachmentsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.notifications",
+      "platform": "app",
+      "label": "Notifications and review centre",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.palette",
+      "platform": "app",
+      "label": "Command palette",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.appearance",
+      "platform": "app",
+      "label": "Per-element appearance editor and property inspector",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.regex",
+      "platform": "app",
+      "label": "Full regex workbench",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.menus.application",
+      "platform": "app",
+      "label": "Application menus",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.menus.tabs",
+      "platform": "app",
+      "label": "Tab and group context menus",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.menus.collections",
+      "platform": "app",
+      "label": "List, table, tree, entry and group menus",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.menus.text-editing",
+      "platform": "app",
+      "label": "Line, multiline, rich-text and editable-combo menus",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.menus.elements",
+      "platform": "app",
+      "label": "Every rendered element and state context menu",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.dropdowns",
+      "platform": "app",
+      "label": "Selectors, pickers, autocomplete and overflow",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.locks",
+      "platform": "app",
+      "label": "Element lock wizard and authentication",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.support",
+      "platform": "app",
+      "label": "Local recovery tickets and unlock ladder",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.authenticator",
+      "platform": "app",
+      "label": "Arbitrary-account authenticator",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.converter",
+      "platform": "app",
+      "label": "Local converter and durable queue",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.ollama",
+      "platform": "app",
+      "label": "Local model catalog, pulls, chat and profiles",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.offline-docs",
+      "platform": "app",
+      "label": "Bundled documentation browser",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.schedules",
+      "platform": "app",
+      "label": "Scheduled settings and external sources",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.logo",
+      "platform": "app",
+      "label": "Local logo editor",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.extension.start",
+      "platform": "app",
+      "label": "Extension handoff: start download",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.extension.progress",
+      "platform": "app",
+      "label": "Extension handoff: active download",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.extension.complete",
+      "platform": "app",
+      "label": "Extension handoff: completed download",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.overview",
+      "platform": "site",
+      "label": "Overview and front-screen provenance",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.downloads",
+      "platform": "site",
+      "label": "Verified downloads",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.docs",
+      "platform": "site",
+      "label": "Documentation index and article reader",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.changelog",
+      "platform": "site",
+      "label": "Release history and filters",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.settings",
+      "platform": "site",
+      "label": "Visitor settings",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.settings.language",
+      "platform": "site",
+      "label": "Visitor language, voice and personal wording",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.settings.appearance",
+      "platform": "site",
+      "label": "Visitor appearance settings",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.settings.schedule",
+      "platform": "site",
+      "label": "Visitor schedules",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.tabs",
+      "platform": "site",
+      "label": "Visitor tab strips and groups",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.dialogs",
+      "platform": "site",
+      "label": "Website dialogs and confirmations",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.menus",
+      "platform": "site",
+      "label": "Every website element context menu",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.dropdowns",
+      "platform": "site",
+      "label": "Website selectors, pickers and overflow",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.regex",
+      "platform": "site",
+      "label": "Search-bound regex workbench",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.palette",
+      "platform": "site",
+      "label": "Website command palette",
+      "source": "site/app.js",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.appearance",
+      "platform": "site",
+      "label": "Website element appearance editor",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.notifications",
+      "platform": "site",
+      "label": "Visitor notifications and review centre",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.locks",
+      "platform": "site",
+      "label": "Visitor element locks and local recovery",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.authenticator",
+      "platform": "site",
+      "label": "Local visitor authenticator equivalent",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.history",
+      "platform": "site",
+      "label": "Visitor-owned state history",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.converter",
+      "platform": "site",
+      "label": "Local visitor converter equivalent",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.ollama",
+      "platform": "site",
+      "label": "Locally mediated model-manager equivalent",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.logo",
+      "platform": "site",
+      "label": "Visitor logo editor",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.status",
+      "platform": "site",
+      "label": "Factual project status and delivery states",
+      "source": "site/index.html",
+      "ownership": "visitor-site-state",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    }
+  ]
+}

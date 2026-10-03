@@ -1,6 +1,6 @@
 # Feature documentation
 
-One article per feature, grouped by category. `inventory.json` is the hand-written per-surface completeness inventory that `scripts/check-feature-inventory.mjs` checks fail-closed; a feature without an article here is red there.
+One article per feature, grouped by category. The platform summaries in `inventory.json`, explicit `surface-inventory.json`, and `capability-inventory.json` are checked against the hand-maintained contract by `scripts/check-feature-inventory.mjs`. Schema validity and current built-product completeness have separate verdicts. Missing current evidence remains incomplete. See [interface completeness](delivery/interface-completion.md) for the receipt format, migration and honest acceptance boundary.
 
 | Category | Index |
 | --- | --- |

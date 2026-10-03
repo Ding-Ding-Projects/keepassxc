@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "note": "Hand-written per-surface completeness inventory. Every canonical feature appears once per surface. A row is green only when status is implemented and every link resolves; scripts/check-feature-inventory.mjs fails closed otherwise.",
+  "schemaVersion": 2,
+  "note": "Platform summaries preserve historical source assessments, not current built-product proof. Named surfaces and capability evidence are checked independently. A schema pass is never product completion.",
   "rows": [
     {
       "id": "language-modes",
@@ -21,7 +21,9 @@
       },
       "article": {
         "file": "docs/features/messaging/language-modes.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "funny-level-english",
@@ -42,7 +44,9 @@
       },
       "article": {
         "file": "docs/features/messaging/funny-level-english.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "funny-level-cantonese",
@@ -63,7 +67,9 @@
       },
       "article": {
         "file": "docs/features/messaging/funny-level-cantonese.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dialog-emoji-toggle",
@@ -74,43 +80,57 @@
       "implementation": {
         "file": "src/core/Config.h",
         "anchor": "^\\s*GUI_ShowDialogEmojis,$"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "school-mode",
       "surface": "app",
       "title": "School mode (shared, renameable, live)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "narrator",
       "surface": "app",
       "title": "Spoken narrator",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "narrator-voice-pickers",
       "surface": "app",
       "title": "Per-language narrator voice pickers",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "scheduled-settings",
       "surface": "app",
       "title": "Scheduled settings",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "external-settings-sources",
       "surface": "app",
       "title": "External HTTPS settings sources",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "home-assistant-source",
       "surface": "app",
       "title": "Home Assistant boolean source",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dim-sum-surprise",
@@ -124,7 +144,9 @@
       },
       "article": {
         "file": "docs/features/messaging/dim-sum-surprise.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "release-code-name",
@@ -133,13 +155,15 @@
       "status": "missing",
       "article": {
         "file": "docs/features/delivery/release-code-name.md"
-      }
+      },
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "personal-vocabulary-upload",
       "surface": "app",
       "title": "Local personal-vocabulary JSON upload",
-      "status": "implemented",
+      "status": "partial",
       "note": "Upload, bounded validation, cache consumption at the tr() boundary, replace, invalid refusal, clear and restart persistence; loaded, cleared and invalid states voiced in English and Cantonese at every level; proved on the built artifact through the real row and the native file dialog. Row labels follow the hub-wide language mode.",
       "implementation": {
         "file": "src/core/PersonalVocabulary.cpp",
@@ -163,7 +187,9 @@
       "localizedCopy": {
         "file": "share/voice/voice.json",
         "anchor": "^\\s*\"vocabulary\\.loaded\": \\{$"
-      }
+      },
+      "priorStatus": "implemented",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "regex-builder",
@@ -181,7 +207,9 @@
       },
       "article": {
         "file": "docs/features/search/regex-builder.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "search-bar-every-surface",
@@ -199,7 +227,9 @@
       },
       "article": {
         "file": "docs/features/search/search-bar-every-surface.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "settings-search",
@@ -210,7 +240,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialSettingsHub.h",
         "anchor": "^\\s*SearchBar\\* activeSearchBar\\(\\) const;$"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dropdown-search",
@@ -232,13 +264,17 @@
       "capture": {
         "file": "design/parity/evidence/appearance-default/select-popup.png",
         "note": "Interface font family select opened on a hidden desktop through the capture route; search bar, regex builder button and per-face rows visible"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "context-menu-search",
       "surface": "app",
       "title": "Search field in every context menu",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "notifications",
@@ -252,7 +288,9 @@
       },
       "article": {
         "file": "docs/features/messaging/notifications.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "notification-centre",
@@ -266,7 +304,9 @@
       },
       "article": {
         "file": "docs/features/messaging/notification-centre.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "no-nag-policy",
@@ -277,7 +317,9 @@
       "implementation": {
         "file": "scripts/check-repair-contracts.ps1",
         "anchor": "^\\s*if \\(-not \\$Sources\\.MainWindow\\.Contains\\('m_updateFailureNotified'\\)\\) \\{"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "material-3-appearance",
@@ -295,7 +337,9 @@
       },
       "article": {
         "file": "docs/features/design/material-3-appearance.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "per-element-appearance-editor",
@@ -317,7 +361,9 @@
       "capture": {
         "file": "design/parity/evidence/appearance-default/appearance-editor.png",
         "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "infinite-color-picker",
@@ -339,7 +385,9 @@
       "capture": {
         "file": "design/parity/evidence/appearance-default/appearance-editor.png",
         "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rainbow-color",
@@ -361,7 +409,9 @@
       "capture": {
         "file": "design/parity/evidence/appearance-default/appearance-editor.png",
         "note": "Editor opened on the interface font family select through the appearance-editor capture state on a hidden desktop (Type tab)"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "font-customization",
@@ -372,13 +422,17 @@
       "implementation": {
         "file": "src/core/Config.h",
         "anchor": "^\\s*GUI_FontFamily,$"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "app-rename",
       "surface": "app",
       "title": "User-renameable app display name",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tabs",
@@ -396,13 +450,17 @@
       },
       "article": {
         "file": "docs/features/navigation/tabs.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-docking",
       "surface": "app",
       "title": "Tab strip docking to any edge",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-overflow",
@@ -413,7 +471,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialTabOverflow.h",
         "anchor": "^\\s*class TabOverflow\\b"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-pinning",
@@ -424,67 +484,89 @@
       "implementation": {
         "file": "src/core/Config.h",
         "anchor": "^\\s*GUI_PinnedTabs,$"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-groups",
       "surface": "app",
       "title": "Tab groups",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-searches",
       "surface": "app",
       "title": "Four tab-discovery searches",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "bulk-close-tabs",
       "surface": "app",
       "title": "Close tabs containing / not containing text",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "move-into-group-picker",
       "surface": "app",
       "title": "Move into group picker",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "toy-locks",
       "surface": "app",
       "title": "Per-element toy locks (six policies)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "support-tickets",
       "surface": "app",
       "title": "Support Tickets recovery desk",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "unlock-ladder",
       "surface": "app",
       "title": "Unlock ladder",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "authenticator",
       "surface": "app",
       "title": "Built-in authenticator",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "qr-pairing",
       "surface": "app",
       "title": "QR-based OTP pairing",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "secret-mutation-history",
       "surface": "app",
       "title": "Secret and display-name mutation history",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "command-palette",
@@ -498,31 +580,41 @@
       },
       "article": {
         "file": "docs/features/navigation/command-palette.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "super-confirmation",
       "surface": "app",
       "title": "Destructive-action super confirmation",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "bulk-actions",
       "surface": "app",
       "title": "Bulk actions on every list",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "export-everything",
       "surface": "app",
       "title": "Export every record in every format",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "archive-export",
       "surface": "app",
       "title": "ZIP and 7z archive export",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "local-history",
@@ -540,7 +632,9 @@
       },
       "article": {
         "file": "docs/features/records/local-history.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "history-panel-filters",
@@ -554,7 +648,9 @@
       },
       "article": {
         "file": "docs/features/records/history-panel-filters.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "changelog-viewer",
@@ -572,7 +668,9 @@
       },
       "article": {
         "file": "docs/features/records/changelog-viewer.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "changelog-commit-links",
@@ -586,7 +684,9 @@
       },
       "article": {
         "file": "docs/features/records/changelog-commit-links.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "external-editor",
@@ -600,25 +700,33 @@
       },
       "article": {
         "file": "docs/features/navigation/external-editor.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "vscode-handoff",
       "surface": "app",
       "title": "Open exports in Visual Studio Code",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "offline-docs-browser",
       "surface": "app",
       "title": "Offline in-app documentation browser",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "landing-page",
       "surface": "app",
       "title": "Material landing page with every feature",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "social-preview",
@@ -635,7 +743,9 @@
       },
       "capture": {
         "file": "social-preview.png"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "in-app-version-provenance",
@@ -649,7 +759,9 @@
       },
       "article": {
         "file": "docs/features/delivery/in-app-version-provenance.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "frameless-material-title-bar",
@@ -667,115 +779,153 @@
       },
       "article": {
         "file": "docs/features/design/frameless-title-bar.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "overlays-paint-surface",
       "surface": "app",
       "title": "Overlays paint their own surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "resizable-panels",
       "surface": "app",
       "title": "Resizable and draggable panels",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "shortcut-display",
       "surface": "app",
       "title": "Shortcuts shown in context menus",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "progress-where-started",
       "surface": "app",
       "title": "Long operations report progress where started",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "recovery-reauth",
       "surface": "app",
       "title": "Recovery and re-authentication at the failure surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rendered-provider-text",
       "surface": "app",
       "title": "Provider text rendered as markup",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "collapsible-filters",
       "surface": "app",
       "title": "Collapsible filters and statistics",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "guided-forms",
       "surface": "app",
       "title": "Guided forms with browse controls",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "novice-expert-controls",
       "surface": "app",
       "title": "Novice control over expert values",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "settings-explanations",
       "surface": "app",
       "title": "Settings explain themselves and their defaults",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rich-controls",
       "surface": "app",
       "title": "Rich controls wherever a value is shown",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "blank-slate-presets",
       "surface": "app",
       "title": "Presets on blank-slate editors",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "adhd-modes",
       "surface": "app",
       "title": "ADHD modes",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "app-logo-customization",
       "surface": "app",
       "title": "App-logo customization",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "file-converter",
       "surface": "app",
       "title": "Universal local file converter",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "ollama-manager",
       "surface": "app",
       "title": "Local Ollama suite manager",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "status-hub",
       "surface": "app",
       "title": "Status Hub reporting",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "browser-extension-download-dialogs",
       "surface": "app",
       "title": "Browser-extension download dialogs",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "accessibility",
@@ -786,7 +936,9 @@
       "implementation": {
         "file": "src/gui/material/MaterialStyle.h",
         "anchor": "^\\s*class Style\\b"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "responsive-sizing",
@@ -801,7 +953,9 @@
       "test": {
         "file": "tests/TestMaterialBreakpoints.cpp",
         "anchor": "^void TestMaterialBreakpoints::"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "clipping-matrix",
@@ -818,7 +972,9 @@
       },
       "capture": {
         "file": "design/parity/evidence/clipping/matrix.json"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "auto-updates",
@@ -836,7 +992,9 @@
       },
       "article": {
         "file": "docs/features/delivery/auto-updates.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "squirrel-installer",
@@ -854,7 +1012,9 @@
       },
       "article": {
         "file": "docs/features/delivery/squirrel-installer.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "build-scripts",
@@ -868,13 +1028,17 @@
       },
       "article": {
         "file": "docs/features/delivery/build-scripts.md"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dependency-bundling",
       "surface": "app",
       "title": "Bundled dependencies",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "line-count-release",
@@ -883,19 +1047,25 @@
       "status": "missing",
       "article": {
         "file": "docs/features/delivery/line-count-release.md"
-      }
+      },
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "readme-captures",
       "surface": "app",
       "title": "README capture matrix",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "screen-recording",
       "surface": "app",
       "title": "Committed screen recording",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "design-parity",
@@ -916,331 +1086,441 @@
       },
       "capture": {
         "file": "design/parity/evidence/reports-default/comparison.png"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "language-modes",
       "surface": "site",
       "title": "Language modes (English, Cantonese, bilingual)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "funny-level-english",
       "surface": "site",
       "title": "Funny level slider, English",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "funny-level-cantonese",
       "surface": "site",
       "title": "Funny level slider, Cantonese",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dialog-emoji-toggle",
       "surface": "site",
       "title": "Show emojis in dialogs toggle",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "school-mode",
       "surface": "site",
       "title": "School mode (shared, renameable, live)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "narrator",
       "surface": "site",
       "title": "Spoken narrator",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "narrator-voice-pickers",
       "surface": "site",
       "title": "Per-language narrator voice pickers",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "scheduled-settings",
       "surface": "site",
       "title": "Scheduled settings",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "external-settings-sources",
       "surface": "site",
       "title": "External HTTPS settings sources",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "home-assistant-source",
       "surface": "site",
       "title": "Home Assistant boolean source",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dim-sum-surprise",
       "surface": "site",
       "title": "Dim sum surprise (10 %, no opt-out)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "release-code-name",
       "surface": "site",
       "title": "Dim sum release code name",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "personal-vocabulary-upload",
       "surface": "site",
       "title": "Local personal-vocabulary JSON upload",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "regex-builder",
       "surface": "site",
       "title": "Super-advanced regex builder",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "search-bar-every-surface",
       "surface": "site",
       "title": "Search bar on every surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "settings-search",
       "surface": "site",
       "title": "Settings search on every settings surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dropdown-search",
       "surface": "site",
       "title": "Search field in every dropdown",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "context-menu-search",
       "surface": "site",
       "title": "Search field in every context menu",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "notifications",
       "surface": "site",
       "title": "Non-blocking notifications",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "notification-centre",
       "surface": "site",
       "title": "Notification centre",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "no-nag-policy",
       "surface": "site",
       "title": "No nag prompts",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "material-3-appearance",
       "surface": "site",
       "title": "Material Design 3 appearance",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "per-element-appearance-editor",
       "surface": "site",
       "title": "Per-element appearance editor",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "infinite-color-picker",
       "surface": "site",
       "title": "Infinite colour picker with translator",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rainbow-color",
       "surface": "site",
       "title": "Animated rainbow colour",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "font-customization",
       "surface": "site",
       "title": "Interface font customization",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "app-rename",
       "surface": "site",
       "title": "User-renameable app display name",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tabs",
       "surface": "site",
       "title": "Browser-style tabs",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-docking",
       "surface": "site",
       "title": "Tab strip docking to any edge",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-overflow",
       "surface": "site",
       "title": "Tab overflow surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-pinning",
       "surface": "site",
       "title": "Tab pinning",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-groups",
       "surface": "site",
       "title": "Tab groups",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "tab-searches",
       "surface": "site",
       "title": "Four tab-discovery searches",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "bulk-close-tabs",
       "surface": "site",
       "title": "Close tabs containing / not containing text",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "move-into-group-picker",
       "surface": "site",
       "title": "Move into group picker",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "toy-locks",
       "surface": "site",
       "title": "Per-element toy locks (six policies)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "support-tickets",
       "surface": "site",
       "title": "Support Tickets recovery desk",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "unlock-ladder",
       "surface": "site",
       "title": "Unlock ladder",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "authenticator",
       "surface": "site",
       "title": "Built-in authenticator",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "qr-pairing",
       "surface": "site",
       "title": "QR-based OTP pairing",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "secret-mutation-history",
       "surface": "site",
       "title": "Secret and display-name mutation history",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "command-palette",
       "surface": "site",
       "title": "Command palette (Ctrl+Shift+F)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "super-confirmation",
       "surface": "site",
       "title": "Destructive-action super confirmation",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "bulk-actions",
       "surface": "site",
       "title": "Bulk actions on every list",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "export-everything",
       "surface": "site",
       "title": "Export every record in every format",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "archive-export",
       "surface": "site",
       "title": "ZIP and 7z archive export",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "local-history",
       "surface": "site",
       "title": "Local Git-backed version history",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "history-panel-filters",
       "surface": "site",
       "title": "History date picker and action filters",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "changelog-viewer",
       "surface": "site",
       "title": "In-app changelog viewer",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "changelog-commit-links",
       "surface": "site",
       "title": "Changelog commit links",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "external-editor",
       "surface": "site",
       "title": "External editor integration",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "vscode-handoff",
       "surface": "site",
       "title": "Open exports in Visual Studio Code",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "offline-docs-browser",
       "surface": "site",
       "title": "Offline in-app documentation browser",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "landing-page",
       "surface": "site",
       "title": "Material landing page with every feature",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "social-preview",
@@ -1257,193 +1537,307 @@
       },
       "capture": {
         "file": "social-preview.png"
-      }
+      },
+      "priorStatus": "partial",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "in-app-version-provenance",
       "surface": "site",
       "title": "Front-screen version and updated-at provenance",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "frameless-material-title-bar",
       "surface": "site",
       "title": "Frameless window with Material title bar",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "overlays-paint-surface",
       "surface": "site",
       "title": "Overlays paint their own surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "resizable-panels",
       "surface": "site",
       "title": "Resizable and draggable panels",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "shortcut-display",
       "surface": "site",
       "title": "Shortcuts shown in context menus",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "progress-where-started",
       "surface": "site",
       "title": "Long operations report progress where started",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "recovery-reauth",
       "surface": "site",
       "title": "Recovery and re-authentication at the failure surface",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rendered-provider-text",
       "surface": "site",
       "title": "Provider text rendered as markup",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "collapsible-filters",
       "surface": "site",
       "title": "Collapsible filters and statistics",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "guided-forms",
       "surface": "site",
       "title": "Guided forms with browse controls",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "novice-expert-controls",
       "surface": "site",
       "title": "Novice control over expert values",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "settings-explanations",
       "surface": "site",
       "title": "Settings explain themselves and their defaults",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "rich-controls",
       "surface": "site",
       "title": "Rich controls wherever a value is shown",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "blank-slate-presets",
       "surface": "site",
       "title": "Presets on blank-slate editors",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "adhd-modes",
       "surface": "site",
       "title": "ADHD modes",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "app-logo-customization",
       "surface": "site",
       "title": "App-logo customization",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "file-converter",
       "surface": "site",
       "title": "Universal local file converter",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "ollama-manager",
       "surface": "site",
       "title": "Local Ollama suite manager",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "status-hub",
       "surface": "site",
       "title": "Status Hub reporting",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "browser-extension-download-dialogs",
       "surface": "site",
       "title": "Browser-extension download dialogs",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "accessibility",
       "surface": "site",
       "title": "Accessibility (keyboard, focus, roles, contrast, motion)",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "responsive-sizing",
       "surface": "site",
       "title": "Responsive sizing at 100-200 % scale",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "clipping-matrix",
       "surface": "site",
       "title": "Clipping matrix evidence",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "auto-updates",
       "surface": "site",
       "title": "Chrome-style automatic updates",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "squirrel-installer",
       "surface": "site",
       "title": "Unsigned Squirrel.Windows installer",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "build-scripts",
       "surface": "site",
       "title": "One-click build and installer scripts",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "dependency-bundling",
       "surface": "site",
       "title": "Bundled dependencies",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "line-count-release",
       "surface": "site",
       "title": "Line count in every release",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "readme-captures",
       "surface": "site",
       "title": "README capture matrix",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "screen-recording",
       "surface": "site",
       "title": "Committed screen recording",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
     },
     {
       "id": "design-parity",
       "surface": "site",
       "title": "Design-reference parity evidence",
-      "status": "missing"
+      "status": "missing",
+      "priorStatus": "missing",
+      "evidenceState": "historical-unverified"
+    },
+    {
+      "id": "vendored-fonts",
+      "surface": "app",
+      "title": "vendored fonts",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "forge-publishing",
+      "surface": "app",
+      "title": "forge publishing",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "element-motion",
+      "surface": "app",
+      "title": "element motion",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "vendored-fonts",
+      "surface": "site",
+      "title": "vendored fonts",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "forge-publishing",
+      "surface": "site",
+      "title": "forge publishing",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "element-motion",
+      "surface": "site",
+      "title": "element motion",
+      "status": "unverified",
+      "evidenceState": "unverified",
+      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
     }
-  ]
+  ],
+  "migratedFrom": 1,
+  "assessmentSourceCommit": "07ce4dc158bcd7eb735cc309f009c531731f3133"
 }

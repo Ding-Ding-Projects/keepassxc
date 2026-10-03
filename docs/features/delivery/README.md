@@ -16,3 +16,4 @@ Build scripts, the Squirrel.Windows installer, automatic updates and release evi
 | Website download and build provenance | [website-release-provenance.md](website-release-provenance.md) |
 | September 2026 repair verification and remaining acceptance | [repair-verification-2026-09.md](repair-verification-2026-09.md) |
 | Database creation, save results and fresh-process reopening | [database-lifecycle-repair.md](database-lifecycle-repair.md) |
+| Per-surface interface completeness and current evidence | [interface-completion.md](interface-completion.md) |
