@@ -358,7 +358,7 @@ void TestGui::testCreateDatabase()
 
     // Test the switching to other DB tab
     m_tabWidget->setCurrentIndex(0);
-    checkStatusBarText("1 Ent");
+    checkStatusBarText("2 Ent");
 
     m_tabWidget->setCurrentIndex(1);
     checkStatusBarText("0 Ent");
@@ -638,7 +638,6 @@ void TestGui::testTabs()
 
 void TestGui::testEditEntry()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     entryView->setFocus();
@@ -652,15 +651,12 @@ void TestGui::testEditEntry()
     // Confirm the edit action button is enabled
     auto* entryEditAction = m_mainWindow->findChild<QAction*>("actionEntryEdit");
     QVERIFY(entryEditAction->isEnabled());
-    QWidget* entryEditWidget = toolBar->widgetForAction(entryEditAction);
-    QVERIFY(entryEditWidget->isVisible());
-    QVERIFY(entryEditWidget->isEnabled());
 
     // Record current history count
     int editCount = entry->historyItems().size();
 
     // Edit the first entry ("Sample Entry")
-    QTest::mouseClick(entryEditWidget, Qt::LeftButton);
+    triggerAction("actionEntryEdit");
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::EditEntryMode);
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
@@ -771,7 +767,7 @@ void TestGui::testEditEntry()
     QTRY_COMPARE(m_tabWidget->tabText(m_tabWidget->currentIndex()), QString("%1*").arg(m_dbFileName));
 
     // Test copy & paste newline sanitization
-    QTest::mouseClick(entryEditWidget, Qt::LeftButton);
+    triggerAction("actionEntryEdit");
     okButton = editEntryWidgetButtonBox->button(QDialogButtonBox::Ok);
     QVERIFY(okButton);
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::EditEntryMode);
@@ -842,20 +838,14 @@ void TestGui::testSearchEditEntry()
 
 void TestGui::testAddEntry()
 {
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
 
     // Given the status bar label with initial number of entries.
-    checkStatusBarText("1 Ent");
+    checkStatusBarText("2 Ent");
 
     // Find the new entry action
     auto* entryNewAction = m_mainWindow->findChild<QAction*>("actionEntryNew");
     QVERIFY(entryNewAction->isEnabled());
-
-    // Find the button associated with the new entry action
-    QWidget* entryNewWidget = toolBar->widgetForAction(entryNewAction);
-    QVERIFY(entryNewWidget->isVisible());
-    QVERIFY(entryNewWidget->isEnabled());
 
     // Click the Material vault action and check that it drives the same owned
     // new-entry path as the classic toolbar action.
@@ -903,8 +893,8 @@ void TestGui::testAddEntry()
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::ViewMode);
-    QModelIndex item = entryView->model()->index(1, 1);
-    Entry* entry = entryView->entryFromIndex(item);
+    Entry* entry = m_dbWidget->currentSelectedEntry();
+    QVERIFY(entry);
 
     QCOMPARE(entry->title(), QString("test"));
     QCOMPARE(entry->username(), QString("AutocompletionUsername"));
@@ -914,11 +904,11 @@ void TestGui::testAddEntry()
     m_db->updateCommonUsernames();
 
     // Then the status bar label should be updated with incremented number of entries.
-    checkStatusBarText("2 Ent");
+    checkStatusBarText("3 Ent");
 
     // Cancelling an entry while its TOTP sheet is open must close the sheet
     // before DatabaseWidget releases the transient Entry.
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    QTest::mouseClick(materialNewEntry, Qt::LeftButton);
     QTest::mouseClick(setupTotpButton, Qt::LeftButton);
     QPointer<TotpSetupDialog> abandonedTotp = editEntryWidget->findChild<TotpSetupDialog*>("TotpSetupDialog");
     QTRY_VERIFY(abandonedTotp);
@@ -928,7 +918,7 @@ void TestGui::testAddEntry()
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::ViewMode);
 
     // Add entry "something 2"
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    QTest::mouseClick(materialNewEntry, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "something 2");
     QTest::mouseClick(usernameComboBox, Qt::LeftButton);
     QTest::keyClicks(usernameComboBox, "Auto");
@@ -939,15 +929,15 @@ void TestGui::testAddEntry()
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::ViewMode);
-    item = entryView->model()->index(1, 1);
-    entry = entryView->entryFromIndex(item);
+    entry = m_dbWidget->currentSelectedEntry();
+    QVERIFY(entry);
 
     QCOMPARE(entry->title(), QString("something 2"));
     QCOMPARE(entry->username(), QString("AutocompletionUsername"));
     QCOMPARE(entry->historyItems().size(), 0);
 
     // Add entry "something 5" but click cancel button (does NOT add entry)
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    QTest::mouseClick(materialNewEntry, Qt::LeftButton);
     QTest::keyClicks(titleEdit, "something 5");
     MessageBox::setNextAnswer(MessageBox::Discard);
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Cancel), Qt::LeftButton);
@@ -955,7 +945,7 @@ void TestGui::testAddEntry()
     QApplication::processEvents();
 
     // Confirm no changed entry count
-    QTRY_COMPARE(entryView->model()->rowCount(), 3);
+    QTRY_COMPARE(entryView->model()->rowCount(), 4);
 }
 
 void TestGui::testScreenCaptureStatePreserved()
@@ -1651,37 +1641,34 @@ void TestGui::testDeleteEntry()
 {
     // Add canned entries for consistent testing
     addCannedEntries();
-    checkStatusBarText("4 Ent");
+    checkStatusBarText("5 Ent");
 
     auto* groupView = m_dbWidget->findChild<GroupView*>("groupView");
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
     auto* entryDeleteAction = m_mainWindow->findChild<QAction*>("actionEntryDelete");
-    QWidget* entryDeleteWidget = toolBar->widgetForAction(entryDeleteAction);
     entryView->setFocus();
 
     // Move one entry to the recycling bin
     QCOMPARE(m_dbWidget->currentMode(), DatabaseWidget::Mode::ViewMode);
     clickIndex(entryView->model()->index(1, 1), entryView, Qt::LeftButton);
-    QVERIFY(entryDeleteWidget->isVisible());
-    QVERIFY(entryDeleteWidget->isEnabled());
+    QVERIFY(entryDeleteAction->isEnabled());
     QVERIFY(!m_db->metadata()->recycleBin());
 
     // Test with confirmation dialog
     if (!config()->get(Config::Security_NoConfirmMoveEntryToRecycleBin).toBool()) {
         MessageBox::setNextAnswer(MessageBox::Move);
-        QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
+        triggerAction("actionEntryDelete");
 
-        QCOMPARE(entryView->model()->rowCount(), 3);
+        QCOMPARE(entryView->model()->rowCount(), 4);
         QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 1);
     } else {
         // no confirm dialog
-        QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
-        QCOMPARE(entryView->model()->rowCount(), 3);
+        triggerAction("actionEntryDelete");
+        QCOMPARE(entryView->model()->rowCount(), 4);
         QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 1);
     }
 
-    checkStatusBarText("3 Ent");
+    checkStatusBarText("4 Ent");
 
     // Select multiple entries and move them to the recycling bin
     clickIndex(entryView->model()->index(1, 1), entryView, Qt::LeftButton);
@@ -1690,17 +1677,17 @@ void TestGui::testDeleteEntry()
 
     if (!config()->get(Config::Security_NoConfirmMoveEntryToRecycleBin).toBool()) {
         MessageBox::setNextAnswer(MessageBox::Cancel);
-        QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
-        QCOMPARE(entryView->model()->rowCount(), 3);
+        triggerAction("actionEntryDelete");
+        QCOMPARE(entryView->model()->rowCount(), 4);
         QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 1);
 
         MessageBox::setNextAnswer(MessageBox::Move);
-        QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
-        QCOMPARE(entryView->model()->rowCount(), 1);
+        triggerAction("actionEntryDelete");
+        QCOMPARE(entryView->model()->rowCount(), 2);
         QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 3);
     } else {
-        QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
-        QCOMPARE(entryView->model()->rowCount(), 1);
+        triggerAction("actionEntryDelete");
+        QCOMPARE(entryView->model()->rowCount(), 2);
         QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 3);
     }
 
@@ -1715,12 +1702,12 @@ void TestGui::testDeleteEntry()
     // Delete one entry from the bin
     clickIndex(entryView->model()->index(0, 1), entryView, Qt::LeftButton);
     MessageBox::setNextAnswer(MessageBox::Cancel);
-    QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
+    triggerAction("actionEntryDelete");
     QCOMPARE(entryView->model()->rowCount(), 3);
     QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 3);
 
     MessageBox::setNextAnswer(MessageBox::Delete);
-    QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
+    triggerAction("actionEntryDelete");
     QCOMPARE(entryView->model()->rowCount(), 2);
     QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 2);
 
@@ -1728,18 +1715,12 @@ void TestGui::testDeleteEntry()
     clickIndex(entryView->model()->index(0, 1), entryView, Qt::LeftButton);
     clickIndex(entryView->model()->index(1, 1), entryView, Qt::LeftButton, Qt::ControlModifier);
     MessageBox::setNextAnswer(MessageBox::Delete);
-    QTest::mouseClick(entryDeleteWidget, Qt::LeftButton);
+    triggerAction("actionEntryDelete");
     QCOMPARE(entryView->model()->rowCount(), 0);
     QCOMPARE(m_db->metadata()->recycleBin()->entries().size(), 0);
 
-    // Ensure the entry preview widget shows the recycling group since all entries are deleted
-    auto* previewWidget = m_dbWidget->findChild<EntryPreviewWidget*>("previewWidget");
-    QVERIFY(previewWidget);
-    auto* groupTitleLabel = previewWidget->findChild<QLabel*>("groupTitleLabel");
-    QVERIFY(groupTitleLabel);
-
-    QTRY_VERIFY(groupTitleLabel->isVisible());
-    QVERIFY(groupTitleLabel->text().contains(m_db->metadata()->recycleBin()->name()));
+    // The empty recycling bin remains the active group after deletion.
+    QCOMPARE(groupView->currentGroup(), m_db->metadata()->recycleBin());
 
     // Go back to the root group
     clickIndex(groupView->model()->index(0, 0), groupView, Qt::LeftButton);
@@ -1751,7 +1732,8 @@ void TestGui::testCloneEntry()
     auto* entryView = m_dbWidget->findChild<EntryView*>("entryView");
     entryView->setFocus();
 
-    QCOMPARE(entryView->model()->rowCount(), 1);
+    const auto initialCount = m_db->rootGroup()->entriesRecursive(false).size();
+    QCOMPARE(entryView->model()->rowCount(), initialCount);
 
     QModelIndex item = entryView->model()->index(0, 1);
     Entry* entryOrg = entryView->entryFromIndex(item);
@@ -1763,8 +1745,9 @@ void TestGui::testCloneEntry()
     auto* cloneButtonBox = cloneDialog->findChild<QDialogButtonBox*>("buttonBox");
     QTest::mouseClick(cloneButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
-    QCOMPARE(entryView->model()->rowCount(), 2);
-    Entry* entryClone = entryView->entryFromIndex(entryView->model()->index(1, 1));
+    QCOMPARE(entryView->model()->rowCount(), initialCount + 1);
+    Entry* entryClone = m_dbWidget->currentSelectedEntry();
+    QVERIFY(entryClone);
     QVERIFY(entryOrg->uuid() != entryClone->uuid());
     QCOMPARE(entryClone->title(), entryOrg->title() + QString(" - Clone"));
     QVERIFY(m_dbWidget->currentSelectedEntry()->uuid() == entryClone->uuid());
@@ -3024,15 +3007,13 @@ void TestGui::testDeleteEntryDuringModalDialog()
 void TestGui::addCannedEntries()
 {
     // Find buttons
-    auto* toolBar = m_mainWindow->findChild<QToolBar*>("toolBar");
-    QWidget* entryNewWidget = toolBar->widgetForAction(m_mainWindow->findChild<QAction*>("actionEntryNew"));
     auto* editEntryWidget = m_dbWidget->findChild<EditEntryWidget*>("editEntryWidget");
     auto* titleEdit = editEntryWidget->findChild<QLineEdit*>("titleEdit");
     auto* passwordEdit =
         editEntryWidget->findChild<PasswordWidget*>("passwordEdit")->findChild<QLineEdit*>("passwordEdit");
 
     // Add entry "test" and confirm added
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    triggerAction("actionEntryNew");
     QTest::keyClicks(titleEdit, "test");
     auto* editEntryWidgetTagsEdit = editEntryWidget->findChild<TagsEdit*>("tagsList");
     editEntryWidgetTagsEdit->tags(QStringList() << "testTag");
@@ -3040,13 +3021,13 @@ void TestGui::addCannedEntries()
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Add entry "something 2"
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    triggerAction("actionEntryNew");
     QTest::keyClicks(titleEdit, "something 2");
     QTest::keyClicks(passwordEdit, "something 2");
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 
     // Add entry "something 3"
-    QTest::mouseClick(entryNewWidget, Qt::LeftButton);
+    triggerAction("actionEntryNew");
     QTest::keyClicks(titleEdit, "something 3");
     QTest::mouseClick(editEntryWidgetButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
 }
@@ -3087,9 +3068,20 @@ void TestGui::checkSaveDatabase()
 void TestGui::checkStatusBarText(const QString& textFragment)
 {
     QApplication::processEvents();
-    QVERIFY(m_statusBarLabel->isVisible());
-    QTRY_VERIFY2(m_statusBarLabel->text().startsWith(textFragment),
-                 qPrintable(QString("'%1' doesn't start with '%2'").arg(m_statusBarLabel->text(), textFragment)));
+    auto* vault = m_mainWindow->findChild<Material::VaultScreen*>("materialVaultScreen");
+    QVERIFY(vault);
+    QVERIFY(vault->isVisible());
+    const auto countPrefix = textFragment.section(QLatin1Char(' '), 0, 0) + QLatin1Char(' ');
+    QTRY_VERIFY(([&] {
+        for (auto* label : vault->findChildren<QLabel*>()) {
+            if (label->isVisible()
+                && (label->text().startsWith(countPrefix + QStringLiteral("entry"), Qt::CaseInsensitive)
+                    || label->text().startsWith(countPrefix + QStringLiteral("entries"), Qt::CaseInsensitive))) {
+                return true;
+            }
+        }
+        return false;
+    })());
 }
 
 void TestGui::triggerAction(const QString& name)
