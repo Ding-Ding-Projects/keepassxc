@@ -42,6 +42,8 @@ labels only, never hidden data roles or the editable field's current contents.
 The popup initially focuses its local search. Up and Down move the candidate
 through enabled results, Return activates its original index, and Escape
 cancels. Standard focus traversal reaches the regex controls and result list.
+Return inside the builder edits the pattern without activating a choice;
+Escape closes the builder first and leaves the choice popup open.
 The owner retains the combobox role and exposes expanded/collapsed state plus
 an explicit relationship to the popup. The result view exposes Qt's list and
 selection semantics. Accessible names and inline result/error descriptions use
@@ -76,7 +78,8 @@ The tests-first source produced 2 passes and 16 failures because the searchable
 popup did not exist. Implementation verification is recorded with the exact
 candidate and executable hashes in the task receipts. Offscreen Qt checks are
 not native packaged acceptance. No new native captures are available: the
-required hidden-desktop service connection exhausted its bounded attempts.
+required hidden-desktop service connection previously exhausted its bounded
+attempts, and service recovery has not yet produced evidence for this candidate.
 Keyboard and screen-reader operation, theme/language/scale geometry, every
 production control and the packaged create/save/quit/reopen flow still require
 genuine native interaction and capture evidence before product acceptance.

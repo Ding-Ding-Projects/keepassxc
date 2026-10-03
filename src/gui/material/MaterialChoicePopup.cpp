@@ -347,6 +347,13 @@ namespace Material
         }
         if (event->type() == QEvent::KeyPress && watched != m_owner) {
             auto* key = static_cast<QKeyEvent*>(event);
+            // Unhandled editor keys propagate through the inline workbench.
+            // They must not also commit or navigate the underlying choices.
+            if (m_builder && m_builder->isOpen()) {
+                if (key->key() == Qt::Key_Escape) { m_builder->closeOverlay(); return true; }
+                if (watched == this && (key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter
+                                       || key->key() == Qt::Key_Down || key->key() == Qt::Key_Up)) return true;
+            }
             if (key->key() == Qt::Key_Escape) { hide(); return true; }
             if (key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter) { activateCurrent(); return true; }
             if (key->key() == Qt::Key_Down || key->key() == Qt::Key_Up) {
