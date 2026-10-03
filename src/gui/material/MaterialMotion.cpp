@@ -6,6 +6,7 @@
 #include <QAbstractButton>
 #include <QApplication>
 #include <QEvent>
+#include <QSignalBlocker>
 #include <QWidget>
 #include <cmath>
 #ifdef Q_OS_WIN
@@ -149,9 +150,16 @@ namespace Material
             finish();
             return;
         }
-        m_animation.setDuration(duration);
-        m_animation.setStartValue(m_value);
-        m_animation.setEndValue(target);
+        // Endpoint changes evaluate at the retained animation time. Publish only
+        // the new run, never those intermediate configuration values.
+        const qreal current = m_value;
+        {
+            const QSignalBlocker blocker(&m_animation);
+            m_animation.setDuration(duration);
+            m_animation.setStartValue(current);
+            m_animation.setEndValue(target);
+            m_animation.setCurrentTime(0);
+        }
         m_animation.start();
     }
 

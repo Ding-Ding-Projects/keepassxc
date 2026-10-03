@@ -368,7 +368,6 @@ namespace Material
         setAttribute(Qt::WA_NoSystemBackground);
         setAttribute(Qt::WA_TranslucentBackground);
         setFocusPolicy(Qt::NoFocus);
-        hide();
 
         auto* root = new QVBoxLayout(this);
         root->setContentsMargins(ShadowMargin, ShadowMargin, ShadowMargin, ShadowMargin);
@@ -456,6 +455,8 @@ namespace Material
             reposition();
         });
         applyTheme();
+        // hideEvent requires both the hold timer and transition to exist.
+        hide();
     }
 
     DimSumCard::~DimSumCard()

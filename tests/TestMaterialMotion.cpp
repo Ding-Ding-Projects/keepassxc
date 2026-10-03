@@ -2,6 +2,8 @@
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "core/Config.h"
 #include "gui/material/MaterialMotion.h"
+#include "gui/material/MaterialSnackbar.h"
+#include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialOverlay.h"
 #include "gui/material/MaterialSwitch.h"
 #include "gui/material/MaterialControls.h"
@@ -28,15 +30,40 @@ using namespace Material;
 class TestMaterialMotion : public QObject
 {
     Q_OBJECT
+private:
+    QString m_roamingFile;
+    QString m_localFile;
 private slots:
     void initTestCase()
     {
-        Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), {});
+        m_roamingFile = TemporaryFile::createTempConfigFile();
+        m_localFile = TemporaryFile::createTempConfigFile();
+        Config::createConfigFromFile(m_roamingFile, m_localFile);
     }
     void init()
     {
         config()->set(Config::GUI_ReducedMotion, false);
         config()->set(Config::GUI_LowStimulation, false);
+    }
+    void preferencePersistsWithoutDiscardingBaseChoice()
+    {
+        // Reload before any shared motion/appearance singleton connects to Config.
+        config()->set(Config::GUI_ReducedMotion, true);
+        config()->set(Config::GUI_LowStimulation, true);
+        config()->sync();
+        QSettings persisted(m_localFile, QSettings::IniFormat);
+        QCOMPARE(persisted.value(QStringLiteral("GUI/ReducedMotion")).toBool(), true);
+        QCOMPARE(persisted.value(QStringLiteral("GUI/LowStimulation")).toBool(), true);
+        Config::createConfigFromFile(m_roamingFile, m_localFile);
+        QVERIFY(config()->get(Config::GUI_ReducedMotion).toBool());
+        QVERIFY(config()->get(Config::GUI_LowStimulation).toBool());
+        config()->set(Config::GUI_LowStimulation, false);
+        config()->sync();
+        Config::createConfigFromFile(m_roamingFile, m_localFile);
+        QVERIFY(config()->get(Config::GUI_ReducedMotion).toBool());
+        QVERIFY(!config()->get(Config::GUI_LowStimulation).toBool());
+        MotionPolicy reloaded([] { return false; });
+        QVERIFY(reloaded.reducedMotion());
     }
     void policyComposesEveryVeto()
     {
@@ -68,18 +95,6 @@ private slots:
         QCOMPARE(style.styleHint(QStyle::SH_Widget_Animation_Duration),
                  MotionPolicy::instance()->duration(Duration::Medium));
     }
-    void preferencePersistsWithoutDiscardingBaseChoice()
-    {
-        config()->set(Config::GUI_ReducedMotion, true);
-        config()->set(Config::GUI_LowStimulation, true);
-        config()->sync();
-        QSettings persisted(config()->getFileName(), QSettings::IniFormat);
-        QCOMPARE(persisted.value(QStringLiteral("GUI/ReducedMotion")).toBool(), true);
-        QCOMPARE(persisted.value(QStringLiteral("GUI/LowStimulation")).toBool(), true);
-        config()->set(Config::GUI_LowStimulation, false);
-        MotionPolicy reloaded([] { return false; });
-        QVERIFY(reloaded.reducedMotion());
-    }
     void reversalStartsAtCurrentValueAndSettlesOnce()
     {
         MotionPolicy policy([] { return false; });
@@ -91,8 +106,10 @@ private slots:
         QVERIFY(transition.isRunning());
         QTRY_VERIFY(transition.value() > 0.0);
         const qreal current = transition.value();
+        QSignalSpy changes(&transition, &MotionTransition::valueChanged);
         transition.animateTo(0.0, 140);
         QCOMPARE(transition.value(), current);
+        QCOMPARE(changes.count(), 0);
         QTRY_VERIFY(!transition.isRunning());
         QCOMPARE(transition.value(), 0.0);
         QCOMPARE(settled.count(), 1);
@@ -180,11 +197,19 @@ private slots:
         QTest::qWait(50);
         QCOMPARE(changes.count(), 0);
     }
+    void reducedSwitchAndOverlayHaveImmediateFinalStates_data()
+    {
+        QTest::addColumn<bool>("visibleParent");
+        QTest::newRow("hidden-parent") << false;
+        QTest::newRow("visible-parent") << true;
+    }
     void reducedSwitchAndOverlayHaveImmediateFinalStates()
     {
+        QFETCH(bool, visibleParent);
         config()->set(Config::GUI_ReducedMotion, true);
         QWidget host;
         host.resize(640, 480);
+        if (visibleParent) host.show();
         Switch toggle(&host);
         Overlay overlay(&host);
         auto* sheet = new QLabel(QStringLiteral("Neutral test surface"));
@@ -206,6 +231,50 @@ private slots:
         QVERIFY(!overlay.isOpen());
         QCOMPARE(overlay.transition(), 0.0);
         QCOMPARE(closed.count(), 2);
+    }
+    void finiteNotificationTimersResumeAfterVisibilityReturns_data()
+    {
+        QTest::addColumn<bool>("dimSum");
+        QTest::addColumn<bool>("hideParent");
+        QTest::newRow("snackbar-own-hide") << false << false;
+        QTest::newRow("snackbar-parent-hide") << false << true;
+        QTest::newRow("dim-sum-own-hide") << true << false;
+        QTest::newRow("dim-sum-parent-hide") << true << true;
+    }
+    void finiteNotificationTimersResumeAfterVisibilityReturns()
+    {
+        QFETCH(bool, dimSum);
+        QFETCH(bool, hideParent);
+        config()->set(Config::GUI_ReducedMotion, true);
+        QWidget host;
+        host.resize(640, 480);
+        QPointer<QWidget> notification;
+        // Construct before showing the parent to isolate timer resumption from
+        // construction-time hide delivery.
+        if (dimSum) {
+            notification = new DimSumCard({QStringLiteral("Test dish"), QStringLiteral("測試點心"), QString()}, &host);
+        } else {
+            notification = new Snackbar(SeverityLevel::Info, QString(), QStringLiteral("Test notification"), {}, 200, &host);
+            notification->setFocusPolicy(Qt::NoFocus);
+            notification->move(300, 300);
+        }
+        auto* timer = notification->findChild<QTimer*>(QString(), Qt::FindDirectChildrenOnly);
+        QVERIFY(timer);
+        host.show();
+        if (dimSum) qobject_cast<DimSumCard*>(notification.data())->present();
+        else qobject_cast<Snackbar*>(notification.data())->animateIn();
+        QVERIFY(timer->isActive());
+        QWidget* hidden = hideParent ? &host : notification.data();
+        hidden->hide();
+        QVERIFY(!timer->isActive());
+        QTest::qWait(20);
+        QVERIFY(notification);
+        QVERIFY(!timer->isActive());
+        hidden->show();
+        QVERIFY(timer->isActive());
+        // Exercise the real timeout and disposal without waiting six seconds.
+        timer->setInterval(30);
+        QTRY_VERIFY_WITH_TIMEOUT(notification.isNull(), 1000);
     }
     void reducedIndeterminateProgressHasNoTimer()
     {

@@ -17,6 +17,9 @@
 #include <QAction>
 
 #include <QApplication>
+#include <QStandardPaths>
+#include <QTemporaryDir>
+#include <QUuid>
 #include <QMenu>
 #include <QLineEdit>
 #include <QSignalSpy>
@@ -382,4 +385,19 @@ void TestMaterialShellResponsive::settingsSwitchRowsToggleAndStayInStep()
     QVERIFY(!toggle->isChecked());
 }
 
-QTEST_MAIN(TestMaterialShellResponsive)
+int main(int argc, char** argv)
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QString identity = QStringLiteral("TestMaterialShellResponsive-%1").arg(QUuid::createUuid().toString(QUuid::Id128));
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
+    qputenv("USERNAME", identity.toLatin1());
+    qputenv("USER", identity.toLatin1());
+    QTemporaryDir profile;
+    if (!profile.isValid()) return 1;
+    QApplication application(argc, argv);
+    Config::createConfigFromFile(profile.filePath(QStringLiteral("roaming.ini")),
+                                 profile.filePath(QStringLiteral("local.ini")));
+    TestMaterialShellResponsive tests;
+    return QTest::qExec(&tests, argc, argv);
+}

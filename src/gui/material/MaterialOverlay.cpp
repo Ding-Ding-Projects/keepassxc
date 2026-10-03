@@ -48,8 +48,6 @@ namespace Material
     {
         setFocusPolicy(Qt::StrongFocus);
         setAttribute(Qt::WA_NoMousePropagation);
-        hide();
-
         m_animation = new MotionTransition(this);
         connect(m_animation, &MotionTransition::valueChanged, this, &Overlay::setTransition);
         connect(m_animation, &MotionTransition::settled, this, [this] {
@@ -59,6 +57,8 @@ namespace Material
             }
         });
 
+        // hideEvent requires the transition to exist, even during construction.
+        hide();
         if (parent) {
             parent->installEventFilter(this);
             setGeometry(parent->rect());
