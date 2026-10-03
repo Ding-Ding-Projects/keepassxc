@@ -10,6 +10,8 @@ An eligible launch draws once from 100 equally likely values. Only zero selects 
 
 There is one startup scheduling opportunity. After a 1.5-second grace period, presentation rechecks the off preference, desktop quiet state and visible active host. An unavailable host or an excluded state cancels that launch instead of retrying later during the user's work. Destroying the host invalidates the pending presentation safely.
 
+Programmatic database opening through the main window also cancels a pending or visible card before the database tab is constructed or selected. This includes a filename forwarded by another process, whose embedded unlock form may appear without a keyboard, pointer or modal event.
+
 ## Configuration
 
 Settings > Behaviour contains **Startup dim sum surprise**, with English, Cantonese and bilingual labels. It persists the existing `GUI/DimSumSurprise` preference. Existing explicit `false` values remain disabled. Turning it off cancels a pending presentation and immediately hides any visible card. Turning it back on does not resurrect a canceled startup; eligibility is reconsidered on the next launch.
@@ -24,7 +26,7 @@ All dish names and images come from `:/dimsum/dimsum.json` and the bundled `:/di
 
 `TestMaterialDimSum.cpp` and `TestDimSum.cpp` use synthetic configuration and unique per-run Qt organization and application identities established before `QApplication`. Private test providers make the draw boundaries and quiet-state decisions deterministic. Coverage includes all 100 draw values, one draw per launch, persisted disabling, first-run latching, remembered-database launch exclusion, active-flow cancellation, informational versus error notifications, visible message severity transitions, popup exclusion, focus preservation, timed dismissal, host destruction, local images and the localized setting. Remembered database paths in these tests are synthetic strings and are never opened.
 
-The tests-first candidate produced 7 passes and 106 failures before the runtime repair. These offscreen tests establish behavioral evidence only. Native rendering, supported geometry, operating-system notification integration and the integrated user/system reduced-motion matrix still require built-application acceptance through the sanctioned route. No native capture is claimed here.
+The tests-first candidate produced 7 passes and 106 failures before the runtime repair. Two additional queued-opening regressions use newly generated, task-owned locked databases and the real main-window slot, checking both pending and already-visible cards. Their isolated profile avoids an unrelated hidden browser-settings warning, keeps the browser service stopped, and rejects input, modal, popup and error-show events as alternative cancellation causes. Both cases were observed failing before the main-window hook was added. These offscreen tests establish behavioral evidence only. Native rendering, supported geometry, operating-system notification integration and the integrated user/system reduced-motion matrix still require built-application acceptance through the sanctioned route. No native capture is claimed here.
 
 ## Related articles
 

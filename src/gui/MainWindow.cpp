@@ -1451,6 +1451,9 @@ void MainWindow::clearLastDatabases()
 
 void MainWindow::openDatabase(const QString& filePath, const QString& password, const QString& keyfile)
 {
+    // Forwarded file requests can enter an embedded credential form without
+    // user input or a modal event. End startup decoration before opening it.
+    Material::DimSum::suppress();
     m_ui->tabWidget->addDatabaseTab(filePath, false, password, keyfile);
 }
 
