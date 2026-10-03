@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSwitch.h"
+#include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
@@ -23,7 +24,7 @@
 #include <QEvent>
 #include <QKeyEvent>
 #include <QPainter>
-#include <QPropertyAnimation>
+
 
 namespace Material
 {
@@ -37,16 +38,8 @@ namespace Material
         constexpr qreal KnobOffCenter = 6.0 + Switch::KnobSizeOff / 2.0; // 14
         constexpr qreal KnobOnCenter = 24.0 + Switch::KnobSizeOn / 2.0; // 36
 
-        constexpr qreal HoverAlpha = 0.08;
         constexpr qreal DisabledOpacity = 0.38;
 
-        /** The design's standard easing, cubic-bezier(.2, 0, 0, 1). */
-        QEasingCurve standardCurve()
-        {
-            QEasingCurve curve(QEasingCurve::BezierSpline);
-            curve.addCubicBezierSegment(QPointF(0.2, 0.0), QPointF(0.0, 1.0), QPointF(1.0, 1.0));
-            return curve;
-        }
 
         QColor lerp(const QColor& from, const QColor& to, qreal t)
         {
@@ -67,9 +60,9 @@ namespace Material
         setFocusPolicy(Qt::StrongFocus);
         setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed);
 
-        m_animation = new QPropertyAnimation(this, "knobPosition", this);
-        m_animation->setDuration(Duration::Toggle);
-        m_animation->setEasingCurve(standardCurve());
+        m_animation = new MotionTransition(this);
+        connect(m_animation, &MotionTransition::valueChanged, this, &Switch::setKnobPosition);
+        MotionState::attach(this);
 
         connect(theme(), &Theme::changed, this, [this] { update(); });
     }
@@ -103,13 +96,7 @@ namespace Material
 
     void Switch::animateTo(qreal position)
     {
-        m_animation->stop();
-        if (qFuzzyCompare(position + 1.0, m_knobPosition + 1.0)) {
-            return;
-        }
-        m_animation->setStartValue(m_knobPosition);
-        m_animation->setEndValue(position);
-        m_animation->start();
+        m_animation->animateTo(position, Duration::Toggle);
     }
 
     void Switch::checkStateSet()
@@ -179,9 +166,9 @@ namespace Material
         painter.setBrush(fill);
         painter.drawRoundedRect(trackPath, trackPath.height() / 2.0, trackPath.height() / 2.0);
 
-        if (isEnabled() && m_hovered) {
+        if (isEnabled() && MotionState::opacity(this) > 0.0) {
             painter.save();
-            paintStateLayer(&painter, track, Shape::Full, theme()->color(Role::OnSurface), HoverAlpha);
+            paintStateLayer(&painter, track, Shape::Full, theme()->color(Role::OnSurface), MotionState::opacity(this));
             painter.restore();
         }
 

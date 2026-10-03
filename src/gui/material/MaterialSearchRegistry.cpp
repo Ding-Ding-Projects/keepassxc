@@ -1,6 +1,7 @@
 #include "MaterialSearchRegistry.h"
 
 #include "MaterialSearchBar.h"
+#include "MaterialMenu.h"
 
 #include <QCursor>
 #include <QLineEdit>
@@ -39,6 +40,9 @@ namespace Material
             // every wander can make another bar current. The bar that asked is
             // the one to return to, so it is pinned here.
             m_builderOwner = bar;
+            // Native menus own their adjacent workbench and its lifetime. Do not
+            // open the main-window overlay or share another menu's draft state.
+            if (MenuSearch::openBuilderFor(bar)) return;
             emit builderRequested(bar);
         });
         return true;

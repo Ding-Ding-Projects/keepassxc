@@ -16,6 +16,7 @@
  */
 
 #include "MaterialAppearanceEditor.h"
+#include "MaterialMotion.h"
 
 #include "core/Config.h"
 #include "MaterialButtons.h"
@@ -86,6 +87,12 @@ namespace Material
         m_rainbowTimer = new QTimer(this);
         m_rainbowTimer->setInterval(RainbowTickMs);
         m_rainbowTimer->setTimerType(Qt::CoarseTimer);
+        m_reducedMotion = MotionPolicy::instance()->reducedMotion();
+        connect(MotionPolicy::instance(), &MotionPolicy::changed, this, [this] {
+            m_reducedMotion = MotionPolicy::instance()->reducedMotion();
+            if (m_reducedMotion) m_rainbowTimer->stop();
+            tick();
+        });
         connect(m_rainbowTimer, &QTimer::timeout, this, &AppearanceApplier::tick);
     }
 
@@ -112,8 +119,7 @@ namespace Material
 
     void AppearanceApplier::setReducedMotion(bool reduced)
     {
-        m_reducedMotion = reduced;
-        tick();
+        config()->set(Config::GUI_ReducedMotion, reduced);
     }
 
     void AppearanceApplier::tick()
@@ -124,12 +130,15 @@ namespace Material
         for (const QString& key : keys) {
             const auto value = ElementOverrides::instance()->get(key);
             if (value.rainbow.value_or(false)) {
-                any = true;
+                const auto widgets = QApplication::allWidgets();
+                for (const auto* widget : widgets) {
+                    if (widget->objectName() == key && widget->isVisible()) any = true;
+                }
                 m_cycleMs = ColorText::rainbowCycleMs(value.rainbowLevel.value_or(3));
                 apply(key);
             }
         }
-        if (!any) {
+        if (!any || m_reducedMotion) {
             m_rainbowTimer->stop();
         }
     }
@@ -236,7 +245,7 @@ namespace Material
         } else if (widget->graphicsEffect()) {
             widget->setGraphicsEffect(nullptr);
         }
-        if (value.rainbow.value_or(false) && !m_rainbowTimer->isActive()) {
+        if (value.rainbow.value_or(false) && widget->isVisible() && !m_reducedMotion && !m_rainbowTimer->isActive()) {
             m_cycleMs = ColorText::rainbowCycleMs(value.rainbowLevel.value_or(3));
             m_rainbowTimer->start();
         }
@@ -262,6 +271,9 @@ namespace Material
             return false;
         }
         switch (event->type()) {
+        case QEvent::Hide:
+            if (m_rainbowTimer->isActive()) tick();
+            break;
         case QEvent::Show:
         case QEvent::Polish:
             if (!widget->objectName().isEmpty() && !ElementOverrides::instance()->get(widget->objectName()).isEmpty()) {

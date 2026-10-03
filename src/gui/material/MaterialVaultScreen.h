@@ -261,6 +261,7 @@ namespace Material
         QWidget* m_panes = nullptr;
         QSplitter* m_splitter = nullptr;
         bool m_restoringSplitter = false;
+        bool m_splitterRestorePending = true;
         QStackedWidget* m_stack = nullptr;
         QPointer<QStackedWidget> m_host;
         QPointer<QWidget> m_databasePage;

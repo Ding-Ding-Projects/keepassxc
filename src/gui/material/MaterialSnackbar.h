@@ -28,11 +28,12 @@
 
 #include <functional>
 
-class QPropertyAnimation;
+
 class QTimer;
 
 namespace Material
 {
+    class MotionTransition;
     /**
      * How long a toast stays on screen before it removes itself.
      *
@@ -160,6 +161,8 @@ namespace Material
         void dismissed();
 
     protected:
+        void showEvent(QShowEvent* event) override;
+        void hideEvent(QHideEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;
         void mouseMoveEvent(QMouseEvent* event) override;
@@ -181,7 +184,7 @@ namespace Material
         QString m_title;
         QString m_message;
         QList<NotificationAction> m_actions;
-        QPropertyAnimation* m_animation = nullptr;
+        MotionTransition* m_animation = nullptr;
         QTimer* m_lifetime = nullptr;
         int m_duration = ToastLifetime;
         int m_progress = NoProgress;

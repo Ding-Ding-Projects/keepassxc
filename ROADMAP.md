@@ -1,16 +1,30 @@
 # Roadmap
 
+## Current release-grade acceptance
+
+- [ ] Complete the requested release-grade closeout, including smoke verification of the exact built candidate.
+- [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
+- [ ] Complete native acceptance through the approved isolated route. The route remains unavailable; source and offscreen checks cannot replace it.
+
 ## October 2026 complete interface scope
 
-- [x] Preserve the original 172 source-assessment rows and add a versioned, explicit native/website surface and capability inventory. The focused schema/evidence regression passes 93 checks, including removal of all 178 platform rows, 106 surfaces and 998 capability contracts. This item is inventory tooling only.
+- [x] Preserve the original 172 source-assessment rows and add a versioned, explicit native/website surface and capability inventory. The focused schema/evidence regression passes 94 checks, including removal of all 178 platform rows, 106 surfaces and 998 capability contracts. This item is inventory tooling only.
 - [ ] Implement and verify every canonical capability on every named native surface and website-owned equivalent. Current product evidence remains 0/105,788 verified capability cells, not a completion claim.
 - [ ] Complete search with an independent anchored full regex workbench in every context menu, dropdown, editor and settings section, including keyboard/touch routes and menu lifetime behavior.
-- [ ] Complete genuine Material Design 3 primitives, every-element appearance and motion with reduced-motion behavior, all language modes and every supported scale. Parallel motion/menu candidates remain unintegrated and are absent from the published package below.
+- [ ] Complete genuine Material Design 3 primitives, every-element appearance and motion with reduced-motion behavior, all language modes and every supported scale. Reviewed menu, motion and vault-sizing source is present from main 91772a16; full native acceptance remains pending.
 - [ ] Complete the detailed language/School/narration/schedules, tabs/groups/discovery, six lock policies, authenticator/encrypted history, notifications/exports/bulk actions, converter, local model suite, logo, offline documentation, provenance and Status Hub contracts recorded in [interface completeness](docs/features/delivery/interface-completion.md).
 - [ ] Obtain candidate-bound built interactions and genuine per-click screenshots through the approved isolated-desktop route. Historical parity images remain historical; the route is currently unavailable.
 - [ ] Verify the current explicit startup surprise contract: a fresh 1% chance per launch, at most one display, persisted off switch honored after restart, bundled local images, excluded first-run/error/update/mid-task flows, no focus theft and quiet/reduced-motion behavior. Current instructions supersede the earlier installed 10%/no-off guidance; no runtime behavior is changed by the inventory work.
 - [x] Verify hosted packaging run `37147954035` succeeded at source `07ce4dc158bcd7eb735cc309f009c531731f3133` and published non-draft `v2.8.29801` with seven required assets. The parent lane downloaded and verified the package/update metadata. This is package evidence, not installed UI acceptance.
 - [ ] Complete the original ten-entry native save/quit/relaunch/readback acceptance, positional spaces/Cantonese filename acceptance, default-branch delivery of the new interface work, and safe task-owned cleanup.
+## October 3 combined interface verification
+
+- [x] Combine reviewed menu, shared motion and initial vault-pane sizing source without conflicts.
+- [x] List all 39 combined feature articles exactly once with immutable ancestor and article-byte binding; keep build and client category recognition consistent. The focused regression was observed red, then green.
+- [x] Build and run the five relevant combined Qt targets at `2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`: 90 passing entries, zero failures, skips or timeouts.
+- [ ] Obtain the full native interaction and language/theme/scale/viewport evidence through the approved isolated route. Offscreen Qt results do not satisfy this item.
+- [ ] Complete non-QMenu adapters, calendar-grid search, per-element appearance/locks, saved snippets and visible query-history selection.
+- [ ] Independently review and deliver the combined source and final documentation bundle; hosted publication remains separate from local verification.
 
 ## October 2026 database lifecycle repair
 

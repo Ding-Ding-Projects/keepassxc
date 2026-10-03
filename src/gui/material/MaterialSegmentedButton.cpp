@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSegmentedButton.h"
+#include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
@@ -42,6 +43,9 @@ namespace Material
     SegmentedButton::SegmentedButton(QWidget* parent)
         : QWidget(parent)
     {
+        m_selectionMotion = new MotionTransition(this);
+        m_selectionMotion->snapTo(1.0);
+        connect(m_selectionMotion, &MotionTransition::valueChanged, this, [this] { update(); });
         setMouseTracking(true);
         setCursor(Qt::PointingHandCursor);
         setFocusPolicy(Qt::StrongFocus);
@@ -107,6 +111,8 @@ namespace Material
             return;
         }
         m_currentIndex = index;
+        m_selectionMotion->snapTo(0.0);
+        m_selectionMotion->animateTo(1.0, Duration::Medium);
         setAccessibleDescription(tr("Selected: %1").arg(m_segments.at(index).label));
         update();
         emit segmentSelected(id);
@@ -280,7 +286,9 @@ namespace Material
         painter.setClipPath(roundedPath(QRectF(rect()), Shape::Full));
 
         if (m_currentIndex >= 0 && m_currentIndex < m_segments.size()) {
-            painter.fillRect(m_segments.at(m_currentIndex).rect, theme()->color(Role::SecondaryContainer));
+            QColor selectedFill = theme()->color(Role::SecondaryContainer);
+            selectedFill.setAlphaF(0.5 + 0.5 * m_selectionMotion->value());
+            painter.fillRect(m_segments.at(m_currentIndex).rect, selectedFill);
         }
         if (isEnabled() && m_hoverIndex >= 0 && m_hoverIndex != m_currentIndex) {
             paintStateLayer(

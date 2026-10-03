@@ -29,6 +29,9 @@
 #include "gui/material/MaterialSwitch.h"
 
 #include <QApplication>
+#include <QStandardPaths>
+#include <QTemporaryDir>
+#include <QUuid>
 #include <QCoreApplication>
 #include <QLabel>
 #include <QLineEdit>
@@ -36,13 +39,27 @@
 #include <QTest>
 #include <QVBoxLayout>
 
-QTEST_MAIN(TestMaterialAppearanceEditor)
+int main(int argc, char** argv)
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QString identity = QStringLiteral("TestMaterialAppearanceEditor-%1").arg(QUuid::createUuid().toString(QUuid::Id128));
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
+    qputenv("USERNAME", identity.toLatin1());
+    qputenv("USER", identity.toLatin1());
+    QTemporaryDir profile;
+    if (!profile.isValid()) return 1;
+    QApplication application(argc, argv);
+    Config::createConfigFromFile(profile.filePath(QStringLiteral("roaming.ini")),
+                                 profile.filePath(QStringLiteral("local.ini")));
+    TestMaterialAppearanceEditor tests;
+    return QTest::qExec(&tests, argc, argv);
+}
 
 using namespace Material;
 
 void TestMaterialAppearanceEditor::initTestCase()
 {
-    Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), {});
     qApp->installEventFilter(AppearanceApplier::instance());
 }
 

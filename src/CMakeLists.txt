@@ -123,6 +123,7 @@ set(gui_SOURCES
         gui/material/MaterialHistoryScreen.cpp
         gui/material/MaterialHistoryStore.cpp
         gui/material/MaterialIcons.cpp
+        gui/material/MaterialMotion.cpp
         gui/material/MaterialNavigationRail.cpp
         gui/material/MaterialNotificationCentre.cpp
         gui/material/MaterialNotifier.cpp
@@ -135,6 +136,7 @@ set(gui_SOURCES
         gui/material/MaterialScreen.cpp
         gui/material/MaterialSearchBar.cpp
         gui/material/MaterialSearchRegistry.cpp
+        gui/material/MaterialMenu.cpp
         gui/material/MaterialSegmentedButton.cpp
         gui/material/MaterialAppearanceEditor.cpp
         gui/material/MaterialColorPicker.cpp

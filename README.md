@@ -53,11 +53,20 @@ strip, and a five-destination stack. `Ctrl+Shift+F` opens a command palette list
 
 | Destination | State |
 | --- | --- |
-| **Vault** | **Still the stock three-pane widget.** Restyled by the Material stylesheet, but the group tree / entry table / preview layout is upstream's. The Material vault screen is written and not yet wired — see [Status](#status). |
+| **Vault** | Material three-pane screen with remembered user widths and deferred first-visible splitter restoration. Focused offscreen sizing checks pass; native geometry acceptance remains pending. See [vault pane sizing](docs/features/interface/vault-pane-sizing.md). |
 | **Reports** | Material screen — password health, breach and reuse findings, database statistics as stat cards |
 | **History** | Material screen — local Git-backed revision history embedded in encrypted database saves, with diff and restore |
 | **Changelog** | Material screen — every released version, searchable and date-filterable, exportable to Markdown |
 | **Settings** | Material screen — appearance, language, behaviour and integrations, plus spec sheets for individual settings |
+
+The combined menu, motion and vault-sizing source passed 90 focused Qt entries at
+`2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`, with zero failures or timeouts across
+five isolated offscreen processes. These checks do not prove packaged interaction,
+native geometry, screen-reader behavior or full feature completeness. The
+[handoff](HANDOFF.md) records exact target counts, executable hashes and remaining scope.
+Release-grade smoke verification and genuine current captures for chat, repository
+ evidence, README and the documentation website remain pending through the approved
+ isolated route; the existing historical images do not establish that acceptance.
 
 ### Appearance is a runtime setting, not a build flag
 

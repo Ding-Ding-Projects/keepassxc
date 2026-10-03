@@ -16,6 +16,7 @@
  */
 
 #include "MaterialButtons.h"
+#include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 
@@ -40,8 +41,6 @@ namespace Material
         constexpr int BadgeInset = 4;
         constexpr int BadgePadding = 4;
 
-        constexpr qreal HoverAlpha = 0.08;
-        constexpr qreal PressedAlpha = 0.12;
         constexpr qreal DisabledOpacity = 0.38;
 
         /** Blend @p fg over an opaque @p bg at @p alpha. */
@@ -70,6 +69,7 @@ namespace Material
         setFocusPolicy(Qt::StrongFocus);
         setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
         enforceLabelWidth();
+        MotionState::attach(this);
 
         connect(theme(), &Theme::changed, this, [this] {
             enforceLabelWidth();
@@ -213,7 +213,7 @@ namespace Material
         // can hand back a translucent tint and still paint with one fill.
         qreal state = 0.0;
         if (isEnabled()) {
-            state = isDown() ? PressedAlpha : (m_hovered ? HoverAlpha : 0.0);
+            state = MotionState::opacity(this);
         }
 
         QColor result;
@@ -290,6 +290,12 @@ namespace Material
         QPainter painter(this);
         painter.setRenderHint(QPainter::Antialiasing);
         paintSurface(&painter, rect(), m_radius, containerColor(), borderColor());
+
+        if (hasFocus()) {
+            painter.setPen(QPen(theme()->color(Role::Primary), 2));
+            painter.setBrush(Qt::NoBrush);
+            painter.drawPath(roundedPath(QRectF(rect()).adjusted(2, 2, -2, -2), qMax(0, m_radius - 2)));
+        }
 
         const QFont typeface = labelFont();
         const QFontMetrics metrics(typeface);

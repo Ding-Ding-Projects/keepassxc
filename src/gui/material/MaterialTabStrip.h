@@ -31,6 +31,7 @@ class QKeyEvent;
 
 namespace Material
 {
+    class MotionTransition;
     class IconButton;
     class TabOverflow;
 
@@ -120,6 +121,7 @@ namespace Material
         IconButton* m_searchButton = nullptr;
         IconButton* m_addButton = nullptr;
         QPointer<TabOverflow> m_overflow;
+        MotionTransition* m_selectionMotion = nullptr;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
         QString m_focusId;

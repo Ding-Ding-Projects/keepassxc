@@ -1,40 +1,65 @@
-# Complete interface and database lifecycle continuation
+# Combined inventory and interface continuation
 
-Current objective: implement every canonical user-facing feature on the native application and website-owned equivalents, complete Material Design 3, give every context menu its own search and adjacent full regex workbench, and implement every-element motion. Preserve the original native ten-entry creation/save/quit/relaunch/exact-readback acceptance. The overall goal is active and incomplete.
+The current request requires release-grade closeout, smoke verification, and genuine
+built-interface screenshots shown in chat and committed with their evidence to the
+repository, README and documentation website. The wider objective remains incomplete.
+A schema check, source merge, offscreen suite or downloadable package does not prove
+native acceptance or complete feature delivery.
 
-- Inventory/evidence lane: `codex/ui-evidence-inventory-20261003`, base `07ce4dc158bcd7eb735cc309f009c531731f3133`. This lane changed only contract inventories, the evidence validator, focused tests and related documentation. Integration and remote delivery belong to the parent lane and are not claimed in this snapshot.
-- Website article registration uses immutable documentation snapshot `8e6e35eb449cdf95e14d31872d80de6b918000a8` and schema-2 `site/content-manifest.json`. All 36 articles retain exact repository/path/blob provenance and inventory-derived status. The overview article is `not-tracked`, not a feature completion claim. Registration contains no generated interaction or capture receipt. Full website build and hosted publication are not established by this documentation candidate.
-- Handwritten scope: 89 canonical features, 83 named surfaces, 996 capability contracts. The original 172 platform rows and original proof links are preserved as historical source assessment, with six newly named platform rows. Website controls operate on visitor state and documentation, not a browser-hosted vault runtime.
-- Verification: 69 focused inventory checks pass, including individual removal of every 178 platform rows, 83 surfaces and 996 capabilities, then restoration. Schema validation passes. Product evidence remains 0/82,668 current cells verified and 7,387 incomplete surface/feature groups. No current runtime proof is accepted merely because an old image or source file exists.
-- Latest verified release: `v2.8.29801`, non-draft at source `07ce4dc158bcd7eb735cc309f009c531731f3133`, successful run `37147954035`, published `2026-10-03T20:01:34Z`. The parent downloaded all seven assets and verified Squirrel/package/update metadata. Setup SHA-256 `72ff97641ec249b216890401e7b64ba9fd6d8f5a8d4b472024238d246e5074f3`; packaged executable SHA-256 `ff0e81e698691806436df3d6a5499c51f9d2e7ed1eafeb0d3fa79d65fb1dbee6`.
-- Menu and motion candidates are separate active lanes, unintegrated at this snapshot and absent from that release. Their source or compiler progress does not prove runtime behavior.
-- Menu baseline at tests-only commit `5c33af6b74c18bb43d0f0c932e9a38fd71e06c16`: 15 passes and 8 failures. The repair at `38959fc653ed7115b573c543f65fb7f2b2b9a97d` reports 23 passes and zero failures; independent follow-up review remains pending. These offscreen Qt results establish no native interaction or screenshot acceptance.
-- Motion candidate `65240d644a4d852b8fc8bfd3ad1f2fe08ad0e29a` built, but reported two explicit failures: `preferencePersistsWithoutDiscardingBaseChoice` read the roaming file instead of the isolated local file, so production preference loss is not established; `reversalStartsAtCurrentValueAndSettlesOnce` observed scalar `0.304590151897` jump synchronously to `0.579813392396`. The next case, `reducedSwitchAndOverlayHaveImmediateFinalStates`, exited `0xC0000005` before its first assertion in the full run and one isolated diagnostic. Constructor `hideEvent` before transition initialization is a source-review hypothesis, awaiting repair and refutation. This evidence is red and does not establish native acceptance.
-- Prior focused lifecycle result remains 99 Qt passes in 28 processes at `97825b47b2916ced881e82763e1a49d23ed98313`. The later release source changes documentation only; no broad/native rerun occurred in the inventory lane.
-- Required next work: finish and independently review each implementation lane; integrate/preserve through the parent; build exact candidates; obtain genuine per-click interaction and screenshot receipts; complete all missing capability families and the ten-entry acceptance. Keep all unchecked roadmap items incomplete until their actual claims are proven.
-- Evidence and schema documentation: `docs/features/delivery/interface-completion.md`; inventories: `docs/features/inventory.json`, `docs/features/surface-inventory.json`, `docs/features/capability-inventory.json`; checker: `scripts/check-feature-inventory.mjs`; regression: `scripts/test-feature-inventory-guard.mjs`.
-- Constraints: approved isolated native-control endpoint unavailable, unchanged attempts exhausted. Do not launch visible control, install/reconfigure the route, alter personal data, retry the long-directory experiment, or initiate a host power/login action. Retain historical genuine images and task-owned unfinished work. Startup surprise acceptance is a fresh 1% chance per launch and a persisted off switch under the current explicit instruction, superseding earlier installed 10%/no-off guidance. Runtime evidence remains pending; this lane changes no runtime behavior.
-- No publication, installed acceptance, full UI completion, merge or cleanup is established by this inventory update. Current usage allowance is not measured by this lane. Status Hub tooling was unavailable; no Hub or display update is claimed.
+## Source and preservation
 
-The following older continuation is retained for source and diagnostic history. Its package and active-state statements are superseded by the verified boundary above.
+- Owned branch: `codex/ui-evidence-inventory-20261003`.
+- Preserve inventory tip `3b5d384f514bf7e30267a95bd7d6179bc75f1f1f` and verified
+  main `91772a166def5e44f60dd49501f5882d7190287c` through a normal merge with both
+  histories retained. The coordinating owner handles default-branch delivery.
+- Main contributes reviewed menu, shared motion and first-visible vault-pane sizing.
+  Its five Qt suites passed 90 entries at `2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`:
+  menu 31, motion 33, responsive shell 14, appearance editor 6, tabs 6. Every exit
+  was zero without failure, skip, blacklisted entry or timeout. No runtime source,
+  Qt test or native build input is changed by this records/inventory merge.
+- Inventory contracts retain 178 platform summaries, 106 named surfaces, 89 features
+  and 998 capabilities. All 172 original rows and their historical evidence survive.
+  Required coverage is 105,788 cells in 9,434 surface-feature groups. Zero current
+  cells are verified. Product completeness must remain red.
+- The documented group count regression failed at
+  `c29f0b56ba045aa34b178b4aedc75a1407bbe66b`: 93 passes, one failure, 8455 != 9434.
+  Repair `f45b4b9bfc70ccbaad81583950f6c49e6e689f4e` passed all 94 checks.
+- The merged documentation set has 39 articles, retaining the inventory overview
+  and every menu, motion and vault article. Derive membership from actual articles,
+  preserve inventory-derived status and localized titles, then pin every article
+  to the immutable merged ancestor named by `site/content-manifest.json`.
+- Run only the merge-relevant inventory and client/category checks, the expected-red
+  product completeness check and a full documentation build. Receipts must name the
+  final exact source. Use official Node 24.19.0, existing dependency caches,
+  `KPXC_REFRESH_RELEASE=1` and normal `npm run build --prefix site`; retain generated
+  provenance and scan changed/generated public files. Earlier results keep their
+  own exact source identities and are not silently relabelled.
 
-# Database lifecycle continuation
+## Remaining acceptance
 
-Objective: complete native acceptance of creation, ten synthetic entries across two groups, save, full exit, fresh-process reopening and exact field readback, including a positional filename with spaces and Cantonese characters. Preserve personal databases, personal data and unrelated processes, including original PID 21756. The goal remains active and incomplete.
+- The approved isolated native-control route is unavailable after its bounded
+  attempts. Do not retry unchanged, substitute visible control or fabricate captures.
+  Smoke verification of the real built candidate and all native captures remain
+  unverified until the approved route is available.
+- Capture each required real interaction, inspect the pixels, bind source/executable
+  hashes and tuple/privacy metadata, then show and publish only verified evidence.
+  Historical captures remain historical. No new capture was produced in this merge.
+- Native keyboard grabs, screen-reader behavior, geometry and the complete language,
+  theme, scale and viewport matrix remain unverified. Non-QMenu adapters, calendar
+  filtering, per-element appearance/locks, saved snippets and visible query-history
+  selection remain unfinished. Shared motion does not establish every-element coverage.
+- Complete the original synthetic ten-entry create/save/quit/relaunch/readback flow,
+  positional filenames with spaces and Cantonese, and installed package acceptance.
+  The initial 285-character history-directory limitation remains open.
+- Startup-surprise repair remains a separate lane. This merge does not establish
+  its 1% draw, persisted off setting or first-run/error/update/mid-task exclusions.
+- Status Hub and Tidbyt bindings are unavailable to this worker. No status delivery
+  is claimed. Preserve personal databases and unrelated processes, and never change
+  host power/login state.
+- This worker does not mutate main, push, publish, run native control or remove
+  checkouts. The coordinating owner owns independent review, integration, remote
+  proof, release, smoke/capture delivery and safe cleanup.
 
-- Delivered source: `main` and `codex/database-lifecycle-20261003` reached `97825b47b2916ced881e82763e1a49d23ed98313`. This continuation document is a later preservation update, not the source used for the package or focused checks below.
-- Implemented: actual Save As return result, owning Windows filename string, history key-readiness checks before serialization, history hydration after unlock with one save listener, isolated Git configuration and command-local nested-file long-path support.
-- Verified red then green: keyless-open access violation at `89791fd7569d4147d0d5a61ab98d5bf1e18e9997`, corrected at `e2f26c784f3a78bdaab5ab38ba2ce5b2104d18e8`. Save As and first-close false-return assertions are red at e2f26c7 and green at `d8282cf4ff4a47a7de1958c7ba862060b445ccdc`.
-- Final focused checks at `97825b47b2916ced881e82763e1a49d23ed98313`: 28 separate processes, 99 Qt passes, zero failures and zero timeouts. GUI: 15 processes / 50 passes. History: 12 processes / 37 passes. Database: 1 process / 12 passes. Counts include setup and cleanup. These checks do not establish native acceptance.
-- Main package: [v2.8.29501](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.29501), built by successful [run 37145236217](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37145236217). Seven downloaded artifacts were locally verified, including the update manifest. Packaged executable SHA-256: `4bc14557e7fc151d56d46cce919d722f675bcb8b685e92a857031e955bc200e1`. The package source is 97825b47, not this later documentation update.
-- Release distinction: latest release v2.8.29601 targets diagnostic source `6c1c3accdc86890053a99d5ae79ca909a2cb0c64`. It is distinct from the verified main package v2.8.29501 and must not be presented as the main package above.
-- Wiki: `master` at `03b3e478d2bb07ae520343085143ea9f38ff96cf` was verified.
-- GUI fixture repair: the current Vault view hides the stock tab host. Teardown uses owned-tab membership rather than visibility, guards its own database, and setup asserts fresh object identity. TOTP creation coverage verifies the intentionally recorded pre-TOTP state. Backup-path coverage makes a real metadata change and verifies the backup against the previous name.
-- Open limitation: per-database history initialization fails when the initial directory itself reaches 285 characters. The global 210-character directory succeeds. Three bounded launch comparisons failed before initialization. The reproduction remains at source `0e7077b61f0d58c2ddd3161282202bdc593c9080` and verification 6c1c3ac; `1d36ff6b61625c94cb5975b2d62fcd740436197b` excludes the unfinished test from completed-unit integration without claiming it passed. Explicit `--git-dir`/`--work-tree` from a short current directory remains an untried future investigation. No retry is authorized in this continuation.
-- Native acceptance remains unavailable, reconfirmed at `2026-10-03T19:23:11Z`: no callable Lowlevel tool bindings are exposed. No native ten-entry creation, full Quit/relaunch, positional Cantonese filename, screenshot or packaged field-readback is claimed. Qt uses Windows known-folder paths; APPDATA/LOCALAPPDATA overrides alone cannot isolate production history. Native launch requires an isolated profile or verified equivalent before process construction.
-- The same native-access condition has persisted for two consecutive goal turns. The goal remains active and incomplete, not blocked yet. Do not count repeated calls within one turn as additional goal turns.
-- Compiler installation was approved and completed with restart disabled. MSVC, SDK and Qt 6.8.3 are verified. The existing local documentation-packaging limitation is canonical Ruby private-assembly resolution. No vendor patch or host restart occurred.
-- Public records: [final handoff](https://github.com/Ding-Ding-Projects/keepassxc/issues/17#issuecomment-5972620480), [announcement #19](https://github.com/Ding-Ding-Projects/keepassxc/discussions/19), and [lifecycle procedure](docs/features/delivery/database-lifecycle-repair.md).
-- Retain active task checkouts and diagnostic evidence. Do not delete unmerged, unpushed or unrelated work. Existing backlog remains excluded.
-
-Next safe action: preserve this continuation update, then resume native acceptance only when the approved isolated-desktop route becomes available. Do not install or reconfigure that route, substitute visible control, retry the long-directory investigation, or modify personal data. A bounded Ruby-loader trace requires separate authorization. No actual host power action is authorized. Keep synthetic credential values masked and out of reports. This continuation update does not rerun checks, change implementation, establish native acceptance or complete the goal.
+Next: independently review the frozen combined candidate and receipts, integrate
+accepted work through the coordinator, verify remote main and hosted results, and
+continue the outstanding release-grade acceptance without upgrading narrow evidence.

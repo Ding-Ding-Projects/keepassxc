@@ -2,6 +2,195 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "menu.search": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search menu actions"
+                ],
+                "levels": {
+                    "1": "Search menu actions",
+                    "2": "Search menu actions",
+                    "3": "Search menu actions",
+                    "4": "Search menu actions",
+                    "5": "Search menu actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋選單操作"
+                ],
+                "levels": {
+                    "1": "搜尋選單操作",
+                    "2": "搜尋選單操作",
+                    "3": "搜尋選單操作",
+                    "4": "搜尋選單操作",
+                    "5": "搜尋選單操作"
+                }
+            }
+        },
+        "menu.pattern-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Pattern exceeds safe menu search limits."
+                ],
+                "levels": {
+                    "1": "Pattern exceeds safe menu search limits.",
+                    "2": "Pattern exceeds safe menu search limits.",
+                    "3": "Pattern exceeds safe menu search limits.",
+                    "4": "Pattern exceeds safe menu search limits.",
+                    "5": "Pattern exceeds safe menu search limits."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "模式超出安全選單搜尋限制。"
+                ],
+                "levels": {
+                    "1": "模式超出安全選單搜尋限制。",
+                    "2": "模式超出安全選單搜尋限制。",
+                    "3": "模式超出安全選單搜尋限制。",
+                    "4": "模式超出安全選單搜尋限制。",
+                    "5": "模式超出安全選單搜尋限制。"
+                }
+            }
+        },
+        "menu.invalid-pattern": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Invalid regular expression."
+                ],
+                "levels": {
+                    "1": "Invalid regular expression.",
+                    "2": "Invalid regular expression.",
+                    "3": "Invalid regular expression.",
+                    "4": "Invalid regular expression.",
+                    "5": "Invalid regular expression."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正規表達式無效。"
+                ],
+                "levels": {
+                    "1": "正規表達式無效。",
+                    "2": "正規表達式無效。",
+                    "3": "正規表達式無效。",
+                    "4": "正規表達式無效。",
+                    "5": "正規表達式無效。"
+                }
+            }
+        },
+        "menu.result-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Menu search limit reached; shorten the query."
+                ],
+                "levels": {
+                    "1": "Menu search limit reached; shorten the query.",
+                    "2": "Menu search limit reached; shorten the query.",
+                    "3": "Menu search limit reached; shorten the query.",
+                    "4": "Menu search limit reached; shorten the query.",
+                    "5": "Menu search limit reached; shorten the query."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已達選單搜尋限制；請縮短搜尋字詞。"
+                ],
+                "levels": {
+                    "1": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "2": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "3": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "4": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "5": "已達選單搜尋限制；請縮短搜尋字詞。"
+                }
+            }
+        },
+        "menu.no-matches": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No matching actions"
+                ],
+                "levels": {
+                    "1": "No matching actions",
+                    "2": "No matching actions",
+                    "3": "No matching actions",
+                    "4": "No matching actions",
+                    "5": "No matching actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "沒有符合的操作"
+                ],
+                "levels": {
+                    "1": "沒有符合的操作",
+                    "2": "沒有符合的操作",
+                    "3": "沒有符合的操作",
+                    "4": "沒有符合的操作",
+                    "5": "沒有符合的操作"
+                }
+            }
+        },
+        "menu.match-count": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "{count} matching actions"
+                ],
+                "levels": {
+                    "1": "{count} matching actions",
+                    "2": "{count} matching actions",
+                    "3": "{count} matching actions",
+                    "4": "{count} matching actions",
+                    "5": "{count} matching actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "{count} 個符合的操作"
+                ],
+                "levels": {
+                    "1": "{count} 個符合的操作",
+                    "2": "{count} 個符合的操作",
+                    "3": "{count} 個符合的操作",
+                    "4": "{count} 個符合的操作",
+                    "5": "{count} 個符合的操作"
+                }
+            }
+        },
+        "menu.builder": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Menu regular expression builder"
+                ],
+                "levels": {
+                    "1": "Menu regular expression builder",
+                    "2": "Menu regular expression builder",
+                    "3": "Menu regular expression builder",
+                    "4": "Menu regular expression builder",
+                    "5": "Menu regular expression builder"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選單正規表達式建立器"
+                ],
+                "levels": {
+                    "1": "選單正規表達式建立器",
+                    "2": "選單正規表達式建立器",
+                    "3": "選單正規表達式建立器",
+                    "4": "選單正規表達式建立器",
+                    "5": "選單正規表達式建立器"
+                }
+            }
+        },
         "clipboard.copied": {
             "category": "success",
             "en": {
@@ -284,6 +473,195 @@
                     "1": "詞彙未載入。檔案必須係 JSON、schema version 1、最多 500 條有界字串、唔大過 64 KiB。",
                     "3": "詞彙未載入，檔案要用 schema version 1，最多 500 條有界字串，唔可以大過 64 KiB。",
                     "5": "詞彙未載入：呢個檔案過唔到門口。要用 schema version 1，最多 500 條有界字串，仲要唔大過 64 KiB。"
+                }
+            }
+        },
+    "motion.reduced.label": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reduce motion"
+                ],
+                "levels": {
+                    "1": "Reduce motion",
+                    "2": "Reduce motion",
+                    "3": "Reduce motion",
+                    "4": "Reduce motion",
+                    "5": "Reduce motion"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "減少動態效果"
+                ],
+                "levels": {
+                    "1": "減少動態效果",
+                    "2": "減少動態效果",
+                    "3": "減少動態效果",
+                    "4": "減少動態效果",
+                    "5": "減少動態效果"
+                }
+            }
+        },
+        "motion.reduced.description": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Show final states immediately. Windows accessibility preferences always take priority."
+                ],
+                "levels": {
+                    "1": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "2": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "3": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "4": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "5": "Show final states immediately. Windows accessibility preferences always take priority."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "即時顯示最終狀態。Windows 無障礙設定一律優先。"
+                ],
+                "levels": {
+                    "1": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "2": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "3": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "4": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "5": "即時顯示最終狀態。Windows 無障礙設定一律優先。"
+                }
+            }
+        },
+        "motion.low.label": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Low stimulation"
+                ],
+                "levels": {
+                    "1": "Low stimulation",
+                    "2": "Low stimulation",
+                    "3": "Low stimulation",
+                    "4": "Low stimulation",
+                    "5": "Low stimulation"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "低刺激模式"
+                ],
+                "levels": {
+                    "1": "低刺激模式",
+                    "2": "低刺激模式",
+                    "3": "低刺激模式",
+                    "4": "低刺激模式",
+                    "5": "低刺激模式"
+                }
+            }
+        },
+        "motion.low.description": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved."
+                ],
+                "levels": {
+                    "1": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "2": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "3": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "4": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "5": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。"
+                ],
+                "levels": {
+                    "1": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "2": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "3": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "4": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "5": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。"
+                }
+            }
+        },
+        "motion.status.system": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Windows has disabled interface animation."
+                ],
+                "levels": {
+                    "1": "Windows has disabled interface animation.",
+                    "2": "Windows has disabled interface animation.",
+                    "3": "Windows has disabled interface animation.",
+                    "4": "Windows has disabled interface animation.",
+                    "5": "Windows has disabled interface animation."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Windows 已停用介面動畫。"
+                ],
+                "levels": {
+                    "1": "Windows 已停用介面動畫。",
+                    "2": "Windows 已停用介面動畫。",
+                    "3": "Windows 已停用介面動畫。",
+                    "4": "Windows 已停用介面動畫。",
+                    "5": "Windows 已停用介面動畫。"
+                }
+            }
+        },
+        "motion.status.reduced": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reduced motion is active. Changes remain immediate."
+                ],
+                "levels": {
+                    "1": "Reduced motion is active. Changes remain immediate.",
+                    "2": "Reduced motion is active. Changes remain immediate.",
+                    "3": "Reduced motion is active. Changes remain immediate.",
+                    "4": "Reduced motion is active. Changes remain immediate.",
+                    "5": "Reduced motion is active. Changes remain immediate."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "減少動態效果已啟用，改動會即時顯示。"
+                ],
+                "levels": {
+                    "1": "減少動態效果已啟用，改動會即時顯示。",
+                    "2": "減少動態效果已啟用，改動會即時顯示。",
+                    "3": "減少動態效果已啟用，改動會即時顯示。",
+                    "4": "減少動態效果已啟用，改動會即時顯示。",
+                    "5": "減少動態效果已啟用，改動會即時顯示。"
+                }
+            }
+        },
+        "motion.status.standard": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Short transitions are active. Static content stays still."
+                ],
+                "levels": {
+                    "1": "Short transitions are active. Static content stays still.",
+                    "2": "Short transitions are active. Static content stays still.",
+                    "3": "Short transitions are active. Static content stays still.",
+                    "4": "Short transitions are active. Static content stays still.",
+                    "5": "Short transitions are active. Static content stays still."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "短暫過場效果已啟用，靜態內容保持靜止。"
+                ],
+                "levels": {
+                    "1": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "2": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "3": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "4": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "5": "短暫過場效果已啟用，靜態內容保持靜止。"
                 }
             }
         }

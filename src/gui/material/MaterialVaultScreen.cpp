@@ -647,6 +647,7 @@ namespace Material
                 config()->set(Config::GUI_MaterialVaultSplitterState, m_splitter->saveState());
             }
         });
+        panes->installEventFilter(this);
 
         auto* tree = m_sidebar->groupView();
         tree->setContextMenuPolicy(Qt::CustomContextMenu);
@@ -1010,6 +1011,7 @@ namespace Material
     void VaultScreen::setBreakpoint(Breakpoint breakpoint)
     {
         if (m_breakpoint == breakpoint) {
+            if (m_splitterRestorePending) restoreSplitter();
             return;
         }
         m_breakpoint = breakpoint;
@@ -1040,10 +1042,14 @@ namespace Material
 
     void VaultScreen::restoreSplitter()
     {
+        if (m_restoringSplitter) return;
+        // Construction and breakpoint changes can happen while a stacked page
+        // is hidden. Keep the request until the actual panes have usable geometry.
+        m_splitterRestorePending = true;
         if (!m_splitter || !m_sidebar->isVisible() || !m_detail->isVisible()) {
             return;
         }
-        m_restoringSplitter = true;
+        QScopedValueRollback<bool> restoring(m_restoringSplitter, true);
         const QByteArray saved = config()->get(Config::GUI_MaterialVaultSplitterState).toByteArray();
         if (saved.isEmpty() || !m_splitter->restoreState(saved)) {
             // The reference widths for a first run; the centre takes the rest.
@@ -1052,7 +1058,7 @@ namespace Material
             const int centre = qMax(CentreMinimumWidth, m_splitter->width() - sidebar - detail);
             m_splitter->setSizes({sidebar, centre, detail});
         }
-        m_restoringSplitter = false;
+        m_splitterRestorePending = false;
     }
 
     void VaultScreen::openDetailSheet()
@@ -1694,6 +1700,10 @@ namespace Material
 
     bool VaultScreen::eventFilter(QObject* watched, QEvent* event)
     {
+        if (watched == m_splitter && m_splitterRestorePending
+            && (event->type() == QEvent::Show || event->type() == QEvent::Resize)) {
+            restoreSplitter();
+        }
         if (watched == m_centre && event->type() == QEvent::Resize) {
             updateFabGeometry();
             const bool compact = m_centre->width() < CompactListWidth;
