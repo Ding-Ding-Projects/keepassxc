@@ -1,5 +1,6 @@
 #include "TestMaterialComboBox.h"
 #include "gui/material/MaterialControls.h"
+#include "gui/material/MaterialChoicePopup.h"
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
@@ -13,6 +14,7 @@
 #include <QLineEdit>
 #include <QListView>
 #include <QPointer>
+#include <QScopedPointer>
 #include <QSignalSpy>
 #include <QStandardItemModel>
 #include <QStandardPaths>
@@ -372,6 +374,73 @@ void TestMaterialComboBox::boundedRegexEngineErrors()
     QSignalSpy activated(&combo, &QComboBox::activated);
     QTest::keyClick(search(window)->lineEdit(), Qt::Key_Return);
     QCOMPARE(activated.count(), 0); QVERIFY(window->isVisible());
+}
+
+void TestMaterialComboBox::dismissalBindingChangeCannotCommit_data()
+{
+    QTest::addColumn<bool>("changeRoot");
+    QTest::newRow("root-changed-during-dismissal") << true;
+    QTest::newRow("column-changed-during-dismissal") << false;
+}
+
+void TestMaterialComboBox::dismissalBindingChangeCannotCommit()
+{
+    QFETCH(bool, changeRoot);
+    QStandardItemModel model;
+    auto* originalRoot = new QStandardItem(QStringLiteral("Original"));
+    auto* replacementRoot = new QStandardItem(QStringLiteral("Replacement"));
+    model.appendRow(originalRoot); model.appendRow(replacementRoot);
+    for (int row = 0; row < 3; ++row) {
+        originalRoot->appendRow({new QStandardItem(QStringLiteral("Original %1").arg(row)),
+                                 new QStandardItem(QStringLiteral("Other column %1").arg(row))});
+        replacementRoot->appendRow({new QStandardItem(QStringLiteral("Replacement %1").arg(row)),
+                                    new QStandardItem(QStringLiteral("Replacement column %1").arg(row))});
+    }
+    ComboBox combo; combo.setModel(&model); combo.setRootModelIndex(originalRoot->index());
+    combo.setCurrentIndex(0);
+    auto* window = popup(combo); QVERIFY(window);
+    auto* choicePopup = qobject_cast<ChoicePopup*>(window); QVERIFY(choicePopup);
+    QSignalSpy activated(&combo, &QComboBox::activated), changed(&combo, &QComboBox::currentIndexChanged);
+    bool dismissed = false;
+    int indexAfterDismissal = -1;
+    QString textAfterDismissal;
+    connect(choicePopup, &ChoicePopup::dismissed, &combo, [&] {
+        dismissed = true;
+        if (changeRoot) combo.setRootModelIndex(replacementRoot->index());
+        else combo.setModelColumn(1);
+        indexAfterDismissal = combo.currentIndex();
+        textAfterDismissal = combo.currentText();
+        changed.clear(); // Only subsequent writes belong to stale activation.
+    });
+    choose(choices(window), 2);
+    QVERIFY(dismissed); QCOMPARE(combo.model(), &model);
+    QCOMPARE(activated.count(), 0);
+    QCOMPARE(combo.currentIndex(), indexAfterDismissal);
+    QCOMPARE(combo.currentText(), textAfterDismissal);
+    QCOMPARE(changed.count(), 0);
+}
+
+void TestMaterialComboBox::editableAccessibleFocusRoutesToEditor_data()
+{
+    QTest::addColumn<bool>("material");
+    QTest::newRow("native-qt-control") << false;
+    QTest::newRow("material-control") << true;
+}
+
+void TestMaterialComboBox::editableAccessibleFocusRoutesToEditor()
+{
+    QFETCH(bool, material);
+    QScopedPointer<QComboBox> combo(material ? static_cast<QComboBox*>(new ComboBox) : new QComboBox);
+    combo->setEditable(true); combo->addItem(QStringLiteral("Synthetic editable choice"));
+    combo->show(); combo->activateWindow(); combo->setFocus();
+    QTRY_VERIFY(combo->hasFocus());
+    combo->lineEdit()->setCursorPosition(4);
+    auto* accessible = QAccessible::queryAccessibleInterface(combo.data()); QVERIFY(accessible);
+    auto* focus = accessible->focusChild(); QVERIFY(focus);
+    QCOMPARE(focus->object(), combo->lineEdit());
+    auto* text = focus->textInterface(); QVERIFY(text);
+    QCOMPARE(text->cursorPosition(), 4);
+    QCOMPARE(text->text(0, text->characterCount()), combo->lineEdit()->text());
 }
 
 int main(int argc, char** argv)

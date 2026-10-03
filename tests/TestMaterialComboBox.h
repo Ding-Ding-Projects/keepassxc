@@ -30,6 +30,10 @@ private slots:
     void builderReturnDoesNotActivateChoice();
     void boundedRegexEngineErrors_data();
     void boundedRegexEngineErrors();
+    void dismissalBindingChangeCannotCommit_data();
+    void dismissalBindingChangeCannotCommit();
+    void editableAccessibleFocusRoutesToEditor_data();
+    void editableAccessibleFocusRoutesToEditor();
 };
 
 #endif
