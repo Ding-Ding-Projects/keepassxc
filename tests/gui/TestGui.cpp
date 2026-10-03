@@ -1914,7 +1914,9 @@ void TestGui::testSaveAs()
     QVERIFY(m_tabWidget->saveDatabaseAs());
     QCOMPARE(m_db->filePath(), tmpFileName);
     QVERIFY(!m_db->isModified());
-    QCOMPARE(config()->get(Config::LastDatabases).toStringList().first(), tmpFileName);
+    const auto recentFiles = config()->get(Config::LastDatabases).toStringList();
+    QVERIFY(!recentFiles.isEmpty());
+    QCOMPARE(recentFiles.first(), QDir::toNativeSeparators(tmpFileName));
 
     QCOMPARE(m_tabWidget->tabText(m_tabWidget->currentIndex()), QString("testSaveAs"));
 
@@ -2009,7 +2011,9 @@ void TestGui::testFirstSaveOnClose()
     QCOMPARE(m_tabWidget->count(), initialCount - 1);
     QVERIFY(QFileInfo::exists(fileName));
     checkDatabase(fileName, "First save on close");
-    QCOMPARE(config()->get(Config::LastDatabases).toStringList().first(), fileName);
+    const auto recentFiles = config()->get(Config::LastDatabases).toStringList();
+    QVERIFY(!recentFiles.isEmpty());
+    QCOMPARE(recentFiles.first(), QDir::toNativeSeparators(fileName));
     MessageBox::setNextAnswer(MessageBox::NoButton);
 }
 
