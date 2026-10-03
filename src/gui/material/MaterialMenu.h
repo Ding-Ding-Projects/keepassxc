@@ -42,6 +42,7 @@ namespace Material
         void filter();
         void restore();
         void showBuilder();
+        void restoreBuilderWidth();
         void remember();
         void updateStatus(const QString& error = {});
         bool isCommand(QAction* action) const;
@@ -65,6 +66,8 @@ namespace Material
         bool m_changing = false;
         bool m_prepared = false;
         bool m_builderOpen = false;
+        int m_popupMinimumWidth = 0;
+        int m_popupMaximumWidth = 16777215;
         int m_resultCount = 0;
         quint64 m_popupGeneration = 0;
     };

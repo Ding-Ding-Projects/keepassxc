@@ -79,6 +79,7 @@ namespace Material
         QListWidget* listWidget() const;
         QMenu* popup() const;
         bool isPopupOpen() const;
+        QString filterError() const { return m_filterError; }
 
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
@@ -125,6 +126,7 @@ namespace Material
         QString m_searchId;
         QString m_searchLabel;
         QString m_placeholder;
+        QString m_filterError;
     };
 
 } // namespace Material

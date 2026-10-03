@@ -95,6 +95,7 @@ namespace Material
                 m_builderOpen = false;
                 if (m_builder) m_builder->closeOverlay();
                 if (m_builderAction) m_builderAction->setVisible(false);
+                restoreBuilderWidth();
             }
             remember();
             restore();
@@ -211,7 +212,7 @@ namespace Material
             for (int row = 0; row < list->count(); ++row) {
                 if (!list->isRowHidden(row)) ++m_resultCount;
             }
-            updateStatus();
+            updateStatus(m_select->filterError());
             return;
         }
         QString error;
@@ -405,6 +406,9 @@ namespace Material
     void MenuSearch::showBuilder()
     {
         if (!m_menu || !m_search || m_builderOpen) return;
+        m_popupMinimumWidth = m_menu->minimumWidth();
+        m_popupMaximumWidth = m_menu->maximumWidth();
+        const QSize baseSize = m_menu->sizeHint();
         m_builderOpen = true;
         if (!m_builderContainer) {
             m_builderContainer = new QWidget(m_menu);
@@ -430,6 +434,7 @@ namespace Material
                 if (!m_builderOpen || !m_menu) return;
                 m_builderOpen = false;
                 m_builderAction->setVisible(false);
+                restoreBuilderWidth();
                 filter();
                 m_menu->adjustSize();
                 if (m_search) m_search->lineEdit()->setFocus(Qt::PopupFocusReason);
@@ -449,16 +454,28 @@ namespace Material
         m_builder->setPattern(m_search->text());
         m_builder->setFlags(m_search->regexFlags());
         const QRect available = m_menu->screen()->availableGeometry();
-        const QSize size(qMin(1064, qMax(240, available.width() - 32)),
-                         qMin(740, qMax(160, available.height() - m_search->height() - 96)));
+        // Select fixes the ordinary popup width. Release that constraint only
+        // while its inline workbench is visible, and reserve the other rows.
+        m_menu->setMinimumWidth(m_popupMinimumWidth);
+        m_menu->setMaximumWidth(qMax(m_popupMinimumWidth, available.width()));
+        const QSize size(qMin(1064, qMax(1, available.width() - 32)),
+                         qMin(740, qMax(1, available.height() - baseSize.height() - 32)));
         m_builderContainer->setFixedSize(size);
         m_builder->setGeometry(m_builderContainer->rect());
         m_builderAction->setVisible(true);
+        m_builderContainer->show();
         m_builder->openOverlay();
         // The workbench is an adjacent child row in the SAME popup. A separate
         // top-level dialog would close QMenu::exec and destroy stack-local menus.
         m_menu->adjustSize();
         m_menu->move(qBound(available.left(), m_menu->x(), qMax(available.left(), available.right() - m_menu->width() + 1)),
                      qBound(available.top(), m_menu->y(), qMax(available.top(), available.bottom() - m_menu->height() + 1)));
+    }
+
+    void MenuSearch::restoreBuilderWidth()
+    {
+        if (!m_menu) return;
+        m_menu->setMinimumWidth(m_popupMinimumWidth);
+        m_menu->setMaximumWidth(m_popupMaximumWidth);
     }
 }

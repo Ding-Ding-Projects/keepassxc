@@ -22,7 +22,9 @@
 #include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
+#include "MaterialVoice.h"
 
+#include <QElapsedTimer>
 #include <QEvent>
 #include <QFontMetrics>
 #include <QKeyEvent>
@@ -324,30 +326,53 @@ namespace Material
             return;
         }
         const QString needle = m_search->text().trimmed();
+        m_filterError.clear();
         QRegularExpression pattern;
-        bool useRegex = false;
+        const bool useRegex = m_search->isRegexEnabled() && !needle.isEmpty();
         if (m_search->isRegexEnabled() && !needle.isEmpty()) {
-            pattern = QRegularExpression(needle, optionsForFlags(m_search->regexFlags()));
-            // An unparsable pattern changes nothing rather than emptying the list.
-            if (!pattern.isValid()) {
-                return;
+            if (needle.size() > RegexLimits::PatternChars || !riskReport(needle).isEmpty()) {
+                m_filterError = Voice::say(QStringLiteral("menu.pattern-limit"), Voice::Category::Error);
+            } else {
+                pattern = QRegularExpression(QStringLiteral("(*LIMIT_MATCH=10000)(*LIMIT_DEPTH=128)") + needle,
+                                             optionsForFlags(m_search->regexFlags()));
+                if (!pattern.isValid())
+                    m_filterError = Voice::say(QStringLiteral("menu.invalid-pattern"), Voice::Category::Error);
             }
-            useRegex = true;
         }
+        QElapsedTimer timer;
+        timer.start();
         int shown = 0;
         for (int row = 0; row < m_list->count(); ++row) {
             const QString text = m_list->item(row)->text();
-            const bool visible = needle.isEmpty() || (useRegex ? pattern.match(text).hasMatch()
-                                                                : text.contains(needle, Qt::CaseInsensitive));
+            bool visible = needle.isEmpty();
+            if (!needle.isEmpty() && m_filterError.isEmpty()) {
+                if (row >= 1024 || text.size() > 2048 || timer.elapsed() > RegexLimits::BudgetMs) {
+                    m_filterError = Voice::say(QStringLiteral("menu.result-limit"), Voice::Category::Error);
+                } else if (useRegex) {
+                    const auto match = pattern.match(text);
+                    if (!match.isValid())
+                        m_filterError = Voice::say(QStringLiteral("menu.result-limit"), Voice::Category::Error);
+                    else
+                        visible = match.hasMatch();
+                } else {
+                    visible = text.contains(needle, Qt::CaseInsensitive);
+                }
+            }
             m_list->setRowHidden(row, !visible);
             shown += visible ? 1 : 0;
+        }
+        if (!m_filterError.isEmpty()) {
+            for (int row = 0; row < m_list->count(); ++row) m_list->setRowHidden(row, true);
+            m_list->setCurrentRow(-1);
+            shown = 0;
         }
         if (m_list->currentRow() < 0 || m_list->isRowHidden(m_list->currentRow())) {
             m_list->setCurrentRow(firstVisibleRow(0, 1));
         }
         const int rows = qBound(1, shown, PopupMaximumHeight / ListRowHeight);
         m_list->setFixedHeight(rows * ListRowHeight + 4);
-        m_list->setAccessibleDescription(shown == 0 ? tr("No choices match") : tr("%n choice(s)", "", shown));
+        m_list->setAccessibleDescription(!m_filterError.isEmpty() ? m_filterError
+            : shown == 0 ? tr("No choices match") : tr("%n choice(s)", "", shown));
         emit filteredChoicesChanged(shown);
         if (m_popup && m_popup->isVisible()) {
             m_popup->adjustSize();
@@ -382,7 +407,7 @@ namespace Material
 
     void Select::chooseRow(int row)
     {
-        if (row < 0 || row >= m_items.size()) {
+        if (row < 0 || row >= m_items.size() || !m_filterError.isEmpty() || !m_list || m_list->isRowHidden(row)) {
             return;
         }
         hidePopup();
