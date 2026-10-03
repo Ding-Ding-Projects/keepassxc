@@ -2,6 +2,195 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "menu.search": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search menu actions"
+                ],
+                "levels": {
+                    "1": "Search menu actions",
+                    "2": "Search menu actions",
+                    "3": "Search menu actions",
+                    "4": "Search menu actions",
+                    "5": "Search menu actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋選單操作"
+                ],
+                "levels": {
+                    "1": "搜尋選單操作",
+                    "2": "搜尋選單操作",
+                    "3": "搜尋選單操作",
+                    "4": "搜尋選單操作",
+                    "5": "搜尋選單操作"
+                }
+            }
+        },
+        "menu.pattern-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Pattern exceeds safe menu search limits."
+                ],
+                "levels": {
+                    "1": "Pattern exceeds safe menu search limits.",
+                    "2": "Pattern exceeds safe menu search limits.",
+                    "3": "Pattern exceeds safe menu search limits.",
+                    "4": "Pattern exceeds safe menu search limits.",
+                    "5": "Pattern exceeds safe menu search limits."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "模式超出安全選單搜尋限制。"
+                ],
+                "levels": {
+                    "1": "模式超出安全選單搜尋限制。",
+                    "2": "模式超出安全選單搜尋限制。",
+                    "3": "模式超出安全選單搜尋限制。",
+                    "4": "模式超出安全選單搜尋限制。",
+                    "5": "模式超出安全選單搜尋限制。"
+                }
+            }
+        },
+        "menu.invalid-pattern": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Invalid regular expression."
+                ],
+                "levels": {
+                    "1": "Invalid regular expression.",
+                    "2": "Invalid regular expression.",
+                    "3": "Invalid regular expression.",
+                    "4": "Invalid regular expression.",
+                    "5": "Invalid regular expression."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正規表達式無效。"
+                ],
+                "levels": {
+                    "1": "正規表達式無效。",
+                    "2": "正規表達式無效。",
+                    "3": "正規表達式無效。",
+                    "4": "正規表達式無效。",
+                    "5": "正規表達式無效。"
+                }
+            }
+        },
+        "menu.result-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Menu search limit reached; shorten the query."
+                ],
+                "levels": {
+                    "1": "Menu search limit reached; shorten the query.",
+                    "2": "Menu search limit reached; shorten the query.",
+                    "3": "Menu search limit reached; shorten the query.",
+                    "4": "Menu search limit reached; shorten the query.",
+                    "5": "Menu search limit reached; shorten the query."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已達選單搜尋限制；請縮短搜尋字詞。"
+                ],
+                "levels": {
+                    "1": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "2": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "3": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "4": "已達選單搜尋限制；請縮短搜尋字詞。",
+                    "5": "已達選單搜尋限制；請縮短搜尋字詞。"
+                }
+            }
+        },
+        "menu.no-matches": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No matching actions"
+                ],
+                "levels": {
+                    "1": "No matching actions",
+                    "2": "No matching actions",
+                    "3": "No matching actions",
+                    "4": "No matching actions",
+                    "5": "No matching actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "沒有符合的操作"
+                ],
+                "levels": {
+                    "1": "沒有符合的操作",
+                    "2": "沒有符合的操作",
+                    "3": "沒有符合的操作",
+                    "4": "沒有符合的操作",
+                    "5": "沒有符合的操作"
+                }
+            }
+        },
+        "menu.match-count": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "{count} matching actions"
+                ],
+                "levels": {
+                    "1": "{count} matching actions",
+                    "2": "{count} matching actions",
+                    "3": "{count} matching actions",
+                    "4": "{count} matching actions",
+                    "5": "{count} matching actions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "{count} 個符合的操作"
+                ],
+                "levels": {
+                    "1": "{count} 個符合的操作",
+                    "2": "{count} 個符合的操作",
+                    "3": "{count} 個符合的操作",
+                    "4": "{count} 個符合的操作",
+                    "5": "{count} 個符合的操作"
+                }
+            }
+        },
+        "menu.builder": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Menu regular expression builder"
+                ],
+                "levels": {
+                    "1": "Menu regular expression builder",
+                    "2": "Menu regular expression builder",
+                    "3": "Menu regular expression builder",
+                    "4": "Menu regular expression builder",
+                    "5": "Menu regular expression builder"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選單正規表達式建立器"
+                ],
+                "levels": {
+                    "1": "選單正規表達式建立器",
+                    "2": "選單正規表達式建立器",
+                    "3": "選單正規表達式建立器",
+                    "4": "選單正規表達式建立器",
+                    "5": "選單正規表達式建立器"
+                }
+            }
+        },
         "clipboard.copied": {
             "category": "success",
             "en": {

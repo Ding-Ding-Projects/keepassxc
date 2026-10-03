@@ -226,7 +226,12 @@ namespace Material
     QString SearchBar::searchId() const { return m_searchId; }
     QString SearchBar::searchLabel() const { return m_searchLabel; }
     QString SearchBar::regexFlags() const { return m_regexFlags; }
-    void SearchBar::setRegexFlags(const QString& flags) { m_regexFlags = flags; }
+    void SearchBar::setRegexFlags(const QString& flags)
+    {
+        if (m_regexFlags == flags) return;
+        m_regexFlags = flags;
+        emit regexFlagsChanged(flags);
+    }
 
     bool SearchBar::isRegexEnabled() const
     {

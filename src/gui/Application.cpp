@@ -24,6 +24,7 @@
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
 #include "gui/material/MaterialIcons.h"
+#include "gui/material/MaterialMenu.h"
 #include "gui/material/MaterialStyle.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/osutils/OSUtils.h"
@@ -161,6 +162,7 @@ void Application::bootstrap(const QString& uiLanguage)
 
     osUtils->registerNativeEventFilter();
     MessageBox::initializeButtonDefs();
+    Material::MenuSearch::install(qApp);
 
 #ifdef Q_OS_MACOS
     // Don't show menu icons on OSX

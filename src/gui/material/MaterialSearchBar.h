@@ -92,6 +92,7 @@ namespace Material
     signals:
         void textChanged(const QString& text);
         void regexToggled(bool enabled);
+        void regexFlagsChanged(const QString& flags);
         void builderRequested();
         void returnPressed();
 
