@@ -58,13 +58,8 @@ namespace Material
             if (executable.isEmpty()) return result;
             QProcess process;
             auto environment = QProcessEnvironment::systemEnvironment();
-#ifdef Q_OS_WIN
-            environment.insert(QStringLiteral("GIT_CONFIG_GLOBAL"), QStringLiteral("NUL"));
-            environment.insert(QStringLiteral("GIT_CONFIG_SYSTEM"), QStringLiteral("NUL"));
-#else
             environment.insert(QStringLiteral("GIT_CONFIG_GLOBAL"), QStringLiteral("/dev/null"));
             environment.insert(QStringLiteral("GIT_CONFIG_SYSTEM"), QStringLiteral("/dev/null"));
-#endif
             environment.insert(QStringLiteral("GIT_AUTHOR_NAME"), QStringLiteral("KeePassXC History"));
             environment.insert(QStringLiteral("GIT_AUTHOR_EMAIL"), QStringLiteral("history@localhost"));
             environment.insert(QStringLiteral("GIT_COMMITTER_NAME"), QStringLiteral("KeePassXC History"));
