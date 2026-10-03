@@ -19,6 +19,7 @@
 #define KEEPASSX_WINDOWSELECTCOMBOBOX_H
 
 #include <QComboBox>
+#include <functional>
 
 class WindowSelectComboBox : public QComboBox
 {
@@ -31,6 +32,11 @@ public:
     void showPopup() override;
     QSize sizeHint() const override;
     QSize minimumSizeHint() const override;
+
+private:
+    friend class TestWindowSelectComboBox;
+    WindowSelectComboBox(QWidget* parent, std::function<QStringList()> windowTitles);
+    const std::function<QStringList()> m_windowTitles;
 };
 
 #endif // KEEPASSX_WINDOWSELECTCOMBOBOX_H

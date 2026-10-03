@@ -22,7 +22,13 @@
 #include "autotype/AutoType.h"
 
 WindowSelectComboBox::WindowSelectComboBox(QWidget* parent)
+    : WindowSelectComboBox(parent, [] { return autoType()->windowTitles(); })
+{
+}
+
+WindowSelectComboBox::WindowSelectComboBox(QWidget* parent, std::function<QStringList()> windowTitles)
     : QComboBox(parent)
+    , m_windowTitles(std::move(windowTitles))
 {
     setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
@@ -39,7 +45,7 @@ void WindowSelectComboBox::refreshWindowList()
     while (count() > 1) {
         removeItem(1);
     }
-    insertItems(1, autoType()->windowTitles());
+    insertItems(1, m_windowTitles());
 }
 
 void WindowSelectComboBox::showPopup()
