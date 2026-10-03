@@ -493,6 +493,9 @@ namespace Material
     void MenuSearch::restoreBuilderWidth()
     {
         if (!m_menu) return;
+        // QMenu skips invisible action rectangles; hide the explicitly shown
+        // container as well, including when the entire popup is dismissed.
+        if (m_builderContainer) m_builderContainer->hide();
         m_menu->setMinimumWidth(m_popupMinimumWidth);
         m_menu->setMaximumWidth(m_popupMaximumWidth);
     }
