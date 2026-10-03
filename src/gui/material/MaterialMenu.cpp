@@ -111,6 +111,23 @@ namespace Material
     QStringList MenuSearch::history() const { return m_history; }
     int MenuSearch::resultCount() const { return m_resultCount; }
 
+    void MenuSearch::resizePopup(QMenu* menu)
+    {
+        if (!menu) return;
+        auto* controller = menu->findChild<MenuSearch*>(QStringLiteral("materialMenuSearchController"),
+                                                       Qt::FindDirectChildrenOnly);
+        if (!controller || !controller->m_builderOpen) {
+            menu->adjustSize();
+            return;
+        }
+        const QRect available = menu->screen()->availableGeometry();
+        // QWidget::adjustSize caps top-level widgets at two thirds of the screen.
+        // An inline workbench needs its measured menu size, bounded by the screen.
+        menu->resize(menu->sizeHint().boundedTo(available.size()));
+        menu->move(qBound(available.left(), menu->x(), qMax(available.left(), available.right() - menu->width() + 1)),
+                   qBound(available.top(), menu->y(), qMax(available.top(), available.bottom() - menu->height() + 1)));
+    }
+
     void MenuSearch::prepare()
     {
         if (!m_menu) return;
@@ -178,7 +195,7 @@ namespace Material
             }
         }
         filter();
-        m_menu->adjustSize();
+        resizePopup(m_menu);
         QTimer::singleShot(0, this, [this] {
             if (m_menu && m_menu->isVisible() && m_search && !m_builderOpen) {
                 m_menu->setActiveAction(nullptr);
@@ -439,7 +456,7 @@ namespace Material
                 m_builderAction->setVisible(false);
                 restoreBuilderWidth();
                 filter();
-                m_menu->adjustSize();
+                resizePopup(m_menu);
                 if (m_search) m_search->lineEdit()->setFocus(Qt::PopupFocusReason);
             });
             connect(m_builder, &RegexBuilder::patternApplied, this, [this](const QString& pattern) {
@@ -470,9 +487,7 @@ namespace Material
         m_builder->openOverlay();
         // The workbench is an adjacent child row in the SAME popup. A separate
         // top-level dialog would close QMenu::exec and destroy stack-local menus.
-        m_menu->adjustSize();
-        m_menu->move(qBound(available.left(), m_menu->x(), qMax(available.left(), available.right() - m_menu->width() + 1)),
-                     qBound(available.top(), m_menu->y(), qMax(available.top(), available.bottom() - m_menu->height() + 1)));
+        resizePopup(m_menu);
     }
 
     void MenuSearch::restoreBuilderWidth()

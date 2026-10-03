@@ -19,6 +19,7 @@
 
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
+#include "MaterialMenu.h"
 #include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
@@ -375,7 +376,7 @@ namespace Material
             : shown == 0 ? tr("No choices match") : tr("%n choice(s)", "", shown));
         emit filteredChoicesChanged(shown);
         if (m_popup && m_popup->isVisible()) {
-            m_popup->adjustSize();
+            MenuSearch::resizePopup(m_popup);
         }
     }
 

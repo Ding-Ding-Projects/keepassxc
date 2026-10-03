@@ -28,6 +28,7 @@ namespace Material
         static void install(QApplication* application);
         static MenuSearch* attach(QMenu* menu);
         static bool openBuilderFor(SearchBar* bar);
+        static void resizePopup(QMenu* menu);
         SearchBar* searchBar() const;
         QStringList history() const;
         int resultCount() const;
