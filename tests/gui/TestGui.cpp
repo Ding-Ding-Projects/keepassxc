@@ -2100,7 +2100,9 @@ void TestGui::testSaveBackupPath()
 
     // Save a modified database
     auto prevName = m_db->metadata()->name();
+    qWarning() << "Backup diagnostic before change" << QTest::currentDataTag() << prevName << m_db->isModified();
     m_db->metadata()->setName("testBackupPathPattern");
+    qWarning() << "Backup diagnostic after change" << m_db->metadata()->name() << m_db->isModified();
     checkSaveDatabase();
 
     // Test that the backup file has the previous database name

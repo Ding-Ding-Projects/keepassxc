@@ -78,6 +78,8 @@ namespace Material
             result.exitCode = process.exitCode();
             result.out = process.readAllStandardOutput();
             result.err = process.readAllStandardError();
+            qWarning() << "History diagnostic command" << arguments << "repository length" << repo.size()
+                       << "started" << result.started << "timeout" << result.timedOut << "stderr" << result.err;
             return result;
         }
 
@@ -752,10 +754,10 @@ namespace Material
     {
         const QString repo = databaseRepositoryPath(revision.databasePath);
         if (repo.isEmpty() || m_gitExecutable.isEmpty()) return false;
-        if (!QDir().mkpath(repo)) return false;
+        if (!QDir().mkpath(repo)) { qWarning() << "History diagnostic database directory failed" << repo.size(); return false; }
         QLockFile lock(repo + QStringLiteral(".lock"));
         lock.setStaleLockTime(0);
-        if (!lock.tryLock(LockTimeoutMs)) return false;
+        if (!lock.tryLock(LockTimeoutMs)) { qWarning() << "History diagnostic database lock failed" << lock.error(); return false; }
         return commitDatabaseRepositoryAt(repo, revision, encryptedSnapshot, fingerprint);
     }
 
@@ -769,6 +771,7 @@ namespace Material
             || fingerprint.isEmpty() || fingerprintDigest(fingerprint) != revision.contentFingerprint
             || m_gitExecutable.isEmpty() || !initializeDatabaseHistoryRepository(m_gitExecutable, repo)) return false;
         const auto status = git(m_gitExecutable, repo, {QStringLiteral("status"), QStringLiteral("--porcelain"), QStringLiteral("--untracked-files=all")});
+        qWarning() << "History diagnostic database status" << status.ok() << status.out;
         if (!status.ok() || !status.out.isEmpty()) return false;
         const QString manifestPath = QDir(repo).filePath(DatabaseHistoryManifestName);
         if (QFileInfo::exists(manifestPath)) {
@@ -1481,10 +1484,12 @@ namespace Material
             }
             return true;
         }
+        qWarning() << "History diagnostic ready" << bool(db->key()) << db->transformedDatabaseKey().isEmpty();
         load();
         QByteArray currentFingerprint;
         QByteArray encryptedSnapshot;
         const HistoryRevision revision = createSaveRevision(db, &currentFingerprint, &encryptedSnapshot);
+        qWarning() << "History diagnostic revision" << revision.isValid() << encryptedSnapshot.size();
         if (!revision.isValid() || !commitTransaction(revision, currentFingerprint, encryptedSnapshot)
             || !commitDatabaseRepository(revision, encryptedSnapshot, currentFingerprint)) {
             emit writeFailed(tr("Local history could not be recorded. The database save completed; retry after checking Git and application-data storage."));
