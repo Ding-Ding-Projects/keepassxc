@@ -67,6 +67,7 @@
 #include "gui/material/MaterialChangelogFeed.h"
 #include "gui/material/MaterialChangelogScreen.h"
 #include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialGeneratorSheet.h"
 #include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialHistoryScreen.h"
@@ -106,7 +107,6 @@
 
 #ifdef KPXC_FEATURE_UPDATES
 #include "networking/UpdateChecker.h"
-#include "gui/material/MaterialDimSum.h"
 #endif
 
 #ifdef KPXC_FEATURE_SSHAGENT
