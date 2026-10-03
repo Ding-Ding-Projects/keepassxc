@@ -34,6 +34,10 @@ private slots:
     void dismissalBindingChangeCannotCommit();
     void editableAccessibleFocusRoutesToEditor_data();
     void editableAccessibleFocusRoutesToEditor();
+    void dismissalDeletionIsSafe_data();
+    void dismissalDeletionIsSafe();
+    void dismissalEligibilityChangeCannotCommit_data();
+    void dismissalEligibilityChangeCannotCommit();
 };
 
 #endif

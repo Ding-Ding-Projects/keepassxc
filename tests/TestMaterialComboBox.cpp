@@ -443,6 +443,96 @@ void TestMaterialComboBox::editableAccessibleFocusRoutesToEditor()
     QCOMPARE(text->text(0, text->characterCount()), combo->lineEdit()->text());
 }
 
+void TestMaterialComboBox::dismissalDeletionIsSafe_data()
+{
+    QTest::addColumn<bool>("deleteOwner");
+    QTest::addColumn<bool>("activate");
+    QTest::newRow("owner-direct") << true << false;
+    QTest::newRow("owner-selection") << true << true;
+    QTest::newRow("popup-direct") << false << false;
+    QTest::newRow("popup-selection") << false << true;
+}
+
+void TestMaterialComboBox::dismissalDeletionIsSafe()
+{
+    QFETCH(bool, deleteOwner);
+    QFETCH(bool, activate);
+    QPointer<ComboBox> owner = new ComboBox;
+    owner->addItems({QStringLiteral("A"), QStringLiteral("B")});
+    QPointer<ChoicePopup> window = qobject_cast<ChoicePopup*>(popup(*owner));
+    QVERIFY(window);
+    QPointer<SearchBar> bar = search(window);
+    QVERIFY(bar);
+    bool dismissed = false;
+    int activations = 0;
+    connect(owner, &QComboBox::activated, this, [&] { ++activations; });
+    connect(window, &ChoicePopup::dismissed, this, [&] {
+        dismissed = true;
+        if (deleteOwner) delete owner.data();
+        else delete window.data();
+        // The search control must already be gone while hideEvent unwinds.
+        // A signal blocker surviving dismissed would retain its deleted target.
+        QVERIFY(bar.isNull());
+    });
+    if (activate) {
+        auto* view = choices(window);
+        view->setCurrentIndex(view->model()->index(1, view->modelColumn(), view->rootIndex()));
+        // Only send the press: the callback deliberately deletes its receiver.
+        QTest::keyPress(view, Qt::Key_Return);
+    } else {
+        owner->hidePopup();
+    }
+    QVERIFY(dismissed);
+    QVERIFY(window.isNull());
+    QVERIFY(bar.isNull());
+    QCOMPARE(activations, 0);
+    if (deleteOwner) {
+        QVERIFY(owner.isNull());
+    } else {
+        QVERIFY(owner);
+        QCOMPARE(owner->currentIndex(), 0);
+        auto* replacement = popup(*owner);
+        QVERIFY(replacement);
+        QVERIFY(replacement->isVisible());
+        owner->hidePopup();
+        delete owner.data();
+    }
+}
+
+void TestMaterialComboBox::dismissalEligibilityChangeCannotCommit_data()
+{
+    QTest::addColumn<bool>("disable");
+    QTest::newRow("enabled-removed") << true;
+    QTest::newRow("selectable-removed") << false;
+}
+
+void TestMaterialComboBox::dismissalEligibilityChangeCannotCommit()
+{
+    QFETCH(bool, disable);
+    QStandardItemModel model;
+    model.appendRow(new QStandardItem(QStringLiteral("A")));
+    auto* selected = new QStandardItem(QStringLiteral("B"));
+    model.appendRow(selected);
+    ComboBox combo;
+    combo.setModel(&model);
+    combo.setCurrentIndex(0);
+    auto* window = qobject_cast<ChoicePopup*>(popup(combo));
+    QVERIFY(window);
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    QSignalSpy changed(&combo, &QComboBox::currentIndexChanged);
+    bool dismissed = false;
+    connect(window, &ChoicePopup::dismissed, &combo, [&] {
+        dismissed = true;
+        if (disable) selected->setEnabled(false);
+        else selected->setSelectable(false);
+    });
+    choose(choices(window), 1);
+    QVERIFY(dismissed);
+    QCOMPARE(activated.count(), 0);
+    QCOMPARE(changed.count(), 0);
+    QCOMPARE(combo.currentIndex(), 0);
+}
+
 int main(int argc, char** argv)
 {
     const QString identity = QStringLiteral("kpxc-choice-") + QUuid::createUuid().toString(QUuid::WithoutBraces);
