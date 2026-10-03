@@ -20,6 +20,13 @@ changes, source destruction, owner hiding and disabling cancel the popup;
 activation also validates the source synchronously. The nonvirtual base setter
 APIs remain supported, with binding changes observed while the popup is open.
 
+Dismissal listeners may synchronously delete the owner or popup, or change a row's
+enabled/selectable flags. The popup clears its search and releases its signal
+blocker during hiding, then emits `dismissed` only after Qt finishes processing
+visibility. Tracked owner/popup pointers stop subsequent work after deletion.
+Selection rechecks binding and both eligibility flags after dismissal, before any
+value change or activation signal. A deleted popup can be recreated on reopening.
+
 ## Search and regular expressions
 
 Plain, case-insensitive search is the default. The adjacent full regex builder
@@ -75,6 +82,17 @@ labels and roles, source indices, nonzero roots and columns, source mutations,
 replacement and destruction, editable contracts, disabled and same-item
 activation, local regex behavior, cancellation, lifetime and accessibility.
 The tests isolate configuration and set a fresh identity before `QApplication`.
+
+The dismissal regression started at `6f7cbbb5865d5669a1c66772bc23bad94e438cf4`:
+both eligibility rows failed because activation still occurred, and four separate
+owner/popup deletion cases exited with access violations. A first repair fixed
+eligibility but still crashed during Qt's hide-event unwinding. Moving dismissal
+outside that unwinding passed all six new cases without changing their assertions.
+At `62cb371658e2fedb1751547332db4a36c1a12c36`, the full combo suite reports
+36 passes, zero failures, skips or blacklisted cases, exit 0. The executable SHA-256
+is `1AC11C7D74871214A56A4758FEF4A765A8AF82C5BEDD93F2AF4FA51E1D2FAD8F`.
+These bounded, isolated offscreen results establish the exercised callback paths;
+they do not establish native interaction or rendering acceptance.
 
 The tests-first source produced 2 passes and 16 failures because the searchable
 popup did not exist. Implementation verification is recorded with the exact

@@ -1,5 +1,18 @@
 # Combined choice-popup continuation
 
+Current narrow repair: runtime `62cb371658e2fedb1751547332db4a36c1a12c36`
+fixes deletion and row-eligibility changes inside dismissal callbacks. Tests-first
+`6f7cbbb5865d5669a1c66772bc23bad94e438cf4` produced two behavioral failures and
+four access violations. First repair `e9d2efb9` remained unsuccessful for deletion.
+The final repair passes all six new cases and the full combo suite, 36 passed,
+0 failed/skipped/blacklisted, exit 0, without changing the assertions. Executable
+SHA-256: `1AC11C7D74871214A56A4758FEF4A765A8AF82C5BEDD93F2AF4FA51E1D2FAD8F`.
+All 41 articles and inventory claims remain. Review the frozen documentation and
+immutable bindings, then let the coordinator preserve and integrate this repair.
+No native acceptance, publication or delivery is claimed by this worker.
+The following combined-unit requirements remain applicable; earlier future-tense
+verification wording describes the original integration stage, not the repair result.
+
 Continue release-grade completion from the promotion source
 `9530b42c6c8bade2754e5c93bbfe999bec2a1522` on
 `codex/choice-integration-20261003`. The coordinating owner handles integration,

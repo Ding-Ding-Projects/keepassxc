@@ -1,3 +1,27 @@
+# Choice dismissal repair, October 3, 2026
+
+This narrow follow-up starts from preserved integration
+`c03f8eaec3358a9c3f4a05a9a49bfea9732888b0`. Tests-first commit
+`6f7cbbb5865d5669a1c66772bc23bad94e438cf4` exposed two erroneous activation
+cases and four synchronous deletion crashes. The first repair
+`e9d2efb9d81218070d8d71d8c3e4bec32c17c400` passed eligibility but still crashed;
+its receipts are unsuccessful repair evidence, not final verification.
+
+Runtime repair `62cb371658e2fedb1751547332db4a36c1a12c36` uses tracked popup
+ownership, owner survival checks and post-dismissal row eligibility validation.
+It emits dismissal after QWidget visibility processing finishes, with no signal
+blocker alive across the callback. All six new cases pass without test changes.
+The full combo suite is 36 passed, 0 failed, 0 skipped, 0 blacklisted, exit 0,
+under a 120-second bound with a fresh Qt identity and isolated configuration
+established before QApplication. Executable SHA-256:
+`1AC11C7D74871214A56A4758FEF4A765A8AF82C5BEDD93F2AF4FA51E1D2FAD8F`.
+No native interaction, screenshot or package acceptance is inferred.
+
+All 41 articles and inventory-derived statuses are retained. Inventory logic,
+shared motion and the four promoted controls are unchanged by this repair.
+The coordinator owns independent review, preservation, main integration and
+publication. The following integration record remains historical context.
+
 # Combined choice-popup integration, October 3, 2026
 
 This candidate combines promotion `9530b42c6c8bade2754e5c93bbfe999bec2a1522`

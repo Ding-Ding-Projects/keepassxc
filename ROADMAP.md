@@ -8,6 +8,7 @@
 
 ## October 3 combined choice integration
 
+- [x] Repair synchronous owner/popup deletion and changed row eligibility during dismissal. Six unchanged causal cases and the full 36-case offscreen combo suite pass at `62cb371658e2fedb1751547332db4a36c1a12c36` after observed failures.
 - [x] Combine repaired shared searchable choices and the four promoted fields while preserving shared motion and lifetime behavior. The combined source has 49 destinations.
 - [ ] Verify combo, motion and menu targets at the frozen integration candidate, then complete coordinator delivery and native acceptance. Earlier 30/0 popup results remain bound to their original source.
 - [ ] Deliver all 41 immutable feature articles without changing inventory completion claims.

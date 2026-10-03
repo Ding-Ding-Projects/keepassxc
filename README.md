@@ -23,6 +23,12 @@ now use the shared Material combo-box class in four existing fields. The `browse
 not native interaction, accessibility or rendering acceptance. The documentation
 catalogue retains all 40 promotion articles and adds the shared searchable-choice article as number 41.
 
+The [shared choice popup](docs/features/search/combobox-choice-search.md) also
+revalidates row eligibility after dismissal and tolerates synchronous deletion of
+its owner or popup in that callback. At `62cb371658e2fedb1751547332db4a36c1a12c36`,
+the isolated offscreen combo suite passes 36 cases after observed failing regressions.
+Native acceptance remains outstanding.
+
 The hidden-desktop controller is installed at source
 `e6e42f2066d539256d6480401d7cef867f2b8dfe`. Its quiet standard-input/output transport
 exposes 58 tools and passed native-backend installation smoke with a synthetic Qt
