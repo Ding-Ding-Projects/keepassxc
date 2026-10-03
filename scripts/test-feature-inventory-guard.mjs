@@ -78,6 +78,22 @@ check('handwritten acceptance examples remain registered', () => {
     'app.extension.complete', 'site.overview', 'site.downloads', 'site.docs', 'site.changelog',
     'site.settings', 'site.tabs', 'site.dialogs']) assert(SURFACE_CONTRACTS.some(s => s.id === id), id);
 });
+// Independently transcribed from ReportsDialog and the two QWizard constructors,
+// including the ReportsDialog editor stack page. Family rows cannot stand in for them.
+for (const id of [
+  'app.reports.statistics', 'app.reports.health', 'app.reports.passkeys',
+  'app.reports.browser-statistics', 'app.reports.hibp', 'app.reports.entry-editor',
+  'app.wizard.create.metadata', 'app.wizard.create.encryption', 'app.wizard.create.database-key',
+  'app.wizard.import.select', 'app.wizard.import.review',
+]) {
+  check(`registered report or wizard destination has its own obligation: ${id}`, () => {
+    assert(SURFACE_CONTRACTS.some(surface => surface.id === id), `missing independently registered destination ${id}`);
+    assert(baseline.surfaces.rows.some(surface => surface.id === id), `missing inventory destination ${id}`);
+    const candidate = structuredClone(baseline);
+    candidate.surfaces.rows = candidate.surfaces.rows.filter(surface => surface.id !== id);
+    assert(validateSchema(candidate).some(error => error.includes(`required row absent ${id}`)));
+  });
+}
 for (const [property, collection] of [['inventory', 'rows'], ['surfaces', 'rows'], ['capabilities', 'contracts']]) {
   check(`each ${property} registration fails when removed and passes when restored`, () => {
     const list = baseline[property][collection];
@@ -210,6 +226,22 @@ try {
   matrixRow.evidence.capture = matrixMembers[0].capture;
   matrixRow.evidence.matrix = matrixMembers.slice(1);
   check('complete 48 combination format fixture passes structural validation only', () => assert.deepEqual(validateEvidence(matrixRow, options), []));
+  for (const primary of [false, true]) check(`matrix cannot mix states by replacing ${primary ? 'primary' : 'bilingual dark 200 percent minimum'} interaction`, () => {
+    const candidate = structuredClone(matrixRow);
+    const member = primary ? candidate.evidence : candidate.evidence.matrix.at(-1);
+    const original = readFileSync(join(root, member.interaction.file));
+    const changed = JSON.parse(original);
+    changed.tuple.state = 'empty';
+    for (const step of changed.steps) step.tuple.state = 'empty';
+    writeFileSync(join(root, member.interaction.file), JSON.stringify(changed));
+    member.interaction = ref(member.interaction.file);
+    try {
+      assert(validateEvidence(candidate, options).some(error => error.includes('layout matrix state differs')));
+    } finally {
+      writeFileSync(join(root, member.interaction.file), original);
+    }
+    assert.deepEqual(validateEvidence(matrixRow, options), []);
+  });
   check('missing bilingual dark 200 percent minimum combination remains red', () => {
     const candidate = structuredClone(matrixRow);
     candidate.evidence.matrix = candidate.evidence.matrix.filter(member => !member.interaction.file.endsWith('bilingual-dark-2-minimum.json'));
