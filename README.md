@@ -14,6 +14,16 @@ no tracked or untracked changes. Diagnostics report bounded change counts withou
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
+## October 3 startup integration state
+
+The [startup surprise contract](docs/features/messaging/dim-sum-surprise.md) now
+combines its 1% draw, persisted off switch and credential/error/update exclusions
+with the shared motion controller. At `7cb43f654ef2cc908a76a5a739bddfda2aa29c52`,
+three isolated offscreen suites passed 167 checks (127 + 7 + 33), with no failures,
+skips or timeouts. These are behavioral results, not native or packaged acceptance.
+All 40 feature articles and the four promoted choice controls remain present.
+Product completeness stays 0/105,788 current verified capability cells.
+
 ## October 3 choice-control delivery state
 
 [Browser, sharing and SSH choice controls](docs/features/interface/choice-control-promotion.md)

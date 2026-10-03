@@ -1,49 +1,37 @@
-# Choice-control promotion continuation
+# Startup integration continuation
 
-Continue release-grade completion from the frozen promotion source
-`3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f` on
-`codex/promote-choice-controls-20261003`. The coordinating owner handles integration,
-push, publication and cleanup. This worker owns documentation preparation only;
-runtime source remains unchanged from the reviewed promotion candidate.
+## October 3 startup and motion integration
 
-The four promoted fields are browser type, group sharing type, SSH key type and SSH
-key size. The `browser`, `keeshare` and `sshagent` production targets compiled, and
-six output hashes were independently checked. Source review was dry in this bounded
-unit. No behavioral suite or native acceptance is inferred from compilation. The
-shared searchable popup is a separate implementation awaiting reviewed integration.
+Startup candidate `9b2b9e07867ef4e83323f29582f0fb88b39a0eea` is combined with
+promotion candidate `9530b42c6c8bade2754e5c93bbfe999bec2a1522` at runtime source
+`7cb43f654ef2cc908a76a5a739bddfda2aa29c52`. Shared motion transitions, hide/show timer handling,
+startup suppression, generation checks and guarded object pointers are preserved.
+The updates-disabled include repair is unchanged. Its prior real compiler red
+(exit 2) and green (exit 0) remain relevant; that translation unit was not repeated.
 
-Register 40 feature articles, preserving the prior 39, localized titles and
-inventory-derived status. The new article is `not-tracked`, not complete or exempt.
-Preserve all inventory logic and historical evidence: 178 summaries, 106 surfaces,
-89 features, 998 capabilities, 105,788 required cells, 9,434 groups, zero current
-verified cells. Product completeness must remain red.
+The combined offscreen run passed **167 checks**: `testmaterialdimsum` 127,
+`testdimsum` 7, and `testmaterialmotion` 33. Every process exited 0
+with no skips or timeout, explicit QTest output and exact-source/executable receipts.
+These results belong to the runtime source above. Later record and immutable-manifest
+changes do not establish a new runtime execution. No assertions were weakened.
 
-Freeze both documentation bytes and their immutable manifest before the full normal
-build. Use official Node 24.19.0, `npm ci --ignore-scripts --prefix site`,
-`KPXC_REFRESH_RELEASE=1` and `npm run build --prefix site`. Keep an exact-source
-receipt, generated provenance, changed-category/content verdicts, the expected-red
-completeness result and public-bound delta/generated scans. Do not rerun unchanged
-Qt suites. Source records alone do not claim a successful build or hosted deployment.
+All 40 articles, four promoted choice controls and complete inventory contracts
+remain present. Product completeness is still 0/105,788 current capability cells
+and 9,434 incomplete surface-feature groups. Offscreen tests do not fill native
+evidence cells. The shared searchable choice popup remains a separate integration.
 
-The hidden-desktop controller is installed at
-`e6e42f2066d539256d6480401d7cef867f2b8dfe`, with quiet standard-input/output transport,
-58 tools and native-backend installation smoke. A synthetic Qt fixture proved hidden
-launch, capture, background close and owned teardown. That fixture image is not
-KeePassXC evidence. KeePassXC profile/history isolation is blocked pending the owner's
-scope choice. Environment-only APPDATA/LOCALAPPDATA overrides do not isolate Windows
-known-folder paths. No personal database, existing process or host power/login state
-may be affected. No packaged lifecycle has run.
+Native lifecycle, real forwarded-process transport, supported geometry and genuine
+per-click capture acceptance remain pending the approved isolated route. Controller
+installation smoke is separate from KeePassXC acceptance. The requested release-grade
+closeout, ten-entry save/quit/relaunch/readback flow, positional spaces/Cantonese path
+flow, privacy provenance and captures in chat, README and the documentation website
+remain required as described in the interface-completion article. The coordinator
+owns independent review, main integration, delivery, publication and cleanup.
 
-The coordinator downloaded and verified the seven required assets of `v2.8.30301`,
-source `91772a166def5e44f60dd49501f5882d7190287c`. This older package does not establish
-the promotion's installed behavior. Native keyboard, accessibility, geometry, full
-language/theme/scale/viewport coverage and complete feature delivery remain unverified.
-Obtain the explicit ten-entry/two-group save, Quit, relaunch and exact readback flow,
-including positional paths with spaces and Cantonese, once isolation is established.
-Capture every real interaction and retain reviewed source/hash/tuple/privacy evidence.
-Never substitute the controller fixture or historical screenshots for current proof.
+The full documentation build must bind the final source, all 40 immutable article
+bytes and generated provenance. Its separate receipt records the actual result;
+this source record does not predict a hosted or native verdict.
 
-Status Hub and Tidbyt bindings are unavailable to this worker; no delivery is claimed.
-The wider objective remains incomplete. Next: independently check the final frozen
-documentation candidate and its exact receipts, integrate the accepted unit, prove
-remote main and hosted results, then resume the pending isolated native acceptance.
+Continue from this task branch only after checking its final recorded source.
+The worker performed no main mutation, push, service change, personal-profile
+launch or publication. Preserve prior task branches and worktrees.

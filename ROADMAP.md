@@ -6,6 +6,14 @@
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
 - [ ] Complete native acceptance through the approved isolated route. Controller installation smoke passed; KeePassXC profile/history isolation remains blocked pending the owner scope decision. Source and offscreen checks cannot replace native acceptance.
 
+## October 3 startup and motion integration
+
+- [x] Combine reviewed startup suppression with shared motion transitions and hide/show lifetime handling, preserving the four promoted controls and all 40 articles.
+- [x] Verify the combined source `7cb43f654ef2cc908a76a5a739bddfda2aa29c52` with 167 offscreen passes (127 + 7 + 33), zero failures, zero skips and no timeouts.
+- [x] Preserve the unchanged updates-disabled compiler repair and its actual red/green evidence.
+- [ ] Verify the final immutable article manifest and complete documentation bundle against their exact final source; retain the external receipt before delivery.
+- [ ] Complete independent incorporation review, main delivery and native lifecycle/capture acceptance through the approved isolated route.
+
 ## October 3 choice-control promotion
 
 - [x] Promote browser type, group sharing type, SSH key type and SSH key size to the shared Material combo-box class, preserving names, controller connections and data roles. The three production owners compiled at `3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f`; independent source review is complete.

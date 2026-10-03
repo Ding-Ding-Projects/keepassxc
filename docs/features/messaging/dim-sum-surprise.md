@@ -28,6 +28,8 @@ All dish names and images come from `:/dimsum/dimsum.json` and the bundled `:/di
 
 The tests-first candidate produced 7 passes and 106 failures before the runtime repair. Two additional queued-opening regressions use newly generated, task-owned locked databases and the real main-window slot, checking both pending and already-visible cards. Their isolated profile avoids an unrelated hidden browser-settings warning, keeps the browser service stopped, and rejects input, modal, popup and error-show events as alternative cancellation causes. Both cases were observed failing before the main-window hook was added. These offscreen tests establish behavioral evidence only. Native rendering, supported geometry, operating-system notification integration and the integrated user/system reduced-motion matrix still require built-application acceptance through the sanctioned route. No native capture is claimed here.
 
+The integrated source `7cb43f654ef2cc908a76a5a739bddfda2aa29c52` passed 167 isolated offscreen checks: `testmaterialdimsum` 127, `testdimsum` 7 and `testmaterialmotion` 33. All three processes exited 0, with no skips or timeouts. This preserves both startup cancellation and the shared motion lifetime checks. Real forwarded-process transport and native acceptance remain unverified.
+
 ## Related articles
 
 - [Language modes and the voice catalogue](language-modes.md)
