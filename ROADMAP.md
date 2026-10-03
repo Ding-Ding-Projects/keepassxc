@@ -5,8 +5,8 @@
 - [x] Repair the history snapshot attempted before database unlock and prove its focused regression red then green. Packaged native acceptance remains below.
 - [x] Verify successful Save As returns true, cancellation and unsuccessful writes return false, and first save on close completes in isolated atomic-save regressions. Both success assertions were observed red before repair and green afterward.
 - [x] Verify focused history initialization with portable configuration isolation. Ten selected history cases, both ready-key rows and unlock baseline/listener pass at `d08b434`; this does not include packaged native acceptance.
-- [ ] Verify deep encrypted-snapshot paths with command-local long-path support. The add comparison passes; the production deep-root case still returns false and first-operation diagnostics are running.
-- [ ] Complete creation, entry and locking GUI coverage using the current interface. Creation/edit/search-edit/delete/clone/save/backup/locking pass at `d08b434`; add-entry TOTP-history and three backup-path rows remain under investigation.
+- [ ] Support per-database history directories beyond 260 characters. Nested-file long-path support is verified, but the initial directory change fails at 285 characters. Three bounded launch comparisons failed; the reproduction remains preserved outside completed-unit integration.
+- [x] Complete the focused creation, entry, saving, backup and locking GUI coverage using the current interface. All 15 selected processes pass at `6c1c3ac`, with 50 Qt entries passing including setup/cleanup. Native packaged acceptance remains separate.
 - [ ] Verify positional database opening with spaces and Cantonese characters after retaining the Windows filename string through its native call.
 - [ ] Create ten synthetic entries through the packaged interface, save, fully exit, relaunch and prove exact contents after reopening.
 - [ ] Verify the final package, remote integration and task-owned cleanup. Current evidence is recorded in [the lifecycle article](docs/features/delivery/database-lifecycle-repair.md).

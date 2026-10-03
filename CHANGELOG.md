@@ -2,7 +2,7 @@
 
 - Database opening: Defer history snapshots until database keys are ready, allow history initialization after unlock, and retain one save listener. The focused keyless-write regression was observed failing before repair and passing afterward; packaged verification is pending.
 - Local history: Use Git's documented `/dev/null` configuration override on Windows as well, avoiding the rejected `NUL` path without reading personal configuration.
-- Local history: Enable long paths for history subprocesses on Windows without changing host Git settings; focused production-helper verification is pending.
+- Local history: Enable long paths for nested encrypted history files on Windows without changing host Git settings. Focused history checks pass; entering an initial history repository directory beyond 260 characters remains an open limitation.
 - Database saving: Return the actual Save As result so successful first saves can complete close/lock decisions; preserve cancellation and unsuccessful-write results.
 - Windows startup: Retain the owning filename string until the native filename lookup completes. Native launch-crash reproduction and complete fresh-process persistence verification remain pending.
 

@@ -21,8 +21,9 @@ dragging, updates, and the incomplete full feature inventory.
 The [database lifecycle repair record](docs/features/delivery/database-lifecycle-repair.md) tracks
 the October database-opening crash, Save As result, history initialization and Windows
 filename-lifetime repairs. Local compilation and database checks passed. The keyless-open and
-Save As regressions were observed failing before their repairs and passing afterward. History
-path handling and older GUI expectations remain under verification; the packaged create, save,
+Save As regressions were observed failing before their repairs and passing afterward. All 15
+focused GUI processes and ten selected history cases pass. An initial history directory beyond
+260 characters remains an open limitation; the packaged create, save,
 quit and reopen sequence is pending. The installed launch crash is not yet claimed resolved.
 
 The cryptography, the KDBX format handling, the browser and SSH integrations and the command line
