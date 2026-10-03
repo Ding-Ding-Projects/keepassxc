@@ -594,12 +594,15 @@ namespace Material
                     || selected.column() != modelColumn() || !selected.flags().testFlag(Qt::ItemIsEnabled)
                     || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
                 QPointer<ComboBox> alive(this);
+                const QPointer<ChoicePopup> popup = m_choicePopup;
                 const QString label = selected.data(isEditable() ? Qt::EditRole : Qt::DisplayRole).toString();
                 hidePopup();
                 // Dismissal callbacks may rebind this combo without replacing
                 // its model. Validate before writing into the new binding.
-                if (!alive || !selected.isValid() || selected.model() != model()
-                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()) return;
+                if (!alive || !popup || !selected.isValid() || selected.model() != model()
+                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
+                    || !selected.flags().testFlag(Qt::ItemIsEnabled)
+                    || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
                 setCurrentIndex(selected.row());
                 if (!alive || !selected.isValid() || selected.model() != model()
                     || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
@@ -613,7 +616,10 @@ namespace Material
 
     void ComboBox::hidePopup()
     {
+        const QPointer<ComboBox> alive(this);
         if (m_choicePopup) m_choicePopup->hide();
+        // dismissed listeners may synchronously destroy this owner.
+        if (!alive) return;
         QComboBox::hidePopup();
     }
 

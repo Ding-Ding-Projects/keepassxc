@@ -420,8 +420,11 @@ namespace Material
         m_connections.clear();
         if (m_builder) { m_builder->closeOverlay(); m_builder->hide(); m_builder->setSampleText(QString()); }
         if (m_builderContainer) m_builderContainer->hide();
-        const QSignalBlocker blocker(m_search);
-        m_search->clear(); m_search->setRegexEnabled(false); m_search->setRegexFlags(QStringLiteral("i"));
+        {
+            // Restore signals before dismissed can delete the popup's children.
+            const QSignalBlocker blocker(m_search);
+            m_search->clear(); m_search->setRegexEnabled(false); m_search->setRegexFlags(QStringLiteral("i"));
+        }
         m_proxy->setSourceModel(nullptr); m_source.clear(); m_root = QPersistentModelIndex();
         QWidget::hideEvent(event); announceState();
         const QPointer<ComboBox> owner = m_owner;

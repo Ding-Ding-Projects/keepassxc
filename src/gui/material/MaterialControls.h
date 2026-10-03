@@ -23,6 +23,7 @@
 #include <QDialogButtonBox>
 #include <QGroupBox>
 #include <QProgressBar>
+#include <QPointer>
 #include <QRadioButton>
 #include <QSpinBox>
 #include <QTabBar>
@@ -177,7 +178,7 @@ namespace Material
         void leaveEvent(QEvent* event) override;
 
     private:
-        ChoicePopup* m_choicePopup = nullptr;
+        QPointer<ChoicePopup> m_choicePopup;
         bool m_hovered = false;
     };
 
