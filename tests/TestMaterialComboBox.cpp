@@ -2,6 +2,7 @@
 #include "gui/material/MaterialControls.h"
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSearchRegistry.h"
 
 #include <QAbstractProxyModel>
 #include <QAccessible>
@@ -276,6 +277,85 @@ void TestMaterialComboBox::accessibilityStateAndAssociation()
     auto* list = QAccessible::queryAccessibleInterface(choices(window)); QVERIFY(list);
     QCOMPARE(list->role(), QAccessible::List);
     combo.hidePopup(); QVERIFY(!accessible->state().expanded); QVERIFY(accessible->state().collapsed);
+}
+
+void TestMaterialComboBox::openingKeepsCurrentCandidate()
+{
+    ComboBox combo; combo.addItems({QStringLiteral("A"), QStringLiteral("B"), QStringLiteral("C")});
+    combo.setCurrentIndex(2);
+    auto* window = popup(combo); QVERIFY(window);
+    QSignalSpy activated(&combo, &QComboBox::activated), changed(&combo, &QComboBox::currentIndexChanged);
+    QTest::keyClick(search(window)->lineEdit(), Qt::Key_Return);
+    QCOMPARE(combo.currentIndex(), 2); QCOMPARE(changed.count(), 0);
+    QCOMPARE(activated.count(), 1); QCOMPARE(activated.first().first().toInt(), 2);
+}
+
+void TestMaterialComboBox::changedLabelCannotActivateStaleResult()
+{
+    QStandardItemModel model;
+    model.appendRow(new QStandardItem(QStringLiteral("Other")));
+    model.appendRow(new QStandardItem(QStringLiteral("Target")));
+    ComboBox combo; combo.setModel(&model);
+    auto* window = popup(combo); QVERIFY(window);
+    search(window)->setText(QStringLiteral("Target"));
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    model.item(1)->setText(QStringLiteral("Renamed"));
+    // Deliberately do not drain the queued dataChanged refresh before Return.
+    QTest::keyClick(search(window)->lineEdit(), Qt::Key_Return);
+    QCOMPARE(activated.count(), 0); QCOMPARE(combo.currentIndex(), 0);
+}
+
+void TestMaterialComboBox::bindingChangeCannotActivateStaleResult()
+{
+    QStandardItemModel first, second;
+    first.appendRow(new QStandardItem(QStringLiteral("Old")));
+    second.appendRow(new QStandardItem(QStringLiteral("New")));
+    ComboBox combo; combo.setModel(&first);
+    auto* window = popup(combo); QVERIFY(window);
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    static_cast<QComboBox*>(&combo)->setModel(&second);
+    QTest::keyClick(search(window)->lineEdit(), Qt::Key_Return);
+    QCOMPARE(activated.count(), 0); QVERIFY(!window->isVisible());
+}
+
+void TestMaterialComboBox::builderIsNotGloballyRouted()
+{
+    ComboBox combo; combo.addItem(QStringLiteral("Private choice"));
+    auto* window = popup(combo); QVERIFY(window);
+    QSignalSpy routed(SearchRegistry::instance(), &SearchRegistry::builderRequested);
+    QVERIFY(QMetaObject::invokeMethod(search(window), "builderRequested"));
+    QCOMPARE(routed.count(), 0);
+    QVERIFY(!SearchRegistry::instance()->bars().contains(search(window)));
+    auto* builder = window->findChild<RegexBuilder*>(); QVERIFY(builder);
+    QCOMPARE(builder->sampleText(), QString());
+    builder->closeOverlay();
+    QTRY_VERIFY(!builder->isVisible());
+    QVERIFY(window->isVisible());
+}
+
+void TestMaterialComboBox::boundedRegexEngineErrors_data()
+{
+    QTest::addColumn<QString>("pattern");
+    QTest::addColumn<QStringList>("labels");
+    QTest::newRow("match-limit") << QStringLiteral("(*NO_JIT)(*LIMIT_MATCH=10000)^(?:OK|(?:a?){30}a{30})$")
+        << QStringList{QStringLiteral("OK"), QString(30, QLatin1Char('a'))};
+    QTest::newRow("depth-limit") << QStringLiteral("(*NO_JIT)(*LIMIT_DEPTH=1)^(?:OK|a)$")
+        << QStringList{QStringLiteral("a")};
+    QStringList many;
+    for (int row = 0; row < 1025; ++row) many.append(QStringLiteral("Choice"));
+    QTest::newRow("row-count") << QStringLiteral(".*") << many;
+}
+
+void TestMaterialComboBox::boundedRegexEngineErrors()
+{
+    QFETCH(QString, pattern); QFETCH(QStringList, labels);
+    ComboBox combo; combo.addItems(labels);
+    auto* window = popup(combo); QVERIFY(window);
+    search(window)->setRegexEnabled(true); search(window)->setText(pattern);
+    QCOMPARE(rows(choices(window)), 0);
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    QTest::keyClick(search(window)->lineEdit(), Qt::Key_Return);
+    QCOMPARE(activated.count(), 0); QVERIFY(window->isVisible());
 }
 
 int main(int argc, char** argv)

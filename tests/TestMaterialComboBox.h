@@ -23,6 +23,12 @@ private slots:
     void hideAndOwnerLifetime();
     void activationMayDestroyOwner();
     void accessibilityStateAndAssociation();
+    void openingKeepsCurrentCandidate();
+    void changedLabelCannotActivateStaleResult();
+    void bindingChangeCannotActivateStaleResult();
+    void builderIsNotGloballyRouted();
+    void boundedRegexEngineErrors_data();
+    void boundedRegexEngineErrors();
 };
 
 #endif
