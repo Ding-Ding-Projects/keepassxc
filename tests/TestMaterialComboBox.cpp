@@ -333,6 +333,22 @@ void TestMaterialComboBox::builderIsNotGloballyRouted()
     QVERIFY(window->isVisible());
 }
 
+void TestMaterialComboBox::builderReturnDoesNotActivateChoice()
+{
+    ComboBox combo; combo.addItems({QStringLiteral("A"), QStringLiteral("B")});
+    auto* window = popup(combo); QVERIFY(window);
+    QVERIFY(QMetaObject::invokeMethod(search(window), "builderRequested"));
+    auto* builder = window->findChild<RegexBuilder*>(); QVERIFY(builder);
+    auto* patternEdit = qobject_cast<QLineEdit*>(builder->sheetWidget()->focusProxy()); QVERIFY(patternEdit);
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    QTest::keyClick(patternEdit, Qt::Key_Return);
+    QCOMPARE(activated.count(), 0);
+    QVERIFY(window->isVisible()); QVERIFY(builder->isOpen());
+    QTest::keyClick(patternEdit, Qt::Key_Escape);
+    QTRY_VERIFY(!builder->isOpen());
+    QVERIFY(window->isVisible()); QCOMPARE(activated.count(), 0);
+}
+
 void TestMaterialComboBox::boundedRegexEngineErrors_data()
 {
     QTest::addColumn<QString>("pattern");

@@ -27,6 +27,7 @@ private slots:
     void changedLabelCannotActivateStaleResult();
     void bindingChangeCannotActivateStaleResult();
     void builderIsNotGloballyRouted();
+    void builderReturnDoesNotActivateChoice();
     void boundedRegexEngineErrors_data();
     void boundedRegexEngineErrors();
 };
