@@ -66,6 +66,9 @@ namespace Material
             environment.insert(QStringLiteral("GIT_COMMITTER_EMAIL"), QStringLiteral("history@localhost"));
             process.setProcessEnvironment(environment);
             QStringList args;
+#ifdef Q_OS_WIN
+            args << QStringLiteral("-c") << QStringLiteral("core.longpaths=true");
+#endif
             if (!repo.isEmpty()) args << QStringLiteral("-C") << repo;
             args << arguments;
             process.start(executable, args, QIODevice::ReadOnly);
