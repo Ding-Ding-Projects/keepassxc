@@ -1,4 +1,21 @@
-# Current task handoff, September 27, 2026
+# Current task handoff, October 3, 2026
+
+## Database lifecycle repair in progress
+
+- Baseline: `8301d0364a4e0753f9f0ae5c700174cd3dd1e353`, matching release `v2.8.29201`.
+- Regression-only candidate: `d5be645278834bb015f37fcacbd3972c740853b8`. Source repair: `61ee4d40638ca65fdce7cebe715b48b3c5b705e4`. Test expectation correction: `5c5f9745dcf9273171ca7714c460b696a2cfdc87`.
+- Additional isolated test support: `3a1bb24b601ab57cd42a9f6d14efb4ef2bc5256a` enables Qt test paths and a unique organization namespace before GUI application construction. Applied alone to the regression branch, it produces `7972fe0372abee1444b0a62a34a072c732a537f7`.
+- Database tests pass 12/12 at `7972fe0372abee1444b0a62a34a072c732a537f7`. The keyless-opening regression deliberately reproduces `0xC0000005` at `89791fd7569d4147d0d5a61ab98d5bf1e18e9997`, then passes 3/3 at repaired `e2f26c784f3a78bdaab5ab38ba2ce5b2104d18e8`. Repair `178d3e720261f6f52af06ca856fb49d5d8c53e92` defers snapshots until key readiness.
+- The intended Save As and first-close false-result assertions are red at `e2f26c7` and green at repaired `d8282cf4ff4a47a7de1958c7ba862060b445ccdc`. Each of the four atomic Save As/cancel/write-failure/first-close cases passes 3/3. Related search-edit, save, backup and locking cases pass. Creation/edit/add/delete/clone initially fail obsolete hidden-control or root-list assumptions; reviewed adaptation `0e3ad08de78764c4b79acabf1e3894fdfd0a7e70` is now under execution.
+- History configuration correction `24e05bf8d945b38c3251f80ee7c14ee3650e3e37` replaces rejected `NUL` overrides with `/dev/null`. Subsequent diagnostics prove nested snapshot paths exceed Git's default Windows path limit. Correction `4c5c49bec69c2347754f16d6c5639052605009d1` supplies command-local long-path support. Unlock baseline/single-listener coverage passes 3/3 at verification `de8d1330f60e67a9f12aba4c62af708eb57b23c7`.
+- The runner's initial redirected temporary working directory exceeded 260 characters before the intended nested operation. A short owned temporary root resolves that test-environment constraint. Deep-root regression `a7e4d392`, corrected through `44e844b9` and `ab14108f`, reaches the intended nested-path failure at `c684f9877d944a32b06a7952c913b58f712550bd` with short TEMP. The corrected history and GUI run is pinned to `d08b434fc734c2b35e15e86a8d3349fa0dd4675f`. Earlier fixture compile failures are not runtime-red evidence.
+- The configured isolated-desktop service is unavailable. No native interaction, full process-restart persistence, or screenshot evidence is claimed.
+- Latest completed short-root run: `d08b434fc734c2b35e15e86a8d3349fa0dd4675f`, 27 isolated processes, 24 passed and three failed, with no crash or timeout. All ten selected history cases, both ready-key rows, unlock baseline/listener and four atomic-save cases pass. Creation/edit/search-edit/delete/clone/save/backup/locking pass. Remaining: quiet deep-root `recordSave()` failure, a stale add-entry TOTP-history expectation, and three backup-path rows failing the modified-state precondition. TOTP expectation correction `d7575293747631bd42349c14579ebc28656b62ff` is preserved separately and awaits execution. Earlier pending-run wording above is superseded by this completed receipt.
+- The maintainer approved the verified Microsoft VS2022 Build Tools installer. Its setup log reports exit 0; MSVC, SDK and Qt 6.8.3 are verified. No host restart was initiated. Ruby documentation tooling has a separate original-assembly resolution failure, so packaging remains pending.
+- Next: complete the short-root history comparison and adapted GUI checks, record exact results, then build/package and complete the native lifecycle. Environment-only APPDATA changes cannot isolate Qt's Windows known-folder history location; native proof requires an isolated profile or a verified equivalent. No push, main integration, verified package, native capture or cleanup is claimed by this snapshot.
+- [Issue #17](https://github.com/Ding-Ding-Projects/keepassxc/issues/17), [progress discussion #18](https://github.com/Ding-Ding-Projects/keepassxc/discussions/18), and [verification procedure](docs/features/delivery/database-lifecycle-repair.md) carry the current scope. Existing unrelated issues remain outside this repair.
+
+# Historical handoff, September 27, 2026
 
 ## Documentation publication recovery, September 28, 2026
 
@@ -12,8 +29,8 @@ The combined work for issues #8 through #12 is incomplete. This continuation pre
 
 ## Current documentation publication recovery, September 28, 2026
 
-- At the time of publication run `36362264327`, `main` was dewed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The run is red because `site/content-manifest.json` referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
-- The recovery manifest references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65` and is recorded in local commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`. `npm run build --prefix site` passed on that source and printed `Built website 2.8.22201 from source 1d81f452525e2dae7d2155fcd2177cf1e8ca2967 with published release provenance a30d109626b35fff6331e5c4450b3f98da5d8837.` The first build attempt before the manifest pre-dew stopped at the source-commit guard and produced no output.
+- At the time of publication run `36362264327`, `main` was pushed at `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The run is red because `site/content-manifest.json` referenced article snapshot `fab0379819713819a73708cc51297cb5cf8661fa`, while `docs/features/records/local-history.md` changed in `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65`.
+- The recovery manifest references `9e4fe8bfb62b9f29be44ae6d1f2afe3ce4febf65` and is recorded in local commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`. `npm run build --prefix site` passed on that source and printed `Built website 2.8.22201 from source 1d81f452525e2dae7d2155fcd2177cf1e8ca2967 with published release provenance a30d109626b35fff6331e5c4450b3f98da5d8837.` The first build attempt before the manifest commit stopped at the source-commit guard and produced no output.
 - At the time this recovery note was written, package run `36362264321` was running at the unsigned Squirrel installer build step. No terminal package result was then available.
 - The focused `testmaterialhistory` CTest result remains 1/1 passed in 40.57 seconds. This does not verify the production package or interactive database-history behavior.
 
@@ -21,7 +38,7 @@ The combined work for issues #8 through #12 is incomplete. This continuation pre
 
 - Packaging run `36362264321` completed successfully on source `ab1e3d5622c3390c72ce144f112c580e6e7268c9` and published non-draft release `v2.8.28801` at `2026-09-28T00:53:13Z`.
 - Documentation runs `36362264327` and `36363860002` both completed with failure on the same source and the same exact message: `Current article bytes differ from immutable evidence.` The latter run is [here](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/36363860002).
-- At the time of this handoff update, the manifest correction was local in commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`; the hui `main` still pointed to `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The next action is to dew the correction and verify the new documentation run.
+- At the time of this handoff update, the manifest correction was local in commit `1d81f452525e2dae7d2155fcd2177cf1e8ca2967`; the remote `main` still pointed to `ab1e3d5622c3390c72ce144f112c580e6e7268c9`. The next action is to push the correction and verify the new documentation run.
 
 ## Current checkout and candidate state
 
@@ -97,15 +114,15 @@ The linked checkouts for the integrated local `codex/*` branches are still prese
 
 ## Archive and cleanup status
 
-The required external archive must be created and verified under `<OneDrive>/OakKayBackups/keepassxc/zips/` before any linked checkout, branch, or artifact Tong is removed. The archive must contain `.git`, every tracked file, and every non-ignored untracked file, and its listing and test result must be recorded here before removal. Until that evidence is present, cleanup remains pending.
+The required external archive must be created and verified in the configured external backup location before any linked checkout, branch, or stash is removed. The archive must contain `.git`, every tracked file, and every non-ignored untracked file, and its listing and test result must be recorded here before removal. Until that evidence is present, cleanup remains pending.
 
-Archive verified before cleanup: `C:\Users\cntow\OneDrive\OakKayBackups\keepassxc\zips\keepassxc-20260918T165722Z.7z`, 330,559,655 bytes, 231 folders, 3,045 files, 408,469,097 source bytes, `.git` present, zero non-ignored untracked files, and 7-Zip test result `Everything is Ok`.
+Archive verified before cleanup: `keepassxc-20260918T165722Z.7z` in the configured external backup location, 330,559,655 bytes, 231 folders, 3,045 files, 408,469,097 source bytes, `.git` present, zero non-ignored untracked files, and 7-Zip test result `Everything is Ok`.
 
 ## cleanup authorization removal receipt
 
 After the archive and remote ancestry proof, 30 clean local `codex/*` branches and their linked checkouts were removed. The removed local branches were: `codex/day-teet-hui-boundary-hardening`, `codex/day-teet-hui-build-provenance`, `codex/day-teet-hui-combined-repair`, `codex/day-teet-hui-evidence-immutable`, `codex/day-teet-hui-evidence-refresh`, `codex/day-teet-hui-interaction-corrective`, `codex/day-teet-hui-interaction-final`, `codex/day-teet-hui-interaction-findings`, `codex/day-teet-hui-interaction-last`, `codex/day-teet-hui-interaction-rescue`, `codex/day-teet-hui-interactions`, `codex/day-teet-hui-interactions-final-repair`, `codex/day-teet-hui-interactions-provenance`, `codex/day-teet-hui-interactions-repair`, `codex/day-teet-hui-interactions-repair2`, `codex/day-teet-hui-manifest-schema`, `codex/day-teet-hui-provenance`, `codex/day-teet-hui-reduced-motion`, `codex/day-teet-hui-schema2-repair`, `codex/day-teet-hui-social-preview-refresh`, `codex/dayteethui-changelog-vocabulary-hooks`, `codex/dayteethui-field-width`, `codex/dayteethui-foundation`, `codex/dayteethui-integration-20260908`, `codex/dayteethui-material-accessibility`, `codex/finalizer-api-fix`, `codex/minimize-repair`, `codex/repair-window-content-drag-r2`, `codex/updater-download-repair-2`, and `codex/updater-lifecycle-regression`.
 
-No artifact Tongs existed. Remote `codex/*` refs and the non-`codex/*` refs were retained and remain pushed because remote ownership, activity, or load-bearing status was not proven for this pass. The final local state has one checkout, `main`, and no local `codex/*` branches.
+No stashes existed. Remote `codex/*` refs and the non-`codex/*` refs were retained and remain pushed because remote ownership, activity, or load-bearing status was not proven for this pass. The final local state has one checkout, `main`, and no local `codex/*` branches.
 
 # Previous repair handoff, September 2026
 

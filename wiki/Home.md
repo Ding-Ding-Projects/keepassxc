@@ -13,6 +13,7 @@ The cryptography, KDBX format handling, browser and SSH integrations, and `keepa
 | [Material Design](./Material-Design.md) | Colour roles, seeds, density, shape, motion, and the component library |
 | [Building](./Building.md) | Toolchain, dependencies, configure and build commands |
 | [Passkeys](./Passkeys.md) | How passkey registration and saving work, and how they are tested |
+| [Database lifecycle repair](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/delivery/database-lifecycle-repair.md) | Save As return handling, startup filename ownership, atomic-save regressions, and the pending native create/save/exit/reopen acceptance |
 
 ## Interface at a glance
 

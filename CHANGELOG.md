@@ -1,5 +1,11 @@
 # Changelog
 
+- Database opening: Defer history snapshots until database keys are ready, allow history initialization after unlock, and retain one save listener. The focused keyless-write regression was observed failing before repair and passing afterward; packaged verification is pending.
+- Local history: Use Git's documented `/dev/null` configuration override on Windows as well, avoiding the rejected `NUL` path without reading personal configuration.
+- Local history: Enable long paths for history subprocesses on Windows without changing host Git settings; focused production-helper verification is pending.
+- Database saving: Return the actual Save As result so successful first saves can complete close/lock decisions; preserve cancellation and unsuccessful-write results.
+- Windows startup: Retain the owning filename string until the native filename lookup completes. Native launch-crash reproduction and complete fresh-process persistence verification remain pending.
+
 - Interface: Every remaining stock control in the forms is a Material 3 control: checkboxes, radio buttons, combo boxes, spin boxes, progress bars, group boxes, tool buttons, sliders, push buttons, dialog button rows and tab bars are Material subclasses of the Qt widgets, so every screen (password generator, entry editor, application and database settings, About, TOTP setup, key components, reports, history, changelog, bottom navigation) reads as Material without changing behaviour; the last raw Qt message boxes go through the Material dialog sheet.
 - Dialogs: Every message box is a Material 3 dialog sheet inside the window (symbol badge, headline, supporting text, text and filled actions); the unlock form's Quick Unlock toggle and its Close/Unlock buttons are Material controls, and the unlock-path warnings use the same sheet.
 - Layout: Elide painted labels in report chips, generator and regex chips and calendar cells instead of clipping them; the command palette fits the minimum window; the history detail pane, spec-sheet search and regex palette give way instead of holding a fixed width; group rows follow the density setting.

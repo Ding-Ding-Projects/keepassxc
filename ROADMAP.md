@@ -1,5 +1,16 @@
 # Roadmap
 
+## October 2026 database lifecycle repair
+
+- [x] Repair the history snapshot attempted before database unlock and prove its focused regression red then green. Packaged native acceptance remains below.
+- [x] Verify successful Save As returns true, cancellation and unsuccessful writes return false, and first save on close completes in isolated atomic-save regressions. Both success assertions were observed red before repair and green afterward.
+- [x] Verify focused history initialization with portable configuration isolation. Ten selected history cases, both ready-key rows and unlock baseline/listener pass at `d08b434`; this does not include packaged native acceptance.
+- [ ] Verify deep encrypted-snapshot paths with command-local long-path support. The add comparison passes; the production deep-root case still returns false and first-operation diagnostics are running.
+- [ ] Complete creation, entry and locking GUI coverage using the current interface. Creation/edit/search-edit/delete/clone/save/backup/locking pass at `d08b434`; add-entry TOTP-history and three backup-path rows remain under investigation.
+- [ ] Verify positional database opening with spaces and Cantonese characters after retaining the Windows filename string through its native call.
+- [ ] Create ten synthetic entries through the packaged interface, save, fully exit, relaunch and prove exact contents after reopening.
+- [ ] Verify the final package, remote integration and task-owned cleanup. Current evidence is recorded in [the lifecycle article](docs/features/delivery/database-lifecycle-repair.md).
+
 ## Embedded database history
 
 - [ ] Stage a bounded per-database history bundle before the primary KDBX write and save the data and bundle atomically; current local code adds KDBX3/KDBX4 round trips, but the full production target has not been rebuilt after the latest edits.
