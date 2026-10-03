@@ -175,7 +175,7 @@ void TestWindowSelectComboBox::editableContractAndSizing()
     combo.hidePopup();
     QCOMPARE(combo.lineEdit(), editor); QCOMPARE(combo.completer(), completer);
     QCOMPARE(combo.validator(), &validator);
-    combo.setFocus(); QTRY_VERIFY(combo.hasFocus());
+    combo.activateWindow(); combo.setFocus(); QTRY_VERIFY(combo.hasFocus());
     auto* accessible = QAccessible::queryAccessibleInterface(&combo); QVERIFY(accessible);
     auto* child = accessible->focusChild(); QVERIFY(child);
     QCOMPARE(child->object(), editor); QVERIFY(child->textInterface());
