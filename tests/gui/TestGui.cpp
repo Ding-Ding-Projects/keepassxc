@@ -875,6 +875,12 @@ void TestGui::testAddEntry()
     QVERIFY(usernameComboBox);
     QTest::mouseClick(usernameComboBox, Qt::LeftButton);
     QTest::keyClicks(usernameComboBox, "AutocompletionUsername");
+    auto* transientEntry = editEntryWidget->currentEntry();
+    QVERIFY(transientEntry);
+    QVERIFY(transientEntry->historyItems().isEmpty());
+    QVERIFY(!transientEntry->hasTotp());
+    const auto preTotpTitle = transientEntry->title();
+    const auto preTotpUsername = transientEntry->username();
     auto* setupTotpButton = editEntryWidget->findChild<QPushButton*>("setupTotpButton");
     QVERIFY(setupTotpButton);
     QVERIFY(setupTotpButton->isVisible());
@@ -886,6 +892,12 @@ void TestGui::testAddEntry()
     auto* setupTotpButtonBox = setupTotpDialog->findChild<QDialogButtonBox*>("buttonBox");
     QTest::mouseClick(setupTotpButtonBox->button(QDialogButtonBox::Ok), Qt::LeftButton);
     QTRY_VERIFY(setupTotpDialog.isNull());
+    QCOMPARE(transientEntry->historyItems().size(), 1);
+    auto* preTotpHistory = transientEntry->historyItems().first();
+    QCOMPARE(preTotpHistory->uuid(), transientEntry->uuid());
+    QCOMPARE(preTotpHistory->title(), preTotpTitle);
+    QCOMPARE(preTotpHistory->username(), preTotpUsername);
+    QVERIFY(!preTotpHistory->hasTotp());
     QCOMPARE(setupTotpButton->text(), QString("Edit TOTP..."));
     QCOMPARE(attributesModel->entryAttributes()->parent(), editEntryWidget);
     QVERIFY(attributesModel->entryAttributes() != editEntryWidget->currentEntry()->attributes());
@@ -899,7 +911,11 @@ void TestGui::testAddEntry()
     QCOMPARE(entry->title(), QString("test"));
     QCOMPARE(entry->username(), QString("AutocompletionUsername"));
     QVERIFY(entry->hasValidTotp());
-    QCOMPARE(entry->historyItems().size(), 0);
+    QCOMPARE(entry->historyItems().size(), 1);
+    QCOMPARE(entry->historyItems().first(), preTotpHistory);
+    QCOMPARE(preTotpHistory->title(), preTotpTitle);
+    QCOMPARE(preTotpHistory->username(), preTotpUsername);
+    QVERIFY(!preTotpHistory->hasTotp());
 
     m_db->updateCommonUsernames();
 
