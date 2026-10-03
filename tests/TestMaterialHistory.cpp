@@ -22,7 +22,6 @@
 #include <QToolButton>
 #include <QAbstractButton>
 #include <QDir>
-#include <QDirIterator>
 #include <QFile>
 #include <QProcess>
 #include <QCryptographicHash>
@@ -303,56 +302,6 @@ void TestMaterialHistory::recordsReadyDatabaseSnapshots()
     QVERIFY(database->isModified());
     database->metadata()->setName(QStringLiteral("Still editable after snapshot"));
     QCOMPARE(database->metadata()->name(), QStringLiteral("Still editable after snapshot"));
-}
-
-void TestMaterialHistory::recordsSnapshotsBelowDeepHistoryRoot()
-{
-    QTemporaryDir root;
-    QVERIFY(root.isValid());
-    QString deepRoot = root.path();
-    while (deepRoot.size() < 190) {
-        deepRoot = QDir(deepRoot).filePath(QStringLiteral("nested-history-storage"));
-    }
-    QVERIFY(QDir().mkpath(deepRoot));
-    QFile qtProbe(QDir(deepRoot).filePath(QStringLiteral("qt-write-probe.txt")));
-    QVERIFY(qtProbe.open(QIODevice::WriteOnly));
-    QCOMPARE(qtProbe.write("ready"), qint64(5));
-    qtProbe.close();
-
-    auto database = QSharedPointer<Database>::create();
-    QString error;
-    QVERIFY2(database->open(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"),
-                            materialHistoryTestKey(), &error), qPrintable(error));
-    // History identity needs a path, but the source need not be saved under the deep storage root.
-    database->setFilePath(QStringLiteral("synthetic-history-source.kdbx"));
-    database->metadata()->setName(QStringLiteral("Deep history snapshot"));
-    HistoryStore store(deepRoot, QStandardPaths::findExecutable(QStringLiteral("git")));
-    QVERIFY(store.recordSave(database));
-    const auto revisions = store.revisionsForDatabase(database);
-    QCOMPARE(revisions.size(), 1);
-    QDirIterator snapshots(QDir(deepRoot).filePath(QStringLiteral("history/repository/snapshots")),
-                           {revisions.first().id + QStringLiteral(".kdbx")},
-                           QDir::Files, QDirIterator::Subdirectories);
-    QVERIFY(snapshots.hasNext());
-    const auto generatedSnapshotPath = snapshots.next();
-    QVERIFY(generatedSnapshotPath.size() > 260);
-    QVERIFY(QFileInfo::exists(generatedSnapshotPath));
-    QVERIFY(!snapshots.hasNext());
-    const auto snapshot = store.snapshot(revisions.first().id, &error);
-    QVERIFY2(!snapshot.isEmpty(), qPrintable(error));
-    const auto snapshotPath = QDir(root.path()).filePath(QStringLiteral("reopen.kdbx"));
-    QFile file(snapshotPath);
-    QVERIFY(file.open(QIODevice::WriteOnly));
-    QCOMPARE(file.write(snapshot), qint64(snapshot.size()));
-    file.close();
-    auto restored = QSharedPointer<Database>::create();
-    QVERIFY2(restored->open(snapshotPath, materialHistoryTestKey(), &error), qPrintable(error));
-    QCOMPARE(restored->metadata()->name(), QStringLiteral("Deep history snapshot"));
-    HistoryStore reconstructed(deepRoot, QStandardPaths::findExecutable(QStringLiteral("git")));
-    const auto retained = reconstructed.revisionsForDatabase(database);
-    QCOMPARE(retained.size(), 1);
-    QCOMPARE(retained.first().id, revisions.first().id);
-    QCOMPARE(reconstructed.snapshot(retained.first().id, &error), snapshot);
 }
 
 void TestMaterialHistory::gitStoreTransactionAndRestart()

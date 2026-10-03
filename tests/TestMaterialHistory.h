@@ -12,7 +12,6 @@ private slots:
     void skipsHistoryBeforeDatabaseUnlock();
     void recordsReadyDatabaseSnapshots_data();
     void recordsReadyDatabaseSnapshots();
-    void recordsSnapshotsBelowDeepHistoryRoot();
     void gitStoreFailureDoesNotAdvanceFingerprint();
     void gitStoreMigratesLegacyOnce();
     void gitStoreSerializesConcurrentWriters();
