@@ -27,7 +27,7 @@ WindowSelectComboBox::WindowSelectComboBox(QWidget* parent)
 }
 
 WindowSelectComboBox::WindowSelectComboBox(QWidget* parent, std::function<QStringList()> windowTitles)
-    : QComboBox(parent)
+    : Material::ComboBox(parent)
     , m_windowTitles(std::move(windowTitles))
 {
     setEditable(true);
@@ -56,19 +56,19 @@ void WindowSelectComboBox::showPopup()
 
     refreshWindowList();
 
-    QComboBox::showPopup();
+    Material::ComboBox::showPopup();
 }
 
 QSize WindowSelectComboBox::sizeHint() const
 {
     QSize size = lineEdit()->sizeHint();
-    size.setHeight(qMax(size.height(), QComboBox::sizeHint().height()));
+    size.setHeight(qMax(size.height(), Material::ComboBox::sizeHint().height()));
     return size;
 }
 
 QSize WindowSelectComboBox::minimumSizeHint() const
 {
     QSize size = lineEdit()->minimumSizeHint();
-    size.setHeight(qMax(size.height(), QComboBox::minimumSizeHint().height()));
+    size.setHeight(qMax(size.height(), Material::ComboBox::minimumSizeHint().height()));
     return size;
 }

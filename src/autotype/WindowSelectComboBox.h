@@ -18,10 +18,10 @@
 #ifndef KEEPASSX_WINDOWSELECTCOMBOBOX_H
 #define KEEPASSX_WINDOWSELECTCOMBOBOX_H
 
-#include <QComboBox>
+#include "gui/material/MaterialControls.h"
 #include <functional>
 
-class WindowSelectComboBox : public QComboBox
+class WindowSelectComboBox : public Material::ComboBox
 {
     Q_OBJECT
 
