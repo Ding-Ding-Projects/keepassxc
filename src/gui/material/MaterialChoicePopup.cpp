@@ -412,6 +412,16 @@ namespace Material
              qBound(available.top(), anchor.y(), available.bottom() - height() + 1));
     }
 
+    void ChoicePopup::setVisible(bool visible)
+    {
+        const bool dismissedNow = !visible && isVisible();
+        const QPointer<ChoicePopup> alive(this);
+        QWidget::setVisible(visible);
+        // Qt continues using the widget after hideEvent returns. Notify only
+        // after that processing, since a listener may delete this popup or owner.
+        if (alive && dismissedNow) emit dismissed();
+    }
+
     void ChoicePopup::hideEvent(QHideEvent* event)
     {
         m_closing = true;
@@ -433,7 +443,6 @@ namespace Material
                 owner->setFocus(Qt::PopupFocusReason);
         });
         m_closing = false;
-        emit dismissed();
     }
 
     void ChoicePopup::announceState()

@@ -27,6 +27,7 @@ namespace Material
         ~ChoicePopup() override;
         static void installAccessibility();
         void open();
+        void setVisible(bool visible) override;
 
     signals:
         void choiceActivated(const QPersistentModelIndex& index);
