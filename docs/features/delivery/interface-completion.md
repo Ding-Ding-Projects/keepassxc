@@ -13,7 +13,7 @@ features, 106 distinct surfaces, and 998 capability subcontracts. Removing a run
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 105,788 surface/capability cells and 8,455 surface/feature
+The required matrix has 105,788 surface/capability cells and 9,434 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
 still needs applicable interaction and evidence. A reviewed capture may support
