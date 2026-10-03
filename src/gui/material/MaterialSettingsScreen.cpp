@@ -617,8 +617,8 @@ namespace Material
             toggle->setObjectName(id);
             layout->addWidget(toggle, 0, Qt::AlignVCenter);
             auto refresh = [key, textKey, descriptionKey, title, description, toggle] {
-                title->setText(Voice::text(textKey));
-                description->setText(Voice::text(descriptionKey));
+                title->setText(Voice::say(textKey));
+                description->setText(Voice::say(descriptionKey));
                 toggle->setAccessibleName(title->text());
                 toggle->setAccessibleDescription(description->text());
                 const QSignalBlocker blocker(toggle);
@@ -632,7 +632,8 @@ namespace Material
             connect(Voice::notifier(), &Voice::Notifier::changed, row, refresh);
             content->addWidget(row);
             for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
-                haystack << Voice::text(language, 1, 1, textKey) << Voice::text(language, 1, 1, descriptionKey);
+                haystack << Voice::preview(language, 1, 1, textKey).joined()
+                         << Voice::preview(language, 1, 1, descriptionKey).joined();
             }
         };
         addMotionPreference(Config::GUI_ReducedMotion, QStringLiteral("appearanceReducedMotion"),
@@ -642,7 +643,7 @@ namespace Material
         auto* motionStatus = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurfaceVariant, card, true);
         motionStatus->setObjectName(QStringLiteral("appearanceMotionStatus"));
         auto refreshMotionStatus = [motionStatus] {
-            motionStatus->setText(Voice::text(MotionPolicy::instance()->systemReducedMotion()
+            motionStatus->setText(Voice::say(MotionPolicy::instance()->systemReducedMotion()
                 ? QStringLiteral("motion.status.system") : MotionPolicy::instance()->reducedMotion()
                 ? QStringLiteral("motion.status.reduced") : QStringLiteral("motion.status.standard")));
         };

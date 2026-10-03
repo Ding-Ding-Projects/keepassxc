@@ -8,6 +8,8 @@
 #include "gui/material/MaterialAppearanceEditor.h"
 #include "gui/material/MaterialSettingsScreen.h"
 #include "gui/material/MaterialVoice.h"
+#include "gui/material/MaterialStyle.h"
+#include "gui/material/MaterialTheme.h"
 #include "util/TemporaryFile.h"
 
 #include <QApplication>
@@ -51,6 +53,20 @@ private slots:
         QVERIFY(policy.reducedMotion());
         config()->set(Config::GUI_LowStimulation, false);
         QVERIFY(!policy.reducedMotion());
+    }
+    void styleAnimationDurationFollowsSharedPolicy()
+    {
+        Style style;
+        QCOMPARE(style.styleHint(QStyle::SH_Widget_Animation_Duration),
+                 MotionPolicy::instance()->duration(Duration::Medium));
+        config()->set(Config::GUI_ReducedMotion, true);
+        QCOMPARE(style.styleHint(QStyle::SH_Widget_Animation_Duration), 0);
+        config()->set(Config::GUI_ReducedMotion, false);
+        config()->set(Config::GUI_LowStimulation, true);
+        QCOMPARE(style.styleHint(QStyle::SH_Widget_Animation_Duration), 0);
+        config()->set(Config::GUI_LowStimulation, false);
+        QCOMPARE(style.styleHint(QStyle::SH_Widget_Animation_Duration),
+                 MotionPolicy::instance()->duration(Duration::Medium));
     }
     void preferencePersistsWithoutDiscardingBaseChoice()
     {
@@ -242,13 +258,14 @@ private slots:
             QVERIFY(Voice::catalogueKeys().contains(key));
             for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
                 for (int level = 1; level <= 5; ++level) {
-                    const auto text = Voice::text(language, level, level, key);
+                    const auto text = Voice::preview(language, level, level, key).joined();
                     QVERIFY(!text.isEmpty());
                     QVERIFY(text != key);
                 }
             }
         }
-        QCOMPARE(Voice::text(Voice::Language::English, 1, 1, QStringLiteral("motion.unknown")), QStringLiteral("motion.unknown"));
+        QCOMPARE(Voice::preview(Voice::Language::English, 1, 1, QStringLiteral("motion.unknown")).joined(),
+                 QStringLiteral("motion.unknown"));
     }
 };
 

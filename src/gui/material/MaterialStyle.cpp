@@ -383,7 +383,7 @@ namespace Material
         case SH_ToolTipLabel_Opacity:
             return 255;
         case SH_Widget_Animation_Duration:
-            return Duration::Medium;
+            return MotionPolicy::instance()->duration(Duration::Medium);
         case SH_FocusFrame_AboveWidget:
             return 1;
         case SH_ScrollBar_Transient:
