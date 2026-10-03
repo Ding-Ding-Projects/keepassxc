@@ -192,7 +192,9 @@ void TestGui::cleanup()
     if (m_dbWidget && m_tabWidget->indexOf(m_dbWidget) >= 0) {
         m_tabWidget->setCurrentWidget(m_dbWidget);
         // DO NOT save the database
-        m_db->markAsClean();
+        if (const auto database = m_dbWidget->database()) {
+            database->markAsClean();
+        }
         MessageBox::setNextAnswer(MessageBox::No);
         triggerAction("actionDatabaseClose");
         QApplication::processEvents();
