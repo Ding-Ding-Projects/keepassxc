@@ -1,4 +1,5 @@
 #include "core/Config.h"
+#include "gui/MessageWidget.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialNotifier.h"
 #include "gui/material/MaterialSettingsScreen.h"
@@ -29,6 +30,8 @@ private slots:
         DimSum::resetLaunchState();
         config()->set(Config::GUI_DimSumSurprise, true);
         config()->set(Config::GUI_MinimizeOnStartup, false);
+        config()->set(Config::OpenPreviousDatabasesOnStartup, true);
+        config()->set(Config::LastOpenedDatabases, QStringList());
         config()->set(Config::LastDatabases, QStringList{QStringLiteral("synthetic-history-only.kdbx")});
         config()->set(Config::LastActiveDatabase, QString());
         config()->sync();
@@ -70,6 +73,71 @@ private slots:
         QVERIFY(!DimSum::shouldShow());
         QVERIFY(!DimSum::showNow(nullptr));
         QCOMPARE(environmentCalls, 0);
+    }
+    void restoredLaunch_data()
+    {
+        QTest::addColumn<bool>("restore");
+        QTest::addColumn<QStringList>("opened");
+        QTest::addColumn<QString>("active");
+        QTest::addColumn<bool>("eligible");
+        QTest::newRow("remembered-tab") << true << QStringList{"synthetic.kdbx"} << QString() << false;
+        QTest::newRow("last-active-only") << true << QStringList{} << QString("synthetic.kdbx") << false;
+        QTest::newRow("empty-records") << true << QStringList{QString()} << QString() << true;
+        QTest::newRow("restoration-disabled") << false << QStringList{"synthetic.kdbx"}
+                                               << QString("synthetic.kdbx") << true;
+    }
+    void restoredLaunch()
+    {
+        QFETCH(bool, restore);
+        QFETCH(QStringList, opened);
+        QFETCH(QString, active);
+        QFETCH(bool, eligible);
+        config()->set(Config::OpenPreviousDatabasesOnStartup, restore);
+        config()->set(Config::LastOpenedDatabases, opened);
+        config()->set(Config::LastActiveDatabase, active);
+        int draws = 0;
+        DimSum::s_random = [&](quint32) { ++draws; return 0; };
+        DimSum::beginStartup();
+        QCOMPARE(DimSum::shouldShow(), eligible);
+        QCOMPARE(draws, eligible ? 1 : 0);
+        // Finishing or cancelling restoration must not make a later task eligible.
+        config()->set(Config::LastOpenedDatabases, QStringList());
+        config()->set(Config::LastActiveDatabase, QString());
+        QCOMPARE(DimSum::shouldShow(), eligible);
+    }
+    void visibleMessageSeverityChange_data()
+    {
+        QTest::addColumn<int>("severity");
+        QTest::addColumn<bool>("excluded");
+        QTest::newRow("error") << int(MessageWidget::Error) << true;
+        QTest::newRow("warning") << int(MessageWidget::Warning) << true;
+        QTest::newRow("information") << int(MessageWidget::Information) << false;
+        QTest::newRow("positive") << int(MessageWidget::Positive) << false;
+    }
+    void visibleMessageSeverityChange()
+    {
+        QFETCH(int, severity);
+        QFETCH(bool, excluded);
+        QWidget host;
+        MessageWidget message(&host);
+        message.setAnimate(false);
+        message.showMessage(QStringLiteral("Synthetic information"), MessageWidget::Information, -1);
+        host.resize(640, 480);
+        host.show();
+        host.activateWindow();
+        QTRY_VERIFY(host.isActiveWindow());
+        QVERIFY(message.isVisible());
+        QVERIFY(DimSum::showNow(&host));
+        QPointer<DimSumCard> card = host.findChild<DimSumCard*>();
+        QVERIFY(card && card->isVisible());
+        message.showMessage(QStringLiteral("Synthetic replacement"),
+                            static_cast<MessageWidget::MessageType>(severity), -1);
+        QVERIFY(message.isVisible());
+        QCOMPARE(card && card->isVisible(), !excluded);
+        if (excluded) {
+            QTRY_VERIFY(card.isNull());
+            QVERIFY(!DimSum::shouldShow());
+        }
     }
     void preferenceOverridesWinningDraw()
     {
@@ -246,7 +314,9 @@ int main(int argc, char** argv)
     qputenv("KPXC_CONFIG_LOCAL", (isolated.path() + QStringLiteral("/local.ini")).toUtf8());
     qputenv("USERNAME", "dim-sum-test");
     qputenv("USER", "dim-sum-test");
-    QCoreApplication::setOrganizationName(QStringLiteral("KeePassXC-DimSum-Tests"));
+    const auto identity = QStringLiteral("KeePassXC-DimSum-Tests-") + QDir(isolated.path()).dirName();
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
     QApplication application(argc, argv);
     TestMaterialDimSum test;
     return QTest::qExec(&test, argc, argv);

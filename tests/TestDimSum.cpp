@@ -168,7 +168,9 @@ int main(int argc, char** argv)
     qputenv("KPXC_CONFIG_LOCAL", (isolated.path() + QStringLiteral("/local.ini")).toUtf8());
     qputenv("USERNAME", "dim-sum-test");
     qputenv("USER", "dim-sum-test");
-    QCoreApplication::setOrganizationName(QStringLiteral("KeePassXC-DimSum-Legacy-Tests"));
+    const auto identity = QStringLiteral("KeePassXC-DimSum-Legacy-Tests-") + QDir(isolated.path()).dirName();
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
     QApplication application(argc, argv);
     TestDimSum test;
     return QTest::qExec(&test, argc, argv);
