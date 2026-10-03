@@ -857,6 +857,105 @@
       "ownership": "native-product",
       "status": "source-present",
       "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.statistics",
+      "platform": "app",
+      "label": "Reports: database statistics",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.health",
+      "platform": "app",
+      "label": "Reports: password health",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.passkeys",
+      "platform": "app",
+      "label": "Reports: passkeys",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.browser-statistics",
+      "platform": "app",
+      "label": "Reports: browser statistics",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.hibp",
+      "platform": "app",
+      "label": "Reports: Have I Been Pwned",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.reports.entry-editor",
+      "platform": "app",
+      "label": "Reports: embedded entry editor",
+      "source": "src/gui/reports/ReportsDialog.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.create.metadata",
+      "platform": "app",
+      "label": "Create database: metadata",
+      "source": "src/gui/wizard/NewDatabaseWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.create.encryption",
+      "platform": "app",
+      "label": "Create database: encryption",
+      "source": "src/gui/wizard/NewDatabaseWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.create.database-key",
+      "platform": "app",
+      "label": "Create database: database key",
+      "source": "src/gui/wizard/NewDatabaseWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.import.select",
+      "platform": "app",
+      "label": "Import: source selection",
+      "source": "src/gui/wizard/ImportWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.wizard.import.review",
+      "platform": "app",
+      "label": "Import: review",
+      "source": "src/gui/wizard/ImportWizard.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
     }
   ]
 }

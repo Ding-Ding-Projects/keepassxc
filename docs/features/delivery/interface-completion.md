@@ -9,11 +9,11 @@ installed behavior, accessibility, or genuine current screenshots.
 
 [`scripts/feature-inventory-contract.mjs`](../../../scripts/feature-inventory-contract.mjs)
 is the hand-maintained authority, independent of runtime discovery. It names 89
-features, 95 distinct surfaces, and 998 capability subcontracts. Removing a runtime
+features, 106 distinct surfaces, and 998 capability subcontracts. Removing a runtime
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 94,810 surface/capability cells and 8,455 surface/feature
+The required matrix has 105,788 surface/capability cells and 8,455 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
 still needs applicable interaction and evidence. A reviewed capture may support
@@ -40,6 +40,16 @@ editing/preview; notifications, palette, appearance and regex; every application
 tab, collection, text-editing and rendered-element menu family; dropdowns; locks,
 support, authenticator, converter, local models, offline help, schedules and logo;
 and the three extension-download states.
+
+Report obligations separately name Statistics, Password Health, Passkeys, Browser
+Statistics and Have I Been Pwned, plus the embedded entry-editor stack page.
+Creation separately names Metadata, Encryption and Database Key; import separately
+names Selection and Review. The family rows remain, and conditional browser-report
+registrations remain obligations rather than silently disappearing with a build
+flag. The ReportsDialog and both wizard constructors have been checked for sibling
+page registrations. The import review's embedded CSV controls retain the existing
+CSV surface obligation; table widgets and report cards are content, not additional
+registered pages. Existing entry-editor section obligations also remain in force.
 
 Website overview, downloads, documentation, changelog, settings sections, tabs,
 dialogs, menus, dropdowns, regex, palette, appearance, notifications, locks,
@@ -129,6 +139,13 @@ duplicate combinations fail, including bilingual/dark/2/minimum. Individual axis
 examples cannot substitute for the combined matrix. The real capture review must
 also confirm that the declared dimensions are the surface's supported minimum
 and normal sizes; labels alone cannot establish that runtime fact.
+
+All 48 tuples must name the same `state` as the primary interaction. An empty
+state cannot replace a populated state at a difficult combination, even when its
+step tuples and receipt hashes agree. A different state needs its own full matrix;
+this validator does not discover or prove the complete required state inventory.
+Independent review must still establish that the selected states cover the actual
+surface behavior before accepting implementation.
 
 An interaction may list additional `{ "feature", "capability" }` records in
 `claims`, all for its exact surface. Reuse preserves every claim's tuple,

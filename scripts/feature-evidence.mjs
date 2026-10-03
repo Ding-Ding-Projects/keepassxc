@@ -170,6 +170,11 @@ function validateEvidenceRecord(row, options, matrixMember = false) {
     const covered = new Set(), sizes = new Map();
     for (const item of tuples) {
       if (!checkTuple(item) || !['normal', 'minimum'].includes(item.viewport)) continue;
+      // A simpler scene cannot stand in for the same scene at a harder tuple.
+      if (item.state !== interaction.tuple.state) {
+        add('layout matrix state differs from primary interaction');
+        continue;
+      }
       const key = `${item.language}/${item.theme}/${item.scale}/${item.viewport}`;
       if (covered.has(key)) add(`duplicate layout tuple: ${key}`);
       covered.add(key);
