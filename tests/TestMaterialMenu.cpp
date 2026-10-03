@@ -477,7 +477,9 @@ void TestMaterialMenu::selectBuilderFitsAndRestoresWidth()
     QVERIFY(builder && builder->isOpen());
     const QRect panelBounds(panel->mapToGlobal(QPoint()), panel->size());
     const QRect popupBounds(popup->mapToGlobal(QPoint()), popup->size());
-    QVERIFY2(popupBounds.contains(panelBounds), "The inline workbench must fit inside its owning popup");
+    QVERIFY2(popupBounds.contains(panelBounds), qPrintable(QStringLiteral("Popup %1,%2 %3x%4; panel %5,%6 %7x%8")
+        .arg(popupBounds.x()).arg(popupBounds.y()).arg(popupBounds.width()).arg(popupBounds.height())
+        .arg(panelBounds.x()).arg(panelBounds.y()).arg(panelBounds.width()).arg(panelBounds.height())));
     QVERIFY(popup->screen()->availableGeometry().contains(popupBounds));
     IconButton* close = nullptr;
     for (auto* candidate : builder->findChildren<IconButton*>())

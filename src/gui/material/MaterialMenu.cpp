@@ -419,6 +419,9 @@ namespace Material
             m_builder->setSheetTopMargin(0);
             m_builderAction = new QWidgetAction(m_menu);
             m_builderAction->setDefaultWidget(m_builderContainer);
+            // Publish the row only after its final size is known, so QMenu
+            // invalidates its cached action rectangles when it becomes visible.
+            m_builderAction->setVisible(false);
             const auto actions = m_menu->actions();
             QAction* searchAction = m_searchAction;
             if (!searchAction) {

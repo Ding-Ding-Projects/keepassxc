@@ -325,7 +325,7 @@ namespace Material
         if (!m_list || !m_search) {
             return;
         }
-        const QString needle = m_search->text().trimmed();
+        const QString needle = m_search->isRegexEnabled() ? m_search->text() : m_search->text().trimmed();
         m_filterError.clear();
         QRegularExpression pattern;
         const bool useRegex = m_search->isRegexEnabled() && !needle.isEmpty();
