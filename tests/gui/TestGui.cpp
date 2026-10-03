@@ -73,6 +73,7 @@
 #include "gui/material/MaterialShell.h"
 #include "gui/material/MaterialStyle.h"
 #include "gui/material/MaterialTheme.h"
+#include "gui/material/MaterialHistoryStore.h"
 #include "gui/passkeys/PasskeyImportDialog.h"
 #include "gui/group/EditGroupWidget.h"
 #include "gui/group/GroupModel.h"
@@ -1874,6 +1875,23 @@ void TestGui::testDragAndDropGroup()
     dragAndDropGroup(groupModel->index(1, 0, rootIndex), rootIndex, 0, true, "NewDatabase", 0);
 
     dragAndDropGroup(groupModel->index(0, 0, rootIndex), rootIndex, -1, true, "NewDatabase", 4);
+}
+
+void TestGui::testHistoryInitializationAfterUnlock()
+{
+    auto* history = Material::HistoryStore::instance();
+    const auto baseline = history->revisionsForDatabase(m_db);
+    QVERIFY(!baseline.isEmpty());
+    QString error;
+    QVERIFY2(!history->snapshot(baseline.first().id, &error).isEmpty(), qPrintable(error));
+    m_tabWidget->databaseUnlocked(m_dbWidget);
+    m_tabWidget->databaseUnlocked(m_dbWidget);
+    QCOMPARE(history->revisionsForDatabase(m_db).size(), baseline.size());
+    m_db->metadata()->setName("Editable after history initialization");
+    m_dbWidget->databaseSaved();
+    QCOMPARE(history->revisionsForDatabase(m_db).size(), baseline.size() + 1);
+    QCOMPARE(m_db->metadata()->name(), QString("Editable after history initialization"));
+    QVERIFY(m_db->isModified());
 }
 
 void TestGui::testSaveAs()

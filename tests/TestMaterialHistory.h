@@ -9,6 +9,9 @@ private slots:
     void detailCardDescribesTheCurrentRevision();
     void routeAndActionInventory();
     void gitStoreTransactionAndRestart();
+    void skipsHistoryBeforeDatabaseUnlock();
+    void recordsReadyDatabaseSnapshots_data();
+    void recordsReadyDatabaseSnapshots();
     void gitStoreFailureDoesNotAdvanceFingerprint();
     void gitStoreMigratesLegacyOnce();
     void gitStoreSerializesConcurrentWriters();

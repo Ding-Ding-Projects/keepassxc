@@ -242,6 +242,68 @@ void TestMaterialHistory::routeAndActionInventory()
     QVERIFY(screen.searchBar()->lineEdit()->accessibleDescription().contains(QStringLiteral("Invalid")));
 }
 
+void TestMaterialHistory::skipsHistoryBeforeDatabaseUnlock()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const auto path = QDir(root.path()).filePath(QStringLiteral("locked.kdbx"));
+    QVERIFY(QFile::copy(QStringLiteral(KEEPASSX_TEST_DATA_DIR) + QStringLiteral("/NewDatabase.kdbx"), path));
+    auto database = QSharedPointer<Database>::create();
+    QString error;
+    QVERIFY(database->open(path, nullptr, &error));
+    QVERIFY(!database->key());
+    const bool modified = database->isModified();
+    const auto name = database->metadata()->name();
+    HistoryStore store(root.path(), QStandardPaths::findExecutable(QStringLiteral("git")));
+    QVERIFY(!store.recordSave(database));
+    QVERIFY(store.revisionsForDatabase(database).isEmpty());
+    QCOMPARE(database->isModified(), modified);
+    QCOMPARE(database->metadata()->name(), name);
+    QCOMPARE(database->filePath(), path);
+    QVERIFY(database->open(path, materialHistoryTestKey(), &error));
+    database->metadata()->setName(QStringLiteral("Editable after unlock"));
+    QCOMPARE(database->metadata()->name(), QStringLiteral("Editable after unlock"));
+    QVERIFY(database->isModified());
+}
+
+void TestMaterialHistory::recordsReadyDatabaseSnapshots_data()
+{
+    QTest::addColumn<bool>("emptyKey");
+    QTest::newRow("password-key") << false;
+    QTest::newRow("empty-composite-key") << true;
+}
+
+void TestMaterialHistory::recordsReadyDatabaseSnapshots()
+{
+    QFETCH(bool, emptyKey);
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    auto database = QSharedPointer<Database>::create();
+    auto key = emptyKey ? QSharedPointer<CompositeKey>::create() : materialHistoryTestKey();
+    QVERIFY(database->setKey(key));
+    QVERIFY(!database->transformedDatabaseKey().isEmpty());
+    database->setFilePath(QDir(root.path()).filePath(QStringLiteral("new.kdbx")));
+    database->metadata()->setName(QStringLiteral("New editable database"));
+    HistoryStore store(root.path(), QStandardPaths::findExecutable(QStringLiteral("git")));
+    QVERIFY(store.recordSave(database));
+    const auto revisions = store.revisionsForDatabase(database);
+    QCOMPARE(revisions.size(), 1);
+    QString error;
+    const auto snapshot = store.snapshot(revisions.first().id, &error);
+    QVERIFY2(!snapshot.isEmpty(), qPrintable(error));
+    const auto snapshotPath = QDir(root.path()).filePath(QStringLiteral("snapshot.kdbx"));
+    QFile file(snapshotPath);
+    QVERIFY(file.open(QIODevice::WriteOnly));
+    QCOMPARE(file.write(snapshot), qint64(snapshot.size()));
+    file.close();
+    auto restored = QSharedPointer<Database>::create();
+    QVERIFY2(restored->open(snapshotPath, key, &error), qPrintable(error));
+    QCOMPARE(restored->metadata()->name(), QStringLiteral("New editable database"));
+    QVERIFY(database->isModified());
+    database->metadata()->setName(QStringLiteral("Still editable after snapshot"));
+    QCOMPARE(database->metadata()->name(), QStringLiteral("Still editable after snapshot"));
+}
+
 void TestMaterialHistory::gitStoreTransactionAndRestart()
 {
     QTemporaryDir root;
