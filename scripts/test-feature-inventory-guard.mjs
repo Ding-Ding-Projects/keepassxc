@@ -10,8 +10,11 @@ import { loadBundle, repoRoot, evaluateBundle, validateSchema, validateEvidence,
 import { sha256 } from './feature-evidence.mjs';
 import { FEATURE_CONTRACTS, SURFACE_CONTRACTS, CAPABILITY_IDS } from './feature-inventory-contract.mjs';
 
-let passed = 0;
-function check(name, body) { body(); passed++; process.stdout.write(`PASS ${name}\n`); }
+let passed = 0, failed = 0;
+function check(name, body) {
+  try { body(); passed++; process.stdout.write(`PASS ${name}\n`); }
+  catch (error) { failed++; process.stderr.write(`FAIL ${name}: ${error.message}\n`); }
+}
 const baseline = loadBundle();
 check('complete registries have valid schema but incomplete product', () => {
   const result = evaluateBundle(baseline, { root: repoRoot });
@@ -24,6 +27,7 @@ check('complete registries have valid schema but incomplete product', () => {
 // Independent examples pin the required behaviors, not only registry length.
 const requiredCapabilities = [
   'dim-sum-surprise/one-percent-per-launch-draw', 'dim-sum-surprise/persisted-off-switch',
+  'dim-sum-surprise/at-most-once-per-launch', 'dim-sum-surprise/no-mid-task-flow',
   'school-mode/live-propagation', 'school-mode/rename-everywhere',
   'narrator-voice-pickers/stable-identity', 'scheduled-settings/dst',
   'regex-builder/bounded-trace', 'regex-builder/conditionals-subroutines',
@@ -48,6 +52,24 @@ const requiredCapabilities = [
   'tab-searches/all-owned-windows', 'in-app-version-provenance/front-screen-before-navigation',
   'status-hub/verified-reply-route', 'element-motion/every-rendered-element',
 ];
+// Independently transcribed from concrete addPage/addSettingsPage registrations.
+// This list must not be generated from the production registry being tested.
+check('every registered settings and editor destination has its own obligation', () => {
+  const expected = [
+    'app.settings.general', 'app.settings.security', 'app.settings.browser',
+    'app.settings.shortcuts', 'app.settings.ssh-agent', 'app.settings.keeshare',
+    'app.settings.appearance', 'app.database.general', 'app.database.security',
+    'app.database.credentials', 'app.database.encryption', 'app.database.remote-sync',
+    'app.database.browser', 'app.database.keeshare', 'app.database.maintenance',
+    'app.entry.main', 'app.entry.attributes', 'app.entry.icons', 'app.entry.autotype',
+    'app.entry.browser', 'app.entry.ssh', 'app.entry.properties', 'app.entry.history',
+    'app.group.main', 'app.group.icon', 'app.group.properties', 'app.group.browser', 'app.group.keeshare',
+  ];
+  for (const id of expected) {
+    assert(SURFACE_CONTRACTS.some(surface => surface.id === id), `missing independently registered destination ${id}`);
+    assert(baseline.surfaces.rows.some(surface => surface.id === id), `missing inventory destination ${id}`);
+  }
+});
 check('handwritten acceptance examples remain registered', () => {
   for (const id of requiredCapabilities) assert(CAPABILITY_IDS.includes(id), `missing required example ${id}`);
   for (const id of ['app.database.credentials', 'app.entry.attributes', 'app.menus.text-editing',
@@ -164,6 +186,14 @@ try {
   evidenceMutation('wrong binary hash', (_r, x) => x.artifactSha256 = 'c'.repeat(64), 'artifact hash');
   evidenceMutation('receipt reused across surface', (_r, x) => x.surface = 'site.overview', 'another inventory cell');
   evidenceMutation('receipt reused across capability', (_r, x) => x.capability = 'bilingual', 'another inventory cell');
+  const claim = (r, x, feature, capability) => { r.feature = x.feature = feature; r.capability = x.capability = capability; };
+  evidenceMutation('dark capability rejects a light tuple', (r, x) => claim(r, x, 'clipping-matrix', 'dark'), 'capability tuple');
+  evidenceMutation('200 percent capability rejects scale one', (r, x) => claim(r, x, 'clipping-matrix', 'scale-200'), 'capability tuple');
+  evidenceMutation('Cantonese capability rejects English tuple', (r, x) => claim(r, x, 'clipping-matrix', 'cantonese'), 'capability tuple');
+  evidenceMutation('language mode capability rejects a different rendered language', (r, x) => claim(r, x, 'language-modes', 'cantonese'), 'capability tuple');
+  evidenceMutation('separate axis evidence cannot replace the combined layout matrix', (r, x) => {
+    claim(r, x, 'clipping-matrix', 'normal-minimum'); x.tuple.viewport = 'normal'; x.steps[0].tuple.viewport = 'normal';
+  }, 'required layout tuple missing: bilingual/dark/2/minimum');
   evidenceMutation('historical ledger schema', (_r, x) => x.schemaVersion = 0, 'schema');
   evidenceMutation('source preview is not built provenance', (_r, x) => x.method = 'source-preview', 'genuine');
   evidenceMutation('synthetic capture receipt', (_r, x) => x.synthetic = true, 'genuine');
@@ -229,4 +259,5 @@ check('CLI product mode remains red', () => {
   const result = spawnSync(process.execPath, ['scripts/check-feature-inventory.mjs', '--summary'], { cwd: repoRoot, encoding: 'utf8' });
   assert.equal(result.status, 1); assert.match(result.stdout, /0\/82668 current capability cells verified/);
 });
-process.stdout.write(`${passed} focused contract checks passed. All ${baseline.inventory.rows.length} feature rows, ${baseline.surfaces.rows.length} surfaces, and ${baseline.capabilities.contracts.length} capability removals were rejected. Product completeness remains incomplete.\n`);
+process.stdout.write(`${passed} focused contract checks passed; ${failed} failed. Registry inventory: ${baseline.inventory.rows.length} feature rows, ${baseline.surfaces.rows.length} surfaces, ${baseline.capabilities.contracts.length} capabilities. Product completeness remains incomplete.\n`);
+process.exitCode = failed ? 1 : 0;
