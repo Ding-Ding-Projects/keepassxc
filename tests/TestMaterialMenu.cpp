@@ -1,13 +1,16 @@
 #include "TestMaterialMenu.h"
 #include "gui/material/MaterialMenu.h"
 #include "gui/material/MaterialRegexBuilder.h"
+#include "gui/material/MaterialRegexSafety.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialSelect.h"
 #include "gui/material/MaterialVoice.h"
 
 #include <QApplication>
 #include <QDir>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMenu>
 #include <QPlainTextEdit>
 #include <QSignalSpy>
@@ -16,6 +19,7 @@
 #include <QTest>
 #include <QTimer>
 #include <QWidgetAction>
+#include <QVBoxLayout>
 #include <memory>
 
 using namespace Material;
@@ -246,6 +250,192 @@ void TestMaterialMenu::localizationAndSessionHistory()
     menu.close();
     QCOMPARE(controller->history(), QStringList{QStringLiteral("Unknown")});
     Voice::setLanguage(language);
+}
+
+void TestMaterialMenu::borrowedSearchFlagsReachExistingConsumer()
+{
+    QMenu menu;
+    auto* search = new SearchBar(&menu);
+    auto* row = new QWidgetAction(&menu);
+    row->setDefaultWidget(search);
+    menu.addAction(row);
+    auto* command = menu.addAction(QStringLiteral("COPY"));
+    // Existing menu owners consume textChanged, including re-applied patterns.
+    connect(search, &SearchBar::textChanged, &menu, [=](const QString& text) {
+        command->setVisible(!search->isRegexEnabled()
+            || QRegularExpression(text, optionsForFlags(search->regexFlags())).match(command->text()).hasMatch());
+    });
+    auto* controller = MenuSearch::attach(&menu);
+    controller->refresh();
+    search->setRegexEnabled(true);
+    search->setText(QStringLiteral("^copy$"));
+    QVERIFY(command->isVisible());
+    search->setRegexFlags(QString());
+    QVERIFY(!command->isVisible());
+    QCOMPARE(controller->resultCount(), 0);
+    search->setRegexFlags(QStringLiteral("i"));
+    QVERIFY(command->isVisible());
+    QCOMPARE(controller->resultCount(), 1);
+}
+
+void TestMaterialMenu::pendingCallbacksDoNotRefilterClosedMenu_data()
+{
+    QTest::addColumn<int>("change");
+    QTest::newRow("changed") << 0;
+    QTest::newRow("added") << 1;
+    QTest::newRow("removed") << 2;
+}
+
+void TestMaterialMenu::pendingCallbacksDoNotRefilterClosedMenu()
+{
+    QFETCH(int, change);
+    QObject owner;
+    QAction shared(QStringLiteral("Other"), &owner);
+    QMenu menu, second;
+    menu.addAction(&shared);
+    second.addAction(&shared);
+    auto* keep = menu.addAction(QStringLiteral("Keep"));
+    menu.popup(QPoint(40, 40));
+    auto* controller = MenuSearch::attach(&menu);
+    QTRY_VERIFY(controller->searchBar());
+    QCoreApplication::processEvents();
+    controller->searchBar()->setText(QStringLiteral("Keep"));
+    QVERIFY(!shared.isVisible());
+    if (change == 0) shared.setEnabled(false);
+    if (change == 1) menu.addAction(QStringLiteral("Added"));
+    if (change == 2) menu.removeAction(keep);
+    menu.close();
+    QVERIFY(shared.isVisible());
+    QCoreApplication::processEvents();
+    QVERIFY(shared.isVisible());
+    QVERIFY(second.actions().contains(&shared));
+}
+
+void TestMaterialMenu::matchLimitFailureDiscardsPartialResults()
+{
+    const QString pattern = QStringLiteral("(*NO_JIT)^(?:OK|(?:a?){30}a{30})$");
+    const QString expensive(30, QLatin1Char('a'));
+    QVERIFY(riskReport(pattern).isEmpty());
+    QRegularExpression expression(QStringLiteral("(*LIMIT_MATCH=10000)(*LIMIT_DEPTH=128)") + pattern,
+                                  optionsForFlags(QStringLiteral("i")));
+    QVERIFY(expression.isValid());
+    QVERIFY(expression.match(QStringLiteral("OK")).hasMatch());
+    QVERIFY(!expression.match(expensive).isValid());
+    QMenu menu;
+    auto* earlyMatch = menu.addAction(QStringLiteral("OK"));
+    menu.addAction(expensive);
+    auto* controller = MenuSearch::attach(&menu);
+    controller->refresh();
+    controller->searchBar()->setRegexEnabled(true);
+    controller->searchBar()->setText(pattern);
+    QCOMPARE(controller->resultCount(), 0);
+    QVERIFY(!earlyMatch->isVisible());
+    auto* status = menu.findChild<QLabel*>(QStringLiteral("materialMenuSearchStatus"));
+    QVERIFY(status);
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("menu.result-limit"), Voice::Category::Error));
+}
+
+void TestMaterialMenu::selectKeepsKeyboardNavigation()
+{
+    Select select;
+    select.addItem(QStringLiteral("Apple"));
+    select.addItem(QStringLiteral("Banana"));
+    select.addItem(QStringLiteral("Cherry"));
+    select.show();
+    select.showPopup();
+    QCoreApplication::processEvents();
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Down);
+    QCOMPARE(select.listWidget()->currentRow(), 1);
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Down);
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Up);
+    QCOMPARE(select.listWidget()->currentRow(), 1);
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Return);
+    QCOMPARE(select.currentIndex(), 1);
+    QVERIFY(!select.isPopupOpen());
+}
+
+void TestMaterialMenu::selectKeepsClearFirstEscape()
+{
+    Select select;
+    select.addItem(QStringLiteral("Apple"));
+    select.addItem(QStringLiteral("Banana"));
+    select.show();
+    select.showPopup();
+    select.searchBar()->setText(QStringLiteral("Ban"));
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Escape);
+    QVERIFY(select.isPopupOpen());
+    QVERIFY(select.searchBar()->text().isEmpty());
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Escape);
+    QVERIFY(!select.isPopupOpen());
+}
+
+void TestMaterialMenu::selectStatusCountsItsChoices()
+{
+    Select select;
+    select.addItem(QStringLiteral("Apple"));
+    select.addItem(QStringLiteral("Banana"));
+    select.show();
+    select.showPopup();
+    auto* controller = MenuSearch::attach(select.popup());
+    QCOMPARE(controller->resultCount(), 2);
+    select.searchBar()->setText(QStringLiteral("Ban"));
+    QCOMPARE(controller->resultCount(), 1);
+    auto* status = select.popup()->findChild<QLabel*>(QStringLiteral("materialMenuSearchStatus"));
+    QVERIFY(status);
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("menu.match-count"),
+                                      {{QStringLiteral("count"), 1}}, Voice::Category::Info));
+    select.searchBar()->setText(QStringLiteral("No such choice"));
+    QCOMPARE(controller->resultCount(), 0);
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("menu.no-matches")));
+    select.hidePopup();
+}
+
+void TestMaterialMenu::removedSharedActionRestoresVisibility()
+{
+    QObject owner;
+    QAction shared(QStringLiteral("Other"), &owner);
+    shared.setCheckable(true);
+    shared.setChecked(true);
+    shared.setShortcut(QKeySequence(QStringLiteral("Ctrl+Y")));
+    QMenu menu, second;
+    menu.addAction(&shared);
+    second.addAction(&shared);
+    menu.addAction(QStringLiteral("Keep"));
+    menu.popup(QPoint(40, 40));
+    auto* controller = MenuSearch::attach(&menu);
+    QTRY_VERIFY(controller->searchBar());
+    controller->searchBar()->setText(QStringLiteral("Keep"));
+    QVERIFY(!shared.isVisible());
+    menu.removeAction(&shared);
+    menu.close();
+    QCoreApplication::processEvents();
+    QVERIFY(shared.isVisible());
+    QCOMPARE(shared.parent(), &owner);
+    QVERIFY(shared.isEnabled());
+    QVERIFY(shared.isChecked());
+    QCOMPARE(shared.shortcut(), QKeySequence(QStringLiteral("Ctrl+Y")));
+    QVERIFY(second.actions().contains(&shared));
+}
+
+void TestMaterialMenu::dynamicRefreshReturnsFocusToOpener()
+{
+    QWidget host;
+    auto* layout = new QVBoxLayout(&host);
+    auto* opener = new QLineEdit(&host);
+    layout->addWidget(opener);
+    host.show();
+    host.activateWindow();
+    opener->setFocus();
+    QTRY_VERIFY(opener->hasFocus());
+    QMenu menu(&host);
+    menu.addAction(QStringLiteral("Original"));
+    menu.popup(QPoint(40, 40));
+    auto* controller = MenuSearch::attach(&menu);
+    QTRY_VERIFY(controller->searchBar()->lineEdit()->hasFocus());
+    menu.addAction(QStringLiteral("Dynamic"));
+    QCoreApplication::processEvents();
+    menu.close();
+    QTRY_VERIFY(opener->hasFocus());
 }
 
 int main(int argc, char** argv)

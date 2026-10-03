@@ -16,5 +16,14 @@ private slots:
     void nestedMenusAndStandardEditorMenus();
     void inlineFullBuilderPreservesExecAndLifetime();
     void localizationAndSessionHistory();
+    void borrowedSearchFlagsReachExistingConsumer();
+    void pendingCallbacksDoNotRefilterClosedMenu_data();
+    void pendingCallbacksDoNotRefilterClosedMenu();
+    void matchLimitFailureDiscardsPartialResults();
+    void selectKeepsKeyboardNavigation();
+    void selectKeepsClearFirstEscape();
+    void selectStatusCountsItsChoices();
+    void removedSharedActionRestoresVisibility();
+    void dynamicRefreshReturnsFocusToOpener();
 };
 #endif
