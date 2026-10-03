@@ -16,6 +16,7 @@
  */
 
 #include "MaterialControls.h"
+#include "MaterialMotion.h"
 
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -64,9 +65,8 @@ namespace Material
         }
 
         /** The hover / pressed circle behind a selection control. */
-        void paintStateLayer(QPainter& painter, const QPoint& centre, bool hovered, bool pressed, const QColor& tint)
+        void paintStateLayer(QPainter& painter, const QPoint& centre, qreal alpha, const QColor& tint)
         {
-            const qreal alpha = pressed ? PressedAlpha : (hovered ? HoverAlpha : 0.0);
             if (alpha <= 0.0) {
                 return;
             }
@@ -188,6 +188,7 @@ namespace Material
     void CheckBox::init()
     {
         setAttribute(Qt::WA_Hover);
+        MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
         setFont(theme()->font(TypeRole::BodyMedium));
         connect(theme(), &Theme::changed, this, [this] {
@@ -234,13 +235,13 @@ namespace Material
         const bool on = checkState() != Qt::Unchecked;
         const QColor tint = theme()->color(on ? Role::Primary : Role::OnSurface);
         const QPoint centre(StateLayer / 2, height() / 2);
-        paintStateLayer(painter, centre, m_hovered, isDown(), tint);
+        paintStateLayer(painter, centre, MotionState::opacity(this), tint);
 
         const QRect box(centre.x() - CheckSize / 2, centre.y() - CheckSize / 2, CheckSize, CheckSize);
         painter.setOpacity(isEnabled() ? 1.0 : DisabledOpacity);
         if (on) {
             painter.setPen(Qt::NoPen);
-            painter.setBrush(theme()->color(Role::Primary));
+            painter.setBrush(withAlpha(theme()->color(Role::Primary), 0.5 + 0.5 * MotionState::selection(this, on)));
             painter.drawRoundedRect(box, CheckRadius, CheckRadius);
             const QString glyph =
                 checkState() == Qt::PartiallyChecked ? QStringLiteral("remove") : QStringLiteral("check");
@@ -277,6 +278,7 @@ namespace Material
     void RadioButton::init()
     {
         setAttribute(Qt::WA_Hover);
+        MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
         setFont(theme()->font(TypeRole::BodyMedium));
         connect(theme(), &Theme::changed, this, [this] {
@@ -323,7 +325,7 @@ namespace Material
         const bool on = isChecked();
         const QColor tint = theme()->color(on ? Role::Primary : Role::OnSurface);
         const QPoint centre(StateLayer / 2, height() / 2);
-        paintStateLayer(painter, centre, m_hovered, isDown(), tint);
+        paintStateLayer(painter, centre, MotionState::opacity(this), tint);
 
         painter.setOpacity(isEnabled() ? 1.0 : DisabledOpacity);
         painter.setPen(QPen(theme()->color(on ? Role::Primary : Role::OnSurfaceVariant), 2));
@@ -332,7 +334,8 @@ namespace Material
         if (on) {
             painter.setPen(Qt::NoPen);
             painter.setBrush(theme()->color(Role::Primary));
-            painter.drawEllipse(centre, RadioDot / 2, RadioDot / 2);
+            painter.drawEllipse(QPointF(centre), (RadioDot / 2.0) * MotionState::selection(this, on),
+                                (RadioDot / 2.0) * MotionState::selection(this, on));
         }
         painter.setOpacity(1.0);
 
@@ -359,6 +362,7 @@ namespace Material
             update();
         });
         connect(this, &QProgressBar::valueChanged, this, [this] { syncSweep(); });
+        connect(MotionPolicy::instance(), &MotionPolicy::changed, this, [this] { syncSweep(); update(); });
         connect(theme(), &Theme::changed, this, [this] { update(); });
     }
 
@@ -388,13 +392,19 @@ namespace Material
     void LinearProgress::syncSweep()
     {
         const bool indeterminate = minimum() == 0 && maximum() == 0;
-        if (indeterminate && isVisible()) {
+        if (indeterminate && isVisible() && isEnabled() && !MotionPolicy::instance()->reducedMotion()) {
             if (!m_sweep->isActive()) {
                 m_sweep->start();
             }
         } else if (m_sweep->isActive()) {
             m_sweep->stop();
         }
+    }
+
+    void LinearProgress::changeEvent(QEvent* event)
+    {
+        QProgressBar::changeEvent(event);
+        if (event->type() == QEvent::EnabledChange) syncSweep();
     }
 
     void LinearProgress::showEvent(QShowEvent* event)
@@ -436,7 +446,7 @@ namespace Material
         painter.setBrush(theme()->color(Role::Primary));
         if (minimum() == 0 && maximum() == 0) {
             // A segment that grows from the left and shrinks into the right.
-            const qreal t = m_phase / qreal(SweepPeriodMs);
+            const qreal t = MotionPolicy::instance()->reducedMotion() ? 0.5 : m_phase / qreal(SweepPeriodMs);
             const qreal head = qMin(1.0, t * 1.5);
             const qreal tail = qMax(0.0, (t - 0.35) * 1.55);
             const QRectF segment(
@@ -553,6 +563,7 @@ namespace Material
         : QComboBox(parent)
     {
         setAttribute(Qt::WA_Hover);
+        MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
         setMinimumHeight(FieldHeight);
         setFont(theme()->font(TypeRole::BodyLarge));
@@ -631,6 +642,7 @@ namespace Material
         : QToolButton(parent)
     {
         setAttribute(Qt::WA_Hover);
+        MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
         setAutoRaise(true);
         setFont(theme()->font(TypeRole::LabelMedium));
@@ -698,7 +710,7 @@ namespace Material
             painter.setBrush(theme()->color(Role::SecondaryContainer));
             painter.drawRoundedRect(container, radius, radius);
         }
-        const qreal alpha = isDown() ? PressedAlpha : (m_hovered ? HoverAlpha : 0.0);
+        const qreal alpha = MotionState::opacity(this);
         if (alpha > 0.0) {
             painter.setBrush(withAlpha(tint, alpha));
             painter.drawRoundedRect(container, radius, radius);

@@ -17,9 +17,14 @@
 #include <QAction>
 
 #include <QApplication>
+#include <QStandardPaths>
+#include <QTemporaryDir>
+#include <QUuid>
 #include <QMenu>
 #include <QLineEdit>
 #include <QSignalSpy>
+#include <QSplitter>
+#include <QStackedWidget>
 #include <QToolButton>
 #include <QScrollBar>
 #include <QWheelEvent>
@@ -220,6 +225,8 @@ void TestMaterialShellResponsive::emitsOnlyOnBreakpointTransitions()
 
 void TestMaterialShellResponsive::appliesVaultPaneContract()
 {
+    // Establish first-run state before any construction or visibility event.
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
     VaultScreen vault;
     vault.resize(1500, 800);
     vault.show();
@@ -227,7 +234,6 @@ void TestMaterialShellResponsive::appliesVaultPaneContract()
 
     // With no remembered splitter the reference widths apply; the panes are
     // user-resizable from there, never fixed.
-    config()->remove(Config::GUI_MaterialVaultSplitterState);
     vault.setBreakpoint(Breakpoint::ExtraLarge);
     QApplication::processEvents();
     QVERIFY(vault.groupPaneVisible());
@@ -270,6 +276,109 @@ void TestMaterialShellResponsive::appliesVaultPaneContract()
     QVERIFY(!vault.detailPaneInline());
     QVERIFY(vault.groupScopeButton()->isVisible());
     QVERIFY(vault.detailSheetButton()->isVisible());
+}
+
+void TestMaterialShellResponsive::initializesVaultPanesWhenFirstVisible_data()
+{
+    QTest::addColumn<Breakpoint>("breakpoint");
+    QTest::addColumn<bool>("setWhileHidden");
+    QTest::addColumn<int>("sidebarWidth");
+    QTest::addColumn<int>("detailWidth");
+    QTest::newRow("default-extra-large") << Breakpoint::ExtraLarge << false << 250 << 392;
+    QTest::newRow("same-breakpoint-while-hidden") << Breakpoint::ExtraLarge << true << 250 << 392;
+    QTest::newRow("changed-breakpoint-while-hidden") << Breakpoint::Large << true << 216 << 360;
+}
+
+void TestMaterialShellResponsive::initializesVaultPanesWhenFirstVisible()
+{
+    QFETCH(Breakpoint, breakpoint);
+    QFETCH(bool, setWhileHidden);
+    QFETCH(int, sidebarWidth);
+    QFETCH(int, detailWidth);
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
+    VaultScreen vault;
+    vault.resize(1500, 800);
+    QVERIFY(!vault.isVisible());
+    if (setWhileHidden) vault.setBreakpoint(breakpoint);
+    vault.show();
+    QApplication::processEvents();
+    QCOMPARE(vault.sidebar()->width(), sidebarWidth);
+    QCOMPARE(vault.detail()->width(), detailWidth);
+    auto* splitter = vault.findChild<QSplitter*>(QStringLiteral("materialVaultPanes"));
+    QVERIFY(splitter);
+    const auto initialSizes = splitter->sizes();
+    vault.setBreakpoint(breakpoint);
+    QApplication::processEvents();
+    QCOMPARE(splitter->sizes(), initialSizes);
+    QVERIFY(config()->get(Config::GUI_MaterialVaultSplitterState).toByteArray().isEmpty());
+}
+
+void TestMaterialShellResponsive::initializesVaultPanesAfterHiddenPage()
+{
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
+    QStackedWidget pages;
+    pages.addWidget(new QWidget);
+    auto* vault = new VaultScreen;
+    pages.addWidget(vault);
+    pages.resize(1500, 800);
+    pages.show();
+    QApplication::processEvents();
+    QVERIFY(!vault->isVisible());
+    vault->setBreakpoint(Breakpoint::ExtraLarge);
+    pages.setCurrentWidget(vault);
+    QApplication::processEvents();
+    QCOMPARE(vault->sidebar()->width(), 250);
+    QCOMPARE(vault->detail()->width(), 392);
+
+    auto* splitter = vault->findChild<QSplitter*>(QStringLiteral("materialVaultPanes"));
+    QVERIFY(splitter);
+    // A subsequent show or same-breakpoint update must not repeat first-run sizing.
+    splitter->setSizes({310, splitter->width() - 310 - 430 - 2 * splitter->handleWidth(), 430});
+    const auto chosenSizes = splitter->sizes();
+    pages.setCurrentIndex(0);
+    pages.setCurrentWidget(vault);
+    vault->setBreakpoint(Breakpoint::ExtraLarge);
+    QApplication::processEvents();
+    QCOMPARE(splitter->sizes(), chosenSizes);
+}
+
+void TestMaterialShellResponsive::restoresRememberedVaultWidthsOnFirstShow()
+{
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
+    QByteArray saved;
+    QList<int> expected;
+    {
+        VaultScreen previous;
+        previous.resize(1500, 800);
+        previous.show();
+        QApplication::processEvents();
+        auto* splitter = previous.findChild<QSplitter*>(QStringLiteral("materialVaultPanes"));
+        QVERIFY(splitter);
+        splitter->setSizes({310, splitter->width() - 310 - 430 - 2 * splitter->handleWidth(), 430});
+        expected = splitter->sizes();
+        QCOMPARE(expected.at(0), 310);
+        QCOMPARE(expected.at(2), 430);
+        saved = splitter->saveState();
+    }
+    // Seed a real QSplitter state before constructing the replacement screen.
+    config()->set(Config::GUI_MaterialVaultSplitterState, saved);
+    VaultScreen restored;
+    restored.resize(1500, 800);
+    restored.setBreakpoint(Breakpoint::ExtraLarge);
+    restored.show();
+    QApplication::processEvents();
+    auto* splitter = restored.findChild<QSplitter*>(QStringLiteral("materialVaultPanes"));
+    QVERIFY(splitter);
+    QCOMPARE(splitter->sizes(), expected);
+    restored.setBreakpoint(Breakpoint::ExtraLarge);
+    restored.hide();
+    restored.show();
+    restored.resize(1600, 800);
+    QApplication::processEvents();
+    QCOMPARE(restored.sidebar()->width(), 310);
+    QCOMPARE(restored.detail()->width(), 430);
+    QCOMPARE(config()->get(Config::GUI_MaterialVaultSplitterState).toByteArray(), saved);
+    config()->remove(Config::GUI_MaterialVaultSplitterState);
 }
 
 void TestMaterialShellResponsive::appBarFoldsActionsIntoOverflow()
@@ -382,4 +491,21 @@ void TestMaterialShellResponsive::settingsSwitchRowsToggleAndStayInStep()
     QVERIFY(!toggle->isChecked());
 }
 
-QTEST_MAIN(TestMaterialShellResponsive)
+int main(int argc, char** argv)
+{
+    QStandardPaths::setTestModeEnabled(true);
+    const QString identity = QStringLiteral("TestMaterialShellResponsive-%1").arg(QUuid::createUuid().toString(QUuid::Id128));
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
+    qputenv("USERNAME", identity.toLatin1());
+    qputenv("USER", identity.toLatin1());
+    QTemporaryDir profile;
+    if (!profile.isValid()) return 1;
+    qputenv("KPXC_CONFIG", profile.filePath(QStringLiteral("roaming.ini")).toUtf8());
+    qputenv("KPXC_CONFIG_LOCAL", profile.filePath(QStringLiteral("local.ini")).toUtf8());
+    QApplication application(argc, argv);
+    Config::createConfigFromFile(profile.filePath(QStringLiteral("roaming.ini")),
+                                 profile.filePath(QStringLiteral("local.ini")));
+    TestMaterialShellResponsive tests;
+    return QTest::qExec(&tests, argc, argv);
+}

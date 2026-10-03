@@ -16,6 +16,7 @@
  */
 
 #include "MaterialChip.h"
+#include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 
@@ -55,8 +56,6 @@ namespace Material
         constexpr int PillPadding = 14;
         constexpr int PillMaxWidth = 320;
 
-        constexpr qreal HoverAlpha = 0.08;
-        constexpr qreal PressedAlpha = 0.12;
         constexpr qreal DisabledOpacity = 0.38;
 
         /** The 12px medium label the pills use, in mono for the Mono kind. */
@@ -141,6 +140,7 @@ namespace Material
     {
         setText(text);
         setAttribute(Qt::WA_Hover);
+        MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
         setFocusPolicy(Qt::StrongFocus);
         setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
@@ -320,9 +320,9 @@ namespace Material
         painter.setRenderHint(QPainter::Antialiasing);
         paintSurface(&painter, rect(), m_radius, fill, border);
 
-        if (isEnabled() && (isDown() || m_hovered)) {
+        if (isEnabled() && MotionState::opacity(this) > 0.0) {
             paintStateLayer(
-                &painter, rect(), m_radius, theme()->color(Role::OnSurface), isDown() ? PressedAlpha : HoverAlpha);
+                &painter, rect(), m_radius, theme()->color(Role::OnSurface), MotionState::opacity(this));
         }
 
         if (!isEnabled()) {

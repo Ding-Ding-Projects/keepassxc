@@ -18,6 +18,8 @@
 #include "MaterialSettingsScreen.h"
 
 #include "MaterialAppearanceEditor.h"
+#include "MaterialMotion.h"
+#include <QSignalBlocker>
 #include "MaterialSelect.h"
 #include "MaterialSlider.h"
 
@@ -599,6 +601,57 @@ namespace Material
         content->addWidget(m_themeSegment);
         content->addSpacing(18);
         haystack << tr("Light") << tr("Dark");
+
+        auto addMotionPreference = [this, content, &haystack](Config::ConfigKey key, const QString& id,
+                                                               const QString& textKey, const QString& descriptionKey) {
+            auto* row = new QWidget;
+            auto* layout = new QHBoxLayout(row);
+            layout->setContentsMargins(0, 8, 0, 8);
+            auto* labels = new QVBoxLayout;
+            auto* title = makeLabel(QString(), TypeRole::BodyMedium, Role::OnSurface, row, true);
+            auto* description = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurfaceVariant, row, true);
+            labels->addWidget(title);
+            labels->addWidget(description);
+            layout->addLayout(labels, 1);
+            auto* toggle = new Switch(row);
+            toggle->setObjectName(id);
+            layout->addWidget(toggle, 0, Qt::AlignVCenter);
+            auto refresh = [key, textKey, descriptionKey, title, description, toggle] {
+                title->setText(Voice::say(textKey));
+                description->setText(Voice::say(descriptionKey));
+                toggle->setAccessibleName(title->text());
+                toggle->setAccessibleDescription(description->text());
+                const QSignalBlocker blocker(toggle);
+                toggle->setChecked(config()->get(key).toBool());
+            };
+            refresh();
+            connect(toggle, &QAbstractButton::toggled, this, [key](bool checked) { config()->set(key, checked); });
+            connect(config(), &Config::changed, row, [refresh, key](Config::ConfigKey changed) {
+                if (changed == key) refresh();
+            });
+            connect(Voice::notifier(), &Voice::Notifier::changed, row, refresh);
+            content->addWidget(row);
+            for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
+                haystack << Voice::preview(language, 1, 1, textKey).joined()
+                         << Voice::preview(language, 1, 1, descriptionKey).joined();
+            }
+        };
+        addMotionPreference(Config::GUI_ReducedMotion, QStringLiteral("appearanceReducedMotion"),
+                            QStringLiteral("motion.reduced.label"), QStringLiteral("motion.reduced.description"));
+        addMotionPreference(Config::GUI_LowStimulation, QStringLiteral("appearanceLowStimulation"),
+                            QStringLiteral("motion.low.label"), QStringLiteral("motion.low.description"));
+        auto* motionStatus = makeLabel(QString(), TypeRole::BodySmall, Role::OnSurfaceVariant, card, true);
+        motionStatus->setObjectName(QStringLiteral("appearanceMotionStatus"));
+        auto refreshMotionStatus = [motionStatus] {
+            motionStatus->setText(Voice::say(MotionPolicy::instance()->systemReducedMotion()
+                ? QStringLiteral("motion.status.system") : MotionPolicy::instance()->reducedMotion()
+                ? QStringLiteral("motion.status.reduced") : QStringLiteral("motion.status.standard")));
+        };
+        refreshMotionStatus();
+        connect(MotionPolicy::instance(), &MotionPolicy::changed, motionStatus, refreshMotionStatus);
+        connect(Voice::notifier(), &Voice::Notifier::changed, motionStatus, refreshMotionStatus);
+        content->addWidget(motionStatus);
+        content->addSpacing(18);
 
         content->addWidget(caption(tr("Seed colour")));
         content->addSpacing(8);

@@ -107,6 +107,8 @@ public:
         GUI_SearchWaitForEnter,
         GUI_ShowExpiredEntriesOnDatabaseUnlock,
         GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays,
+        GUI_ReducedMotion,
+        GUI_LowStimulation,
         GUI_FontSizeOffset,
         GUI_FontFamily,
         GUI_FontScale,

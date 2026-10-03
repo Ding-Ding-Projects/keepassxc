@@ -16,6 +16,7 @@
  */
 
 #include "MaterialTabStrip.h"
+#include "MaterialMotion.h"
 
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
@@ -102,6 +103,9 @@ namespace Material
         : QWidget(parent)
     {
         setFixedHeight(Layout::TabStripHeight);
+        m_selectionMotion = new MotionTransition(this);
+        m_selectionMotion->snapTo(1.0);
+        connect(m_selectionMotion, &MotionTransition::valueChanged, this, [this] { update(); });
         setMouseTracking(true);
         setFocusPolicy(Qt::StrongFocus);
         setAccessibleName(tr("Open database tabs"));
@@ -269,6 +273,8 @@ namespace Material
             return;
         }
         m_currentIndex = index;
+        m_selectionMotion->snapTo(0.0);
+        m_selectionMotion->animateTo(1.0, Duration::Medium);
         // The active tab is never allowed to hide in the overflow menu.
         relayout();
         update();
@@ -542,7 +548,9 @@ namespace Material
             if (active) {
                 // Merges with the content below: same colour, and it covers the
                 // strip's bottom hairline.
-                painter.fillPath(fillPath, activeFill);
+                QColor animatedFill = activeFill;
+                animatedFill.setAlphaF(0.5 + 0.5 * m_selectionMotion->value());
+                painter.fillPath(fillPath, animatedFill);
             } else if (i == m_hoverIndex) {
                 painter.fillPath(fillPath, hoverFill);
             }
@@ -680,6 +688,8 @@ namespace Material
 
         if (index >= 0 && !m_pressedClose && index != m_currentIndex) {
             m_currentIndex = index;
+            m_selectionMotion->snapTo(0.0);
+            m_selectionMotion->animateTo(1.0, Duration::Medium);
             relayout();
             emit tabSelected(m_tabs.at(m_currentIndex).id);
         }

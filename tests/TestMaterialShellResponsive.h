@@ -11,6 +11,10 @@ private slots:
     void preservesDestinationAccessAcrossBreakpoints();
     void emitsOnlyOnBreakpointTransitions();
     void appliesVaultPaneContract();
+    void initializesVaultPanesWhenFirstVisible_data();
+    void initializesVaultPanesWhenFirstVisible();
+    void initializesVaultPanesAfterHiddenPage();
+    void restoresRememberedVaultWidthsOnFirstShow();
     void appBarFoldsActionsIntoOverflow();
     void fallbackSearchesAreIndependentAndRestoreFocus();
     void settingsPageScrollsFromContentAndContainsScrollbar();

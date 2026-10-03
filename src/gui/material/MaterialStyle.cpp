@@ -16,6 +16,7 @@
  */
 
 #include "MaterialStyle.h"
+#include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
@@ -112,7 +113,7 @@ namespace Material
          * filled primary shape carrying an onPrimary glyph; the whole thing fades
          * to 38% when the control is disabled.
          */
-        void paintIndicator(QPainter* painter, const QStyleOption* option, bool radio)
+        void paintIndicator(QPainter* painter, const QStyleOption* option, bool radio, const QWidget* widget)
         {
             const QRect box = indicatorRect(option->rect);
             if (box.width() < 4) {
@@ -130,7 +131,9 @@ namespace Material
             }
 
             if (on || partial) {
-                painter->fillPath(roundedPath(QRectF(box), radius), theme()->color(Role::Primary));
+                QColor fill = theme()->color(Role::Primary);
+                fill.setAlphaF(0.5 + 0.5 * MotionState::selection(widget, on || partial));
+                painter->fillPath(roundedPath(QRectF(box), radius), fill);
 
                 const QColor glyph = theme()->color(Role::OnPrimary);
                 if (radio) {
@@ -219,6 +222,7 @@ namespace Material
 
         if (qobject_cast<QAbstractButton*>(widget) || qobject_cast<QComboBox*>(widget)) {
             enableHover(widget);
+            MotionState::attach(widget);
         }
 
         if (auto* view = qobject_cast<QAbstractItemView*>(widget)) {
@@ -379,7 +383,7 @@ namespace Material
         case SH_ToolTipLabel_Opacity:
             return 255;
         case SH_Widget_Animation_Duration:
-            return Duration::Medium;
+            return MotionPolicy::instance()->duration(Duration::Medium);
         case SH_FocusFrame_AboveWidget:
             return 1;
         case SH_ScrollBar_Transient:
@@ -435,10 +439,10 @@ namespace Material
             return;
         }
         case PE_IndicatorCheckBox:
-            paintIndicator(painter, option, false);
+            paintIndicator(painter, option, false, widget);
             return;
         case PE_IndicatorRadioButton:
-            paintIndicator(painter, option, true);
+            paintIndicator(painter, option, true, widget);
             return;
         case PE_PanelItemViewRow:
             // The row fill belongs to the item panel, which draws it rounded.

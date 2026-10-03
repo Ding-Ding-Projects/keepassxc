@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSnackbar.h"
+#include "MaterialMotion.h"
 
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -27,7 +28,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPropertyAnimation>
+
 #include <QRegion>
 #include <QTimer>
 
@@ -67,19 +68,7 @@ namespace Material
         constexpr qreal HoverAlpha = 0.12;
         constexpr qreal TrackAlpha = 0.24;
 
-        /**
-         * The toastIn curve, cubic-bezier(.38, 1.21, .22, 1).
-         *
-         * Its own curve rather than the emphasised sheet one: the second control
-         * point sits above 1, so a toast overshoots its resting place and settles
-         * back instead of easing straight into it.
-         */
-        QEasingCurve toastCurve()
-        {
-            QEasingCurve curve(QEasingCurve::BezierSpline);
-            curve.addCubicBezierSegment(QPointF(0.38, 1.21), QPointF(0.22, 1.0), QPointF(1.0, 1.0));
-            return curve;
-        }
+
 
         /**
          * Primary resolved against the inverse surface. An information toast
@@ -215,12 +204,13 @@ namespace Material
         m_lifetime->setSingleShot(true);
         connect(m_lifetime, &QTimer::timeout, this, &Snackbar::dismiss);
 
-        m_animation = new QPropertyAnimation(this, "transition", this);
-        connect(m_animation, &QPropertyAnimation::finished, this, [this] {
+        m_animation = new MotionTransition(this);
+        connect(m_animation, &MotionTransition::valueChanged, this, &Snackbar::setTransition);
+        connect(m_animation, &MotionTransition::settled, this, [this] {
             if (m_dismissing) {
                 emit dismissed();
                 deleteLater();
-            } else {
+            } else if (isVisible()) {
                 resumeTimer();
             }
         });
@@ -355,12 +345,7 @@ namespace Material
     void Snackbar::animateIn()
     {
         show();
-        m_animation->stop();
-        m_animation->setDuration(Duration::Long);
-        m_animation->setEasingCurve(toastCurve());
-        m_animation->setStartValue(m_transition);
-        m_animation->setEndValue(1.0);
-        m_animation->start();
+        m_animation->animateTo(1.0, Duration::Long);
 
 #ifndef QT_NO_ACCESSIBILITY
         // Announced as an alert so a screen reader reads it without the user
@@ -377,12 +362,20 @@ namespace Material
         }
         m_dismissing = true;
         m_lifetime->stop();
-        m_animation->stop();
-        m_animation->setDuration(Duration::Short);
-        m_animation->setEasingCurve(QEasingCurve::Linear);
-        m_animation->setStartValue(m_transition);
-        m_animation->setEndValue(0.0);
-        m_animation->start();
+        m_animation->animateTo(0.0, Duration::Short);
+    }
+
+    void Snackbar::showEvent(QShowEvent* event)
+    {
+        QWidget::showEvent(event);
+        resumeTimer();
+    }
+
+    void Snackbar::hideEvent(QHideEvent* event)
+    {
+        QWidget::hideEvent(event);
+        m_lifetime->stop();
+        m_animation->finish();
     }
 
     void Snackbar::paintEvent(QPaintEvent* event)
@@ -603,7 +596,8 @@ namespace Material
 
     void Snackbar::resumeTimer()
     {
-        if (m_dismissing || m_duration <= 0 || underMouse() || hasFocus()) {
+        if (m_dismissing || m_duration <= 0 || !isVisible() || m_transition < 1.0
+            || m_animation->isRunning() || underMouse() || hasFocus()) {
             return;
         }
         m_lifetime->start(m_duration);

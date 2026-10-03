@@ -475,6 +475,195 @@
                     "5": "詞彙未載入：呢個檔案過唔到門口。要用 schema version 1，最多 500 條有界字串，仲要唔大過 64 KiB。"
                 }
             }
+        },
+    "motion.reduced.label": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reduce motion"
+                ],
+                "levels": {
+                    "1": "Reduce motion",
+                    "2": "Reduce motion",
+                    "3": "Reduce motion",
+                    "4": "Reduce motion",
+                    "5": "Reduce motion"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "減少動態效果"
+                ],
+                "levels": {
+                    "1": "減少動態效果",
+                    "2": "減少動態效果",
+                    "3": "減少動態效果",
+                    "4": "減少動態效果",
+                    "5": "減少動態效果"
+                }
+            }
+        },
+        "motion.reduced.description": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Show final states immediately. Windows accessibility preferences always take priority."
+                ],
+                "levels": {
+                    "1": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "2": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "3": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "4": "Show final states immediately. Windows accessibility preferences always take priority.",
+                    "5": "Show final states immediately. Windows accessibility preferences always take priority."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "即時顯示最終狀態。Windows 無障礙設定一律優先。"
+                ],
+                "levels": {
+                    "1": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "2": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "3": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "4": "即時顯示最終狀態。Windows 無障礙設定一律優先。",
+                    "5": "即時顯示最終狀態。Windows 無障礙設定一律優先。"
+                }
+            }
+        },
+        "motion.low.label": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Low stimulation"
+                ],
+                "levels": {
+                    "1": "Low stimulation",
+                    "2": "Low stimulation",
+                    "3": "Low stimulation",
+                    "4": "Low stimulation",
+                    "5": "Low stimulation"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "低刺激模式"
+                ],
+                "levels": {
+                    "1": "低刺激模式",
+                    "2": "低刺激模式",
+                    "3": "低刺激模式",
+                    "4": "低刺激模式",
+                    "5": "低刺激模式"
+                }
+            }
+        },
+        "motion.low.description": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved."
+                ],
+                "levels": {
+                    "1": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "2": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "3": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "4": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved.",
+                    "5": "Keep controls, progress indicators and rainbow colours still. Your reduced-motion choice remains saved."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。"
+                ],
+                "levels": {
+                    "1": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "2": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "3": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "4": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。",
+                    "5": "控制項、進度指示同彩虹顏色保持靜止，原本減少動態效果嘅選擇會保留。"
+                }
+            }
+        },
+        "motion.status.system": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Windows has disabled interface animation."
+                ],
+                "levels": {
+                    "1": "Windows has disabled interface animation.",
+                    "2": "Windows has disabled interface animation.",
+                    "3": "Windows has disabled interface animation.",
+                    "4": "Windows has disabled interface animation.",
+                    "5": "Windows has disabled interface animation."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Windows 已停用介面動畫。"
+                ],
+                "levels": {
+                    "1": "Windows 已停用介面動畫。",
+                    "2": "Windows 已停用介面動畫。",
+                    "3": "Windows 已停用介面動畫。",
+                    "4": "Windows 已停用介面動畫。",
+                    "5": "Windows 已停用介面動畫。"
+                }
+            }
+        },
+        "motion.status.reduced": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reduced motion is active. Changes remain immediate."
+                ],
+                "levels": {
+                    "1": "Reduced motion is active. Changes remain immediate.",
+                    "2": "Reduced motion is active. Changes remain immediate.",
+                    "3": "Reduced motion is active. Changes remain immediate.",
+                    "4": "Reduced motion is active. Changes remain immediate.",
+                    "5": "Reduced motion is active. Changes remain immediate."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "減少動態效果已啟用，改動會即時顯示。"
+                ],
+                "levels": {
+                    "1": "減少動態效果已啟用，改動會即時顯示。",
+                    "2": "減少動態效果已啟用，改動會即時顯示。",
+                    "3": "減少動態效果已啟用，改動會即時顯示。",
+                    "4": "減少動態效果已啟用，改動會即時顯示。",
+                    "5": "減少動態效果已啟用，改動會即時顯示。"
+                }
+            }
+        },
+        "motion.status.standard": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Short transitions are active. Static content stays still."
+                ],
+                "levels": {
+                    "1": "Short transitions are active. Static content stays still.",
+                    "2": "Short transitions are active. Static content stays still.",
+                    "3": "Short transitions are active. Static content stays still.",
+                    "4": "Short transitions are active. Static content stays still.",
+                    "5": "Short transitions are active. Static content stays still."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "短暫過場效果已啟用，靜態內容保持靜止。"
+                ],
+                "levels": {
+                    "1": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "2": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "3": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "4": "短暫過場效果已啟用，靜態內容保持靜止。",
+                    "5": "短暫過場效果已啟用，靜態內容保持靜止。"
+                }
+            }
         }
     }
 }
