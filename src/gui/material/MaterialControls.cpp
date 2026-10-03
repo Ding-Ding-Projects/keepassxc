@@ -594,7 +594,7 @@ namespace Material
                     || selected.column() != modelColumn() || !selected.flags().testFlag(Qt::ItemIsEnabled)
                     || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
                 QPointer<ComboBox> alive(this);
-                const QString label = selected.data(Qt::DisplayRole).toString();
+                const QString label = selected.data(isEditable() ? Qt::EditRole : Qt::DisplayRole).toString();
                 hidePopup();
                 if (!alive || !selected.isValid() || selected.model() != model()) return;
                 setCurrentIndex(selected.row());

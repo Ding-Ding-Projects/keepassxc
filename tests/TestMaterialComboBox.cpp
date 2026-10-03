@@ -147,7 +147,10 @@ void TestMaterialComboBox::disabledRowsAndSameItemActivation()
     ComboBox combo; combo.setModel(&model); combo.setCurrentIndex(1);
     QSignalSpy activated(&combo, &QComboBox::activated), changed(&combo, &QComboBox::currentIndexChanged);
     auto* window = popup(combo); QVERIFY(window);
-    choose(choices(window), 0); QCOMPARE(activated.count(), 0); QVERIFY(window->isVisible());
+    auto* view = choices(window);
+    const auto disabledIndex = view->model()->index(0, view->modelColumn(), view->rootIndex());
+    QTest::mouseClick(view->viewport(), Qt::LeftButton, Qt::NoModifier, view->visualRect(disabledIndex).center());
+    QCOMPARE(activated.count(), 0); QVERIFY(window->isVisible());
     choose(choices(window), 1); QCOMPARE(activated.count(), 1); QCOMPARE(changed.count(), 0);
 }
 
@@ -246,8 +249,17 @@ void TestMaterialComboBox::activationMayDestroyOwner()
     auto* combo = new ComboBox; combo->addItems({QStringLiteral("A"), QStringLiteral("B")});
     QPointer<ComboBox> owner(combo);
     auto* window = popup(*combo); QVERIFY(window);
-    connect(combo, &QComboBox::currentIndexChanged, combo, [combo] { delete combo; });
+    connect(combo, &QComboBox::activated, combo, [combo] { delete combo; });
     choose(choices(window), 1); QVERIFY(owner.isNull());
+
+    // Native QComboBox continues using itself after currentIndexChanged. As
+    // with a stock combo, destruction from that signal must be deferred.
+    combo = new ComboBox; combo->addItems({QStringLiteral("A"), QStringLiteral("B")});
+    owner = combo; window = popup(*combo); QVERIFY(window);
+    connect(combo, &QComboBox::currentIndexChanged, combo, &QObject::deleteLater);
+    choose(choices(window), 1);
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QVERIFY(owner.isNull());
 }
 
 void TestMaterialComboBox::accessibilityStateAndAssociation()

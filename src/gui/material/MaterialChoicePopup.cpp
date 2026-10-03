@@ -282,6 +282,9 @@ namespace Material
         if (!m_error.isEmpty()) matches.clear();
         m_proxy->apply(m_root, m_column, matches);
         m_list->setRootIndex(m_proxy->mapFromSource(m_root));
+        // QListView clamps its column against the current root. A child table
+        // can have more columns than the top-level model, so set this last.
+        m_list->setModelColumn(m_column);
         m_list->setCurrentIndex({});
         m_list->clearSelection();
         // Query edits never silently commit, and choose the first enabled match
