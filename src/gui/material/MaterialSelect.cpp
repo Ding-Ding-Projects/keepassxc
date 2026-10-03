@@ -19,6 +19,7 @@
 
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialTheme.h"
 
@@ -326,7 +327,7 @@ namespace Material
         QRegularExpression pattern;
         bool useRegex = false;
         if (m_search->isRegexEnabled() && !needle.isEmpty()) {
-            pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
+            pattern = QRegularExpression(needle, optionsForFlags(m_search->regexFlags()));
             // An unparsable pattern changes nothing rather than emptying the list.
             if (!pattern.isValid()) {
                 return;
@@ -347,6 +348,7 @@ namespace Material
         const int rows = qBound(1, shown, PopupMaximumHeight / ListRowHeight);
         m_list->setFixedHeight(rows * ListRowHeight + 4);
         m_list->setAccessibleDescription(shown == 0 ? tr("No choices match") : tr("%n choice(s)", "", shown));
+        emit filteredChoicesChanged(shown);
         if (m_popup && m_popup->isVisible()) {
             m_popup->adjustSize();
         }

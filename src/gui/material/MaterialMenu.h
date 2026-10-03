@@ -18,6 +18,7 @@ namespace Material
 {
     class RegexBuilder;
     class SearchBar;
+    class Select;
 
     /** Adds local search without cloning, reparenting or replacing command actions. */
     class MenuSearch : public QObject
@@ -49,6 +50,7 @@ namespace Material
 
         QPointer<QMenu> m_menu;
         QPointer<SearchBar> m_search;
+        QPointer<Select> m_select;
         QPointer<QWidgetAction> m_searchAction;
         QPointer<QWidgetAction> m_statusAction;
         QPointer<QLabel> m_status;
@@ -64,6 +66,7 @@ namespace Material
         bool m_prepared = false;
         bool m_builderOpen = false;
         int m_resultCount = 0;
+        quint64 m_popupGeneration = 0;
     };
 }
 

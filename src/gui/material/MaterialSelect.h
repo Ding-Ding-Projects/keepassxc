@@ -90,6 +90,7 @@ namespace Material
     signals:
         void currentIndexChanged(int index);
         void currentTextChanged(const QString& text);
+        void filteredChoicesChanged(int count);
 
     protected:
         void paintEvent(QPaintEvent* event) override;

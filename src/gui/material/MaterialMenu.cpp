@@ -3,6 +3,7 @@
 #include "MaterialRegexBuilder.h"
 #include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
+#include "MaterialSelect.h"
 #include "MaterialTheme.h"
 #include "MaterialVoice.h"
 #include "gui/Clipboard.h"
@@ -13,6 +14,7 @@
 #include <QKeyEvent>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMenu>
 #include <QScreen>
 #include <QScopedValueRollback>
@@ -88,6 +90,7 @@ namespace Material
         setObjectName(QStringLiteral("materialMenuSearchController"));
         menu->installEventFilter(this);
         connect(menu, &QMenu::aboutToHide, this, [this] {
+            ++m_popupGeneration;
             if (m_builderOpen) {
                 m_builderOpen = false;
                 if (m_builder) m_builder->closeOverlay();
@@ -130,6 +133,13 @@ namespace Material
             connect(m_search, &SearchBar::textChanged, this, [this] { filter(); });
             connect(m_search, &SearchBar::regexToggled, this, [this] { filter(); });
             connect(m_search, &SearchBar::regexFlagsChanged, this, [this] { filter(); });
+            // A Select owns a list inside its QWidgetAction, including keyboard
+            // behavior. Observe its real results instead of treating it as commands.
+            m_select = qobject_cast<Select*>(m_menu->parentWidget());
+            if (m_select && m_select->searchBar() != m_search) m_select.clear();
+            if (m_select) {
+                connect(m_select, &Select::filteredChoicesChanged, this, [this] { filter(); });
+            }
         }
         if (!m_statusAction) {
             m_status = new QLabel(m_menu);
@@ -190,12 +200,20 @@ namespace Material
 
     void MenuSearch::filter()
     {
-        if (!m_menu || !m_search || m_changing) return;
+        if (!m_menu || !m_search || !m_prepared || m_changing) return;
         QScopedValueRollback<bool> changing(m_changing, true);
         // No default/stale selection survives an edit, including a flags-only edit.
         m_menu->setActiveAction(nullptr);
         m_matches.clear();
         m_resultCount = 0;
+        if (m_select) {
+            auto* list = m_select->listWidget();
+            for (int row = 0; row < list->count(); ++row) {
+                if (!list->isRowHidden(row)) ++m_resultCount;
+            }
+            updateStatus();
+            return;
+        }
         QString error;
         const QString query = m_search->text();
         QRegularExpression expression;
@@ -223,8 +241,18 @@ namespace Material
                     if (++examined > 1024 || label.size() > 2048 || timer.elapsed() > RegexLimits::BudgetMs) {
                         error = Voice::say(QStringLiteral("menu.result-limit"), Voice::Category::Error);
                     }
-                    visible = error.isEmpty() && (m_search->isRegexEnabled()
-                              ? expression.match(label).hasMatch() : label.contains(query, Qt::CaseInsensitive));
+                    visible = false;
+                    if (error.isEmpty()) {
+                        if (m_search->isRegexEnabled()) {
+                            const auto match = expression.match(label);
+                            if (!match.isValid())
+                                error = Voice::say(QStringLiteral("menu.result-limit"), Voice::Category::Error);
+                            else
+                                visible = match.hasMatch();
+                        } else {
+                            visible = label.contains(query, Qt::CaseInsensitive);
+                        }
+                    }
                 }
                 action->setVisible(visible);
             }
@@ -269,12 +297,16 @@ namespace Material
     {
         if (!m_menu || m_changing) return;
         QScopedValueRollback<bool> changing(m_changing, true);
-        for (auto* action : m_menu->actions()) {
-            if (m_originalVisibility.contains(action)) action->setVisible(m_originalVisibility.value(action));
-        }
+        // Removed actions can still belong to another menu or toolbar. Keep weak
+        // pointers while restoring, since action callbacks may destroy siblings.
+        QList<QPair<QPointer<QAction>, bool>> originals;
+        for (auto it = m_originalVisibility.cbegin(); it != m_originalVisibility.cend(); ++it)
+            originals.append({it.key(), it.value()});
         m_originalVisibility.clear();
         m_matches.clear();
         m_prepared = false;
+        for (const auto& original : originals)
+            if (original.first) original.first->setVisible(original.second);
     }
 
     void MenuSearch::remember()
@@ -308,11 +340,26 @@ namespace Material
             const bool expected = action->isSeparator() ? action->isVisible() : m_matches.contains(action);
             if (m_originalVisibility.contains(action) && action->isVisible() != expected)
                 m_originalVisibility[action] = action->isVisible();
-            QTimer::singleShot(0, this, [this] { filter(); });
+            const auto generation = m_popupGeneration;
+            QTimer::singleShot(0, this, [this, generation] {
+                if (generation == m_popupGeneration && m_menu && m_menu->isVisible()) filter();
+            });
+        }
+        if (watched == m_menu && event->type() == QEvent::ActionRemoved) {
+            auto* action = static_cast<QActionEvent*>(event)->action();
+            if (m_originalVisibility.contains(action)) {
+                const bool visible = m_originalVisibility.take(action);
+                m_matches.remove(action);
+                QScopedValueRollback<bool> changing(m_changing, true);
+                action->setVisible(visible);
+            }
         }
         if (watched == m_menu && (event->type() == QEvent::ActionAdded || event->type() == QEvent::ActionRemoved)
             && m_menu->isVisible()) {
-            QTimer::singleShot(0, this, [this] { refresh(); });
+            const auto generation = m_popupGeneration;
+            QTimer::singleShot(0, this, [this, generation] {
+                if (generation == m_popupGeneration && m_menu && m_menu->isVisible()) refresh();
+            });
         }
         if (event->type() != QEvent::KeyPress || !m_search) return false;
         auto* key = static_cast<QKeyEvent*>(event);
@@ -320,6 +367,7 @@ namespace Material
             if (watched == m_menu && (key->key() == Qt::Key_Return || key->key() == Qt::Key_Enter)) return true;
             return false;
         }
+        if (m_select) return false; // The borrowed list owns arrows, Enter and clear-first Escape.
         if (key->key() == Qt::Key_Escape) { m_menu->close(); return true; }
         if (key->key() == Qt::Key_Down || key->key() == Qt::Key_Up) {
             moveSelection(key->key() == Qt::Key_Down ? 1 : -1);

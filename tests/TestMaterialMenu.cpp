@@ -276,6 +276,17 @@ void TestMaterialMenu::borrowedSearchFlagsReachExistingConsumer()
     search->setRegexFlags(QStringLiteral("i"));
     QVERIFY(command->isVisible());
     QCOMPARE(controller->resultCount(), 1);
+
+    Select select;
+    select.addItem(QStringLiteral("COPY"));
+    select.show();
+    select.showPopup();
+    select.searchBar()->setRegexEnabled(true);
+    select.searchBar()->setText(QStringLiteral("^copy$"));
+    QVERIFY(!select.listWidget()->isRowHidden(0));
+    select.searchBar()->setRegexFlags(QString());
+    QVERIFY(select.listWidget()->isRowHidden(0));
+    select.hidePopup();
 }
 
 void TestMaterialMenu::pendingCallbacksDoNotRefilterClosedMenu_data()
@@ -301,7 +312,7 @@ void TestMaterialMenu::pendingCallbacksDoNotRefilterClosedMenu()
     QCoreApplication::processEvents();
     controller->searchBar()->setText(QStringLiteral("Keep"));
     QVERIFY(!shared.isVisible());
-    if (change == 0) shared.setEnabled(false);
+    if (change == 0) shared.setText(QStringLiteral("Other renamed"));
     if (change == 1) menu.addAction(QStringLiteral("Added"));
     if (change == 2) menu.removeAction(keep);
     menu.close();
@@ -387,6 +398,9 @@ void TestMaterialMenu::selectStatusCountsItsChoices()
     select.searchBar()->setText(QStringLiteral("No such choice"));
     QCOMPARE(controller->resultCount(), 0);
     QCOMPARE(status->text(), Voice::say(QStringLiteral("menu.no-matches")));
+    select.searchBar()->clear();
+    select.addItem(QStringLiteral("Cherry"));
+    QCOMPARE(controller->resultCount(), 3);
     select.hidePopup();
 }
 

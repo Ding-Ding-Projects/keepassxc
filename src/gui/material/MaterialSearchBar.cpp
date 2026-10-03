@@ -230,6 +230,9 @@ namespace Material
     {
         if (m_regexFlags == flags) return;
         m_regexFlags = flags;
+        // Existing search owners read flags when their textChanged consumer runs.
+        // Reapply an unchanged pattern as well, without changing the line edit.
+        emit textChanged(text());
         emit regexFlagsChanged(flags);
     }
 
