@@ -16,6 +16,7 @@
  */
 
 #include "MaterialNavigationRail.h"
+#include "MaterialMotion.h"
 
 #include "MaterialButtons.h"
 #include "MaterialElevation.h"
@@ -27,7 +28,7 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QVariantAnimation>
+
 #include <QWheelEvent>
 
 namespace Material
@@ -94,18 +95,6 @@ namespace Material
             return color;
         }
 
-        /** A 0..1 ramp on the design's standard easing curve. */
-        QVariantAnimation* createTransition(QObject* parent)
-        {
-            auto* animation = new QVariantAnimation(parent);
-            animation->setDuration(Duration::Medium);
-            animation->setStartValue(0.0);
-            animation->setEndValue(1.0);
-            QEasingCurve curve(QEasingCurve::BezierSpline);
-            curve.addCubicBezierSegment(QPointF(0.2, 0.0), QPointF(0.0, 1.0), QPointF(1.0, 1.0));
-            animation->setEasingCurve(curve);
-            return animation;
-        }
     } // namespace
 
     NavigationRail::NavigationRail(QWidget* parent)
@@ -137,23 +126,23 @@ namespace Material
         m_lockButton->setAccessibleName(m_lockButton->toolTip());
         connect(m_lockButton, &QAbstractButton::clicked, this, &NavigationRail::lockRequested);
 
-        m_selectAnimation = createTransition(this);
-        connect(m_selectAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
-            m_selectProgress = value.toReal();
+        m_selectAnimation = new MotionTransition(this);
+        connect(m_selectAnimation, &MotionTransition::valueChanged, this, [this](qreal value) {
+            m_selectProgress = value;
             update();
         });
-        connect(m_selectAnimation, &QVariantAnimation::finished, this, [this] {
+        connect(m_selectAnimation, &MotionTransition::settled, this, [this] {
             m_previousIndex = -1;
             m_selectProgress = 1.0;
             update();
         });
 
-        m_hoverAnimation = createTransition(this);
-        connect(m_hoverAnimation, &QVariantAnimation::valueChanged, this, [this](const QVariant& value) {
-            m_hoverProgress = value.toReal();
+        m_hoverAnimation = new MotionTransition(this);
+        connect(m_hoverAnimation, &MotionTransition::valueChanged, this, [this](qreal value) {
+            m_hoverProgress = value;
             update();
         });
-        connect(m_hoverAnimation, &QVariantAnimation::finished, this, [this] {
+        connect(m_hoverAnimation, &MotionTransition::settled, this, [this] {
             m_previousHoverIndex = -1;
             m_hoverProgress = 1.0;
             update();
@@ -248,10 +237,10 @@ namespace Material
         m_currentIndex = index;
         setAccessibleDescription(m_destinations.at(index).label);
 
-        m_selectAnimation->stop();
+        m_selectAnimation->snapTo(0.0);
         if (m_previousIndex >= 0) {
             m_selectProgress = 0.0;
-            m_selectAnimation->start();
+            m_selectAnimation->animateTo(1.0, Duration::Medium);
         } else {
             m_selectProgress = 1.0;
         }
@@ -465,9 +454,9 @@ namespace Material
 
         m_previousHoverIndex = m_hoverIndex;
         m_hoverIndex = index;
-        m_hoverAnimation->stop();
+        m_hoverAnimation->snapTo(0.0);
         m_hoverProgress = 0.0;
-        m_hoverAnimation->start();
+        m_hoverAnimation->animateTo(1.0, Duration::Short);
 
         if (index >= 0) {
             const Destination& destination = m_destinations.at(index);

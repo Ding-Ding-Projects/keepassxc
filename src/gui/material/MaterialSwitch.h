@@ -21,10 +21,11 @@
 #include <QAbstractButton>
 
 class QKeyEvent;
-class QPropertyAnimation;
+
 
 namespace Material
 {
+    class MotionTransition;
     /**
      * The Material 3 switch used by every behaviour row in the settings screen.
      *
@@ -67,7 +68,7 @@ namespace Material
     private:
         void animateTo(qreal position);
 
-        QPropertyAnimation* m_animation = nullptr;
+        MotionTransition* m_animation = nullptr;
         qreal m_knobPosition = 0.0;
         bool m_hovered = false;
     };

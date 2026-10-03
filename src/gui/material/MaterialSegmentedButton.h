@@ -27,6 +27,7 @@ class QKeyEvent;
 
 namespace Material
 {
+    class MotionTransition;
     /**
      * A single-select segmented control: an outlined pill divided into equal
      * segments, the active one filled with secondaryContainer.
@@ -83,6 +84,7 @@ namespace Material
         bool hasSymbols() const;
 
         QList<Segment> m_segments;
+        MotionTransition* m_selectionMotion = nullptr;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
     };

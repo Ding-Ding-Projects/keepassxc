@@ -16,17 +16,18 @@
  */
 
 #include "MaterialOverlay.h"
+#include "MaterialMotion.h"
 
 #include "MaterialElevation.h"
 #include "MaterialTheme.h"
 
 #include <QEasingCurve>
 #include <QEvent>
-#include <QGraphicsOpacityEffect>
+
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPropertyAnimation>
+
 #include <QResizeEvent>
 #include <QShowEvent>
 
@@ -35,21 +36,11 @@ namespace Material
     namespace
     {
         constexpr qreal ScrimAlpha = 0.32;
-        // sheetIn: translateY(18px) and scale(.98) resolving to none.
-        constexpr int RiseDistance = 18;
-        constexpr qreal StartScale = 0.98;
         // Breathing room kept between the sheet and the window edge.
         constexpr int EdgeMargin = 32;
         constexpr int MinSheetWidth = 240;
         constexpr int MinSheetHeight = 160;
 
-        /** cubic-bezier(.2, 0, 0, 1), the design's emphasised easing. */
-        QEasingCurve emphasisedCurve()
-        {
-            QEasingCurve curve(QEasingCurve::BezierSpline);
-            curve.addCubicBezierSegment(QPointF(0.2, 0.0), QPointF(0.0, 1.0), QPointF(1.0, 1.0));
-            return curve;
-        }
     } // namespace
 
     Overlay::Overlay(QWidget* parent)
@@ -59,8 +50,9 @@ namespace Material
         setAttribute(Qt::WA_NoMousePropagation);
         hide();
 
-        m_animation = new QPropertyAnimation(this, "transition", this);
-        connect(m_animation, &QPropertyAnimation::finished, this, [this] {
+        m_animation = new MotionTransition(this);
+        connect(m_animation, &MotionTransition::valueChanged, this, &Overlay::setTransition);
+        connect(m_animation, &MotionTransition::settled, this, [this] {
             if (!m_open) {
                 hide();
                 emit closed();
@@ -91,11 +83,6 @@ namespace Material
 
         m_sheet->setParent(this);
         m_sheet->installEventFilter(this);
-        // The scrim paints the sheet's el3 shadow, which leaves the widget's
-        // single effect slot free for the fade.
-        auto* fade = new QGraphicsOpacityEffect(m_sheet);
-        fade->setOpacity(m_transition);
-        m_sheet->setGraphicsEffect(fade);
         m_sheet->show();
         centreSheet();
     }
@@ -160,11 +147,6 @@ namespace Material
             return;
         }
         m_transition = value;
-        if (m_sheet) {
-            if (auto* fade = qobject_cast<QGraphicsOpacityEffect*>(m_sheet->graphicsEffect())) {
-                fade->setOpacity(m_transition);
-            }
-        }
         centreSheet();
         update();
     }
@@ -191,12 +173,7 @@ namespace Material
             m_sheet->setFocus(Qt::PopupFocusReason);
         }
 
-        m_animation->stop();
-        m_animation->setDuration(Duration::Long);
-        m_animation->setEasingCurve(emphasisedCurve());
-        m_animation->setStartValue(m_transition);
-        m_animation->setEndValue(1.0);
-        m_animation->start();
+        m_animation->animateTo(1.0, Duration::Long);
 
         emit opened();
     }
@@ -207,13 +184,9 @@ namespace Material
             return;
         }
         m_open = false;
+        if (m_sheet) m_sheet->hide();
 
-        m_animation->stop();
-        m_animation->setDuration(Duration::Short);
-        m_animation->setEasingCurve(QEasingCurve::InOutQuad);
-        m_animation->setStartValue(m_transition);
-        m_animation->setEndValue(0.0);
-        m_animation->start();
+        m_animation->animateTo(0.0, Duration::Short);
     }
 
     void Overlay::aboutToOpen()
@@ -254,6 +227,16 @@ namespace Material
         QWidget::showEvent(event);
         raise();
         centreSheet();
+    }
+
+    void Overlay::hideEvent(QHideEvent* event)
+    {
+        QWidget::hideEvent(event);
+        const bool wasOpen = m_open;
+        m_open = false;
+        if (m_sheet) m_sheet->hide();
+        m_animation->snapTo(0.0);
+        if (wasOpen) emit closed();
     }
 
     void Overlay::mousePressEvent(QMouseEvent* event)
@@ -304,13 +287,8 @@ namespace Material
         int height = m_sheet->hasHeightForWidth() ? m_sheet->heightForWidth(width) : hint.height();
         height = qMin(qMax(height, hint.height()), qMax(MinSheetHeight, available));
 
-        const qreal scale = StartScale + (1.0 - StartScale) * m_transition;
-        const int scaledWidth = qRound(width * scale);
-        const int scaledHeight = qRound(height * scale);
-        const int rise = qRound(RiseDistance * (1.0 - m_transition));
-        const int top = m_sheetTopMargin >= 0 ? m_sheetTopMargin : qRound((this->height() - scaledHeight) / 2.0);
-
-        m_sheet->setGeometry(qRound((this->width() - scaledWidth) / 2.0), top + rise, scaledWidth, scaledHeight);
+        const int top = m_sheetTopMargin >= 0 ? m_sheetTopMargin : qRound((this->height() - height) / 2.0);
+        m_sheet->setGeometry(qRound((this->width() - width) / 2.0), top, width, height);
     }
 
 } // namespace Material

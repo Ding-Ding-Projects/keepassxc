@@ -26,11 +26,12 @@
 #include <QWidget>
 
 class QLabel;
-class QPropertyAnimation;
+
 class QTimer;
 
 namespace Material
 {
+    class MotionTransition;
     class Card;
 
     /**
@@ -133,6 +134,7 @@ namespace Material
         void dismiss();
 
     protected:
+        void hideEvent(QHideEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
         /** A click on the card dismisses it; one beside it belongs to the window. */
         void mousePressEvent(QMouseEvent* event) override;
@@ -153,7 +155,7 @@ namespace Material
         QLabel* m_artLabel = nullptr;
         QLabel* m_nameLabel = nullptr;
         QLabel* m_captionLabel = nullptr;
-        QPropertyAnimation* m_animation = nullptr;
+        MotionTransition* m_animation = nullptr;
         QTimer* m_holdTimer = nullptr;
         qreal m_transition = 0.0;
         bool m_reducedMotion = false;

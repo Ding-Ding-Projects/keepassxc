@@ -16,6 +16,7 @@
  */
 
 #include "MaterialDimSum.h"
+#include "MaterialMotion.h"
 
 #include "MaterialButtons.h"
 #include "MaterialCard.h"
@@ -38,7 +39,7 @@
 #include <QLabel>
 #include <QMouseEvent>
 #include <QPainter>
-#include <QPropertyAnimation>
+
 #include <QRandomGenerator>
 #include <QScreen>
 #include <QSignalBlocker>
@@ -100,13 +101,6 @@ namespace Material
         bool s_drawn = false;
         bool s_draw = false;
 
-        /** The design's emphasised curve, cubic-bezier(.2, 0, 0, 1). */
-        QEasingCurve emphasizedCurve()
-        {
-            QEasingCurve curve(QEasingCurve::BezierSpline);
-            curve.addCubicBezierSegment(QPointF(0.2, 0.0), QPointF(0.0, 1.0), QPointF(1.0, 1.0));
-            return curve;
-        }
 
         /**
          * The line under the dish, written at two levels only. Only the copy
@@ -152,22 +146,6 @@ namespace Material
                 break;
             }
             return english;
-        }
-
-        /**
-         * A desktop asking for less motion. Only Windows exposes the preference
-         * to Qt; elsewhere the card still animates, and it is dismissible and
-         * short-lived either way.
-         */
-        bool prefersReducedMotion()
-        {
-#ifdef Q_OS_WIN
-            BOOL animate = TRUE;
-            if (::SystemParametersInfoW(SPI_GETCLIENTAREAANIMATION, 0, &animate, 0)) {
-                return !animate;
-            }
-#endif
-            return false;
         }
 
         /**
@@ -385,7 +363,7 @@ namespace Material
         : QWidget(parent)
         , m_dish(dish)
         , m_host(parent ? parent->window() : nullptr)
-        , m_reducedMotion(prefersReducedMotion())
+        , m_reducedMotion(MotionPolicy::instance()->reducedMotion())
     {
         setAttribute(Qt::WA_NoSystemBackground);
         setAttribute(Qt::WA_TranslucentBackground);
@@ -454,11 +432,12 @@ namespace Material
         m_holdTimer->setInterval(Hold);
         connect(m_holdTimer, &QTimer::timeout, this, &DimSumCard::dismiss);
 
-        m_animation = new QPropertyAnimation(this, "transition", this);
-        connect(m_animation, &QPropertyAnimation::finished, this, [this] {
+        m_animation = new MotionTransition(this);
+        connect(m_animation, &MotionTransition::valueChanged, this, &DimSumCard::setTransition);
+        connect(m_animation, &MotionTransition::settled, this, [this] {
             if (m_dismissing) {
                 deleteLater();
-            } else {
+            } else if (isVisible()) {
                 m_holdTimer->start();
             }
         });
@@ -472,6 +451,10 @@ namespace Material
         }
 
         connect(theme(), &Theme::changed, this, &DimSumCard::applyTheme);
+        connect(MotionPolicy::instance(), &MotionPolicy::changed, this, [this] {
+            m_reducedMotion = MotionPolicy::instance()->reducedMotion();
+            reposition();
+        });
         applyTheme();
     }
 
@@ -511,18 +494,7 @@ namespace Material
         show();
         raise();
 
-        if (m_reducedMotion) {
-            setTransition(1.0);
-            m_holdTimer->start();
-            return;
-        }
-
-        m_animation->stop();
-        m_animation->setDuration(RiseDuration);
-        m_animation->setEasingCurve(emphasizedCurve());
-        m_animation->setStartValue(0.0);
-        m_animation->setEndValue(1.0);
-        m_animation->start();
+        m_animation->animateTo(1.0, RiseDuration);
         // The hold is armed when the rise finishes, so the card really does sit
         // still for its six seconds.
     }
@@ -535,33 +507,19 @@ namespace Material
         m_dismissing = true;
         m_holdTimer->stop();
 
-        // QAbstractAnimation::stop() re-emits finished() when the animation is
-        // already sitting exactly on its end value, which is precisely the state
-        // the card is in when the hold expires. That would re-enter the handler
-        // above with m_dismissing already set and delete the card out from under
-        // the fade this function is about to start. Silence the animation while
-        // it is being wound back.
-        {
-            const QSignalBlocker blocker(m_animation);
-            m_animation->stop();
-        }
-
-        if (m_reducedMotion) {
-            hide();
-            deleteLater();
-            return;
-        }
-
-        m_animation->setDuration(Duration::Medium);
-        m_animation->setEasingCurve(QEasingCurve::Linear);
-        m_animation->setStartValue(m_transition);
-        m_animation->setEndValue(0.0);
-        m_animation->start();
+        m_animation->animateTo(0.0, Duration::Medium);
     }
 
     QRect DimSumCard::cardRect() const
     {
         return rect().adjusted(ShadowMargin, ShadowMargin, -ShadowMargin, -ShadowMargin);
+    }
+
+    void DimSumCard::hideEvent(QHideEvent* event)
+    {
+        QWidget::hideEvent(event);
+        m_holdTimer->stop();
+        m_animation->finish();
     }
 
     void DimSumCard::paintEvent(QPaintEvent* event)

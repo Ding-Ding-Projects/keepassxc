@@ -23,10 +23,11 @@
 #include <QString>
 #include <QWidget>
 
-class QVariantAnimation;
+
 
 namespace Material
 {
+    class MotionTransition;
     class IconButton;
 
     /**
@@ -117,8 +118,8 @@ namespace Material
         IconButton* m_lockButton = nullptr;
         // The two 180ms cross-fades: one for the active tile, one for the hover
         // state layer. Both blend an outgoing index into an incoming one.
-        QVariantAnimation* m_selectAnimation = nullptr;
-        QVariantAnimation* m_hoverAnimation = nullptr;
+        MotionTransition* m_selectAnimation = nullptr;
+        MotionTransition* m_hoverAnimation = nullptr;
         int m_currentIndex = -1;
         int m_hoverIndex = -1;
         int m_previousIndex = -1;

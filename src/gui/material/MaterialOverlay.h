@@ -20,18 +20,19 @@
 
 #include <QWidget>
 
-class QPropertyAnimation;
+
 
 namespace Material
 {
+    class MotionTransition;
     /**
      * A modal sheet inside the window: a 32% black scrim over everything, with
      * one rounded-28 sheet centred on top of it.
      *
      * The overlay resizes itself to cover its parent and stays out of the way
-     * until openOverlay() is called. Opening runs the 240ms sheetIn transition -
-     * the scrim fades while the sheet rises 18px and scales up from .98 - and
-     * closing plays it in reverse before hiding.
+     * until openOverlay() is called. The decorative scrim transitions for at most
+     * 240 ms; sheet geometry stays stable and no content pixels are cached.
+     * Dismissal hides the sheet immediately before the empty scrim fades away.
      *
      * Escape and a click on the scrim close it; a click on the sheet does not.
      * The sheet widget is reparented and owned by the overlay.
@@ -85,6 +86,7 @@ namespace Material
         void paintEvent(QPaintEvent* event) override;
         void resizeEvent(QResizeEvent* event) override;
         void showEvent(QShowEvent* event) override;
+        void hideEvent(QHideEvent* event) override;
         void mousePressEvent(QMouseEvent* event) override;
         void keyPressEvent(QKeyEvent* event) override;
         bool eventFilter(QObject* watched, QEvent* event) override;
@@ -94,7 +96,7 @@ namespace Material
 
     private:
         QWidget* m_sheet = nullptr;
-        QPropertyAnimation* m_animation = nullptr;
+        MotionTransition* m_animation = nullptr;
         qreal m_transition = 0.0;
         int m_sheetWidth = 0;
         int m_sheetTopMargin = -1;

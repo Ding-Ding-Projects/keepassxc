@@ -477,3 +477,15 @@ if(WIN32)
                     "$<TARGET_FILE_DIR:testpersonalvocabulary>/platforms/"
             VERBATIM)
 endif()
+
+add_unit_test(NAME testmaterialmotion SOURCES TestMaterialMotion.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialmotion PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
+if(WIN32)
+    add_custom_command(TARGET testmaterialmotion POST_BUILD
+            COMMAND ${CMAKE_COMMAND} -E make_directory "$<TARGET_FILE_DIR:testmaterialmotion>/platforms"
+            COMMAND ${CMAKE_COMMAND} -E copy_if_different
+                    "$<TARGET_FILE:Qt6::QOffscreenIntegrationPlugin>"
+                    "$<TARGET_FILE_DIR:testmaterialmotion>/platforms/"
+            VERBATIM)
+endif()
