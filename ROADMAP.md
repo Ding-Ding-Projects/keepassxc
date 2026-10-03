@@ -1,5 +1,14 @@
 # Roadmap
 
+## October 3 combined interface verification
+
+- [x] Combine reviewed menu, shared motion and initial vault-pane sizing source without conflicts.
+- [x] List all 38 feature articles exactly once with immutable ancestor and article-byte binding; keep build and client category recognition consistent. The focused regression was observed red, then green.
+- [x] Build and run the five relevant combined Qt targets at `2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`: 90 passing entries, zero failures, skips or timeouts.
+- [ ] Obtain the full native interaction and language/theme/scale/viewport evidence through the approved isolated route. Offscreen Qt results do not satisfy this item.
+- [ ] Complete non-QMenu adapters, calendar-grid search, per-element appearance/locks, saved snippets and visible query-history selection.
+- [ ] Independently review and deliver the combined source and final documentation bundle; hosted publication remains separate from local verification.
+
 ## October 2026 database lifecycle repair
 
 - [x] Repair the history snapshot attempted before database unlock and prove its focused regression red then green. Packaged native acceptance remains below.

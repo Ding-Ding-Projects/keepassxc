@@ -1,4 +1,54 @@
-# Current task handoff, October 3, 2026
+# Combined interface integration, October 3, 2026
+
+The integration branch combines menu `69f4ae67fe58b4e4ad4aeb43dbff1cc4f7f34cda`,
+motion `3003180d830e398814ca70443a793f1d8278d6fa` and vault sizing
+`a37297e818598a1eba0c715c31b5619386b9c264` at merge
+`1c85f7e8b072886c503923ad53f673ea01275912`. This section supersedes earlier
+current-state statements below; historical evidence retains its original source.
+
+- Documentation run [37154600696](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37154600696)
+  failed with `Content manifest must list every documented feature article exactly once.`
+  The manifest now lists all 38 articles once, including native menu search, native
+  interface motion and vault pane sizing, and pins their unchanged bytes to the
+  immutable combined ancestor `1c85f7e8b072886c503923ad53f673ea01275912`.
+- Both documentation category allowlists now accept `interface`. Existing schema,
+  ancestry, article-byte and published-release validators remain intact.
+  `scripts/test-site-content-categories.mjs` recorded 1 pass and 2 failures at
+  tests-first commit `ef8692aa316d76fc9e55de7a1d8f3a50ffec6dce`, then 3 passes and
+  zero failures after repair `2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`.
+- The dedicated combined Qt build and all five isolated offscreen processes used
+  clean source `2e7683ffb5dd6e7912e5f7f61b48674ec1a54a90`. Results: menu 31,
+  motion 33, responsive shell 14, appearance editor 6 and tabs 6 passing entries.
+  Total: 90 passes, zero failures, skips, blacklisted entries or timeouts. All exits
+  were 0. Counts include setup and cleanup. Each receipt records source, executable
+  SHA-256, PID, timestamps, explicit QTest output and the 120-second process bound.
+- Test mode and isolated identity/configuration precede application construction.
+  The tests use synthetic widgets and temporary configuration, not personal databases
+  or the production executable. These results do not establish native acceptance.
+- The final documentation bundle uses official Node 24.19.0,
+  `npm ci --prefix site --ignore-scripts`, `KPXC_REFRESH_RELEASE=1` and
+  `npm run build --prefix site`. Its generated provenance and external build receipt
+  identify the exact final record commit, separately from the Qt-tested source.
+  Hosted publication and integration into main remain the coordinating owner's work.
+- Native keyboard grabs, screen-reader behavior, geometry and the complete
+  language/theme/scale/viewport matrix remain unverified because the approved
+  isolated-control route is unavailable. No new screenshot is claimed.
+- Non-QMenu adapters, calendar-grid search, per-element appearance and locks,
+  saved snippets and a visible query-history picker remain unfinished. Shared
+  motion does not prove motion coverage of every rendered element. The independent
+  inventory and startup-surprise lanes remain separate and are not accepted here.
+
+## Executable identities for the combined check
+
+| Target | SHA-256 |
+| --- | --- |
+| `testmaterialmenu` | `C4533BA51C08D4AB764FB34DF058F2F49FEFC4DDFF7C30B32273E0EC5E9E6BF0` |
+| `testmaterialmotion` | `D359F567A2D802ED31927F66C07E9A372D78C19521BCB6EDCBDDAA954BC61B94` |
+| `testmaterialshellresponsive` | `6DEB5E118AEC330B80DE8AB77309C181A39F51060BADE8ED4AFDDAD6D74C9F8E` |
+| `testmaterialappearanceeditor` | `CD5595449E4FF20A8DBACA1E3AA0564126D4ABA5AF701D229B037EBAF2784141` |
+| `testmaterialtabs` | `F1B191FB371283BA55B292716726C9AA2D9B8A0693CF3D99680DC9B131BC458B` |
+
+# Historical lifecycle handoff, October 3, 2026
 
 ## Database lifecycle repair, native acceptance pending
 
