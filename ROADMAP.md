@@ -6,12 +6,17 @@
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
 - [ ] Complete native acceptance through the approved isolated route. Controller installation smoke passed; KeePassXC profile/history isolation remains blocked pending the owner scope decision. Source and offscreen checks cannot replace native acceptance.
 
+## October 3 combined choice integration
+
+- [x] Combine repaired shared searchable choices and the four promoted fields while preserving shared motion and lifetime behavior. The combined source has 49 destinations.
+- [ ] Verify combo, motion and menu targets at the frozen integration candidate, then complete coordinator delivery and native acceptance. Earlier 30/0 popup results remain bound to their original source.
+- [ ] Deliver all 41 immutable feature articles without changing inventory completion claims.
 ## October 3 choice-control promotion
 
 - [x] Promote browser type, group sharing type, SSH key type and SSH key size to the shared Material combo-box class, preserving names, controller connections and data roles. The three production owners compiled at `3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f`; independent source review is complete.
 - [x] Install the hidden-desktop controller at `e6e42f2066d539256d6480401d7cef867f2b8dfe` and verify its 58 tools, native backend, synthetic Qt hidden launch/capture/background close and owned teardown. This is installation smoke only.
 - [x] Record coordinator verification of all seven downloaded assets for `v2.8.30301`, source `91772a166def5e44f60dd49501f5882d7190287c`. This does not establish installed acceptance or delivery of the later promotion.
-- [ ] Finish exact-source documentation build and delivery of the 40-article catalogue, retaining all prior articles, immutable byte binding and inventory-derived status.
+- [ ] Finish exact-source documentation build and delivery of the 41-article catalogue, retaining all prior articles, immutable byte binding and inventory-derived status.
 - [ ] Establish approved KeePassXC profile/history isolation, integrate the independently reviewed shared popup, and verify the four real controllers with native keyboard, accessibility, language/theme/scale and per-click capture evidence.
 
 ## October 2026 complete interface scope

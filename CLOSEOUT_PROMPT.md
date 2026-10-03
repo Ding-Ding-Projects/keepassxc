@@ -1,18 +1,20 @@
-# Choice-control promotion continuation
+# Combined choice-popup continuation
 
-Continue release-grade completion from the frozen promotion source
-`3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f` on
-`codex/promote-choice-controls-20261003`. The coordinating owner handles integration,
-push, publication and cleanup. This worker owns documentation preparation only;
-runtime source remains unchanged from the reviewed promotion candidate.
+Continue release-grade completion from the promotion source
+`9530b42c6c8bade2754e5c93bbfe999bec2a1522` on
+`codex/choice-integration-20261003`. The coordinating owner handles integration,
+push, publication and cleanup. This worker owns the isolated semantic integration
+with repaired choice candidate `632b6c49fa5d8474d271617529af817228f4dbdc`.
+Shared motion and lifetime behavior are preserved. Startup work is not integrated.
 
 The four promoted fields are browser type, group sharing type, SSH key type and SSH
 key size. The `browser`, `keeshare` and `sshagent` production targets compiled, and
 six output hashes were independently checked. Source review was dry in this bounded
 unit. No behavioral suite or native acceptance is inferred from compilation. The
-shared searchable popup is a separate implementation awaiting reviewed integration.
+shared searchable popup is now integrated. Run the combo, motion and menu suites
+at the final frozen source with bounded hidden offscreen processes.
 
-Register 40 feature articles, preserving the prior 39, localized titles and
+Register 41 feature articles, preserving the prior 40, localized titles and
 inventory-derived status. The new article is `not-tracked`, not complete or exempt.
 Preserve all inventory logic and historical evidence: 178 summaries, 106 surfaces,
 89 features, 998 capabilities, 105,788 required cells, 9,434 groups, zero current
@@ -22,7 +24,7 @@ Freeze both documentation bytes and their immutable manifest before the full nor
 build. Use official Node 24.19.0, `npm ci --ignore-scripts --prefix site`,
 `KPXC_REFRESH_RELEASE=1` and `npm run build --prefix site`. Keep an exact-source
 receipt, generated provenance, changed-category/content verdicts, the expected-red
-completeness result and public-bound delta/generated scans. Do not rerun unchanged
+completeness result and public-bound delta/generated scans. Do not rerun unrelated
 Qt suites. Source records alone do not claim a successful build or hosted deployment.
 
 The hidden-desktop controller is installed at

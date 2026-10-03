@@ -44,6 +44,7 @@ class QTimer;
  */
 namespace Material
 {
+    class ChoicePopup;
     class CheckBox : public QCheckBox
     {
         Q_OBJECT
@@ -162,6 +163,10 @@ namespace Material
 
     public:
         explicit ComboBox(QWidget* parent = nullptr);
+        ~ComboBox() override;
+
+        void showPopup() override;
+        void hidePopup() override;
 
         QSize sizeHint() const override;
         QSize minimumSizeHint() const override;
@@ -172,6 +177,7 @@ namespace Material
         void leaveEvent(QEvent* event) override;
 
     private:
+        ChoicePopup* m_choicePopup = nullptr;
         bool m_hovered = false;
     };
 

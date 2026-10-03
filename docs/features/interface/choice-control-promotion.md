@@ -23,8 +23,10 @@ classes and compile with the real controllers. Existing browser protocol and SSH
 cryptography tests do not exercise these four choice fields, so they are not
 evidence for this conversion.
 
-This change establishes class adoption only. Searchable popup behavior belongs to
-the shared combo-box implementation and requires verification after integration.
+The promotion establishes class adoption only. This combined source now includes
+the separately reviewed searchable combo-box implementation; combined offscreen
+verification must bind the frozen integration candidate. Native acceptance of the
+four real controllers remains separate from those synthetic checks.
 Native rendering, keyboard interaction, accessibility and the language, theme and
 display-scale matrix remain pending. The hidden-desktop controller is installed
 and has passed installation smoke with a synthetic Qt fixture. KeePassXC profile

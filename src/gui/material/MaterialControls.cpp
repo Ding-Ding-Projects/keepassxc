@@ -16,6 +16,7 @@
  */
 
 #include "MaterialControls.h"
+#include "MaterialChoicePopup.h"
 #include "MaterialMotion.h"
 
 #include "MaterialElevation.h"
@@ -562,6 +563,7 @@ namespace Material
     ComboBox::ComboBox(QWidget* parent)
         : QComboBox(parent)
     {
+        ChoicePopup::installAccessibility();
         setAttribute(Qt::WA_Hover);
         MotionState::attach(this);
         setCursor(Qt::PointingHandCursor);
@@ -571,6 +573,48 @@ namespace Material
             setFont(theme()->font(TypeRole::BodyLarge));
             update();
         });
+    }
+
+    ComboBox::~ComboBox()
+    {
+        // Delete while the derived owner is still alive. Child teardown must
+        // not invoke the popup-reset callback on a partially destroyed combo.
+        if (m_choicePopup) m_choicePopup->blockSignals(true);
+        delete m_choicePopup;
+    }
+
+    void ComboBox::showPopup()
+    {
+        if (!m_choicePopup) {
+            m_choicePopup = new ChoicePopup(this);
+            connect(m_choicePopup, &ChoicePopup::dismissed, this, [this] { QComboBox::hidePopup(); });
+            connect(m_choicePopup, &ChoicePopup::choiceActivated, this, [this](const QPersistentModelIndex& source) {
+                QPersistentModelIndex selected(source);
+                if (!selected.isValid() || selected.model() != model() || selected.parent() != rootModelIndex()
+                    || selected.column() != modelColumn() || !selected.flags().testFlag(Qt::ItemIsEnabled)
+                    || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
+                QPointer<ComboBox> alive(this);
+                const QString label = selected.data(isEditable() ? Qt::EditRole : Qt::DisplayRole).toString();
+                hidePopup();
+                // Dismissal callbacks may rebind this combo without replacing
+                // its model. Validate before writing into the new binding.
+                if (!alive || !selected.isValid() || selected.model() != model()
+                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()) return;
+                setCurrentIndex(selected.row());
+                if (!alive || !selected.isValid() || selected.model() != model()
+                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
+                    || currentIndex() != selected.row()) return;
+                emit activated(selected.row());
+                if (alive) emit textActivated(label);
+            });
+        }
+        m_choicePopup->open();
+    }
+
+    void ComboBox::hidePopup()
+    {
+        if (m_choicePopup) m_choicePopup->hide();
+        QComboBox::hidePopup();
     }
 
     QSize ComboBox::sizeHint() const

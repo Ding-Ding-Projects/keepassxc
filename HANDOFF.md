@@ -1,3 +1,27 @@
+# Combined choice-popup integration, October 3, 2026
+
+This candidate combines promotion `9530b42c6c8bade2754e5c93bbfe999bec2a1522`
+and repaired shared popup `632b6c49fa5d8474d271617529af817228f4dbdc` without
+conflicts. All four promoted controls and the existing shared motion/lifetime
+behavior are retained. The source covers 49 Material combo-box destinations.
+Startup work is not integrated. The documentation manifest retains all 40 prior
+articles and adds searchable combobox choices as article 41, with inventory-derived
+status and immutable ancestor/byte binding. Inventory implementation and claims
+remain unchanged, including zero accepted current capability cells.
+
+The independent popup follow-up accepted root/column revalidation before mutation
+and accessible editor focus. Unchanged tests produced 3 passes/3 failures before
+repair, then 6/0 focused and 30/0 full at the repaired popup candidate. These are
+historical candidate-bound results. Combined combo, motion and menu verification
+must use the final frozen integration source and exact executable hashes. No native
+acceptance is inferred. The prior promotion compiled its three real controllers;
+its four destinations still need native interaction after integration.
+
+The installed hidden-desktop controller has synthetic Qt installation smoke only.
+KeePassXC profile/history isolation remains blocked pending the owner's scope
+choice. No personal profile, native launch or packaged lifecycle is part of this
+integration. Completion of the wider feature inventory remains outstanding.
+The coordinator owns independent incorporation, main delivery and publication.
 # Choice-control promotion delivery, October 3, 2026
 
 This section supersedes current-state wording in the historical snapshots below.
