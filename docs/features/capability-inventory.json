@@ -502,7 +502,7 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/startup-draw",
+      "id": "dim-sum-surprise/one-percent-per-launch-draw",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -556,7 +556,7 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/unresolved-frequency-control-contract",
+      "id": "dim-sum-surprise/persisted-off-switch",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true

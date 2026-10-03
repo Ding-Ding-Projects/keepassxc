@@ -67,11 +67,16 @@ the capability inventory rather than reduced to these category descriptions.
 | Remaining surface behavior | Guided forms, truthful defaults, rich controls, novice/expert shared values, presets, attention accommodations, local logo conversion, command palette, resizable decorated overlays, actual shortcuts, origin progress and contextual recovery. |
 | Delivery and evidence | Front-screen version/build time with timezone and seconds, Status Hub and truthful reply delivery, verified downloads, social graphics, complete vendored fonts, package/update provenance, line counts, current screenshots/recording and deterministic design parity. |
 
-The startup surprise contract has an unresolved instruction conflict: the older
-project guidance specifies a 1% draw and an off switch, while the current installed
-guidance specifies different frequency/control behavior. Its explicit capability
-`unresolved-frequency-control-contract` remains incomplete. This inventory change
-does not choose or modify that product behavior.
+The current explicit project instruction governs the startup surprise: a fresh 1%
+chance per launch, no more than one display per launch, and a persisted off switch
+that is honored absolutely. The earlier installed guidance specified 10% and no
+off switch; that conflict is resolved by the current user instruction's priority.
+The explicit capabilities are `one-percent-per-launch-draw` and
+`persisted-off-switch`. Acceptance must prove disabled/restarted suppression,
+first-run/error/update/mid-task exclusions, bundled local images with meaningful
+dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
+motion. All behavioral evidence remains pending; this inventory lane changes no
+runtime frequency or control.
 
 ## Evidence record and acceptance
 
@@ -150,6 +155,14 @@ preserves every original row and link, retains its prior status and marks its pr
 historical. It refuses to overwrite version 2 or existing companion inventories.
 The loader can read version 1 for inspection, but marks it `migrationRequired` so
 legacy input remains red until deliberately reviewed and migrated.
+
+## Candidate evidence snapshot
+
+- Menu baseline at tests-only commit `5c33af6b74c18bb43d0f0c932e9a38fd71e06c16`: 15 passes and 8 failures. The repair at `38959fc653ed7115b573c543f65fb7f2b2b9a97d` reports 23 passes and zero failures; independent follow-up review remains pending. These offscreen Qt results establish no native interaction or screenshot acceptance.
+- Motion candidate `65240d644a4d852b8fc8bfd3ad1f2fe08ad0e29a` built, but reported two explicit failures: `preferencePersistsWithoutDiscardingBaseChoice` read the roaming file instead of the isolated local file, so production preference loss is not established; `reversalStartsAtCurrentValueAndSettlesOnce` observed scalar `0.304590151897` jump synchronously to `0.579813392396`. The next case, `reducedSwitchAndOverlayHaveImmediateFinalStates`, exited `0xC0000005` before its first assertion in the full run and one isolated diagnostic. Constructor `hideEvent` before transition initialization is a source-review hypothesis, awaiting repair and refutation. This evidence is red and does not establish native acceptance.
+
+Both candidates remain separate from release `v2.8.29801` at this snapshot.
+No inventory status is upgraded from these results.
 
 ## Current boundary and next action
 

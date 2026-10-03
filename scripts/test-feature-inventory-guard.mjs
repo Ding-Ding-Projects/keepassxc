@@ -23,6 +23,7 @@ check('complete registries have valid schema but incomplete product', () => {
 
 // Independent examples pin the required behaviors, not only registry length.
 const requiredCapabilities = [
+  'dim-sum-surprise/one-percent-per-launch-draw', 'dim-sum-surprise/persisted-off-switch',
   'school-mode/live-propagation', 'school-mode/rename-everywhere',
   'narrator-voice-pickers/stable-identity', 'scheduled-settings/dst',
   'regex-builder/bounded-trace', 'regex-builder/conditionals-subroutines',

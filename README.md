@@ -181,10 +181,17 @@ Honest state of the rewrite, measured rather than remembered:
   anatomy and the vault root lists every entry. The audits list what is still open: the app bar
   content, vault health chips and group filter, and smaller differences on Settings, Appearance,
   History and Changelog.
-- **The feature inventory is fail-closed and currently red.** `docs/features/inventory.json` names
-  86 canonical features on two surfaces; `node scripts/check-feature-inventory.mjs` reports how many
-  rows are fully green (implementation, copy, article, test, interaction record and capture all
-  resolving). At the last measurement that number was **0 of 172**, which is the work list.
+- **The feature inventory is fail-closed and currently red.** The [interface completeness
+  contract](docs/features/delivery/interface-completion.md) registers **89 canonical features,
+  83 named native and website surfaces, and 996 capability contracts**. All 172 original
+  source-assessment rows and their historical links remain, with six added summaries.
+  `node scripts/check-feature-inventory.mjs --summary` reports **0 of 82,668 current
+  surface/capability cells verified**, spanning 7,387 incomplete surface/feature groups.
+  These are coverage obligations, not a count of distinct implementation defects. Acceptance
+  requires configuration, implementation, localized copy, documentation, focused tests,
+  persistence where applicable, and genuine candidate-bound interactions and captures.
+  Passing the separate schema checks establishes inventory integrity only; source presence
+  and historical captures do not establish current product completion.
 - **Done since the previous status** — the legacy status bar under the shell is gone; the welcome
   screen shows the running version, revision and the exact updated-at time of that revision; the
   dim sum surprise is a ten percent draw with no opt-out; the command palette is on `Ctrl+Shift+F`;
