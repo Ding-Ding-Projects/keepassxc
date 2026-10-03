@@ -43,8 +43,8 @@ void TestWindowSelectComboBox::customTextRefreshAndData()
     WindowSelectComboBox combo(nullptr, [&] { ++calls; return titles; });
     QCOMPARE(calls, 0);
     QCOMPARE(combo.count(), 1);
-    combo.setEditText(QStringLiteral("Custom * association"));
     combo.setItemData(0, 71);
+    combo.setEditText(QStringLiteral("Custom * association"));
     auto* model = combo.model();
     auto* editor = combo.lineEdit();
     combo.refreshWindowList();
