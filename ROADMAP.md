@@ -4,7 +4,15 @@
 
 - [ ] Complete the requested release-grade closeout, including smoke verification of the exact built candidate.
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
-- [ ] Complete native acceptance through the approved isolated route. The route remains unavailable; source and offscreen checks cannot replace it.
+- [ ] Complete native acceptance through the approved isolated route. Controller installation smoke passed; KeePassXC profile/history isolation remains blocked pending the owner scope decision. Source and offscreen checks cannot replace native acceptance.
+
+## October 3 choice-control promotion
+
+- [x] Promote browser type, group sharing type, SSH key type and SSH key size to the shared Material combo-box class, preserving names, controller connections and data roles. The three production owners compiled at `3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f`; independent source review is complete.
+- [x] Install the hidden-desktop controller at `e6e42f2066d539256d6480401d7cef867f2b8dfe` and verify its 58 tools, native backend, synthetic Qt hidden launch/capture/background close and owned teardown. This is installation smoke only.
+- [x] Record coordinator verification of all seven downloaded assets for `v2.8.30301`, source `91772a166def5e44f60dd49501f5882d7190287c`. This does not establish installed acceptance or delivery of the later promotion.
+- [ ] Finish exact-source documentation build and delivery of the 40-article catalogue, retaining all prior articles, immutable byte binding and inventory-derived status.
+- [ ] Establish approved KeePassXC profile/history isolation, integrate the independently reviewed shared popup, and verify the four real controllers with native keyboard, accessibility, language/theme/scale and per-click capture evidence.
 
 ## October 2026 complete interface scope
 
@@ -13,7 +21,7 @@
 - [ ] Complete search with an independent anchored full regex workbench in every context menu, dropdown, editor and settings section, including keyboard/touch routes and menu lifetime behavior.
 - [ ] Complete genuine Material Design 3 primitives, every-element appearance and motion with reduced-motion behavior, all language modes and every supported scale. Reviewed menu, motion and vault-sizing source is present from main 91772a16; full native acceptance remains pending.
 - [ ] Complete the detailed language/School/narration/schedules, tabs/groups/discovery, six lock policies, authenticator/encrypted history, notifications/exports/bulk actions, converter, local model suite, logo, offline documentation, provenance and Status Hub contracts recorded in [interface completeness](docs/features/delivery/interface-completion.md).
-- [ ] Obtain candidate-bound built interactions and genuine per-click screenshots through the approved isolated-desktop route. Historical parity images remain historical; the route is currently unavailable.
+- [ ] Obtain candidate-bound built interactions and genuine per-click screenshots through the approved isolated-desktop route. Historical parity images remain historical; controller installation smoke is separate from the pending KeePassXC isolation and acceptance.
 - [ ] Verify the current explicit startup surprise contract: a fresh 1% chance per launch, at most one display, persisted off switch honored after restart, bundled local images, excluded first-run/error/update/mid-task flows, no focus theft and quiet/reduced-motion behavior. Current instructions supersede the earlier installed 10%/no-off guidance; no runtime behavior is changed by the inventory work.
 - [x] Verify hosted packaging run `37147954035` succeeded at source `07ce4dc158bcd7eb735cc309f009c531731f3133` and published non-draft `v2.8.29801` with seven required assets. The parent lane downloaded and verified the package/update metadata. This is package evidence, not installed UI acceptance.
 - [ ] Complete the original ten-entry native save/quit/relaunch/readback acceptance, positional spaces/Cantonese filename acceptance, default-branch delivery of the new interface work, and safe task-owned cleanup.

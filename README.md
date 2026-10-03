@@ -14,6 +14,27 @@ no tracked or untracked changes. Diagnostics report bounded change counts withou
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
+## October 3 choice-control delivery state
+
+[Browser, sharing and SSH choice controls](docs/features/interface/choice-control-promotion.md)
+now use the shared Material combo-box class in four existing fields. The `browser`,
+`keeshare` and `sshagent` owners compiled at
+`3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f`; this establishes controller compatibility,
+not native interaction, accessibility or rendering acceptance. The documentation
+catalogue retains its prior 39 articles and adds this article as number 40.
+
+The hidden-desktop controller is installed at source
+`e6e42f2066d539256d6480401d7cef867f2b8dfe`. Its quiet standard-input/output transport
+exposes 58 tools and passed native-backend installation smoke with a synthetic Qt
+fixture: hidden launch, capture, background close and owned teardown. That image
+is not KeePassXC evidence. KeePassXC profile/history isolation remains blocked
+pending the owner's scope decision, and no packaged lifecycle has run.
+
+Release [v2.8.30301](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.30301)
+binds `91772a166def5e44f60dd49501f5882d7190287c`. The coordinator downloaded and
+verified all seven required assets. Native acceptance remains unverified, and the
+promotion is a later source unit awaiting integration and delivery. See the
+[required smoke sequence](docs/features/delivery/interface-completion.md).
 The [September repair verification record](docs/features/delivery/repair-verification-2026-09.md)
 separates the passing focused native checks and published website from still-unverified installed
 dragging, updates, and the incomplete full feature inventory.

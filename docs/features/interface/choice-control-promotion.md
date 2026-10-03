@@ -26,8 +26,10 @@ evidence for this conversion.
 This change establishes class adoption only. Searchable popup behavior belongs to
 the shared combo-box implementation and requires verification after integration.
 Native rendering, keyboard interaction, accessibility and the language, theme and
-display-scale matrix remain pending. The required hidden-desktop capture route is
-unavailable; no current screenshots are claimed.
+display-scale matrix remain pending. The hidden-desktop controller is installed
+and has passed installation smoke with a synthetic Qt fixture. KeePassXC profile
+and history isolation remains blocked pending the owner's scope decision. No
+KeePassXC interaction or current screenshot is claimed from that fixture.
 
 ## Failure modes and security considerations
 

@@ -1,3 +1,46 @@
+# Choice-control promotion delivery, October 3, 2026
+
+This section supersedes current-state wording in the historical snapshots below.
+The source unit is `3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f` on
+`codex/promote-choice-controls-20261003`. The four fields are browser type, group
+sharing type, SSH key type and SSH key size. Their names, data roles, connections
+and real controller behavior are preserved. The three affected production targets,
+`browser`, `keeshare` and `sshagent`, compiled successfully. Independent source review
+found no actionable regression in this bounded promotion; this is not native proof.
+The six recorded library/generated-header hashes were independently matched.
+No unchanged Qt suite was repeated for this documentation preparation.
+
+Documentation now registers 40 articles, preserving the earlier 39 and adding
+`choice-control-promotion`. The new article has inventory-derived `not-tracked`
+status, which is not an exemption or a completion claim. The immutable manifest
+must bind every article byte to its recorded ancestor. Inventory logic and historical
+rows are unchanged: 178 summaries, 106 surfaces, 89 features, 998 capabilities,
+105,788 required cells and 9,434 surface-feature groups. Zero current cells are
+verified. Product completeness remains red.
+
+The hidden-desktop controller is installed at source
+`e6e42f2066d539256d6480401d7cef867f2b8dfe`, using quiet standard-input/output transport.
+Installation smoke verified 58 tools, the native backend, synthetic Qt hidden
+launch and capture, background close and owned teardown. The fixture image is
+not KeePassXC evidence. KeePassXC profile/history isolation remains blocked
+pending the owner's scope decision. No packaged lifecycle or current KeePassXC
+capture has run. Windows known-folder behavior makes environment-only APPDATA
+and LOCALAPPDATA overrides insufficient for production history isolation.
+
+The coordinator downloaded and verified all seven required assets of
+[v2.8.30301](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.30301),
+bound to main `91772a166def5e44f60dd49501f5882d7190287c`. This package predates the
+promotion and does not establish its installed behavior. The separate shared
+choice-popup implementation still requires integration and its own acceptance.
+
+The documentation source is frozen before the normal full build using official
+Node 24.19.0, `npm ci --ignore-scripts --prefix site`, release refresh and
+`npm run build --prefix site`. Only changed-content/category checks, expected-red
+completeness and public-bound delta/generated scans belong to this documentation
+verification. The exact final-source build receipt is required before delivery;
+this source record does not predict its result or claim hosted/rendered acceptance.
+The coordinating owner owns review, main integration, remote proof, publication,
+release-grade smoke/captures and cleanup. See `CLOSEOUT_PROMPT.md`.
 # Current inventory and interface merge, October 3, 2026
 
 The current request requires release-grade closeout, smoke verification and genuine

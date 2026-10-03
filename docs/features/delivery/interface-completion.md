@@ -212,8 +212,8 @@ No inventory status is upgraded from these results.
 
 ### Required smoke and capture acceptance
 
-Every item below is pending until the approved isolated native-control route is
-available. This is a finite acceptance sequence for the combined candidate, not
+Every item below is pending until KeePassXC profile and history isolation is
+established. This is a finite acceptance sequence for the combined candidate, not
 a substitute for the wider per-surface feature inventory. A passing source check,
 offscreen Qt suite, package build or download does not complete a native item.
 
@@ -263,11 +263,18 @@ current acceptance rows. Preserve them as historical evidence without relabellin
 their source or provenance. Do not fabricate, reconstruct or substitute images
 when the approved route is unavailable.
 
-The approved isolated native-control route is unavailable in the current task.
-No native UI was launched or driven by this inventory lane, and no new screenshot,
-runtime receipt or installed acceptance was produced. Continue bounded source
-implementation separately, build the exact candidate, and obtain genuine per-click
-proof through the approved route when it becomes available. A checklist is not the
+The approved hidden-desktop controller is installed using quiet standard input/output
+transport at source `e6e42f2066d539256d6480401d7cef867f2b8dfe`. Installation smoke
+confirmed 58 tools, the native backend, and a synthetic Qt fixture's hidden launch,
+capture, background close and owned-process teardown. This is controller installation
+evidence only. The fixture image is not KeePassXC evidence and is not published here.
+
+KeePassXC profile and history isolation remains blocked pending the owner's scope
+decision. No packaged lifecycle or current KeePassXC capture has run. Release
+`v2.8.30301` binds source `91772a166def5e44f60dd49501f5882d7190287c`; the coordinator
+downloaded and verified its seven required assets. Package verification does not
+establish native acceptance. Build the exact integrated candidate and obtain genuine
+per-click proof only after isolation is established. A checklist is not the
 implementation it describes.
 
 Suggested articles: [Database lifecycle acceptance](database-lifecycle-repair.md),
