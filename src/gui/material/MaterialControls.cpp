@@ -599,6 +599,7 @@ namespace Material
                 if (!alive || !selected.isValid() || selected.model() != model()) return;
                 setCurrentIndex(selected.row());
                 if (!alive || !selected.isValid() || selected.model() != model()
+                    || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
                     || currentIndex() != selected.row()) return;
                 emit activated(selected.row());
                 if (alive) emit textActivated(label);

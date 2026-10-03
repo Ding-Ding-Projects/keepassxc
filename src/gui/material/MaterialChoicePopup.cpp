@@ -197,7 +197,7 @@ namespace Material
         connect(m_search, &SearchBar::regexToggled, this, &ChoicePopup::refresh);
         connect(m_search, &SearchBar::regexFlagsChanged, this, &ChoicePopup::refresh);
         connect(m_search, &SearchBar::builderRequested, this, &ChoicePopup::showBuilder);
-        connect(m_list, &QListView::clicked, this, [this](const QModelIndex&) { activateCurrent(); });
+        connect(m_list, &QListView::clicked, this, &ChoicePopup::activateIndex);
         m_bindingTimer = new QTimer(this);
         m_bindingTimer->setInterval(30);
         connect(m_bindingTimer, &QTimer::timeout, this, [this] {
@@ -238,6 +238,9 @@ namespace Material
         m_connections << connect(m_source, &QAbstractItemModel::rowsInserted, this, &ChoicePopup::refresh, Qt::QueuedConnection);
         m_connections << connect(m_source, &QAbstractItemModel::rowsRemoved, this, &ChoicePopup::refresh, Qt::QueuedConnection);
         m_connections << connect(m_source, &QAbstractItemModel::rowsMoved, this, &ChoicePopup::refresh, Qt::QueuedConnection);
+        m_connections << connect(m_source, &QAbstractItemModel::columnsInserted, this, &ChoicePopup::refresh, Qt::QueuedConnection);
+        m_connections << connect(m_source, &QAbstractItemModel::columnsRemoved, this, &ChoicePopup::refresh, Qt::QueuedConnection);
+        m_connections << connect(m_source, &QAbstractItemModel::columnsMoved, this, &ChoicePopup::refresh, Qt::QueuedConnection);
         m_connections << connect(m_source, &QAbstractItemModel::layoutChanged, this, &ChoicePopup::refresh, Qt::QueuedConnection);
         m_connections << connect(m_source, &QAbstractItemModel::modelReset, this, &ChoicePopup::refresh, Qt::QueuedConnection);
         refresh(); positionPopup(); show(); raise();
@@ -250,6 +253,8 @@ namespace Material
         if (m_refreshing || m_closing || !m_source) return;
         if (!bindingIsCurrent()) { hide(); return; }
         QScopedValueRollback<bool> refreshing(m_refreshing, true);
+        QPersistentModelIndex candidate(m_proxy->mapToSource(m_list->currentIndex()));
+        if (!candidate.isValid()) candidate = m_source->index(m_owner->currentIndex(), m_column, m_root);
         m_error.clear();
         QSet<QPersistentModelIndex> matches;
         const QString query = m_search->text();
@@ -287,9 +292,12 @@ namespace Material
         m_list->setModelColumn(m_column);
         m_list->setCurrentIndex({});
         m_list->clearSelection();
-        // Query edits never silently commit, and choose the first enabled match
-        // only as the keyboard candidate for Return, not as the combo's value.
-        moveSelection(1);
+        // Keep the current choice on opening and preserve a still-matching
+        // keyboard candidate. Filtering never changes the combo's value.
+        const QModelIndex mapped = m_proxy->mapFromSource(candidate);
+        if (mapped.isValid() && mapped.flags().testFlag(Qt::ItemIsEnabled) && mapped.flags().testFlag(Qt::ItemIsSelectable))
+            m_list->setCurrentIndex(mapped);
+        else moveSelection(1);
         const QString status = !m_error.isEmpty() ? m_error : matches.isEmpty()
             ? Voice::say(QStringLiteral("choice.no-matches"))
             : Voice::say(QStringLiteral("choice.match-count"), {{QStringLiteral("count"), matches.size()}}, Voice::Category::Info);
@@ -315,11 +323,19 @@ namespace Material
 
     void ChoicePopup::activateCurrent()
     {
+        activateIndex(m_list->currentIndex());
+    }
+
+    void ChoicePopup::activateIndex(const QModelIndex& index)
+    {
         if (!bindingIsCurrent()) { hide(); return; }
-        if (!m_error.isEmpty()) return;
-        const QPersistentModelIndex selected(m_proxy->mapToSource(m_list->currentIndex()));
+        const QPersistentModelIndex selected(m_proxy->mapToSource(index));
         if (!selected.isValid() || selected.parent() != m_root || selected.column() != m_column
             || !selected.flags().testFlag(Qt::ItemIsEnabled) || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
+        // dataChanged can be queued behind this key/click. Re-evaluate before
+        // committing the captured index, never fall back to another current row.
+        refresh();
+        if (!m_error.isEmpty() || !selected.isValid() || !m_proxy->mapFromSource(selected).isValid()) return;
         // The receiver may synchronously delete the combo and this popup.
         emit choiceActivated(selected);
     }

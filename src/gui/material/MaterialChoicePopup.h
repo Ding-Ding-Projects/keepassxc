@@ -41,6 +41,7 @@ namespace Material
         bool bindingIsCurrent() const;
         void refresh();
         void activateCurrent();
+        void activateIndex(const QModelIndex& index);
         void moveSelection(int direction);
         void showBuilder();
         void positionPopup();
