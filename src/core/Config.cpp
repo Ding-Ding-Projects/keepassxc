@@ -146,8 +146,7 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_CustomLogoEnabled, {QS("GUI/CustomLogoEnabled"), Local, false}},
     {Config::GUI_CustomLogoFitMode, {QS("GUI/CustomLogoFitMode"), Local, QS("fit")}},
     {Config::GUI_CustomLogoBackground, {QS("GUI/CustomLogoBackground"), Local, QS("#00000000")}},
-    // Retired: the dim sum surprise has no opt-out. The key stays registered so
-    // an old profile still parses; nothing reads it.
+    // Existing profiles retain their explicit startup-decoration preference.
     {Config::GUI_DimSumSurprise, {QS("GUI/DimSumSurprise"), Roaming, true}},
     {Config::GUI_VoiceLanguage, {QS("GUI/VoiceLanguage"), Roaming, QS("English")}},
     {Config::GUI_FunnyLevelEnglish, {QS("GUI/FunnyLevelEnglish"), Roaming, 3}},

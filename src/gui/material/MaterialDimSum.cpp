@@ -66,8 +66,7 @@ namespace Material
     namespace
     {
         /** One launch in a hundred, drawn from the system entropy source. */
-        // One launch in ten, drawn fresh every launch and never twice in one.
-        constexpr int OddsDenominator = 10;
+        constexpr int OddsDenominator = 100;
 
         /** Room the card leaves itself for the el3 shadow. */
         constexpr int ShadowMargin = 24;
@@ -100,6 +99,40 @@ namespace Material
         bool s_pending = false;
         bool s_drawn = false;
         bool s_draw = false;
+        bool s_started = false;
+        bool s_scheduled = false;
+        quint64 s_generation = 0;
+        QPointer<QObject> s_monitor;
+        QPointer<DimSumCard> s_card;
+
+        class StartupMonitor : public QObject
+        {
+        public:
+            using QObject::QObject;
+            bool eventFilter(QObject* watched, QEvent* event) override
+            {
+                switch (event->type()) {
+                case QEvent::KeyPress:
+                case QEvent::MouseButtonPress:
+                case QEvent::Wheel:
+                case QEvent::TouchBegin:
+                    DimSum::suppress();
+                    break;
+                case QEvent::Show:
+                    if (auto* widget = qobject_cast<QWidget*>(watched)) {
+                        auto* message = qobject_cast<KMessageWidget*>(widget);
+                        if (widget->isModal() || widget->windowType() == Qt::Popup
+                            || (message && message->messageType() == KMessageWidget::Error)) {
+                            DimSum::suppress();
+                        }
+                    }
+                    break;
+                default:
+                    break;
+                }
+                return false;
+            }
+        };
 
 
         /**
@@ -189,6 +222,19 @@ namespace Material
                    && config()->get(Config::LastActiveDatabase).toString().isEmpty();
         }
 
+        bool restoresDatabaseAtStartup()
+        {
+            if (!config()->get(Config::OpenPreviousDatabasesOnStartup).toBool()) {
+                return false;
+            }
+            // MainWindow::restoreConfigState opens each nonempty remembered path,
+            // including LastActiveDatabase independently of the opened-tab list.
+            // This enters an embedded credential form without a modal Show event.
+            const auto opened = config()->get(Config::LastOpenedDatabases).toStringList();
+            return !config()->get(Config::LastActiveDatabase).toString().isEmpty()
+                   || std::any_of(opened.cbegin(), opened.cend(), [](const QString& path) { return !path.isEmpty(); });
+        }
+
         /** Whether @p parent belongs to a window that is up, in front and idle. */
         bool isUsableHost(QWidget* parent)
         {
@@ -201,24 +247,16 @@ namespace Material
             }
             // A dialog on screen means an error, an update or a half finished
             // task, and any of those outranks a joke.
-            if (!window->isActiveWindow() || QApplication::activeModalWidget()) {
+            if (!window->isActiveWindow() || QApplication::activeModalWidget() || QApplication::activePopupWidget()) {
                 return false;
             }
             // So does a message bar: that is how KeePassXC reports a failure, a
             // new release and every other thing the user has to read.
             const auto messages = window->findChildren<KMessageWidget*>();
             return std::none_of(
-                messages.cbegin(), messages.cend(), [](const KMessageWidget* bar) { return bar->isVisible(); });
-        }
-
-        /** Every suppression rule, with the draw itself left out. */
-        bool canShow()
-        {
-            // There is no opt-out: the surprise ships in every profile, and the
-            // retired GUI_DimSumSurprise key is ignored so an old profile that
-            // turned it off simply rejoins the draw.
-            return !s_shown && !s_suppressed && !isFirstRun()
-                   && !isQuiet() && !DimSum::catalogue().isEmpty();
+                messages.cbegin(), messages.cend(), [](const KMessageWidget* bar) {
+                    return bar->isVisible() && bar->messageType() == KMessageWidget::Error;
+                });
         }
 
         QPixmap renderDish(const QString& asset, int size)
@@ -243,6 +281,15 @@ namespace Material
             return pixmap;
         }
     } // namespace
+
+    std::function<quint32(quint32)> DimSum::s_random = [](quint32 bound) { return QRandomGenerator::system()->bounded(bound); };
+    std::function<bool()> DimSum::s_quiet = isQuiet;
+        /** Every suppression rule, with the draw itself left out. */
+    bool DimSum::canShow()
+        {
+            return config()->get(Config::GUI_DimSumSurprise).toBool() && !s_shown && !s_suppressed
+                   && !s_quiet() && !DimSum::catalogue().isEmpty();
+        }
 
     // -------------------------------------------------------------- DimSum::Dish
 
@@ -289,42 +336,56 @@ namespace Material
         return dishes;
     }
 
+    void DimSum::beginStartup()
+    {
+        if (s_started) return;
+        s_started = true;
+        if (!config()->get(Config::GUI_DimSumSurprise).toBool() || isFirstRun() || restoresDatabaseAtStartup()) {
+            suppress();
+        }
+        s_monitor = new StartupMonitor(qApp);
+        qApp->installEventFilter(s_monitor);
+        QObject::connect(config(), &Config::changed, s_monitor, [](Config::ConfigKey key) {
+            if (key == Config::GUI_DimSumSurprise && !config()->get(key).toBool()) suppress();
+        });
+    }
+
     bool DimSum::shouldShow()
     {
-        // One decision per launch, remembered, so that asking twice can never make the surprise
-        // more likely than the ten percent it advertises.
-        //
-        // The whole decision latches, not just the random draw. canShow() asks the shell for the
-        // user's notification state, which is an out-of-process call costing on the order of a
-        // hundred milliseconds, and stats the config file. Running that ahead of the cache made
-        // every caller pay for it: a test asking 20,000 times took 42 minutes. It is a startup
-        // decision, so evaluating the environment once at the moment of the draw is also the
-        // behaviour the one-per-launch rule actually describes.
+        beginStartup();
+        // Cheap, live vetoes must also override an already winning draw. Only
+        // the random draw and initial environment query are cached.
+        if (s_shown || s_suppressed || !config()->get(Config::GUI_DimSumSurprise).toBool()) return false;
         if (!s_drawn) {
             s_drawn = true;
-            s_draw = canShow() && QRandomGenerator::system()->bounded(OddsDenominator) == 0;
+            s_draw = canShow() && s_random(OddsDenominator) == 0;
         }
         return s_draw;
     }
 
     void DimSum::showIfDue(QWidget* parent)
     {
-        if (s_pending || !shouldShow()) {
+        if (s_scheduled) {
             return;
         }
+        s_scheduled = true;
+        if (!shouldShow()) return;
 
         // Startup owns the main thread until the window is up. The card waits
         // for it, and re-checks everything when it wakes.
         s_pending = true;
         QPointer<QWidget> host(parent);
-        QTimer::singleShot(StartupGrace, qApp, [host] {
+        const auto generation = s_generation;
+        QTimer::singleShot(StartupGrace, qApp, [host, generation] {
+            if (generation != s_generation) return;
             s_pending = false;
-            showNow(host);
+            if (!showNow(host)) suppress();
         });
     }
 
     bool DimSum::showNow(QWidget* parent)
     {
+        beginStartup();
         if (!canShow() || !isUsableHost(parent)) {
             return false;
         }
@@ -334,6 +395,7 @@ namespace Material
 
         s_shown = true;
         auto* card = new DimSumCard(dish, parent->window());
+        s_card = card;
         card->present();
         return true;
     }
@@ -346,10 +408,20 @@ namespace Material
     void DimSum::suppress()
     {
         s_suppressed = true;
+        if (s_card) {
+            s_card->hide();
+            s_card->deleteLater();
+            s_card = nullptr;
+        }
     }
 
     void DimSum::resetLaunchState()
     {
+        suppress();
+        delete s_monitor.data();
+        ++s_generation;
+        s_started = false;
+        s_scheduled = false;
         s_shown = false;
         s_suppressed = false;
         s_pending = false;

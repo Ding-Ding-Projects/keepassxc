@@ -67,6 +67,7 @@
 #include "gui/material/MaterialChangelogFeed.h"
 #include "gui/material/MaterialChangelogScreen.h"
 #include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialGeneratorSheet.h"
 #include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialHistoryScreen.h"
@@ -640,6 +641,9 @@ MainWindow::MainWindow()
 #ifdef KPXC_FEATURE_UPDATES
     connect(m_ui->actionCheckForUpdates, SIGNAL(triggered()), SLOT(showUpdateCheckDialog()));
     connect(updateCheck(), &UpdateChecker::stateChanged, this, [this](UpdateChecker::State state, UpdateChecker::Failure failure) {
+        // Updates are an active workflow, including a check that finishes before
+        // the startup decoration's grace period expires.
+        Material::DimSum::suppress();
         switch (state) {
         case UpdateChecker::State::Checking:
             Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Checking for updates…"), -1);
@@ -1447,6 +1451,9 @@ void MainWindow::clearLastDatabases()
 
 void MainWindow::openDatabase(const QString& filePath, const QString& password, const QString& keyfile)
 {
+    // Forwarded file requests can enter an embedded credential form without
+    // user input or a modal event. End startup decoration before opening it.
+    Material::DimSum::suppress();
     m_ui->tabWidget->addDatabaseTab(filePath, false, password, keyfile);
 }
 

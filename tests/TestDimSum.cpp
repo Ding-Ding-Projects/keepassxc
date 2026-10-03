@@ -21,6 +21,10 @@
 #include "gui/material/MaterialDimSum.h"
 #include "util/TemporaryFile.h"
 
+#include <QApplication>
+#include <QDir>
+#include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QFile>
 #include <QLocale>
 #include <QSet>
@@ -29,7 +33,7 @@
 #include <QTest>
 #include <QWidget>
 
-QTEST_MAIN(TestDimSum)
+
 
 using Material::DimSum;
 using Material::DimSumCard;
@@ -37,7 +41,7 @@ using Material::DimSumCard;
 void TestDimSum::initTestCase()
 {
     QLocale::setDefault(QLocale::c());
-    Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), {});
+    Config::createConfigFromFile(qEnvironmentVariable("KPXC_CONFIG"), qEnvironmentVariable("KPXC_CONFIG_LOCAL"));
 
     // A configuration that has never seen a database reads as a first run, and
     // the surprise stands down on those. Give it a history so the rules under
@@ -121,31 +125,13 @@ void TestDimSum::testDisplayNameCarriesBothLanguages()
     }
 }
 
-void TestDimSum::testRetiredOptOutIsIgnored()
+void TestDimSum::testDisabledSuppressesAbsolutely()
 {
-    // The surprise has no opt-out. Whatever this desktop currently allows (quiet
-    // hours and focus assist are themselves part of the contract), the retired
-    // GUI_DimSumSurprise key must make no difference to the answer.
-    DimSum::resetLaunchState();
-    config()->set(Config::GUI_DimSumSurprise, true);
-    const bool withKeyOn = DimSum::showNow(m_window.data());
-    const bool shownOn = DimSum::hasShown();
-
-    DimSum::resetLaunchState();
     config()->set(Config::GUI_DimSumSurprise, false);
-    const bool withKeyOff = DimSum::showNow(m_window.data());
-    QCOMPARE(withKeyOff, withKeyOn);
-    QCOMPARE(DimSum::hasShown(), shownOn);
-
-    // The launch decision still latches: shouldShow() answers the same thing
-    // however often it is asked, which keeps the odds honest and keeps 20,000
-    // calls a bool read rather than 42 minutes of shell queries.
-    const bool first = DimSum::shouldShow();
-    for (int i = 0; i < 20000; ++i) {
-        QCOMPARE(DimSum::shouldShow(), first);
-    }
+    QVERIFY(!DimSum::showNow(m_window.data()));
+    QVERIFY(!DimSum::hasShown());
+    for (int i = 0; i < 200; ++i) QVERIFY(!DimSum::shouldShow());
 }
-
 void TestDimSum::testFiresOnlyOncePerLaunch()
 {
     const bool first = DimSum::showNow(m_window.data());
@@ -171,4 +157,21 @@ void TestDimSum::testFiresOnlyOncePerLaunch()
     QTest::qWait(20);
 
     QCOMPARE(m_window->findChildren<DimSumCard*>().size(), 1);
+}
+
+int main(int argc, char** argv)
+{
+    QStandardPaths::setTestModeEnabled(true);
+    QTemporaryDir isolated(QDir::tempPath() + QStringLiteral("/kds-old-XXXXXX"));
+    if (!isolated.isValid()) return 2;
+    qputenv("KPXC_CONFIG", (isolated.path() + QStringLiteral("/settings.ini")).toUtf8());
+    qputenv("KPXC_CONFIG_LOCAL", (isolated.path() + QStringLiteral("/local.ini")).toUtf8());
+    qputenv("USERNAME", "dim-sum-test");
+    qputenv("USER", "dim-sum-test");
+    const auto identity = QStringLiteral("KeePassXC-DimSum-Legacy-Tests-") + QDir(isolated.path()).dirName();
+    QCoreApplication::setOrganizationName(identity);
+    QCoreApplication::setApplicationName(identity);
+    QApplication application(argc, argv);
+    TestDimSum test;
+    return QTest::qExec(&test, argc, argv);
 }
