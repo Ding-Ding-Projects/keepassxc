@@ -22,6 +22,8 @@
 #include <QCheckBox>
 #include <QClipboard>
 #include <QDialog>
+#include <QFileDialog>
+#include <QTemporaryDir>
 #include <QListWidget>
 #include <QMenu>
 #include <QMenuBar>
@@ -1883,7 +1885,12 @@ void TestGui::testSaveAs()
 
     fileDialog()->setNextFileName(tmpFileName);
 
-    triggerAction("actionDatabaseSaveAs");
+    config()->set(Config::UseAtomicSaves, true);
+    config()->set(Config::RememberLastDatabases, true);
+    QVERIFY(m_tabWidget->saveDatabaseAs());
+    QCOMPARE(m_db->filePath(), tmpFileName);
+    QVERIFY(!m_db->isModified());
+    QCOMPARE(config()->get(Config::LastDatabases).toStringList().first(), tmpFileName);
 
     QCOMPARE(m_tabWidget->tabText(m_tabWidget->currentIndex()), QString("testSaveAs"));
 
@@ -1892,6 +1899,94 @@ void TestGui::testSaveAs()
     fileInfo.refresh();
     QCOMPARE(fileInfo.lastModified(), lastModified);
     tmpFile.remove();
+}
+
+void TestGui::testSaveAsCanceled()
+{
+    config()->set(Config::UseAtomicSaves, true);
+    const auto oldPath = m_db->filePath();
+    const auto recentFiles = config()->get(Config::LastDatabases).toStringList();
+    m_db->metadata()->setName("Unsaved cancellation");
+
+    // Use the Qt dialog so cancellation is deterministic without native input.
+    const bool nativeDialogsDisabled = qApp->testAttribute(Qt::AA_DontUseNativeDialogs);
+    qApp->setAttribute(Qt::AA_DontUseNativeDialogs, true);
+    auto restoreDialogs = qScopeGuard([nativeDialogsDisabled] {
+        qApp->setAttribute(Qt::AA_DontUseNativeDialogs, nativeDialogsDisabled);
+    });
+    bool canceled = false;
+    QTimer::singleShot(0, [&canceled] {
+        auto* dialog = qobject_cast<QFileDialog*>(QApplication::activeModalWidget());
+        if (dialog) {
+            dialog->reject();
+            canceled = true;
+        }
+    });
+    QVERIFY(!m_tabWidget->saveDatabaseAs());
+    QVERIFY(canceled);
+    QCOMPARE(m_db->filePath(), oldPath);
+    QCOMPARE(m_db->metadata()->name(), QString("Unsaved cancellation"));
+    QVERIFY(m_db->isModified());
+    QVERIFY(!m_dbWidget->isLocked());
+    QVERIFY(m_mainWindow->isEnabled());
+    QCOMPARE(config()->get(Config::LastDatabases).toStringList(), recentFiles);
+    m_db->metadata()->setName("Still editable after cancellation");
+    QCOMPARE(m_db->metadata()->name(), QString("Still editable after cancellation"));
+}
+
+void TestGui::testSaveAsFailed()
+{
+    config()->set(Config::UseAtomicSaves, true);
+    QTemporaryDir destination;
+    QVERIFY(destination.isValid());
+    const auto oldPath = m_db->filePath();
+    const auto recentFiles = config()->get(Config::LastDatabases).toStringList();
+    m_db->metadata()->setName("Unsaved failed destination");
+    // An existing directory cannot be replaced by a database file on any platform.
+    fileDialog()->setNextFileName(destination.path());
+    QVERIFY(!m_tabWidget->saveDatabaseAs());
+    QCOMPARE(m_db->filePath(), oldPath);
+    QCOMPARE(m_db->metadata()->name(), QString("Unsaved failed destination"));
+    QVERIFY(m_db->isModified());
+    QVERIFY(!m_dbWidget->isLocked());
+    QVERIFY(m_mainWindow->isEnabled());
+    QCOMPARE(config()->get(Config::LastDatabases).toStringList(), recentFiles);
+    QVERIFY(QFileInfo(destination.path()).isDir());
+    m_db->metadata()->setName("Still editable after save failure");
+    QCOMPARE(m_db->metadata()->name(), QString("Still editable after save failure"));
+}
+
+void TestGui::testFirstSaveOnClose()
+{
+    config()->set(Config::UseAtomicSaves, true);
+    config()->set(Config::RememberLastDatabases, true);
+    QTemporaryDir destination;
+    QVERIFY(destination.isValid());
+    const auto fileName = destination.filePath("first-save.kdbx");
+    auto database = QSharedPointer<Database>::create();
+    QVERIFY(database->setKey(m_db->key()));
+    database->metadata()->setName("First save on close");
+    QVERIFY(database->filePath().isEmpty());
+    QVERIFY(database->isModified());
+    auto* widget = new DatabaseWidget(database, m_tabWidget);
+    m_tabWidget->addDatabaseTab(widget);
+    auto restoreTabs = qScopeGuard([this, widget] {
+        if (m_tabWidget->indexOf(widget) >= 0) {
+            MessageBox::setNextAnswer(MessageBox::Discard);
+            m_tabWidget->closeDatabaseTab(widget);
+        }
+        m_tabWidget->setCurrentWidget(m_dbWidget);
+        MessageBox::setNextAnswer(MessageBox::NoButton);
+    });
+    const int initialCount = m_tabWidget->count();
+    fileDialog()->setNextFileName(fileName);
+    MessageBox::setNextAnswer(MessageBox::Save);
+    QVERIFY(m_tabWidget->closeDatabaseTab(widget));
+    QCOMPARE(m_tabWidget->count(), initialCount - 1);
+    QVERIFY(QFileInfo::exists(fileName));
+    checkDatabase(fileName, "First save on close");
+    QCOMPARE(config()->get(Config::LastDatabases).toStringList().first(), fileName);
+    MessageBox::setNextAnswer(MessageBox::NoButton);
 }
 
 void TestGui::testSaveBackup()
