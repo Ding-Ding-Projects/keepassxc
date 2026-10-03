@@ -65,6 +65,7 @@ private slots:
     void testDragAndDropEntry();
     void testDragAndDropGroup();
     void testSaveAs();
+    void testHistoryInitializationAfterUnlock();
     void testSaveAsCanceled();
     void testSaveAsFailed();
     void testFirstSaveOnClose();
