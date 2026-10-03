@@ -475,6 +475,7 @@ void TestMaterialMenu::selectBuilderFitsAndRestoresWidth()
     QTRY_VERIFY(panel->isVisible());
     auto* builder = panel->findChild<RegexBuilder*>();
     QVERIFY(builder && builder->isOpen());
+    QTRY_COMPARE(builder->transition(), qreal(1.0));
     const QRect panelBounds(panel->mapToGlobal(QPoint()), panel->size());
     const QRect popupBounds(popup->mapToGlobal(QPoint()), popup->size());
     QVERIFY2(popupBounds.contains(panelBounds), qPrintable(QStringLiteral("Popup %1,%2 %3x%4; panel %5,%6 %7x%8")
@@ -485,7 +486,11 @@ void TestMaterialMenu::selectBuilderFitsAndRestoresWidth()
     for (auto* candidate : builder->findChildren<IconButton*>())
         if (candidate->toolTip() == QStringLiteral("Close")) close = candidate;
     QVERIFY(close);
+    QTRY_VERIFY(close->isVisible() && close->width() > 0 && close->height() > 0);
+    QSignalSpy closedClick(close, &IconButton::clicked);
     QTest::mouseClick(close, Qt::LeftButton);
+    QCOMPARE(closedClick.count(), 1);
+    QVERIFY(!builder->isOpen());
     QTRY_VERIFY(!panel->isVisible());
     QCOMPARE(popup->minimumWidth(), originalMinimum);
     QCOMPARE(popup->maximumWidth(), originalMaximum);
