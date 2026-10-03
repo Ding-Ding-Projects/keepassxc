@@ -349,7 +349,6 @@ void TestMaterialHistory::recordsSnapshotsBelowDeepHistoryRoot()
     QVERIFY2(restored->open(snapshotPath, materialHistoryTestKey(), &error), qPrintable(error));
     QCOMPARE(restored->metadata()->name(), QStringLiteral("Deep history snapshot"));
     HistoryStore reconstructed(deepRoot, QStandardPaths::findExecutable(QStringLiteral("git")));
-    reconstructed.load();
     const auto retained = reconstructed.revisionsForDatabase(database);
     QCOMPARE(retained.size(), 1);
     QCOMPARE(retained.first().id, revisions.first().id);
