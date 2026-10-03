@@ -1424,7 +1424,7 @@
              </widget>
             </item>
             <item>
-             <widget class="QComboBox" name="browserTypeComboBox">
+             <widget class="Material::ComboBox" name="browserTypeComboBox">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                 <horstretch>0</horstretch>
@@ -1592,6 +1592,11 @@
   </layout>
  </widget>
  <customwidgets>
+  <customwidget>
+   <class>Material::ComboBox</class>
+   <extends>QComboBox</extends>
+   <header>gui/material/MaterialControls.h</header>
+  </customwidget>
   <customwidget>
    <class>MessageWidget</class>
    <extends>QWidget</extends>
