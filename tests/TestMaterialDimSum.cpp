@@ -1,6 +1,9 @@
 #include "core/Config.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialNotifier.h"
+#include "gui/material/MaterialSettingsScreen.h"
+#include "gui/material/MaterialVoice.h"
+#include <QAbstractButton>
 
 #include <QApplication>
 #include <QDir>
@@ -89,6 +92,63 @@ private slots:
         DimSum::s_random = [&](quint32) { ++calls; return 0; };
         QVERIFY(!DimSum::shouldShow());
         QCOMPARE(calls, 0);
+    }
+    void firstRunCannotBecomeEligibleMidLaunch()
+    {
+        config()->set(Config::LastDatabases, QStringList());
+        DimSum::beginStartup();
+        config()->set(Config::LastDatabases, QStringList{QStringLiteral("synthetic-history-only.kdbx")});
+        QVERIFY(!DimSum::shouldShow());
+    }
+    void settingsControlIsLocalizedAndPersists()
+    {
+        Material::SettingsScreen settings;
+        auto* toggle = settings.findChild<QAbstractButton*>(QStringLiteral("dimSumSurpriseToggle"));
+        QVERIFY(toggle);
+        QVERIFY(toggle->focusPolicy() != Qt::NoFocus);
+        QVERIFY(toggle->isChecked());
+        toggle->click();
+        QVERIFY(!config()->get(Config::GUI_DimSumSurprise).toBool());
+        config()->sync();
+        QSettings stored(config()->getFileName(), QSettings::IniFormat);
+        QVERIFY(!stored.value(QStringLiteral("GUI/DimSumSurprise"), true).toBool());
+        for (auto language : {Material::Voice::Language::English, Material::Voice::Language::Cantonese,
+                              Material::Voice::Language::Bilingual}) {
+            Material::Voice::setLanguage(language);
+            QCOMPARE(toggle->accessibleName(), Material::Voice::say(QStringLiteral("dim-sum.setting")));
+            QVERIFY(toggle->accessibleDescription().contains(QStringLiteral("1%")));
+            QVERIFY(!toggle->accessibleName().contains(QStringLiteral("dim-sum.setting")));
+        }
+        config()->set(Config::GUI_DimSumSurprise, true);
+        QVERIFY(toggle->isChecked());
+    }
+    void disablingVisibleCardIsImmediate()
+    {
+        QWidget host;
+        host.show();
+        host.activateWindow();
+        QTRY_VERIFY(host.isActiveWindow());
+        QVERIFY(DimSum::showNow(&host));
+        QPointer<DimSumCard> card = host.findChild<DimSumCard*>();
+        QVERIFY(card && card->isVisible());
+        config()->set(Config::GUI_DimSumSurprise, false);
+        QVERIFY(!card || !card->isVisible());
+        QTRY_VERIFY(card.isNull());
+    }
+    void quietAtPresentationCancelsWithoutRetry()
+    {
+        QWidget host;
+        host.show();
+        host.activateWindow();
+        QTRY_VERIFY(host.isActiveWindow());
+        DimSum::showIfDue(&host);
+        DimSum::s_quiet = [] { return true; };
+        QTest::qWait(1600);
+        QVERIFY(!DimSum::hasShown());
+        DimSum::s_quiet = [] { return false; };
+        DimSum::showIfDue(&host);
+        QTest::qWait(1600);
+        QVERIFY(!DimSum::hasShown());
     }
     void suppressionOverridesWinningDraw()
     {

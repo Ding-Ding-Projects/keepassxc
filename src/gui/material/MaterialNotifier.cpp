@@ -18,6 +18,7 @@
 #include "MaterialNotifier.h"
 
 #include "MaterialNotificationCentre.h"
+#include "MaterialDimSum.h"
 
 // ---------------------------------------------------------------------------
 // INTEGRATION POINT - Material::Voice
@@ -117,6 +118,7 @@ namespace Material
                           const QString& body,
                           const QList<NotificationAction>& actions)
             {
+                if (severity == SeverityLevel::Error) DimSum::suppress();
                 QWidget* window = resolveHost();
                 if (!window) {
                     return;

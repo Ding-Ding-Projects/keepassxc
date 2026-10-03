@@ -162,6 +162,13 @@ int main(int argc, char** argv)
         Config::createConfigFromFile(parser.value(configOption), parser.value(localConfigOption));
     }
 
+    // Capture first-run eligibility before opening a database can populate history.
+    Material::DimSum::beginStartup();
+    if (!parser.positionalArguments().isEmpty() || parser.isSet(pwstdinOption)
+        || parser.isSet(startMinimized) || parser.isSet(captureRouteOption)) {
+        Material::DimSum::suppress();
+    }
+
     // Extract file names provided on the command line for opening
     QStringList fileNames;
 #ifdef Q_OS_WIN

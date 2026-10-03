@@ -4,25 +4,29 @@ Feature id: `dim-sum-surprise` · Category: Messages, language and voice
 
 ## Behaviour
 
-At startup the application may show a randomly chosen dim sum dish, named in English and Cantonese, as a non-blocking auto-dismissing card that never gates startup or steals focus (`Material::DimSum`, `src/gui/material/MaterialDimSum.h`). It is suppressed on first run, on error paths, during updates and whenever a capture route is active.
+An eligible launch draws once from 100 equally likely values. Only zero selects a randomly chosen dish. The card names the dish in English and Cantonese, uses bundled SVG artwork, appears without taking keyboard focus, and dismisses after six seconds. Startup never waits for it.
+
+`Material::DimSum::beginStartup()` captures first-run eligibility before database-opening flows can populate recent history. A profile with no recent database history is conservatively treated as a first run. The card is also excluded when the application starts minimized, opens a command-line database, receives keyboard, pointer, wheel or touch input, opens a modal dialog or popup, reports an error, or enters the update workflow. Ordinary informational notifications do not cancel the draw.
+
+There is one startup scheduling opportunity. After a 1.5-second grace period, presentation rechecks the off preference, desktop quiet state and visible active host. An unavailable host or an excluded state cancels that launch instead of retrying later during the user's work. Destroying the host invalidates the pending presentation safely.
 
 ## Configuration
 
-Today `GUI/DimSumSurprise` can turn it off and the draw is one percent.
+Settings > Behaviour contains **Startup dim sum surprise**, with English, Cantonese and bilingual labels. It persists the existing `GUI/DimSumSurprise` preference. Existing explicit `false` values remain disabled. Turning it off cancels a pending presentation and immediately hides any visible card. Turning it back on does not resurrect a canceled startup; eligibility is reconsidered on the next launch.
 
-## Failure modes
+Windows notification quiet state and minimized startup suppress presentation. Windows reduced-animation preference selects immediate presentation and dismissal in this source unit. Composition with the separate user reduced-motion preference is owned by the shared motion-policy unit and must be verified after integration.
 
-The canonical contract is a ten percent draw with no opt-out and dish photos resolved from the public catalog rather than bundled images; both are open inventory findings.
+## Security and privacy
 
-## Security considerations
-
-Bundled assets only; no network.
+All dish names and images come from `:/dimsum/dimsum.json` and the bundled `:/dimsum/` assets. There is no network request, telemetry or database-content lookup for this feature. The card contains only dish information. Error, update and user-interaction suppression hides it immediately rather than delaying that exclusion for an animation.
 
 ## Verification
 
-Parity captures suppress the card explicitly; behaviour tests are pending.
+`TestMaterialDimSum.cpp` uses synthetic configuration and a separate Qt identity established before `QApplication`. Private test providers make the draw boundaries and quiet-state decisions deterministic. Coverage includes all 100 draw values, one draw per launch, persisted disabling, first-run latching, active-flow cancellation, informational versus error notifications, popup exclusion, focus preservation, timed dismissal, host destruction, local images and the localized setting.
 
-## Suggested articles
+The tests-first candidate produced 7 passes and 106 failures before the runtime repair. These offscreen tests establish behavioral evidence only. Native rendering, supported geometry, operating-system notification integration and the integrated user/system reduced-motion matrix still require built-application acceptance through the sanctioned route. No native capture is claimed here.
 
-- [Language modes and the voice catalogue](../messaging/language-modes.md)
+## Related articles
+
+- [Language modes and the voice catalogue](language-modes.md)
 - [Dim sum release code names](../delivery/release-code-name.md)

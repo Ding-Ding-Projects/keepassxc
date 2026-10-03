@@ -106,6 +106,7 @@
 
 #ifdef KPXC_FEATURE_UPDATES
 #include "networking/UpdateChecker.h"
+#include "gui/material/MaterialDimSum.h"
 #endif
 
 #ifdef KPXC_FEATURE_SSHAGENT
@@ -640,6 +641,9 @@ MainWindow::MainWindow()
 #ifdef KPXC_FEATURE_UPDATES
     connect(m_ui->actionCheckForUpdates, SIGNAL(triggered()), SLOT(showUpdateCheckDialog()));
     connect(updateCheck(), &UpdateChecker::stateChanged, this, [this](UpdateChecker::State state, UpdateChecker::Failure failure) {
+        // Updates are an active workflow, including a check that finishes before
+        // the startup decoration's grace period expires.
+        Material::DimSum::suppress();
         switch (state) {
         case UpdateChecker::State::Checking:
             Material::Notify::progress(QStringLiteral("squirrel-update"), tr("Checking for updates…"), -1);

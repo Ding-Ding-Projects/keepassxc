@@ -120,6 +120,6 @@ be true in the build. A row is not done because the prototype shows it.
 | 1% chance at startup, drawn fresh, never twice per launch | Real in the prototype; Appearance has a force button | — |
 | Name in both languages, honouring language mode | Card | Correct at every funny level |
 | Non-blocking, auto-dismissing, never gates startup or steals focus | 6 s auto-dismiss | Suppressed on first run, error paths, updates, mid-task |
-| Bundled local assets, no network, no CDN | Placeholder names `share/dimsum/<id>.png` | — |
+| Bundled local assets, no network, no CDN | `share/dimsum/` SVG catalogue | `:/dimsum/` resources; native acceptance pending |
 | Meaningful alt text; reduced motion and quiet honoured | — | — |
-| Persisted off switch, honoured absolutely | Card › Turn off; Appearance › Motion | `GUI_DimSumEnabled` |
+| Persisted off switch, honoured absolutely | Settings › Behaviour › Startup dim sum surprise | `GUI/DimSumSurprise`; pending and visible presentation canceled immediately |

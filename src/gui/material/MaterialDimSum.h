@@ -45,7 +45,7 @@ namespace Material
      * nothing else: it never gates startup, never takes focus, never blocks a
      * click, and it stands down entirely on a first run, on an error path,
      * during an update, while a dialog is open, while the desktop is quiet, and
-     * during a capture route. There is no opt-out; one launch in ten draws it.
+     * during a capture route. The persisted off switch always takes precedence.
      *
      * Everything it draws is bundled in `:/dimsum`; nothing is fetched.
      */
@@ -66,6 +66,9 @@ namespace Material
 
         /** The bundled dishes, parsed once from `:/dimsum/dimsum.json`. */
         static QVector<Dish> catalogue();
+
+        /** Latch startup eligibility before opening databases or processing user input. */
+        static void beginStartup();
 
         /** The 1% draw plus every suppression rule. Drawn at most once per launch. */
         static bool shouldShow();
