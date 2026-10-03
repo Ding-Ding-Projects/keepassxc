@@ -2,6 +2,249 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "choice.popup": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose an item"
+                ],
+                "levels": {
+                    "1": "Choose an item",
+                    "2": "Choose an item",
+                    "3": "Choose an item",
+                    "4": "Choose an item",
+                    "5": "Choose an item"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "揀一個項目"
+                ],
+                "levels": {
+                    "1": "揀一個項目",
+                    "2": "揀一個項目",
+                    "3": "揀一個項目",
+                    "4": "揀一個項目",
+                    "5": "揀一個項目"
+                }
+            }
+        },
+        "choice.search": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search choices"
+                ],
+                "levels": {
+                    "1": "Search choices",
+                    "2": "Search choices",
+                    "3": "Search choices",
+                    "4": "Search choices",
+                    "5": "Search choices"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋選項"
+                ],
+                "levels": {
+                    "1": "搜尋選項",
+                    "2": "搜尋選項",
+                    "3": "搜尋選項",
+                    "4": "搜尋選項",
+                    "5": "搜尋選項"
+                }
+            }
+        },
+        "choice.results": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Matching choices"
+                ],
+                "levels": {
+                    "1": "Matching choices",
+                    "2": "Matching choices",
+                    "3": "Matching choices",
+                    "4": "Matching choices",
+                    "5": "Matching choices"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "符合搜尋嘅選項"
+                ],
+                "levels": {
+                    "1": "符合搜尋嘅選項",
+                    "2": "符合搜尋嘅選項",
+                    "3": "符合搜尋嘅選項",
+                    "4": "符合搜尋嘅選項",
+                    "5": "符合搜尋嘅選項"
+                }
+            }
+        },
+        "choice.pattern-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Pattern exceeds safe choice search limits."
+                ],
+                "levels": {
+                    "1": "Pattern exceeds safe choice search limits.",
+                    "2": "Pattern exceeds safe choice search limits.",
+                    "3": "Pattern exceeds safe choice search limits.",
+                    "4": "Pattern exceeds safe choice search limits.",
+                    "5": "Pattern exceeds safe choice search limits."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋式超出選項搜尋嘅安全限制。"
+                ],
+                "levels": {
+                    "1": "搜尋式超出選項搜尋嘅安全限制。",
+                    "2": "搜尋式超出選項搜尋嘅安全限制。",
+                    "3": "搜尋式超出選項搜尋嘅安全限制。",
+                    "4": "搜尋式超出選項搜尋嘅安全限制。",
+                    "5": "搜尋式超出選項搜尋嘅安全限制。"
+                }
+            }
+        },
+        "choice.invalid-pattern": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Invalid regular expression. No choices can be selected."
+                ],
+                "levels": {
+                    "1": "Invalid regular expression. No choices can be selected.",
+                    "2": "Invalid regular expression. No choices can be selected.",
+                    "3": "Invalid regular expression. No choices can be selected.",
+                    "4": "Invalid regular expression. No choices can be selected.",
+                    "5": "Invalid regular expression. No choices can be selected."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正規表示式無效，暫時唔可以揀選項。"
+                ],
+                "levels": {
+                    "1": "正規表示式無效，暫時唔可以揀選項。",
+                    "2": "正規表示式無效，暫時唔可以揀選項。",
+                    "3": "正規表示式無效，暫時唔可以揀選項。",
+                    "4": "正規表示式無效，暫時唔可以揀選項。",
+                    "5": "正規表示式無效，暫時唔可以揀選項。"
+                }
+            }
+        },
+        "choice.result-limit": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Choice search exceeded its limits. Refine the search or use the original field."
+                ],
+                "levels": {
+                    "1": "Choice search exceeded its limits. Refine the search or use the original field.",
+                    "2": "Choice search exceeded its limits. Refine the search or use the original field.",
+                    "3": "Choice search exceeded its limits. Refine the search or use the original field.",
+                    "4": "Choice search exceeded its limits. Refine the search or use the original field.",
+                    "5": "Choice search exceeded its limits. Refine the search or use the original field."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選項搜尋超出限制。請調整搜尋，或者用原本欄位。"
+                ],
+                "levels": {
+                    "1": "選項搜尋超出限制。請調整搜尋，或者用原本欄位。",
+                    "2": "選項搜尋超出限制。請調整搜尋，或者用原本欄位。",
+                    "3": "選項搜尋超出限制。請調整搜尋，或者用原本欄位。",
+                    "4": "選項搜尋超出限制。請調整搜尋，或者用原本欄位。",
+                    "5": "選項搜尋超出限制。請調整搜尋，或者用原本欄位。"
+                }
+            }
+        },
+        "choice.no-matches": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No matching choices"
+                ],
+                "levels": {
+                    "1": "No matching choices",
+                    "2": "No matching choices",
+                    "3": "No matching choices",
+                    "4": "No matching choices",
+                    "5": "No matching choices"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "冇符合搜尋嘅選項"
+                ],
+                "levels": {
+                    "1": "冇符合搜尋嘅選項",
+                    "2": "冇符合搜尋嘅選項",
+                    "3": "冇符合搜尋嘅選項",
+                    "4": "冇符合搜尋嘅選項",
+                    "5": "冇符合搜尋嘅選項"
+                }
+            }
+        },
+        "choice.match-count": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "{count} matching choices"
+                ],
+                "levels": {
+                    "1": "{count} matching choices",
+                    "2": "{count} matching choices",
+                    "3": "{count} matching choices",
+                    "4": "{count} matching choices",
+                    "5": "{count} matching choices"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "有 {count} 個符合搜尋嘅選項"
+                ],
+                "levels": {
+                    "1": "有 {count} 個符合搜尋嘅選項",
+                    "2": "有 {count} 個符合搜尋嘅選項",
+                    "3": "有 {count} 個符合搜尋嘅選項",
+                    "4": "有 {count} 個符合搜尋嘅選項",
+                    "5": "有 {count} 個符合搜尋嘅選項"
+                }
+            }
+        },
+        "choice.flags": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching."
+                ],
+                "levels": {
+                    "1": "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching.",
+                    "2": "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching.",
+                    "3": "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching.",
+                    "4": "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching.",
+                    "5": "Qt regex (PCRE2): i, m, s. Unicode properties are always enabled; g does not change choice matching."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。"
+                ],
+                "levels": {
+                    "1": "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。",
+                    "2": "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。",
+                    "3": "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。",
+                    "4": "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。",
+                    "5": "Qt 正規表示式（PCRE2）：i、m、s。Unicode 屬性一律啟用；g 唔會改變選項配對結果。"
+                }
+            }
+        },
         "menu.search": {
             "category": "info",
             "en": {
