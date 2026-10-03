@@ -3,6 +3,7 @@
 #include "crypto/Crypto.h"
 #include "crypto/kdf/AesKdf.h"
 #include "gui/DatabaseWidget.h"
+#include "gui/DatabaseTabWidget.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageWidget.h"
 #include "keys/CompositeKey.h"
@@ -53,6 +54,11 @@ private slots:
     {
         DimSum::s_random = [](quint32 bound) { return QRandomGenerator::system()->bounded(bound); };
         DimSum::resetLaunchState();
+        if (m_window) QVERIFY(m_window->findChild<DatabaseTabWidget*>()->closeAllDatabaseTabs());
+    }
+    void cleanupTestCase()
+    {
+        m_window.reset();
     }
     void drawBoundary_data()
     {
@@ -156,14 +162,7 @@ private slots:
         config()->set(Config::GUI_DimSumSurprise, false);
         QVERIFY(!DimSum::shouldShow());
     }
-    void programmaticOpenCancelsPendingCard()
-    {
-        programmaticOpen(false);
-    }
-    void programmaticOpenHidesVisibleCard()
-    {
-        programmaticOpen(true);
-    }
+
     void firstRunDoesNotDraw()
     {
         config()->set(Config::LastDatabases, QStringList());
@@ -322,7 +321,16 @@ private slots:
             QVERIFY(dish.displayName().contains(dish.cantonese));
         }
     }
+    void programmaticOpenCancelsPendingCard()
+    {
+        programmaticOpen(false);
+    }
+    void programmaticOpenHidesVisibleCard()
+    {
+        programmaticOpen(true);
+    }
 private:
+    QScopedPointer<MainWindow> m_window;
     void programmaticOpen(bool alreadyVisible)
     {
         QTemporaryDir databaseDirectory(QDir::tempPath() + QStringLiteral("/kds-db-XXXXXX"));
@@ -347,7 +355,8 @@ private:
         config()->set(Config::GlobalAutoTypeKey, 0);
         config()->set(Config::GlobalAutoTypeModifiers, 0);
         config()->set(Config::Security_LockDatabaseIdle, false);
-        MainWindow window;
+        if (!m_window) m_window.reset(new MainWindow);
+        auto& window = *m_window;
         window.resize(1024, 768);
         window.show();
         window.activateWindow();
@@ -373,6 +382,7 @@ private:
             QVERIFY(!card || !card->isVisible());
             QTRY_VERIFY(card.isNull());
         } else {
+            QVERIFY(!DimSum::shouldShow());
             QTest::qWait(1600);
             QVERIFY(!DimSum::hasShown());
             QVERIFY(window.findChildren<DimSumCard*>().isEmpty());
