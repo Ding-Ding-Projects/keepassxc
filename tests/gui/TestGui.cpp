@@ -133,6 +133,7 @@ void TestGui::initTestCase()
 // Every test starts with resetting config settings and opening the temp database
 void TestGui::init()
 {
+    const auto previousDatabase = m_db;
     // Reset config to defaults
     config()->resetToDefaults();
     // Disable autosave so we can test the modified file indicator
@@ -180,6 +181,7 @@ void TestGui::init()
 
     QTRY_VERIFY(!m_dbWidget->isLocked());
     m_db = m_dbWidget->database();
+    QVERIFY(m_db != previousDatabase);
 
     QApplication::processEvents();
 }
@@ -187,7 +189,8 @@ void TestGui::init()
 // Every test ends with closing the temp database without saving
 void TestGui::cleanup()
 {
-    if (m_tabWidget->isVisible()) {
+    if (m_dbWidget && m_tabWidget->indexOf(m_dbWidget) >= 0) {
+        m_tabWidget->setCurrentWidget(m_dbWidget);
         // DO NOT save the database
         m_db->markAsClean();
         MessageBox::setNextAnswer(MessageBox::No);
