@@ -1,5 +1,12 @@
 #include "core/Config.h"
+#include "core/Database.h"
+#include "crypto/Crypto.h"
+#include "crypto/kdf/AesKdf.h"
+#include "gui/DatabaseWidget.h"
+#include "gui/MainWindow.h"
 #include "gui/MessageWidget.h"
+#include "keys/CompositeKey.h"
+#include "keys/PasswordKey.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialNotifier.h"
 #include "gui/material/MaterialSettingsScreen.h"
@@ -25,6 +32,10 @@ class TestMaterialDimSum : public QObject
 {
     Q_OBJECT
 private slots:
+    void initTestCase()
+    {
+        QVERIFY(Crypto::init());
+    }
     void init()
     {
         DimSum::resetLaunchState();
@@ -144,6 +155,14 @@ private slots:
         QVERIFY(DimSum::shouldShow());
         config()->set(Config::GUI_DimSumSurprise, false);
         QVERIFY(!DimSum::shouldShow());
+    }
+    void programmaticOpenCancelsPendingCard()
+    {
+        programmaticOpen(false);
+    }
+    void programmaticOpenHidesVisibleCard()
+    {
+        programmaticOpen(true);
     }
     void firstRunDoesNotDraw()
     {
@@ -302,6 +321,63 @@ private slots:
             QVERIFY(dish.displayName().contains(dish.english));
             QVERIFY(dish.displayName().contains(dish.cantonese));
         }
+    }
+private:
+    void programmaticOpen(bool alreadyVisible)
+    {
+        QTemporaryDir databaseDirectory(QDir::tempPath() + QStringLiteral("/kds-db-XXXXXX"));
+        QVERIFY(databaseDirectory.isValid());
+        const auto path = databaseDirectory.filePath(QStringLiteral("synthetic-locked.kdbx"));
+        {
+            Database fixture;
+            auto kdf = QSharedPointer<AesKdf>::create();
+            kdf->setRounds(1);
+            fixture.setKdf(kdf);
+            auto key = QSharedPointer<CompositeKey>::create();
+            key->addKey(QSharedPointer<PasswordKey>::create(QStringLiteral("synthetic-test-only")));
+            QVERIFY(fixture.setKey(key));
+            QString error;
+            QVERIFY2(fixture.saveAs(path, Database::DirectWrite, {}, &error), qPrintable(error));
+        }
+        config()->set(Config::GUI_CheckForUpdates, false);
+        config()->set(Config::Browser_Enabled, false);
+        config()->set(Config::SSHAgent_Enabled, false);
+        config()->set(Config::GUI_ShowTrayIcon, false);
+        config()->set(Config::GUI_AllowScreenCapture, true);
+        config()->set(Config::GlobalAutoTypeKey, 0);
+        config()->set(Config::GlobalAutoTypeModifiers, 0);
+        config()->set(Config::Security_LockDatabaseIdle, false);
+        MainWindow window;
+        window.resize(1024, 768);
+        window.show();
+        window.activateWindow();
+        QTRY_VERIFY(window.isActiveWindow());
+        QVERIFY(window.getOpenDatabases().isEmpty());
+        QVERIFY(DimSum::shouldShow());
+        QPointer<DimSumCard> card;
+        if (alreadyVisible) {
+            QVERIFY(DimSum::showNow(&window));
+            card = window.findChild<DimSumCard*>();
+            QVERIFY(card && card->isVisible());
+        } else {
+            DimSum::showIfDue(&window);
+        }
+        // This is the same one-argument slot used by Application::openFile.
+        // Queue it without keyboard, pointer, modal or single-instance IPC.
+        QVERIFY(QMetaObject::invokeMethod(&window, "openDatabase", Qt::QueuedConnection, Q_ARG(QString, path)));
+        QTRY_COMPARE(window.getOpenDatabases().size(), 1);
+        QVERIFY(window.getOpenDatabases().first()->isLocked());
+        QVERIFY(!QApplication::activeModalWidget());
+        QVERIFY(!QApplication::activePopupWidget());
+        if (alreadyVisible) {
+            QVERIFY(!card || !card->isVisible());
+            QTRY_VERIFY(card.isNull());
+        } else {
+            QTest::qWait(1600);
+            QVERIFY(!DimSum::hasShown());
+            QVERIFY(window.findChildren<DimSumCard*>().isEmpty());
+        }
+        QVERIFY(!DimSum::shouldShow());
     }
 };
 
