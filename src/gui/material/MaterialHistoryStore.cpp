@@ -303,7 +303,8 @@ namespace Material
 
     QByteArray HistoryStore::serializeDatabaseWithoutEmbeddedHistory(const QSharedPointer<Database>& db, QString* error) const
     {
-        if (!db || !db->metadata() || !db->metadata()->customData()) return {};
+        if (!db || !db->rootGroup() || !db->metadata() || !db->metadata()->customData()
+            || !db->key() || db->transformedDatabaseKey().isEmpty()) return {};
         auto* customData = db->metadata()->customData();
         const bool hadBundle = customData->contains(EmbeddedHistoryKey);
         const auto bundle = hadBundle ? customData->item(EmbeddedHistoryKey) : CustomData::CustomDataItem{};
@@ -1452,7 +1453,8 @@ namespace Material
 
     bool HistoryStore::recordSave(const QSharedPointer<Database>& db)
     {
-        if (!db || !db->rootGroup() || db->filePath().isEmpty()) return false;
+        if (!db || !db->rootGroup() || db->filePath().isEmpty()
+            || !db->key() || db->transformedDatabaseKey().isEmpty()) return false;
         auto pending = m_databaseSaves.find(db.data());
         if (pending != m_databaseSaves.end() && pending->staged) {
             if (pending->finalizationAttempted) return pending->finalizationSucceeded;

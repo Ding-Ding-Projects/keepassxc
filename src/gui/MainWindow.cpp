@@ -1188,11 +1188,20 @@ MainWindow::MainWindow()
         // widget, so the connection is made once. Qt::UniqueConnection cannot
         // do that job - it asserts on a functor - so the widget is marked.
         static const char* const watchedProperty = "materialSaveWatcher";
-        if (!dbWidget || dbWidget->property(watchedProperty).toBool()) {
+        if (!dbWidget) {
             return;
         }
-        dbWidget->setProperty(watchedProperty, true);
+        if (!dbWidget->property(watchedProperty).toBool()) {
+            dbWidget->setProperty(watchedProperty, true);
+            connect(dbWidget, &DatabaseWidget::databaseSaved, this, [dbWidget] {
+                Material::HistoryStore::instance()->recordSave(dbWidget->database());
+            });
+        }
         const auto database = dbWidget->database();
+        // Opening a tab precedes unlock; only initialize history once keys are ready.
+        if (!database || !database->key() || database->transformedDatabaseKey().isEmpty()) {
+            return;
+        }
         auto* history = Material::HistoryStore::instance();
         QString historyError;
         const bool historyReady = database && history->hydrateDatabase(database, &historyError);
@@ -1204,9 +1213,6 @@ MainWindow::MainWindow()
             // so a delete followed by Save always has a recoverable predecessor.
             history->recordSave(database);
         }
-        connect(dbWidget, &DatabaseWidget::databaseSaved, this, [dbWidget] {
-            Material::HistoryStore::instance()->recordSave(dbWidget->database());
-        });
     };
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseOpened, this, watchSaves);
     connect(m_ui->tabWidget, &DatabaseTabWidget::databaseUnlocked, this, watchSaves);
