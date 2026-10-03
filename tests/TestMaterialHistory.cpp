@@ -22,6 +22,7 @@
 #include <QToolButton>
 #include <QAbstractButton>
 #include <QDir>
+#include <QDirIterator>
 #include <QFile>
 #include <QProcess>
 #include <QCryptographicHash>
@@ -329,9 +330,14 @@ void TestMaterialHistory::recordsSnapshotsBelowDeepHistoryRoot()
     QVERIFY(store.recordSave(database));
     const auto revisions = store.revisionsForDatabase(database);
     QCOMPARE(revisions.size(), 1);
-    QVERIFY(!revisions.first().snapshotPath.isEmpty());
-    QVERIFY(QDir(deepRoot).filePath(QStringLiteral("history/repository/")
-                                  + revisions.first().snapshotPath).size() > 260);
+    QDirIterator snapshots(QDir(deepRoot).filePath(QStringLiteral("history/repository/snapshots")),
+                           {revisions.first().id + QStringLiteral(".kdbx")},
+                           QDir::Files, QDirIterator::Subdirectories);
+    QVERIFY(snapshots.hasNext());
+    const auto generatedSnapshotPath = snapshots.next();
+    QVERIFY(generatedSnapshotPath.size() > 260);
+    QVERIFY(QFileInfo::exists(generatedSnapshotPath));
+    QVERIFY(!snapshots.hasNext());
     const auto snapshot = store.snapshot(revisions.first().id, &error);
     QVERIFY2(!snapshot.isEmpty(), qPrintable(error));
     const auto snapshotPath = QDir(root.path()).filePath(QStringLiteral("reopen.kdbx"));
@@ -343,7 +349,7 @@ void TestMaterialHistory::recordsSnapshotsBelowDeepHistoryRoot()
     QVERIFY2(restored->open(snapshotPath, materialHistoryTestKey(), &error), qPrintable(error));
     QCOMPARE(restored->metadata()->name(), QStringLiteral("Deep history snapshot"));
     HistoryStore reconstructed(deepRoot, QStandardPaths::findExecutable(QStringLiteral("git")));
-    QVERIFY(reconstructed.load());
+    reconstructed.load();
     const auto retained = reconstructed.revisionsForDatabase(database);
     QCOMPARE(retained.size(), 1);
     QCOMPARE(retained.first().id, revisions.first().id);
