@@ -210,6 +210,59 @@ No inventory status is upgraded from these results.
 
 ## Current boundary and next action
 
+### Required smoke and capture acceptance
+
+Every item below is pending until the approved isolated native-control route is
+available. This is a finite acceptance sequence for the combined candidate, not
+a substitute for the wider per-surface feature inventory. A passing source check,
+offscreen Qt suite, package build or download does not complete a native item.
+
+- [ ] Bind the exact package, source commit and executable SHA-256 to the run.
+  Verify the installed or staged executable actually launched has that hash, and
+  record its version, process identity and fixture identity before interaction.
+- [ ] Establish a fresh nonpersonal profile, configuration, data/history paths and
+  Qt identity before `QApplication` or production initialization. Environment-only
+  APPDATA/LOCALAPPDATA changes are insufficient for Windows known-folder isolation.
+  Preserve unrelated processes and never open a personal database.
+- [ ] Create ten deterministic synthetic entries in two groups through the actual
+  interface. Retain their expected fields locally within the disposable fixture;
+  receipts record comparison outcomes without publishing credential field values.
+- [ ] Save atomically through the real application path. Confirm the intended file
+  exists, the save operation succeeds and the modified state clears. Do not treat
+  a dismissed dialog or changed filename alone as successful persistence.
+- [ ] Choose the actual Quit action and prove the owned process exits. A hidden
+  window or minimized process is not exit. Relaunch as a distinct process and
+  compare all ten entries, group membership and exact expected field values locally.
+- [ ] Repeat reopening through the positional filename route using a path with
+  spaces and Cantonese characters. Prove the intended database opened without
+  substituting a file-picker route, and repeat the exact local field comparison.
+- [ ] Exercise menu plain-text and regex filtering, inline builder open/apply/close,
+  invalid/resource-limited patterns, disabled-action protection and original action
+  activation. Check keyboard navigation, Escape and focus return, popup containment
+  and restored width after the builder closes.
+- [ ] Interrupt and reverse motion while it is active. Verify final geometry,
+  reduced-motion and low-stimulation behavior, and the operating-system veto.
+  Verify first-visible vault pane widths, hidden-page restoration and preservation
+  of a remembered user division through resize and hide/show.
+- [ ] Exercise startup-surprise eligibility and exclusions: first run, error,
+  update and mid-task flows, persisted off after restart, at most once per launch,
+  quiet/reduced-motion behavior and no focus theft. A random absence does not prove
+  an exclusion; use the reviewed deterministic fixture and separately verify the
+  declared 1% draw boundary.
+- [ ] Retain a genuine capture after every click in this sequence and for each
+  final state. Inspect every image for the expected transition, readable controls,
+  nonblank content and privacy. Bind each frame to source, executable hash, screen,
+  state, language, theme, viewport, scale, input and expected/actual outcome.
+- [ ] Show the reviewed genuine captures in chat and commit their evidence to the
+  repository. Embed current representative captures in README and the documentation
+  website, then verify the delivered image links. Capturing and publishing are
+  separate verdicts; neither is inferred from the presence of a filename.
+
+Historical September images lack the required executable binding and cannot fill
+current acceptance rows. Preserve them as historical evidence without relabelling
+their source or provenance. Do not fabricate, reconstruct or substitute images
+when the approved route is unavailable.
+
 The approved isolated native-control route is unavailable in the current task.
 No native UI was launched or driven by this inventory lane, and no new screenshot,
 runtime receipt or installed acceptance was produced. Continue bounded source

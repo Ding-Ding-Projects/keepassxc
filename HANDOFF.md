@@ -10,6 +10,15 @@ and verified main `91772a166def5e44f60dd49501f5882d7190287c`, without rewriting
 history. Runtime source and Qt tests match that main exactly. Both the explicit
 inventory contracts and all combined interface articles are retained.
 
+The coordinator verified documentation run
+[37156873299](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37156873299)
+green at main `91772a166def5e44f60dd49501f5882d7190287c`. Package run
+[37156873294](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37156873294)
+was still running at this snapshot. Neither result proves this later merge's native
+acceptance. The existing completeness article now carries the explicit pending
+smoke and per-click capture sequence, including package/hash identity, pre-start
+isolation, ten entries in two groups, real quit/relaunch and exact local readback.
+
 - Coverage: 178 platform summaries, 106 surfaces, 89 features, 998 capabilities;
   105,788 required cells, 9,434 surface-feature groups and zero verified cells.
   The expected product verdict is incomplete, even when schema checks pass.
