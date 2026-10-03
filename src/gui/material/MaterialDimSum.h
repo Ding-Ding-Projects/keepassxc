@@ -24,6 +24,9 @@
 #include <QString>
 #include <QVector>
 #include <QWidget>
+#include <functional>
+
+class TestMaterialDimSum;
 
 class QLabel;
 class QPropertyAnimation;
@@ -98,6 +101,10 @@ namespace Material
         static void resetLaunchState();
 
     private:
+        friend class ::TestMaterialDimSum;
+        static std::function<quint32(quint32)> s_random;
+        static std::function<bool()> s_quiet;
+        static bool canShow();
         DimSum() = delete;
     };
 

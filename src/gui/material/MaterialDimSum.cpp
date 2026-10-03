@@ -233,16 +233,6 @@ namespace Material
                 messages.cbegin(), messages.cend(), [](const KMessageWidget* bar) { return bar->isVisible(); });
         }
 
-        /** Every suppression rule, with the draw itself left out. */
-        bool canShow()
-        {
-            // There is no opt-out: the surprise ships in every profile, and the
-            // retired GUI_DimSumSurprise key is ignored so an old profile that
-            // turned it off simply rejoins the draw.
-            return !s_shown && !s_suppressed && !isFirstRun()
-                   && !isQuiet() && !DimSum::catalogue().isEmpty();
-        }
-
         QPixmap renderDish(const QString& asset, int size)
         {
             QSvgRenderer renderer(asset);
@@ -265,6 +255,18 @@ namespace Material
             return pixmap;
         }
     } // namespace
+
+    std::function<quint32(quint32)> DimSum::s_random = [](quint32 bound) { return QRandomGenerator::system()->bounded(bound); };
+    std::function<bool()> DimSum::s_quiet = isQuiet;
+        /** Every suppression rule, with the draw itself left out. */
+    bool DimSum::canShow()
+        {
+            // There is no opt-out: the surprise ships in every profile, and the
+            // retired GUI_DimSumSurprise key is ignored so an old profile that
+            // turned it off simply rejoins the draw.
+            return !s_shown && !s_suppressed && !isFirstRun()
+                   && !s_quiet() && !DimSum::catalogue().isEmpty();
+        }
 
     // -------------------------------------------------------------- DimSum::Dish
 
@@ -324,7 +326,7 @@ namespace Material
         // behaviour the one-per-launch rule actually describes.
         if (!s_drawn) {
             s_drawn = true;
-            s_draw = canShow() && QRandomGenerator::system()->bounded(OddsDenominator) == 0;
+            s_draw = canShow() && s_random(OddsDenominator) == 0;
         }
         return s_draw;
     }
