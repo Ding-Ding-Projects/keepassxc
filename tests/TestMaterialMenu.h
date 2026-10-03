@@ -25,5 +25,9 @@ private slots:
     void selectStatusCountsItsChoices();
     void removedSharedActionRestoresVisibility();
     void dynamicRefreshReturnsFocusToOpener();
+    void selectBuilderFitsAndRestoresWidth();
+    void selectInvalidRegexClearsPreviousChoice();
+    void selectRegexLimits_data();
+    void selectRegexLimits();
 };
 #endif

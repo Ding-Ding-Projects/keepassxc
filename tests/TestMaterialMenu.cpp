@@ -1,5 +1,6 @@
 #include "TestMaterialMenu.h"
 #include "gui/material/MaterialMenu.h"
+#include "gui/material/MaterialButtons.h"
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialRegexSafety.h"
 #include "gui/material/MaterialSearchBar.h"
@@ -14,6 +15,7 @@
 #include <QMenu>
 #include <QPlainTextEdit>
 #include <QSignalSpy>
+#include <QScreen>
 #include <QStandardPaths>
 #include <QTemporaryDir>
 #include <QTest>
@@ -450,6 +452,125 @@ void TestMaterialMenu::dynamicRefreshReturnsFocusToOpener()
     QCoreApplication::processEvents();
     menu.close();
     QTRY_VERIFY(opener->hasFocus());
+}
+
+void TestMaterialMenu::selectBuilderFitsAndRestoresWidth()
+{
+    Select select;
+    select.setSearchIdentity(QStringLiteral("test.narrow-select"), QStringLiteral("Narrow choices"));
+    select.addItem(QStringLiteral("Apple"));
+    select.addItem(QStringLiteral("Banana"));
+    select.resize(240, 48);
+    select.show();
+    select.showPopup();
+    auto* popup = select.popup();
+    const int originalWidth = popup->width();
+    const int originalMinimum = popup->minimumWidth();
+    const int originalMaximum = popup->maximumWidth();
+    auto* button = select.searchBar()->findChild<IconButton*>();
+    QVERIFY(button);
+    QTest::mouseClick(button, Qt::LeftButton);
+    auto* panel = popup->findChild<QWidget*>(QStringLiteral("materialMenuRegexPanel"));
+    QVERIFY(panel);
+    QTRY_VERIFY(panel->isVisible());
+    auto* builder = panel->findChild<RegexBuilder*>();
+    QVERIFY(builder && builder->isOpen());
+    const QRect panelBounds(panel->mapToGlobal(QPoint()), panel->size());
+    const QRect popupBounds(popup->mapToGlobal(QPoint()), popup->size());
+    QVERIFY2(popupBounds.contains(panelBounds), "The inline workbench must fit inside its owning popup");
+    QVERIFY(popup->screen()->availableGeometry().contains(popupBounds));
+    IconButton* close = nullptr;
+    for (auto* candidate : builder->findChildren<IconButton*>())
+        if (candidate->toolTip() == QStringLiteral("Close")) close = candidate;
+    QVERIFY(close);
+    QTest::mouseClick(close, Qt::LeftButton);
+    QTRY_VERIFY(!panel->isVisible());
+    QCOMPARE(popup->minimumWidth(), originalMinimum);
+    QCOMPARE(popup->maximumWidth(), originalMaximum);
+    QCOMPARE(popup->width(), originalWidth);
+    select.hidePopup();
+}
+
+void TestMaterialMenu::selectInvalidRegexClearsPreviousChoice()
+{
+    Select select;
+    select.addItem(QStringLiteral("Apple"));
+    select.addItem(QStringLiteral("Banana"));
+    select.show();
+    select.showPopup();
+    auto* search = select.searchBar();
+    auto* controller = MenuSearch::attach(select.popup());
+    search->setRegexEnabled(true);
+    search->setText(QStringLiteral("^Ban"));
+    QCOMPARE(controller->resultCount(), 1);
+    QCOMPARE(select.listWidget()->currentRow(), 1);
+    QCOMPARE(select.currentIndex(), 0);
+    search->setText(QStringLiteral("["));
+    QCOMPARE(controller->resultCount(), 0);
+    QCOMPARE(select.listWidget()->currentRow(), -1);
+    for (int row = 0; row < select.count(); ++row) QVERIFY(select.listWidget()->isRowHidden(row));
+    auto* status = select.popup()->findChild<QLabel*>(QStringLiteral("materialMenuSearchStatus"));
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("menu.invalid-pattern"), Voice::Category::Error));
+    QCOMPARE(search->lineEdit()->accessibleDescription(), status->text());
+    QTest::keyClick(search->lineEdit(), Qt::Key_Return);
+    QCOMPARE(select.currentIndex(), 0);
+    QVERIFY(select.isPopupOpen());
+    search->setText(QStringLiteral("^Ban"));
+    QCOMPARE(controller->resultCount(), 1);
+    QTest::keyClick(search->lineEdit(), Qt::Key_Return);
+    QCOMPARE(select.currentIndex(), 1);
+}
+
+void TestMaterialMenu::selectRegexLimits_data()
+{
+    QTest::addColumn<QString>("pattern");
+    QTest::addColumn<QStringList>("labels");
+    QTest::addColumn<QString>("statusKey");
+    QTest::addColumn<bool>("invalidMatch");
+    QTest::newRow("pattern-size") << QString(513, QLatin1Char('a')) << QStringList{QStringLiteral("Apple")}
+        << QStringLiteral("menu.pattern-limit") << false;
+    QTest::newRow("nested-quantifier") << QStringLiteral("(a+)+$") << QStringList{QStringLiteral("Apple")}
+        << QStringLiteral("menu.pattern-limit") << false;
+    QTest::newRow("label-size") << QStringLiteral(".*") << QStringList{QStringLiteral("OK"), QString(2049, QLatin1Char('a'))}
+        << QStringLiteral("menu.result-limit") << false;
+    QStringList many;
+    for (int row = 0; row < 1025; ++row) many.append(QStringLiteral("Choice"));
+    QTest::newRow("choice-count") << QStringLiteral(".*") << many << QStringLiteral("menu.result-limit") << false;
+    QTest::newRow("match-limit") << QStringLiteral("(*NO_JIT)(*LIMIT_MATCH=10000)^(?:OK|(?:a?){30}a{30})$")
+        << QStringList{QStringLiteral("OK"), QString(30, QLatin1Char('a'))} << QStringLiteral("menu.result-limit") << true;
+    QTest::newRow("depth-limit") << QStringLiteral("(*NO_JIT)(*LIMIT_DEPTH=1)^(?:OK|a)$")
+        << QStringList{QStringLiteral("a")} << QStringLiteral("menu.result-limit") << true;
+}
+
+void TestMaterialMenu::selectRegexLimits()
+{
+    QFETCH(QString, pattern);
+    QFETCH(QStringList, labels);
+    QFETCH(QString, statusKey);
+    QFETCH(bool, invalidMatch);
+    if (invalidMatch) {
+        QVERIFY(riskReport(pattern).isEmpty());
+        QRegularExpression expression(QStringLiteral("(*LIMIT_MATCH=10000)(*LIMIT_DEPTH=128)") + pattern);
+        QVERIFY(expression.isValid());
+        QVERIFY(!expression.match(labels.last()).isValid());
+    }
+    Select select;
+    for (const auto& label : labels) select.addItem(label);
+    select.show();
+    select.showPopup();
+    select.searchBar()->setRegexEnabled(true);
+    select.searchBar()->setText(pattern);
+    auto* controller = MenuSearch::attach(select.popup());
+    QCOMPARE(controller->resultCount(), 0);
+    QCOMPARE(select.listWidget()->currentRow(), -1);
+    for (int row = 0; row < select.count(); ++row) QVERIFY(select.listWidget()->isRowHidden(row));
+    auto* status = select.popup()->findChild<QLabel*>(QStringLiteral("materialMenuSearchStatus"));
+    QCOMPARE(status->text(), Voice::say(statusKey, Voice::Category::Error));
+    QSignalSpy changed(&select, &Select::currentIndexChanged);
+    QTest::keyClick(select.searchBar()->lineEdit(), Qt::Key_Return);
+    QCOMPARE(changed.count(), 0);
+    QVERIFY(select.isPopupOpen());
+    select.hidePopup();
 }
 
 int main(int argc, char** argv)
