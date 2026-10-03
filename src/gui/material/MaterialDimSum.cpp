@@ -244,6 +244,19 @@ namespace Material
                    && config()->get(Config::LastActiveDatabase).toString().isEmpty();
         }
 
+        bool restoresDatabaseAtStartup()
+        {
+            if (!config()->get(Config::OpenPreviousDatabasesOnStartup).toBool()) {
+                return false;
+            }
+            // MainWindow::restoreConfigState opens each nonempty remembered path,
+            // including LastActiveDatabase independently of the opened-tab list.
+            // This enters an embedded credential form without a modal Show event.
+            const auto opened = config()->get(Config::LastOpenedDatabases).toStringList();
+            return !config()->get(Config::LastActiveDatabase).toString().isEmpty()
+                   || std::any_of(opened.cbegin(), opened.cend(), [](const QString& path) { return !path.isEmpty(); });
+        }
+
         /** Whether @p parent belongs to a window that is up, in front and idle. */
         bool isUsableHost(QWidget* parent)
         {
@@ -349,7 +362,7 @@ namespace Material
     {
         if (s_started) return;
         s_started = true;
-        if (!config()->get(Config::GUI_DimSumSurprise).toBool() || isFirstRun()) {
+        if (!config()->get(Config::GUI_DimSumSurprise).toBool() || isFirstRun() || restoresDatabaseAtStartup()) {
             suppress();
         }
         s_monitor = new StartupMonitor(qApp);

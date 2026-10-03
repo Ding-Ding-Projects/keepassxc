@@ -17,6 +17,7 @@
  */
 
 #include "MessageWidget.h"
+#include "material/MaterialDimSum.h"
 
 #include <QDesktopServices>
 #include <QTimer>
@@ -53,6 +54,11 @@ void MessageWidget::showMessage(const QString& text, MessageWidget::MessageType 
 
 void MessageWidget::showMessage(const QString& text, KMessageWidget::MessageType type, int autoHideTimeout)
 {
+    // A visible message can change severity without another Show event. Cancel
+    // startup decoration at the semantic transition, before either animation.
+    if (type == Error || type == Warning) {
+        Material::DimSum::suppress();
+    }
     setMessageType(type);
     setText(text);
 
