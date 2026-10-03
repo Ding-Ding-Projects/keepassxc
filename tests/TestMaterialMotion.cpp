@@ -236,23 +236,35 @@ private slots:
     {
         QTest::addColumn<bool>("dimSum");
         QTest::addColumn<bool>("hideParent");
-        QTest::newRow("snackbar-own-hide") << false << false;
-        QTest::newRow("snackbar-parent-hide") << false << true;
-        QTest::newRow("dim-sum-own-hide") << true << false;
-        QTest::newRow("dim-sum-parent-hide") << true << true;
+        QTest::addColumn<bool>("reduced");
+        QTest::addColumn<bool>("interruptEntrance");
+        for (bool dimSum : {false, true}) {
+            for (bool hideParent : {false, true}) {
+                for (bool reduced : {false, true}) {
+                    for (bool interrupt : {false, true}) {
+                        const QByteArray name = QByteArray(dimSum ? "dim-sum" : "snackbar")
+                            + (hideParent ? "-parent" : "-own") + (reduced ? "-reduced" : "-standard")
+                            + (interrupt ? "-entering" : "-settled");
+                        QTest::newRow(name.constData()) << dimSum << hideParent << reduced << interrupt;
+                    }
+                }
+            }
+        }
     }
     void finiteNotificationTimersResumeAfterVisibilityReturns()
     {
         QFETCH(bool, dimSum);
         QFETCH(bool, hideParent);
-        config()->set(Config::GUI_ReducedMotion, true);
+        QFETCH(bool, reduced);
+        QFETCH(bool, interruptEntrance);
+        config()->set(Config::GUI_ReducedMotion, reduced);
         QWidget host;
         host.resize(640, 480);
         QPointer<QWidget> notification;
         // Construct before showing the parent to isolate timer resumption from
         // construction-time hide delivery.
         if (dimSum) {
-            notification = new DimSumCard({QStringLiteral("Test dish"), QStringLiteral("測試點心"), QString()}, &host);
+            notification = new DimSumCard({QStringLiteral("Test dish"), QStringLiteral("測試點心"), QStringLiteral(":/dimsum/har_gow.svg")}, &host);
         } else {
             notification = new Snackbar(SeverityLevel::Info, QString(), QStringLiteral("Test notification"), {}, 200, &host);
             notification->setFocusPolicy(Qt::NoFocus);
@@ -263,7 +275,7 @@ private slots:
         host.show();
         if (dimSum) qobject_cast<DimSumCard*>(notification.data())->present();
         else qobject_cast<Snackbar*>(notification.data())->animateIn();
-        QVERIFY(timer->isActive());
+        if (!interruptEntrance) QTRY_VERIFY_WITH_TIMEOUT(timer->isActive(), 1000);
         QWidget* hidden = hideParent ? &host : notification.data();
         hidden->hide();
         QVERIFY(!timer->isActive());

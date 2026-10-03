@@ -57,6 +57,22 @@ bridge and localized visible preference controls. Its application data identity 
 files are isolated before control construction. The platform query is injectable so OS
 preference changes can be tested without modifying the host's settings.
 
+Animation retargeting preserves the currently published scalar while Qt configures the
+next endpoints. Construction creates hide-event prerequisites before explicitly hiding
+overlays and notification cards. Finite notification timers stop while hidden and resume
+when a settled notification becomes visible again; hiding during entrance settles that
+entrance without running a hidden timer. Snackbar focus and hover still hold its timer.
+The focused notification matrix covers both notification types, direct and parent hiding,
+standard and reduced motion, and interrupted and settled entrances.
+
+The first notification hide/show regression at source `876db09c36b6d2cd2b526a567cae63bbb6ce1e86`
+returned four failing data rows, all at the timer-active assertion after showing again.
+Timer resumption was repaired only after that result. The appearance, responsive-shell,
+tabs and motion test programs enable Qt test paths and unique application identities before
+constructing QApplication, and provide separate temporary roaming and local Config files.
+The persistence regression reads the local file and reloads it through Config before
+creating shared motion singletons. Offscreen results remain separate from native acceptance.
+
 A negative regression should temporarily remove the policy-change settlement call from
 `MotionTransition` and run `userVetoSettlesActiveTransitionImmediately`, observe failure,
 restore the implementation, rebuild and observe success. This mutation belongs only in a

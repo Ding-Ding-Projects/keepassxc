@@ -516,6 +516,14 @@ namespace Material
         return rect().adjusted(ShadowMargin, ShadowMargin, -ShadowMargin, -ShadowMargin);
     }
 
+    void DimSumCard::showEvent(QShowEvent* event)
+    {
+        QWidget::showEvent(event);
+        if (!m_dismissing && !m_animation->isRunning() && m_transition >= 1.0) {
+            m_holdTimer->start();
+        }
+    }
+
     void DimSumCard::hideEvent(QHideEvent* event)
     {
         QWidget::hideEvent(event);

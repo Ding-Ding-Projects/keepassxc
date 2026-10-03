@@ -134,6 +134,7 @@ namespace Material
         void dismiss();
 
     protected:
+        void showEvent(QShowEvent* event) override;
         void hideEvent(QHideEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
         /** A click on the card dismisses it; one beside it belongs to the window. */

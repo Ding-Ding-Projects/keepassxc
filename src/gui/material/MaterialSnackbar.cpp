@@ -365,6 +365,12 @@ namespace Material
         m_animation->animateTo(0.0, Duration::Short);
     }
 
+    void Snackbar::showEvent(QShowEvent* event)
+    {
+        QWidget::showEvent(event);
+        resumeTimer();
+    }
+
     void Snackbar::hideEvent(QHideEvent* event)
     {
         QWidget::hideEvent(event);
@@ -590,7 +596,8 @@ namespace Material
 
     void Snackbar::resumeTimer()
     {
-        if (m_dismissing || m_duration <= 0 || underMouse() || hasFocus()) {
+        if (m_dismissing || m_duration <= 0 || !isVisible() || m_transition < 1.0
+            || m_animation->isRunning() || underMouse() || hasFocus()) {
             return;
         }
         m_lifetime->start(m_duration);
