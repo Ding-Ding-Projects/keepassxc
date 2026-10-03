@@ -17,6 +17,12 @@ function check(name, body) {
   catch (error) { failed++; process.stderr.write(`FAIL ${name}: ${error.message}\n`); }
 }
 const baseline = loadBundle();
+check('documented surface-feature group count matches the canonical inventory', () => {
+  const article = readFileSync(join(repoRoot, 'docs/features/delivery/interface-completion.md'), 'utf8');
+  const count = article.match(/\b([\d,]+) surface\/feature\s+groups\b/);
+  assert(count, 'Documented surface-feature group count is missing');
+  assert.equal(Number(count[1].replaceAll(',', '')), SURFACE_CONTRACTS.length * FEATURE_CONTRACTS.length);
+});
 check('complete registries have valid schema but incomplete product', () => {
   const result = evaluateBundle(baseline, { root: repoRoot });
   assert.deepEqual(result.schemaErrors, []);
