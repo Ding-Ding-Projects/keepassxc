@@ -34,9 +34,11 @@
 #include <QSignalSpy>
 #include <QScopeGuard>
 #include <QSpinBox>
+#include <QStandardPaths>
 #include <QTableWidget>
 #include <QTest>
 #include <QToolBar>
+#include <QUuid>
 
 #include "config-keepassx-tests.h"
 #include "core/PasswordHealth.h"
@@ -92,6 +94,10 @@
 
 int main(int argc, char* argv[])
 {
+    // Isolate default data paths before constructors can initialize persistent stores.
+    QStandardPaths::setTestModeEnabled(true);
+    QCoreApplication::setOrganizationName(
+        QStringLiteral("KeePassXC-TestGui-%1").arg(QUuid::createUuid().toString(QUuid::WithoutBraces)));
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     QGuiApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
     Application app(argc, argv);
