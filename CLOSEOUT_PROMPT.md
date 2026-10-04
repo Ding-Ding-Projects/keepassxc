@@ -1,5 +1,17 @@
 # Startup integration continuation
 
+Current isolated follow-up: website navigation and favicon repair on
+`codex/site-navigation-20261003`, based on `edffb9db8be840e7a6db685d57990a1a57f6119c`.
+Tests-first `36e0d8ca` reports 1 pass/3 failures against the captured baseline.
+Runtime source `0404ed3f3cc1592bbcebab869abd7d4b7f728042` builds successfully and
+passes all four unchanged built-output checks. Labels use intrinsic tab widths;
+the favicon is the unchanged project icon. Preserve the existing 40 articles and
+inventory claims. Review the final immutable binding and exact-source build receipt.
+Next, independently recapture the original matrix, test scrolling/overflow and
+keyboard focus, and verify a fresh-browser favicon response. Source checks do not
+establish rendered acceptance. The coordinator owns integration and publication.
+The earlier startup integration record below remains the inherited baseline.
+
 ## October 3 startup and motion integration
 
 Startup candidate `9b2b9e07867ef4e83323f29582f0fb88b39a0eea` is combined with

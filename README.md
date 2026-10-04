@@ -16,6 +16,12 @@ A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is
 
 ## October 3 startup integration state
 
+The documentation website has a narrow navigation repair: complete tab labels
+retain intrinsic widths within the scrollable Material tab strip, and the build
+packages the existing project favicon. Four focused built-output checks pass
+after three observed baseline failures. New rendered acceptance is pending;
+see [navigation verification](docs/features/navigation/tabs.md).
+
 The [startup surprise contract](docs/features/messaging/dim-sum-surprise.md) now
 combines its 1% draw, persisted off switch and credential/error/update exclusions
 with the shared motion controller. At `7cb43f654ef2cc908a76a5a739bddfda2aa29c52`,

@@ -1,5 +1,20 @@
 # Startup integration handoff
 
+## Narrow website navigation and favicon repair
+
+This isolated unit starts from `edffb9db8be840e7a6db685d57990a1a57f6119c`.
+Independent inspection confirmed the retained 320px capture and geometry show
+label overlap, and the initial console log records a local favicon 404.
+Tests-first `36e0d8ca7636a9a63c5d0ab438fa3358d341a8c7` reports one pass and three
+failures against the retained built baseline. Repair
+`0404ed3f3cc1592bbcebab869abd7d4b7f728042` passes all four unchanged checks after
+the normal documentation build. It changes only tab width/scroll containment,
+the explicit favicon link and the copy of the existing project icon.
+The Material components, navigation behavior, search, regex builder and language/
+theme controls are retained. No native code is changed. A separate capture pass
+must establish repaired pixels, label containment, focus/overflow reachability
+and the favicon network response. The coordinator owns integration and delivery.
+
 ## October 3 startup and motion integration
 
 Startup candidate `9b2b9e07867ef4e83323f29582f0fb88b39a0eea` is combined with

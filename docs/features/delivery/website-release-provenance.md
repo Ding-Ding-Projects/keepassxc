@@ -1,5 +1,12 @@
 # Website release provenance
 
+The document selects `./favicon.ico` with an explicit icon link. The normal build
+copies the existing project-owned `share/windows/keepassxc.ico` into that output
+path without conversion or a network dependency. The focused built-output check
+verifies its ICO header and exact byte identity. This repairs the missing asset
+behind the captured baseline's local favicon 404; a fresh-browser runtime pass
+must still verify the rebuilt request and absence of a console error.
+
 The website's downloadable version is projected from a published stable release, its `build-provenance.json`, and its `update-manifest-v1.json`. The generator rejects disagreements before writing `site/release.json`.
 
 Run `node scripts/site-release-data.mjs RELEASE_JSON PROVENANCE_JSON MANIFEST_JSON RECEIPT_JSON site/release.json`. Prefer the fetch command below, which resolves and peels the release tag through the GitHub CLI. Manual inputs must include `targetCommit`, resolved from that tag, plus all three attached metadata files obtained with explicit asset patterns. The generator makes no network request and consumes at most one MiB per input, including UTF-8 BOM handling for the existing PowerShell-produced assets.

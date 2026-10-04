@@ -2,6 +2,9 @@
 
 ## Current release-grade acceptance
 
+- [x] Repair the captured website tab-width cause and missing favicon asset. Four focused built-output checks pass at `0404ed3f3cc1592bbcebab869abd7d4b7f728042` after a baseline result of one pass and three failures.
+- [ ] Recapture the navigation repair at the original matrix tuples, verify every full tab label stays in its target, exercise scroll/overflow and keyboard access, and confirm the fresh-browser favicon response succeeds.
+
 - [ ] Complete the requested release-grade closeout, including smoke verification of the exact built candidate.
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
 - [ ] Complete native acceptance through the approved isolated route. Controller installation smoke passed; KeePassXC profile/history isolation remains blocked pending the owner scope decision. Source and offscreen checks cannot replace native acceptance.
