@@ -8,3 +8,4 @@ Search bars, the regex builder and the safety limits every pattern runs under.
 | Search bars and the search registry | [search-bar-every-surface.md](search-bar-every-surface.md) |
 | Dropdowns are list boxes with a search bar | [dropdown-select.md](dropdown-select.md) |
 | Model-preserving searchable combobox choices | [combobox-choice-search.md](combobox-choice-search.md) |
+| Searchable auto-type window choices | [autotype-window-choice.md](autotype-window-choice.md) |

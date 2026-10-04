@@ -14,13 +14,57 @@ no tracked or untracked changes. Diagnostics report bounded change counts withou
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
-## October 3 startup integration state
+## October 4 combined choice integration state
 
-The documentation website has a narrow navigation repair: complete tab labels
-retain intrinsic widths within the scrollable Material tab strip, and the build
-packages the existing project favicon. Four focused built-output checks pass
-after three observed baseline failures. New rendered acceptance is pending;
-see [navigation verification](docs/features/navigation/tabs.md).
+Runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` combines the reviewed shared choice popup
+`c57f7f95f60ac687b602f89991a8b6457508aeaf` and auto-type window selector
+`a593787da94b01bc2b87ae63796c8f9e5cd1486e` on navigation baseline
+`1f3ca0526e3657be5308da2763287913d3fd6ac6`. Both choice implementations and their
+assertions are unchanged from those reviewed candidates. The four promoted
+controls, startup suppression, shared motion and repaired website navigation are
+preserved. Localized copy combines every baseline key with the nine choice keys.
+
+The pinned combined build compiled the real production owners and passed
+**57 offscreen checks**: the full combo suite 42, the full window-selector suite 9,
+the motion-catalogue selector 3 and the startup-setting localization/persistence
+selector 3. Each process exited 0 with no failures, skips or timeout, fresh
+configuration and identity before `QApplication`, explicit QTest output and a
+120-second process bound. The window-selector fixture supplies only synthetic
+titles and never enumerates native windows. Earlier causal red receipts remain
+preserved; unchanged isolated regressions were not repeated separately.
+
+The catalogue preserves the prior 41 articles and adds
+[auto-type window choices](docs/features/search/autotype-window-choice.md) as
+article 42. Immutable article binding and the normal documentation build have
+separate exact-source receipts. Product completeness remains **0/105,788** current
+verified capability cells and 9,434 incomplete surface-feature groups. The added
+article has no mapped inventory row and retains the explicit `not-tracked` status.
+These scoped checks do not establish native, packaged or whole-product acceptance.
+
+## Scoped website navigation verification
+
+The repaired built output at `1f3ca0526e3657be5308da2763287913d3fd6ac6` was checked
+at all 48 original viewport/language/theme/device-scale tuples. All 960 tab-label
+measurements stayed inside their targets, with zero body-overflow states. The
+run retained 198 original captures, exercised scroll/overflow and native
+background keyboard focus/activation, and obtained a fresh local favicon response
+of HTTP 200 with no console exceptions or failed resources. Device scale factors
+were browser emulation, not operating-system display scaling. Interaction methods
+and inspection scope remain recorded in the external capture receipts.
+
+The scoped visual and interaction checks passed, but the aggregate audit remains
+**failed**: the owned browser profile was retained after deletion was rejected.
+Owned browser/server processes, ports and the named desktop were released; the
+profile and earlier retained profiles remain untouched. These captures have not
+been promoted into repository evidence or published. The aggregate audit must not
+be called complete from the successful navigation checks.
+
+The hidden-desktop controller installation and synthetic Qt smoke passed at
+`e6e42f2066d539256d6480401d7cef867f2b8dfe`, with 58 tools and the native backend.
+KeePassXC native profile/history acceptance and the packaged lifecycle remain
+pending. Controller installation smoke is not KeePassXC acceptance.
+
+## Earlier startup integration evidence
 
 The [startup surprise contract](docs/features/messaging/dim-sum-surprise.md) now
 combines its 1% draw, persisted off switch and credential/error/update exclusions
@@ -36,8 +80,7 @@ Product completeness stays 0/105,788 current verified capability cells.
 now use the shared Material combo-box class in four existing fields. The `browser`,
 `keeshare` and `sshagent` owners compiled at
 `3cb79c5ce840e494b00e6cbcd22cc2fa1d14759f`; this establishes controller compatibility,
-not native interaction, accessibility or rendering acceptance. The documentation
-catalogue retains all 40 promotion articles and adds the shared searchable-choice article as number 41.
+not native interaction, accessibility or rendering acceptance. The current documentation catalogue contains 42 articles, preserving the 40 promotion articles and adding shared searchable choices and auto-type window choices.
 
 The [shared choice popup](docs/features/search/combobox-choice-search.md) also
 revalidates row eligibility after dismissal and tolerates synchronous deletion of

@@ -17,3 +17,11 @@ Window titles can contain sensitive information. The popup keeps titles in the e
 Focused regressions cover custom text and refresh, original-index activation with duplicate labels and distinct item data, read-only behavior, refresh on reopening, cancellation, regex-builder synchronization and empty samples, invalid and oversized patterns, insertion policy, sizing, editor accessibility, and popup teardown. Compilation includes the real `autotype` target and its containing entry editor through `keepassxc_gui`.
 
 Native entry-editor interaction, assistive-technology behavior, and the language/theme/scale/minimum-size capture matrix remain unverified. Synthetic offscreen tests are not native acceptance or evidence of a shipped release.
+## Combined integration verification
+
+At `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9`, the shared combo suite reports 42 passes and the
+synthetic auto-type selector suite reports 9 passes, both with zero failures, skips
+or timeouts and exit 0. Focused shared-copy checks add 3 motion-catalogue passes
+and 3 startup-setting localization/persistence passes. The source preserves the
+reviewed runtime implementations and earlier causal red evidence. These isolated
+offscreen checks do not establish native or packaged acceptance.

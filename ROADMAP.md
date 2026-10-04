@@ -1,9 +1,19 @@
 # Roadmap
 
+## October 4 combined choice integration
+
+- [x] Combine the reviewed searchable combo and auto-type selector while preserving startup, shared motion, four promoted controls and navigation.
+- [x] Verify runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` with 57 offscreen passes (42 + 9 + 3 + 3), zero failures/skips/timeouts and synthetic title isolation.
+- [x] Preserve 41 articles and add the auto-type choice article as number 42 without changing inventory status claims.
+- [ ] Verify the final immutable article binding and normal documentation bundle against the exact final source receipt.
+- [ ] Complete independent integration review and coordinator delivery.
+- [ ] Complete KeePassXC native and packaged acceptance; controller installation smoke is separate evidence.
+
 ## Current release-grade acceptance
 
 - [x] Repair the captured website tab-width cause and missing favicon asset. Four focused built-output checks pass at `0404ed3f3cc1592bbcebab869abd7d4b7f728042` after a baseline result of one pass and three failures.
-- [ ] Recapture the navigation repair at the original matrix tuples, verify every full tab label stays in its target, exercise scroll/overflow and keyboard access, and confirm the fresh-browser favicon response succeeds.
+- [x] Verify the scoped navigation repair at all 48 original tuples: 960 contained tab labels, no body overflow, scroll/overflow and native keyboard activation, and fresh favicon HTTP 200. Source: `1f3ca0526e3657be5308da2763287913d3fd6ac6`; browser device scale emulation is not operating-system scaling.
+- [ ] Resolve the navigation aggregate audit: deletion was rejected, so the profile remains retained. Processes, ports and the named desktop were released; no retained profile was retried or deleted. Capture promotion and publication remain separate pending work.
 
 - [ ] Complete the requested release-grade closeout, including smoke verification of the exact built candidate.
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.

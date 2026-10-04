@@ -1,49 +1,69 @@
-# Startup integration continuation
+# Combined choice integration continuation
 
-Current isolated follow-up: website navigation and favicon repair on
-`codex/site-navigation-20261003`, based on `edffb9db8be840e7a6db685d57990a1a57f6119c`.
-Tests-first `36e0d8ca` reports 1 pass/3 failures against the captured baseline.
-Runtime source `0404ed3f3cc1592bbcebab869abd7d4b7f728042` builds successfully and
-passes all four unchanged built-output checks. Labels use intrinsic tab widths;
-the favicon is the unchanged project icon. Preserve the existing 40 articles and
-inventory claims. Review the final immutable binding and exact-source build receipt.
-Next, independently recapture the original matrix, test scrolling/overflow and
-keyboard focus, and verify a fresh-browser favicon response. Source checks do not
-establish rendered acceptance. The coordinator owns integration and publication.
-The earlier startup integration record below remains the inherited baseline.
+The owned branch is `codex/choice-final-20261004`, based on navigation source
+`1f3ca0526e3657be5308da2763287913d3fd6ac6`. Only the two assigned choice candidates
+were integrated. Runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` is frozen.
+A malformed intermediate local conflict resolution was corrected before any build
+or execution; history is preserved. No main-branch mutation or publication was
+performed in this lane. The coordinator owns independent review and delivery.
 
-## October 3 startup and motion integration
+## October 4 combined choice integration
 
-Startup candidate `9b2b9e07867ef4e83323f29582f0fb88b39a0eea` is combined with
-promotion candidate `9530b42c6c8bade2754e5c93bbfe999bec2a1522` at runtime source
-`7cb43f654ef2cc908a76a5a739bddfda2aa29c52`. Shared motion transitions, hide/show timer handling,
-startup suppression, generation checks and guarded object pointers are preserved.
-The updates-disabled include repair is unchanged. Its prior real compiler red
-(exit 2) and green (exit 0) remain relevant; that translation unit was not repeated.
+Runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` combines the reviewed shared choice popup
+`c57f7f95f60ac687b602f89991a8b6457508aeaf` and auto-type window selector
+`a593787da94b01bc2b87ae63796c8f9e5cd1486e` on navigation baseline
+`1f3ca0526e3657be5308da2763287913d3fd6ac6`. Both choice implementations and their
+assertions are unchanged from those reviewed candidates. The four promoted
+controls, startup suppression, shared motion and repaired website navigation are
+preserved. Localized copy combines every baseline key with the nine choice keys.
 
-The combined offscreen run passed **167 checks**: `testmaterialdimsum` 127,
-`testdimsum` 7, and `testmaterialmotion` 33. Every process exited 0
-with no skips or timeout, explicit QTest output and exact-source/executable receipts.
-These results belong to the runtime source above. Later record and immutable-manifest
-changes do not establish a new runtime execution. No assertions were weakened.
+The pinned combined build compiled the real production owners and passed
+**57 offscreen checks**: the full combo suite 42, the full window-selector suite 9,
+the motion-catalogue selector 3 and the startup-setting localization/persistence
+selector 3. Each process exited 0 with no failures, skips or timeout, fresh
+configuration and identity before `QApplication`, explicit QTest output and a
+120-second process bound. The window-selector fixture supplies only synthetic
+titles and never enumerates native windows. Earlier causal red receipts remain
+preserved; unchanged isolated regressions were not repeated separately.
 
-All 40 articles, four promoted choice controls and complete inventory contracts
-remain present. Product completeness is still 0/105,788 current capability cells
-and 9,434 incomplete surface-feature groups. Offscreen tests do not fill native
-evidence cells. The shared searchable choice popup remains a separate integration.
+The catalogue preserves the prior 41 articles and adds
+[auto-type window choices](docs/features/search/autotype-window-choice.md) as
+article 42. Immutable article binding and the normal documentation build have
+separate exact-source receipts. Product completeness remains **0/105,788** current
+verified capability cells and 9,434 incomplete surface-feature groups. The added
+article has no mapped inventory row and retains the explicit `not-tracked` status.
+These scoped checks do not establish native, packaged or whole-product acceptance.
 
-Native lifecycle, real forwarded-process transport, supported geometry and genuine
-per-click capture acceptance remain pending the approved isolated route. Controller
-installation smoke is separate from KeePassXC acceptance. The requested release-grade
-closeout, ten-entry save/quit/relaunch/readback flow, positional spaces/Cantonese path
-flow, privacy provenance and captures in chat, README and the documentation website
-remain required as described in the interface-completion article. The coordinator
-owns independent review, main integration, delivery, publication and cleanup.
+## Scoped website navigation verification
 
-The full documentation build must bind the final source, all 40 immutable article
-bytes and generated provenance. Its separate receipt records the actual result;
-this source record does not predict a hosted or native verdict.
+The repaired built output at `1f3ca0526e3657be5308da2763287913d3fd6ac6` was checked
+at all 48 original viewport/language/theme/device-scale tuples. All 960 tab-label
+measurements stayed inside their targets, with zero body-overflow states. The
+run retained 198 original captures, exercised scroll/overflow and native
+background keyboard focus/activation, and obtained a fresh local favicon response
+of HTTP 200 with no console exceptions or failed resources. Device scale factors
+were browser emulation, not operating-system display scaling. Interaction methods
+and inspection scope remain recorded in the external capture receipts.
 
-Continue from this task branch only after checking its final recorded source.
-The worker performed no main mutation, push, service change, personal-profile
-launch or publication. Preserve prior task branches and worktrees.
+The scoped visual and interaction checks passed, but the aggregate audit remains
+**failed**: the owned browser profile was retained after deletion was rejected.
+Owned browser/server processes, ports and the named desktop were released; the
+profile and earlier retained profiles remain untouched. These captures have not
+been promoted into repository evidence or published. The aggregate audit must not
+be called complete from the successful navigation checks.
+
+The hidden-desktop controller installation and synthetic Qt smoke passed at
+`e6e42f2066d539256d6480401d7cef867f2b8dfe`, with 58 tools and the native backend.
+KeePassXC native profile/history acceptance and the packaged lifecycle remain
+pending. Controller installation smoke is not KeePassXC acceptance.
+
+## Next safe actions
+
+Verify the final source-bound documentation receipt, all 42 immutable article bytes,
+unchanged runtime relative to the tested source, executable hashes and process exits.
+Perform independent incorporation review before delivery. Preserve the original red
+regression evidence and retained capture profiles. Do not infer native acceptance
+from offscreen checks or whole-product completeness from the documentation build.
+The complete local packaging route, exact-candidate native lifecycle, ten-entry
+save/quit/relaunch/readback flow and positional spaces/Cantonese filename flow remain
+separate acceptance work. Current product coverage remains 0/105,788.

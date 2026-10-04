@@ -124,3 +124,12 @@ decision. Controller installation evidence does not verify this candidate.
 Keyboard and screen-reader operation, theme/language/scale geometry, every
 production control and the packaged create/save/quit/reopen flow still require
 genuine native interaction and capture evidence before product acceptance.
+
+## Combined integration verification
+
+At `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9`, the shared combo suite reports 42 passes and the
+synthetic auto-type selector suite reports 9 passes, both with zero failures, skips
+or timeouts and exit 0. Focused shared-copy checks add 3 motion-catalogue passes
+and 3 startup-setting localization/persistence passes. The source preserves the
+reviewed runtime implementations and earlier causal red evidence. These isolated
+offscreen checks do not establish native or packaged acceptance.
