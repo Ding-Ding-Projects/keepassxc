@@ -208,6 +208,7 @@ const contentManifest=readJson(resolve(root,'content-manifest.json'));
 validateContentManifest(contentManifest);
 if(buildProbe==='manifest-schema')runManifestSchemaProbe(contentManifest);
 copyFileSync(new URL('../social-preview.png',import.meta.url),new URL('dist/social-preview.png',import.meta.url));
+copyFileSync(new URL('../share/windows/keepassxc.ico',import.meta.url),new URL('dist/favicon.ico',import.meta.url));
 const licenseDirectory=new URL('dist/licenses/',import.meta.url);
 mkdirSync(licenseDirectory,{recursive:true});
 const licenseIndex=[];
