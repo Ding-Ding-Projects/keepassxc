@@ -1,5 +1,31 @@
 # Navigation delivery continuation
 
+## Preservation checkpoint, October 4, 2026
+
+The coordinator reports 10% remaining allowance. This is a preservation-only
+continuation; the wider product goal remains incomplete and no cleanup is performed.
+The owning branch and remote `main` were verified at
+`f99c814aa8e779cd6b6eca7502c2cbca8b928d3b` before these record edits.
+The following workflows have terminal `completed/success` results at that exact source:
+
+- [Package workflow 37167704896](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167704896).
+- [Package workflow 37167782363](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782363).
+- [Documentation workflow 37167782362](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782362).
+
+The coordinator verified wiki `master` at
+`10865dabed4b0eca235f4ed863d7d6739427a36d` and installation/currentness of all 83
+managed skills, including the updated KeePassXC operational guidance. These results
+do not establish native application acceptance. Lowlevel installation is complete
+and synthetic smoke is verified. The native KeePassXC profile/history scope decision
+is still pending, combined-choice source remains held, and genuine navigation
+evidence remains unpromoted. Retained profiles and original evidence stay intact.
+
+The final independent image-publication review found no current image eligible for
+public promotion. The existing documentation homepage returned HTTP 200 but contained
+zero image references, so neither a gallery nor image delivery was verified. All 198
+current navigation captures remain held; older parity receipts are stale; the Lowlevel
+synthetic fixture remains installation-only. No public gallery was created or modified.
+
 ## Navigation delivery and acceptance, October 4, 2026
 
 Observed at `2026-10-03T21:08:29.1907970-04:00`, both remote `main` and
@@ -18,8 +44,9 @@ the packaged executable SHA-256 is
 `5562a09c3f52435e9fcd4ab3e678df0ba31de36d06e0b797f53c4576117c66b1`.
 This establishes downloaded-byte and package provenance, not installed lifecycle
 or native execution acceptance. This continuation performed no download or execution.
-[Main package workflow 37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) was **in_progress** on the fresh read.
-Its final verdict must be read separately; another successful run is not its result.
+[Main package workflow 37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) is now verified `completed/success` at
+`1f3ca0526e3657be5308da2763287913d3fd6ac6`. This terminal workflow result does not
+establish installed lifecycle or native acceptance.
 
 The original repair evidence is retained: tests-first
 `36e0d8ca7636a9a63c5d0ab438fa3358d341a8c7` reported 1 pass and 3 failures;
@@ -93,7 +120,6 @@ records and any subsequent acceptance work.
 
 ## Next safe actions
 
-Read the main package workflow's terminal result when it becomes available.
 Independently review and deliver these three record changes through the coordinator.
 Keep the combined-choice manifest action held for its explicit approval. Preserve
 all retained profiles and original evidence. Resolve the native profile/history

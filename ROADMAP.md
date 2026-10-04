@@ -1,5 +1,16 @@
 # Roadmap
 
+## Preservation checkpoint, October 4, 2026
+
+- [x] Record the coordinator-reported 10% remaining allowance and preserve the navigation records. The wider goal remains incomplete; no cleanup is performed.
+- [x] Verify terminal success for package workflows [37167704896](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167704896) and [37167782363](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782363), and documentation workflow [37167782362](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782362), all at `f99c814aa8e779cd6b6eca7502c2cbca8b928d3b`.
+- [x] Record verified Lowlevel installation, synthetic smoke, and coordinator-verified currentness of all 83 managed skills. Synthetic smoke is not native KeePassXC acceptance.
+- [x] Record verified wiki `master` at `10865dabed4b0eca235f4ed863d7d6739427a36d`.
+- [ ] Resolve the native KeePassXC profile/history scope decision before native lifecycle acceptance.
+- [ ] Clear the separate combined-choice manifest approval hold through its authorized decision route. No held action is retried by this continuation.
+- [ ] Promote genuine navigation evidence only after its aggregate audit is accepted. Original captures and retained profiles remain preserved.
+- [ ] Establish public image delivery. The final independent review found no eligible current image: all 198 navigation captures remain held, older parity receipts are stale, and the synthetic fixture is installation-only. The existing homepage returned HTTP 200 with zero image references; no gallery or image delivery was verified, and no public gallery was created or modified.
+
 ## Navigation delivery record, October 4, 2026
 
 - [x] Deliver navigation source `1f3ca0526e3657be5308da2763287913d3fd6ac6` to remote `main`, verified by the exact remote ref.
@@ -7,7 +18,7 @@
 - [x] Verify preservation package workflow [37164478960](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37164478960) succeeded and published non-draft [v2.8.32001](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.32001) with seven uploaded assets. This is not installed acceptance.
 - [x] Verify all seven downloaded assets for `v2.8.32001` against published receipts and source `1f3ca0526e3657be5308da2763287913d3fd6ac6`; the local verdict records verified package provenance, expected `NotSigned` state and `nativeRuntimeVerified: false`. Installer and packaged-executable hashes are recorded in the handoff.
 - [x] Record the bounded independent dry source review of preserved combined-choice `568bb411`. Exactly one immutable article binding remains stale, and its explicit approval hold remains in force.
-- [ ] Verify the distinct main package workflow [37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) reaches its terminal result. Its current observed state and timestamp are recorded in the handoff.
+- [x] Verify the distinct main package workflow [37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) completed successfully at `1f3ca0526e3657be5308da2763287913d3fd6ac6`. This does not establish installed or native acceptance.
 - [ ] Resolve the retained-profile aggregate capture audit. Exact owned profile deletion was rejected; no alternate route or retry is authorized by the successful scoped navigation checks.
 - [ ] Obtain explicit approval for the separate combined-choice manifest update at preserved source `568bb411e571a9b7e08bd0e82e0ea9208ea76267`; its 57 offscreen QTest rows (49 behavioral plus eight initialization/teardown rows) include selected motion/startup checks, not those full suites. Exactly one of 42 immutable bindings remains stale; no final documentation or native acceptance is established.
 
