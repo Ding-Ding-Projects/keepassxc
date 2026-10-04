@@ -5,7 +5,7 @@
 - [x] Combine the reviewed searchable combo and auto-type selector while preserving startup, shared motion, four promoted controls and navigation.
 - [x] Verify runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` with 57 offscreen passes (42 + 9 + 3 + 3), zero failures/skips/timeouts and synthetic title isolation.
 - [x] Preserve 41 articles and add the auto-type choice article as number 42 without changing inventory status claims.
-- [ ] Verify the final immutable article binding and normal documentation bundle against the exact final source receipt.
+- [x] Verify all 42 immutable article bindings and the normal documentation build at `61ed25b2f09b7680e87b87a58cf793558263e368`: exit 0, three category checks, 16 generated files with no public-boundary findings. Later record-only source has a separate final receipt.
 - [ ] Complete independent integration review and coordinator delivery.
 - [ ] Complete KeePassXC native and packaged acceptance; controller installation smoke is separate evidence.
 

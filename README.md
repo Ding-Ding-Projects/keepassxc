@@ -14,6 +14,19 @@ no tracked or untracked changes. Diagnostics report bounded change counts withou
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
+## Recorded documentation build
+
+The full normal documentation build at `61ed25b2f09b7680e87b87a58cf793558263e368`
+exited 0 using Node v24.19.0 after `npm ci --ignore-scripts`, with release metadata
+refreshed. All 42 articles bind byte-for-byte to immutable ancestor
+`9f296b178ae39fd57e60668bea7380816ca450d8`. The build produced 16 files, and the
+public-boundary scan found no findings in those files or the changed source paths.
+The category check passed 3 checks. The generated package metadata identifies
+version 2.8.31801 and release source `a593787da94b01bc2b87ae63796c8f9e5cd1486e`;
+that metadata does not claim this integration has shipped. Later record-only
+source receives its own final build receipt. Hosting and native acceptance remain
+unverified.
+
 ## October 4 combined choice integration state
 
 Runtime source `23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` combines the reviewed shared choice popup
