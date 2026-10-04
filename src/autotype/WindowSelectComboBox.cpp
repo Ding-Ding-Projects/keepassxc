@@ -22,7 +22,13 @@
 #include "autotype/AutoType.h"
 
 WindowSelectComboBox::WindowSelectComboBox(QWidget* parent)
-    : QComboBox(parent)
+    : WindowSelectComboBox(parent, [] { return autoType()->windowTitles(); })
+{
+}
+
+WindowSelectComboBox::WindowSelectComboBox(QWidget* parent, std::function<QStringList()> windowTitles)
+    : Material::ComboBox(parent)
+    , m_windowTitles(std::move(windowTitles))
 {
     setEditable(true);
     setInsertPolicy(QComboBox::NoInsert);
@@ -39,7 +45,7 @@ void WindowSelectComboBox::refreshWindowList()
     while (count() > 1) {
         removeItem(1);
     }
-    insertItems(1, autoType()->windowTitles());
+    insertItems(1, m_windowTitles());
 }
 
 void WindowSelectComboBox::showPopup()
@@ -50,19 +56,19 @@ void WindowSelectComboBox::showPopup()
 
     refreshWindowList();
 
-    QComboBox::showPopup();
+    Material::ComboBox::showPopup();
 }
 
 QSize WindowSelectComboBox::sizeHint() const
 {
     QSize size = lineEdit()->sizeHint();
-    size.setHeight(qMax(size.height(), QComboBox::sizeHint().height()));
+    size.setHeight(qMax(size.height(), Material::ComboBox::sizeHint().height()));
     return size;
 }
 
 QSize WindowSelectComboBox::minimumSizeHint() const
 {
     QSize size = lineEdit()->minimumSizeHint();
-    size.setHeight(qMax(size.height(), QComboBox::minimumSizeHint().height()));
+    size.setHeight(qMax(size.height(), Material::ComboBox::minimumSizeHint().height()));
     return size;
 }
