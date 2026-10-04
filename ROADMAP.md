@@ -1,9 +1,18 @@
 # Roadmap
 
+## Navigation delivery record, October 4, 2026
+
+- [x] Deliver navigation source `1f3ca0526e3657be5308da2763287913d3fd6ac6` to remote `main`, verified by the exact remote ref.
+- [x] Verify documentation workflow [37165266322](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266322) succeeded at that source.
+- [x] Verify preservation package workflow [37164478960](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37164478960) succeeded and published non-draft [v2.8.32001](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.32001) with seven uploaded assets. This is not installed acceptance.
+- [ ] Verify the distinct main package workflow [37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) reaches its terminal result. Its current observed state and timestamp are recorded in the handoff.
+- [ ] Resolve the retained-profile aggregate capture audit. Exact owned profile deletion was rejected; no alternate route or retry is authorized by the successful scoped navigation checks.
+- [ ] Obtain explicit approval for the separate combined-choice manifest update at preserved source `568bb411e571a9b7e08bd0e82e0ea9208ea76267`; its 57 offscreen QTest rows (49 behavioral plus eight initialization/teardown rows) include selected motion/startup checks, not those full suites. Exactly one of 42 immutable bindings remains stale; no final documentation or native acceptance is established.
+
 ## Current release-grade acceptance
 
 - [x] Repair the captured website tab-width cause and missing favicon asset. Four focused built-output checks pass at `0404ed3f3cc1592bbcebab869abd7d4b7f728042` after a baseline result of one pass and three failures.
-- [ ] Recapture the navigation repair at the original matrix tuples, verify every full tab label stays in its target, exercise scroll/overflow and keyboard access, and confirm the fresh-browser favicon response succeeds.
+- [x] Verify scoped navigation at all 48 original tuples: 198 original captures, 960 contained labels, no body overflow, scrolling/overflow and native background keyboard activation, plus fresh favicon HTTP 200. Browser device scale emulation is distinct from operating-system scaling; representative pixel inspection and full image-integrity checks are recorded separately. The aggregate audit remains incomplete and no evidence promotion is claimed.
 
 - [ ] Complete the requested release-grade closeout, including smoke verification of the exact built candidate.
 - [ ] Show genuine inspected captures in chat and retain them in repository evidence, README and the public documentation website with source, executable hash and privacy provenance.
