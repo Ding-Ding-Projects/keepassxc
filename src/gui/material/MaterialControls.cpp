@@ -595,8 +595,7 @@ namespace Material
                     || !selected.flags().testFlag(Qt::ItemIsSelectable)) return;
                 QPointer<ComboBox> alive(this);
                 const QPointer<ChoicePopup> popup = m_choicePopup;
-                const QString label = selected.data(isEditable() ? Qt::EditRole : Qt::DisplayRole).toString();
-                hidePopup();
+            hidePopup();
                 // Dismissal callbacks may rebind this combo without replacing
                 // its model. Validate before writing into the new binding.
                 if (!alive || !popup || !selected.isValid() || selected.model() != model()
@@ -607,7 +606,10 @@ namespace Material
                 if (!alive || !selected.isValid() || selected.model() != model()
                     || selected.parent() != rootModelIndex() || selected.column() != modelColumn()
                     || currentIndex() != selected.row()) return;
-                emit activated(selected.row());
+            // Selection callbacks may update the label or editable field. Freeze the
+            // resulting text for both activation signals before their callbacks run.
+            const QString label = currentText();
+            emit activated(selected.row());
                 if (alive) emit textActivated(label);
             });
         }
