@@ -89,12 +89,28 @@ that is honored absolutely. The earlier installed guidance specified 10% and no
 off switch; that conflict is resolved by the current user instruction's priority.
 The explicit capabilities are `one-percent-per-launch-draw` and
 `persisted-off-switch`, `at-most-once-per-launch` and `no-mid-task-flow`.
-Current `MaterialDimSum.cpp` still uses denominator 10 and ignores the retired
-off preference, so those runtime mismatches remain open. Acceptance must prove disabled/restarted suppression,
+The earlier inventory snapshot found denominator 10 and an ignored off preference.
+Those source mismatches were repaired by the delivered startup unit. Current
+`MaterialDimSum.cpp` uses `OddsDenominator = 100`, checks persisted
+`GUI_DimSumSurprise` before drawing, and suppresses the pending or visible card
+when the preference is disabled. The discoverable localized settings control,
+launch eligibility, credential and forwarded-file exclusions, notification
+severity changes, at-most-once behavior and shared motion lifecycle are described
+in [startup surprise](../messaging/dim-sum-surprise.md).
+
+At runtime source `7cb43f654ef2cc908a76a5a739bddfda2aa29c52`, the combined
+startup/motion verification passed 167 offscreen checks: 127 in
+`testmaterialdimsum`, 7 in `testdimsum`, and 33 in `testmaterialmotion`, all with
+exit 0 and no failures, skips or timeouts. The original causal red/green evidence
+and updates-disabled compiler repair remain preserved in the feature article
+and source-bound receipts. The combined choice integration leaves that runtime
+unchanged and separately exercises the localized startup preference.
+
+Native and packaged acceptance still must prove disabled/restarted suppression,
 first-run/error/update/mid-task exclusions, bundled local images with meaningful
 dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
-motion. All behavioral evidence remains pending; this inventory lane changes no
-runtime frequency or control.
+motion through the approved isolated route. Offscreen results do not fill native
+evidence cells, change inventory status, or establish whole-product completeness.
 
 ## Evidence record and acceptance
 
