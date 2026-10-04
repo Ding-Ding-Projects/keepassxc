@@ -533,6 +533,58 @@ void TestMaterialComboBox::dismissalEligibilityChangeCannotCommit()
     QCOMPARE(combo.currentIndex(), 0);
 }
 
+void TestMaterialComboBox::activationTextFollowsSelection_data()
+{
+    QTest::addColumn<bool>("editable");
+    QTest::addColumn<int>("callbackStage");
+    QTest::newRow("fixed-dismissal") << false << 0;
+    QTest::newRow("editable-dismissal") << true << 0;
+    QTest::newRow("fixed-index-callback") << false << 1;
+    QTest::newRow("editable-index-callback") << true << 1;
+    QTest::newRow("fixed-activation-callback") << false << 2;
+    QTest::newRow("editable-activation-callback") << true << 2;
+}
+
+void TestMaterialComboBox::activationTextFollowsSelection()
+{
+    QFETCH(bool, editable);
+    QFETCH(int, callbackStage);
+    ComboBox combo;
+    combo.setEditable(editable);
+    combo.addItems({QStringLiteral("Initial"), QStringLiteral("Old label")});
+    combo.setCurrentIndex(0);
+    auto* window = qobject_cast<ChoicePopup*>(popup(combo));
+    QVERIFY(window);
+    QSignalSpy activated(&combo, &QComboBox::activated);
+    QSignalSpy textActivated(&combo, &QComboBox::textActivated);
+    bool dismissed = false;
+    QString selectedTextAtActivation;
+    connect(window, &ChoicePopup::dismissed, &combo, [&] {
+        dismissed = true;
+        combo.setItemText(1, QStringLiteral("Dismissed label"));
+    });
+    connect(&combo, &QComboBox::currentIndexChanged, &combo, [&](int index) {
+        if (index == 1 && callbackStage >= 1) {
+            combo.setItemText(1, QStringLiteral("Index callback label"));
+        }
+    });
+    connect(&combo, &QComboBox::activated, &combo, [&](int index) {
+        QCOMPARE(index, 1);
+        selectedTextAtActivation = combo.currentText();
+        if (callbackStage == 2) combo.setItemText(1, QStringLiteral("Activation callback label"));
+    });
+    choose(choices(window), 1);
+    QVERIFY(dismissed);
+    QCOMPARE(combo.currentIndex(), 1);
+    QCOMPARE(activated.count(), 1);
+    QCOMPARE(textActivated.count(), 1);
+    QCOMPARE(selectedTextAtActivation,
+             callbackStage >= 1 ? QStringLiteral("Index callback label") : QStringLiteral("Dismissed label"));
+    QCOMPARE(combo.currentText(),
+             callbackStage == 2 ? QStringLiteral("Activation callback label") : selectedTextAtActivation);
+    QCOMPARE(textActivated.at(0).at(0).toString(), selectedTextAtActivation);
+}
+
 int main(int argc, char** argv)
 {
     const QString identity = QStringLiteral("kpxc-choice-") + QUuid::createUuid().toString(QUuid::WithoutBraces);

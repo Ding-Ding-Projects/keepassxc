@@ -38,6 +38,8 @@ private slots:
     void dismissalDeletionIsSafe();
     void dismissalEligibilityChangeCannotCommit_data();
     void dismissalEligibilityChangeCannotCommit();
+    void activationTextFollowsSelection_data();
+    void activationTextFollowsSelection();
 };
 
 #endif
