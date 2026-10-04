@@ -8,8 +8,16 @@ Observed at `2026-10-03T21:08:29.1907970-04:00`, both remote `main` and
 [Documentation workflow 37165266322](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266322) completed successfully at that
 source. [Preservation package workflow 37164478960](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37164478960) also completed
 successfully and published non-draft [v2.8.32001](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.32001) with seven
-uploaded assets and that exact target. This is workflow and release-metadata
-proof; it does not establish downloaded-byte or installed lifecycle acceptance.
+uploaded assets and that exact target. The completed local download verification
+subsequently confirmed all seven assets against the published receipts and source
+provenance. `local-download-verdict.json` records `packageVerified: true`, expected
+`signingStatus: NotSigned`, and `nativeRuntimeVerified: false`.
+The installer SHA-256 is
+`257eba22c0c798bf5bb1bafe2340834f08ea456b85346f2d86ad46c83e778757`;
+the packaged executable SHA-256 is
+`5562a09c3f52435e9fcd4ab3e678df0ba31de36d06e0b797f53c4576117c66b1`.
+This establishes downloaded-byte and package provenance, not installed lifecycle
+or native execution acceptance. This continuation performed no download or execution.
 [Main package workflow 37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) was **in_progress** on the fresh read.
 Its final verdict must be read separately; another successful run is not its result.
 
@@ -63,7 +71,10 @@ profile or database was opened by this continuation.
 all exit 0 with no skips or timeout. These comprise 49 behavioral rows and eight
 initialization/teardown rows. Motion-catalogue and startup-setting results are
 selected checks, not complete suites. Exactly one of the 42 immutable article
-bindings remains stale. The final manifest update awaits explicit
+bindings remains stale. Independent source review of preserved `568bb411` found no
+actionable regression within its bounded scope; that dry source verdict does not
+clear the manifest hold or establish native or packaged acceptance. The final
+manifest update awaits explicit
 approval after automatic review rejected its command; it was not retried here.
 That source is not this navigation branch and its final documentation acceptance
 must not be inferred from this branch's successful build.
