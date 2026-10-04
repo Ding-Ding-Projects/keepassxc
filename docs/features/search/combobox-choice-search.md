@@ -27,6 +27,13 @@ visibility. Tracked owner/popup pointers stop subsequent work after deletion.
 Selection rechecks binding and both eligibility flags after dismissal, before any
 value change or activation signal. A deleted popup can be recreated on reopening.
 
+Dismissal and current-index listeners may also change the selected label or its
+editable field. After those listeners finish, selection snapshots `currentText()`
+before emitting `activated`, and uses that snapshot for the paired `textActivated`
+signal. Both signals therefore describe the same selected text. Changes made by
+an `activated` listener do not rewrite that already selected signal value; owner
+deletion still prevents the subsequent text signal.
+
 ## Search and regular expressions
 
 Plain, case-insensitive search is the default. The adjacent full regex builder
@@ -93,6 +100,19 @@ At `62cb371658e2fedb1751547332db4a36c1a12c36`, the full combo suite reports
 is `1AC11C7D74871214A56A4758FEF4A765A8AF82C5BEDD93F2AF4FA51E1D2FAD8F`.
 These bounded, isolated offscreen results establish the exercised callback paths;
 they do not establish native interaction or rendering acceptance.
+
+The activation-text regression at `82466dec0ccbd4dfc3d2a14733ff880dd8178c5c`
+reports 2 passes and 6 failures, exit 6: editable and non-editable rows still emit
+the old label after dismissal or current-index callbacks change it. The six rows
+also cover a later activation callback changing the label again. The unchanged
+regression at `80ab41c87ea3d29bed2a2a27589e5da04fb4ed94` reports 8 passes and
+zero failures, exit 0; the complete combo suite reports 42 passes and zero
+failures, skips or blacklisted cases, exit 0. All previous lifetime, eligibility
+and binding assertions remain unchanged. The executable SHA-256 is
+`09DC6A84B0F341F6A6DBB56568B99A408718D3321559901E7C34616583A3E1D1`.
+These checks used fresh pre-application configuration and identity, the offscreen
+Qt platform and a 120-second process bound. They provide no native rendering or
+packaged interaction acceptance.
 
 The tests-first source produced 2 passes and 16 failures because the searchable
 popup did not exist. Implementation verification is recorded with the exact
