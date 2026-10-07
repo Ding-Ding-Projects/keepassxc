@@ -1,128 +1,48 @@
-# Navigation delivery continuation
+# KeePassXC installer and window verification continuation
 
-## Preservation checkpoint, October 4, 2026
+Updated: 2026-10-07
 
-The coordinator reports 10% remaining allowance. This is a preservation-only
-continuation; the wider product goal remains incomplete and no cleanup is performed.
-The owning branch and remote `main` were verified at
-`f99c814aa8e779cd6b6eca7502c2cbca8b928d3b` before these record edits.
-The following workflows have terminal `completed/success` results at that exact source:
+## Objective and latest user direction
 
-- [Package workflow 37167704896](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167704896).
-- [Package workflow 37167782363](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782363).
-- [Documentation workflow 37167782362](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37167782362).
+Repair the Squirrel setup lifecycle so a successful installation creates the application and its Desktop and Start Menu shortcuts. Restore actual pointer resizing for the main window. Verify the updater from the published `v2.8.32701` release to a new successful `main` release, and keep issue #12 open during this scoped work.
 
-The coordinator verified wiki `master` at
-`10865dabed4b0eca235f4ed863d7d6739427a36d` and installation/currentness of all 83
-managed skills, including the updated KeePassXC operational guidance. These results
-do not establish native application acceptance. Lowlevel installation is complete
-and synthetic smoke is verified. The native KeePassXC profile/history scope decision
-is still pending, combined-choice source remains held, and genuine navigation
-evidence remains unpromoted. Retained profiles and original evidence stay intact.
+The latest user direction explicitly requested immediate preservation and a cleanup pass. This continuation preserves the incomplete work and does not claim the automatic usage threshold was reached.
 
-The final independent image-publication review found no current image eligible for
-public promotion. The existing documentation homepage returned HTTP 200 but contained
-zero image references, so neither a gallery nor image delivery was verified. All 198
-current navigation captures remain held; older parity receipts are stale; the Lowlevel
-synthetic fixture remains installation-only. No public gallery was created or modified.
+## Source state
 
-## Navigation delivery and acceptance, October 4, 2026
+- Baseline `main`: `3356cdfece47a33fca6fb02db4dcd82f8c576e12`.
+- Baseline successful GitHub Actions run: [37170195681](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37170195681).
+- Published baseline: [v2.8.32701](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.32701).
+- Task branch: `codex/installer-resize-update-20261006`.
+- Source checkpoint: `d44209a3e37013d16e65b492cb875f634940447e`.
+- Prior task checkpoints: `414ef883c15e24381a8cb4af82a205dfae6cdd22` and `cf1638b3009d68b8919a0ebcf4094ac9886f7ea8`.
+- `d44209a3` adds direct per-user Desktop and Start Menu shortcut creation through Windows Shell Link, plus an ownership receipt containing path, target, arguments, and SHA-256. Uninstall removes only an unchanged receipt match. The source and its focused tests remain unverified.
+- At the time of this record, the task branch has not yet been published. No integration into `main` has occurred.
 
-Observed at `2026-10-03T21:08:29.1907970-04:00`, both remote `main` and
-`codex/site-navigation-20261003` resolve to
-`1f3ca0526e3657be5308da2763287913d3fd6ac6`. The navigation source is delivered.
-[Documentation workflow 37165266322](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266322) completed successfully at that
-source. [Preservation package workflow 37164478960](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37164478960) also completed
-successfully and published non-draft [v2.8.32001](https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v2.8.32001) with seven
-uploaded assets and that exact target. The completed local download verification
-subsequently confirmed all seven assets against the published receipts and source
-provenance. `local-download-verdict.json` records `packageVerified: true`, expected
-`signingStatus: NotSigned`, and `nativeRuntimeVerified: false`.
-The installer SHA-256 is
-`257eba22c0c798bf5bb1bafe2340834f08ea456b85346f2d86ad46c83e778757`;
-the packaged executable SHA-256 is
-`5562a09c3f52435e9fcd4ab3e678df0ba31de36d06e0b797f53c4576117c66b1`.
-This establishes downloaded-byte and package provenance, not installed lifecycle
-or native execution acceptance. This continuation performed no download or execution.
-[Main package workflow 37165266179](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/37165266179) is now verified `completed/success` at
-`1f3ca0526e3657be5308da2763287913d3fd6ac6`. This terminal workflow result does not
-establish installed lifecycle or native acceptance.
+## Build and verification
 
-The original repair evidence is retained: tests-first
-`36e0d8ca7636a9a63c5d0ab438fa3358d341a8c7` reported 1 pass and 3 failures;
-`0404ed3f3cc1592bbcebab869abd7d4b7f728042` passed all four unchanged built-output
-checks. The final built source above retains intrinsic tab widths, scroll containment
-and the existing local favicon without removing labels or navigation behavior.
+- The exact root `build.bat /s` entrypoint first stopped because the selected Ruby installation could not resolve `ruby_builtin_dlls`.
+- A second attempt stopped because the entrypoint selected an incomplete MSVC environment.
+- With the verified user-scoped Ruby and MSVC paths selected for that process, configuration succeeded and Ninja built most targets, including `SquirrelLifecycle.cpp`, `TestSquirrelLifecycle.cpp`, `testmaterialtitlebar.exe`, and `testsquirrellifecycle.exe`. The overall entrypoint still exited 1 with `ninja: build stopped: subcommand failed`. The specific failing subcommand diagnostic was not retained, so no passing build is claimed.
+- `testsquirrellifecycle`, `testmaterialtitlebar`, and `testupdatecheck` were not run against this source checkpoint.
+- `build-installer.bat /s`, package receipt verification, disposable-profile setup execution, shortcut launch, and owned-shortcut uninstall verification remain unrun.
+- The live `v2.8.32701` setup and full package hashes were independently checked earlier. No installed update from that release to a new `main` release has been performed.
+- Baseline native inspection found `WS_THICKFRAME` enabled and all eight `WM_NCHITTEST` edge and corner probes returned the expected resize codes at 96 DPI. These probes do not establish pointer dragging. No real edge or corner drag has been verified, and this continuation contains no window-resizing source change.
+- A disposable Windows profile is available, but no Setup installation or update was completed in it. The everyday profile has not been used.
 
-The genuine navigation capture retained **198 original images across 48 tuples**,
-with **960 contained tab-label measurements**, zero label escapes and no body
-overflow. Scoped visual and interaction checks passed, including native background
-Right/Enter focus and activation, automatic focus scrolling, DOM overflow selection
-and a fresh local favicon response of HTTP 200. The matrix and overflow inputs used
-DOM clicks; keyboard input used the hidden-desktop controller. Browser device scale
-factors do not establish operating-system display scaling. Representative images
-were inspected; all images were checked for hash, dimensions and PNG integrity.
-This is not full accessibility or whole-product acceptance.
+## Records, issue, and external status
 
-The aggregate audit remains **failed/incomplete**, with validator exit 1 because
-browser profiles remain retained after exact owned profile deletion was rejected by
-automatic approval review. Owned browser/server processes, ports and the named
-desktop were released. No alternate deletion route or retry was used, and earlier
-retained profiles remain untouched. The invalid first attempt remains invalid.
-Captures have not been promoted into repository evidence or published. The scoped
-success must not be presented as a passing aggregate lifecycle audit.
+- Issue #12 remains open, and its body and checklist were not edited. No progress or completion comment was posted because the new visible behavior has no genuine built-artifact capture yet.
+- README, ROADMAP.md, HANDOFF.md, the wiki, and the project documentation site have not yet been updated for this task.
+- The Status Hub read path could not be reached because SSH host-key verification failed. No host-key trust setting was changed and no status update was sent.
+- No new task release or exact-source GitHub Actions run exists.
 
-## Controller installation and remaining native boundary
+## Preservation and next safe actions
 
-Lowlevel source `e6e42f2066d539256d6480401d7cef867f2b8dfe` is installed through a
-quiet client-owned persistent stdio session. Retained receipts prove 58 observed
-tools, the native backend, client registration, neutral-working-directory
-initialization and synthetic Qt launch/capture/background close/owned teardown.
-Foreground, cursor and input desktop stayed unchanged. This is controller
-installation smoke only; the synthetic image is not KeePassXC evidence.
-
-KeePassXC native profile/history acceptance remains pending the owner's isolated
-scope decision. Temporary INI files alone do not isolate the independent
-`QStandardPaths::AppDataLocation` history root. No packaged KeePassXC lifecycle has
-run. The ten-entry save/quit/relaunch/readback flow, positional spaces/Cantonese
-filename flow, real forwarded-process transport, complete feature interaction,
-accessibility, geometry and per-click evidence remain required. No personal
-profile or database was opened by this continuation.
-
-## Separate combined-choice preservation
-
-`568bb411e571a9b7e08bd0e82e0ea9208ea76267` is separately preserved on remote
-`codex/choice-final-20261004`. Its unchanged runtime
-`23741dbb6bb6ed072483ce74afa5bcf5ec2536e9` passed 57 isolated offscreen QTest rows
-(42 combo, 9 window selector, 3 motion catalogue and 3 startup-setting rows),
-all exit 0 with no skips or timeout. These comprise 49 behavioral rows and eight
-initialization/teardown rows. Motion-catalogue and startup-setting results are
-selected checks, not complete suites. Exactly one of the 42 immutable article
-bindings remains stale. Independent source review of preserved `568bb411` found no
-actionable regression within its bounded scope; that dry source verdict does not
-clear the manifest hold or establish native or packaged acceptance. The final
-manifest update awaits explicit
-approval after automatic review rejected its command; it was not retried here.
-That source is not this navigation branch and its final documentation acceptance
-must not be inferred from this branch's successful build.
-
-This navigation source preserves its 40 articles and inventory contracts. Current
-product coverage remains **0/105,788** verified capability cells and **9,434**
-incomplete surface-feature groups. The delivered startup/motion result remains
-167 offscreen checks at `7cb43f654ef2cc908a76a5a739bddfda2aa29c52`; native evidence
-and broader requirements remain pending. Source delivery, hosted workflow success,
-installation smoke, scoped captures and product acceptance have separate verdicts.
-
-This continuation changes only `CLOSEOUT_PROMPT.md`, `HANDOFF.md` and `ROADMAP.md`.
-It performs no runtime/UI edit, article-manifest update, build, capture, installation,
-main-branch mutation, push or publication. The coordinator owns delivery of these
-records and any subsequent acceptance work.
-
-## Next safe actions
-
-Independently review and deliver these three record changes through the coordinator.
-Keep the combined-choice manifest action held for its explicit approval. Preserve
-all retained profiles and original evidence. Resolve the native profile/history
-scope before the first KeePassXC lifecycle run; do not promote capture evidence
-while its aggregate audit remains incomplete. No new source or capture work is
-authorized by this record-only continuation.
+- Publish the task branch for preservation, verify the resulting ref, and keep this work unmerged while its required build, native tests, installer run, updater sequence, and real pointer-drag proof are incomplete.
+- The task branch is not merged into `main`, so neither it nor its linked checkout is eligible for removal.
+- Recover the exact Ninja subcommand diagnostic from retained local build evidence before any same-source retry. Retry only after a verdict-relevant repair.
+- After a successful exact root build, run `testsquirrellifecycle`, `testmaterialtitlebar`, and `testupdatecheck`; then use the exact `build-installer.bat /s` entrypoint and verify the package receipt.
+- Continue installation and updater checks only in the disposable profile. Prove version, executable hash, both shortcuts, shortcut launch, owned-shortcut removal, package hashes, updater states, restart, and resulting version.
+- Verify real pointer drags on every edge and corner at the requested sizes, languages, themes, and display scales. Keep resizing unverified until genuine drag evidence exists.
+- Update the directly related documentation and handoff records, keep issue #12 open, then integrate and publish only after the required local and hosted evidence is complete.
