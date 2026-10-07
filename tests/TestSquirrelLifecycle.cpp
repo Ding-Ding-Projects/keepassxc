@@ -303,12 +303,23 @@ void TestSquirrelLifecycle::handleUsesExactOwnedSeams()
     QCOMPARE(helperTimeout, 30000);
     QCOMPARE(integratedEvent, SquirrelLifecycle::Event::Install);
     QCOMPARE(helperArguments,
-             QStringList({QStringLiteral("--createShortcut"), QStringLiteral("KeePassXC.exe")}));
+             QStringList({QStringLiteral("--createShortcut=KeePassXC.exe"),
+                          QStringLiteral("--shortcut-locations=Desktop,StartMenu")}));
     QCOMPARE(QDir::cleanPath(workingDirectory), QDir::cleanPath(QFileInfo(program).absolutePath()));
 
     QCOMPARE(SquirrelLifecycle::handle(install, app), std::optional<int>(EXIT_SUCCESS));
     QCOMPARE(processCalls, 2);
     QCOMPARE(integrationCalls, 2);
+
+    const QStringList updated{QStringLiteral("KeePassXC.exe"),
+                              QStringLiteral("--squirrel-updated"),
+                              QStringLiteral("2.8.1")};
+    QCOMPARE(SquirrelLifecycle::handle(updated, app), std::optional<int>(EXIT_SUCCESS));
+    QCOMPARE(processCalls, 3);
+    QCOMPARE(helperArguments,
+             QStringList({QStringLiteral("--createShortcut=KeePassXC.exe"),
+                          QStringLiteral("--shortcut-locations=Desktop,StartMenu")}));
+    QCOMPARE(integratedEvent, SquirrelLifecycle::Event::Updated);
 
     const QStringList wrongVersion{QStringLiteral("KeePassXC.exe"),
                                    QStringLiteral("--squirrel-updated"),
@@ -320,13 +331,16 @@ void TestSquirrelLifecycle::handleUsesExactOwnedSeams()
     const QStringList uninstall{QStringLiteral("KeePassXC.exe"),
                                 QStringLiteral("--squirrel-uninstall"),
                                 QStringLiteral("2.8.1")};
+    const int processCallsBeforeUninstall = processCalls;
     QCOMPARE(SquirrelLifecycle::handle(uninstall, app), std::optional<int>(EXIT_SUCCESS));
+    QCOMPARE(processCalls, processCallsBeforeUninstall);
     QCOMPARE(helperArguments,
-             QStringList({QStringLiteral("--removeShortcut"), QStringLiteral("KeePassXC.exe")}));
+             QStringList({QStringLiteral("--createShortcut=KeePassXC.exe"),
+                          QStringLiteral("--shortcut-locations=Desktop,StartMenu")}));
     QCOMPARE(integratedEvent, SquirrelLifecycle::Event::Uninstall);
     QCOMPARE(SquirrelLifecycle::handle(uninstall, app), std::optional<int>(EXIT_SUCCESS));
-    QCOMPARE(processCalls, 4);
-    QCOMPARE(integrationCalls, 4);
+    QCOMPARE(processCalls, 3);
+    QCOMPARE(integrationCalls, 5);
 
     SquirrelLifecycle::setProcessRunnerForTests(
         [](const QString&, const QStringList&, const QString&, int) { return SquirrelLifecycle::ProcessResult{}; });
