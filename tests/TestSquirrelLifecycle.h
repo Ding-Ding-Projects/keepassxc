@@ -13,8 +13,7 @@ private slots:
     void firstRunConsumption();
     void layoutValidation();
     void registryOwnershipDecisions();
-    void processResultContract();
-    void shortHelperEvidence();
+    void shortcutOwnershipContract();
     void handleUsesExactOwnedSeams();
 };
 

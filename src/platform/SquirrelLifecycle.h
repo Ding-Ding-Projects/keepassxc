@@ -21,13 +21,6 @@ namespace SquirrelLifecycle
         FirstRun
     };
 
-    enum class ExitStatus
-    {
-        NotStarted,
-        Normal,
-        Crashed
-    };
-
     struct Layout
     {
         QString applicationDirectory;
@@ -44,20 +37,6 @@ namespace SquirrelLifecycle
         PreserveForeign
     };
 
-    struct ProcessResult
-    {
-        bool started = false;
-        bool startTimedOut = false;
-        bool finishTimedOut = false;
-        ExitStatus exitStatus = ExitStatus::NotStarted;
-        int exitCode = -1;
-        QByteArray standardOutput;
-        QByteArray standardError;
-        qint64 durationMs = 0;
-
-        bool succeeded() const;
-    };
-
     struct IntegrationResult
     {
         bool browser = true;
@@ -67,9 +46,16 @@ namespace SquirrelLifecycle
         bool succeeded() const;
     };
 
-    using ProcessRunner =
-        std::function<ProcessResult(const QString&, const QStringList&, const QString&, int)>;
+    struct ShortcutOwnership
+    {
+        QString path;
+        QString target;
+        QString arguments;
+        QByteArray sha256;
+    };
+
     using IntegrationRunner = std::function<IntegrationResult(Event, const Layout&)>;
+    using ShortcutRunner = std::function<bool(Event, const Layout&)>;
 
     Event classify(const QStringList& arguments);
     bool consume(QStringList& arguments);
@@ -77,15 +63,12 @@ namespace SquirrelLifecycle
     std::optional<Layout> validateLayout(const QString& applicationDirectory);
     QString openCommand(const Layout& layout);
     RegistrationDecision registrationDecision(bool hasExistingValues, bool ownershipMarker);
-    ProcessResult runShortHelper(const QString& program,
-                                 const QStringList& arguments,
-                                 const QString& workingDirectory,
-                                 int timeoutMs);
     IntegrationResult updateInstallOwnedRegistrations(Event event, const Layout& layout);
-    void setProcessRunnerForTests(ProcessRunner runner);
-    void resetProcessRunnerForTests();
+    bool shortcutOwnershipMatches(const ShortcutOwnership& recorded, const ShortcutOwnership& current);
     void setIntegrationRunnerForTests(IntegrationRunner runner);
     void resetIntegrationRunnerForTests();
+    void setShortcutRunnerForTests(ShortcutRunner runner);
+    void resetShortcutRunnerForTests();
 
     /**
      * Handle an installation lifecycle event before normal UI startup.
