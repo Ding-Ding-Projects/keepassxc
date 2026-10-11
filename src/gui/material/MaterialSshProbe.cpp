@@ -107,6 +107,8 @@ bool SshProbe::parseFacts(const QByteArray& bytes, QJsonObject& facts)
 quint64 SshProbe::start(const Connection& c)
 {
     cancel();++m_attempt;
+    // Register identity before validation or QProcess::start can complete synchronously.
+    emit attemptRegistered(m_attempt);
     const auto args=arguments(c);
     if(args.isEmpty()){emit completed(m_attempt,QStringLiteral("invalid"),{});return m_attempt;}
     auto* process=new QProcess(this);m_process=process;m_output.clear();

@@ -23,6 +23,7 @@ public:
     void cancel();
     bool active() const;
 signals:
+    void attemptRegistered(quint64 attempt);
     void completed(quint64 attempt, const QString& state, const QJsonObject& facts);
 private:
     friend class ::TestMaterialServerManager;

@@ -104,6 +104,34 @@ private slots:
         const auto third=probe.start(connection);probe.appendOutput(QByteArray(4097,'x'));QCOMPARE(completed.last().at(0).toULongLong(),third);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("unavailable"));
         ServerManager manager(nullptr,temporary.path()+QStringLiteral("managed"));manager.m_target->setCurrentIndex(2);manager.m_sshFacts=QJsonObject{{"schema",1}};manager.m_sshHost->setText(QStringLiteral("changed.example.invalid"));QVERIFY(manager.m_sshFacts.isEmpty());QCOMPARE(manager.m_sshAttempt,quint64(0));
     }
+    void sshDiscoverySynchronousCompletionAndStaleResult() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));const auto hosts=temporary.filePath(QStringLiteral("known_hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));QCOMPARE(file.write("synthetic"),qint64(9));}
+        ServerManager manager(nullptr,temporary.filePath(QStringLiteral("managed")));
+        manager.m_target->setCurrentIndex(2);
+        manager.m_sshHost->setText(QStringLiteral("synthetic.example.invalid"));manager.m_sshUser->setText(QStringLiteral("synthetic"));
+        manager.m_sshExecutable->setText(executable);manager.m_sshIdentity->setText(identity);manager.m_sshKnownHosts->setText(hosts);
+        manager.m_sshProbe->m_testLaunch=[&](const QString&,const QStringList&){manager.m_sshProbe->finish(QStringLiteral("unavailable"));};
+        manager.discoverSsh();
+        const auto first=manager.m_sshAttempt;QVERIFY(first>0);
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.unavailable"));
+        QVERIFY(!manager.m_sshProbe->active());QVERIFY(!manager.m_sshProbe->m_deadline->isActive());
+        manager.m_sshProbe->m_testLaunch=[](const QString&,const QStringList&){};
+        manager.discoverSsh();const auto second=manager.m_sshAttempt;QVERIFY(second>first);QVERIFY(manager.m_sshProbe->active());
+        emit manager.m_sshProbe->completed(first,QStringLiteral("ready"),QJsonObject{{"schema",1}});
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.loading"));QVERIFY(manager.m_sshFacts.isEmpty());QCOMPARE(manager.m_sshAttempt,second);
+        manager.m_sshHost->setText(QStringLiteral("changed.example.invalid"));
+        QCOMPARE(manager.m_sshAttempt,quint64(0));QVERIFY(!manager.m_sshProbe->active());
+        emit manager.m_sshProbe->completed(second,QStringLiteral("ready"),QJsonObject{{"schema",1}});
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.changed"));QVERIFY(manager.m_sshFacts.isEmpty());
+    }
     void dockerCopyInventoryAndLiveLanguageChanges() {
         using namespace Material;
         const QStringList required{

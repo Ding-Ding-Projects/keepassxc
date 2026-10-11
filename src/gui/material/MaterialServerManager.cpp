@@ -176,6 +176,7 @@ ServerManager::ServerManager(QWidget* parent, const QString& inventoryRoot) : Sc
     auto* sshCancel=new TextButton(this);bindCopy(sshCancel,"server.ssh.cancel");sshForm->addRow(sshCancel);connect(sshCancel,&QAbstractButton::clicked,this,[this]{m_sshProbe->cancel();});
     auto* scope=new QLabel(this);scope->setWordWrap(true);bindCopy(scope,"server.ssh.scope");sshForm->addRow(scope);form->addRow(sshBox);
     connect(m_target,qOverload<int>(&QComboBox::currentIndexChanged),this,[this,sshBox]{sshBox->setEnabled(m_target->currentIndex()>=2);invalidateSsh();});sshBox->setEnabled(false);
+    connect(m_sshProbe,&SshProbe::attemptRegistered,this,[this](quint64 attempt){m_sshAttempt=attempt;});
     connect(m_sshProbe,&SshProbe::completed,this,[this](quint64 attempt,const QString& state,const QJsonObject& facts){
         if(attempt!=m_sshAttempt)return;m_sshFacts=facts;
         if(state==QLatin1String("ready")){statusKey("server.ssh.ready");refreshCopy();}
@@ -641,6 +642,6 @@ void ServerManager::discoverSsh()
     m_sshAttempt=0;m_sshProbe->cancel();m_sshFacts={};
     SshProbe::Connection connection{m_sshExecutable->text(),m_sshHost->text(),m_sshUser->text(),m_sshIdentity->text(),m_sshKnownHosts->text(),m_sshPort->value()};
     if(m_target->currentIndex()<2 || !SshProbe::validConnection(connection)){statusKey("server.ssh.invalid");return;}
-    statusKey("server.ssh.loading");m_sshAttempt=m_sshProbe->start(connection);
+    statusKey("server.ssh.loading");m_sshProbe->start(connection);
 }
 }
