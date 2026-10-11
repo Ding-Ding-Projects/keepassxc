@@ -43,7 +43,7 @@
       "id": "shell-default-d1",
       "summary": "No Inspect chip in the app bar",
       "reason": "The reference's Inspect opens the design tool's element inspector; the product has no such surface",
-      "approval": "session review 2026-09-01 (single-Dog pass, user-directed)"
+      "approval": "session review 2026-09-01 (single-agent pass, user-directed)"
     }
   ]
 }
