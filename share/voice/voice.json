@@ -6712,6 +6712,141 @@
                     "5": "Docker CLI (docker.exe docker)，命令列工具"
                 }
             }
+        },
+        "motion.authoring.motion_track_search": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Motion track search"
+                ],
+                "levels": {
+                    "1": "Motion track search",
+                    "2": "Motion track search",
+                    "3": "Motion track search",
+                    "4": "Motion track search",
+                    "5": "Motion track search"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動作軌道搜尋"
+                ],
+                "levels": {
+                    "1": "動作軌道搜尋",
+                    "2": "動作軌道搜尋",
+                    "3": "動作軌道搜尋",
+                    "4": "動作軌道搜尋",
+                    "5": "動作軌道搜尋"
+                }
+            }
+        },
+        "motion.authoring.search_track_names_states_and_properties": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search track names, states and properties"
+                ],
+                "levels": {
+                    "1": "Search track names, states and properties",
+                    "2": "Search track names, states and properties",
+                    "3": "Search track names, states and properties",
+                    "4": "Search track names, states and properties",
+                    "5": "Search track names, states and properties"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋軌道名稱、狀態同屬性"
+                ],
+                "levels": {
+                    "1": "搜尋軌道名稱、狀態同屬性",
+                    "2": "搜尋軌道名稱、狀態同屬性",
+                    "3": "搜尋軌道名稱、狀態同屬性",
+                    "4": "搜尋軌道名稱、狀態同屬性",
+                    "5": "搜尋軌道名稱、狀態同屬性"
+                }
+            }
+        },
+        "motion.authoring.search_motion_tracks": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search motion tracks"
+                ],
+                "levels": {
+                    "1": "Search motion tracks",
+                    "2": "Search motion tracks",
+                    "3": "Search motion tracks",
+                    "4": "Search motion tracks",
+                    "5": "Search motion tracks"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋動作軌道"
+                ],
+                "levels": {
+                    "1": "搜尋動作軌道",
+                    "2": "搜尋動作軌道",
+                    "3": "搜尋動作軌道",
+                    "4": "搜尋動作軌道",
+                    "5": "搜尋動作軌道"
+                }
+            }
+        },
+        "motion.authoring.1_of_2_tracks_shown_search_does_not_change_the_selected_track": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "%1 of %2 tracks shown. Search does not change the selected track."
+                ],
+                "levels": {
+                    "1": "%1 of %2 tracks shown. Search does not change the selected track.",
+                    "2": "%1 of %2 tracks shown. Search does not change the selected track.",
+                    "3": "%1 of %2 tracks shown. Search does not change the selected track.",
+                    "4": "%1 of %2 tracks shown. Search does not change the selected track.",
+                    "5": "%1 of %2 tracks shown. Search does not change the selected track."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。"
+                ],
+                "levels": {
+                    "1": "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。",
+                    "2": "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。",
+                    "3": "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。",
+                    "4": "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。",
+                    "5": "顯示 %2 條軌道中嘅 %1 條。搜尋唔會改變已選軌道。"
+                }
+            }
+        },
+        "motion.authoring.pattern_unavailable_the_last_valid_track_filter_is_retained": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Pattern unavailable. The last valid track filter is retained."
+                ],
+                "levels": {
+                    "1": "Pattern unavailable. The last valid track filter is retained.",
+                    "2": "Pattern unavailable. The last valid track filter is retained.",
+                    "3": "Pattern unavailable. The last valid track filter is retained.",
+                    "4": "Pattern unavailable. The last valid track filter is retained.",
+                    "5": "Pattern unavailable. The last valid track filter is retained."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個模式未能使用，保留上一次有效嘅軌道篩選。"
+                ],
+                "levels": {
+                    "1": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
+                    "2": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
+                    "3": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
+                    "4": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
+                    "5": "呢個模式未能使用，保留上一次有效嘅軌道篩選。"
+                }
+            }
         }
     }
 }

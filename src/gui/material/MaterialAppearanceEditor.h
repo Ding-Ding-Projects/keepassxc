@@ -131,6 +131,7 @@ namespace Material
         QString currentTab() const;
 
         SearchBar* propertySearch() const;
+        SearchBar* motionSearch() const;
         ColorPicker* backgroundPicker() const;
         ColorPicker* foregroundPicker() const;
         Select* fontFamily() const;
@@ -192,6 +193,7 @@ namespace Material
         void loadFromOverride();
         void writeOverride(const std::function<void(ElementOverrides::Override&)>& change);
         void applyFilter();
+        void applyMotionFilter();
         void placeBesideTarget();
         void applyTheme();
         void loadPresets();
@@ -209,6 +211,12 @@ namespace Material
         SegmentedButton* m_tabs = nullptr;
         QStackedWidget* m_pages = nullptr;
         MotionEditor* m_motion = nullptr;
+        SearchBar* m_motionSearch = nullptr;
+        QLabel* m_motionSearchStatus = nullptr;
+        QString m_motionFilter;
+        QString m_motionFilterFlags;
+        bool m_motionFilterRegex = false;
+        bool m_motionFilterPending = false;
         QList<PropertyRow*> m_rows;
 
         Select* m_fontFamily = nullptr;

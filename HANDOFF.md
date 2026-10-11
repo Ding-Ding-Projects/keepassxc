@@ -1,5 +1,9 @@
 # Navigation delivery handoff
 
+## Motion inspector source continuation
+
+Source unit `12b19ee48efb5bd1d7c52adee64b35859275384f` adds an independent motion-track inspector search using the existing registry, anchored regex builder and bounded matcher. It filters track metadata without changing selection or saved documents; invalid candidates retain the last valid filter. Independent source review found no concrete regression, with matcher interruption limits explicitly retained. Five catalogue entries are integrated in English and Cantonese at all five levels. Focused fixtures are written but uncompiled and unexecuted. Native keyboard, accessibility, localization and layout acceptance remain pending. The separate GUI-enabled e202657b build does not include this later unit.
+
 ## Current schema and SSH continuation, October 11, 2026
 
 This section supersedes the current-state statements below while preserving their historical evidence. The SSH branch contains bounded read-only host/runtime discovery at `d79ad3c84501c15939d766f900c53f5a42e1b9f7` and independently reviewed immediate-completion ordering repair `feedfadea832ec944e3bb88ad0326cc5853180e6`. Remote creation, lifecycle and complete version/configuration/extension compatibility remain incomplete. No real SSH host connection or native execution has been performed for this unit.
