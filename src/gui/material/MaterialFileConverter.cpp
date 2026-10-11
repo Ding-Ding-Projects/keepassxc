@@ -160,8 +160,10 @@ FileConverter::Result FileConverter::convertWithObserver(const QString& source, 
     if (reopenedHash.digest() != sourceHash.result()) return Result::InvalidInput;
     if (cancel && cancel->load()) return Result::Cancelled;
 #ifdef Q_OS_WIN
-    const QString from = QDir::toNativeSeparators(staged), to = QDir::toNativeSeparators(destination);
-    if (!MoveFileExW(reinterpret_cast<LPCWSTR>(from.utf16()), reinterpret_cast<LPCWSTR>(to.utf16()), MOVEFILE_WRITE_THROUGH)) return Result::IoFailure;
+    // QTemporaryFile owns the underlying handle even after close(). Let its
+    // no-replacement, same-volume rename publish the verified file.
+    if (!temporary.rename(destination)) return Result::IoFailure;
+    temporary.setAutoRemove(false);
     return Result::Success;
 #else
     return Result::UnsupportedPlatform;
@@ -170,7 +172,9 @@ FileConverter::Result FileConverter::convertWithObserver(const QString& source, 
 
 FileConverter::FileConverter(QWidget* parent) : Screen(parent)
 {
+    setSearchVisible(true);
     searchBar()->setIdentity(QStringLiteral("converter.catalog"), say("converter.title"));
+    searchBar()->setCopyKeys(QStringLiteral("converter.title"), QStringLiteral("converter.title"));
     m_categories = new QListWidget(this);
     m_categories->setWordWrap(true);
     for (int i = 0; i < 8; ++i) {

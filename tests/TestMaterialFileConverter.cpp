@@ -2,6 +2,10 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialRegexBuilder.h"
 #include "gui/material/MaterialVoice.h"
+#include "gui/material/MaterialShell.h"
+#include "gui/material/MaterialNavigationRail.h"
+#include <QAction>
+#include <QToolButton>
 #include "core/Config.h"
 #include <QAbstractButton>
 #include <QApplication>
@@ -11,6 +15,7 @@
 #include <QBuffer>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -18,6 +23,56 @@ class TestMaterialFileConverter : public QObject
 {
     Q_OBJECT
 private slots:
+    void visibleSearchAndLiveDestinationCopy()
+    {
+        const auto language = Material::Voice::language();
+        const auto restoreLanguage = qScopeGuard([language] { Material::Voice::setLanguage(language); });
+        Material::Voice::setLanguage(Material::Voice::Language::English);
+        Material::Shell shell;
+        auto* converter = new Material::FileConverter(&shell);
+        shell.addDestination(QStringLiteral("converter"), converter, QStringLiteral("transform"),
+                             Material::Voice::say(QStringLiteral("converter.title")));
+        shell.setDestinationCopyKey(QStringLiteral("converter"), QStringLiteral("converter.title"));
+        shell.addDestination(QStringLiteral("other"), nullptr, QStringLiteral("help"), QStringLiteral("Other"));
+        shell.resize(480, 640);
+        shell.show();
+        QCoreApplication::processEvents();
+        const auto order = shell.destinations();
+        auto* bar = converter->searchBar();
+        QTRY_VERIFY(bar->isVisible());
+        QVERIFY(converter->isSearchVisible());
+        bar->setRegexEnabled(true);
+        bar->setRegexFlags(QStringLiteral("i"));
+        bar->setText(QStringLiteral("^binary"));
+        auto* command = shell.findChild<QAction*>(QStringLiteral("materialDestination_converter"));
+        auto* button = shell.findChild<QToolButton*>(QStringLiteral("materialBottomDestination_converter"));
+        QVERIFY(command && button);
+        for (auto mode : {Material::Voice::Language::English, Material::Voice::Language::Cantonese,
+                          Material::Voice::Language::Bilingual, Material::Voice::Language::English}) {
+            Material::Voice::setLanguage(mode);
+            QCoreApplication::processEvents();
+            const auto label = Material::Voice::say(QStringLiteral("converter.title"));
+            QCOMPARE(command->text(), label);
+            QCOMPARE(button->accessibleName(), label);
+            QCOMPARE(shell.rail()->destinationLabel(QStringLiteral("converter")), label);
+            QCOMPARE(shell.rail()->accessibleDescription(), label);
+            QCOMPARE(shell.destinationFeedback(QStringLiteral("converter")), label);
+            QCOMPARE(bar->searchLabel(), label);
+            QCOMPARE(bar->accessibleName(), label);
+            QCOMPARE(bar->placeholder(), label);
+            QCOMPARE(bar->text(), QStringLiteral("^binary"));
+            QCOMPARE(bar->regexFlags(), QStringLiteral("i"));
+            QVERIFY(bar->isRegexEnabled());
+            QVERIFY(bar->isVisible());
+            QCOMPARE(shell.destinations(), order);
+            QCOMPARE(shell.currentDestination(), QStringLiteral("converter"));
+            QCOMPARE(shell.destination(QStringLiteral("converter")), static_cast<QWidget*>(converter));
+            command->trigger();
+            QCOMPARE(shell.currentDestination(), QStringLiteral("converter"));
+        }
+        QCOMPARE(shell.rail()->destinationLabel(QStringLiteral("other")), QStringLiteral("Other"));
+        QCOMPARE(shell.destinationFeedback(QStringLiteral("other")), QStringLiteral("Already showing Other."));
+    }
     void cancellationDuringVerification()
     {
         using Converter = Material::FileConverter;
@@ -112,6 +167,19 @@ private slots:
 #ifdef Q_OS_WIN
         QCOMPARE(Converter::convert(source, destination, Converter::Operation::HexEncode), Converter::Result::Success);
         QFile result(destination); QVERIFY(result.open(QIODevice::ReadOnly)); QCOMPARE(result.readAll(), QByteArray("616263")); result.close();
+        QVERIFY(QDir(directory.path()).entryList(QStringList{QStringLiteral(".conversion-*")}, QDir::Files | QDir::Hidden).isEmpty());
+        const auto racedDestination = directory.filePath(QStringLiteral("created-during-verification.txt"));
+        const auto racedResult = Converter::convertWithObserver(source, racedDestination, Converter::Operation::HexEncode, nullptr,
+            [&](int phase) {
+                if (phase != 2) return;
+                QFile occupied(racedDestination);
+                QVERIFY(occupied.open(QIODevice::WriteOnly | QIODevice::NewOnly));
+                QCOMPARE(occupied.write("existing"), qint64(8));
+            });
+        QCOMPARE(racedResult, Converter::Result::IoFailure);
+        QFile occupied(racedDestination); QVERIFY(occupied.open(QIODevice::ReadOnly));
+        QCOMPARE(occupied.readAll(), QByteArray("existing")); occupied.close();
+        QVERIFY(QDir(directory.path()).entryList(QStringList{QStringLiteral(".conversion-*")}, QDir::Files | QDir::Hidden).isEmpty());
         QCOMPARE(Converter::convert(source, destination, Converter::Operation::Base64Encode), Converter::Result::UnsafePath);
         QVERIFY(result.open(QIODevice::ReadOnly)); QCOMPARE(result.readAll(), QByteArray("616263"));
 #endif

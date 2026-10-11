@@ -53,6 +53,9 @@ namespace Material
         void
         addDestination(const QString& id, const QString& symbol, const QString& label, const QString& sublabel = {});
 
+        void setLabel(const QString& id, const QString& label);
+        QString destinationLabel(const QString& id) const;
+
         /** The 10px line under the label, e.g. the entry count of a database. */
         void setSublabel(const QString& id, const QString& sublabel);
 

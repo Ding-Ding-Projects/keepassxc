@@ -874,6 +874,7 @@ MainWindow::MainWindow()
         QStringLiteral("tools"), toolsSheet, QStringLiteral("construction"), tr("Tools"), pages(toolsSheet));
     materialShell->addDestination(QStringLiteral("converter"), new Material::FileConverter(materialShell),
                                   QStringLiteral("transform"), Material::Voice::say(QStringLiteral("converter.title")), QString());
+    materialShell->setDestinationCopyKey(QStringLiteral("converter"), QStringLiteral("converter.title"));
     materialShell->addDestination(
         QStringLiteral("history"), historyScreen, QStringLiteral("history"), tr("History"), QString());
     materialShell->addDestination(QStringLiteral("changelog"),
