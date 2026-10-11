@@ -340,6 +340,7 @@ namespace Material
         m_guidanceWidget = host;
         auto* layout = new QVBoxLayout(host);
         layout->setContentsMargins(0, 0, 0, 0);
+        layout->setSizeConstraint(QLayout::SetMinimumSize);
         auto* entry = new GuidanceEntry(host);
         entry->setObjectName(QStringLiteral("searchGuidanceEntry"));
         entry->setCheckable(true);
@@ -347,6 +348,7 @@ namespace Material
         auto* panel = new QWidget(host);
         panel->setObjectName(QStringLiteral("searchGuidancePanel"));
         auto* steps = new QVBoxLayout(panel);
+        steps->setSizeConstraint(QLayout::SetMinimumSize);
         auto* explanation = new QLabel(panel);
         explanation->setObjectName(QStringLiteral("searchGuidanceExplanation"));
         explanation->setWordWrap(true);
@@ -356,6 +358,7 @@ namespace Material
         auto* scroll = new QScrollArea(panel);
         scroll->setWidgetResizable(true);
         scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         scroll->setMinimumHeight(100);
         scroll->setMaximumHeight(180);
         scroll->setWidget(explanation);

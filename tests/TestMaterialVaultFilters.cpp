@@ -537,6 +537,11 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
                         && explanation->height() >= explanation->heightForWidth(explanation->width()));
             QVERIFY(done->height() >= done->heightForWidth(done->width()));
             QVERIFY(done->height() >= Layout::ButtonHeight);
+            const QRect scrollRect(scroll->mapTo(panel, QPoint()), scroll->size());
+            const QRect doneRect(done->mapTo(panel, QPoint()), done->size());
+            const QRect viewportRect(scroll->viewport()->mapTo(panel, QPoint()), scroll->viewport()->size());
+            QVERIFY(scrollRect.bottom() < doneRect.top());
+            QVERIFY(viewportRect.bottom() < doneRect.top());
             // Vertical excess is intentionally exposed by this scroll area. Horizontal
             // label escape is never intentional and must not require horizontal scrolling.
             const QRect explanationRect(explanation->mapTo(scroll->viewport(), QPoint()), explanation->size());
@@ -554,6 +559,63 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             QTRY_COMPARE(QApplication::focusWidget(), bar.lineEdit());
             QVERIFY(contained(host.data(), entry));
         }
+    }
+    // Exercise the actual fixed-height sidebar, with all its competing sections.
+    // The standalone owner above must not be the only allocation oracle.
+    for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
+        Voice::setLanguage(language);
+        VaultSidebar sidebar;
+        sidebar.setFixedSize(250, 400);
+        QStandardItemModel model;
+        auto* root = new QStandardItem(QStringLiteral("Root"));
+        root->appendRow(new QStandardItem(QStringLiteral("Work")));
+        root->appendRow(new QStandardItem(QStringLiteral("Personal")));
+        model.appendRow(root);
+        sidebar.setGroupModel(&model);
+        sidebar.setTags({QStringLiteral("work"), QStringLiteral("personal"), QStringLiteral("travel")});
+        sidebar.setSelectedTags({QStringLiteral("work")});
+        sidebar.show();
+        sidebar.groupFilter()->setText(QStringLiteral("Work"));
+        sidebar.tagFilter()->setText(QStringLiteral("travel"));
+        auto* outerScroll = sidebar.findChild<QScrollArea*>(QStringLiteral("materialVaultSidebarScroll"));
+        auto* footer = sidebar.findChild<QWidget*>(QStringLiteral("materialVaultExternalEditor"));
+        QVERIFY(outerScroll && footer);
+        for (auto* bar : {sidebar.groupFilter(), sidebar.tagFilter()}) {
+            auto* host = bar->guidanceWidget();
+            auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+            auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
+            auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+            auto* scroll = panel->findChild<QScrollArea*>();
+            const QString query = bar->text();
+            outerScroll->ensureWidgetVisible(entry);
+            entry->setFocus();
+            QTest::keyClick(entry, Qt::Key_Space);
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+            QCoreApplication::processEvents();
+            QTRY_VERIFY(contained(host, panel));
+            QVERIFY(contained(panel, scroll));
+            QVERIFY(contained(panel, done));
+            const QRect action(done->mapTo(panel, QPoint()), done->size());
+            const QRect viewport(scroll->viewport()->mapTo(panel, QPoint()), scroll->viewport()->size());
+            const QRect scrollBox(scroll->mapTo(panel, QPoint()), scroll->size());
+            QVERIFY2(scrollBox.bottom() < action.top(), "Explanation scroll area overlaps the return action");
+            QVERIFY(viewport.bottom() < action.top());
+            QVERIFY(done->height() >= done->heightForWidth(done->width()));
+            QCOMPARE(scroll->horizontalScrollBar()->maximum(), 0);
+            QVERIFY(outerScroll->verticalScrollBar()->maximum() > 0);
+            QCOMPARE(outerScroll->horizontalScrollBar()->maximum(), 0);
+            outerScroll->ensureWidgetVisible(done);
+            QCoreApplication::processEvents();
+            QVERIFY(contained(outerScroll->viewport(), done));
+            QTest::keyClick(done, Qt::Key_Space);
+            QTRY_COMPARE(QApplication::focusWidget(), bar->lineEdit());
+            QCOMPARE(bar->text(), query);
+            QCOMPARE(sidebar.selectedTags(), QStringList{QStringLiteral("work")});
+            QVERIFY(!sidebar.groupView()->isRowHidden(0, QModelIndex()));
+        }
+        outerScroll->ensureWidgetVisible(footer);
+        QCoreApplication::processEvents();
+        QVERIFY(contained(outerScroll->viewport(), footer));
     }
     Voice::setLanguage(originalLanguage);
 }
