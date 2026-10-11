@@ -130,9 +130,9 @@
     {
       "path": "docs/features/design/app-logo-customization.md",
       "sourceSha256": "56b3130da7fd78513c34f5d74d55e87008633e64cf8f0843cf614b66dec58246",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "應用程式標誌自訂",
+      "markdown": "# 應用程式標誌自訂\n\nMaterial Settings 畫面有 **Application logo** 卡片，預設保留隨附 KeePassXC 標誌，亦可以揀本機 PNG 或 JPEG 作純呈現替代。變更會即時套用至應用程式同已開啟頂層視窗，唔會改執行檔、安裝程式、應用程式識別碼、更新來源、資料位置、簽署狀態或一般操作圖示。\n\n## 本機轉換界線\n\n選擇器只接受真正 PNG 同 JPEG 位元組。驗證器檢查解碼格式，唔係檔名；拒絕無法讀取檔案、大於5 MiB、尺寸大於4096像素、超過1600萬像素，以及動畫輸入。接受像素會正規化為 PNG，放喺應用程式私人資料 `logos/` 快取。快取拒絕符號連結同 Windows 重解析點目錄，寫入或移除檔案之前先核對標準路徑包含關係，永遠唔會跟隨連結 `logos/` 目錄。所選來源路徑永遠唔會儲存喺設定、歷史、匯出、遙測、記錄、螢幕擷取、提示或專案記錄。\n\n卡片只儲存三項本機呈現設定：自訂標誌有冇啟用、`fit` 或 `crop`，以及背景色。正規化私人來源圖片，令配合、裁切或背景改變時可以重新產生顯示衍生圖，毋須重開原檔。來源同顯示檔分開暫存，之後經已檢查回退啟用，先至提交啟用狀態或呈現設定。轉換失敗會保留現有有效標誌同設定。重設會確認兩個私人檔都已移除，先報成功。如果第一個已移除而第二個移除失敗，就會停用自訂呈現、報部分重設失敗、將剩餘私人檔留喺只供清理嘅名稱之下，容許之後重試重設再移除。\n\n## 無障礙控制\n\n卡片有無障礙即時預覽同狀態文字、可搜尋配合模式選擇器，附 `Material::Select` 提供嘅相鄰正則表達式建構工具整合、背景色控制、可用鍵盤操作嘅本機選擇器，同重設操作。檔案篩選如實只列 PNG 同 JPEG。SVG、動畫格式、格式不正確資料、假副檔名同過大輸入都會被拒絕，唔會靜靜地轉換。\n\n## 驗證\n\n`TestApplicationLogo` 只建立中性產生測試資料，涵蓋有效匯入、已儲存路徑私隱、格式不正確同過大拒絕、第二次寫入故障注入保留之前狀態、暫存呈現設定回退、重設失敗保留、連結快取拒絕而冇外部目標寫入、配合／背景重新產生、持久設定、重設同快取移除。針對性目標需要喺 `tests/CMakeLists.txt` 登記：\n\n```cmake\nadd_unit_test(NAME testapplicationlogo SOURCES TestApplicationLogo.cpp\n        LIBS ${TEST_LIBRARIES})\n```\n\n應該先用現有離屏 Qt 設定，再以建置介面擷取確認支援顯示縮放下嘅所選標誌。\n"
     },
     {
       "path": "docs/features/design/clipping-matrix.md",
@@ -151,9 +151,9 @@
     {
       "path": "docs/features/design/frameless-title-bar.md",
       "sourceSha256": "20decac8b9e37f8f0a96fac7a69d0dcba69e2d3cefae17839f9a49dfc82b1b37",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "無邊框視窗同 Material 標題列",
+      "markdown": "# 無邊框視窗同 Material 標題列\n\n功能識別碼：`frameless-material-title-bar` · 分類：設計同外觀\n\n## 運作方式\n\n桌面標題唔係產品介面裝飾。喺 Windows，主視窗保留原生框架（調整尺寸邊框、陰影、貼齊版面、最小化同恢復動畫、系統選單），但將標題區交畀應用程式：`Material::TitleBar`（`src/gui/material/MaterialTitleBar.h`）係主介面第一行，參考結構高44 px，有盾牌標誌、產品名稱、旁邊已開資料庫名稱，右邊三個標題按鈕（Minimise、Maximise 或 Restore、Close）各46 × 44 px。\n\n拖曳標題列會移動視窗，雙擊會最大化或恢復，右擊開啟系統選單；Close 按鈕喺懸停時用桌面本身紅色，令呢個破壞性控制符合每個 Windows 使用者預期。標題列按主題繪製，深色應用程式有深色標題，毋須向桌面要求。\n\n## 設定\n\n冇。應用程式喺 Windows 永遠安裝自訂標題列同無邊框標題。\n\n## 實作方式\n\n`Material::WindowChrome::installFrameless()`（`src/gui/material/MaterialWindowChrome.cpp`）要求視窗管理器重新計算框架，`MainWindow::nativeEvent` 透過 `WindowChrome::handleNativeEvent()` 回答兩個訊息：`WM_NCCALCSIZE` 回傳由頂邊開始嘅客戶區（最大化時按框架厚度內縮，避免第一行離開畫面），`WM_NCHITTEST` 先報調整尺寸邊框，再將扣除按鈕嘅標題列報為標題，最後報客戶區。標題列判斷之前會先轉換原生訊息裝置像素座標，確保跨顯示縮放同最大化恢復後標題控制同內容仍然可互動。Material 主介面略過舊工具列同分頁列移動篩選，將指標擁有權留畀標題命中測試、分頁同內容。標題列只發要求，由視窗決定。\n\n## 失敗情況\n\nWindows 以外作業系統會喺原生標題之下嘅客戶區呈現標題列；無邊框行為按設計只限 Windows。視窗管理器拒絕框架變更時，原生標題保留，標題列只係第二條，問題可見，唔會靜默發生。\n\n## 安全考慮\n\n除咗視窗本身之外冇其他考慮；標題列只讀取視窗標題。\n\n## 驗證\n\n`testmaterialtitlebar` 涵蓋按鈕要求、46 × 44目標同次序、排除按鈕嘅標題命中測試、最大化／恢復圖示交換、主介面將標題列放喺導覽列之上，以及320 px寬度仍將每個按鈕保留喺列內。一致性項目 `shell-default` 保存客戶區擷取；`design/parity/evidence/shell-default/window-frame.png` 係離屏桌面完整視窗擷取，顯示自訂列之上冇桌面標題。\n\n## 延伸閱讀\n\n- [Material Design 3 外觀](material-3-appearance.md)\n- [設計參考一致性](design-parity.md)\n- [分頁](../navigation/tabs.md)\n"
     },
     {
       "path": "docs/features/design/material-3-appearance.md",
@@ -340,16 +340,16 @@
     {
       "path": "docs/features/search/dropdown-select.md",
       "sourceSha256": "98b631603b6329a764d6750793ac2c406a37a4f5f07082342a2ea3a9d8f594fc",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "下拉選單改用設有搜尋列嘅清單框",
+      "markdown": "# 下拉選單改用設有搜尋列嘅清單框\n\n功能識別碼：`dropdown-search` · 分類：搜尋\n\n## 運作方式\n\nMaterial 介面每個下拉選單都係 `Material::Select`（`src/gui/material/MaterialSelect.h`），唔係原生組合框。關閉控制係有外框欄位，顯示已選項目同尾端箭嘴。啟用（點擊、Space、Return、Down 或 F4）會開啟錨定清單框，頂部係清單自己嘅搜尋列：預設純文字，同其他搜尋畫面一樣有 Regex 標籤同建構工具按鈕。輸入會喺本機篩選可見行；方向鍵同 Page Up／Down 喺保留項目之間移動；Return 揀高亮行；Escape 先清除篩選，再按一次先關閉；兩種關閉方式都會返回欄位焦點。無法解析正則表達式會保留原清單，唔會清空或當純文字搜尋。重開清單會清除之前篩選同正則表達式自選狀態。喺關閉選單上滾動滑鼠唔會改值，所以捲動頁面唔會偷偷換咗指標下方設定。\n\n每行可以有自己字體，所以介面字體清單會以每款已安裝字體本身嘅字形顯示。\n\n## 使用位置\n\n| 選擇器 | 物件名稱 | 搜尋身份 |\n|---|---|---|\n| 介面字體（Appearance） | `appearanceFontFamily` | `appearance.font-family` |\n| 介面字重（Appearance） | `appearanceFontWeight` | `appearance.font-weight` |\n| 自訂元素（Appearance） | `appearanceOverrideElement` | `appearance.override-element` |\n| 報告分類（Reports） | `reportsCategory` | `reports.category` |\n| 歷史日期預設（History） | `historyDatePreset` | `history.date-preset` |\n| 設定頁選擇器（窄 Settings 中心） | `settingsPagePicker` | `settings.page-picker` |\n\n每個搜尋身份都會登記至搜尋登記表，令指令選單同設定搜尋可以到達清單自己嘅篩選。每個欄位都有自己查詢、模式、旗標同模式選擇，唔會有兩個選擇器共用狀態。\n\n## 設定\n\n冇。控制自己唔會保存任何資料；所屬畫面仍然按原有方式保存所選值。\n\n## 失敗情況\n\n空清單唔會開啟。篩選冇符合項目會如實顯示「No choices match」無障礙描述，搜尋列仍然可操作。Regex 標籤係明確自選，冇啟用就保持純文字比對。\n\n## 安全考慮\n\n篩選喺本機執行，受搜尋列自己模式界限限制，唔會傳送或保存內容。\n\n## 驗證\n\n`testmaterialselect` 涵蓋組合框 API 子集、純文字同正則表達式篩選（包括無效模式）、鍵盤移動同選擇、Escape 語義、焦點返回，以及檢查 Appearance、Reports 同 History 每個選擇器都有無障礙名稱同搜尋身份。`testmaterialappearance` 同 `testmaterialreports` 透過之前原生控制使用嘅同一 API 操作畫面選擇器。\n\n## 延伸閱讀\n\n- [每個畫面都有搜尋列](search-bar-every-surface.md)\n- [正則表達式建構工具](regex-builder.md)\n- context-menu-search（尚未實作；見 `docs/features/inventory.json`）\n"
     },
     {
       "path": "docs/features/search/regex-builder.md",
       "sourceSha256": "da3aa2a7dc0ecf01f0a0634f98bfbda21b446c90eed8f8f4a7ef640cc40f767e",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "正則表達式建構工具",
+      "markdown": "# 正則表達式建構工具\n\n功能識別碼：`regex-builder` · 分類：搜尋同正則表達式\n\n## 運作方式\n\n模式欄位下面係設計嘅**語法積木**：每個語法單元一個有顏色等寬標籤，附拖曳把手；文字、字元類別、群組、前後查看、數量詞、錨點、分支同跳脫各有自己色調。點積木會從模式移除該單元；拖到另一積木會移動位置；鍵盤 <kbd>Delete</kbd> 移除聚焦積木，<kbd>Ctrl</kbd>+<kbd>Left</kbd>／<kbd>Ctrl</kbd>+<kbd>Right</kbd> 移動積木。積木列係虛線放置區，模式空白時會清楚交代。\n\n每條 Material 搜尋列都有 `.*` 標籤切換至正則表達式模式，以及為確切欄位開啟 `Material::RegexBuilder` 浮層（`src/gui/material/MaterialRegexBuilder.h`）嘅建構工具入口。浮層係工作台，唔係緊湊對話框：\n\n- **語法選擇同模式資料庫。** 引導語法標籤（字元類別、錨點、數量詞、群組、分支、前後查看、反向參照）喺游標插入。下面模式資料庫有十個隨附預設同自己搜尋欄位；揀選會載入模式、旗標同範例。\n- **比對。** 範例文字區同即時比對／擷取群組清單，每次輸入都以 `QRegularExpression` 重新計算，受 `Material::RegexSafety` 限制。\n- **解說。** `Material::RegexLab::tokenize` 每個語法單元一行英文同粵語解說，標示只適用 PCRE2 嘅結構；點一行會揀選模式欄位對應範圍。\n- **取代。** `$1`、`$<name>` 同 `$&` 格式取代範本，經 `RegexLab::qtReplacement` 轉為 `QString::replace` 接受嘅 `\\1` 格式，並對範例提供即時預覽。\n- **匯出。** 將模式同旗標寫成 `QRegularExpression` C++、JavaScript、Python `re` 同 `grep -P` 格式，各有複製操作，按所選方言篩選。\n- **速查表。** 建構工具知道嘅每個結構，每行可以插入語法單元，並交代兩個引擎都支援定只限 PCRE2。\n- **方言。** 方言開關（ECMAScript、QRegularExpression、Both）描述兩個引擎旗標同差異；副標題清楚交代真正執行嘅係 QRegularExpression（PCRE2），同每條搜尋列背後引擎一樣。\n\nApply 將模式同旗標寫返提出要求嘅搜尋列；Copy 將模式放入剪貼簿。工作台邏輯放喺唔依賴元件嘅 `src/gui/material/MaterialRegexLab.h`，規則由 `testmaterialregexlab` 固定驗證。\n\n## 設定\n\n預設純文字搜尋，每個欄位明確自選正則表達式。旗標係 `gimsu` 子集。\n\n## 失敗情況\n\n評估受 `Material::RegexSafety` 限制；超出界限模式會被拒絕並顯示明確狀態，唔會執行。Replace 範本命名參照如果冇對應群組，就保留輸入原樣，唔會靜靜地丟棄。只有 QRegularExpression 執行；ECMAScript 方言只供描述同匯出，永遠唔會執行。\n\n## 安全考慮\n\n模式同範例只喺本機評估，永遠唔會傳送或保存。\n\n## 驗證\n\n`testmaterialregexlab`（語法範圍、方言匯出、取代轉換、預設、速查表）、`testmaterialregexsafety` 同 `testmaterialsearchregistry`；一致性項目 `regex-builder-default`。\n\n## 延伸閱讀\n\n- [搜尋列同搜尋登記表](../search/search-bar-every-surface.md)\n- settings-search（尚未實作；見 `docs/features/inventory.json`）\n- [指令選單](../navigation/command-palette.md)\n"
     },
     {
       "path": "docs/features/search/search-bar-every-surface.md",
