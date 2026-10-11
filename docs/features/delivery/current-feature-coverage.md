@@ -8,6 +8,8 @@ The existing feature inventory has 178 rows across 89 families and two aggregate
 
 Recorded application rows comprise 49 missing, 37 partial and 3 unverified. Recorded website rows comprise 85 missing, 1 partial and 3 unverified. These are historical inventory states, not a fresh implementation verdict. Current search work can supersede older missing rows only after its actual implementation and required evidence are incorporated.
 
+The current extension registers a server-management family with 47 explicit capability requirements and native/visitor surface records. The resulting inventory has 90 families, 180 platform rows, 108 surfaces and 1,045 capability contracts. The sparse accepted-evidence ledger still has zero rows. Historical assessment metadata remains historical; new source units do not retroactively verify it.
+
 ## Strengthened requirements in the current review
 
 The refreshed catalogue still contains 105 contracts. The current review includes the following requirements within existing families as well as the new server manager:
@@ -22,9 +24,11 @@ These are implementation and acceptance obligations, not newly accepted capabili
 
 The `minecraft-server-manager` contract had no existing product family at the recorded baseline. The current source adds a bounded owned local Java server workspace with official version discovery, verified local JAR intake and owned process controls. Its [implementation article](../servers/local-java-server-manager.md) lists the remaining targets and management capabilities. Native compilation and lifecycle acceptance remain pending. This first unit does not satisfy the complete server contract.
 
+The shared presentation-mode foundation now includes a serialized local record, live watchers, local credential verification, effective neutral English and removal of owned settings controls. Its independently reviewed literal-name repair preserves markup-shaped names and ampersands as visible text. All 34 catalogue entries are integrated. Global routes, previously rendered surfaces, other products and native acceptance remain incomplete; see [the feature article](../interface/school-mode.md).
+
 The current source also adds a [bounded motion authoring workspace](../interface/motion-authoring.md), expanded search-control explanations and a public-photo provider. Motion solo eligibility and atomic preset import were independently reviewed after their source repairs. Localized motion catalogue entries are integrated in source. These changes require focused native checks, real interaction and current capture evidence before acceptance. School-mode suppression, full motion authoring and comprehensive per-element guidance remain incomplete.
 
-The catalogue was fetched and reconciled again at instruction-source commit `df119a824c1a7e143f26b15e953e84cb92b13750`. An independent exact comparison passed for all 105 identities, including the five public identifier projections. No new identity was missing from the crosswalk. Requirements strengthened within existing identities still require individual implementation and acceptance.
+The catalogue was fetched and reconciled again during the October 11 refresh. An independent exact comparison passed for all 105 identities, including the five public identifier projections. No new identity was missing from the crosswalk. Requirements strengthened within existing identities still require individual implementation and acceptance.
 
 Several repository delivery contracts have no corresponding family in the current UI-focused capability inventory. Their empty mapping is an explicit requirement for a new assessed row, not an exemption. Shared-status-service-only, instruction-corpus-only and Roblox-game-only requirements have individual exclusion reasons in the crosswalk.
 

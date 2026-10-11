@@ -8,12 +8,12 @@ installed behavior, accessibility, or genuine current screenshots.
 ## Scope and source of requirements
 
 [`scripts/feature-inventory-contract.mjs`](../../../scripts/feature-inventory-contract.mjs)
-is the hand-maintained authority, independent of runtime discovery. It names 89
-features, 106 distinct surfaces, and 998 capability subcontracts. Removing a runtime
+is the hand-maintained authority, independent of runtime discovery. It names 90
+features, 108 distinct surfaces, and 1,045 capability subcontracts. Removing a runtime
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 105,788 surface/capability cells and 9,434 surface/feature
+The required matrix has 112,860 surface/capability cells and 9,720 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
 still needs applicable interaction and evidence. A reviewed capture may support
@@ -24,7 +24,7 @@ contains no accepted current cells. Absence means incomplete, never exempt.
 
 | Record | Purpose |
 | --- | --- |
-| [`inventory.json`](../inventory.json) | Version 2 platform-level summaries. All 172 original rows and their source/evidence links survive; six newly named platform rows bring the total to 178. Historical status is retained as `priorStatus`. The former implemented personal-wording row is partial until current evidence exists. |
+| [`inventory.json`](../inventory.json) | Version 2 platform-level summaries. All 172 original rows and their source/evidence links survive; six earlier platform rows and two server-management rows bring the total to 180. Historical status is retained as `priorStatus`. Source-only units remain partial or missing until current evidence exists. |
 | [`surface-inventory.json`](../surface-inventory.json) | Explicit native and website surface identities, ownership boundary, source hints and assessment state. `source-present` asserts only that a named file existed at the recorded assessment revision. |
 | [`capability-inventory.json`](../capability-inventory.json) | Every required capability, its section, its persistence obligation, and sparse per-surface proof records. |
 | [`feature-evidence.mjs`](../../../scripts/feature-evidence.mjs) | Bounded-path, revision, hash, interaction, privacy and completeness validation. |
