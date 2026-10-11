@@ -30,6 +30,7 @@ private slots:
     void healthChipsArePresentAndCheckable();
     void tagSearchPreservesSelectionAndPreviousResults();
     void closingVaultClearsCategoryQueriesAndModes();
+    void languageModesPreserveIndependentQueries();
     void detailFilterNarrowsFieldsAndAttachments();
     void entryRowsPaintTagChips();
 };

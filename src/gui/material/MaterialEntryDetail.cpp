@@ -21,6 +21,8 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
+#include "MaterialVoice.h"
+#include "MaterialRegexSafety.h"
 
 #include <QAbstractButton>
 #include <QDateTime>
@@ -961,9 +963,10 @@ namespace Material
         m_attachmentFilter->setObjectName(QStringLiteral("entryDetailAttachmentFilter"));
         m_attachmentFilter->setPlaceholder(tr("Filter attachments & fields"));
         m_attachmentFilter->setIdentity(QStringLiteral("vault.attachments"), tr("Entry attachments and fields filter"));
-        m_attachmentFilter->lineEdit()->setAccessibleName(tr("Filter attachments and fields"));
+        m_attachmentFilter->setCopyKeys(QStringLiteral("search.details"), QStringLiteral("search.details"));
         connect(m_attachmentFilter, &SearchBar::textChanged, this, [this] { applyDetailFilter(); });
         connect(m_attachmentFilter, &SearchBar::regexToggled, this, [this] { applyDetailFilter(); });
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, &EntryDetail::applyDetailFilter);
         layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
         m_filterStatus = new QLabel(m_attachmentsSection);
         m_filterStatus->setWordWrap(true);
@@ -1044,11 +1047,11 @@ namespace Material
         QRegularExpression pattern;
         bool useRegex = false;
         if (m_attachmentFilter && m_attachmentFilter->isRegexEnabled() && !needle.isEmpty()) {
-            pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
+            pattern = QRegularExpression(needle, optionsForFlags(m_attachmentFilter->regexFlags()));
             // An unparsable pattern changes nothing rather than hiding
             // everything or quietly turning into a literal search.
             if (!pattern.isValid()) {
-                m_filterStatus->setText(tr("Invalid regular expression. Previous results retained."));
+                m_filterStatus->setText(Voice::say(QStringLiteral("search.invalid")));
                 m_filterStatus->show();
                 return;
             }
@@ -1065,17 +1068,9 @@ namespace Material
             return haystack.contains(needle, Qt::CaseInsensitive);
         };
 
-        const struct
-        {
-            FieldRow* row;
-            QString value;
-        } fields[] = {{m_usernameRow, m_data.username},
-                      {m_passwordRow, QString()},
-                      {m_urlRow, m_data.url},
-                      {m_modifiedRow, m_data.modified}};
-        for (const auto& field : fields) {
-            if (field.row) {
-                field.row->setVisible(accepts(field.row->key()));
+        for (FieldRow* row : {m_usernameRow, m_passwordRow, m_urlRow, m_modifiedRow}) {
+            if (row) {
+                row->setVisible(accepts(row->key()));
             }
         }
         const auto rows = m_attachmentsList->findChildren<QAbstractButton*>(QString(), Qt::FindDirectChildrenOnly);

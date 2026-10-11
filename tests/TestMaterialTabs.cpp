@@ -4,6 +4,7 @@
 #include "gui/material/MaterialTabStrip.h"
 #include "gui/material/MaterialTabOverflow.h"
 #include "gui/material/MaterialSearchRegistry.h"
+#include "gui/material/MaterialSearchBar.h"
 
 #include <QAbstractButton>
 #include "core/Config.h"
@@ -74,6 +75,39 @@ void TestMaterialTabs::searchableOverflow()
     QVERIFY(beta);
     beta->click();
     QCOMPARE(activated, QStringLiteral("runtime-b"));
+}
+
+void TestMaterialTabs::rejectedPatternsRetainRowsAndLifecycleResetClearsSearch()
+{
+    QWidget host;
+    host.resize(900, 700);
+    host.show();
+    TabOverflow overflow(&host);
+    overflow.setTabs({
+        {QStringLiteral("runtime-a"), {}, QStringLiteral("database"), QStringLiteral("Alpha"), false, false},
+        {QStringLiteral("runtime-b"), {}, QStringLiteral("database"), QStringLiteral("Beta"), false, false}
+    }, QStringLiteral("runtime-a"), {});
+    overflow.openOverlay();
+    auto* search = SearchRegistry::instance()->bar(QStringLiteral("tabs.open"));
+    QVERIFY(search);
+    search->setText(QStringLiteral("Beta"));
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(overflow.findChildren<QWidget*>(QStringLiteral("materialTabResult")).size(), 1);
+    search->setRegexEnabled(true);
+    search->setText(QStringLiteral("(a+)+"));
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    auto rows = overflow.findChildren<QWidget*>(QStringLiteral("materialTabResult"));
+    QCOMPARE(rows.size(), 1);
+    QCOMPARE(rows.first()->property("runtimeId").toString(), QStringLiteral("runtime-b"));
+    search->setText(QStringLiteral("("));
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QCOMPARE(overflow.findChildren<QWidget*>(QStringLiteral("materialTabResult")).size(), 1);
+    overflow.clearSearch();
+    QCoreApplication::sendPostedEvents(nullptr, QEvent::DeferredDelete);
+    QVERIFY(search->text().isEmpty());
+    QVERIFY(!search->isRegexEnabled());
+    QCOMPARE(search->regexFlags(), QStringLiteral("i"));
+    QVERIFY(overflow.findChildren<QWidget*>(QStringLiteral("materialTabResult")).isEmpty());
 }
 
 void TestMaterialTabs::pointerDragRequestsReorder()

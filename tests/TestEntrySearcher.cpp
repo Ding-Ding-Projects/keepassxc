@@ -452,6 +452,8 @@ void TestEntrySearcher::testMetadataOnly()
     entry->attributes()->set(QStringLiteral("private"), QStringLiteral("synthetic-secret"), true);
     EntrySearcher metadata(false, true, true);
     QCOMPARE(metadata.search(QStringLiteral("Mail"), m_rootGroup).size(), 1);
+    QVERIFY(metadata.search(QStringLiteral("*\"(?-i:mail)\""), m_rootGroup).isEmpty());
+    QCOMPARE(metadata.search(QStringLiteral("*\"(?i:mail)\""), m_rootGroup).size(), 1);
     QCOMPARE(metadata.search(QStringLiteral("invoice"), m_rootGroup).size(), 1);
     QVERIFY(metadata.search(QStringLiteral("synthetic-secret"), m_rootGroup).isEmpty());
     QVERIFY(metadata.search(QStringLiteral("password:synthetic-secret"), m_rootGroup).isEmpty());

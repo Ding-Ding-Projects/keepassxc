@@ -226,6 +226,19 @@ namespace Material
         if (m_focusId.isEmpty() && !m_tabs.isEmpty()) m_focusId = m_tabs.first().id;
         relayout();
         update();
+        if (m_overflow && m_overflow->isOpen()) {
+            QSet<QString> hidden;
+            for (const auto& tab : m_tabs) if (!tab.visible) hidden.insert(tab.id);
+            m_overflow->setTabs(tabs(), currentTab(), hidden);
+        }
+    }
+
+    void TabStrip::clearSearch()
+    {
+        if (m_overflow) {
+            m_overflow->clearSearch();
+            m_overflow->closeOverlay();
+        }
     }
 
     QList<TabDescriptor> TabStrip::tabs() const

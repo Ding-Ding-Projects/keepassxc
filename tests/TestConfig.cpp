@@ -18,6 +18,11 @@
 #include "TestConfig.h"
 
 #include <QSettings>
+#include <QDir>
+#include <QFile>
+#include <QUuid>
+#include <QStandardPaths>
+#include <QTemporaryDir>
 #include <QTest>
 
 #include "config-keepassx-tests.h"
@@ -30,6 +35,39 @@ const QString oldTrueConfigPath = QString(KEEPASSX_TEST_DATA_DIR).append("/Outda
 void TestConfig::initTestCase()
 {
     QLocale::setDefault(QLocale::c());
+}
+
+void TestConfig::testVerificationProfileIgnoresEnvironmentOverrides()
+{
+    QTemporaryDir temporary;
+    QVERIFY(temporary.isValid());
+    const QByteArray oldConfig = qgetenv("KPXC_CONFIG");
+    const QByteArray oldLocal = qgetenv("KPXC_CONFIG_LOCAL");
+    const QString oldName = QCoreApplication::applicationName();
+    const bool oldTestMode = QStandardPaths::isTestModeEnabled();
+    const QString configTrap = temporary.filePath(QStringLiteral("inherited.ini"));
+    const QString localTrap = temporary.filePath(QStringLiteral("inherited-local.ini"));
+    qputenv("KPXC_CONFIG", configTrap.toUtf8());
+    qputenv("KPXC_CONFIG_LOCAL", localTrap.toUtf8());
+    QStandardPaths::setTestModeEnabled(true);
+    QCoreApplication::setApplicationName(QStringLiteral("KeePassXC-Verification-")
+                                         + QUuid::createUuid().toString(QUuid::WithoutBraces));
+    const QString expected = QDir::toNativeSeparators(
+        QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) + QStringLiteral("/keepassxc.ini"));
+    Config::createConfigFromFile({}, {});
+    const QString actual = config()->getFileName();
+    config()->set(Config::GUI_Language, QStringLiteral("en"));
+    config()->sync();
+    const bool trapWritten = QFile::exists(configTrap) || QFile::exists(localTrap);
+    // Replace the singleton before restoring the caller's path environment.
+    Config::createConfigFromFile(temporary.filePath(QStringLiteral("test.ini")),
+                               temporary.filePath(QStringLiteral("test-local.ini")));
+    oldConfig.isNull() ? qunsetenv("KPXC_CONFIG") : qputenv("KPXC_CONFIG", oldConfig);
+    oldLocal.isNull() ? qunsetenv("KPXC_CONFIG_LOCAL") : qputenv("KPXC_CONFIG_LOCAL", oldLocal);
+    QCoreApplication::setApplicationName(oldName);
+    QStandardPaths::setTestModeEnabled(oldTestMode);
+    QCOMPARE(actual, expected);
+    QVERIFY(!trapWritten);
 }
 
 // upgrade config file with deprecated settings (all of which are set to non-default values)

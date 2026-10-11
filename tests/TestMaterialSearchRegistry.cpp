@@ -4,6 +4,10 @@
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialCommandPalette.h"
 #include "gui/material/MaterialNotificationCentre.h"
+#include "gui/material/MaterialVoice.h"
+#include "core/Config.h"
+#include "util/TemporaryFile.h"
+#include <QStandardPaths>
 
 #include <QApplication>
 #include <QAbstractButton>
@@ -11,6 +15,42 @@
 #include <QTest>
 
 using namespace Material;
+
+void TestMaterialSearchRegistry::initTestCase()
+{
+    QStandardPaths::setTestModeEnabled(true);
+    Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), TemporaryFile::createTempConfigFile());
+}
+
+void TestMaterialSearchRegistry::localizedCopyPreservesBuilderOwnership()
+{
+    const auto originalLanguage = Voice::language();
+    SearchBar search;
+    QVERIFY(search.setIdentity(QStringLiteral("test.localized-copy"), QStringLiteral("Tag search")));
+    search.setCopyKeys(QStringLiteral("search.tags"), QStringLiteral("search.tags"));
+    search.setText(QStringLiteral("local query"));
+    auto* registry = SearchRegistry::instance();
+    registry->setCurrent(&search);
+    Voice::setLanguage(Voice::Language::Cantonese);
+    Voice::setLanguage(Voice::Language::Bilingual);
+    const bool ownershipPreserved = registry->current() == &search;
+    Voice::setLanguage(originalLanguage);
+    int requests = 0;
+    const auto connection = connect(registry, &SearchRegistry::builderRequested, this,
+                                    [&](SearchBar* owner) { if (owner == &search) ++requests; });
+    emit search.builderRequested();
+    disconnect(connection);
+    QVERIFY(ownershipPreserved);
+    QCOMPARE(search.text(), QStringLiteral("local query"));
+    QCOMPARE(requests, 1);
+    QVERIFY(search.setIdentity(QStringLiteral("test.localized-copy-renamed"), QStringLiteral("Renamed")));
+    requests = 0;
+    const auto renamedConnection = connect(registry, &SearchRegistry::builderRequested, this,
+                                           [&](SearchBar* owner) { if (owner == &search) ++requests; });
+    emit search.builderRequested();
+    disconnect(renamedConnection);
+    QCOMPARE(requests, 1);
+}
 
 void TestMaterialSearchRegistry::registrationAndOwnership()
 {

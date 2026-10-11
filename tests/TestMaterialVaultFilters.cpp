@@ -26,6 +26,8 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialVaultScreen.h"
 #include "gui/material/MaterialVaultSidebar.h"
+#include "gui/material/MaterialVoice.h"
+#include <QLineEdit>
 
 #include <QAbstractButton>
 #include <QCoreApplication>
@@ -42,7 +44,7 @@ using namespace Material;
 
 void TestMaterialVaultFilters::initTestCase()
 {
-    Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), {});
+    Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), TemporaryFile::createTempConfigFile());
 }
 
 void TestMaterialVaultFilters::groupFilterKeepsAncestorsOfMatches()
@@ -76,6 +78,10 @@ void TestMaterialVaultFilters::groupFilterKeepsAncestorsOfMatches()
     sidebar.groupFilter()->setRegexEnabled(true);
     sidebar.groupFilter()->setText(QStringLiteral("^bank"));
     QVERIFY(!view->isRowHidden(1, root->index()));
+    sidebar.groupFilter()->setRegexFlags(QString());
+    QVERIFY(view->isRowHidden(1, root->index()));
+    sidebar.groupFilter()->setRegexFlags(QStringLiteral("i"));
+    QVERIFY(!view->isRowHidden(1, root->index()));
     QVERIFY(view->isRowHidden(0, root->index()));
     sidebar.groupFilter()->setText(QStringLiteral("("));
     QVERIFY(!view->isRowHidden(1, root->index()));
@@ -84,6 +90,30 @@ void TestMaterialVaultFilters::groupFilterKeepsAncestorsOfMatches()
     sidebar.groupFilter()->setText(QString());
     QVERIFY(!view->isRowHidden(0, root->index()));
     QVERIFY(!view->isRowHidden(1, root->index()));
+}
+
+void TestMaterialVaultFilters::languageModesPreserveIndependentQueries()
+{
+    const auto originalLanguage = Voice::language();
+    Voice::setLanguage(Voice::Language::English);
+    VaultSidebar sidebar;
+    sidebar.setTags({QStringLiteral("work"), QStringLiteral("travel")});
+    sidebar.groupFilter()->setText(QStringLiteral("Cloud"));
+    sidebar.tagFilter()->setText(QStringLiteral("work"));
+    Voice::setLanguage(Voice::Language::Cantonese);
+    const QString cantonesePlaceholder = sidebar.tagFilter()->placeholder();
+    const QString cantoneseName = sidebar.tagFilter()->lineEdit()->accessibleName();
+    Voice::setLanguage(Voice::Language::Bilingual);
+    const QString bilingualPlaceholder = sidebar.tagFilter()->placeholder();
+    const QString folderQuery = sidebar.groupFilter()->text();
+    const QString tagQuery = sidebar.tagFilter()->text();
+    Voice::setLanguage(originalLanguage);
+    QCOMPARE(cantonesePlaceholder, QStringLiteral("搜尋標籤"));
+    QCOMPARE(cantoneseName, cantonesePlaceholder);
+    QVERIFY(bilingualPlaceholder.contains(QStringLiteral("Search tags")));
+    QVERIFY(bilingualPlaceholder.contains(QStringLiteral("搜尋標籤")));
+    QCOMPARE(folderQuery, QStringLiteral("Cloud"));
+    QCOMPARE(tagQuery, QStringLiteral("work"));
 }
 
 void TestMaterialVaultFilters::healthChipsArePresentAndCheckable()
@@ -182,6 +212,10 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     // standing rather than hiding everything or searching it literally.
     detail.attachmentFilter()->setRegexEnabled(true);
     detail.attachmentFilter()->setText(QStringLiteral("^user"));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+    detail.attachmentFilter()->setRegexFlags(QString());
+    QVERIFY(detail.visibleFieldKeys().isEmpty());
+    detail.attachmentFilter()->setRegexFlags(QStringLiteral("i"));
     QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
     detail.attachmentFilter()->setText(QStringLiteral("("));
     QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});

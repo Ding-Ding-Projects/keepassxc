@@ -14,6 +14,8 @@ The folder search keeps matching descendants and their ancestors visible. Cleari
 
 Tag search narrows available chips without changing selected tags. Selected chips remain visible and removable even when their names do not match. Clearing tag search restores available chips while preserving selection. Tag regex execution uses the existing bounded matcher. Invalid or unsafe tag patterns leave prior results standing with an inline message.
 
+The tab selector also evaluates a complete candidate result set before replacing its rows. Invalid, blocked or timed-out expressions retain the previous rows. Locking or closing a vault resets and closes an open selector; normal descriptor changes refresh it without changing tab order. Search labels and inline messages use the English/Cantonese voice catalogue, including bilingual mode. Changing language preserves the current query and regex-builder owner. Regex flags apply independently to each category.
+
 ## Entry details
 
 The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.
@@ -21,6 +23,8 @@ The detail search matches field labels and attachment filenames only. It does no
 ## Verification status
 
 Source regression cases cover tag selection preservation, independent folder text, invalid patterns, clear behavior, metadata matches, secret exclusion, placeholder exclusion, protected notes, UUID and expiry filtering, and legacy engine compatibility. These cases require a compiled native test run before acceptance. Native interaction, supported language/theme/scale geometry and representative screenshots remain pending until a current source-bound build is available.
+
+Additional focused cases cover rejected tab-pattern retention, tab-query reset, language-switch query and builder ownership, regex case sensitivity, and capture-profile configuration isolation. The existing source-style check passed after these repairs. Native execution remains pending. Capture runs use a dedicated verification identifier with isolated instance and standard paths, ignore inherited configuration overrides and portable mode, and reject explicit configuration overrides before application startup.
 
 ## Related
 

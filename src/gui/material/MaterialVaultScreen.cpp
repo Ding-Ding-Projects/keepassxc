@@ -30,6 +30,7 @@
 #include "MaterialOverlay.h"
 #include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
+#include "MaterialVoice.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialTheme.h"
 #include "MaterialVaultSidebar.h"
@@ -232,9 +233,14 @@ namespace Material
          * wildcard conversion off, and the quotes keep a pattern containing
          * spaces in one piece.
          */
-        QString regexTerm(const QString& pattern)
+        QString regexTerm(const QString& pattern, const QString& flags)
         {
-            QString escaped = pattern;
+            QString enabled;
+            QString disabled;
+            for (QChar flag : QStringLiteral("ims")) {
+                (flags.contains(flag) ? enabled : disabled).append(flag);
+            }
+            QString escaped = QStringLiteral("(?%1%2:%3)").arg(enabled, disabled.isEmpty() ? QString() : QStringLiteral("-") + disabled, pattern);
             escaped.replace(QLatin1String("\""), QLatin1String("\\\""));
             return QStringLiteral("*\"%1\"").arg(escaped);
         }
@@ -761,6 +767,8 @@ namespace Material
         m_searchBar = new SearchBar(SearchBar::Variant::Prominent, header);
         m_searchBar->setPlaceholder(tr("Search entries — title, username, URL, notes"));
         m_searchBar->setIdentity(QStringLiteral("vault.entries"), tr("Vault entry search"));
+        m_searchBar->setCopyKeys(QStringLiteral("search.entries"), QStringLiteral("search.entries"));
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, &VaultScreen::updateResultLine);
         headerLayout->addWidget(m_searchBar);
 
         auto* summaryRow = new QWidget(header);
@@ -783,7 +791,7 @@ namespace Material
         m_groupScopeSearch->setObjectName(QStringLiteral("materialVaultGroupScopeSearch"));
         m_groupScopeSearch->setPlaceholder(tr("Search groups"));
         m_groupScopeSearch->setIdentity(QStringLiteral("vault.group-scope"), tr("Vault group scope search"));
-        m_groupScopeSearch->lineEdit()->setAccessibleName(tr("Search vault groups"));
+        m_groupScopeSearch->setCopyKeys(QStringLiteral("search.group-scope"), QStringLiteral("search.group-scope"));
         connect(m_groupScopeSearch, &SearchBar::textChanged, this, &VaultScreen::filterGroupScopeMenu);
         connect(m_groupScopeSearch, &SearchBar::regexToggled, this, [this] {
             filterGroupScopeMenu(m_groupScopeSearch->text());
@@ -1349,9 +1357,7 @@ namespace Material
         const QString text = m_searchBar->text().trimmed();
         const bool regex = m_searchBar->isRegexEnabled();
 
-        // A pattern that does not compile shows nothing until it parses: the
-        // search is not run at all, so the rows behind it are not left standing
-        // as if they still matched.
+        // Invalid input retains the previous complete result set.
         m_regexInvalid = regex && !text.isEmpty() && !QRegularExpression(text).isValid();
         if (m_regexInvalid) {
             updateResultLine();
@@ -1359,7 +1365,7 @@ namespace Material
         }
 
         if (!text.isEmpty()) {
-            terms << (regex ? regexTerm(text) : text);
+            terms << (regex ? regexTerm(text, m_searchBar->regexFlags()) : text);
         }
         for (const QString& tag : m_sidebar->selectedTags()) {
             QString escaped = tag;
@@ -1413,18 +1419,18 @@ namespace Material
         m_resultLabel->setStyleSheet(resultLineStyle());
 
         if (m_regexInvalid) {
-            m_resultLabel->setText(tr("Invalid regular expression. Previous results retained."));
-            m_emptyLabel->setText(tr("No entry matches this search."));
+            m_resultLabel->setText(Voice::say(QStringLiteral("search.invalid")));
+            m_emptyLabel->setText(Voice::say(QStringLiteral("search.no-entries")));
             return;
         }
 
         QString line = tr("%n entry(s)", "number of entries in the list", rows);
         if (searching && m_searchBar->isRegexEnabled() && !m_searchBar->text().trimmed().isEmpty()) {
-            line = tr("%1 · regex /%2/i").arg(line, m_searchBar->text().trimmed());
+            line = tr("%1 · regex /%2/%3").arg(line, m_searchBar->text().trimmed(), m_searchBar->regexFlags());
         }
         m_resultLabel->setText(line);
 
-        m_emptyLabel->setText(searching ? tr("No entry matches this search.") : tr("This group has no entries."));
+        m_emptyLabel->setText(searching ? Voice::say(QStringLiteral("search.no-entries")) : Voice::say(QStringLiteral("search.empty-group")));
         m_listStack->setCurrentWidget(rows > 0 ? static_cast<QWidget*>(m_entryList) : m_emptyState);
     }
 

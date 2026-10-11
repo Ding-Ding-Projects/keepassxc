@@ -8,6 +8,8 @@ class TestMaterialSearchRegistry : public QObject
     Q_OBJECT
 
 private slots:
+    void initTestCase();
+    void localizedCopyPreservesBuilderOwnership();
     void registrationAndOwnership();
     void duplicateIdentityRejected();
     void existingConsumerSurfacesRegister();

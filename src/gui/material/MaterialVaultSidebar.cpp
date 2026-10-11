@@ -22,6 +22,7 @@
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
+#include "MaterialVoice.h"
 #include "MaterialRegexSafety.h"
 #include "MaterialTheme.h"
 
@@ -287,7 +288,7 @@ namespace Material
         m_groupFilter->setObjectName(QStringLiteral("materialVaultGroupFilter"));
         m_groupFilter->setPlaceholder(tr("Filter groups"));
         m_groupFilter->setIdentity(QStringLiteral("vault.groups"), tr("Vault group filter"));
-        m_groupFilter->lineEdit()->setAccessibleName(tr("Filter groups"));
+        m_groupFilter->setCopyKeys(QStringLiteral("search.groups"), QStringLiteral("search.groups"));
         connect(m_groupFilter, &SearchBar::textChanged, this, &VaultSidebar::filterGroups);
         connect(m_groupFilter, &SearchBar::regexToggled, this, [this] { filterGroups(m_groupFilter->text()); });
         root->addWidget(m_groupFilter);
@@ -329,7 +330,10 @@ namespace Material
         m_tagsOverline = createOverline(tr("Tags"), TagsOverlineTop, this);
         root->addWidget(m_tagsOverline);
         m_tagFilter = new SearchBar(SearchBar::Variant::Surface, this);
+        m_tagFilter->setObjectName(QStringLiteral("vaultTagSearch"));
+        m_tagFilter->lineEdit()->setObjectName(QStringLiteral("vaultTagSearchInput"));
         m_tagFilter->setIdentity(QStringLiteral("vault.tags"), tr("Vault tag search"));
+        m_tagFilter->setCopyKeys(QStringLiteral("search.tags"), QStringLiteral("search.tags"));
         m_tagFilter->setPlaceholder(tr("Search tags"));
         m_tagFilter->lineEdit()->setClearButtonEnabled(true);
         connect(m_tagFilter, &SearchBar::textChanged, this, &VaultSidebar::filterTags);
@@ -363,6 +367,10 @@ namespace Material
         m_tagContainer->setVisible(false);
 
         connect(theme(), &Theme::changed, this, &VaultSidebar::applyTheme);
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, [this] {
+            filterGroups(m_groupFilter->text());
+            filterTags();
+        });
         applyTheme();
         updateGroupViewHeight();
     }
@@ -413,9 +421,9 @@ namespace Material
         const bool regex = m_groupFilter->isRegexEnabled();
         QRegularExpression pattern;
         if (regex && !needle.isEmpty()) {
-            pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
+            pattern = QRegularExpression(needle, optionsForFlags(m_groupFilter->regexFlags()));
             if (!pattern.isValid()) {
-                m_groupStatus->setText(tr("Invalid regular expression. Previous results retained."));
+                m_groupStatus->setText(Voice::say(QStringLiteral("search.invalid")));
                 m_groupStatus->show();
                 return; // an unparsable pattern changes nothing until it parses
             }
@@ -438,7 +446,7 @@ namespace Material
             return anyVisible;
         };
         const bool matches = apply(QModelIndex());
-        m_groupStatus->setText(tr("No folder matches this search."));
+        m_groupStatus->setText(Voice::say(QStringLiteral("search.no-folders")));
         m_groupStatus->setVisible(!needle.isEmpty() && !matches);
         updateGroupViewHeight();
     }
@@ -576,7 +584,7 @@ namespace Material
                                              ? QRegularExpression::CaseInsensitiveOption
                                              : QRegularExpression::NoPatternOption);
         if (m_tagFilter->isRegexEnabled() && !query.isEmpty() && !pattern.isValid()) {
-            m_tagStatus->setText(tr("Invalid regular expression. Previous results retained."));
+            m_tagStatus->setText(Voice::say(QStringLiteral("search.invalid")));
             m_tagStatus->show();
             return;
         }
@@ -587,7 +595,7 @@ namespace Material
             if (m_tagFilter->isRegexEnabled() && !query.isEmpty()) {
                 const auto run = runBounded(query, optionsForFlags(m_tagFilter->regexFlags()), chip->text());
                 if (!run.compiled || run.blocked || run.timedOut) {
-                    m_tagStatus->setText(tr("Pattern could not run safely. Previous results retained."));
+                    m_tagStatus->setText(Voice::say(QStringLiteral("search.unsafe")));
                     m_tagStatus->show();
                     return;
                 }
@@ -599,7 +607,7 @@ namespace Material
         for (int index = 0; index < m_tagChips.size(); ++index) {
             m_tagChips.at(index)->setVisible(accepted.at(index));
         }
-        m_tagStatus->setText(tr("No tag matches this search. Selected tags remain available."));
+        m_tagStatus->setText(Voice::say(QStringLiteral("search.no-tags")));
         m_tagStatus->setVisible(!query.isEmpty() && matches == 0);
         m_tagContainer->updateGeometry();
     }

@@ -29,6 +29,7 @@ private slots:
     void testUpgrade();
     void testURLDoubleClickMigration();
     void testRemovedToolbarStyleIsDiscarded();
+    void testVerificationProfileIgnoresEnvironmentOverrides();
 };
 
 #endif // KEEPASSX_TESTCONFIG_H

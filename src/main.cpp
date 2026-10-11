@@ -82,23 +82,38 @@ int main(int argc, char** argv)
         }
     }
     QString verificationProfile;
-    bool hasCaptureRoute = false;
+    QString verificationCaptureRoute;
+    bool conflictingConfig = false;
+    bool malformedVerificationOption = false;
     bool verificationRequested = false;
     for (int i = 1; i < argc; ++i) {
         const QString argument = QString::fromLocal8Bit(argv[i]);
         if (argument == QLatin1String("--")) break;
-        if (argument == QLatin1String("--capture-route") || argument.startsWith(QLatin1String("--capture-route="))) hasCaptureRoute = true;
+        if (argument == QLatin1String("--capture-route") && i + 1 < argc) {
+            verificationCaptureRoute = QString::fromLocal8Bit(argv[i + 1]);
+        } else if (argument.startsWith(QLatin1String("--capture-route="))) {
+            verificationCaptureRoute = argument.mid(QStringLiteral("--capture-route=").size());
+        }
+        conflictingConfig |= argument == QLatin1String("--config") || argument == QLatin1String("--localconfig")
+                             || argument.startsWith(QLatin1String("--config="))
+                             || argument.startsWith(QLatin1String("--localconfig="));
         if (argument == QLatin1String("--verification-profile")) {
             verificationRequested = true;
             if (i + 1 < argc) verificationProfile = QString::fromLocal8Bit(argv[++i]);
         } else if (argument.startsWith(QLatin1String("--verification-profile="))) {
             verificationRequested = true;
             verificationProfile = argument.mid(QStringLiteral("--verification-profile=").size());
+        } else if (argument.startsWith(QLatin1String("--verification-profile"))) {
+            verificationRequested = true;
+            malformedVerificationOption = true;
         }
     }
     if (verificationRequested) {
-        if (verificationProfile.isEmpty() || !hasCaptureRoute || QRegularExpression(QStringLiteral("^[A-Za-z0-9_-]{1,64}$")).match(verificationProfile).capturedLength() != verificationProfile.size()) {
-            qCritical("Verification profiles require a capture route and a safe unique identifier.");
+        Material::CaptureRoute::Request verificationRequest;
+        if (verificationProfile.isEmpty() || conflictingConfig || malformedVerificationOption
+            || !Material::CaptureRoute::parse(verificationCaptureRoute, verificationRequest)
+            || QRegularExpression(QStringLiteral("^[A-Za-z0-9_-]{1,64}$")).match(verificationProfile).capturedLength() != verificationProfile.size()) {
+            qCritical("Verification profiles require a valid capture route, a safe unique identifier, and no configuration override.");
             return EXIT_FAILURE;
         }
         QStandardPaths::setTestModeEnabled(true);

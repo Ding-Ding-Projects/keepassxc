@@ -596,6 +596,13 @@ void Config::init(const QString& configFileName, const QString& localConfigFileN
 
 QPair<QString, QString> Config::defaultConfigFiles()
 {
+    // Capture profiles must not inherit portable or environment configuration.
+    if (QStandardPaths::isTestModeEnabled()
+        && QCoreApplication::applicationName().startsWith(QStringLiteral("KeePassXC-Verification-"))) {
+        const QString root = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+        return {QDir::toNativeSeparators(root + QStringLiteral("/keepassxc.ini")),
+                QDir::toNativeSeparators(root + QStringLiteral("/keepassxc_local.ini"))};
+    }
     // Check if we are running in portable mode, if so store the config files local to the app
     if (isPortable()) {
         return {portableConfigDir().append("/keepassxc.ini"), portableConfigDir().append("/keepassxc_local.ini")};

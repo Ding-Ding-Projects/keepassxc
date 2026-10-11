@@ -193,6 +193,8 @@
 ## Vault-first category search
 
 - [x] Add scoped source implementation and regression cases.
+- [x] Review source repairs for isolated capture configuration, tab lifecycle, localized accessibility and builder ownership.
+- [ ] Execute the added native regression cases for those repairs.
 - [ ] Compile through root build.bat and pass focused native regressions.
 - [ ] Verify synthetic-vault interaction and language/theme/scale capture matrix.
 - [ ] Verify main delivery, documentation publication, and safe scoped cleanup.

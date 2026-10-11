@@ -23,6 +23,7 @@
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
 #include "MaterialSearchRegistry.h"
+#include "MaterialVoice.h"
 
 #include <QApplication>
 #include <QHBoxLayout>
@@ -138,6 +139,10 @@ namespace Material
             emit builderRequested();
         });
         connect(theme(), &Theme::changed, this, &SearchBar::applyTheme);
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, [this] {
+            if (!m_searchLabelKey.isEmpty()) setIdentity(m_searchId, m_searchLabel);
+            if (!m_placeholderKey.isEmpty()) setPlaceholder(QString());
+        });
 
         // The focus ring belongs to the pill, so repaint whenever the input
         // gains or loses focus.
@@ -192,7 +197,7 @@ namespace Material
 
     void SearchBar::setPlaceholder(const QString& placeholder)
     {
-        m_placeholder = placeholder;
+        m_placeholder = m_placeholderKey.isEmpty() ? placeholder : Voice::say(m_placeholderKey);
         applyPlaceholder();
     }
 
@@ -217,14 +222,24 @@ namespace Material
     bool SearchBar::setIdentity(const QString& id, const QString& label)
     {
         if (id.isEmpty() || label.isEmpty()) return false;
-        SearchRegistry::instance()->unregisterBar(this);
+        const bool identityChanged = m_searchId != id;
+        if (identityChanged) SearchRegistry::instance()->unregisterBar(this);
         m_searchId = id;
-        m_searchLabel = label;
-        setAccessibleName(label);
+        m_searchLabel = m_searchLabelKey.isEmpty() ? label : Voice::say(m_searchLabelKey);
+        setAccessibleName(m_searchLabel);
+        m_lineEdit->setAccessibleName(m_searchLabel);
+        if (!identityChanged) return SearchRegistry::instance()->bar(id) == this;
         return SearchRegistry::instance()->registerBar(this);
     }
 
     QString SearchBar::searchId() const { return m_searchId; }
+    void SearchBar::setCopyKeys(const QString& placeholderKey, const QString& labelKey)
+    {
+        m_placeholderKey = placeholderKey;
+        m_searchLabelKey = labelKey;
+        setPlaceholder(m_placeholder);
+        if (!m_searchId.isEmpty()) setIdentity(m_searchId, m_searchLabel);
+    }
     QString SearchBar::searchLabel() const { return m_searchLabel; }
     QString SearchBar::regexFlags() const { return m_regexFlags; }
     void SearchBar::setRegexFlags(const QString& flags)

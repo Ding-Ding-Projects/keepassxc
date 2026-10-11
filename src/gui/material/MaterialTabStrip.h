@@ -58,6 +58,7 @@ namespace Material
         void addTab(const QString& id, const QString& symbol, const QString& label);
         void removeTab(const QString& id);
         void clear();
+        void clearSearch();
         void setTabs(const QList<TabDescriptor>& tabs, const QString& currentRuntimeId);
         QList<TabDescriptor> tabs() const;
 

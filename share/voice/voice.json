@@ -2,6 +2,357 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+    "search.entries": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Search entries"
+            ],
+            "levels": {
+                "1": "Search entries",
+                "2": "Search entries",
+                "3": "Search entries",
+                "4": "Search entries",
+                "5": "Search entries"
+            }
+        },
+        "yue": {
+            "facts": [
+                "搜尋項目"
+            ],
+            "levels": {
+                "1": "搜尋項目",
+                "2": "搜尋項目",
+                "3": "搜尋項目",
+                "4": "搜尋項目",
+                "5": "搜尋項目"
+            }
+        }
+    },
+    "search.groups": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Filter groups"
+            ],
+            "levels": {
+                "1": "Filter groups",
+                "2": "Filter groups",
+                "3": "Filter groups",
+                "4": "Filter groups",
+                "5": "Filter groups"
+            }
+        },
+        "yue": {
+            "facts": [
+                "篩選資料夾"
+            ],
+            "levels": {
+                "1": "篩選資料夾",
+                "2": "篩選資料夾",
+                "3": "篩選資料夾",
+                "4": "篩選資料夾",
+                "5": "篩選資料夾"
+            }
+        }
+    },
+    "search.tags": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Search tags"
+            ],
+            "levels": {
+                "1": "Search tags",
+                "2": "Search tags",
+                "3": "Search tags",
+                "4": "Search tags",
+                "5": "Search tags"
+            }
+        },
+        "yue": {
+            "facts": [
+                "搜尋標籤"
+            ],
+            "levels": {
+                "1": "搜尋標籤",
+                "2": "搜尋標籤",
+                "3": "搜尋標籤",
+                "4": "搜尋標籤",
+                "5": "搜尋標籤"
+            }
+        }
+    },
+    "search.group-scope": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Search groups"
+            ],
+            "levels": {
+                "1": "Search groups",
+                "2": "Search groups",
+                "3": "Search groups",
+                "4": "Search groups",
+                "5": "Search groups"
+            }
+        },
+        "yue": {
+            "facts": [
+                "搜尋資料夾"
+            ],
+            "levels": {
+                "1": "搜尋資料夾",
+                "2": "搜尋資料夾",
+                "3": "搜尋資料夾",
+                "4": "搜尋資料夾",
+                "5": "搜尋資料夾"
+            }
+        }
+    },
+    "search.details": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Search field labels and attachments"
+            ],
+            "levels": {
+                "1": "Search field labels and attachments",
+                "2": "Search field labels and attachments",
+                "3": "Search field labels and attachments",
+                "4": "Search field labels and attachments",
+                "5": "Search field labels and attachments"
+            }
+        },
+        "yue": {
+            "facts": [
+                "搜尋欄位名稱同附件"
+            ],
+            "levels": {
+                "1": "搜尋欄位名稱同附件",
+                "2": "搜尋欄位名稱同附件",
+                "3": "搜尋欄位名稱同附件",
+                "4": "搜尋欄位名稱同附件",
+                "5": "搜尋欄位名稱同附件"
+            }
+        }
+    },
+    "search.tabs": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "Search open vault tabs"
+            ],
+            "levels": {
+                "1": "Search open vault tabs",
+                "2": "Search open vault tabs",
+                "3": "Search open vault tabs",
+                "4": "Search open vault tabs",
+                "5": "Search open vault tabs"
+            }
+        },
+        "yue": {
+            "facts": [
+                "搜尋已開啟嘅密碼庫分頁"
+            ],
+            "levels": {
+                "1": "搜尋已開啟嘅密碼庫分頁",
+                "2": "搜尋已開啟嘅密碼庫分頁",
+                "3": "搜尋已開啟嘅密碼庫分頁",
+                "4": "搜尋已開啟嘅密碼庫分頁",
+                "5": "搜尋已開啟嘅密碼庫分頁"
+            }
+        }
+    },
+    "search.invalid": {
+        "category": "error",
+        "en": {
+            "facts": [
+                "Invalid regular expression. Previous results retained."
+            ],
+            "levels": {
+                "1": "Invalid regular expression. Previous results retained.",
+                "2": "Invalid regular expression. Previous results retained.",
+                "3": "Invalid regular expression. Previous results retained.",
+                "4": "Invalid regular expression. Previous results retained.",
+                "5": "Invalid regular expression. Previous results retained."
+            }
+        },
+        "yue": {
+            "facts": [
+                "正規運算式無效，保留上次結果。"
+            ],
+            "levels": {
+                "1": "正規運算式無效，保留上次結果。",
+                "2": "正規運算式無效，保留上次結果。",
+                "3": "正規運算式無效，保留上次結果。",
+                "4": "正規運算式無效，保留上次結果。",
+                "5": "正規運算式無效，保留上次結果。"
+            }
+        }
+    },
+    "search.unsafe": {
+        "category": "error",
+        "en": {
+            "facts": [
+                "Pattern could not run safely. Previous results retained."
+            ],
+            "levels": {
+                "1": "Pattern could not run safely. Previous results retained.",
+                "2": "Pattern could not run safely. Previous results retained.",
+                "3": "Pattern could not run safely. Previous results retained.",
+                "4": "Pattern could not run safely. Previous results retained.",
+                "5": "Pattern could not run safely. Previous results retained."
+            }
+        },
+        "yue": {
+            "facts": [
+                "運算式無法安全執行，保留上次結果。"
+            ],
+            "levels": {
+                "1": "運算式無法安全執行，保留上次結果。",
+                "2": "運算式無法安全執行，保留上次結果。",
+                "3": "運算式無法安全執行，保留上次結果。",
+                "4": "運算式無法安全執行，保留上次結果。",
+                "5": "運算式無法安全執行，保留上次結果。"
+            }
+        }
+    },
+    "search.no-folders": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "No folder matches this search."
+            ],
+            "levels": {
+                "1": "No folder matches this search.",
+                "2": "No folder matches this search.",
+                "3": "No folder matches this search.",
+                "4": "No folder matches this search.",
+                "5": "No folder matches this search."
+            }
+        },
+        "yue": {
+            "facts": [
+                "冇符合搜尋嘅資料夾。"
+            ],
+            "levels": {
+                "1": "冇符合搜尋嘅資料夾。",
+                "2": "冇符合搜尋嘅資料夾。",
+                "3": "冇符合搜尋嘅資料夾。",
+                "4": "冇符合搜尋嘅資料夾。",
+                "5": "冇符合搜尋嘅資料夾。"
+            }
+        }
+    },
+    "search.no-tags": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "No tag matches this search. Selected tags remain available."
+            ],
+            "levels": {
+                "1": "No tag matches this search. Selected tags remain available.",
+                "2": "No tag matches this search. Selected tags remain available.",
+                "3": "No tag matches this search. Selected tags remain available.",
+                "4": "No tag matches this search. Selected tags remain available.",
+                "5": "No tag matches this search. Selected tags remain available."
+            }
+        },
+        "yue": {
+            "facts": [
+                "冇符合搜尋嘅標籤，已選標籤仍然保留。"
+            ],
+            "levels": {
+                "1": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                "2": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                "3": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                "4": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                "5": "冇符合搜尋嘅標籤，已選標籤仍然保留。"
+            }
+        }
+    },
+    "search.no-tabs": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "No open tab matches this search."
+            ],
+            "levels": {
+                "1": "No open tab matches this search.",
+                "2": "No open tab matches this search.",
+                "3": "No open tab matches this search.",
+                "4": "No open tab matches this search.",
+                "5": "No open tab matches this search."
+            }
+        },
+        "yue": {
+            "facts": [
+                "冇符合搜尋嘅已開啟分頁。"
+            ],
+            "levels": {
+                "1": "冇符合搜尋嘅已開啟分頁。",
+                "2": "冇符合搜尋嘅已開啟分頁。",
+                "3": "冇符合搜尋嘅已開啟分頁。",
+                "4": "冇符合搜尋嘅已開啟分頁。",
+                "5": "冇符合搜尋嘅已開啟分頁。"
+            }
+        }
+    },
+    "search.no-entries": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "No entry matches this search."
+            ],
+            "levels": {
+                "1": "No entry matches this search.",
+                "2": "No entry matches this search.",
+                "3": "No entry matches this search.",
+                "4": "No entry matches this search.",
+                "5": "No entry matches this search."
+            }
+        },
+        "yue": {
+            "facts": [
+                "冇符合搜尋嘅項目。"
+            ],
+            "levels": {
+                "1": "冇符合搜尋嘅項目。",
+                "2": "冇符合搜尋嘅項目。",
+                "3": "冇符合搜尋嘅項目。",
+                "4": "冇符合搜尋嘅項目。",
+                "5": "冇符合搜尋嘅項目。"
+            }
+        }
+    },
+    "search.empty-group": {
+        "category": "info",
+        "en": {
+            "facts": [
+                "This group has no entries."
+            ],
+            "levels": {
+                "1": "This group has no entries.",
+                "2": "This group has no entries.",
+                "3": "This group has no entries.",
+                "4": "This group has no entries.",
+                "5": "This group has no entries."
+            }
+        },
+        "yue": {
+            "facts": [
+                "呢個資料夾未有項目。"
+            ],
+            "levels": {
+                "1": "呢個資料夾未有項目。",
+                "2": "呢個資料夾未有項目。",
+                "3": "呢個資料夾未有項目。",
+                "4": "呢個資料夾未有項目。",
+                "5": "呢個資料夾未有項目。"
+            }
+        }
+    },
         "dim-sum.setting": {
   "category": "info",
   "en": {

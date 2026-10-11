@@ -32,6 +32,7 @@ namespace Material
         if (existing && existing != bar) {
             return false;
         }
+        if (existing == bar) return true;
         m_bars.insert(bar->searchId(), bar);
         connect(bar, &SearchBar::builderRequested, this, [this, bar] {
             setCurrent(bar);
@@ -51,6 +52,7 @@ namespace Material
     void SearchRegistry::unregisterBar(SearchBar* bar)
     {
         if (!bar) return;
+        disconnect(bar, &SearchBar::builderRequested, this, nullptr);
         if (m_bars.value(bar->searchId()) == bar) {
             m_bars.remove(bar->searchId());
         }

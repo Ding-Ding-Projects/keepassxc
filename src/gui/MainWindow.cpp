@@ -963,6 +963,8 @@ MainWindow::MainWindow()
     connect(m_ui->tabWidget, &DatabaseTabWidget::tabVisibilityChanged, this, syncTabStrip);
 
     auto* tabStrip = materialShell->tabs();
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseLocked, tabStrip, &Material::TabStrip::clearSearch);
+    connect(m_ui->tabWidget, &DatabaseTabWidget::databaseClosed, tabStrip, &Material::TabStrip::clearSearch);
     connect(tabStrip, &Material::TabStrip::tabSelected, this, [this](const QString& id) {
         for (int i = 0; i < m_ui->tabWidget->count(); ++i) {
             if (tabIdFor(m_ui->tabWidget->databaseWidgetFromIndex(i)) == id) {

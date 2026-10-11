@@ -69,6 +69,7 @@ namespace Material
         void setPlaceholder(const QString& placeholder);
         QString placeholder() const;
         bool setIdentity(const QString& id, const QString& label);
+        void setCopyKeys(const QString& placeholderKey, const QString& labelKey);
         QString searchId() const;
         QString searchLabel() const;
         QString regexFlags() const;
@@ -112,6 +113,8 @@ namespace Material
         QString m_placeholder;
         QString m_searchId;
         QString m_searchLabel;
+        QString m_placeholderKey;
+        QString m_searchLabelKey;
         QString m_regexFlags = QStringLiteral("i");
     };
 
