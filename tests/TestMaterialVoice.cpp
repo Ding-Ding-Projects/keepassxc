@@ -33,7 +33,7 @@ namespace
 {
     const QList<Language> AllLanguages{Language::English, Language::Cantonese, Language::Bilingual};
 
-    /** Arguments covering every placeholder the starter catalogue uses. */
+    /** Synthetic facts used by the application and server catalogue fixtures. */
     QVariantMap sampleArgs()
     {
         return QVariantMap{{QStringLiteral("seconds"), 10},
@@ -42,7 +42,13 @@ namespace
                            {QStringLiteral("title"), QStringLiteral("GitHub")},
                            {QStringLiteral("window"), QStringLiteral("Firefox")},
                            {QStringLiteral("path"), QStringLiteral("/tmp/report.csv")},
-                           {QStringLiteral("error"), QStringLiteral("no space left on device")}};
+                           {QStringLiteral("error"), QStringLiteral("no space left on device")},
+                           {QStringLiteral("java"), 21},
+                           {QStringLiteral("architecture"), QStringLiteral("x86_64")},
+                           {QStringLiteral("digest"), QStringLiteral("sha256:synthetic")},
+                           {QStringLiteral("platform"), QStringLiteral("Linux")},
+                           {QStringLiteral("cli"), QStringLiteral("detected")},
+                           {QStringLiteral("daemon"), QStringLiteral("unavailable")}};
     }
 } // namespace
 
@@ -146,7 +152,7 @@ void TestMaterialVoice::testBilingualCarriesBothParts()
             QVERIFY(both.hasSecondary());
             QCOMPARE(both.primary, english);
             QCOMPARE(both.secondary, cantonese);
-            QVERIFY(english != cantonese);
+            QVERIFY2(english != cantonese, qPrintable(key));
 
             const QString joined = both.joined();
             QVERIFY(joined.contains(english));

@@ -33,17 +33,18 @@ class QTranslator;
  *
  * Contract (schema version 1): an object with exactly two members,
  *   "schemaVersion": 1 and "entries": { "<original>": "<replacement>", ... }
- * with at most 500 entries, keys 1..128 characters, values 0..512 characters,
- * string values only, no unsafe object keys, and a file no larger than 64 KiB.
+ * with a dynamic entry inventory, keys 1..160 Unicode code points, values
+ * 0..1000 Unicode code points, string values only, no unsafe or duplicate
+ * object keys, JSON depth at most 8, and UTF-8 input no larger than 256 KiB.
  * "replacements" is accepted as an alias of "entries" for files written by
  * earlier builds.
  */
 namespace PersonalVocabulary
 {
-    constexpr int MaxFileBytes = 65536;
-    constexpr int MaxEntries = 500;
-    constexpr int MaxKeyLength = 128;
-    constexpr int MaxValueLength = 512;
+    constexpr int MaxFileBytes = 256 * 1024;
+    constexpr int MaxDepth = 8;
+    constexpr int MaxKeyLength = 160;
+    constexpr int MaxValueLength = 1000;
 
     struct Validation
     {

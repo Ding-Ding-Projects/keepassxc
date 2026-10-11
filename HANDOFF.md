@@ -1,5 +1,23 @@
 # Navigation delivery handoff
 
+## Current schema and SSH continuation, October 11, 2026
+
+This section supersedes the current-state statements below while preserving their historical evidence. The SSH branch contains bounded read-only host/runtime discovery at `d79ad3c84501c15939d766f900c53f5a42e1b9f7` and independently reviewed immediate-completion ordering repair `feedfadea832ec944e3bb88ad0326cc5853180e6`. Remote creation, lifecycle and complete version/configuration/extension compatibility remain incomplete. No real SSH host connection or native execution has been performed for this unit.
+
+The refreshed capability authority now explicitly records 1,119 contracts and 120,852 required cells across 108 surfaces. New obligations cover current vocabulary bounds, complete above-control guidance, animation authoring and workflow diagrams. Historical one-percent/opt-out startup criteria are superseded by ten-percent/no-opt-out requirements, with their retirement recorded in the coverage article. Schema validation and 95 focused positive/negative contract checks pass. Accepted evidence remains zero; expanded requirements never create implementation proof.
+
+The native personal-vocabulary validator now has source for 256 KiB UTF-8 input, depth 8, dynamic entry counts, 160/1000 Unicode code-point limits, decoded duplicate-member rejection and invalid-Unicode rejection. Boundary fixtures and localized rejection copy are updated. Independent source/header review found no concrete parser defect; compilation, execution and real upload acceptance remain pending. The website schema repair is a separate active unit in the reader branch.
+
+The root build at `49a2547bab915b2ad3a6a1d218f8282602a54e41` failed on a missing complete QTimer definition. Repair `cdb8862bd2637b30464abae8ad13888885def592` is pushed and its exact root `build.bat /s` passed in 2,272 seconds. Independent stage validation passed: executable SHA-256 `d57e0e69e805d59596254d69443cb88e1e0a87abc84c0925e537ec7220b4c0c6`, receipt SHA-256 `31e8eb9436ea2875298bf8380d6a6c203d68e9b67d6db7fed571b18dd789fef0`. It does not include this SSH/schema continuation. The earlier verified native source and five passing checks remain bound to `0ffb00b9ae963e7629bacc2e2903c5df4a104490`.
+
+At cdb8862b, twelve focused CTest suites reported nine passing, voice failing and search-registry/tabs not started. Separate explicit-Qt-PATH diagnostics passed search registry (8 cases) and tabs (7 cases); the original startup cause remains unproved. Voice diagnostics produced 8 passing and 2 failing cases: missing server sample arguments and identical English/Cantonese server templates. The current source repairs those fixtures and three actual Cantonese records without weakening assertions. The new root `-WithGuiTests` option includes GUI regression targets that the ordinary build excluded. The next candidate requires its own root build and focused execution, including the previously uncompiled capture-language regression.
+
+The exact GUI-enabled root run at `4f5b3eb9a4671ab61641b29ea95485da4b73c131` exited 1: MSVC C2668 at `PersonalVocabulary.cpp:67`, where an untyped initializer made `QList<Frame>::append` ambiguous. The current one-line repair supplies an explicit `Frame` value without changing parser behavior. The original full log and prior passing executable remain retained. Compilation and focused execution of the repaired candidate are pending.
+
+Reader source `86e06cd96928f29487c422fe4f039b5364f4f6ba` has 384 collected and independently inspected tuples across eight changed articles: 200 original and 184 recovered with source-derived content assertions. Original failures remain retained. Both owned processes/listeners are absent and both empty desktops closed with proof. The captured visible layout subset has no confirmed layout defect, while three surrounding buttons remain English in affected language modes. This does not establish complete article pixels, accessibility or deployment. Wiki `0ab8ac4f147a4aa4998f78e4154bfb3129ee1410` is preserved. Main remains `906e7b3230595b0abf73ea479955c50418d7d0b1`.
+
+The independent current-catalogue review confirms all 105 identities but identifies understated personal-vocabulary, guidance, motion, workflow-diagram and server descriptor obligations. See the current feature-coverage article. Issue 20 comment 6107605988 and Discussion 21 comment 18861383 record this milestone with exact body readback. Authenticated status reporting remains unestablished. No new release or destructive cleanup is authorized by this preservation record.
+
 ## Current expanded feature implementation, October 11, 2026
 
 The current catalogue has 105 identities, all explicitly mapped. This is inventory completeness only; universal implementation and acceptance remain incomplete.
@@ -580,6 +598,14 @@ The pass was closed early at the owner's request (usage limit reached), with the
 - Issue #11 and roadmap implementation items remain open until their independent behavioral coverage and required publication evidence are complete.
 
 ## Vault category search, current implementation
+
+### Latest contract and verification refresh
+
+The October 11 catalogue refresh fetched the current instruction source without divergence and compared all 105 canonical identities against the crosswalk, with no missing identity. The expanded product inventory now records 90 families, 180 platform rows, 108 surfaces and 1,045 capabilities, including 47 server-manager capabilities. Schema validation passes; zero of 112,860 required capability cells has complete current acceptance evidence. Source mapping does not establish product completion.
+
+The root build pinned to `d8822ce76e48810ff3c6c84e81b2665126c59d8d` completed compilation and Qt deployment but failed during provenance hashing because `Get-FileHash` was unavailable in that builder process. No successful root result or stage receipt is claimed. A separate child probe resolves the command both before and after MSVC activation, so the specific cause remains under diagnosis. Five focused native CTest checks finished: entry search, search registry, vault filters and tabs passed; configuration failed without captured diagnostic output. These results belong only to that source and do not cover later feature units.
+
+The isolated documentation-language candidate has 44 complete Cantonese articles out of 62, with the remaining variants explicitly missing. Source reviews confirm the natural anchor Tab restoration and nested translation-path ownership repairs. New browser, keyboard and language acceptance remains pending. School-mode source and its 34 localized catalogue entries are integrated in this branch, with native acceptance still pending.
 
 ### Expanded current-contract requirement
 

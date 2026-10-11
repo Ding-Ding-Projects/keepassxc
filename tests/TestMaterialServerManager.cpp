@@ -1,5 +1,10 @@
 #include "gui/material/MaterialServerManager.h"
+#include "gui/material/MaterialSshProbe.h"
 #include "core/Config.h"
+#include "gui/material/MaterialVoice.h"
+#include "gui/material/MaterialSearchBar.h"
+#include <QLabel>
+#include <QAbstractButton>
 #include <QApplication>
 #include <QStandardPaths>
 #include <QTemporaryDir>
@@ -14,15 +19,222 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QComboBox>
+#include <QUuid>
 #include <QProcess>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QTimer>
+#include <QElapsedTimer>
 #include <QSignalSpy>
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
 #endif
 using Material::ServerManager;
+class TrickleReply : public QNetworkReply {
+public:
+    TrickleReply(const QNetworkRequest& request,QObject* parent,int* aborted,int* trickles)
+        :QNetworkReply(parent),m_aborted(aborted),m_trickles(trickles) {
+        setRequest(request);setUrl(request.url());setOperation(QNetworkAccessManager::GetOperation);
+        setAttribute(QNetworkRequest::HttpStatusCodeAttribute,200);open(QIODevice::ReadOnly|QIODevice::Unbuffered);
+        connect(&m_trickle,&QTimer::timeout,this,[this]{m_bytes.append('x');++*m_trickles;emit readyRead();});m_trickle.start(5);
+    }
+    void abort() override {if(isFinished())return;++*m_aborted;setError(OperationCanceledError,QStringLiteral("Synthetic request aborted"));finish();}
+    void finish(){if(isFinished())return;m_trickle.stop();setFinished(true);emit finished();}
+    qint64 bytesAvailable() const override{return m_bytes.size()+QNetworkReply::bytesAvailable();}
+protected:
+    qint64 readData(char* destination,qint64 maximum) override {const auto count=qMin(maximum,qint64(m_bytes.size()));if(count<=0)return 0;std::memcpy(destination,m_bytes.constData(),size_t(count));m_bytes.remove(0,count);return count;}
+private:
+    QTimer m_trickle;QByteArray m_bytes;int* m_aborted;int* m_trickles;
+};
+class TrickleNetwork : public QNetworkAccessManager {
+public:
+    explicit TrickleNetwork(QObject* parent):QNetworkAccessManager(parent){}
+    int aborted=0,trickles=0;QPointer<TrickleReply> latest;
+protected:
+    QNetworkReply* createRequest(Operation,const QNetworkRequest& request,QIODevice*) override {
+        latest=new TrickleReply(request,this,&aborted,&trickles);return latest;
+    }
+};
 class TestMaterialServerManager : public QObject {
     Q_OBJECT
 private slots:
+    void sshDiscoveryInputsArgumentsAndTypedFacts() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));
+        const auto hosts=temporary.filePath(QStringLiteral("approved hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));QCOMPARE(file.write("synthetic fixture"),qint64(17));}
+        SshProbe::Connection connection{executable,QStringLiteral("synthetic.example.invalid"),QStringLiteral("synthetic-user"),identity,hosts,2222};
+        QVERIFY(SshProbe::validConnection(connection));const auto args=SshProbe::arguments(connection);
+        QCOMPARE(args.mid(0,2),QStringList({QStringLiteral("-F"),QStringLiteral("none")}));
+        for(const auto& option:{QStringLiteral("BatchMode=yes"),QStringLiteral("StrictHostKeyChecking=yes"),QStringLiteral("UpdateHostKeys=no"),QStringLiteral("ClearAllForwardings=yes"),QStringLiteral("IdentityAgent=none"),QStringLiteral("PreferredAuthentications=publickey")})QVERIFY(args.contains(option));
+        QCOMPARE(args.last(),SshProbe::remoteCommand());QVERIFY(!args.last().contains(connection.host));QVERIFY(!args.last().contains(connection.user));
+        QCOMPARE(args.at(args.indexOf(QStringLiteral("-i"))+1),identity);
+        for(const auto& bad:{QStringLiteral("-oProxyCommand=bad"),QStringLiteral("host;command"),QStringLiteral("user@host"),QStringLiteral("ssh://host"),QStringLiteral("host\nother")}){auto copy=connection;copy.host=bad;QVERIFY(SshProbe::arguments(copy).isEmpty());}
+        auto invalid=connection;invalid.user=QStringLiteral("-option");QVERIFY(!SshProbe::validConnection(invalid));invalid=connection;invalid.port=0;QVERIFY(!SshProbe::validConnection(invalid));
+        invalid=connection;invalid.identityFile=QStringLiteral("relative");QVERIFY(!SshProbe::validConnection(invalid));
+        QJsonObject facts;const QByteArray valid=R"({"schema":1,"platform":"Linux","architecture":"x86_64","javaMajor":21,"dockerCli":true,"dockerDaemon":null})";
+        QVERIFY(SshProbe::parseFacts(valid,facts));QCOMPARE(facts.value("javaMajor").toInt(),21);
+        for(const auto& bad:{QByteArray("{}"),QByteArray(4097,'x'),QByteArray(valid).replace("21","21.5"),QByteArray(valid).replace("Linux","unrecognized"),QByteArray(valid).replace("null","[]"),QByteArray(valid).replace("\"schema\":1","\"schema\":1,\"schema\":1")})QVERIFY(!SshProbe::parseFacts(bad,facts));
+    }
+    void sshDiscoveryDeadlineCancellationAndAttemptIdentity() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));const auto hosts=temporary.filePath(QStringLiteral("known_hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));file.write("synthetic");}
+        SshProbe probe;probe.m_testLaunch=[](const QString&,const QStringList&){};probe.m_deadlineMs=20;
+        QSignalSpy completed(&probe,&SshProbe::completed);
+        SshProbe::Connection connection{executable,QStringLiteral("synthetic.example.invalid"),QStringLiteral("synthetic"),identity,hosts,22};
+        const auto first=probe.start(connection);QVERIFY(probe.active());
+        QTRY_COMPARE(completed.count(),1);QCOMPARE(completed.last().at(0).toULongLong(),first);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("timeout"));QVERIFY(!probe.active());
+        const auto second=probe.start(connection);QVERIFY(second>first);probe.cancel();QCOMPARE(completed.count(),2);QCOMPARE(completed.last().at(0).toULongLong(),second);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("cancelled"));
+        probe.finish(QStringLiteral("ready"),QJsonObject{{"untrusted",true}});QCOMPARE(completed.count(),2);
+        const auto third=probe.start(connection);probe.appendOutput(QByteArray(4097,'x'));QCOMPARE(completed.last().at(0).toULongLong(),third);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("unavailable"));
+        ServerManager manager(nullptr,temporary.path()+QStringLiteral("managed"));manager.m_target->setCurrentIndex(2);manager.m_sshFacts=QJsonObject{{"schema",1}};manager.m_sshHost->setText(QStringLiteral("changed.example.invalid"));QVERIFY(manager.m_sshFacts.isEmpty());QCOMPARE(manager.m_sshAttempt,quint64(0));
+    }
+    void sshDiscoverySynchronousCompletionAndStaleResult() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));const auto hosts=temporary.filePath(QStringLiteral("known_hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));QCOMPARE(file.write("synthetic"),qint64(9));}
+        ServerManager manager(nullptr,temporary.filePath(QStringLiteral("managed")));
+        manager.m_target->setCurrentIndex(2);
+        manager.m_sshHost->setText(QStringLiteral("synthetic.example.invalid"));manager.m_sshUser->setText(QStringLiteral("synthetic"));
+        manager.m_sshExecutable->setText(executable);manager.m_sshIdentity->setText(identity);manager.m_sshKnownHosts->setText(hosts);
+        manager.m_sshProbe->m_testLaunch=[&](const QString&,const QStringList&){manager.m_sshProbe->finish(QStringLiteral("unavailable"));};
+        manager.discoverSsh();
+        const auto first=manager.m_sshAttempt;QVERIFY(first>0);
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.unavailable"));
+        QVERIFY(!manager.m_sshProbe->active());QVERIFY(!manager.m_sshProbe->m_deadline->isActive());
+        manager.m_sshProbe->m_testLaunch=[](const QString&,const QStringList&){};
+        manager.discoverSsh();const auto second=manager.m_sshAttempt;QVERIFY(second>first);QVERIFY(manager.m_sshProbe->active());
+        emit manager.m_sshProbe->completed(first,QStringLiteral("ready"),QJsonObject{{"schema",1}});
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.loading"));QVERIFY(manager.m_sshFacts.isEmpty());QCOMPARE(manager.m_sshAttempt,second);
+        manager.m_sshHost->setText(QStringLiteral("changed.example.invalid"));
+        QCOMPARE(manager.m_sshAttempt,quint64(0));QVERIFY(!manager.m_sshProbe->active());
+        emit manager.m_sshProbe->completed(second,QStringLiteral("ready"),QJsonObject{{"schema",1}});
+        QCOMPARE(manager.m_statusKey,QStringLiteral("server.ssh.changed"));QVERIFY(manager.m_sshFacts.isEmpty());
+    }
+    void dockerCopyInventoryAndLiveLanguageChanges() {
+        using namespace Material;
+        const QStringList required{
+            QStringLiteral("server.docker.image-accessible"),
+            QStringLiteral("server.docker.image-label"),
+            QStringLiteral("server.docker.cli"),
+            QStringLiteral("server.docker.choose-cli"),
+            QStringLiteral("server.docker.discover-images"),
+            QStringLiteral("server.docker.cancelled"),
+            QStringLiteral("server.docker.select-image"),
+            QStringLiteral("server.docker.choices-changed"),
+            QStringLiteral("server.docker.resolve-version"),
+            QStringLiteral("server.docker.registry-unavailable"),
+            QStringLiteral("server.docker.metadata-ready"),
+            QStringLiteral("server.docker.metadata-unavailable"),
+            QStringLiteral("server.docker.discovering"),
+            QStringLiteral("server.docker.cli-unavailable"),
+            QStringLiteral("server.docker.metadata-required"),
+            QStringLiteral("server.docker.daemon-unavailable"),
+            QStringLiteral("server.docker.image-unavailable"),
+            QStringLiteral("server.docker.stop-record-invalid"),
+            QStringLiteral("server.docker.record-invalid"),
+            QStringLiteral("server.docker.runtime-changed"),
+            QStringLiteral("server.docker.not-created"),
+            QStringLiteral("server.docker.configuration-invalid"),
+            QStringLiteral("server.docker.creation-failed"),
+            QStringLiteral("server.docker.identity-save-failed"),
+            QStringLiteral("server.docker.identity-invalid"),
+            QStringLiteral("server.docker.state-unavailable"),
+            QStringLiteral("server.docker.ownership-mismatch"),
+            QStringLiteral("server.docker.lifecycle-completed"),
+            QStringLiteral("server.docker.lifecycle-unknown"),
+            QStringLiteral("server.docker.image-summary"),
+            QStringLiteral("server.target.local-process"),
+            QStringLiteral("server.target.local-docker"),
+            QStringLiteral("server.target.ssh-process"),
+            QStringLiteral("server.target.ssh-docker"),
+            QStringLiteral("server.edition.java"),
+            QStringLiteral("server.edition.bedrock-unavailable"),
+            QStringLiteral("server.distribution.vanilla-java"),
+            QStringLiteral("server.filter.java-runtime"),
+            QStringLiteral("server.filter.server-jar"),
+            QStringLiteral("server.filter.docker-cli")};
+        QCOMPARE(required.size(),40);
+        const auto available=Voice::catalogueKeys();
+        for(const auto& key:required) {
+            QVERIFY2(available.contains(key),qPrintable(key));
+            for(int level=Voice::MinLevel;level<=Voice::MaxLevel;++level) {
+                const auto en=Voice::preview(Voice::Language::English,level,level,key).joined();
+                const auto yue=Voice::preview(Voice::Language::Cantonese,level,level,key).joined();
+                QVERIFY(!en.isEmpty());QVERIFY(!yue.isEmpty());QVERIFY(en!=key);QVERIFY(yue!=key);
+                const auto both=Voice::preview(Voice::Language::Bilingual,level,level,key);
+                QCOMPARE(both.primary,en);QCOMPARE(both.secondary,yue);
+            }
+        }
+        const auto original=Voice::language();Voice::setLanguage(Voice::Language::English);
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        manager.m_target->setCurrentIndex(1);
+        manager.m_versions->addItem(QStringLiteral("Fixture version"),QJsonObject{{"id","fixture"}});
+        const QJsonObject image{{"javaMajor",21},{"architecture","amd64"},{"digest","sha256:"+QString(64,QLatin1Char('a'))}};
+        manager.m_images->addItem(QStringLiteral("Before refresh"),image);
+        auto* item=new QListWidgetItem(QStringLiteral("Synthetic entry"),manager.m_inventory);item->setData(Qt::UserRole,QStringLiteral("fixture"));manager.m_inventory->setCurrentItem(item);
+        manager.searchBar()->setText(QStringLiteral("unmatched synthetic query"));
+        manager.statusKey("server.docker.state-unavailable");
+        const auto document=manager.m_document;
+        QSignalSpy targetChanges(manager.m_target,qOverload<int>(&QComboBox::currentIndexChanged));
+        QSignalSpy versionChanges(manager.m_versions,qOverload<int>(&QComboBox::currentIndexChanged));
+        QSignalSpy imageChanges(manager.m_images,qOverload<int>(&QComboBox::currentIndexChanged));
+        for(const auto language:{Voice::Language::English,Voice::Language::Cantonese,Voice::Language::Bilingual}) {
+            Voice::setLanguage(language);
+            QCOMPARE(manager.m_target->currentIndex(),1);QCOMPARE(manager.m_versions->currentIndex(),0);QCOMPARE(manager.m_images->currentIndex(),0);
+            QCOMPARE(manager.m_images->currentData().toJsonObject(),image);QCOMPARE(manager.m_document,document);
+            QCOMPARE(manager.searchBar()->text(),QStringLiteral("unmatched synthetic query"));QCOMPARE(manager.m_inventory->currentItem(),item);QVERIFY(item->isHidden());
+            QCOMPARE(manager.m_target->currentText(),Voice::say(QStringLiteral("server.target.local-docker")));
+            QCOMPARE(manager.m_images->accessibleName(),Voice::say(QStringLiteral("server.docker.image-accessible")));
+            QCOMPARE(manager.m_status->text(),Voice::say(QStringLiteral("server.docker.state-unavailable")));QCOMPARE(manager.m_status->accessibleName(),manager.m_status->text());
+            for(auto it=manager.m_captionKeys.cbegin();it!=manager.m_captionKeys.cend();++it) {
+                const auto expected=Voice::say(it.value());
+                if(auto* label=qobject_cast<QLabel*>(it.key()))QCOMPARE(label->text(),expected);
+                if(auto* button=qobject_cast<QAbstractButton*>(it.key()))QCOMPARE(button->text(),expected);
+            }
+            for(auto it=manager.m_accessibleKeys.cbegin();it!=manager.m_accessibleKeys.cend();++it) {
+                auto expected=Voice::say(it.value());const auto context=it.key()->property("serverBrowseFor").toString();
+                if(!context.isEmpty())expected=Voice::say(context)+QStringLiteral(": ")+Voice::say(QStringLiteral("server.browse"));
+                QCOMPARE(it.key()->accessibleName(),expected);
+            }
+        }
+        QCOMPARE(targetChanges.count(),0);QCOMPARE(versionChanges.count(),0);QCOMPARE(imageChanges.count(),0);
+        Voice::setLanguage(original);
+    }
+    void dockerMetadataAbsoluteDeadlineStopsTrickleAndCancelsOnFinish() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        delete manager.m_network;auto* network=new TrickleNetwork(&manager);manager.m_network=network;
+        manager.m_dockerMetadataDeadlineMs=60;
+        bool completed=false,ok=true;QElapsedTimer elapsed;elapsed.start();
+        manager.dockerMetadata(QUrl(QStringLiteral("https://registry-1.docker.io/synthetic")),{},[&](bool success,const QByteArray&,const QByteArray&){completed=true;ok=success;});
+        QTRY_VERIFY_WITH_TIMEOUT(completed,1000);QVERIFY(!ok);QCOMPARE(network->aborted,1);QVERIFY(network->trickles>=2);
+        QVERIFY(elapsed.elapsed()<1000);
+        completed=false;ok=false;
+        manager.dockerMetadata(QUrl(QStringLiteral("https://registry-1.docker.io/synthetic")),{},[&](bool success,const QByteArray&,const QByteArray&){completed=true;ok=success;});
+        QVERIFY(network->latest);network->latest->finish();QVERIFY(completed);QVERIFY(ok);
+        QTest::qWait(120);QCOMPARE(network->aborted,1);
+    }
     void inventoryLimitsBeforeFileCreation() {
         QTemporaryDir temporary; QVERIFY(temporary.isValid());
         const QString root=temporary.path()+QStringLiteral("/managed");
@@ -108,10 +320,109 @@ private slots:
         QVERIFY(!QFileInfo::exists(target+QStringLiteral("/managed")));
 #endif
     }
+    void dockerRegistryIndexRequiresIntegrityAndCompleteBounds() {
+        const QJsonObject entry{{"mediaType","application/vnd.oci.image.manifest.v1+json"},{"size",2048},{"digest","sha256:"+QString(64,QLatin1Char('a'))},{"platform",QJsonObject{{"os","linux"},{"architecture","amd64"}}}};
+        QJsonObject index{{"schemaVersion",2},{"mediaType","application/vnd.oci.image.index.v1+json"},{"manifests",QJsonArray{entry}}};
+        auto bytes=QJsonDocument(index).toJson(QJsonDocument::Compact);
+        auto digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        const auto images=ServerManager::dockerImages(bytes,digest,21);QCOMPARE(images.size(),1);
+        QVERIFY(ServerManager::validDockerImage(images.first().toObject(),21));
+        QVERIFY(ServerManager::dockerImages(bytes,QByteArray("sha256:")+QByteArray(64,'b'),21).isEmpty());
+        QVERIFY(ServerManager::dockerImages(bytes.left(bytes.size()-1),digest,21).isEmpty());
+        QJsonArray excessive;for(int i=0;i<257;++i)excessive.append(entry);index.insert("manifests",excessive);
+        bytes=QJsonDocument(index).toJson(QJsonDocument::Compact);digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        QVERIFY(ServerManager::dockerImages(bytes,digest,21).isEmpty());
+        index.insert("manifests",QJsonArray{QJsonObject{{"digest",entry.value("digest")}}});bytes=QJsonDocument(index).toJson();digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        QVERIFY(ServerManager::dockerImages(bytes,digest,21).isEmpty());
+    }
+    void dockerImageMetadataAndTypedArguments() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest","sha256:"+QString(64,QLatin1Char('a'))},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        QVERIFY(ServerManager::validDockerImage(image,21));QVERIFY(!ServerManager::validDockerImage(image,17));
+        for(const auto& key:{"provider","source","digest","indexDigest","os","architecture","retrievedAt"}){auto bad=image;bad.insert(key,QStringLiteral("unverified"));QVERIFY(!ServerManager::validDockerImage(bad,21));}
+        QJsonObject record{{"id",QUuid::createUuid().toString(QUuid::WithoutBraces)},{"image",image},{"memoryMiB",2048},{"port",25565}};
+        const auto args=ServerManager::dockerCreateArguments(record,temporary.path(),QStringLiteral("fixture-owner"));
+        QVERIFY(!args.isEmpty());QVERIFY(args.contains(QStringLiteral("never")));QVERIFY(args.contains(QStringLiteral("127.0.0.1:25565:25565/tcp")));
+        QCOMPARE(args.at(args.indexOf(QStringLiteral("--entrypoint"))+1),QStringLiteral("java"));
+        QCOMPARE(args.last(),QStringLiteral("nogui"));QVERIFY(!args.contains(QStringLiteral("--privileged")));
+        QVERIFY(ServerManager::dockerCreateArguments(record,temporary.path()+QStringLiteral(",unexpected"),QStringLiteral("fixture-owner")).isEmpty());
+        auto invalid=record;invalid.insert("port",65536);QVERIFY(ServerManager::dockerCreateArguments(invalid,temporary.path(),QStringLiteral("fixture-owner")).isEmpty());
+        invalid=record;invalid.insert("memoryMiB",1);QVERIFY(ServerManager::dockerCreateArguments(invalid,temporary.path(),QStringLiteral("fixture-owner")).isEmpty());
+    }
+    void dockerVerificationRejectsOfflineAndMismatchedRuntime() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        const QString digest=QStringLiteral("sha256:")+QString(64,QLatin1Char('a'));
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest",digest},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        const QJsonObject record{{"runtime","unused fixture"},{"memoryMiB",2048},{"image",image}};
+        bool called=false,result=true;int requests=0;
+        manager.m_dockerTransport=[&](const QStringList&,const std::function<void(bool,const QByteArray&)>& complete){++requests;complete(false,{});};
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,1);
+        requests=0;called=false;
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            ++requests;
+            if(args.first()==QLatin1String("info")){complete(true,QJsonDocument(QJsonObject{{"Architecture","x86_64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());return;}
+            complete(true,QJsonDocument(QJsonObject{{"RepoDigests",QJsonArray{"eclipse-temurin@"+digest}},{"Os","linux"},{"Architecture","amd64"},{"Config",QJsonObject{{"Env",QJsonArray{"JAVA_VERSION=jdk-17.0.1+1"}}}}}).toJson());
+        };
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,2);
+        requests=0;called=false;
+        manager.m_dockerTransport=[&](const QStringList&,const std::function<void(bool,const QByteArray&)>& complete){++requests;complete(true,QJsonDocument(QJsonObject{{"Architecture","aarch64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());};
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,1);
+    }
+    void dockerOwnershipAndSelectionSafeLifecycle() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        const QString id=QUuid::createUuid().toString(QUuid::WithoutBraces),container(64,QLatin1Char('b'));
+        const QString dir=manager.directoryFor(id);QVERIFY(QDir().mkpath(dir));
+        const QString runtime=temporary.path()+QStringLiteral("/docker.exe");QFile cli(runtime);QVERIFY(cli.open(QIODevice::WriteOnly));cli.write("fixture, never executed");cli.close();
+        const QByteArray jarBytes("synthetic server distribution");QFile jar(dir+QStringLiteral("/server.jar"));QVERIFY(jar.open(QIODevice::WriteOnly));jar.write(jarBytes);jar.close();
+        const QString digest=QStringLiteral("sha256:")+QString(64,QLatin1Char('a'));
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest",digest},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        QJsonObject record{{"id",id},{"name","Synthetic container"},{"edition","java"},{"target","docker"},{"runtime",runtime},{"image",image},{"runtimeVersion","jdk-21.0.9+10"},{"memoryMiB",2048},{"port",25565},{"eulaAccepted",true},{"sha1",QString::fromLatin1(QCryptographicHash::hash(jarBytes,QCryptographicHash::Sha1).toHex())},{"containerId",container},{"futureField",42}};
+        const QJsonObject config{{"Labels",QJsonObject{{"org.keepassxc.material.server",id},{"org.keepassxc.material.inventory",manager.dockerOwner()}}},{"Image","eclipse-temurin@"+digest},{"Entrypoint",QJsonArray{"java"}},{"Cmd",QJsonArray{"-Xmx2048M","-jar","/data/server.jar","nogui"}}};
+        const QJsonObject host{{"Privileged",false},{"NetworkMode","bridge"},{"Memory",2048.0*1024*1024},{"PortBindings",QJsonObject{{"25565/tcp",QJsonArray{QJsonObject{{"HostIp","127.0.0.1"},{"HostPort","25565"}}}}}}};
+        const QJsonObject inspected{{"Id",container},{"Name","/keepassxc-"+id},{"Config",config},{"HostConfig",host},{"Mounts",QJsonArray{QJsonObject{{"Type","bind"},{"Destination","/data"},{"Source",dir}}}}};
+        QVERIFY(manager.validRecord(record));QVERIFY(manager.ownedContainer(inspected,record));
+        for(const auto& key:{"Id","Name","Config","HostConfig","Mounts"}){auto bad=inspected;bad.remove(key);QVERIFY(!manager.ownedContainer(bad,record));}
+        auto foreign=record;foreign.insert("containerId",QString(64,QLatin1Char('c')));QVERIFY(!manager.ownedContainer(inspected,foreign));
+        manager.m_document=QJsonObject{{"schema",1},{"servers",QJsonArray{record}},{"extension","retained"}};manager.rebuildInventory();
+        QList<QStringList> calls;std::function<void(bool,const QByteArray&)> pendingInspect;
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            calls.append(args);
+            if(args.first()==QLatin1String("info")){complete(true,QJsonDocument(QJsonObject{{"Architecture","x86_64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());return;}
+            if(args.first()==QLatin1String("image")){complete(true,QJsonDocument(QJsonObject{{"RepoDigests",QJsonArray{"eclipse-temurin@"+digest}},{"Os","linux"},{"Architecture","amd64"},{"Config",QJsonObject{{"Env",QJsonArray{"JAVA_VERSION=jdk-21.0.9+10"}}}}}).toJson());return;}
+            if(args.value(1)==QLatin1String("inspect")){pendingInspect=complete;return;}
+            complete(true,{});
+        };
+        manager.dockerLifecycle(id,QStringLiteral("restart"));QVERIFY(bool(pendingInspect));
+        auto* other=new QListWidgetItem(QStringLiteral("Other"),manager.m_inventory);other->setData(Qt::UserRole,QStringLiteral("other"));manager.m_inventory->setCurrentItem(other);
+        pendingInspect(true,QJsonDocument(inspected).toJson());
+        QCOMPARE(calls.last(),QStringList({"container","restart",container}));
+        QCOMPARE(manager.m_document.value("servers").toArray().first().toObject().value("futureField").toInt(),42);
+        QVERIFY(manager.saveInventory());manager.loadInventory();QCOMPARE(manager.m_document.value("extension").toString(),QStringLiteral("retained"));
+        calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("stop"));QVERIFY(bool(pendingInspect));
+        auto wrong=inspected;wrong.insert("Id",QString(64,QLatin1Char('d')));pendingInspect(true,QJsonDocument(wrong).toJson());
+        QCOMPARE(calls.size(),1); // Stop inspects ownership directly; no launch verification or mutation.
+        calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("start"));QVERIFY(bool(pendingInspect));
+        ++manager.m_generation;pendingInspect(true,QJsonDocument(inspected).toJson());QCOMPARE(calls.size(),3);
+        auto badPort=inspected;auto changedHost=host;changedHost.insert("PortBindings",QJsonObject{});badPort.insert("HostConfig",changedHost);QVERIFY(!manager.ownedContainer(badPort,record));
+        auto badMount=inspected;badMount.insert("Mounts",QJsonArray{QJsonObject{{"Type","bind"},{"Destination","/data"},{"Source",temporary.path()}}});QVERIFY(!manager.ownedContainer(badMount,record));
+        QVERIFY(QFile::remove(dir+QStringLiteral("/server.jar")));
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            calls.append(args);
+            if(args.first()!=QLatin1String("container")){complete(false,{});return;} // Launch image/capacity discovery unavailable.
+            if(args.value(1)==QLatin1String("inspect")){complete(true,QJsonDocument(inspected).toJson());return;}
+            complete(true,{});
+        };
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("stop"));QCOMPARE(calls.size(),2);QCOMPARE(calls.last(),QStringList({"container","stop",container}));
+        QFile replacementJar(dir+QStringLiteral("/server.jar"));QVERIFY(replacementJar.open(QIODevice::WriteOnly));replacementJar.write("changed distribution");replacementJar.close();
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("stop"));QCOMPARE(calls.size(),2);QCOMPARE(calls.last(),QStringList({"container","stop",container}));
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("restart"));QVERIFY(calls.isEmpty());
+    }
     void targetInventory() {
         const auto targets=ServerManager::targetNames();
         QCOMPARE(targets.size(),4);
-        for(int i=1;i<4;++i) QVERIFY(targets[i].contains(QStringLiteral("unavailable")));
+        QCOMPARE(targets[1],Material::Voice::say(QStringLiteral("server.target.local-docker")));
+        QCOMPARE(targets[2],Material::Voice::say(QStringLiteral("server.target.ssh-process")));
+        QCOMPARE(targets[3],Material::Voice::say(QStringLiteral("server.target.ssh-docker")));
         for(int omitted=0;omitted<4;++omitted) { auto copy=targets;copy.removeAt(omitted);QVERIFY(copy.size()!=4); }
     }
     void namesAndMetadataBoundary() {

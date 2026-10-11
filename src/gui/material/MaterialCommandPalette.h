@@ -105,6 +105,7 @@ namespace Material
             QString haystack;
         };
 
+        void refreshCommands();
         void buildSheet();
         void collect();
         void applyFilter(const QString& query);

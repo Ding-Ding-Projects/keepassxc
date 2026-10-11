@@ -16,6 +16,7 @@
  */
 
 #include "MaterialVoice.h"
+#include "MaterialSchoolMode.h"
 
 #include "MaterialButtons.h"
 #include "MaterialDialog.h"
@@ -200,6 +201,7 @@ namespace Material
                      const QVariantMap& args,
                      Category category)
         {
+            if (SchoolMode::instance()->restricted()) { language=Language::English;englishLevel=MinLevel;cantoneseLevel=MinLevel; }
             const auto it = catalogue().constFind(key);
             if (it == catalogue().constEnd()) {
                 // A missing id is shown as its own name rather than as nothing.
@@ -248,11 +250,13 @@ namespace Material
 
         Language language()
         {
+            if (SchoolMode::instance()->restricted()) return Language::English;
             return languageFromString(config()->get(Config::GUI_VoiceLanguage).toString());
         }
 
         void setLanguage(Language language)
         {
+            if (SchoolMode::instance()->restricted()) return;
             if (language == Voice::language()) {
                 return;
             }
@@ -262,11 +266,13 @@ namespace Material
 
         int funnyLevel(Language language)
         {
+            if (SchoolMode::instance()->restricted()) return MinLevel;
             return qBound(MinLevel, config()->get(levelKey(language)).toInt(), MaxLevel);
         }
 
         void setFunnyLevel(Language language, int level)
         {
+            if (SchoolMode::instance()->restricted()) return;
             const int clamped = qBound(MinLevel, level, MaxLevel);
             if (clamped == funnyLevel(language)) {
                 return;
@@ -277,6 +283,7 @@ namespace Material
 
         void resetToDefaults()
         {
+            if (SchoolMode::instance()->restricted()) return;
             const bool changed = language() != Language::English || funnyLevel(Language::English) != DefaultLevel
                                  || funnyLevel(Language::Cantonese) != DefaultLevel;
             config()->set(Config::GUI_VoiceLanguage, languageToString(Language::English));
@@ -402,7 +409,7 @@ namespace Material
 
         void presentDisclosure(QWidget* parent)
         {
-            if (!parent) {
+            if (!parent || SchoolMode::instance()->restricted()) {
                 return;
             }
             config()->set(Config::GUI_VoiceDisclosureShown, true);

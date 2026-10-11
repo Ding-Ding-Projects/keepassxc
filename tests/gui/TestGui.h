@@ -37,6 +37,8 @@ private slots:
     void cleanup();
     void cleanupTestCase();
 
+    void testCaptureRouteRefreshesExistingSearchLanguage_data();
+    void testCaptureRouteRefreshesExistingSearchLanguage();
     void testSettingsDefaultTabOrder();
     void testCreateDatabase();
     void testMergeDatabase();

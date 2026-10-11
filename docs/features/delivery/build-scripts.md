@@ -12,13 +12,23 @@ The documentation website records its own build-start timestamp once in `build-p
 
 `QT_ROOT_DIR` and `KPXC_VCPKG_ROOT` override the user-scoped toolchain locations.
 
+`build.bat /s -WithGuiTests` includes the native GUI regression executables through
+the same root build route. The switch enables CMake `WITH_GUI_TESTS` only while
+`WithTests` is enabled. Ordinary builds explicitly disable GUI tests, including
+when a reused cache previously enabled them. Building these targets does not run
+them, drive a real interface or establish native acceptance.
+
 `QT_DEPLOY_ROOT_DIR` optionally selects a separate Qt deployment installation while compilation retains `QT_ROOT_DIR`. Before executing its tools, the builder compares every relative file path and SHA-256 in `bin`, `plugins`, `qml` and `translations`, including hidden files, against the compilation installation. Linked/reparse paths are rejected and Qt versions must match. The selected `qtpaths.exe` is placed first on the child PATH, and the selected `windeployqt.exe` is passed explicitly to every CMake configure so a stale cache cannot select another deployment tool. These path checks do not eliminate a hostile concurrent filesystem rename race.
 
 This explicit override can recover a host-specific short-name alias collision without moving a shared installation. First preserve the original installation, create a task-owned full copy in a new path, compare the complete file inventory and hashes, and verify each destination path survives the Win32 short-name/long-name round trip unchanged. Set the override only for that validated copy. The builder does not automatically diagnose collisions or provision this recovery copy.
 
 ## Failure modes
 
-From a plain shell the first compile used to fail on `<assert.h>` because no script exported the MSVC environment; fixed. A build directory whose path contains spaces breaks the readline pkg-config include path; build under a space-free directory.
+Historical failures included missing MSVC environment headers and a readline
+pkg-config include path containing spaces. The current root build passed from a
+checkout path containing spaces; those older failures are retained as history,
+not a current prohibition on such paths. Toolchain, configure, compile, deployment
+and provenance failures propagate through the root entrypoint.
 
 ## Security considerations
 
@@ -28,7 +38,14 @@ Never installs secrets or a signing certificate; per-process execution policy by
 
 Run `build.bat /s` from a fresh shell and confirm `Built application:` and its SHA-256 are printed.
 
-The October 11 source repair is awaiting an exact root-entrypoint run. A separately pinned root build cleared deployment using an externally verified byte-identical copy and generated-cache selection; that diagnostic recovery does not establish that this revised script has passed. Native checks and fresh-machine acceptance remain separate.
+The exact root `build.bat /s` passed at
+`cdb8862bd2637b30464abae8ad13888885def592`, with independently validated staged
+provenance and executable SHA-256
+`d57e0e69e805d59596254d69443cb88e1e0a87abc84c0925e537ec7220b4c0c6`.
+It used the validated Qt deployment-copy override. Its GUI test option was off.
+The new `-WithGuiTests` source path is independently reviewed and PowerShell syntax
+validation passes, but its exact root run and capture-language fixture remain pending.
+Native tests, real interface behavior and fresh-machine acceptance are separate verdicts.
 
 ## Suggested articles
 

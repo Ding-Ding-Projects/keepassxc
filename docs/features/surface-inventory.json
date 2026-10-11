@@ -956,6 +956,24 @@
       "ownership": "native-product",
       "status": "source-present",
       "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers",
+      "platform": "app",
+      "label": "Owned game server inventory and management",
+      "source": "src/gui/material/MaterialServerManager.cpp",
+      "ownership": "native-product",
+      "status": "source-present",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.servers",
+      "platform": "site",
+      "label": "Visitor server-management capability and runtime boundary",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "missing",
+      "evidenceState": "unverified"
     }
   ]
 }

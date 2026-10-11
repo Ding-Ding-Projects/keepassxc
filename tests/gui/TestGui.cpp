@@ -69,6 +69,13 @@
 #include "gui/entry/EntryAttributesModel.h"
 #include "gui/entry/EntryView.h"
 #include "gui/material/MaterialVaultScreen.h"
+#include "gui/material/MaterialCaptureRoute.h"
+#include "gui/material/MaterialVoice.h"
+#include <QFile>
+#include <QLabel>
+#include <QAbstractButton>
+#include <QJsonDocument>
+#include <QJsonObject>
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialShell.h"
 #include "gui/material/MaterialStyle.h"
@@ -3147,4 +3154,82 @@ void TestGui::clickIndex(const QModelIndex& index,
 {
     view->scrollTo(index);
     QTest::mouseClick(view->viewport(), button, stateKey, view->visualRect(index).center());
+}
+
+void TestGui::testCaptureRouteRefreshesExistingSearchLanguage_data()
+{
+    QTest::addColumn<QString>("initialLanguage");
+    QTest::addColumn<QString>("captureLanguage");
+    QTest::newRow("cantonese-to-english") << QStringLiteral("Cantonese") << QStringLiteral("english");
+    QTest::newRow("english-to-cantonese") << QStringLiteral("English") << QStringLiteral("cantonese");
+    QTest::newRow("english-to-bilingual") << QStringLiteral("English") << QStringLiteral("bilingual");
+}
+
+void TestGui::testCaptureRouteRefreshesExistingSearchLanguage()
+{
+    using namespace Material;
+    QFETCH(QString, initialLanguage);
+    QFETCH(QString, captureLanguage);
+    const auto originalLanguage = Voice::language();
+    const auto restoreLanguage = qScopeGuard([originalLanguage] { Voice::setLanguage(originalLanguage); });
+    Voice::setLanguage(Voice::languageFromString(initialLanguage));
+    QList<SearchBar*> bars;
+    for (const auto& id : {QStringLiteral("vault.entries"), QStringLiteral("vault.groups"), QStringLiteral("vault.tags")}) {
+        SearchBar* found = nullptr;
+        for (auto* bar : m_mainWindow->findChildren<SearchBar*>()) {
+            if (bar->searchId() == id) { found = bar; break; }
+        }
+        QVERIFY2(found, qPrintable(id));
+        QVERIFY(!found->guidanceKey().isEmpty());
+        found->setText(QStringLiteral("."));
+        found->setRegexFlags(QStringLiteral("im"));
+        found->setRegexEnabled(true);
+        bars.append(found);
+    }
+    QTemporaryDir temporary;
+    QVERIFY(temporary.isValid());
+    CaptureRoute::Request request;
+    request.screen = QStringLiteral("shell");
+    request.viewport = QSize(1024, 768);
+    request.languageMode = captureLanguage;
+    request.receiptPath = temporary.filePath(QStringLiteral("language-receipt.json"));
+    CaptureRoute::schedule(m_mainWindow.data(), request);
+    QTRY_VERIFY_WITH_TIMEOUT(QFileInfo::exists(request.receiptPath), 5000);
+    QFile receiptFile(request.receiptPath);
+    QVERIFY(receiptFile.open(QIODevice::ReadOnly));
+    const auto receipt = QJsonDocument::fromJson(receiptFile.readAll()).object();
+    QCOMPARE(receipt.value(QStringLiteral("outcome")).toString(), QStringLiteral("ready"));
+    QCOMPARE(Voice::language(), Voice::languageFromString(captureLanguage));
+    QCOMPARE(receipt.value(QStringLiteral("languageMode")).toString(), Voice::languageToString(Voice::language()));
+    for (auto* bar : bars) {
+        QCOMPARE(bar->text(), QStringLiteral("."));
+        QCOMPARE(bar->regexFlags(), QStringLiteral("im"));
+        QVERIFY(bar->isRegexEnabled());
+        const QString labelKey = bar->searchId() == QLatin1String("vault.entries") ? QStringLiteral("search.entries")
+            : bar->searchId() == QLatin1String("vault.groups") ? QStringLiteral("search.groups") : QStringLiteral("search.tags");
+        QCOMPARE(bar->searchLabel(), Voice::say(labelKey));
+        QCOMPARE(bar->placeholder(), Voice::say(labelKey));
+        QCOMPARE(bar->lineEdit()->accessibleName(), Voice::say(labelKey));
+        auto* host = m_mainWindow->findChild<QWidget*>(bar->searchId() + QStringLiteral(".guidance"));
+        QVERIFY(host);
+        auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+        auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+        auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
+        QVERIFY(entry); QVERIFY(done); QVERIFY(panel);
+        const auto expectedEntry = Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ") + bar->searchLabel();
+        QCOMPARE(entry->text(), expectedEntry);
+        QCOMPARE(entry->accessibleName(), expectedEntry);
+        QCOMPARE(done->text(), Voice::say(QStringLiteral("search.guidance.done")));
+        QCOMPARE(done->accessibleName(), done->text());
+        QVERIFY(!panel->isVisible());
+        const auto expectedExplanation = Voice::say(bar->guidanceKey());
+        bool explanationFound = false;
+        for (auto* label : panel->findChildren<QLabel*>()) {
+            if (label->text() == expectedExplanation) {
+                QCOMPARE(label->accessibleName(), expectedExplanation);
+                explanationFound = true;
+            }
+        }
+        QVERIFY(explanationFound);
+    }
 }

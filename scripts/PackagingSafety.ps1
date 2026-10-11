@@ -1,6 +1,12 @@
 # Shared, side-effect-free path and candidate checks for the Windows builders.
 function Get-KpxcHash([string]$Path) {
-    return (Get-FileHash -LiteralPath $Path -Algorithm SHA256 -ErrorAction Stop).Hash.ToLowerInvariant()
+    $stream = [IO.File]::OpenRead($Path)
+    try {
+        $hasher = [Security.Cryptography.SHA256]::Create()
+        try {
+            return ([BitConverter]::ToString($hasher.ComputeHash($stream))).Replace('-', '').ToLowerInvariant()
+        } finally { $hasher.Dispose() }
+    } finally { $stream.Dispose() }
 }
 
 function Resolve-KpxcDirectory([string]$Root, [string]$Path) {

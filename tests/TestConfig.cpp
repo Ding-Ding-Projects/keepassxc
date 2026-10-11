@@ -66,7 +66,7 @@ void TestConfig::testVerificationProfileIgnoresEnvironmentOverrides()
     oldLocal.isNull() ? qunsetenv("KPXC_CONFIG_LOCAL") : qputenv("KPXC_CONFIG_LOCAL", oldLocal);
     QCoreApplication::setApplicationName(oldName);
     QStandardPaths::setTestModeEnabled(oldTestMode);
-    QCOMPARE(actual, expected);
+    QCOMPARE(QDir::fromNativeSeparators(actual), QDir::fromNativeSeparators(expected));
     QVERIFY(!trapWritten);
 }
 

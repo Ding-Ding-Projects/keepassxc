@@ -21,9 +21,12 @@
 
 #include <QCoreApplication>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QList>
 #include <QPointer>
 #include <QRegularExpression>
+#include <QSet>
+#include <QStringDecoder>
 
 #include <algorithm>
 
@@ -46,6 +49,66 @@ namespace
         return key == QLatin1String("__proto__") || key == QLatin1String("constructor")
                || key == QLatin1String("prototype");
     }
+
+    // Inspect encoded member names before QJsonObject can collapse duplicates.
+    // QJsonDocument performs the complete grammar validation afterwards.
+    bool boundedUniqueJson(const QByteArray& bytes)
+    {
+        QStringDecoder utf8(QStringDecoder::Utf8, QStringConverter::Flag::Stateless);
+        const QString text = utf8.decode(bytes);
+        if (utf8.hasError()) {
+            return false;
+        }
+        struct Frame { bool object; QSet<QString> keys; };
+        QList<Frame> frames;
+        for (qsizetype index = 0; index < text.size(); ++index) {
+            const auto character = text.at(index);
+            if (character == QLatin1Char('{') || character == QLatin1Char('[')) {
+                frames.append(Frame{character == QLatin1Char('{'), QSet<QString>{}});
+                if (frames.size() > PersonalVocabulary::MaxDepth) {
+                    return false;
+                }
+            } else if (character == QLatin1Char('}') || character == QLatin1Char(']')) {
+                if (frames.isEmpty() || frames.last().object != (character == QLatin1Char('}'))) {
+                    return false;
+                }
+                frames.removeLast();
+            } else if (character == QLatin1Char('"')) {
+                const auto start = index++;
+                for (; index < text.size(); ++index) {
+                    if (text.at(index) == QLatin1Char('\\')) {
+                        ++index;
+                    } else if (text.at(index) == QLatin1Char('"')) {
+                        break;
+                    }
+                }
+                if (index >= text.size()) {
+                    return false;
+                }
+                QJsonParseError error;
+                const auto token = QJsonDocument::fromJson(
+                    QByteArray("[") + text.mid(start, index - start + 1).toUtf8() + QByteArray("]"), &error);
+                if (error.error != QJsonParseError::NoError || !token.isArray() || token.array().size() != 1) {
+                    return false;
+                }
+                const auto decoded = token.array().first().toString();
+                if (!decoded.isValidUtf16()) {
+                    return false;
+                }
+                auto next = index + 1;
+                while (next < text.size() && text.at(next).isSpace()) {
+                    ++next;
+                }
+                if (next < text.size() && text.at(next) == QLatin1Char(':')) {
+                    if (frames.isEmpty() || !frames.last().object || frames.last().keys.contains(decoded)) {
+                        return false;
+                    }
+                    frames.last().keys.insert(decoded);
+                }
+            }
+        }
+        return frames.isEmpty();
+    }
 } // namespace
 
 namespace PersonalVocabulary
@@ -54,7 +117,11 @@ namespace PersonalVocabulary
     {
         Validation result;
         if (bytes.size() > MaxFileBytes) {
-            result.reason = QStringLiteral("file larger than 64 KiB");
+            result.reason = QStringLiteral("file larger than 256 KiB");
+            return result;
+        }
+        if (!boundedUniqueJson(bytes)) {
+            result.reason = QStringLiteral("invalid UTF-8, Unicode, duplicate members or JSON depth above 8");
             return result;
         }
         QJsonParseError parseError;
@@ -64,7 +131,8 @@ namespace PersonalVocabulary
             return result;
         }
         const QJsonObject root = document.object();
-        if (root.size() != 2 || root.value(QStringLiteral("schemaVersion")).toInt(-1) != 1) {
+        if (root.size() != 2 || !root.value(QStringLiteral("schemaVersion")).isDouble()
+            || root.value(QStringLiteral("schemaVersion")).toDouble() != 1) {
             result.reason = QStringLiteral("schemaVersion must be 1 and the object must carry exactly two members");
             return result;
         }
@@ -75,16 +143,13 @@ namespace PersonalVocabulary
             return result;
         }
         const QJsonObject entries = root.value(entriesKey).toObject();
-        if (entries.size() > MaxEntries) {
-            result.reason = QStringLiteral("more than 500 entries");
-            return result;
-        }
         for (auto it = entries.begin(); it != entries.end(); ++it) {
             if (!it.value().isString()) {
                 result.reason = QStringLiteral("entry values must be strings");
                 return result;
             }
-            if (it.key().isEmpty() || it.key().size() > MaxKeyLength || it.value().toString().size() > MaxValueLength
+            if (it.key().isEmpty() || it.key().toUcs4().size() > MaxKeyLength
+                || it.value().toString().toUcs4().size() > MaxValueLength
                 || unsafeKey(it.key())) {
                 result.reason = QStringLiteral("entry key or value out of bounds");
                 return result;

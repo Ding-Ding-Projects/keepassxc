@@ -2,11 +2,17 @@
 
 ## Current contract reconciliation
 
+- [ ] Verify the updated native personal-vocabulary schema and localized rejection copy, then align the browser schema and prove real local upload, atomic replace, clear and corruption recovery.
+- [ ] Compile and exercise bounded SSH discovery, including synchronous startup completion and stale-attempt rejection. Complete remote lifecycle and version-specific compatibility separately.
+- [ ] Satisfy the expanded capability authority for complete guidance, animation authoring and workflow diagrams with actual implementation and current runtime proof.
+- [x] Expand the current obligation authority to 1,119 contracts and observe 95 focused positive/negative inventory checks passing. This verifies inventory enforcement only, with zero accepted product cells.
+- [ ] Complete reader language acceptance after the 384 source-86e06cd9 captures were inspected. Three surrounding buttons remain English in affected modes; preserve exact source binding when the repair is built.
+
 - [ ] Deliver complete Animation and Transition editors with actual renderer consumers, persistence, undo/history, reduced-motion behavior and timed built evidence. The bounded scalar workspace and two reviewed source repairs are preserved at 6d58ca7b; 49 localized entries are integrated, with native checks still pending.
 - [ ] Deliver optional above-control guided workflows and unique contextual explanations with complete per-element inventories and omission regressions.
 
 - [x] Record the 105 current maintainer contract identities with explicit product-family mappings and scoped exclusions. The focused check passes all 105 omission negatives and duplicate rejection; this is inventory tooling only.
-- [x] Refresh the exact catalogue comparison at instruction-source df119a82: all 105 current identities remain explicitly mapped. This does not accept their implementations.
+- [x] Refresh the exact catalogue comparison against the latest fetched catalogue: all 105 current identities remain explicitly mapped. This does not accept their implementations.
 - [ ] Reconcile every applicable contract with current implementation and accepted per-surface evidence. Existing records contain zero accepted capability evidence rows.
 - [ ] Implement the newly required server creator and manager, including all four target adapters and version-bound rich controls, then verify real workflows.
 - [ ] Refresh every current presentation image from inspected source-bound captures, preserving historical originals and provenance.

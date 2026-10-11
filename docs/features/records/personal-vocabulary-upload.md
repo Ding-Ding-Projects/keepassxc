@@ -50,9 +50,11 @@ cache starts with original wording. Storage failure leaves the existing active d
 Clearing removes the cache before restoring original wording. A generation check prevents an
 older asynchronous upload from undoing clear, replacement or a presentation-mode change.
 
-The native source retained in this reader branch still has historical 64 KiB, 500-entry and
-128/512-character limits. Its old behaviour above is not evidence that the current website or
-newer native task source has passed runtime acceptance.
+The native validator now implements the same byte, depth and Unicode bounds, with dynamic
+entry counts and decoded duplicate-member rejection. For compatibility, the native loader alone
+accepts the historical `replacements` member and normalizes it to `entries` in its cache. The
+website loader accepts only the canonical `entries` object. Neither source repair establishes
+real upload acceptance; current native compilation and browser interaction remain pending.
 
 ## Configuration
 
@@ -62,7 +64,7 @@ state is the validated cache in local configuration; the source path is never pe
 ## Failure modes
 
 - Malformed JSON, a wrong schema version, an extra member, a non-string value, an unsafe key, an
-  oversized file or an out-of-bounds entry: the file is refused with a notification and the previous
+  oversized file, excessive depth, duplicate member or invalid Unicode: the file is refused with a notification and the previous
   cache (if any) stays active.
 - A corrupt cache on disk fails closed: zero entries are active and original wording renders.
 - The cache is revalidated on every reload, so a hand-edited configuration cannot apply partially.
@@ -88,6 +90,9 @@ captures remain bound to their original source.
 - `testpersonalvocabulary` covers the schema and every bound, whole-word longest-first
   application, translator application through `QCoreApplication::translate`, replace, corrupt-cache
   fail-closed and clear restoring original wording.
+- Updated source fixtures cover 750 entries, supplementary Unicode at the exact key/value limits,
+  exact file-byte limits, escaped duplicate keys, invalid UTF-8, unpaired surrogates and excessive
+  depth. Compilation and execution of these new cases remain pending for the current candidate.
 - `node design/parity/vocab-proof.mjs <exe> <repo> <outDir> <json> neutral|private` drives the Settings upload control with a real file on the hidden
   desktop and records load, applied wording, restart persistence, replace, invalid-file refusal and
   clear, keeping the payload out of the retained captures.

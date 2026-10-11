@@ -88,9 +88,16 @@
       "id": "school-mode",
       "surface": "app",
       "title": "School mode (shared, renameable, live)",
-      "status": "missing",
+      "status": "partial",
       "priorStatus": "missing",
-      "evidenceState": "historical-unverified"
+      "evidenceState": "unverified",
+      "note": "Shared-record, credential and owned-settings foundation is source-reviewed with literal-name repair pending refutation. Universal route/translator/copy enforcement and native acceptance remain incomplete.",
+      "implementation": {
+        "file": "src/gui/material/MaterialSchoolMode.cpp"
+      },
+      "test": {
+        "file": "tests/TestMaterialSchoolMode.cpp"
+      }
     },
     {
       "id": "narrator",
@@ -137,16 +144,18 @@
       "surface": "app",
       "title": "Dim sum surprise (10 %, no opt-out)",
       "status": "partial",
-      "note": "Ten percent draw with no opt-out; public-catalog photos and release code name pending",
+      "note": "Startup probability is 10% in current source, with bounded public-photo provider and cache validation. Native/photo acceptance and complete offline randomness remain incomplete.",
       "implementation": {
-        "file": "src/gui/material/MaterialDimSum.h",
-        "anchor": "^\\s*class DimSum$"
+        "file": "src/gui/material/MaterialDimSum.cpp"
       },
       "article": {
         "file": "docs/features/messaging/dim-sum-surprise.md"
       },
       "priorStatus": "partial",
-      "evidenceState": "historical-unverified"
+      "evidenceState": "unverified",
+      "test": {
+        "file": "tests/TestMaterialDimSum.cpp"
+      }
     },
     {
       "id": "release-code-name",
@@ -1809,9 +1818,15 @@
       "id": "element-motion",
       "surface": "app",
       "title": "element motion",
-      "status": "unverified",
+      "status": "partial",
       "evidenceState": "unverified",
-      "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+      "note": "Bounded scalar authoring, persistence and renderer source exists with reviewed solo/import repairs. Full motion workspace and timed native acceptance remain incomplete.",
+      "implementation": {
+        "file": "src/gui/material/MaterialMotionAuthoring.cpp"
+      },
+      "test": {
+        "file": "tests/TestMaterialAppearanceEditor.cpp"
+      }
     },
     {
       "id": "vendored-fonts",
@@ -1836,6 +1851,37 @@
       "status": "unverified",
       "evidenceState": "unverified",
       "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "minecraft-server-manager",
+      "surface": "app",
+      "title": "Minecraft server creator and manager",
+      "status": "partial",
+      "evidenceState": "unverified",
+      "note": "Bounded owned local Java workspace source exists. Other targets, Bedrock and advanced management remain incomplete; native acceptance is pending.",
+      "implementation": {
+        "file": "src/gui/material/MaterialServerManager.cpp"
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json"
+      },
+      "test": {
+        "file": "tests/TestMaterialServerManager.cpp"
+      },
+      "article": {
+        "file": "docs/features/servers/local-java-server-manager.md"
+      }
+    },
+    {
+      "id": "minecraft-server-manager",
+      "surface": "site",
+      "title": "Minecraft server creator and manager",
+      "status": "missing",
+      "evidenceState": "unverified",
+      "note": "No browser-mediated server-management workflow is implemented. Native process control cannot be inferred from documentation.",
+      "article": {
+        "file": "docs/features/servers/local-java-server-manager.md"
+      }
     }
   ],
   "migratedFrom": 1,

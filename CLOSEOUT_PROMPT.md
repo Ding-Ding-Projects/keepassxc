@@ -1,4 +1,4 @@
-# Current implementation continuation
+# Continuation prompt
 
 Continue approved vault-category search and all applicable current product contracts in Ding-Ding-Projects/keepassxc. No new release is authorized. The task remains incomplete.
 

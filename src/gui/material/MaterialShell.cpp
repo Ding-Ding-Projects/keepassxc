@@ -39,6 +39,7 @@
 #include <QPainter>
 #include <QStackedWidget>
 #include <QToolButton>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QResizeEvent>
 #include <QWidgetAction>

@@ -660,10 +660,12 @@
         "app"
       ],
       "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
-      "productFamilies": [],
-      "mappingState": "new-inventory-row-required",
+      "productFamilies": [
+        "minecraft-server-manager"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
       "evidenceState": "incomplete",
-      "note": "No product family or implementation was found in the bounded material-interface and website source search. Record and implement this requirement explicitly."
+      "note": "Explicit server family and native/visitor surface obligations are registered. Only the bounded local Java source unit exists; all runtime and remaining contract evidence stays incomplete."
     },
     {
       "canonicalId": "ollama-suite",

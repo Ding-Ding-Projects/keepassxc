@@ -3,6 +3,7 @@ param(
     [Alias('s')][switch]$Silent,
     [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '2.8.0',
     [bool]$WithTests = $true,
+    [switch]$WithGuiTests,
     [string]$BuildDirectory = 'build-windows',
     [string]$InstallDirectory = 'stage\app'
 )
@@ -106,8 +107,9 @@ if ([IO.Path]::GetFullPath($qtPaths.Source) -ine [IO.Path]::GetFullPath((Join-Pa
 $compilerPath = Initialize-KpxcMsvcEnvironment
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
+$guiTestsOption = if ($WithTests -and $WithGuiTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
-$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot", "-DWINDEPLOYQT_EXE=$(Join-Path $qtDeployRoot 'bin\windeployqt.exe')") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
+$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption","-DWITH_GUI_TESTS=$guiTestsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot", "-DWINDEPLOYQT_EXE=$(Join-Path $qtDeployRoot 'bin\windeployqt.exe')") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
 Invoke-Native cmake $configureArguments
 $parallelArguments = @('--parallel')
 if ($env:CMAKE_BUILD_PARALLEL_LEVEL) {
