@@ -1,4 +1,13 @@
 #include "gui/material/MaterialFileConverter.h"
+#include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialRegexBuilder.h"
+#include "gui/material/MaterialVoice.h"
+#include "core/Config.h"
+#include <QAbstractButton>
+#include <QApplication>
+#include <QListWidget>
+#include <QStandardPaths>
+#include <QScopeGuard>
 #include <QBuffer>
 #include <QFile>
 #include <QFileInfo>
@@ -9,6 +18,57 @@ class TestMaterialFileConverter : public QObject
 {
     Q_OBJECT
 private slots:
+    void cancellationDuringVerification()
+    {
+        using Converter = Material::FileConverter;
+        QTemporaryDir directory; QVERIFY(directory.isValid());
+        const auto source = directory.filePath(QStringLiteral("source.bin"));
+        QFile file(source); QVERIFY(file.open(QIODevice::WriteOnly)); file.write(QByteArray(65537, 'x')); file.close();
+        for (int cancelledPhase : {1, 2}) {
+            std::atomic_bool cancel{false};
+            int reached = 0;
+            const auto destination = directory.filePath(QString::number(cancelledPhase));
+            const auto result = Converter::convertWithObserver(source, destination, Converter::Operation::HexEncode, &cancel,
+                [&](int phase) { reached = phase; if (phase == cancelledPhase) cancel.store(true); });
+            QCOMPARE(reached, cancelledPhase);
+            QCOMPARE(result, Converter::Result::Cancelled);
+            QVERIFY(!QFileInfo::exists(destination));
+        }
+        QVERIFY(file.open(QIODevice::ReadOnly)); QCOMPARE(file.readAll(), QByteArray(65537, 'x'));
+    }
+    void builderFlagsRefreshCategory()
+    {
+        const auto language = Material::Voice::language();
+        const auto restoreLanguage = qScopeGuard([language] { Material::Voice::setLanguage(language); });
+        Material::Voice::setLanguage(Material::Voice::Language::English);
+        Material::FileConverter converter;
+        converter.show();
+        auto* bar = converter.searchBar();
+        auto* categories = converter.findChild<QListWidget*>();
+        QVERIFY(categories);
+        bar->setRegexEnabled(true);
+        bar->setRegexFlags(QStringLiteral("i"));
+        bar->setText(QStringLiteral("^binary"));
+        QVERIFY(!categories->item(7)->isHidden());
+        Material::RegexBuilder builder(&converter);
+        builder.setPattern(bar->text());
+        builder.setFlags(QString());
+        connect(&builder, &Material::RegexBuilder::patternApplied, bar, [&builder, bar](const QString& pattern) {
+            bar->setRegexFlags(builder.flags());
+            bar->setRegexEnabled(true);
+            bar->setText(pattern);
+        });
+        builder.openOverlay();
+        QAbstractButton* apply = nullptr;
+        for (auto* button : builder.findChildren<QAbstractButton*>())
+            if (button->text() == QStringLiteral("Apply to search")) apply = button;
+        QVERIFY(apply);
+        QTRY_VERIFY(apply->isEnabled());
+        apply->click();
+        QCOMPARE(bar->text(), QStringLiteral("^binary"));
+        QVERIFY(bar->regexFlags().isEmpty());
+        QVERIFY(categories->item(7)->isHidden());
+    }
     void vectors()
     {
         using Converter = Material::FileConverter;
@@ -66,5 +126,15 @@ private slots:
         QVERIFY(!QFileInfo::exists(rejected));
     }
 };
-QTEST_GUILESS_MAIN(TestMaterialFileConverter)
+int main(int argc, char** argv)
+{
+    QStandardPaths::setTestModeEnabled(true);
+    qputenv("QT_QPA_PLATFORM", "offscreen");
+    QTemporaryDir profile;
+    if (!profile.isValid()) return 1;
+    QApplication application(argc, argv);
+    Config::createConfigFromFile(profile.filePath(QStringLiteral("roaming.ini")), profile.filePath(QStringLiteral("local.ini")));
+    TestMaterialFileConverter tests;
+    return QTest::qExec(&tests, argc, argv);
+}
 #include "TestMaterialFileConverter.moc"

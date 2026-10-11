@@ -111,6 +111,12 @@ FileConverter::Result FileConverter::transform(QIODevice& input, QIODevice& outp
 
 FileConverter::Result FileConverter::convert(const QString& source, const QString& destination, Operation op, std::atomic_bool* cancel)
 {
+    return convertWithObserver(source, destination, op, cancel, {});
+}
+
+FileConverter::Result FileConverter::convertWithObserver(const QString& source, const QString& destination, Operation op,
+                                                        std::atomic_bool* cancel, const std::function<void(int)>& verificationStarted)
+{
     if (!safePath(source) || !safePath(destination) || QFileInfo::exists(destination)
         || QFileInfo(source).absoluteFilePath() == QFileInfo(destination).absoluteFilePath()) return Result::UnsafePath;
     QFile input(source);
@@ -137,17 +143,21 @@ FileConverter::Result FileConverter::convert(const QString& source, const QStrin
     if (result != Result::Success || !temporary.flush()) return result == Result::Success ? Result::IoFailure : result;
     if (!temporary.seek(0)) return Result::IoFailure;
     HashSink restored;
+    if (verificationStarted) verificationStarted(1);
     result = transform(temporary, restored, inverse(op), cancel);
-    if (result != Result::Success || restored.digest() != sourceHash.result()) return Result::InvalidInput;
+    if (result != Result::Success) return result;
+    if (restored.digest() != sourceHash.result()) return Result::InvalidInput;
     // Reopen the staged file, then validate independently of the writer handle.
     const QString staged = temporary.fileName();
     temporary.close();
     QFile reopened(staged);
     if (!reopened.open(QIODevice::ReadOnly)) return Result::IoFailure;
     HashSink reopenedHash;
+    if (verificationStarted) verificationStarted(2);
     result = transform(reopened, reopenedHash, inverse(op), cancel);
     reopened.close();
-    if (result != Result::Success || reopenedHash.digest() != sourceHash.result()) return Result::InvalidInput;
+    if (result != Result::Success) return result;
+    if (reopenedHash.digest() != sourceHash.result()) return Result::InvalidInput;
     if (cancel && cancel->load()) return Result::Cancelled;
 #ifdef Q_OS_WIN
     const QString from = QDir::toNativeSeparators(staged), to = QDir::toNativeSeparators(destination);
@@ -209,6 +219,7 @@ FileConverter::FileConverter(QWidget* parent) : Screen(parent)
     connect(cancelButton, &QAbstractButton::clicked, this, [this] { m_cancel.store(true); });
     connect(searchBar(), &SearchBar::textChanged, this, &FileConverter::filterCategories);
     connect(searchBar(), &SearchBar::regexToggled, this, &FileConverter::filterCategories);
+    connect(searchBar(), &SearchBar::regexFlagsChanged, this, &FileConverter::filterCategories);
     connect(Voice::notifier(), &Voice::Notifier::changed, this, &FileConverter::refreshCopy);
     refreshCopy();
 }

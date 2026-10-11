@@ -3,6 +3,9 @@
 
 #include "MaterialScreen.h"
 #include <atomic>
+#include <functional>
+
+class TestMaterialFileConverter;
 
 class QComboBox;
 class QLabel;
@@ -24,6 +27,9 @@ public:
     static Result transform(QIODevice& input, QIODevice& output, Operation operation, std::atomic_bool* cancel = nullptr);
     static Result convert(const QString& source, const QString& destination, Operation operation, std::atomic_bool* cancel = nullptr);
 private:
+    friend class ::TestMaterialFileConverter;
+    static Result convertWithObserver(const QString& source, const QString& destination, Operation operation,
+                                      std::atomic_bool* cancel, const std::function<void(int)>& verificationStarted);
     void refreshCopy();
     void filterCategories();
     void start();
