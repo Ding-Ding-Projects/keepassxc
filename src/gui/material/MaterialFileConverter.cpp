@@ -170,7 +170,9 @@ FileConverter::Result FileConverter::convertWithObserver(const QString& source, 
 
 FileConverter::FileConverter(QWidget* parent) : Screen(parent)
 {
+    setSearchVisible(true);
     searchBar()->setIdentity(QStringLiteral("converter.catalog"), say("converter.title"));
+    searchBar()->setCopyKeys(QStringLiteral("converter.title"), QStringLiteral("converter.title"));
     m_categories = new QListWidget(this);
     m_categories->setWordWrap(true);
     for (int i = 0; i < 8; ++i) {

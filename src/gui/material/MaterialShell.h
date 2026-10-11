@@ -124,6 +124,10 @@ namespace Material
                             const QString& label,
                             const QString& sublabel = {});
 
+        /** Refresh this destination in place when shared language or voice changes. */
+        void setDestinationCopyKey(const QString& id, const QString& key);
+        QString destinationFeedback(const QString& id) const;
+
         QString currentDestination() const;
         QWidget* destination(const QString& id) const;
         /** Destination ids in the order they were added. */
@@ -162,6 +166,7 @@ namespace Material
          * to the palette are stale the moment the mode flips.
          */
         void retintCommands();
+        void refreshDestinationCopy();
         void applyBreakpoint(Breakpoint breakpoint);
         void updateCompactSelection();
         void filterMoreDestinations(const QString& query);
@@ -175,6 +180,7 @@ namespace Material
         SnackbarHost* m_snackbars = nullptr;
         QHash<QString, QWidget*> m_pages;
         QStringList m_order;
+        QHash<QString, QString> m_destinationCopyKeys;
         QString m_current;
         /**
          * The two menus the shell's commands hang off. They are never popped

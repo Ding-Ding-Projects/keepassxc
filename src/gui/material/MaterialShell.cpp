@@ -26,6 +26,7 @@
 #include "MaterialRegexSafety.h"
 #include "MaterialTabStrip.h"
 #include "MaterialTheme.h"
+#include "MaterialVoice.h"
 #include "MaterialTitleBar.h"
 #include "MaterialTopAppBar.h"
 
@@ -171,6 +172,7 @@ namespace Material
         QTimer::singleShot(0, this, [this] {
             addDestination(QStringLiteral("servers"), new ServerManager(this), QStringLiteral("dns"), tr("Minecraft servers"), tr("Owned local Java servers"));
         });
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, &Shell::refreshDestinationCopy);
         s_instance = this;
         applyBreakpoint(breakpointFor(width()));
     }
@@ -245,14 +247,14 @@ namespace Material
         // The symbol name has to outlive the call so retintCommands() can build
         // the icon again in the other mode.
         command->setData(symbol);
-        connect(command, &QAction::triggered, this, [this, id, label] {
+        connect(command, &QAction::triggered, this, [this, id] {
             if (id == m_current) {
                 // The row for the destination already on screen is the one a
                 // user reaches for first, and setCurrentDestination() has
                 // nothing to do for it - the palette would close on a command
                 // that did nothing at all. Say where they already are instead.
                 if (m_snackbars) {
-                    m_snackbars->show(tr("Already showing %1.").arg(label));
+                    m_snackbars->show(destinationFeedback(id));
                 }
                 return;
             }
@@ -285,6 +287,31 @@ namespace Material
             emit destinationChanged(id);
         }
         updateCompactSelection();
+    }
+
+    void Shell::setDestinationCopyKey(const QString& id, const QString& key)
+    {
+        if (!m_pages.contains(id) || key.isEmpty()) return;
+        m_destinationCopyKeys.insert(id, key);
+        refreshDestinationCopy();
+    }
+
+    void Shell::refreshDestinationCopy()
+    {
+        for (auto it = m_destinationCopyKeys.cbegin(); it != m_destinationCopyKeys.cend(); ++it) {
+            const QString label = Voice::say(it.value());
+            m_rail->setLabel(it.key(), label);
+            if (auto* command = findChild<QAction*>(QStringLiteral("materialDestination_") + it.key(), Qt::FindDirectChildrenOnly))
+                command->setText(label);
+            if (auto* button = m_bottomButtons.value(it.key())) button->setAccessibleName(label);
+        }
+        if (m_moreSearch) filterMoreDestinations(m_moreSearch->text());
+    }
+
+    QString Shell::destinationFeedback(const QString& id) const
+    {
+        if (m_destinationCopyKeys.contains(id)) return Voice::say(m_destinationCopyKeys.value(id));
+        return tr("Already showing %1.").arg(m_rail->destinationLabel(id));
     }
 
     QString Shell::currentDestination() const

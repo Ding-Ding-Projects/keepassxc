@@ -192,6 +192,23 @@ namespace Material
         update();
     }
 
+    void NavigationRail::setLabel(const QString& id, const QString& label)
+    {
+        const int index = indexOf(id);
+        if (index < 0 || m_destinations.at(index).label == label) return;
+        m_destinations[index].label = label;
+        if (index == m_currentIndex) setAccessibleDescription(label);
+        relayout();
+        updateGeometry();
+        update();
+    }
+
+    QString NavigationRail::destinationLabel(const QString& id) const
+    {
+        const int index = indexOf(id);
+        return index < 0 ? QString() : m_destinations.at(index).label;
+    }
+
     void NavigationRail::setSublabel(const QString& id, const QString& sublabel)
     {
         const int index = indexOf(id);
