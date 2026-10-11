@@ -65,12 +65,34 @@ QString schoolCopy(const QString& source) {
     return Voice::catalogueKeys().contains(key)?Voice::say(key):source;
 }
 QString prompt(const QString& mode,const QString& action) { return mode+QStringLiteral(": ")+schoolCopy(action); }
+class PlainInputDialog : public QInputDialog {
+public:
+    explicit PlainInputDialog(QWidget* parent):QInputDialog(parent) {}
+    void setPlainLabel(const QString& text) {
+        setLabelText(text);
+        configureLabel();
+    }
+protected:
+    void showEvent(QShowEvent* event) override {
+        QInputDialog::showEvent(event);
+        // QInputDialog assigns its label buddy when it prepares the layout.
+        configureLabel();
+    }
+private:
+    void configureLabel() {
+        for(auto* label:findChildren<QLabel*>()) {
+            label->setTextFormat(Qt::PlainText);
+            label->setBuddy(nullptr);
+            label->setAccessibleName(label->text());
+        }
+    }
+};
 QString ask(SchoolMode* mode,QWidget* host,const QString& action,QLineEdit::EchoMode echo,const QString& initial,bool* accepted) {
-    auto* dialog=new QInputDialog(host ? host->window() : nullptr);
+    auto* dialog=new PlainInputDialog(host ? host->window() : nullptr);
     QPointer<QInputDialog> alive(dialog);
-    dialog->setWindowTitle(mode->name());dialog->setLabelText(prompt(mode->name(),action));
+    dialog->setWindowTitle(mode->name());dialog->setPlainLabel(prompt(mode->name(),action));
     dialog->setTextEchoMode(echo);dialog->setTextValue(initial);
-    QObject::connect(mode,&SchoolMode::changed,dialog,[mode,dialog,action]{dialog->setWindowTitle(mode->name());dialog->setLabelText(prompt(mode->name(),action));});
+    QObject::connect(mode,&SchoolMode::changed,dialog,[mode,dialog,action]{dialog->setWindowTitle(mode->name());dialog->setPlainLabel(prompt(mode->name(),action));});
     *accepted=dialog->exec()==QDialog::Accepted;
     if(!alive){*accepted=false;return {};}
     QString value=dialog->textValue();dialog->setTextValue(QString());delete dialog;return value;
@@ -192,7 +214,7 @@ bool SchoolMode::setCredential(QByteArray oldCredential,QByteArray newCredential
 }
 SchoolModeControl::SchoolModeControl(SchoolMode* mode,QWidget* parent):QWidget(parent),m_mode(mode) {
     setObjectName(QStringLiteral("sharedModeControl"));auto* column=new QVBoxLayout(this);
-    column->addWidget(new QLabel(this));auto* detail=new QLabel(this);detail->setWordWrap(true);column->addWidget(detail);
+    auto* title=new QLabel(this);title->setTextFormat(Qt::PlainText);column->addWidget(title);auto* detail=new QLabel(this);detail->setTextFormat(Qt::PlainText);detail->setWordWrap(true);column->addWidget(detail);
     for(const auto* id:{"toggle","rename","credential"}){auto* button=new QPushButton(this);button->setObjectName(QLatin1String(id));column->addWidget(button);}
     connect(findChild<QPushButton*>(QStringLiteral("toggle")),&QPushButton::clicked,this,[this]{
         auto* service=m_mode;QPointer<QWidget> host(this);
@@ -220,6 +242,6 @@ void SchoolModeControl::refresh() {
     auto labels=findChildren<QLabel*>(QString{},Qt::FindDirectChildrenOnly);labels[0]->setText(m_mode->name());
     labels[1]->setText(m_mode->name()+QStringLiteral(": ")+schoolCopy(!m_mode->available()?QStringLiteral("Unavailable."):m_mode->restricted()?QStringLiteral("Active."):QStringLiteral("Inactive."))+QLatin1Char(' ')+schoolCopy(m_mode->status())+QLatin1Char(' ')+schoolCopy(QStringLiteral("This is a convenience lock, not security. Deleting the shared local record intentionally resets it.")));
     setAccessibleName(m_mode->name());setAccessibleDescription(labels[1]->text());
-    for(const auto* id:{"toggle","rename","credential"}){auto* b=findChild<QPushButton*>(QLatin1String(id));const QString action=QLatin1String(id)==QLatin1String("toggle")?(m_mode->restricted()?schoolCopy(QStringLiteral("Unlock ")):schoolCopy(QStringLiteral("Enable "))):QLatin1String(id)==QLatin1String("rename")?schoolCopy(QStringLiteral("Rename ")):schoolCopy(QStringLiteral("Set or replace the local credential for "));b->setText(action+m_mode->name());b->setAccessibleName(b->text());b->setEnabled(m_mode->available());}
+    for(const auto* id:{"toggle","rename","credential"}){auto* b=findChild<QPushButton*>(QLatin1String(id));const QString action=QLatin1String(id)==QLatin1String("toggle")?(m_mode->restricted()?schoolCopy(QStringLiteral("Unlock ")):schoolCopy(QStringLiteral("Enable "))):QLatin1String(id)==QLatin1String("rename")?schoolCopy(QStringLiteral("Rename ")):schoolCopy(QStringLiteral("Set or replace the local credential for "));const QString raw=action+m_mode->name();QString visible=raw;visible.replace(QLatin1Char('&'),QStringLiteral("&&"));b->setText(visible);b->setAccessibleName(raw);b->setEnabled(m_mode->available());}
 }
 }

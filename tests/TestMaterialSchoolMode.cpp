@@ -1,3 +1,7 @@
+#include <QLabel>
+#include <QPushButton>
+#include <QInputDialog>
+#include <QTimer>
 /* Copyright (C) 2026 KeePassXC Team <team@keepassxc.org>
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "gui/material/MaterialSchoolMode.h"
@@ -95,6 +99,58 @@ private slots:
         QVERIFY(!m_mode->available());QVERIFY(m_mode->restricted());QCOMPARE(m_mode->name(),QStringLiteral("Quiet work"));QVERIFY(!m_mode->status().isEmpty());
         QFile parent(m_profile.filePath(QStringLiteral("not-a-directory")));QVERIFY(parent.open(QIODevice::WriteOnly));parent.close();
         SchoolMode unavailable(parent.fileName()+QStringLiteral("/state.json"));QVERIFY(!unavailable.available());QVERIFY(unavailable.restricted());
+    }
+    void chosenNamesRenderLiterallyAcrossUpdates() {
+        const QByteArray credential("synthetic-fixture-only");
+        QVERIFY(m_mode->setCredential({},credential));
+        SchoolModeControl control(m_mode.data());
+        const QStringList names{QStringLiteral("<b>Quiet</b>"),QStringLiteral("Work & Study")};
+        for(const auto& name:names) {
+            QVERIFY(m_mode->rename(name,credential));
+            QCOMPARE(m_mode->name(),name);
+            QCOMPARE(control.accessibleName(),name);
+            auto labels=control.findChildren<QLabel*>(QString{},Qt::FindDirectChildrenOnly);
+            QCOMPARE(labels.size(),2);
+            QCOMPARE(labels[0]->text(),name);
+            for(auto* label:labels)QCOMPARE(label->textFormat(),Qt::PlainText);
+            for(auto* button:control.findChildren<QPushButton*>()) {
+                const auto raw=button->accessibleName();
+                QVERIFY(raw.endsWith(name));
+                QString escaped=raw;escaped.replace(QLatin1Char('&'),QStringLiteral("&&"));
+                QCOMPARE(button->text(),escaped);
+                QVERIFY(button->shortcut().isEmpty());
+            }
+            QVERIFY(m_mode->enable());
+            QCOMPARE(control.accessibleName(),name);
+            for(auto* button:control.findChildren<QPushButton*>()) {
+                const auto raw=button->accessibleName();
+                QVERIFY(raw.endsWith(name));
+                QString escaped=raw;escaped.replace(QLatin1Char('&'),QStringLiteral("&&"));
+                QCOMPARE(button->text(),escaped);
+                QVERIFY(button->shortcut().isEmpty());
+            }
+            bool inspected=false;
+            QTimer::singleShot(0,&control,[&]{
+                auto* dialog=qobject_cast<QInputDialog*>(QApplication::activeModalWidget());
+                if(!dialog)return;
+                inspected=dialog->windowTitle()==name && !dialog->findChildren<QLabel*>().isEmpty();
+                for(auto* label:dialog->findChildren<QLabel*>())
+                    inspected=inspected && label->textFormat()==Qt::PlainText && !label->buddy()
+                        && label->text().startsWith(name+QStringLiteral(": "));
+                const QString renamed=name+QStringLiteral(" updated");
+                inspected=inspected && m_mode->rename(renamed,credential);
+                inspected=inspected && dialog->windowTitle()==renamed && control.accessibleName()==renamed;
+                for(auto* label:dialog->findChildren<QLabel*>())
+                    inspected=inspected && label->textFormat()==Qt::PlainText && !label->buddy()
+                        && label->text().startsWith(renamed+QStringLiteral(": "));
+                dialog->reject();
+            });
+            control.findChild<QPushButton*>(QStringLiteral("toggle"))->click();
+            QVERIFY(inspected);
+            QVERIFY(m_mode->restricted());
+            QVERIFY(m_mode->unlock(credential));
+            QCOMPARE(control.accessibleName(),name+QStringLiteral(" updated"));
+        }
     }
     void effectiveVoicePreservesPreferencesAndSettingsOmitControls() {
         Voice::setLanguage(Voice::Language::Bilingual);Voice::setFunnyLevel(Voice::Language::English,5);Voice::setFunnyLevel(Voice::Language::Cantonese,4);
