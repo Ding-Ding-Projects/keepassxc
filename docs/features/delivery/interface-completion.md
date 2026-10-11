@@ -9,11 +9,11 @@ installed behavior, accessibility, or genuine current screenshots.
 
 [`scripts/feature-inventory-contract.mjs`](../../../scripts/feature-inventory-contract.mjs)
 is the hand-maintained authority, independent of runtime discovery. It names 90
-features, 108 distinct surfaces, and 1,045 capability subcontracts. Removing a runtime
+features, 108 distinct surfaces, and 1,119 capability subcontracts. Removing a runtime
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 112,860 surface/capability cells and 9,720 surface/feature
+The required matrix has 120,852 surface/capability cells and 9,720 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
 still needs applicable interaction and evidence. A reviewed capture may support

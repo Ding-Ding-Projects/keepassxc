@@ -8,7 +8,7 @@ The existing feature inventory has 178 rows across 89 families and two aggregate
 
 Recorded application rows comprise 49 missing, 37 partial and 3 unverified. Recorded website rows comprise 85 missing, 1 partial and 3 unverified. These are historical inventory states, not a fresh implementation verdict. Current search work can supersede older missing rows only after its actual implementation and required evidence are incorporated.
 
-The current extension registers a server-management family with 47 explicit capability requirements and native/visitor surface records. The resulting inventory has 90 families, 180 platform rows, 108 surfaces and 1,045 capability contracts. The sparse accepted-evidence ledger still has zero rows. Historical assessment metadata remains historical; new source units do not retroactively verify it.
+The server-management extension registered 47 explicit capability requirements and native/visitor surface records, bringing the previous inventory to 90 families, 180 platform rows, 108 surfaces and 1,045 capability contracts. The follow-up obligation refresh expands vocabulary, guidance, motion and diagram requirements to 1,119 contracts and 120,852 required surface/capability cells, with the same 90 families and 108 surfaces. The sparse accepted-evidence ledger still has zero rows. Historical assessment metadata remains historical; new source units do not retroactively verify it.
 
 ## Strengthened requirements in the current review
 
@@ -33,7 +33,7 @@ The current source also adds a [bounded motion authoring workspace](../interface
 
 The catalogue was fetched and reconciled again during the October 11 refresh. An independent exact comparison passed for all 105 identities, including the five public identifier projections. No new identity was missing from the crosswalk. Requirements strengthened within existing identities still require individual implementation and acceptance.
 
-The follow-up independent review also found that the generic guided-form and element-motion capability rows understate their current contracts, and the capability authority does not enumerate workflow diagrams. These inventory gaps remain incomplete. The current native vocabulary source updates bounds and parsing, and corrects localized rejection copy; its added fixtures and real upload workflow are not yet verified. The browser schema repair is a separate pending source unit.
+The follow-up independent review found that the generic guided-form and element-motion capability rows understated their current contracts, and the capability authority did not enumerate workflow diagrams. The refreshed authority explicitly names those requirements and their omission regressions. It also replaces the historical one-percent/off-switch startup obligations with the current ten-percent draw and retired-opt-out migration; the old requirements are preserved here as superseded history, not current acceptance criteria. Implementation and runtime gaps remain incomplete. The current native vocabulary source updates bounds and parsing, and corrects localized rejection copy; its added fixtures and real upload workflow are not yet verified. The browser schema repair is a separate pending source unit.
 
 Several repository delivery contracts have no corresponding family in the current UI-focused capability inventory. Their empty mapping is an explicit requirement for a new assessed row, not an exemption. Shared-status-service-only, instruction-corpus-only and Roblox-game-only requirements have individual exclusion reasons in the crosswalk.
 

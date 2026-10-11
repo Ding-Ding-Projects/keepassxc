@@ -33,7 +33,8 @@ check('complete registries have valid schema but incomplete product', () => {
 
 // Independent examples pin the required behaviors, not only registry length.
 const requiredCapabilities = [
-  'dim-sum-surprise/one-percent-per-launch-draw', 'dim-sum-surprise/persisted-off-switch',
+  'dim-sum-surprise/ten-percent-per-launch-draw', 'dim-sum-surprise/retired-opt-out-migration',
+  'dim-sum-surprise/no-opt-out',
   'dim-sum-surprise/at-most-once-per-launch', 'dim-sum-surprise/no-mid-task-flow',
   'school-mode/live-propagation', 'school-mode/rename-everywhere',
   'narrator-voice-pickers/stable-identity', 'scheduled-settings/dst',
@@ -58,6 +59,21 @@ const requiredCapabilities = [
   'tab-searches/current-strip', 'tab-searches/each-group', 'tab-searches/group-names',
   'tab-searches/all-owned-windows', 'in-app-version-provenance/front-screen-before-navigation',
   'status-hub/verified-reply-route', 'element-motion/every-rendered-element',
+  'personal-vocabulary-upload/utf8-256kib', 'personal-vocabulary-upload/depth-eight',
+  'personal-vocabulary-upload/dynamic-entry-inventory', 'personal-vocabulary-upload/key-160-codepoints',
+  'personal-vocabulary-upload/value-1000-codepoints', 'personal-vocabulary-upload/compatible-surface-schema',
+  'guided-forms/optional-above-control-entry', 'guided-forms/complexity-classification',
+  'guided-forms/authoritative-concept-id', 'guided-forms/all-editable-text-clear',
+  'guided-forms/dismissed-guidance-stays-dismissed', 'guided-forms/omission-negative',
+  'element-motion/animation-transition-tab', 'element-motion/renderer-property-inventory',
+  'element-motion/actual-renderer-consumers', 'element-motion/trigger-enumeration',
+  'element-motion/timed-render-evidence', 'element-motion/missing-consumer-negative',
+  'readme-captures/generated-explanatory-imagery', 'readme-captures/interactive-animated-workflow-diagrams',
+  'readme-captures/accessible-diagram-equivalent', 'readme-captures/stale-current-image-negative',
+  'readme-captures/diagram-pause-replay', 'readme-captures/responsive-workflow-step-mode-configuration',
+  'readme-captures/illustrative-state-disclosure', 'readme-captures/readme-link-to-active-diagram',
+  'guided-forms/wizard-direct-permission-parity', 'guided-forms/wizard-direct-confirmation-parity',
+  'guided-forms/wizard-direct-action-parity', 'guided-forms/wizard-direct-history-parity',
 ];
 // Independently transcribed from concrete addPage/addSettingsPage registrations.
 // This list must not be generated from the production registry being tested.
@@ -83,6 +99,14 @@ check('handwritten acceptance examples remain registered', () => {
     'app.passkey.clipboard', 'app.attachments.preview', 'app.extension.start', 'app.extension.progress',
     'app.extension.complete', 'site.overview', 'site.downloads', 'site.docs', 'site.changelog',
     'site.settings', 'site.tabs', 'site.dialogs']) assert(SURFACE_CONTRACTS.some(s => s.id === id), id);
+});
+check('updated contract examples fail closed when their inventory contract disappears', () => {
+  for (const id of requiredCapabilities) {
+    const candidate = structuredClone(baseline);
+    candidate.capabilities.contracts = candidate.capabilities.contracts.filter(contract => contract.id !== id);
+    assert(validateSchema(candidate).includes(`capabilities: required contract absent ${id}`), `missing contract did not fail: ${id}`);
+  }
+  assert.deepEqual(validateSchema(baseline), []);
 });
 // Independently transcribed from ReportsDialog and the two QWizard constructors,
 // including the ReportsDialog editor stack page. Family rows cannot stand in for them.

@@ -502,7 +502,13 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/one-percent-per-launch-draw",
+      "id": "dim-sum-surprise/ten-percent-per-launch-draw",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/at-most-once-per-launch",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -521,6 +527,12 @@
     },
     {
       "id": "dim-sum-surprise/no-update-flow",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-mid-task-flow",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -556,7 +568,13 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/persisted-off-switch",
+      "id": "dim-sum-surprise/retired-opt-out-migration",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-opt-out",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -677,6 +695,66 @@
     },
     {
       "id": "personal-vocabulary-upload/export-history-log-exclusion",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/utf8-256kib",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/depth-eight",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/dynamic-entry-inventory",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/key-160-codepoints",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/value-1000-codepoints",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/decoded-duplicate-members",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/invalid-unicode-rejection",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/compatible-surface-schema",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/stale-upload-cancellation",
+      "feature": "personal-vocabulary-upload",
+      "section": "Languages",
+      "persistenceRequired": true
+    },
+    {
+      "id": "personal-vocabulary-upload/storage-failure-atomicity",
       "feature": "personal-vocabulary-upload",
       "section": "Languages",
       "persistenceRequired": true
@@ -4474,6 +4552,138 @@
       "persistenceRequired": false
     },
     {
+      "id": "guided-forms/per-element-inventory",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/optional-above-control-entry",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/exact-origin-target",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/direct-action-retained",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/complexity-classification",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/validated-step-progression",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/back-preserves-input",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/cancellation-recovery",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/actual-operation-result",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/authoritative-concept-id",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/unique-contextual-explanation",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/defaults-effects-examples-validation",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/help-search-palette-navigation",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/unsupported-reason",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/all-editable-text-clear",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/dismissed-guidance-stays-dismissed",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/duplicate-generic-help-negative",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/omission-negative",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/wizard-direct-permission-parity",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/wizard-direct-confirmation-parity",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/wizard-direct-action-parity",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
+      "id": "guided-forms/wizard-direct-history-parity",
+      "feature": "guided-forms",
+      "section": "Guided forms",
+      "persistenceRequired": false
+    },
+    {
       "id": "novice-expert-controls/same-values",
       "feature": "novice-expert-controls",
       "section": "Guided forms",
@@ -5710,6 +5920,96 @@
       "persistenceRequired": false
     },
     {
+      "id": "readme-captures/workflow-image-inventory",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/generated-explanatory-imagery",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/accessible-diagram-equivalent",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/interactive-animated-workflow-diagrams",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/keyboard-touch-diagram-controls",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/reduced-motion-diagram-equivalent",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/diagram-source-provenance",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/diagram-omission-negative",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/diagram-pause-replay",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/responsive-workflow-step-mode-configuration",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/illustrative-state-disclosure",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/readme-link-to-active-diagram",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/current-image-reference-inventory",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/stale-current-image-negative",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
+      "id": "readme-captures/historical-original-preservation",
+      "feature": "readme-captures",
+      "section": "Evidence and documentation",
+      "persistenceRequired": false
+    },
+    {
       "id": "screen-recording/real-built-window",
       "feature": "screen-recording",
       "section": "Evidence and documentation",
@@ -5980,15 +6280,159 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/at-most-once-per-launch",
-      "feature": "dim-sum-surprise",
-      "section": "Dim sum",
+      "id": "element-motion/animation-transition-tab",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/no-mid-task-flow",
-      "feature": "dim-sum-surprise",
-      "section": "Dim sum",
+      "id": "element-motion/renderer-property-inventory",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/layer-state-pseudo-state-scope",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/track-crud",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/keyframe-crud",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/timeline-editing",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/duration-delay-iterations",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/direction-fill-composition",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/easing-curves",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/playback-seek-loop",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/solo-mute",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/trigger-enumeration",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/trigger-threshold-debounce",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/sequencing-priority-inheritance",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/cancellation-reversal-reentrancy",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/actual-renderer-consumers",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/unknown-import-preservation",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/authored-reduced-values-separated",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/per-track-state-global-reset",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/motion-undo-history-presets",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/portable-motion-roundtrip",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/numeric-keyboard-alternatives",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/motion-search-regex-palette",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/timed-render-evidence",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/bounded-preview-teardown",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
+      "persistenceRequired": true
+    },
+    {
+      "id": "element-motion/missing-consumer-negative",
+      "feature": "element-motion",
+      "section": "Appearance and motion",
       "persistenceRequired": true
     },
     {

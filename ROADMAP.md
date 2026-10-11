@@ -4,8 +4,9 @@
 
 - [ ] Verify the updated native personal-vocabulary schema and localized rejection copy, then align the browser schema and prove real local upload, atomic replace, clear and corruption recovery.
 - [ ] Compile and exercise bounded SSH discovery, including synchronous startup completion and stale-attempt rejection. Complete remote lifecycle and version-specific compatibility separately.
-- [ ] Expand capability authority for complete guidance, animation authoring and workflow diagrams, retaining zero acceptance for missing runtime proof.
-- [ ] Inspect all 384 reader captures at source 86e06cd9 and preserve their exact source binding when later browser changes are built.
+- [ ] Satisfy the expanded capability authority for complete guidance, animation authoring and workflow diagrams with actual implementation and current runtime proof.
+- [x] Expand the current obligation authority to 1,119 contracts and observe 95 focused positive/negative inventory checks passing. This verifies inventory enforcement only, with zero accepted product cells.
+- [ ] Complete reader language acceptance after the 384 source-86e06cd9 captures were inspected. Three surrounding buttons remain English in affected modes; preserve exact source binding when the repair is built.
 
 - [ ] Deliver complete Animation and Transition editors with actual renderer consumers, persistence, undo/history, reduced-motion behavior and timed built evidence. The bounded scalar workspace and two reviewed source repairs are preserved at 6d58ca7b; 49 localized entries are integrated, with native checks still pending.
 - [ ] Deliver optional above-control guided workflows and unique contextual explanations with complete per-element inventories and omission regressions.
