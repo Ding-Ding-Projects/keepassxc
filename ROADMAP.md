@@ -9,7 +9,7 @@
 - [ ] Reconcile every applicable contract with current implementation and accepted per-surface evidence. Existing records contain zero accepted capability evidence rows.
 - [ ] Implement the newly required server creator and manager, including all four target adapters and version-bound rich controls, then verify real workflows.
 - [ ] Refresh every current presentation image from inspected source-bound captures, preserving historical originals and provenance.
-- [ ] Reconcile startup surprise behavior with the current 10% probability, no opt-out, public photo source and School-mode suppression requirements. Prior roadmap descriptions are historical and do not override this requirement.
+- [ ] Complete startup surprise reconciliation: 10% and retired opt-out source are preserved; the bounded public-photo provider and cache repairs are source-reviewed at c178bc92. Native execution, actual photo/cache acceptance, complete offline randomness and School-mode suppression remain incomplete. Historical descriptions retain their original scope.
 
 ## Preservation checkpoint, October 4, 2026
 

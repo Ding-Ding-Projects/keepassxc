@@ -4,7 +4,7 @@ Feature id: `dim-sum-surprise` · Category: Messages, language and voice
 
 ## Behaviour
 
-An eligible launch draws once from 10 equally likely values (10%). Only zero selects a randomly chosen dish. The card names the dish in English and Cantonese, uses bundled SVG artwork, appears without taking keyboard focus, and dismisses after six seconds. Startup never waits for it.
+An eligible launch draws once from 10 equally likely values (10%). Only zero selects a randomly chosen dish. The card names the dish in English and Cantonese, uses a validated published public PNG photograph, appears without taking keyboard focus, and dismisses after six seconds. Startup never waits for it.
 
 `Material::DimSum::beginStartup()` captures first-run eligibility before database-opening flows can populate recent history. A profile with no recent database history is conservatively treated as a first run. Enabled automatic restoration with any nonempty remembered tab or last-active database also excludes that launch, because its embedded unlock form is a credential flow. Disabled restoration and empty records do not exclude an otherwise eligible launch. The card is also excluded when the application starts minimized, opens a command-line database, receives keyboard, pointer, wheel or touch input, opens a modal dialog or popup, reports an error or warning, or enters the update workflow. A message bar changing from information to error or warning immediately cancels the card even when that bar was already visible. Ordinary informational and success messages do not cancel the draw.
 
@@ -20,7 +20,7 @@ Windows notification quiet state and minimized startup suppress presentation. Th
 
 ## Security and privacy
 
-All dish names and images come from `:/dimsum/dimsum.json` and the bundled `:/dimsum/` assets. There is no network request, telemetry or database-content lookup for this feature. The card contains only dish information. Error, update and user-interaction suppression hides it immediately rather than delaying that exclusion for an animation.
+Dish names and image specifications come from the public photo catalogue, whose Git blob digest is checked against retrieved revision metadata. Images resolve by exact catalogue filename against completely traversed normal `catalog-v1*` release asset pages. The application performs bounded public HTTPS requests and stores a private application-data cache. There is no database-content lookup or application telemetry. Legacy bundled SVGs are no longer compiled or used as fallback. The card contains only dish information. Error, update and user-interaction suppression hides it immediately rather than delaying that exclusion for an animation.
 
 ## Verification
 
@@ -34,7 +34,13 @@ The integrated source `7cb43f654ef2cc908a76a5a739bddfda2aa29c52` passed 167 isol
 
 The 10% denominator and removal of the opt-out are source changes awaiting focused native execution. Historical results above apply only to their named older source, which used a 1% draw and an off switch.
 
-The current runtime still reads legacy bundled SVG dish metadata. This does not satisfy the current public-photo contract. Migration must resolve authoritative bilingual names from `https://raw.githubusercontent.com/Ding-Ding-Projects/dim-sum-photos/main/catalog/index.json` and photos from that repository's published `catalog-v1*` release assets, using an application-data cache where needed. No photos or replacement catalog were added in this reconciliation. The public-source transport, cache provenance, missing-photo behavior and removal of the legacy authority remain incomplete.
+The public-photo provider is implemented source at `c178bc929d5ee9d05730d08867731907a9ebc7d6`, following `6691cd2932501b3a6fdb56a064321bfca46b0076`. It resolves authoritative bilingual names from `https://raw.githubusercontent.com/Ding-Ding-Projects/dim-sum-photos/main/catalog/index.json` and actual published release assets. No photos or replacement catalogue are vendored into this application. Native compilation, synthetic provider checks, actual discovery, image/cache interaction and inspected photo presentation remain unverified.
+
+Online winning launches resolve a fresh random eligible dish. If discovery fails, a previously validated single-photo cache can be reused for at most 24 hours; offline selection is therefore not a fresh draw from the complete catalogue. Cache receipts retain minimum dimensions, source revision, actual asset URL, official digest when supplied, local digest, retrieval time and discovery coverage counts. Missing or ambiguous assets remain counted separately. A missing official digest has the explicitly weaker HTTPS/size/local-hash trust state. A malformed receipt, changed authoritative digest, stale timestamp, invalid name or inconsistent coverage is rejected.
+
+Transport has a 45-second total deadline, 10-second request timeout, 100-request and 64 MiB aggregate limits, with 16 MiB catalogue, 4 MiB metadata-page and 8 MiB photo limits. Incomplete pagination fails the whole discovery. PNG dimensions are validated before decode; the synchronous decode temporarily narrows Qt's process-wide allocation budget to at most 64 MiB, restores it afterward, and checks decoded dimensions and allocation. This is not a concurrency-isolated per-reader limit. Local path checks reject linked ancestors, but do not claim protection from concurrent rename races.
+
+Focused provider cases are `publicPhotosAreNamedAndNoLegacyFallback`, `providerRejectsMissingAndAmbiguousAssets`, `providerValidatesPngDigestDimensionsAndNoCacheFallback` and `providerCacheRetainsDimensionsAndCoverage` in `TestMaterialDimSum.cpp`. They use in-memory synthetic images and metadata. Their native execution remains pending. Historical passing results above do not cover this provider.
 
 School mode is not implemented. Its required suppression of dim sum remains incomplete and is not inferred from quiet-mode suppression. Native rendering, focus, motion, supported geometry and language acceptance remain unverified for these changes.
 
