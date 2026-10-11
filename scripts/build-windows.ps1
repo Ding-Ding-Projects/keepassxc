@@ -4,12 +4,17 @@ param(
     [ValidatePattern('^\d+\.\d+\.\d+$')][string]$Version = '2.8.0',
     [bool]$WithTests = $true,
     [switch]$WithGuiTests,
+    [switch]$WebsiteOnly,
     [string]$BuildDirectory = 'build-windows',
     [string]$InstallDirectory = 'stage\app'
 )
 
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
+if ($WebsiteOnly) {
+    . (Join-Path $PSScriptRoot 'build-website.ps1') -FunctionsOnly
+    exit (Invoke-KpxcWebsiteBuild -Root $root -Silent:$Silent)
+}
 . (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
 . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
 $build = Resolve-KpxcDirectory $root $BuildDirectory
