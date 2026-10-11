@@ -18,6 +18,7 @@ const cantonese = {
   regexTitle:'文件搜尋運算式',regexIntro:'使用 JavaScript 正規運算式，最多 300 個字元，喺獨立 worker 執行，時限為 250 毫秒。',plainSearch:'改用純文字',cancel:'取消',apply:'套用',
 };
 const extra = {
+  offlineDocumentationSource:['Offline documentation source','離線文件來源'],featureDocumentation:['Feature documentation','功能文件'],externalEditorDocumentation:['External editor documentation','外部編輯器文件'],
   unavailable:['Version and timestamp unavailable.','版本同時間未能取得。'],
   website:['Website','網頁'],updated:['Updated','更新時間'],release:['Released version','已發佈版本'],source:['Source commit','來源 commit'],packageHash:['Package SHA-256','套件 SHA-256'],installerSize:['Installer bytes','安裝程式位元組'],
   search:['Search','搜尋'],language:['Language','語言'],pattern:['Pattern','模式'],flags:['Flags','旗標'],plain:['Plain text','純文字'],matches:['matching articles','篇符合文章'],noMatch:['No matching articles.','冇符合嘅文章。'],
@@ -125,6 +126,14 @@ function applyTabs(){
   const status=$('#tab-group-status');if(status)status.textContent=state.tabs.order.map(id=>`${state.tabs.pinned.includes(id)?'★ ':''}${panelName(id)}${state.tabs.groups[id]?` (${state.tabs.groups[id]})`:''}`).join(' · ');
 }
 function activateTab(id){const index=state.tabs.order.indexOf(id);if(index>=0)selectPanel(index,true);}
+function openPersonalVocabularyPicker(event){
+ if(!event.isTrusted||state.school)return false;
+ const picker=$('#personal-vocabulary-file');
+ if(!picker)return false;
+ picker.value='';
+ picker.click();
+ return true;
+}
 function renderVocabularyControls(){
  const mode=state.school?'en':state.language;
  const copy=(en,yue)=>mode==='both'?`${en} · ${yue}`:mode==='yue'?yue:en;
@@ -148,6 +157,7 @@ function addSettingControls(){
   density.addEventListener('change',()=>{state.appearance.density=density.value;applyAppearance();persist('Density saved.');});accent.addEventListener('input',()=>{state.appearance.accent=accent.value;applyAppearance();persist('Seed color saved.');});font.addEventListener('change',()=>{state.appearance.font=font.value==='system'?'system-ui':font.value;applyAppearance();persist('Font choice saved.');});[[fontScale,'scale',100],[radius,'radius',1],[spacing,'spacing',1]].forEach(([control,key,divisor])=>control.addEventListener('input',()=>{state.appearance[key]=Number(control.value)/divisor;updateOutput(control);applyAppearance();persist('Appearance setting saved.');}));
   $('#appearance-reset').addEventListener('click',()=>{state.appearance=structuredClone(defaults.appearance);save();location.reload();});$('#appearance-preview').addEventListener('click',()=>addNotice('Appearance preview is active in this browser.'));
   const picker=$('#personal-vocabulary-file');vocabClear.disabled=false;
+  vocab.addEventListener('click',openPersonalVocabularyPicker);
   picker.addEventListener('change',async()=>{const file=picker.files?.[0];if(!file||state.school)return;const generation=++vocabularyGeneration;try{if(file.size>vocabularyLimits.bytes)throw Error('Size limit');const bytes=new Uint8Array(await file.arrayBuffer());if(generation!==vocabularyGeneration||state.school)return;state.vocabulary=vocabularyStore.replace(bytes);vocabularyStatus='loaded';renderLanguage();}catch{if(generation===vocabularyGeneration){vocabularyStatus='invalid';renderVocabularyControls();}}finally{picker.value='';}});
   vocabClear.addEventListener('click',()=>{if(state.school)return;++vocabularyGeneration;try{state.vocabulary=vocabularyStore.clear();vocabularyStatus='empty';picker.value='';renderLanguage();}catch{vocabularyStatus='storage';renderVocabularyControls();}});
   renderVocabularyControls();
