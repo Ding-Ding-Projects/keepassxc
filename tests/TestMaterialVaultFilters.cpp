@@ -285,13 +285,23 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     data.password = QStringLiteral("secret");
     data.url = QStringLiteral("https://console.aws.amazon.com");
     data.modified = QStringLiteral("2026-08-14 09:12");
-    data.attachments = {{QStringLiteral("recovery-codes.txt"), QStringLiteral("1 KB")},
-                        {QStringLiteral("mfa-backup.png"), QStringLiteral("40 KB")}};
     detail.setEntryData(data);
     detail.show();
     QCoreApplication::processEvents();
 
     QVERIFY(detail.attachmentFilter());
+    QVERIFY(detail.attachmentFilter()->isVisible());
+    auto* guidance = detail.findChild<QWidget*>(QStringLiteral("vault.attachments.guidance"));
+    QVERIFY(guidance && guidance->isVisible());
+    detail.attachmentFilter()->lineEdit()->setFocus();
+    QTest::keyClicks(detail.attachmentFilter()->lineEdit(), QStringLiteral("Username"));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+    detail.attachmentFilter()->clear();
+    QCOMPARE(detail.visibleFieldKeys().size(), 4);
+    data.attachments = {{QStringLiteral("recovery-codes.txt"), QStringLiteral("1 KB")},
+                        {QStringLiteral("mfa-backup.png"), QStringLiteral("40 KB")}};
+    detail.setEntryData(data);
+    QVERIFY(detail.attachmentFilter()->isVisible());
     QCOMPARE(detail.attachmentFilter()->searchId(), QStringLiteral("vault.attachments"));
     QCOMPARE(detail.visibleFieldKeys().size(), 4);
 
@@ -324,6 +334,16 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     detail.attachmentFilter()->clear();
     QCOMPARE(detail.visibleFieldKeys().size(), 4);
 
+    detail.attachmentFilter()->setText(QStringLiteral("Username"));
+    data.attachments.clear();
+    detail.setEntryData(data);
+    QVERIFY(detail.attachmentFilter()->isVisible());
+    QVERIFY(guidance->isVisible());
+    QCOMPARE(detail.attachmentFilter()->text(), QStringLiteral("Username"));
+    QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
+    detail.attachmentFilter()->clear();
+    QCOMPARE(detail.visibleFieldKeys().size(), 4);
+
     // The hero carries the health chip, the edit and history actions and the
     // footer the copy-password and open-URL actions.
     QVERIFY(detail.findChild<QWidget*>(QStringLiteral("entryDetailHealthChip")));
@@ -331,6 +351,9 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailHistory")));
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailCopyPassword"))->isEnabled());
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailOpenUrl"))->isEnabled());
+    detail.clear();
+    QVERIFY(!detail.attachmentFilter()->isVisible());
+    QVERIFY(!guidance->isVisible());
 }
 
 void TestMaterialVaultFilters::tagSearchPreservesSelectionAndPreviousResults()

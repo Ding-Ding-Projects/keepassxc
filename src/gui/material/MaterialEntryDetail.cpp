@@ -743,6 +743,7 @@ namespace Material
         column->setSpacing(0);
         column->addWidget(buildHeader());
         column->addWidget(buildActions());
+        column->addWidget(buildDetailFilter());
         column->addWidget(inset(buildCredentials(), {PaneMargin, 0, PaneMargin, 12}));
         column->addWidget(buildNotes());
         column->addWidget(buildAttachments());
@@ -948,18 +949,16 @@ namespace Material
         return m_notesSection;
     }
 
-    QWidget* EntryDetail::buildAttachments()
+    QWidget* EntryDetail::buildDetailFilter()
     {
-        m_attachmentsSection = new QWidget(m_content);
-        auto* layout = new QVBoxLayout(m_attachmentsSection);
+        m_detailFilterSection = new QWidget(m_content);
+        auto* layout = new QVBoxLayout(m_detailFilterSection);
         layout->setContentsMargins(0, 0, 0, 16);
         layout->setSpacing(0);
 
-        layout->addWidget(createOverline(tr("Attachments")));
-
         // The design's "Filter attachments & fields" search with its own
         // regex affordance; it narrows the field rows and the attachment list.
-        m_attachmentFilter = new SearchBar(SearchBar::Variant::Surface, m_attachmentsSection);
+        m_attachmentFilter = new SearchBar(SearchBar::Variant::Surface, m_detailFilterSection);
         m_attachmentFilter->setObjectName(QStringLiteral("entryDetailAttachmentFilter"));
         m_attachmentFilter->setPlaceholder(tr("Filter attachments & fields"));
         m_attachmentFilter->setIdentity(QStringLiteral("vault.attachments"), tr("Entry attachments and fields filter"));
@@ -969,11 +968,21 @@ namespace Material
         connect(Voice::notifier(), &Voice::Notifier::changed, this, &EntryDetail::applyDetailFilter);
         layout->addWidget(inset(m_attachmentFilter->guidanceWidget(QStringLiteral("search.guidance.details")), {PaneMargin, 0, PaneMargin, 8}));
         layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
-        m_filterStatus = new QLabel(m_attachmentsSection);
+        m_filterStatus = new QLabel(m_detailFilterSection);
         m_filterStatus->setWordWrap(true);
         m_filterStatus->hide();
         layout->addWidget(inset(m_filterStatus, {PaneMargin, 0, PaneMargin, 8}));
 
+        return m_detailFilterSection;
+    }
+
+    QWidget* EntryDetail::buildAttachments()
+    {
+        m_attachmentsSection = new QWidget(m_content);
+        auto* layout = new QVBoxLayout(m_attachmentsSection);
+        layout->setContentsMargins(0, 0, 0, 16);
+        layout->setSpacing(0);
+        layout->addWidget(createOverline(tr("Attachments")));
         m_attachmentsList = new QWidget(m_attachmentsSection);
         m_attachmentsLayout = new QVBoxLayout(m_attachmentsList);
         m_attachmentsLayout->setContentsMargins(0, 0, 0, 0);
@@ -1153,6 +1162,7 @@ namespace Material
 
     void EntryDetail::updateContent()
     {
+        m_detailFilterSection->setVisible(m_hasEntry);
         const QString symbol = m_data.symbol.isEmpty() ? QStringLiteral("key") : m_data.symbol;
         m_symbolLabel->setPixmap(Icons::pixmap(symbol, SymbolGlyphSize, theme()->color(Role::OnPrimaryContainer)));
 

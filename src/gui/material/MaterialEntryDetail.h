@@ -137,6 +137,7 @@ namespace Material
         QWidget* buildHeader();
         QWidget* buildActions();
         QWidget* buildCredentials();
+        QWidget* buildDetailFilter();
         QWidget* buildNotes();
         QWidget* buildAttachments();
         QWidget* buildHistory();
@@ -201,6 +202,7 @@ namespace Material
         QWidget* m_notesSection = nullptr;
         QLabel* m_notesLabel = nullptr;
         QWidget* m_attachmentsSection = nullptr;
+        QWidget* m_detailFilterSection = nullptr;
         SearchBar* m_attachmentFilter = nullptr;
         QLabel* m_filterStatus = nullptr;
         QWidget* m_attachmentsList = nullptr;

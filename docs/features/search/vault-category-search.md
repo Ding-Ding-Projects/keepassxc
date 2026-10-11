@@ -26,6 +26,14 @@ native tests and rebuilt screenshot acceptance remain pending until executed.
 
 The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.
 
+One combined search and its guidance appear before the field content whenever an
+entry is present, including entries without attachments. Only the attachment
+heading and list disappear when attachments are empty. Removing attachments
+preserves the current search; clearing the entry hides the search and guidance.
+Focused source regressions cover initially empty attachments, populated-to-empty
+transitions, clearing and effective control visibility. Native execution and
+rebuilt visual verification of this placement remain pending.
+
 ## Verification status
 
 Source regression cases cover tag selection preservation, independent folder text, invalid patterns, clear behavior, metadata matches, secret exclusion, placeholder exclusion, protected notes, UUID and expiry filtering, and legacy engine compatibility. These cases require a compiled native test run before acceptance. Native interaction, supported language/theme/scale geometry and representative screenshots remain pending until a current source-bound build is available.
