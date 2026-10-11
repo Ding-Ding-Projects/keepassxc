@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "documents": [
+    {
+      "path": "docs/features/README.md",
+      "sourceSha256": "f8ff7399f6206359d9c5eeb5f0bc434d73371f151bf44aa6e73b2d402ef9918d",
+      "status": "complete",
+      "title": "功能文件",
+      "markdown": "# 功能文件\n\n每項功能一篇文章，按分類整理。`inventory.json` 入面嘅平台摘要、明確嘅 `surface-inventory.json` 同 `capability-inventory.json`，會由 `scripts/check-feature-inventory.mjs` 對照人工維護嘅規範檢查。結構有效同目前建置產品完整度係兩個獨立判斷。欠缺目前證據就仍然未完成。[介面完整度](delivery/interface-completion.md) 列明收據格式、遷移方式同如實驗收界線。\n\n| 分類 | 索引 |\n| --- | --- |\n| 設計同外觀 | [design/README.md](design/README.md) |\n| 搜尋同正則表達式 | [search/README.md](search/README.md) |\n| 訊息、語言同語氣 | [messaging/README.md](messaging/README.md) |\n| 記錄同歷史 | [records/README.md](records/README.md) |\n| 導覽 | [navigation/README.md](navigation/README.md) |\n| 建置、安裝同更新 | [delivery/README.md](delivery/README.md) |\n| 伺服器建立同管理 | [servers/README.md](servers/README.md) |\n\n呢個專案冇 HTTP API，所以 Postman 集合唔適用。\n"
+    },
+    {
+      "path": "docs/features/delivery/README.md",
+      "sourceSha256": "d29fc78e3a023ee8ade042ae9877a69951f081f8913518b5961b44278383b2bc",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/auto-updates.md",
+      "sourceSha256": "e7b401f2013e3ef47f399e96fea995d6487b887ca70020b2224177180e5888ff",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/build-scripts.md",
+      "sourceSha256": "0a02197c90bf0c6688899b59a2939e8c929f0d58acc279ddbcf42ceaa1476db2",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/current-feature-coverage.md",
+      "sourceSha256": "13e4f24d66d1e6bc8c0a77b39fa354216d1507c5c3565d03e6746f79dafc9293",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/database-lifecycle-repair.md",
+      "sourceSha256": "9627d5584c86c27a8475aa8a3d54789fd4731a6255fb59788708de9caa9a221d",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/documentation-reader.md",
+      "status": "complete",
+      "title": "內嵌文件語言選擇",
+      "markdown": "# 內嵌文件語言選擇\n\n文件閱讀器喺本機提供完整功能文章同保留嘅維基快照。英文模式呈現原文；粵語模式喺有完整已審閱粵語版本時呈現譯文。雙語模式先呈現完整英文文章，再呈現完整粵語版本，分開放喺標示語言嘅區段。目錄會配對相應章節名稱，唔會重複列出項目。長內容可以正常向下捲動閱讀。\n\n譯文存放喺 `site/translations/documentation-yue.json`。每份目前內嵌文件恰好有一筆記錄，包括路徑、正規化英文來源嘅 SHA-256、翻譯狀態、標題同 Markdown。完整記錄包含整篇譯文。欠缺記錄嘅譯文內容為空，仍然係驗收缺口。首批唔代表全套文件已翻譯。清單本身列出目前完整同欠缺嘅文件。\n\n建置會拒絕遺漏、重複、未知、過時、過大或格式不正確嘅記錄、改動咗嘅圍欄命令、唔一致嘅標題，以及改動咗嘅標題結構。欠缺譯文唔會靜靜地變成已完成英文後備內容。粵語模式會明確顯示不可用狀態；雙語模式保留完整英文文章，並指出粵語版本不可用。編輯英文來源之後，必須審閱並更新綁定翻譯記錄，即使嗰筆記錄仍然標示欠缺都一樣。\n\n閱讀器用同一套 HTML 規則淨化兩種語言。佢會移除原有識別碼，再指派本機標題識別碼；停用 Markdown 輸入控制，並喺未有已審閱本機圖片對應之前，以圖片描述取代圖片。粵語模式仍然可以使用原有英文錨點。雙語區段使用唔同語言前綴；共同目錄為每個相應章節保留一個項目。文件內部導覽仍然留喺本機，明確外部來源連結則保留不可變來源證明。\n\n切換語言會保留目前文章，並嘗試恢復可見章節，以及文章內原先聚焦嘅標題或連結。閱讀器以外嘅焦點仍然留喺外面。翻譯文字唔會執行命令、取得外部內容或檢視資料庫資料。交付 JSON 上限係 2 MiB，最多 100 份文件，每份文件每種語言最多 131,072 個字元。呢啲界限預留咗兩份完整語言正文嘅空間。\n\n## 驗證狀態\n\n針對性 Node 檢查涵蓋完整語言選擇、明確欠缺狀態、遺漏、重複、過時來源雜湊、格式不正確欄位、標題同程式碼保留、負載界限，以及正式來源綁定。瀏覽器鍵盤行為、完整無障礙支援、窄雙語版面同目前呈現擷取，都需要新一次來源綁定瀏覽器運行。較早嘅純英文閱讀器擷取唔能夠驗證呢個實作。全套文件粵語翻譯仍然未完成，直至每筆清單記錄都完整並經獨立審閱。\n",
+      "sourceSha256": "fea389e2aa7bedfde3b500d7656c8c896070e5cf69044d72bd46c6cda27ac329"
+    },
+    {
+      "path": "docs/features/delivery/in-app-version-provenance.md",
+      "sourceSha256": "0d5e92348742b1f2af29b9b5659ae67601d6a027044fa7f51e207a6972d8a28d",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/interface-completion.md",
+      "sourceSha256": "8491955f214d82e4cd42b9c1a0fae358a283dbb83724f50df2fbd64196d53c23",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/line-count-release.md",
+      "sourceSha256": "ed1d10d6627d24c70a716cfd8708dd2721355c93db560d2a165b54a625ff05bf",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/packaging-path-safety.md",
+      "sourceSha256": "0fad68cdcefdf69e161d631ea71de5fd4f9a830ddf4e6b410a56224df56ab512",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/release-code-name.md",
+      "sourceSha256": "064401f45ad04a1030f960c858867bf5d08c5bd1c65ca63dce0feb23303db0d5",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/release-timing.md",
+      "sourceSha256": "5f50dc4072ec5f2b51c68ae25d7f80c7d7f6c9f896afe4ade567faa07f7741c9",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/repair-verification-2026-09.md",
+      "sourceSha256": "ee615437a62af30e995e82fc8731f68ca64ef10dca4d602e244a22ac49986a0d",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/social-preview.md",
+      "sourceSha256": "a326f807ad073a80247b1048ef0c19077688f3a58dbfd9a4901028836a14fefa",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/squirrel-installer.md",
+      "sourceSha256": "aac5b7b408e03ac0880914e7844206b3d6092ca85b9bef60efe582ccfda7dd55",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/delivery/website-release-provenance.md",
+      "sourceSha256": "87897c393f4cc49c6cf971bb8899e347b9a117e0a67b0465e87ccc3fd101d354",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/README.md",
+      "sourceSha256": "f32564f4a89fb493d635d1f28ebb7087388cc471a492d0dfad06e9e256e43e34",
+      "status": "complete",
+      "title": "設計同外觀",
+      "markdown": "# 設計同外觀\n\nMaterial Design 3 外觀、設計參考一致性，以及呈現介面嘅畫面。\n\n| 功能 | 文章 |\n| --- | --- |\n| 裁切檢查矩陣 | [clipping-matrix.md](clipping-matrix.md) |\n| 應用程式標誌自訂 | [app-logo-customization.md](app-logo-customization.md) |\n| 設計參考一致性 | [design-parity.md](design-parity.md) |\n| 無邊框視窗同 Material 標題列 | [frameless-title-bar.md](frameless-title-bar.md) |\n| Material Design 3 外觀 | [material-3-appearance.md](material-3-appearance.md) |\n| 逐元素外觀編輯器同無限色彩選擇器 | [per-element-appearance-editor.md](per-element-appearance-editor.md) |\n"
+    },
+    {
+      "path": "docs/features/design/app-logo-customization.md",
+      "sourceSha256": "56b3130da7fd78513c34f5d74d55e87008633e64cf8f0843cf614b66dec58246",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/clipping-matrix.md",
+      "sourceSha256": "c169408f6ea136f51f1059b26c674c4a041488cdebb599921d459910008587ad",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/design-parity.md",
+      "sourceSha256": "b96b857a7be322cdfbce822e2b71128832b82dcb5bd3606b0bcffb118361b708",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/frameless-title-bar.md",
+      "sourceSha256": "20decac8b9e37f8f0a96fac7a69d0dcba69e2d3cefae17839f9a49dfc82b1b37",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/material-3-appearance.md",
+      "sourceSha256": "9264daaa325c688637c01c6b2fd0637ddc52c8aa2329ac13b6adc932c65a0ac7",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/design/per-element-appearance-editor.md",
+      "sourceSha256": "6c20f712cac4531207242564783b96d29e63c827e176c1c78cb833f066cc4057",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/interface/README.md",
+      "sourceSha256": "e8a14855ecfc8c0c1d75b976e8f9d6f46e6e0c8bd43a4394e0bd2b035c9cd973",
+      "status": "complete",
+      "title": "介面功能",
+      "markdown": "# 介面功能\n\n- [瀏覽器、分享同 SSH 選項控制](choice-control-promotion.md)\n- [介面動態效果](ui-motion.md)\n- [動畫同轉場編輯](motion-authoring.md)\n- [資料庫面板尺寸](vault-pane-sizing.md)\n\n呢啲功能冇提供 HTTP API，所以 Postman 集合唔適用。\n"
+    },
+    {
+      "path": "docs/features/interface/choice-control-promotion.md",
+      "sourceSha256": "d462cc3a4fc628d627da5cbf37fbb4dd85cb84b98813dde1e8bcf7a10f7c7e37",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/interface/motion-authoring.md",
+      "sourceSha256": "e3f27459e72b5fc68a3b82fd1255c883abbdaa942379ca0228524bec24e5cb81",
+      "status": "complete",
+      "title": "動畫同轉場編輯",
+      "markdown": "# 動畫同轉場編輯\n\n逐元素外觀編輯器有 Animation and Transition 分頁，提供首個有界限動態編輯單元。為元素開啟外觀編輯器，揀動態分頁，再新增軌道。可以直接喺軌道表格編輯名稱、狀態、屬性、時長、延遲、緩動同布林開關。揀選軌道就可以編輯關鍵影格。偏移必須由零嚴格遞增至一，並包括兩個端點。新增中點會喺相鄰影格之間插入；第一個同最後一個影格唔可以移除。無效編輯會顯示診斷訊息，已儲存文件保持不變。\n\n首批即時屬性係高度（24..160 px）、角半徑（0..80 px）、字體大小（8..48 pt）、間距（0..48 px）同邊框寬度（0..8 px）。數值以數字插值，呈現為整數像素／點數。支援全域曲線 `linear`、`inOutCubic` 同 `outCubic`。時長係 1..60000 毫秒，延遲係 -60000..60000 毫秒。軌道用明確起始值、前後填充，以及按次序取代合成。每個屬性以最後一條合資格軌道為準。Solo 只喺所要求狀態內限制合資格軌道；停用同靜音軌道唔會參與。\n\n數字播放頭以毫秒定位。播放會由目前位置繼續，完成後再播會由零開始。倒播會向後繼續；如果停喺零，就由結尾開始。暫停保留播放頭。停止會取消計時器、重設播放頭，並恢復預覽原有外觀。隱藏編輯器或者改變目標會停止預覽。符合目標顯示時，一般狀態即時軌道會播放；目標隱藏就會停止。呢啲效果唔會取代真正操作完成狀態，亦唔會授予受保護操作權限。\n\n減少動態效果採用同其他應用程式動態效果一樣嘅有效規則，唔播放而顯示靜態最終值，並保留所有編輯數值。播放器使用單調經過時間時鐘同 16 ms 計時器。最多 16 個播放器同時運行；額外播放要求會保持停止。文件上限係 256 KiB、32 條軌道，每條最多 128 個關鍵影格。編輯變更取代已儲存資料之前，會驗證有限數值、識別字串、開關同次序。\n\n動態資料儲存在每個元素嘅外觀覆寫之下。現有樣式複製／貼上、命名預設，以及預設 JSON 匯出／匯入，都會攜帶呢份巢狀文件。未知欄位會保留，但唔影響呈現。未知版本同不可用數值仍然可以攜帶，但呈現會標示不可用。重設動態會清除文件；元素同全域重設亦會清除動態。復原／重做喺一次目標編輯期間保留最多 100 份完整快照。持久追加歷史同排程設定仍然未完成。\n\n完整人工維護嘅實作同待完成功能清單，見[動態編輯交接文件](../../../design/motion-authoring/README.md)。其餘規範工作區包括分層／狀態目標、顯示以外嘅轉場同觸發、路徑、變形、色彩、重複／填充／方向編輯、自訂同分段緩動、時間軸工具、多選、分組、排序、檢查器搜尋、指令導覽同持久歷史。QWidget 冇原生 CSS 自訂屬性同捲動／視圖時間軸呈現，呢點係具體平台界線；其他遺漏仍然需要實作。\n\n## 驗證狀態\n\n`TestMaterialAppearanceEditor` 來源測試案例涵蓋插值、靜音／Solo／次序衝突、時序同偏移拒絕、位元組界限、未知欄位保留、預設／樣式往返、取消、直接即時樣式表使用者，以及減少動態效果行為。修復案例亦涵蓋不可用 Solo 軌道、無效目前結構預設匯入嘅原子拒絕，以及未來結構往返。獨立來源審查接受咗兩項修復。呢個候選版本仲未執行呢啲案例。編譯、真實目標互動、時序樣本、效能／結束處理，以及完整語言／主題／縮放／視口矩陣，仍然待驗證。全部 49 個動態目錄鍵已整合英文、粵語同雙語來源文字；實際呈現本地化仍然未驗證。\n\n正常根目錄建置之後，針對性原生命令係：\n\n```powershell\nctest --test-dir build-windows --output-on-failure --timeout 180 -R \"^(testmaterialappearanceeditor|testmaterialmotion)$\"\n```\n\n動態文件唔應包含網絡請求、外部執行、憑證或資料庫內容。可攜資料永遠唔會當成程式碼執行。\n"
+    },
+    {
+      "path": "docs/features/interface/ui-motion.md",
+      "sourceSha256": "515868be585abb5e1450f3081e99b8d49c51648f16c43b7d06ee37d4f9d7a394",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/interface/vault-pane-sizing.md",
+      "sourceSha256": "0eaee29d94b7e9e43557489188de6878d11b47f95b53ede897ae60e0306448fb",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/messaging/README.md",
+      "sourceSha256": "502c7822502079aae8b960b0ee7ae7862c8413ed80a45a3a068b2bc14539e15d",
+      "status": "complete",
+      "title": "訊息、語言同語氣",
+      "markdown": "# 訊息、語言同語氣\n\n通知、語言模式、幽默程度同點心驚喜。\n\n| 功能 | 文章 |\n| --- | --- |\n| 點心驚喜 | [dim-sum-surprise.md](dim-sum-surprise.md) |\n| 粵語幽默程度 | [funny-level-cantonese.md](funny-level-cantonese.md) |\n| 英文幽默程度 | [funny-level-english.md](funny-level-english.md) |\n| 語言模式同語氣目錄 | [language-modes.md](language-modes.md) |\n| 非阻塞通知 | [notifications.md](notifications.md) |\n| 通知中心 | [notification-centre.md](notification-centre.md) |\n"
+    },
+    {
+      "path": "docs/features/messaging/dim-sum-surprise.md",
+      "sourceSha256": "b0bedcc6755626f675e5ad049781a79d37043331581e76a0e7884f0711f2cf05",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/messaging/funny-level-cantonese.md",
+      "sourceSha256": "1fc043dd121bd57a5f2f496d34b9f4816f0c9c2d489e23ccbcd822b95e755b7c",
+      "status": "complete",
+      "title": "粵語幽默程度",
+      "markdown": "# 粵語幽默程度\n\n功能識別碼：`funny-level-cantonese` · 分類：訊息、語言同語氣\n\n## 運作方式\n\n英文滑桿嘅粵語版本：為香港粵語文字提供獨立嘅 1 至 5 程度。每個程度都保持尊重，並保留同英文行一樣嘅事實。\n\n## 設定\n\n`GUI/FunnyLevelCantonese`，會持久保存；位置係 Appearance › Voice。\n\n## 失敗情況\n\n同英文滑桿一樣，隨附預設係第 3 級，而唔係第 5 級。\n\n## 安全考慮\n\n除咗強制保留事實之外，冇其他安全考慮。\n\n## 驗證\n\n`testmaterialvoice`。\n\n## 延伸閱讀\n\n- [英文幽默程度](../messaging/funny-level-english.md)\n- [語言模式同語氣目錄](../messaging/language-modes.md)\n"
+    },
+    {
+      "path": "docs/features/messaging/funny-level-english.md",
+      "sourceSha256": "d9cd8bfb370576f34a0a133c2e48f201b8040a127ab1dbea8bdb6471a79f06f3",
+      "status": "complete",
+      "title": "英文幽默程度",
+      "markdown": "# 英文幽默程度\n\n功能識別碼：`funny-level-english` · 分類：訊息、語言同語氣\n\n## 運作方式\n\n獨立嘅 1 至 5 滑桿，將每段英文訊息由完全嚴肅調到最活潑。第 1 級保留上游原文，亦係每條後備鏈嘅最低程度。所有分類都會套用呢個程度，包括破壞性操作、安全同錯誤文字；解析訊息嗰陣會強制保留所需事實。\n\n## 設定\n\n`GUI/FunnyLevelEnglish`，會持久保存；位置係 Appearance › Voice，滑桿下面有即時示例。\n\n## 失敗情況\n\n規範預設係第 5 級，但隨附預設係第 3 級，呢點仍然係清單入面嘅未解決項目。首次使用提示以 `GUI/VoiceDisclosureShown` 記錄。\n\n## 安全考慮\n\n除咗強制保留事實之外，冇其他安全考慮。\n\n## 驗證\n\n`testmaterialvoice` 會解析每個程度嘅目錄項目，並拒絕漏咗事實嘅變體。\n\n## 延伸閱讀\n\n- [粵語幽默程度](../messaging/funny-level-cantonese.md)\n- [語言模式同語氣目錄](../messaging/language-modes.md)\n"
+    },
+    {
+      "path": "docs/features/messaging/language-modes.md",
+      "sourceSha256": "c4999ff72b6479157712a5b7a204026cd45e966551fc47b309e923ca4afbaed9",
+      "status": "complete",
+      "title": "語言模式同語氣目錄",
+      "markdown": "# 語言模式同語氣目錄\n\n功能識別碼：`language-modes` · 分類：訊息、語言同語氣\n\n## 運作方式\n\n`Material::Voice`（`src/gui/material/MaterialVoice.h`）按識別碼從 `share/voice/voice.json` 取得每段使用者訊息；目錄為每種語言、每個幽默程度各存一行。語言可以係英文、粵語或者雙語。雙語訊息有英文主行同粵語副行，顯示介面可以突出第一行，再緊湊噉顯示第二行。每個目錄項目都列明必須保留嘅事實；變體漏咗事實，就會退回較平實嘅程度。所以語氣可以變，事實唔可以變。\n\n## 設定\n\n漫遊設定內嘅 `GUI/VoiceLanguage`（English、Cantonese、Bilingual）；位置係 Appearance › Language and voice。\n\n## 失敗情況\n\nSchool mode 必須強制英文，並隱藏所有粵語同點心功能。目前尚未實作，仍然係未完成嘅清單項目。\n\n## 安全考慮\n\n文字係隨附資源入面嘅資料，唔會從網絡取得。\n\n## 驗證\n\n`testmaterialvoice`。\n\n## 延伸閱讀\n\n- [英文幽默程度](../messaging/funny-level-english.md)\n- [粵語幽默程度](../messaging/funny-level-cantonese.md)\n- [點心驚喜](../messaging/dim-sum-surprise.md)\n"
+    },
+    {
+      "path": "docs/features/messaging/notification-centre.md",
+      "sourceSha256": "4113bd39d02334416f41e9f4892e804ea1bd6104c6bee588eb203b165ad5e431",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/messaging/notifications.md",
+      "sourceSha256": "d231d88c7de0cdde6a9880d82d40d2dcf07bd86844e62a1fa9d45bf14c40a9fb",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/navigation/README.md",
+      "sourceSha256": "edc058b18b89ba6c61bb8ce649fd374164674b1e5dfddff7cbe2b4fef2b59d21",
+      "status": "complete",
+      "title": "導覽",
+      "markdown": "# 導覽\n\n分頁、指令選單同外置編輯器交接。\n\n| 功能 | 文章 |\n| --- | --- |\n| 瀏覽器式分頁 | [tabs.md](tabs.md) |\n| 指令選單 | [command-palette.md](command-palette.md) |\n| 外置編輯器 | [external-editor.md](external-editor.md) |\n"
+    },
+    {
+      "path": "docs/features/navigation/command-palette.md",
+      "sourceSha256": "aeda2c1af0661f479b5868f069cb9ded0037f2af83136e32fa86aaf46e96480c",
+      "status": "complete",
+      "title": "指令選單",
+      "markdown": "# 指令選單\n\n功能識別碼：`command-palette` · 分類：導覽\n\n## 運作方式\n\n`Material::CommandPalette`（`src/gui/material/MaterialCommandPalette.h`）列出視窗入面每個 `QAction`，連同選單路徑、快捷鍵同主介面目的地，並有自己嘅搜尋列連接建構工具。\n\n## 設定\n\n透過應用程式列閃電按鈕同 `Ctrl+Shift+F` 開啟。\n\n## 失敗情況\n\n規範快捷鍵係 `Ctrl+Shift+F`，結果必須呈現豐富行內控制，揀選結果必須直接前往確切元素；三點都仍然係未解決項目。\n\n## 安全考慮\n\n冇。\n\n## 驗證\n\n已納入搜尋登記表測試；選單專用測試套件仍然待完成。\n\n## 延伸閱讀\n\n- [搜尋列同搜尋登記表](../search/search-bar-every-surface.md)\n- [瀏覽器式分頁](../navigation/tabs.md)\n"
+    },
+    {
+      "path": "docs/features/navigation/external-editor.md",
+      "sourceSha256": "f6d7c11d7858efb5ebf01536600e4381df078bf03fc56a92fbad374adae290cf",
+      "status": "complete",
+      "title": "外置編輯器",
+      "markdown": "# 外置編輯器\n\n功能識別碼：`external-editor` · 分類：導覽\n\n## 運作方式\n\n資料庫提供喺外置編輯器開啟資料庫資料夾嘅操作，會偵測已安裝編輯器，搵唔到時清楚交代。\n\n## 設定\n\n揀選嘅編輯器會持久儲存喺設定。\n\n## 失敗情況\n\n直接喺 Visual Studio Code 開啟匯出內容，仍然係未完成清單項目。\n\n## 安全考慮\n\n只會將資料夾路徑交畀編輯器程序。\n\n## 驗證\n\n人工驗證；針對性測試仍然待完成。\n\n## 延伸閱讀\n\n- vscode-handoff（尚未實作；見 `docs/features/inventory.json`）\n- export-everything（尚未實作；見 `docs/features/inventory.json`）\n"
+    },
+    {
+      "path": "docs/features/navigation/tabs.md",
+      "sourceSha256": "b198189adb208ec24d1a4fcdbbf96e4d9643fd0b8204c997fa0984c2efb09336",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/records/README.md",
+      "sourceSha256": "b267c04f872c00dd3f4f78cf722984e26d963a4c2bec208dd5352a3aba24e65d",
+      "status": "complete",
+      "title": "記錄同歷史",
+      "markdown": "# 記錄同歷史\n\n本機版本歷史、變更記錄檢視器同個人詞彙資料。\n\n| 功能 | 文章 |\n| --- | --- |\n| 變更記錄提交連結 | [changelog-commit-links.md](changelog-commit-links.md) |\n| 變更記錄檢視器 | [changelog-viewer.md](changelog-viewer.md) |\n| 歷史面板篩選 | [history-panel-filters.md](history-panel-filters.md) |\n| 以本機 Git 保存嘅版本歷史 | [local-history.md](local-history.md) |\n| 個人詞彙上載 | [personal-vocabulary-upload.md](personal-vocabulary-upload.md) |\n"
+    },
+    {
+      "path": "docs/features/records/changelog-commit-links.md",
+      "sourceSha256": "cd313d0087a62b39366102622da773920f1fb970c2bfcf3b83535889fa88f79c",
+      "status": "complete",
+      "title": "變更記錄提交連結",
+      "markdown": "# 變更記錄提交連結\n\n功能識別碼：`changelog-commit-links` · 分類：記錄同歷史\n\n## 運作方式\n\n每個已發佈項目都連到標籤指向嘅提交。目錄建置會拒絕無法解析標籤嘅版本，避免發佈失效連結。\n\n## 設定\n\n設定建置時需要完整標籤歷史；兩個 CI 工作流程都會取得標籤。\n\n## 失敗情況\n\nCodeQL 曾經因為檢出內容欠缺標籤而失敗；目前該檢出步驟會取得標籤。\n\n## 安全考慮\n\n冇。\n\n## 驗證\n\n`testmaterialchangelog` 同 CMake 來源證明保護檢查。\n\n## 延伸閱讀\n\n- [變更記錄檢視器](../records/changelog-viewer.md)\n- [每次發佈嘅行數](../delivery/line-count-release.md)\n"
+    },
+    {
+      "path": "docs/features/records/changelog-viewer.md",
+      "sourceSha256": "eac9ae9f9ec12010fe0d2b4fce72f0891df6d0769bbd83f1aa2c140fde018a60",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/records/history-panel-filters.md",
+      "sourceSha256": "95f8b43f4308ad12b4253ec7635cf29fe2442a11e8ad6cad8efd2add85692964",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/records/local-history.md",
+      "sourceSha256": "1342caa3663eef8cb361ee9f03d7663fe980c8b938d2b10db22a8481ef31401e",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/records/personal-vocabulary-upload.md",
+      "sourceSha256": "88b5c82cec9d50c21309caf76a049a97eeaa25e2b8880ab9009a2a8e9e2d8a00",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/search/README.md",
+      "sourceSha256": "f49fc8474c0394f5108ef04e53d33debd0928566696e3c8f49073803414af409",
+      "status": "complete",
+      "title": "搜尋同正則表達式",
+      "markdown": "# 搜尋同正則表達式\n\n搜尋列、正則表達式建構工具，以及每個模式都要遵守嘅安全限制。\n\n| 功能 | 文章 |\n| --- | --- |\n| 正則表達式建構工具 | [regex-builder.md](regex-builder.md) |\n| 搜尋列同搜尋登記表 | [search-bar-every-surface.md](search-bar-every-surface.md) |\n| 下拉選單改用設有搜尋列嘅清單框 | [dropdown-select.md](dropdown-select.md) |\n\n- [資料庫分類搜尋](vault-category-search.md)，實作同驗收狀態。\n"
+    },
+    {
+      "path": "docs/features/search/context-menu-search.md",
+      "sourceSha256": "7e8f266a417cdc9e463a4e92df389c9a3759c5bac4bea1c1f6d0cab3c26e8166",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/search/dropdown-select.md",
+      "sourceSha256": "98b631603b6329a764d6750793ac2c406a37a4f5f07082342a2ea3a9d8f594fc",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/search/regex-builder.md",
+      "sourceSha256": "da3aa2a7dc0ecf01f0a0634f98bfbda21b446c90eed8f8f4a7ef640cc40f767e",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/search/search-bar-every-surface.md",
+      "sourceSha256": "a0ab33f1d8ade0988ab948b15d247df7500f185731b6ca0970fae7c9978030fc",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/search/vault-category-search.md",
+      "sourceSha256": "49752546a4e06497641977aa06ca3211356ebecf1c9f5df8db20271ba75a0513",
+      "status": "complete",
+      "title": "資料庫分類搜尋",
+      "markdown": "# 資料庫分類搜尋\n\n資料庫工作區分別提供已儲存項目、資料夾、已開啟資料庫分頁、標籤，以及項目欄位名稱或附件檔名搜尋。每個分類有自己嘅查詢，重用現有搜尋列，唔會重複新增。\n\n## 項目同私隱\n\n項目搜尋會比對未受保護嘅標題、使用者名稱、URL 同備註，亦會比對標籤同群組名稱。比對時唔會解析預留位置，所以使用者名稱即使含有密碼預留位置，都唔會令背後嘅密碼變成可搜尋內容。資料庫圖形介面唔提供密碼或自訂屬性值搜尋。現有到期、健康狀態、UUID、附件檔名同存在與否篩選仍然可用。其他搜尋引擎呼叫者保留原有行為。\n\n搜尋文字只留喺記憶體。資料庫情境改變、鎖定同關閉會清除分類查詢，並重設正則表達式模式。呢啲控制項唔會將查詢加入設定、匯出或診斷輸出。呢點唔代表承諾鑑證級記憶體清除。\n\n## 資料夾、分頁同標籤\n\n資料夾搜尋會保留符合嘅後代項目同祖先項目可見。清除搜尋會恢復各行，唔會修改資料庫。分頁列搜尋按鈕即使冇分頁溢出，都會開啟全部分頁選擇器；揀選結果會按穩定嘅執行期識別碼啟用分頁。\n\n標籤搜尋會收窄可選標籤，唔會改變已選標籤。已選標籤即使名稱唔符合查詢，都會保持可見同可以移除。清除標籤搜尋會恢復可選標籤，同時保留選擇。標籤正則表達式使用現有有界限比對器。無效或唔安全嘅標籤模式會保留之前結果，並顯示行內訊息。\n\n分頁選擇器亦會先評估完整候選結果，再取代各行。無效、被阻擋或逾時嘅表達式會保留之前各行。鎖定或關閉資料庫會重設並關閉已開啟選擇器；一般描述資料變動會更新選擇器，唔會改變分頁次序。搜尋標籤同行內訊息使用英文／粵語語氣目錄，支援雙語模式。切換語言會保留目前查詢同正則表達式建構工具嘅擁有欄位。正則表達式旗標會獨立套用至每個分類。\n\n## 項目詳情\n\n詳情搜尋只比對欄位名稱同附件檔名，唔會比對顯示出嚟嘅欄位值、密碼值或附件內容。無效正則表達式會保留之前各行可見。\n\n## 驗證狀態\n\n來源回歸案例涵蓋標籤選擇保留、獨立資料夾文字、無效模式、清除行為、中繼資料比對、秘密排除、預留位置排除、受保護備註、UUID 同到期篩選，以及舊引擎相容性。驗收之前必須編譯並執行原生測試。原生互動、支援嘅語言／主題／縮放幾何，以及代表性螢幕擷取，仍然要等目前來源綁定嘅建置可用先驗證。\n\n額外針對性案例涵蓋被拒絕分頁模式嘅結果保留、分頁查詢重設、切換語言時嘅查詢同建構工具擁有權、正則表達式大小寫，以及擷取設定檔隔離。修復之後，現有來源樣式檢查已通過。原生執行仍然待驗證。擷取使用專用驗證識別碼，隔離執行個體同標準路徑，忽略繼承嘅設定覆寫同可攜模式，並喺應用程式啟動之前拒絕明確設定覆寫。\n\n## 相關文章\n\n- [搜尋列同登記表](search-bar-every-surface.md)\n- [正則表達式建構工具](regex-builder.md)\n- [瀏覽器式分頁](../navigation/tabs.md)\n"
+    },
+    {
+      "path": "docs/features/search/vault-search-guidance.md",
+      "sourceSha256": "4441ecf871d251756b3625cead7bec69f0a745f3c1ce418591b65e0aba4c1b96",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/features/servers/README.md",
+      "sourceSha256": "10ad7a213a7fc3e3ebed4b77d65af2c4c2d8f55db84203b35335b02e3eafa98e",
+      "status": "complete",
+      "title": "伺服器管理",
+      "markdown": "# 伺服器管理\n\n- [自主管理嘅本機 Java 伺服器管理器](local-java-server-manager.md)\n\n首個單元冇公開 HTTP API，Postman 集合唔適用。\n"
+    },
+    {
+      "path": "docs/features/servers/local-java-server-manager.md",
+      "sourceSha256": "ad49530d7ff306de418f3a8f373410d9c8465f39f3838b21e42708b40b1c2aa4",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/Building.md",
+      "sourceSha256": "68510163876224ca95d58d35896ade8de54cc6ca9eb69a0571f293dd63fab96c",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/CLOSEOUT_PROMPT.md",
+      "sourceSha256": "190f31bca768df4affb8a7f668330c8ca4b8b5b3dc8613e8b726e3fe53009dc7",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/Home.md",
+      "sourceSha256": "df7b6d18b64ef6eb53c99d5f1d9a665f4a8ef04f6628a16dd91479cb5d3dec71",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/Material-Design.md",
+      "sourceSha256": "698a29144c27bc3d77d6008fa6def1f59316f0548e462dd68aa391ab61e7b6fe",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/Passkeys.md",
+      "sourceSha256": "c7e93af451ddb5192ca11f6661b37ea29c3a014319d16481d035d6759f429f88",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    },
+    {
+      "path": "docs/wiki/README.md",
+      "sourceSha256": "7199d2f3f6c0b306d1ba2e2cec6888677b81f0633363459e035f1beb65c208a3",
+      "status": "complete",
+      "title": "維基文章",
+      "markdown": "# 維基文章\n\n完整專案維基內容，保留自來源修訂 `848bfefb194922da18b856c71e4bed00cc061d2a`。歷史驗證限制仍然屬於歷史記錄。\n\n- [建置](Building.md)\n- [CLOSEOUT_PROMPT](CLOSEOUT_PROMPT.md)\n- [首頁](Home.md)\n- [Material Design](Material-Design.md)\n- [Passkeys](Passkeys.md)\n- [資料庫分類搜尋](Vault-Category-Search.md)\n"
+    },
+    {
+      "path": "docs/wiki/Vault-Category-Search.md",
+      "sourceSha256": "bd8ffa0b45c9e2779b242973d808ddd1fe3db17cf17c41f245272922aa1b00a6",
+      "status": "missing",
+      "title": "",
+      "markdown": ""
+    }
+  ]
+}

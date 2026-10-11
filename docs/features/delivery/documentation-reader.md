@@ -1,0 +1,15 @@
+# Embedded documentation language selection
+
+The documentation reader delivers complete feature articles and the retained wiki snapshot locally. English mode renders the original document. Cantonese mode renders a complete reviewed Cantonese variant when available. Bilingual mode renders the complete English article followed by its complete Cantonese variant, in separate language-labelled sections. The outline pairs corresponding section names without duplicating entries. Long content continues through normal vertical scrolling.
+
+Translations live in `site/translations/documentation-yue.json`. Every current embedded document has exactly one record containing its path, the SHA-256 of its normalized English source, its translation state, title and Markdown. A complete record contains a complete translated article. A missing record has empty translated content and remains an acceptance gap. This first batch does not claim full-corpus translation. The inventory itself gives the current complete and missing lists.
+
+The build rejects omitted, duplicate, unknown, stale, oversized or malformed records, changed fenced commands, inconsistent titles and changed heading structure. Missing translations never silently become completed English fallbacks. Cantonese mode presents an explicit unavailable state; bilingual mode retains the complete English article and states that the Cantonese variant is unavailable. Editing an English source requires reviewing and updating its bound translation record, including a record that is still marked missing.
+
+The reader sanitizes both languages with the same HTML rules. It removes authored identifiers before assigning local heading identifiers, disables Markdown inputs and substitutes image descriptions until reviewed local image mapping exists. Canonical English anchors remain usable in Cantonese mode. Bilingual sections use distinct language prefixes; their shared outline has one entry per corresponding section. Internal document navigation continues locally, while explicitly external source links retain immutable source provenance.
+
+Changing language retains the current article and attempts to restore its visible section and any focused article heading or link. Focus outside the reader remains outside it. Translation text does not execute commands, fetch external content or inspect vault data. The delivered JSON is limited to 2 MiB, with at most 100 documents and 131,072 characters per language per document. These bounds include room for the two complete language bodies.
+
+## Verification status
+
+Focused Node checks cover complete language selection, explicit missing states, omission, duplication, stale source hashes, malformed fields, heading and code preservation, payload bounds and production source bindings. Browser keyboard behavior, full accessibility, narrow bilingual layouts and current rendered captures require a new source-bound browser run. Earlier English-only reader captures do not verify this implementation. Full-corpus Cantonese translation remains incomplete until every inventory record is complete and independently reviewed.
