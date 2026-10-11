@@ -40,6 +40,7 @@
 
 #include <QAbstractButton>
 #include <QCoreApplication>
+#include <QEvent>
 #include <QStandardItemModel>
 #include <QImage>
 #include <QPainter>
@@ -455,6 +456,13 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             QCOMPARE(done->text(), Voice::say(QStringLiteral("search.guidance.done")));
             QCOMPARE(done->accessibleName(), done->text());
             QCOMPARE(explanation->accessibleName(), explanation->text());
+            // Let the scroll area's deferred layout settle before checking the complete
+            // wrapped explanation, not merely the currently visible viewport portion.
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+            QCoreApplication::processEvents();
+            QTRY_VERIFY(explanation->width() > 0
+                        && explanation->heightForWidth(explanation->width()) > 0
+                        && explanation->height() >= explanation->heightForWidth(explanation->width()));
             QVERIFY(done->height() >= done->heightForWidth(done->width()));
             QVERIFY(done->height() >= Layout::ButtonHeight);
             // Vertical excess is intentionally exposed by this scroll area. Horizontal
