@@ -17,14 +17,57 @@
 #include <QComboBox>
 #include <QUuid>
 #include <QProcess>
+#include <QNetworkAccessManager>
+#include <QNetworkReply>
+#include <QNetworkRequest>
+#include <QTimer>
+#include <QElapsedTimer>
 #include <QSignalSpy>
 #ifdef Q_OS_WIN
 #include <qt_windows.h>
 #endif
 using Material::ServerManager;
+class TrickleReply : public QNetworkReply {
+public:
+    TrickleReply(const QNetworkRequest& request,QObject* parent,int* aborted,int* trickles)
+        :QNetworkReply(parent),m_aborted(aborted),m_trickles(trickles) {
+        setRequest(request);setUrl(request.url());setOperation(QNetworkAccessManager::GetOperation);
+        setAttribute(QNetworkRequest::HttpStatusCodeAttribute,200);open(QIODevice::ReadOnly|QIODevice::Unbuffered);
+        connect(&m_trickle,&QTimer::timeout,this,[this]{m_bytes.append('x');++*m_trickles;emit readyRead();});m_trickle.start(5);
+    }
+    void abort() override {if(isFinished())return;++*m_aborted;setError(OperationCanceledError,QStringLiteral("Synthetic request aborted"));finish();}
+    void finish(){if(isFinished())return;m_trickle.stop();setFinished(true);emit finished();}
+    qint64 bytesAvailable() const override{return m_bytes.size()+QNetworkReply::bytesAvailable();}
+protected:
+    qint64 readData(char* destination,qint64 maximum) override {const auto count=qMin(maximum,qint64(m_bytes.size()));if(count<=0)return 0;std::memcpy(destination,m_bytes.constData(),size_t(count));m_bytes.remove(0,count);return count;}
+private:
+    QTimer m_trickle;QByteArray m_bytes;int* m_aborted;int* m_trickles;
+};
+class TrickleNetwork : public QNetworkAccessManager {
+public:
+    explicit TrickleNetwork(QObject* parent):QNetworkAccessManager(parent){}
+    int aborted=0,trickles=0;QPointer<TrickleReply> latest;
+protected:
+    QNetworkReply* createRequest(Operation,const QNetworkRequest& request,QIODevice*) override {
+        latest=new TrickleReply(request,this,&aborted,&trickles);return latest;
+    }
+};
 class TestMaterialServerManager : public QObject {
     Q_OBJECT
 private slots:
+    void dockerMetadataAbsoluteDeadlineStopsTrickleAndCancelsOnFinish() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        delete manager.m_network;auto* network=new TrickleNetwork(&manager);manager.m_network=network;
+        manager.m_dockerMetadataDeadlineMs=60;
+        bool completed=false,ok=true;QElapsedTimer elapsed;elapsed.start();
+        manager.dockerMetadata(QUrl(QStringLiteral("https://registry-1.docker.io/synthetic")),{},[&](bool success,const QByteArray&,const QByteArray&){completed=true;ok=success;});
+        QTRY_VERIFY_WITH_TIMEOUT(completed,1000);QVERIFY(!ok);QCOMPARE(network->aborted,1);QVERIFY(network->trickles>=2);
+        QVERIFY(elapsed.elapsed()<1000);
+        completed=false;ok=false;
+        manager.dockerMetadata(QUrl(QStringLiteral("https://registry-1.docker.io/synthetic")),{},[&](bool success,const QByteArray&,const QByteArray&){completed=true;ok=success;});
+        QVERIFY(network->latest);network->latest->finish();QVERIFY(completed);QVERIFY(ok);
+        QTest::qWait(120);QCOMPARE(network->aborted,1);
+    }
     void inventoryLimitsBeforeFileCreation() {
         QTemporaryDir temporary; QVERIFY(temporary.isValid());
         const QString root=temporary.path()+QStringLiteral("/managed");
@@ -190,11 +233,22 @@ private slots:
         QVERIFY(manager.saveInventory());manager.loadInventory();QCOMPARE(manager.m_document.value("extension").toString(),QStringLiteral("retained"));
         calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("stop"));QVERIFY(bool(pendingInspect));
         auto wrong=inspected;wrong.insert("Id",QString(64,QLatin1Char('d')));pendingInspect(true,QJsonDocument(wrong).toJson());
-        QCOMPARE(calls.size(),3); // Verification and inspection only, no lifecycle mutation.
+        QCOMPARE(calls.size(),1); // Stop inspects ownership directly; no launch verification or mutation.
         calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("start"));QVERIFY(bool(pendingInspect));
         ++manager.m_generation;pendingInspect(true,QJsonDocument(inspected).toJson());QCOMPARE(calls.size(),3);
         auto badPort=inspected;auto changedHost=host;changedHost.insert("PortBindings",QJsonObject{});badPort.insert("HostConfig",changedHost);QVERIFY(!manager.ownedContainer(badPort,record));
         auto badMount=inspected;badMount.insert("Mounts",QJsonArray{QJsonObject{{"Type","bind"},{"Destination","/data"},{"Source",temporary.path()}}});QVERIFY(!manager.ownedContainer(badMount,record));
+        QVERIFY(QFile::remove(dir+QStringLiteral("/server.jar")));
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            calls.append(args);
+            if(args.first()!=QLatin1String("container")){complete(false,{});return;} // Launch image/capacity discovery unavailable.
+            if(args.value(1)==QLatin1String("inspect")){complete(true,QJsonDocument(inspected).toJson());return;}
+            complete(true,{});
+        };
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("stop"));QCOMPARE(calls.size(),2);QCOMPARE(calls.last(),QStringList({"container","stop",container}));
+        QFile replacementJar(dir+QStringLiteral("/server.jar"));QVERIFY(replacementJar.open(QIODevice::WriteOnly));replacementJar.write("changed distribution");replacementJar.close();
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("stop"));QCOMPARE(calls.size(),2);QCOMPARE(calls.last(),QStringList({"container","stop",container}));
+        calls.clear();manager.dockerLifecycle(id,QStringLiteral("restart"));QVERIFY(calls.isEmpty());
     }
     void targetInventory() {
         const auto targets=ServerManager::targetNames();

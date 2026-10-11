@@ -49,6 +49,8 @@ private:
     static QJsonArray dockerImages(const QByteArray& manifest, const QByteArray& digest, int javaMajor);
     static bool validDockerImage(const QJsonObject& image, int javaMajor);
     static QStringList dockerCreateArguments(const QJsonObject& record, const QString& directory, const QString& owner);
+    bool validDockerStopRecord(const QJsonObject& record) const;
+    void inspectDockerLifecycle(const QJsonObject& record, const QString& operation);
     bool ownedContainer(const QJsonObject& inspected, const QJsonObject& record) const;
     QString dockerOwner() const;
     void refreshVersions();
@@ -70,6 +72,7 @@ private:
     QComboBox* m_images;
     QHash<QString, QProcess*> m_dockerCommands;
     bool m_dockerCreationVerified = false;
+    int m_dockerMetadataDeadlineMs = 15000;
     QHash<QString, QString> m_verifiedDockerVersions;
     std::function<void(const QStringList&, const std::function<void(bool,const QByteArray&)>&)> m_dockerTransport;
     QSpinBox *m_memory, *m_port;

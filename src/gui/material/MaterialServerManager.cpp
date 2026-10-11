@@ -404,6 +404,10 @@ void ServerManager::dockerMetadata(const QUrl& url,const QByteArray& authorizati
     if(!authorization.isEmpty())request.setRawHeader("Authorization",QByteArray("Bearer ")+authorization);
     request.setRawHeader("Accept","application/vnd.oci.image.index.v1+json, application/vnd.docker.distribution.manifest.list.v2+json");
     auto* reply=m_network->get(request);m_reply=reply;auto bytes=QSharedPointer<QByteArray>::create();
+    auto* deadline=new QTimer(reply);deadline->setSingleShot(true);deadline->setTimerType(Qt::PreciseTimer);
+    connect(deadline,&QTimer::timeout,reply,&QNetworkReply::abort);
+    connect(reply,&QNetworkReply::finished,deadline,&QTimer::stop);
+    deadline->start(m_dockerMetadataDeadlineMs);
     connect(reply,&QNetworkReply::readyRead,this,[reply,bytes]{bytes->append(reply->read(qMax(qint64(0),MetadataLimit+1-bytes->size())));if(bytes->size()>MetadataLimit)reply->abort();});
     connect(reply,&QNetworkReply::finished,this,[this,reply,bytes,generation,completed]{reply->deleteLater();if(generation!=m_generation)return;m_reply.clear();
         bytes->append(reply->read(qMax(qint64(0),MetadataLimit+1-bytes->size())));
@@ -514,6 +518,10 @@ bool ServerManager::ownedContainer(const QJsonObject& inspected,const QJsonObjec
 void ServerManager::dockerLifecycle(const QString& id,const QString& operation)
 {
     QJsonObject record;for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id)record=value.toObject();
+    if(operation==QLatin1String("stop")) {
+        if(!validDockerStopRecord(record)){status(tr("The saved container ownership record or local CLI is invalid."));return;}
+        inspectDockerLifecycle(record,operation);return;
+    }
     if(!validRecord(record) || !QStringList{"start","stop","restart"}.contains(operation)){status(tr("The selected container record is invalid."));return;}
     QFile jar(directoryFor(id)+QStringLiteral("/server.jar"));QCryptographicHash hash(QCryptographicHash::Sha1);
     if(!jar.open(QIODevice::ReadOnly) || jar.size()>JarLimit || !hash.addData(&jar) || hash.result().toHex()!=record.value("sha1").toString().toLatin1()){status(say("server.integrity"));return;}
@@ -530,6 +538,23 @@ void ServerManager::dockerLifecycle(const QString& id,const QString& operation)
                 dockerLifecycle(id,QStringLiteral("start"));
             });return;
         }
+        inspectDockerLifecycle(record,operation);
+    });
+}
+
+bool ServerManager::validDockerStopRecord(const QJsonObject& record) const
+{
+    const QFileInfo cli(record.value("runtime").toString());const auto dir=directoryFor(record.value("id").toString());
+    return record.value("target").toString()==QLatin1String("docker") && !dir.isEmpty() && containedPath(m_root,dir)
+        && safePath(cli.absoluteFilePath()) && cli.isFile()
+        && (cli.fileName().compare(QStringLiteral("docker.exe"),Qt::CaseInsensitive)==0 || cli.fileName()==QLatin1String("docker"))
+        && QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(record.value("containerId").toString()).hasMatch()
+        && validDockerImage(record.value("image").toObject(),record.value("image").toObject().value("javaMajor").toInt())
+        && record.value("memoryMiB").toInt()>=512 && record.value("memoryMiB").toInt()<=32768
+        && record.value("port").toInt()>=1 && record.value("port").toInt()<=65535;
+}
+void ServerManager::inspectDockerLifecycle(const QJsonObject& record,const QString& operation)
+{
         const QString identity=record.value("containerId").toString();
         if(!QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(identity).hasMatch()){status(tr("Saved container identity is invalid."));return;}
         dockerCommand(record.value("runtime").toString(),{"container","inspect","--format","{{json .}}",identity},[this,record,operation](bool ok,const QByteArray& bytes){
@@ -538,7 +563,6 @@ void ServerManager::dockerLifecycle(const QString& id,const QString& operation)
             const QString container=inspected.value("Id").toString();
             dockerCommand(record.value("runtime").toString(),{"container",operation,container},[this](bool applied,const QByteArray&){status(applied?tr("Owned container lifecycle request completed. Game readiness is not verified."):tr("Container operation failed or connection was lost. Current state is unknown."));});
         });
-    });
 }
 
 }
