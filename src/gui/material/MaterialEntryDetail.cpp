@@ -969,6 +969,7 @@ namespace Material
         layout->addWidget(inset(m_attachmentFilter->guidanceWidget(QStringLiteral("search.guidance.details")), {PaneMargin, 0, PaneMargin, 8}));
         layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
         m_filterStatus = new QLabel(m_detailFilterSection);
+        m_filterStatus->setObjectName(QStringLiteral("entryDetailFilterStatus"));
         m_filterStatus->setWordWrap(true);
         m_filterStatus->hide();
         layout->addWidget(inset(m_filterStatus, {PaneMargin, 0, PaneMargin, 8}));
@@ -1053,21 +1054,31 @@ namespace Material
 
     void EntryDetail::applyDetailFilter()
     {
-        const QString needle = m_attachmentFilter ? m_attachmentFilter->text().trimmed() : QString();
+        QString needle = m_attachmentFilter ? m_attachmentFilter->text().trimmed() : QString();
         QRegularExpression pattern;
         bool useRegex = false;
+        bool invalid = false;
         if (m_attachmentFilter && m_attachmentFilter->isRegexEnabled() && !needle.isEmpty()) {
             pattern = QRegularExpression(needle, optionsForFlags(m_attachmentFilter->regexFlags()));
-            // An unparsable pattern changes nothing rather than hiding
-            // everything or quietly turning into a literal search.
+            // Fresh rows must receive the last accepted filter even while
+            // the current input is invalid. Keep that input and its message.
             if (!pattern.isValid()) {
                 m_filterStatus->setText(Voice::say(QStringLiteral("search.invalid")));
                 m_filterStatus->show();
-                return;
+                invalid = true;
             }
             useRegex = true;
         }
-        m_filterStatus->hide();
+        if (invalid) {
+            needle = m_acceptedDetailNeedle;
+            pattern = m_acceptedDetailPattern;
+            useRegex = m_acceptedDetailRegex;
+        } else {
+            m_filterStatus->hide();
+            m_acceptedDetailNeedle = needle;
+            m_acceptedDetailPattern = pattern;
+            m_acceptedDetailRegex = useRegex;
+        }
         auto accepts = [&](const QString& haystack) {
             if (needle.isEmpty()) {
                 return true;
@@ -1178,7 +1189,6 @@ namespace Material
         m_copyPasswordAction->setEnabled(!m_data.password.isEmpty());
         m_modifiedLabel->setFullText(m_data.modified.isEmpty() ? emptyValue() : m_data.modified);
         m_modifiedRow->setVisible(m_hasEntry);
-        applyDetailFilter();
 
         {
             const QSignalBlocker blocker(m_favouriteButton);
@@ -1211,6 +1221,7 @@ namespace Material
         m_notesSection->setVisible(!m_data.notes.isEmpty());
 
         updateAttachments();
+        applyDetailFilter();
 
         m_historyLabel->setText(m_data.historySummary);
         m_historySection->setVisible(!m_data.historySummary.isEmpty());

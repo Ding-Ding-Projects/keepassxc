@@ -334,6 +334,50 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     detail.attachmentFilter()->clear();
     QCOMPARE(detail.visibleFieldKeys().size(), 4);
 
+    auto visibleAttachmentNames = [&detail] {
+        QStringList names;
+        for (auto* row : detail.findChildren<QAbstractButton*>()) {
+            if ((row->toolTip().endsWith(QStringLiteral(".txt")) || row->toolTip().endsWith(QStringLiteral(".png")))
+                && !row->isHidden()) {
+                names.append(row->toolTip());
+            }
+        }
+        names.sort();
+        return names;
+    };
+    detail.attachmentFilter()->setText(QStringLiteral("recovery"));
+    QCOMPARE(visibleAttachmentNames(), QStringList{QStringLiteral("recovery-codes.txt")});
+    detail.setEntryData(data);
+    QCOMPARE(visibleAttachmentNames(), QStringList{QStringLiteral("recovery-codes.txt")});
+    data.attachments = {{QStringLiteral("recovery-new.txt"), QStringLiteral("2 KB")},
+                        {QStringLiteral("unrelated.png"), QStringLiteral("3 KB")}};
+    detail.setEntryData(data);
+    QCOMPARE(visibleAttachmentNames(), QStringList{QStringLiteral("recovery-new.txt")});
+    detail.attachmentFilter()->setRegexEnabled(true);
+    detail.attachmentFilter()->setText(QStringLiteral("^recovery.*\\.txt$"));
+    QCOMPARE(visibleAttachmentNames(), QStringList{QStringLiteral("recovery-new.txt")});
+    QVERIFY(detail.visibleFieldKeys().isEmpty());
+    detail.attachmentFilter()->setText(QStringLiteral("("));
+    auto* status = detail.findChild<QLabel*>(QStringLiteral("entryDetailFilterStatus"));
+    QVERIFY(status && !status->isHidden());
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("search.invalid")));
+    detail.setEntryData(data);
+    QCOMPARE(visibleAttachmentNames(), QStringList{QStringLiteral("recovery-new.txt")});
+    QVERIFY(detail.visibleFieldKeys().isEmpty());
+    data.attachments.append({QStringLiteral("recovery-added.txt"), QStringLiteral("4 KB")});
+    detail.setEntryData(data);
+    QCOMPARE(visibleAttachmentNames(), (QStringList{QStringLiteral("recovery-added.txt"), QStringLiteral("recovery-new.txt")}));
+    QCOMPARE(detail.attachmentFilter()->text(), QStringLiteral("("));
+    QVERIFY(detail.attachmentFilter()->isRegexEnabled());
+    QCOMPARE(status->text(), Voice::say(QStringLiteral("search.invalid")));
+    QVERIFY(!status->isHidden());
+    detail.attachmentFilter()->clear();
+    QCOMPARE(visibleAttachmentNames().size(), 3);
+    QVERIFY(status->isHidden());
+    detail.setEntryData(data);
+    QCOMPARE(visibleAttachmentNames().size(), 3);
+    detail.attachmentFilter()->setRegexEnabled(false);
+
     detail.attachmentFilter()->setText(QStringLiteral("Username"));
     data.attachments.clear();
     detail.setEntryData(data);

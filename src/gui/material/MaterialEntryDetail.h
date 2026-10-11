@@ -22,6 +22,7 @@
 
 #include <QList>
 #include <QMargins>
+#include <QRegularExpression>
 #include <QScrollArea>
 #include <QString>
 #include <QStringList>
@@ -205,6 +206,9 @@ namespace Material
         QWidget* m_detailFilterSection = nullptr;
         SearchBar* m_attachmentFilter = nullptr;
         QLabel* m_filterStatus = nullptr;
+        QString m_acceptedDetailNeedle;
+        QRegularExpression m_acceptedDetailPattern;
+        bool m_acceptedDetailRegex = false;
         QWidget* m_attachmentsList = nullptr;
         QVBoxLayout* m_attachmentsLayout = nullptr;
         QWidget* m_historySection = nullptr;
