@@ -496,8 +496,10 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
             auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
             auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+            QVERIFY(entry && panel && done);
             auto* scroll = panel->findChild<QScrollArea*>();
             auto* explanation = panel->findChild<QLabel*>(QStringLiteral("searchGuidanceExplanation"));
+            QVERIFY(scroll && explanation);
             QVERIFY(entry && panel && done && scroll && explanation);
             const auto expected = Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ")
                                   + Voice::say(QStringLiteral("search.") + category);
@@ -581,11 +583,15 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
         auto* footer = sidebar.findChild<QWidget*>(QStringLiteral("materialVaultExternalEditor"));
         QVERIFY(outerScroll && footer);
         for (auto* bar : {sidebar.groupFilter(), sidebar.tagFilter()}) {
-            auto* host = bar->guidanceWidget();
+            auto* host = sidebar.findChild<QWidget*>(bar->searchId() + QStringLiteral(".guidance"));
+            QVERIFY(host);
             auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
             auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
             auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+            QVERIFY(entry && panel && done);
             auto* scroll = panel->findChild<QScrollArea*>();
+            auto* explanation = panel->findChild<QLabel*>(QStringLiteral("searchGuidanceExplanation"));
+            QVERIFY(scroll && explanation);
             const QString query = bar->text();
             outerScroll->ensureWidgetVisible(entry);
             entry->setFocus();
@@ -602,6 +608,9 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             QVERIFY(viewport.bottom() < action.top());
             QVERIFY(done->height() >= done->heightForWidth(done->width()));
             QCOMPARE(scroll->horizontalScrollBar()->maximum(), 0);
+            QVERIFY(explanation->height() >= explanation->heightForWidth(explanation->width()));
+            if (explanation->height() > scroll->viewport()->height())
+                QVERIFY(scroll->verticalScrollBar()->maximum() > 0);
             QVERIFY(outerScroll->verticalScrollBar()->maximum() > 0);
             QCOMPARE(outerScroll->horizontalScrollBar()->maximum(), 0);
             outerScroll->ensureWidgetVisible(done);

@@ -290,6 +290,8 @@ namespace Material
         // through the outer scrollbar rather than overlapping guidance actions.
         root->setSizeConstraint(QLayout::SetMinimumSize);
         scroll->setWidget(content);
+        content->setAutoFillBackground(false);
+        scroll->viewport()->setAutoFillBackground(false);
         outer->addWidget(scroll);
         root->setContentsMargins(HorizontalPadding, VerticalPadding, HorizontalPadding, VerticalPadding);
         root->setSpacing(RowSpacing);
