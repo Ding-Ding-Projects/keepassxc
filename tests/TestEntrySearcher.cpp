@@ -459,6 +459,43 @@ void TestEntrySearcher::testMetadataOnly()
     QVERIFY(metadata.search(QStringLiteral("password:synthetic-secret"), m_rootGroup).isEmpty());
     QVERIFY(metadata.search(QStringLiteral("attribute:synthetic-secret"), m_rootGroup).isEmpty());
     QVERIFY(metadata.search(QStringLiteral("private:synthetic-secret"), m_rootGroup).isEmpty());
+    // Forbidden fields must fail closed before negation, including parser aliases.
+    for (const auto& prefix : {QStringLiteral("password:"), QStringLiteral("pw:"),
+                               QStringLiteral("attribute:"), QStringLiteral("_private:")}) {
+        QVERIFY(metadata.search(prefix + QStringLiteral("synthetic-secret"), m_rootGroup).isEmpty());
+        for (const auto& modifier : {QStringLiteral("-"), QStringLiteral("!")}) {
+            QVERIFY(metadata.search(modifier + prefix + QStringLiteral("unmatched-fixture"), m_rootGroup).isEmpty());
+            QVERIFY(metadata.search(QStringLiteral("title:Mail ") + modifier + prefix
+                                        + QStringLiteral("unmatched-fixture"), m_rootGroup).isEmpty());
+        }
+    }
+    // Metadata placeholders remain literal rather than resolving protected values.
+    QCOMPARE(metadata.search(QStringLiteral("username:{PASSWORD}"), m_rootGroup).size(), 1);
+    QVERIFY(metadata.search(QStringLiteral("username:synthetic-secret"), m_rootGroup).isEmpty());
+    entry->setTitle(QStringLiteral("{PASSWORD}"));
+    entry->setUrl(QStringLiteral("{PASSWORD}"));
+    for (const auto& prefix : {QStringLiteral("title:"), QStringLiteral("username:"), QStringLiteral("url:")}) {
+        QCOMPARE(metadata.search(prefix + QStringLiteral("{PASSWORD}"), m_rootGroup).size(), 1);
+        QVERIFY(metadata.search(prefix + QStringLiteral("synthetic-secret"), m_rootGroup).isEmpty());
+    }
+    // Protect each standard metadata field independently, retaining other public fields.
+    entry->setTitle(QStringLiteral("fixture-title"));
+    entry->setUsername(QStringLiteral("fixture-user"));
+    entry->setUrl(QStringLiteral("fixture-url"));
+    const QList<QPair<QString, QString>> protectedMetadata{
+        {QStringLiteral("Title"), QStringLiteral("title:")},
+        {QStringLiteral("UserName"), QStringLiteral("username:")},
+        {QStringLiteral("URL"), QStringLiteral("url:")}};
+    for (const auto& field : protectedMetadata) {
+        const auto value = entry->attributes()->value(field.first);
+        QCOMPARE(metadata.search(field.second + value, m_rootGroup).size(), 1);
+        entry->attributes()->set(field.first, value, true);
+        QVERIFY(metadata.search(field.second + value, m_rootGroup).isEmpty());
+        QVERIFY(metadata.search(value, m_rootGroup).isEmpty());
+        QCOMPARE(metadata.search(QStringLiteral("notes:invoice"), m_rootGroup).size(), 1);
+        entry->attributes()->set(field.first, value, false);
+        QCOMPARE(metadata.search(field.second + value, m_rootGroup).size(), 1);
+    }
     entry->attributes()->set(QStringLiteral("Notes"), QStringLiteral("protected-note"), true);
     QVERIFY(metadata.search(QStringLiteral("protected-note"), m_rootGroup).isEmpty());
     QCOMPARE(metadata.search(QStringLiteral("uuid:") + entry->uuidToHex(), m_rootGroup).size(), 1);
