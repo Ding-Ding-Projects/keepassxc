@@ -31,6 +31,21 @@ check('client loads every article from the actual immutable manifest', () => {
     assert.equal(articles.filter(article => article[2] === path).length, 1, path);
   }
 });
+check('client accepts the actual mixed-status article and an explicit mixed fixture', () => {
+  const actual = manifest.articles.find(article => article.implementationStatus === 'mixed');
+  assert(actual, 'The retained immutable manifest must exercise its mixed-status article');
+  assert.equal(load(manifest).filter(article => article[2] === actual.article.replace('docs/features/', '')).length, 1);
+  const fixture = structuredClone(manifest);
+  fixture.articles[0].implementationStatus = 'mixed';
+  assert.equal(load(fixture).length, fixture.articles.length);
+});
+check('client still rejects unknown and near-match implementation statuses', () => {
+  for (const status of ['unknown-status', 'Mixed', 'mixed ', '', null]) {
+    const invalid = structuredClone(manifest);
+    invalid.articles[0].implementationStatus = status;
+    assert.throws(() => load(invalid), /Invalid content manifest/);
+  }
+});
 check('client still rejects an unknown category', () => {
   const invalid = structuredClone(manifest);
   invalid.articles[0].category = 'unknown-category';
