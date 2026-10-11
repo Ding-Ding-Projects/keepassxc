@@ -475,10 +475,12 @@
       "id": "app.converter",
       "platform": "app",
       "label": "Local converter and durable queue",
-      "source": null,
+      "source": "src/gui/material/MaterialFileConverter.cpp",
       "ownership": "native-product",
-      "status": "unverified",
-      "evidenceState": "unverified"
+      "status": "source-present",
+      "evidenceState": "unverified",
+      "note": "Source added after the historical assessment revision; native runtime and acceptance remain unverified.",
+      "sourceAssessmentCommit": "4e06460946b4da2efa6ee8262538f07dafae561c"
     },
     {
       "id": "app.ollama",

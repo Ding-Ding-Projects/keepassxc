@@ -908,9 +908,25 @@
       "id": "file-converter",
       "surface": "app",
       "title": "Universal local file converter",
-      "status": "missing",
+      "status": "partial",
       "priorStatus": "missing",
-      "evidenceState": "historical-unverified"
+      "evidenceState": "historical-unverified",
+      "note": "Native Binary Encodings source foundation only. Compilation/runtime pending; seven categories, complete adapters, isolated workers, durable queues and website equivalent remain incomplete. No current accepted evidence.",
+      "implementation": {
+        "file": "src/gui/material/MaterialFileConverter.cpp",
+        "anchor": "^FileConverter::Result FileConverter::convert\\("
+      },
+      "test": {
+        "file": "tests/TestMaterialFileConverter.cpp",
+        "anchor": "^class TestMaterialFileConverter : public QObject$"
+      },
+      "localizedCopy": {
+        "file": "share/voice/voice.json",
+        "anchor": "^        \"converter.title\": \\{$"
+      },
+      "article": {
+        "file": "docs/features/records/binary-file-converter.md"
+      }
     },
     {
       "id": "ollama-manager",

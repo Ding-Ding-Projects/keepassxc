@@ -22,6 +22,19 @@ The detail search matches field labels and attachment filenames only. It does no
 
 ## Current continuation, October 11, 2026
 
+Native candidate `8bb91c55791e54667541e03b8772c808243b168b` passed root `build.bat /s -WithGuiTests` and complete staged-file validation. Direct offscreen suites passed 12 entry-searcher, 11 tab and 11 vault-filter cases, with no failures or skips. Metadata exclusion boundaries, opaque selector configurations and search availability without attachments are covered by those compiled fixtures.
+
+Later candidate `7d074ca71461a318bab17844f7fe48305d06ffe4` passed the same root entrypoint and complete stage validation. Its 11 vault-filter cases passed, including repeated entry-content refresh under a detail query and last-valid filtering while current regex input is invalid. Earlier unchanged-suite results remain bound to their original source.
+
+Current synthetic native captures confirm visible detail search without attachments, retained field-label filtering through a real selection refresh and an opaque selector. The opened group guidance still overlaps its Return control; the visible finding remains open despite the passing earlier fixture. Distinct-tab activation and complete current lock/close acceptance remain unverified. A stronger constrained-sidebar source repair is being reviewed separately. No complete native matrix is claimed.
+
+Reader source `9c40436844d4d6edde7b4a839eeb80d42b6600f9` passed its actual root website-only build, eleven focused checks, four index queries and the search article route. Nineteen genuine frames were independently inspected: sixteen desktop-English matrix frames and three narrow bilingual focused frames. The matrix stopped at its existing ownership-query deadline, leaving eighty required frames unrun. Current owned process trees and exact desktops were normally closed; the isolated profile and an earlier uncertain desktop association remain retained. Strict audit and socket-refusal proof remain unverified.
+
+The refreshed documentation at `f10ce6dc060322a2a0a54a2c6ee1c1a7d176d2b1` passed root `build.bat /s -WebsiteOnly`, with all twenty output hashes verified. This later build is not covered by the earlier browser captures or a current hosted-deployment verdict.
+
+All 105 requirement identities remain mapped. The authority requires 1,119 capabilities, 108 surfaces and 120,852 cells; zero cells are accepted. Full local-model management, the eight-category converter, server targets, motion authoring, shared restricted mode and other universal workflows remain incomplete. Remote main is `f5949912caf3ebfe7c9ca9430d2141b4ebd21810`. Task preservation is not completed delivery. No new release or destructive cleanup is claimed.
+## Historical continuation snapshot
+
 Root `build.bat /s` later passed at `cdb8862bd2637b30464abae8ad13888885def592`, with independently verified stage provenance. Nine of twelve selected CTest suites passed; voice failed and two did not start. Separate direct search-registry and tab checks passed. Later SSH, vocabulary and voice source repairs require their own native execution. The GUI-enabled root candidate `4f5b3eb9` failed on an ambiguous list append; repair `e202657b88df87c5e36bc4fa03da3c5dbf2f3d69` is building through `build.bat /s -WithGuiTests`. Earlier evidence below remains historical.
 
 The current requirements authority maps all 105 identities and records 1,119 capabilities across 120,852 required surface cells. Its 95 focused checks passed, with zero accepted cells. Complete server targets, motion authoring, guidance and universal per-surface acceptance remain incomplete.
