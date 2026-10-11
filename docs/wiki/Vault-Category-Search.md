@@ -22,9 +22,13 @@ The detail search matches field labels and attachment filenames only. It does no
 
 ## Verification status
 
-Source regression cases cover tag selection preservation, independent folder text, invalid patterns, clear behavior, metadata matches, secret exclusion, placeholder exclusion, protected notes, UUID and expiry filtering, and legacy engine compatibility. These cases require a compiled native test run before acceptance. Native interaction, supported language/theme/scale geometry and representative screenshots remain pending until a current source-bound build is available.
+Root `build.bat /s` completed successfully at `0ffb00b9ae963e7629bacc2e2903c5df4a104490`. All five focused native checks passed: entry search, configuration, search registry, vault filters and tabs. The staged executable and every stage-receipt hash were independently verified. This establishes that source candidate's build and focused behavior checks, not complete GUI acceptance.
 
-Additional focused cases cover rejected tab-pattern retention, tab-query reset, language-switch query and builder ownership, regex case sensitivity, and capture-profile configuration isolation. The existing source-style check passed after these repairs. Native execution remains pending. Capture runs use a dedicated verification identifier with isolated instance and standard paths, ignore inherited configuration overrides and portable mode, and reject explicit configuration overrides before application startup.
+A genuine synthetic vault capture was obtained at 1440 by 860, English and light theme. It was rejected for language acceptance because the capture route wrote the language configuration without notifying already-constructed controls. Repair `49a2547bab915b2ad3a6a1d218f8282602a54e41` uses the normal Voice setter and adds scheduled production-route fixtures for English, Cantonese and bilingual transitions. Its exact root build is running; those new fixtures and the full native matrix remain pending.
+
+The separate documentation reader at `51521199478ac825a8cfdede991543cd939e622f` passed real index checks (47 initial articles, three vault matches, zero synthetic no-match results and 47 after clearing), 48 bounded language/theme/viewport/scale captures and five keyboard checks. Its processes and empty hidden desktops were closed with proof. Pixel review covers captured portions, not full accessibility or deployment. Independent semantic review read all 63 English/Cantonese pairs; the narrow wording finding and inherited source inconsistencies were repaired in `fcf3737e55c0a61d7ea16407c30c7f32aebd4ea5`.
+
+Capture runs use a dedicated verification identifier with isolated instance and standard paths, ignore inherited configuration overrides and portable mode, and reject explicit configuration overrides before application startup. Only synthetic data was used. Broader native workflow, minimum-size, theme, language and scale acceptance remains incomplete. No new release is authorized.
 
 ## Related
 

@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "repository": "Ding-Ding-Projects/keepassxc.wiki",
-  "revision": "848bfefb194922da18b856c71e4bed00cc061d2a",
+  "revision": "0ab8ac4f147a4aa4998f78e4154bfb3129ee1410",
   "pages": [
     {
       "file": "Building.md",
@@ -10,8 +10,8 @@
     },
     {
       "file": "CLOSEOUT_PROMPT.md",
-      "sha256": "190f31bca768df4affb8a7f668330c8ca4b8b5b3dc8613e8b726e3fe53009dc7",
-      "sourceBlob": "1c644646fdec5bdb507a1bdb2c16d09595d8ce5c"
+      "sha256": "415547caa3f09a91ef26a148d7b6bdbe5b7b55fc30ca0789c8aa94118be3dc7a",
+      "sourceBlob": "6122262e468db53d91e86aafb7e3bf7f3e45ef4e"
     },
     {
       "file": "Home.md",
@@ -25,13 +25,13 @@
     },
     {
       "file": "Passkeys.md",
-      "sha256": "0584250693d16b6e267e173b14b0f86a1f4a26526a4e8d51941becd0db185054",
-      "sourceBlob": "f2e7913cc21c04316fdd4dea7e5859621a7c5a2a"
+      "sha256": "da15d4e30516a252cc28d689be2913be77ef5e863d21df93d8bf73b46e572c25",
+      "sourceBlob": "4caba7b9ffef5ce2e4d6d5b104c8dea3fb0d297c"
     },
     {
       "file": "Vault-Category-Search.md",
-      "sha256": "bd8ffa0b45c9e2779b242973d808ddd1fe3db17cf17c41f245272922aa1b00a6",
-      "sourceBlob": "935d43d75e386a1eb9fcdfa6429d3b784fa90bc6"
+      "sha256": "50eb9b244ffc58bc64f5b7020ed8a83942338b2996cd6d9949112cc3ee9c412c",
+      "sourceBlob": "39505a221c1702cada89c34346dc2730d13956e2"
     }
   ]
 }
