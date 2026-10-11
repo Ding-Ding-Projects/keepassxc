@@ -26,6 +26,7 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialSegmentedButton.h"
 #include "MaterialSelect.h"
 #include "MaterialSlider.h"
@@ -33,6 +34,8 @@
 #include "MaterialTheme.h"
 
 #include <QAbstractButton>
+#include <QAction>
+#include <QTableWidget>
 #include <QApplication>
 #include <QClipboard>
 #include <QEvent>
@@ -486,6 +489,55 @@ namespace Material
         m_pages->addWidget(buildPresetsPage());
         m_motion = new MotionEditor(m_pages);
         m_pages->addWidget(m_motion);
+        m_motionSearch = new SearchBar(SearchBar::Variant::Surface, m_motion);
+        m_motionSearch->setObjectName(QStringLiteral("appearanceMotionSearch"));
+        m_motionSearch->setIdentity(QStringLiteral("appearance.editor.motion"), motionCopy(QStringLiteral("Motion track search")));
+        m_motionSearch->setPlaceholder(motionCopy(QStringLiteral("Search track names, states and properties")));
+        m_motionSearch->lineEdit()->setAccessibleName(motionCopy(QStringLiteral("Search motion tracks")));
+        m_motionSearch->lineEdit()->setMaxLength(RegexLimits::PatternChars);
+        m_motionSearchStatus = new QLabel(m_motion);
+        m_motionSearchStatus->setObjectName(QStringLiteral("appearanceMotionSearchStatus"));
+        m_motionSearchStatus->setWordWrap(true);
+        auto* motionLayout = qobject_cast<QVBoxLayout*>(m_motion->layout());
+        motionLayout->insertWidget(1, m_motionSearch);
+        motionLayout->insertWidget(2, m_motionSearchStatus);
+        connect(m_motionSearch, &SearchBar::textChanged, this, &AppearanceEditor::applyMotionFilter);
+        connect(m_motionSearch, &SearchBar::regexToggled, this, &AppearanceEditor::applyMotionFilter);
+        connect(m_motionSearch, &SearchBar::regexFlagsChanged, this, &AppearanceEditor::applyMotionFilter);
+        auto* tracks = m_motion->findChild<QTableWidget*>(QStringLiteral("motionTracks"));
+        // Table refreshes replace several cells synchronously. Filter the completed view.
+        const auto refilter = [this] {
+            if (m_motionFilterPending) return;
+            m_motionFilterPending = true;
+            QTimer::singleShot(0, this, [this] {
+                m_motionFilterPending = false;
+                applyMotionFilter();
+            });
+        };
+        connect(tracks->model(), &QAbstractItemModel::dataChanged, this, refilter);
+        connect(tracks->model(), &QAbstractItemModel::rowsInserted, this, refilter);
+        connect(tracks->model(), &QAbstractItemModel::rowsRemoved, this, refilter);
+        connect(tracks->model(), &QAbstractItemModel::modelReset, this, refilter);
+        auto* findMotion = new QAction(motionCopy(QStringLiteral("Search motion tracks")), m_motion);
+        findMotion->setObjectName(QStringLiteral("appearanceMotionFind"));
+        findMotion->setShortcut(QKeySequence::Find);
+        findMotion->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+        m_motion->addAction(findMotion);
+        connect(findMotion, &QAction::triggered, m_motionSearch, [this] {
+            if (m_motionSearch->isVisible()) {
+                m_motionSearch->lineEdit()->setFocus();
+                m_motionSearch->lineEdit()->selectAll();
+            }
+        });
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, [this, findMotion] {
+            m_motionSearch->setIdentity(QStringLiteral("appearance.editor.motion"), motionCopy(QStringLiteral("Motion track search")));
+            m_motionSearch->setPlaceholder(motionCopy(QStringLiteral("Search track names, states and properties")));
+            const auto name = motionCopy(QStringLiteral("Search motion tracks"));
+            m_motionSearch->lineEdit()->setAccessibleName(name);
+            findMotion->setText(name);
+            applyMotionFilter();
+        });
+        applyMotionFilter();
         outer->addWidget(scroll, 1);
         connect(m_tabs, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
             const QStringList ids{QStringLiteral("typography"), QStringLiteral("colour"), QStringLiteral("shape"), QStringLiteral("presets"), QStringLiteral("motion")};
@@ -1000,6 +1052,57 @@ namespace Material
         m_search->lineEdit()->setAccessibleDescription(shown == 0 ? tr("No properties match") : tr("%n propert(y/ies) shown", "", shown));
     }
 
+    void AppearanceEditor::applyMotionFilter()
+    {
+        auto* tracks = m_motion->findChild<QTableWidget*>(QStringLiteral("motionTracks"));
+        const auto candidate = m_motionSearch->text();
+        const auto flags = m_motionSearch->regexFlags();
+        const bool regex = m_motionSearch->isRegexEnabled();
+        const auto evaluate = [tracks](const QString& query, bool useRegex, const QString& options, QList<bool>& matches) {
+            for (int row = 0; row < tracks->rowCount(); ++row) {
+                QStringList fields;
+                for (int column = 0; column < 3; ++column) {
+                    const auto* item = tracks->item(row, column);
+                    fields.append(item ? item->text().left(512) : QString());
+                }
+                const auto text = fields.join(QLatin1Char(' '));
+                bool match = query.isEmpty() || text.contains(query, Qt::CaseInsensitive);
+                if (useRegex && !query.isEmpty()) {
+                    const auto run = runBounded(query, optionsForFlags(options), text);
+                    if (!run.compiled || run.blocked || run.timedOut || run.sampleTruncated) return false;
+                    match = !run.matches.isEmpty();
+                }
+                matches.append(match);
+            }
+            return true;
+        };
+        bool valid = true;
+        if (regex && !candidate.isEmpty()) {
+            const auto validation = runBounded(candidate, optionsForFlags(flags), QString());
+            valid = validation.compiled && !validation.blocked && !validation.timedOut;
+        }
+        QList<bool> matches;
+        valid = valid && evaluate(candidate, regex, flags, matches);
+        if (valid) {
+            m_motionFilter = candidate;
+            m_motionFilterFlags = flags;
+            m_motionFilterRegex = regex;
+        } else {
+            matches.clear();
+            if (!evaluate(m_motionFilter, m_motionFilterRegex, m_motionFilterFlags, matches)) return;
+        }
+        int shown = 0;
+        for (int row = 0; row < matches.size(); ++row) {
+            tracks->setRowHidden(row, !matches[row]);
+            if (matches[row]) ++shown;
+        }
+        const QString status = valid
+            ? motionCopy(QStringLiteral("%1 of %2 tracks shown. Search does not change the selected track.")).arg(shown).arg(tracks->rowCount())
+            : motionCopy(QStringLiteral("Pattern unavailable. The last valid track filter is retained."));
+        m_motionSearchStatus->setText(status);
+        m_motionSearch->lineEdit()->setAccessibleDescription(status);
+    }
+
     QStringList AppearanceEditor::visiblePropertyRows() const
     {
         QStringList ids;
@@ -1214,6 +1317,7 @@ namespace Material
     // ------------------------------------------------------------ accessors
 
     SearchBar* AppearanceEditor::propertySearch() const { return m_search; }
+    SearchBar* AppearanceEditor::motionSearch() const { return m_motionSearch; }
     ColorPicker* AppearanceEditor::backgroundPicker() const { return m_background; }
     ColorPicker* AppearanceEditor::foregroundPicker() const { return m_foreground; }
     Select* AppearanceEditor::fontFamily() const { return m_fontFamily; }

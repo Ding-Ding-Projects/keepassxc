@@ -40,6 +40,8 @@
 #include <QLineEdit>
 #include <QSignalSpy>
 #include <QTest>
+#include <QTableWidget>
+#include "gui/material/MaterialSearchRegistry.h"
 #include <QVBoxLayout>
 
 int main(int argc, char** argv)
@@ -515,4 +517,60 @@ void TestMaterialAppearanceEditor::motionPersistenceAndCancellation()
     QCOMPARE(player.document(),v.motion);
     editor.closeEditor();
     ElementOverrides::instance()->reset(QStringLiteral("motionFixture"));
+}
+
+void TestMaterialAppearanceEditor::motionInspectorSearchPreservesDocumentAndSelection()
+{
+    const auto key = QStringLiteral("motionSearchFixture");
+    auto document = authoredMotion();
+    auto first = document.value(QStringLiteral("tracks")).toArray().first().toObject();
+    first[QStringLiteral("name")] = QStringLiteral("Alpha");
+    auto second = first;
+    second[QStringLiteral("name")] = QStringLiteral("Beta");
+    document[QStringLiteral("tracks")] = QJsonArray{first, second};
+    ElementOverrides::Override value;
+    value.motion = document;
+    ElementOverrides::instance()->set(key, value);
+    QWidget target;
+    AppearanceEditor editor;
+    editor.editElement(&target, key);
+    editor.setCurrentTab(QStringLiteral("motion"));
+    auto* search = editor.motionSearch();
+    auto* tracks = editor.findChild<QTableWidget*>(QStringLiteral("motionTracks"));
+    QVERIFY(search);
+    QVERIFY(tracks);
+    QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("appearance.editor.motion")), search);
+    tracks->selectRow(1);
+    editor.propertySearch()->setText(QStringLiteral("radius"));
+    search->setText(QStringLiteral("Alpha"));
+    QVERIFY(!tracks->isRowHidden(0));
+    QVERIFY(tracks->isRowHidden(1));
+    QCOMPARE(tracks->currentRow(), 1);
+    search->setRegexEnabled(true);
+    search->setText(QStringLiteral("^Alpha"));
+    search->setText(QStringLiteral("["));
+    QVERIFY(!tracks->isRowHidden(0));
+    QVERIFY(tracks->isRowHidden(1));
+    QVERIFY(!search->lineEdit()->accessibleDescription().isEmpty());
+    search->setText(QStringLiteral("(a+)+$"));
+    QVERIFY(!tracks->isRowHidden(0));
+    QVERIFY(tracks->isRowHidden(1));
+    search->setText(QStringLiteral("^alpha"));
+    search->setRegexFlags(QString());
+    QVERIFY(tracks->isRowHidden(0));
+    QVERIFY(tracks->isRowHidden(1));
+    search->setRegexFlags(QStringLiteral("i"));
+    QVERIFY(!tracks->isRowHidden(0));
+    search->clear();
+    QVERIFY(!tracks->isRowHidden(0));
+    QVERIFY(!tracks->isRowHidden(1));
+    QCOMPARE(tracks->currentRow(), 1);
+    QCOMPARE(editor.propertySearch()->text(), QStringLiteral("radius"));
+    QCOMPARE(ElementOverrides::instance()->get(key).motion, document);
+    QSignalSpy builder(search, &SearchBar::builderRequested);
+    QVERIFY(QMetaObject::invokeMethod(search, "builderRequested"));
+    QCOMPARE(builder.count(), 1);
+    QCOMPARE(SearchRegistry::instance()->current(), search);
+    editor.closeEditor();
+    ElementOverrides::instance()->reset(key);
 }
