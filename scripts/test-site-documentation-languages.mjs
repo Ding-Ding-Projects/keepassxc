@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildDocumentation} from '../site/build-documentation.mjs';
-import {documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory} from '../site/documentation-languages.mjs';
+import {documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory,translationInventoryForDocuments} from '../site/documentation-languages.mjs';
 
 const hash=text=>createHash('sha256').update(text).digest('hex');
 const root=mkdtempSync(resolve(tmpdir(),'documentation-languages-'));
@@ -23,6 +23,13 @@ try{
     const ids=documentationHeadingIds(['Same','Same','Same-1','yue--Same','','']);assert.equal(new Set(ids).size,ids.length);
     assert.equal(new Set(ids.flatMap(id=>[`en--${id}`,`yue--${id}`])).size,ids.length*2);
     const article=result.documents[0];assert.deepEqual(documentLanguages(article,'both').map(record=>record.markdown),[source,translated]);
+    assert.doesNotThrow(()=>validateTranslationInventory(translationInventoryForDocuments(result.documents),result.documents));
+    for(const property of ['path','extra','__proto__']){
+        const changed=structuredClone(result.documents);Object.defineProperty(changed[0].translation,property,{value:'docs/wiki/README.md',enumerable:true});
+        assert.throws(()=>translationInventoryForDocuments(changed),/fields/);
+    }
+    const swapped=structuredClone(result.documents);[swapped[0].translation,swapped[1].translation]=[swapped[1].translation,swapped[0].translation];
+    assert.throws(()=>validateTranslationInventory(translationInventoryForDocuments(swapped),swapped),/Stale/);
     assert.equal(documentLanguages(article,'yue')[0].language,'yue-Hant');
     assert.equal(documentLanguages(result.documents[1],'yue').length,0);
     assert.match(documentationTitle(result.documents[1],'both'),/unavailable/);

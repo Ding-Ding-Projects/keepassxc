@@ -3,6 +3,12 @@ export const documentationLimits={bundleBytes:2097152,documentCharacters:131072,
 const hash=/^[a-f0-9]{64}$/;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const keys=(value,expected)=>object(value)&&Object.keys(value).sort().join(',')===[...expected].sort().join(',');
+export function translationInventoryForDocuments(documents){
+    return {schemaVersion:1,documents:documents.map(article=>{
+        if(!keys(article.translation,['sourceSha256','status','title','markdown']))throw Error('Invalid delivered translation fields.');
+        return {path:article.path,...article.translation};
+    })};
+}
 export function documentationHeadingIds(titles){
     const used=new Set();
     return titles.map(title=>{

@@ -1,6 +1,6 @@
 import {marked} from 'marked';
 import DOMPurify from 'dompurify';
-import {documentationLimits,documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory} from './documentation-languages.mjs';
+import {documentationLimits,documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory,translationInventoryForDocuments} from './documentation-languages.mjs';
 
 export const documentationHref=(path,hash='')=>`?article=${encodeURIComponent(path)}${hash}`;
 let refresh=()=>{};
@@ -37,7 +37,7 @@ export async function initializeDocumentation({language,showDocs}){
     }finally{clearTimeout(deadline);stream?.releaseLock();}
     const validPath=path=>typeof path==='string'&&/^docs\/(?:features\/[A-Za-z0-9/_-]+|wiki\/[-A-Za-z0-9_ ]+)\.md$/.test(path)&&!path.includes('..');
     if(bundle.schemaVersion!==2||typeof bundle.sourceCommit!=='string'||!/^([a-f0-9]{40})$/.test(bundle.sourceCommit)||typeof bundle.wikiRevision!=='string'||!/^([a-f0-9]{40})$/.test(bundle.wikiRevision)||!Array.isArray(bundle.documents)||bundle.documents.length>documentationLimits.documents||bundle.documents.some(document=>!validPath(document.path)||typeof document.title!=='string'||document.title.length>300||typeof document.markdown!=='string'||document.markdown.length>documentationLimits.documentCharacters||typeof document.sourceSha256!=='string'||!/^[a-f0-9]{64}$/.test(document.sourceSha256)||!document.translation)||new Set(bundle.documents.map(document=>document.path)).size!==bundle.documents.length)throw Error('Invalid documentation inventory.');
-    validateTranslationInventory({schemaVersion:1,documents:bundle.documents.map(article=>({path:article.path,...article.translation}))},bundle.documents);
+    validateTranslationInventory(translationInventoryForDocuments(bundle.documents),bundle.documents);
     for(const article of bundle.documents){
         const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(article.markdown));
         if([...new Uint8Array(digest)].map(byte=>byte.toString(16).padStart(2,'0')).join('')!==article.sourceSha256)throw Error('Documentation source digest differs.');
