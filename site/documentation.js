@@ -127,7 +127,7 @@ export async function initializeDocumentation({language,showDocs}){
         const sections=[...body.querySelectorAll(':scope > section')];
         for(const heading of sections[0]?.querySelectorAll('h2,h3')||[]){
             const counterpart=sections[1]?.querySelector(`[data-heading-index="${heading.dataset.headingIndex}"]`);
-            const anchor=documentElement('a',counterpart?`${heading.textContent} · ${counterpart.textContent}`:heading.textContent);anchor.href=documentationHref(activePath,'#'+heading.id);anchor.dataset.documentPath=activePath;outline.append(anchor);
+            const anchor=documentElement('a',counterpart?`${heading.textContent} · ${counterpart.textContent}`:heading.textContent);anchor.href=documentationHref(activePath,'#'+heading.id);anchor.dataset.documentPath=activePath;anchor.dataset.headingIndex=heading.dataset.headingIndex;outline.append(anchor);
         }
         if(activePath){
             status.replaceChildren(document.createTextNode(copy('Documentation source: ','文件來源：')+bundle.sourceCommit+' · '));
@@ -137,16 +137,18 @@ export async function initializeDocumentation({language,showDocs}){
     }
     refresh=()=>{
         if(activePath&&renderedLanguage!==language()){
-            const focused=body.contains(document.activeElement)?document.activeElement:null;
+            const focused=reader.contains(document.activeElement)?document.activeElement:null;
             const headingIndex=focused?.dataset.headingIndex;
-            const focusLinkIndex=focused?.matches('a')?[...focused.closest('section').querySelectorAll('a')].indexOf(focused):-1;
+            const focusInOutline=focused&&outline.contains(focused);
+            const focusHref=focused?.getAttribute('href');
+            const focusLinkIndex=focused?.matches('a')&&focused.closest('section')?[...focused.closest('section').querySelectorAll('a')].indexOf(focused):-1;
             const focusLanguage=focused?.closest('section')?.dataset.documentLanguage;
             const visible=[...body.querySelectorAll('h1,h2,h3,h4,h5,h6')].find(heading=>heading.getBoundingClientRect().bottom>=0);
             const scrollIndex=visible?.dataset.headingIndex;
             render(activePath,'',false);
             const section=body.querySelector(`section[data-document-language="${focusLanguage}"]`)||body.querySelector('section');
-            const focusTarget=focusLinkIndex>=0?section?.querySelectorAll('a')[focusLinkIndex]:body.querySelector(`[data-heading-index="${headingIndex}"]`);
-            if(focused&&focusTarget){focusTarget.tabIndex=-1;focusTarget.focus({preventScroll:true});}
+            const focusTarget=focusInOutline?outline.querySelector(`[data-heading-index="${headingIndex}"]`):focusLinkIndex>=0?section?.querySelectorAll('a')[focusLinkIndex]:body.querySelector(`[data-heading-index="${headingIndex}"]`)||[...status.querySelectorAll('a')].find(anchor=>anchor.getAttribute('href')===focusHref)||body.querySelector('h1');
+            if(focused&&focusTarget){if(!focusTarget.matches('a[href]'))focusTarget.tabIndex=-1;focusTarget.focus({preventScroll:true});}
             const target=body.querySelector(`[data-heading-index="${headingIndex??scrollIndex}"]`);
             target?.scrollIntoView({block:'start'});
         }else updateCopy();

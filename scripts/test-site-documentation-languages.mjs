@@ -11,11 +11,11 @@ const hash=text=>createHash('sha256').update(text).digest('hex');
 const root=mkdtempSync(resolve(tmpdir(),'documentation-languages-'));
 try{
     for(const directory of ['docs/features','docs/wiki','site/translations','output'])mkdirSync(resolve(root,directory),{recursive:true});
-    const source='# Example\n\nComplete English paragraph.\n\n## Details\n\n```sh\necho example\n```\n';
+    const source='# Example\n\nComplete English paragraph with `literal` and [link](README.md).\n\n## Details\n\n```sh\necho example\n```\n';
     writeFileSync(resolve(root,'docs/features/README.md'),source);
     writeFileSync(resolve(root,'docs/wiki/README.md'),'# Wiki\n');
     writeFileSync(resolve(root,'docs/wiki/inventory.json'),JSON.stringify({schemaVersion:1,repository:'Ding-Ding-Projects/keepassxc.wiki',revision:'a'.repeat(40),pages:[]}));
-    const translated='# 示例\n\n完整粵語段落。\n\n## 詳情\n\n```sh\necho example\n```\n';
+    const translated='# 示例\n\n完整粵語段落，包括 `literal` 同[連結](README.md)。\n\n## 詳情\n\n```sh\necho example\n```\n';
     const inventory={schemaVersion:1,documents:[{path:'docs/features/README.md',sourceSha256:hash(source),status:'complete',title:'示例',markdown:translated},{path:'docs/wiki/README.md',sourceSha256:hash('# Wiki\n'),status:'missing',title:'',markdown:''}]};
     const save=()=>writeFileSync(resolve(root,'site/translations/documentation-yue.json'),JSON.stringify(inventory));
     const build=()=>{save();return buildDocumentation(root,resolve(root,'output'),'b'.repeat(40));};
@@ -34,6 +34,8 @@ try{
     inventory.documents[0].markdown=source;assert.throws(build,/untranslated/);restore();
     inventory.documents[0].markdown=translated.replace('## 詳情','### 詳情');assert.throws(build,/heading structure/);restore();
     inventory.documents[0].markdown=translated.replace('echo example','echo changed');assert.throws(build,/code blocks/);restore();
+    inventory.documents[0].markdown=translated.replace('`literal`','`changed`');assert.throws(build,/technical literals/);restore();
+    inventory.documents[0].markdown=translated.replace('(README.md)','(outside.md)');assert.throws(build,/link destinations/);restore();
     inventory.documents[1].markdown='Partial content';assert.throws(build,/partial/);restore();
     for(const bad of [null,[],{},1]){inventory.documents[0].title=bad;assert.throws(build,/record/);restore();}
     inventory.documents[0].unexpected=true;assert.throws(build,/record/);restore();

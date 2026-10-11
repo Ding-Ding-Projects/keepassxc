@@ -44,6 +44,10 @@ export function buildDocumentation(repository,outputDirectory,sourceCommit){
             if(JSON.stringify(headings(document.markdown))!==JSON.stringify(headings(entry.markdown)))throw Error(`Translation heading structure differs: ${document.path}`);
             const fences=text=>text.match(/^(```|~~~)[\s\S]*?^\1.*$/gm)||[];
             if(JSON.stringify(fences(document.markdown))!==JSON.stringify(fences(entry.markdown)))throw Error(`Translation code blocks differ: ${document.path}`);
+            const literals=text=>(text.replace(/^(```|~~~)[\s\S]*?^\1.*$/gm,'').match(/`[^`\n]+`/g)||[]).sort();
+            if(JSON.stringify(literals(document.markdown))!==JSON.stringify(literals(entry.markdown)))throw Error(`Translation technical literals differ: ${document.path}`);
+            const links=text=>(text.match(/\]\([^\n]*?\)/g)||[]).sort();
+            if(JSON.stringify(links(document.markdown))!==JSON.stringify(links(entry.markdown)))throw Error(`Translation link destinations differ: ${document.path}`);
         }
     }
     const bundle={schemaVersion:2,sourceCommit,wikiRevision:wiki.revision,documents};

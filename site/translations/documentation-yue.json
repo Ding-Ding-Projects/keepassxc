@@ -67,9 +67,9 @@
     {
       "path": "docs/features/delivery/line-count-release.md",
       "sourceSha256": "ed1d10d6627d24c70a716cfd8708dd2721355c93db560d2a165b54a625ff05bf",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "每次發佈嘅行數",
+      "markdown": "# 每次發佈嘅行數\n\n功能識別碼：`line-count-release` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`scripts/count-lines.mjs` 按區域統計受追蹤檔案，將隨附第三方內容、第三方程式碼、上游文件同翻譯行排除於專案總數之外，另行報告產生嘅行數，再用 `git blame` 將保留行歸屬至代理同人員；歸屬加總唔一致就會拒絕表格。發佈工作喺發佈提交執行呢個工具，並將表格連同工作流程開始、完成同耗時加到發佈說明。\n\n## 設定\n\n`--no-attribution` 略過 blame；`--json` 輸出原始結果。\n\n## 失敗情況\n\n歸屬總數唔一致會以非零狀態結束，阻止發佈說明。\n\n## 安全考慮\n\n冇。\n\n## 驗證\n\n喺本機執行指令碼，再同最新發佈正文比較。\n\n## 延伸閱讀\n\n- [點心發佈代號](../delivery/release-code-name.md)\n- [未簽署 Squirrel.Windows 安裝程式](../delivery/squirrel-installer.md)\n"
     },
     {
       "path": "docs/features/delivery/packaging-path-safety.md",
@@ -81,16 +81,16 @@
     {
       "path": "docs/features/delivery/release-code-name.md",
       "sourceSha256": "064401f45ad04a1030f960c858867bf5d08c5bd1c65ca63dce0feb23303db0d5",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "點心發佈代號",
+      "markdown": "# 點心發佈代號\n\n功能識別碼：`release-code-name` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`scripts/select-dim-sum.mjs` 按公開目錄 `Ding-Ding-Projects/dim-sum-photos` 次序，揀下一款未用過嘅點心，證明相片係已發佈 `catalog-v1*` 發佈附件。發佈工作會附上相片，並將點心識別碼、雙語名稱同公開相片連結寫入發佈標題同說明。已用識別碼由之前發佈正文讀取，避免重複點心。\n\n## 設定\n\n冇；目錄同相片儲存庫都係公開。\n\n## 失敗情況\n\n如果搵唔到有已發佈相片嘅未用點心，選擇器會以非零狀態結束，發佈只用版本號，並清楚交代。\n\n## 安全考慮\n\n呢個儲存庫唔會產生或儲存任何圖片。\n\n## 驗證\n\n喺本機以 `GH_REPO=Ding-Ding-Projects/keepassxc` 執行選擇器。\n\n## 延伸閱讀\n\n- [點心驚喜](../messaging/dim-sum-surprise.md)\n- [每次發佈嘅行數](../delivery/line-count-release.md)\n"
     },
     {
       "path": "docs/features/delivery/release-timing.md",
       "sourceSha256": "5f50dc4072ec5f2b51c68ae25d7f80c7d7f6c9f896afe4ade567faa07f7741c9",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "發佈時序定稿",
+      "markdown": "# 發佈時序定稿\n\n功能識別碼：`release-timing` · 分類：建置、安裝同更新\n\n## 運作方式\n\n封裝工作流程建立發佈時，會加入有範圍限制嘅時序預留文字。完成工作流程透過 `gh` 讀取已完成運行，搵出第一個真正工作開始時間，同成功 `Create GitHub Release` 步驟完成時間，只將嗰段預留文字換成確切 UTC 時間同耗時。編輯說明之前，會核對已儲存運行識別碼、標籤同目標提交。\n\n定稿工具亦會揀數字版本最高嘅非草稿穩定發佈，標示為最新。呢個做法會修正發佈完成競態，唔會取消排隊中封裝運行。\n\n## 失敗情況\n\n欠缺工作時間、欠缺發佈步驟、標記唔符或目標提交唔符，都會停止定稿。預留文字保持如實，唔會聲稱推算耗時。最新版本選擇最多重試三次，每次編輯之後都會核對。\n\n## 驗證\n\n`node scripts/finalize-release.mjs --self-test` 驗證版本公式、數字排序、自主管理時序取代，以及拒絕欠缺標記。\n"
     },
     {
       "path": "docs/features/delivery/repair-verification-2026-09.md",
@@ -109,9 +109,9 @@
     {
       "path": "docs/features/delivery/squirrel-installer.md",
       "sourceSha256": "aac5b7b408e03ac0880914e7844206b3d6092ca85b9bef60efe582ccfda7dd55",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "未簽署 Squirrel.Windows 安裝程式",
+      "markdown": "# 未簽署 Squirrel.Windows 安裝程式\n\n功能識別碼：`squirrel-installer` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`scripts/build-squirrel.ps1` 透過 Squirrel.Windows 封裝暫存應用程式，輸出 `Setup.exe`、`RELEASES`、一個完整 `.nupkg`、可選差異套件、建置來源證明、產物收據同更新清單。`scripts/verify-squirrel-artifacts.ps1` 證明安裝執行檔未簽署、套件有預期項目，以及來源證明記錄預期提交。\n\n## 設定\n\n版本由 `OVERRIDE_VERSION` 提供；只有主要圖形介面同產生嘅 stub 支援 Squirrel。\n\n## 失敗情況\n\n程式碼簽署永久停用，所以安裝可能觸發 Unknown Publisher 或 SmartScreen 警告。\n\n如果無法讀取 `HEAD`、Git 無法啟動或檢查來源狀態，或者檢出內容有受追蹤或未追蹤變更，封裝會喺建置之前停止。診斷會分開呢啲情況，只報狀態數量，唔會輸出改動路徑或命令輸出。\n\n## 安全考慮\n\n永遠唔會要求或使用簽署憑證。\n\n## 驗證\n\n`testsquirrellifecycle` 同 `scripts/test-packaging-clean-source-check.ps1`；發佈工作會再次驗證發佈附件。來源潔淨回歸檢查涵蓋潔淨狀態、命令失敗、受追蹤同未追蹤路徑、格式不正確狀態記錄，以及路徑遮蔽案例。\n\n## 延伸閱讀\n\n- [自動更新](../delivery/auto-updates.md)\n- [一鍵建置同安裝程式指令碼](../delivery/build-scripts.md)\n- [每次發佈嘅行數](../delivery/line-count-release.md)\n"
     },
     {
       "path": "docs/features/delivery/website-release-provenance.md",
@@ -200,9 +200,9 @@
     {
       "path": "docs/features/interface/vault-pane-sizing.md",
       "sourceSha256": "0eaee29d94b7e9e43557489188de6878d11b47f95b53ede897ae60e0306448fb",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "資料庫面板尺寸",
+      "markdown": "# 資料庫面板尺寸\n\n資料庫使用可調整尺寸嘅三面板分隔器。第一次顯示而冇有效記憶狀態時，ExtraLarge 會以 250 像素群組面板同 392 像素詳情面板開始；Large 分別用 216 同 360 像素。項目清單佔其餘寬度，較細版面仍然遵守面板最小寬度。\n\n資料庫或所屬堆疊頁面隱藏時，亦可能進行建構同斷點改變。分隔器恢復會保持待處理，直至面板可見並有幾何資料。同一斷點嘅重複要求可以完成待處理恢復，但恢復完成之後唔會重設寬度。一般調整尺寸同隱藏／顯示循環亦會保留目前分配。\n\n有效記憶狀態 `GUI_MaterialVaultSplitterState` 存在時，會優先於參考寬度。恢復狀態唔會將替代值寫入設定。使用者移動分隔器，仍然透過現有處理器保存揀選狀態。欠缺或無效狀態會退回參考寬度。\n\n## 驗證\n\n`TestMaterialShellResponsive` 喺建構首次使用測試資料之前，先確立空設定。佢涵蓋預設同明確不變斷點、隱藏時改變斷點、啟用隱藏堆疊頁面、重複顯示／更新行為，以及喺建構新畫面之前放入真正序列化分隔器狀態。預期參考寬度保持確切。\n\n套件喺 `QApplication` 之前設定 Qt 測試路徑同暫存設定，唔會建立資料庫或讀取個人資料庫。離屏元件斷言只驗證尺寸生命週期；原生呈現、支援顯示縮放、語言模式同螢幕擷取驗收，仍然待核准隱藏桌面路徑可用先驗證。\n"
     },
     {
       "path": "docs/features/messaging/README.md",
@@ -242,16 +242,16 @@
     {
       "path": "docs/features/messaging/notification-centre.md",
       "sourceSha256": "4113bd39d02334416f41e9f4892e804ea1bd6104c6bee588eb203b165ad5e431",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "通知中心",
+      "markdown": "# 通知中心\n\n功能識別碼：`notification-centre` · 分類：訊息、語言同語氣\n\n## 運作方式\n\n應用程式列嘅鐘形按鈕會開啟 `Material::NotificationCentre`（`src/gui/material/MaterialNotificationCentre.h`）。通知中心保留已關閉通知，方便重新查看分類、標題、正文同操作，亦有自己嘅搜尋列連接正則表達式建構工具。\n\n## 設定\n\n歷史長度受通知器歷史上限限制。\n\n## 失敗情況\n\n通知中心嘅批量操作同匯出仍然係未完成清單項目。\n\n## 安全考慮\n\n中心只儲存曾經顯示嘅內容，唔會傳送任何資料。\n\n## 驗證\n\n由主介面響應式測試套件同搜尋登記表測試涵蓋。\n\n## 延伸閱讀\n\n- [非阻塞通知](../messaging/notifications.md)\n- bulk-actions（尚未實作；見 `docs/features/inventory.json`）\n- export-everything（尚未實作；見 `docs/features/inventory.json`）\n"
     },
     {
       "path": "docs/features/messaging/notifications.md",
       "sourceSha256": "d231d88c7de0cdde6a9880d82d40d2dcf07bd86844e62a1fa9d45bf14c40a9fb",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "非阻塞通知",
+      "markdown": "# 非阻塞通知\n\n功能識別碼：`notifications` · 分類：訊息、語言同語氣\n\n## 運作方式\n\n資訊、成功、進度同唔需要決定嘅錯誤訊息，都由 `Material::Notify`（`src/gui/material/MaterialNotifier.h`）以主介面內容上方嘅 snackbar 顯示，唔會用模態對話框。錯誤同警告會留低直至關閉，其他短通知會自動關閉。進度卡以操作識別碼區分，所以長操作只更新同一張卡；百分比跌至零以下就會關閉。舊狀態列隱藏之後，主視窗長操作經呢條路徑報告。\n\n## 設定\n\n逾時同歷史上限係通知器設定鍵。\n\n## 失敗情況\n\n部分上游對話框仍然用模態訊息框顯示資訊文字，每一個剩餘項目都係清單內待處理問題。\n\n## 安全考慮\n\n通知文字會套用幽默程度，但每個程度都保留事實。\n\n## 驗證\n\n響應式主介面測試會驗證通知行為；每個已關閉通知都會留喺中心。\n\n## 延伸閱讀\n\n- [通知中心](../messaging/notification-centre.md)\n- [語言模式同語氣目錄](../messaging/language-modes.md)\n- [英文幽默程度](../messaging/funny-level-english.md)\n"
     },
     {
       "path": "docs/features/navigation/README.md",
@@ -298,9 +298,9 @@
     {
       "path": "docs/features/records/changelog-viewer.md",
       "sourceSha256": "eac9ae9f9ec12010fe0d2b4fce72f0891df6d0769bbd83f1aa2c140fde018a60",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "變更記錄檢視器",
+      "markdown": "# 變更記錄檢視器\n\n功能識別碼：`changelog-viewer` · 分類：記錄同歷史\n\n## 運作方式\n\n變更記錄目的地（`Material::ChangelogScreen`）解析所有隨附發佈，合併日期同有界限正則表達式篩選，呈現安全可互動 Markdown，支援遵守目前篩選嘅複製同匯出，並有明確空白同不可用狀態。參考結構將每次發佈放入卡片：版本、等寬日期標籤（待發佈版本冇日期，所以省略）、適用嘅 LATEST 或 THIS BUILD 標籤，以及每項變更一行分類標籤（ADDED 綠色、FIXED 次要色、CHANGED 琥珀色、SECURITY 錯誤色，其他標題用小型大寫），旁邊係可換行文字同幼分隔線。日期預設標籤（All time、Last 90 days、Last year、Last 2 years）獨佔一行，放喺兩個日期欄位上面，確保兩欄可以並排。每個日期欄位係 `Material::DateField`，接受本地簡短日期格式或純 ISO 日期，尾端日曆圖示（或 <kbd>F4</kbd>）開啟錨定 Material 日期選擇器，有上一／下一個月、月份選擇器同年份選擇器（兩者都係有自己搜尋列同正則表達式建構工具嘅 Material select）、星期行、月份格同 Today 操作。揀日期會設定並關閉；Escape 關閉而唔改值。每個版本嘅代號唔會顯示，因為隨附變更記錄冇記錄代號，GitHub 發佈說明先有。產生嘅目錄會將每個已發佈版本對應至確切標籤提交同 URL。\n\n## 設定\n\n目錄由 `scripts/generate-changelog-provenance.mjs` 產生；已發佈版本冇可解析標籤就會令建置失敗。\n\n## 失敗情況\n\n只有待發佈版本獲豁免提交來源證明，而且會清楚交代。分類標籤同各版本代號仍然係未解決一致性問題。\n\n## 安全考慮\n\n連結會喺瀏覽器開啟；執行時唔會取得資料。\n\n## 驗證\n\n`testmaterialchangelog` 同一致性項目 `changelog-default`。\n\n## 延伸閱讀\n\n- [變更記錄提交連結](../records/changelog-commit-links.md)\n- [以本機 Git 保存嘅版本歷史](../records/local-history.md)\n"
     },
     {
       "path": "docs/features/records/history-panel-filters.md",
