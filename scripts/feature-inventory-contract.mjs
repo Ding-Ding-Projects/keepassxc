@@ -95,6 +95,7 @@ export const FEATURE_CONTRACTS = [
   feature('vendored-fonts', 'Website assets', false, 'canonical-download-script all-weights-styles-subsets source-ranges-preserved actual-variable-axes per-file-hashes built-font-resolution'),
   feature('forge-publishing', 'Publishing', true, 'multi-account-vault-store active-account owner-picker account-search-builder signout-refresh add-account copy-publish-alternative truthful-provider-capability'),
   feature('element-motion', 'Appearance and motion', true, 'every-rendered-element state-transition enter-exit hover-focus press-release selection disabled loading resize-drag interrupt-safe geometry-final-state reduced-motion-static no-sound-no-focus-side-effect'),
+  feature('minecraft-server-manager', 'Server management', true, 'owned-inventory java-bedrock all-version-discovery historical-availability official-source-provenance version-bound-descriptors runtime-compatibility runtime-provisioning distribution-flavours custom-distribution plugins-mods-packs digest-size-verification bounded-downloads cancellation transaction-rollback explicit-license local-process local-container ssh-process ssh-container target-capability-disclosure rich-creation-controls typed-validation searchable-version-picker searchable-inventory configuration-editor unknown-setting-preservation start-stop-restart readiness owned-process-identity graceful-shutdown logs-console ports-networking users-permissions worlds backups-restore scheduled-actions update-migration import-export bulk-actions local-history credential-redaction offline-recovery unavailable-version-reasons language-modes accessibility-sizing current-runtime-evidence'),
 ];
 
 export const CANONICAL_FEATURES = FEATURE_CONTRACTS.map(f => f.id);
@@ -181,6 +182,7 @@ export const SURFACE_CONTRACTS = [
   surface('app', 'authenticator', 'Arbitrary-account authenticator'),
   surface('app', 'converter', 'Local converter and durable queue'),
   surface('app', 'ollama', 'Local model catalog, pulls, chat and profiles'),
+  surface('app', 'servers', 'Owned game server inventory and management', 'src/gui/material/MaterialServerManager.cpp'),
   surface('app', 'offline-docs', 'Bundled documentation browser'),
   surface('app', 'schedules', 'Scheduled settings and external sources'),
   surface('app', 'logo', 'Local logo editor'),
@@ -208,6 +210,7 @@ export const SURFACE_CONTRACTS = [
   surface('site', 'history', 'Visitor-owned state history'),
   surface('site', 'converter', 'Local visitor converter equivalent'),
   surface('site', 'ollama', 'Locally mediated model-manager equivalent'),
+  surface('site', 'servers', 'Visitor server-management capability and runtime boundary'),
   surface('site', 'logo', 'Visitor logo editor'),
   surface('site', 'status', 'Factual project status and delivery states', 'site/index.html'),
 ];

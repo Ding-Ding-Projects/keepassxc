@@ -2,11 +2,11 @@
 
 ## Current expanded feature implementation, October 11, 2026
 
-The latest catalogue refresh at instruction-source `df119a824c1a7e143f26b15e953e84cb92b13750` again matched all 105 explicit crosswalk identities. No new identity was absent. This is inventory completeness only. Motion source at `6d58ca7b6527c85f92da2a04c015995e28b73fd2` resolves unavailable solo-track suppression and validates current-schema imports atomically before preset mutation; independent source review accepted both repairs. All 49 localized motion catalogue entries are integrated. Native acceptance remains pending.
+The latest fetched catalogue again matched all 105 explicit crosswalk identities. No new identity was absent. This is inventory completeness only. Motion source at `6d58ca7b6527c85f92da2a04c015995e28b73fd2` resolves unavailable solo-track suppression and validates current-schema imports atomically before preset mutation; independent source review accepted both repairs. All 49 localized motion catalogue entries are integrated. Native acceptance remains pending.
 
-The pinned native build compiled and linked the executable, then failed in Qt deployment because the deployment tool resolves a stale installation prefix. Prepending the validated Qt binary directory did not resolve that failure, and that tentative script change is not an accepted repair. No staged provenance receipt or native test verdict exists yet. Diagnose the stale prefix before another root build attempt.
+Qt deployment now succeeds with an independently hash-verified complete copy after reproducing an API-visible Windows short-name alias collision in Qt 6.8.3 normalization. A subsequent search-registry test link failed because its shared fixture implementation was not linked. Source c83b1156 repairs target wiring; the separately pinned root build is running at d8822ce7. The root script's explicit validated deployment override is preserved at 550b0e99, independently source-reviewed and checked with four inventory/path negatives. That revised script has not yet run through the root entrypoint. No staged provenance receipt or native test verdict exists yet.
 
-The current catalogue contains 105 contract identities, all explicitly mapped with incomplete product evidence. Root build is pinned to `7d3d535da08e3a05877784af9ae7c35ddca68c9c` at one job. That source repairs `TestMerge.cpp:540`, where a raw `Group*` incorrectly used `.data()`. Independent source review confirmed direct deletion and parent cleanup semantics. Full build/native acceptance remains pending.
+The current catalogue contains 105 contract identities, all explicitly mapped with incomplete product evidence. The root build uses one job and retains the earlier `TestMerge.cpp:540` direct-delete repair. Full build/native acceptance remains pending. The local documentation reader collected 48 tuples at f9b4e2b9 with 60 embedded documents, immutable input hashes and correct rendered build identity/date. Pixel acceptance and promotion remain pending. Its isolated browser, server and both empty hidden desktops were closed with receipts. Shared user-renamable mode implementation is in progress in the separate checkout, with broader surface enforcement explicitly incomplete.
 
 The first server workspace source is preserved locally in `cbba3df58063eab0f7a8b7806a53436473d77295`. It is not complete server management. Independent review accepted those source repairs at d9046c26d66dd2f765ee0b0dfd40559face513fa; native execution remains pending and concurrent-rename races remain documented. No server or license workflow was executed. Search child help and palette unavailable-reason accessibility have source-reviewed changes and focused regression source; execution and full guidance coverage remain pending. The root continuation prompt carries the current queue and preservation boundaries.
 
@@ -578,6 +578,14 @@ The pass was closed early at the owner's request (usage limit reached), with the
 - Issue #11 and roadmap implementation items remain open until their independent behavioral coverage and required publication evidence are complete.
 
 ## Vault category search, current implementation
+
+### Latest contract and verification refresh
+
+The October 11 catalogue refresh fetched the current instruction source without divergence and compared all 105 canonical identities against the crosswalk, with no missing identity. The expanded product inventory now records 90 families, 180 platform rows, 108 surfaces and 1,045 capabilities, including 47 server-manager capabilities. Schema validation passes; zero of 112,860 required capability cells has complete current acceptance evidence. Source mapping does not establish product completion.
+
+The root build pinned to `d8822ce76e48810ff3c6c84e81b2665126c59d8d` completed compilation and Qt deployment but failed during provenance hashing because `Get-FileHash` was unavailable in that builder process. No successful root result or stage receipt is claimed. A separate child probe resolves the command both before and after MSVC activation, so the specific cause remains under diagnosis. Five focused native CTest checks finished: entry search, search registry, vault filters and tabs passed; configuration failed without captured diagnostic output. These results belong only to that source and do not cover later feature units.
+
+The isolated documentation-language candidate has 44 complete Cantonese articles out of 62, with the remaining variants explicitly missing. Source reviews confirm the natural anchor Tab restoration and nested translation-path ownership repairs. New browser, keyboard and language acceptance remains pending. School-mode source and its 34 localized catalogue entries are integrated in this branch, with native acceptance still pending.
 
 ### Expanded current-contract requirement
 

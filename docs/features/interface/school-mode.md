@@ -32,7 +32,7 @@ The reader watches the containing directory, its parent anchor and the file when
 
 The [implementation handoff](../../../design/school-mode/README.md) maps consumers and incomplete work. Universal enforcement remains incomplete: other applications must adopt the schema; global palette and direct routes, all existing rendered surfaces, direct personal-vocabulary consumers, translator-priority changes, built-in food references elsewhere and complete settings export/import interactions still need work. Existing translated widgets outside the rebuilt settings do not gain verified English presentation merely because future lookups do. Raw duplicate-key rejection and complete filesystem/ACL hardening are also pending. No claim of universal completion or passkey support is made.
 
-The separate `school.control.*` voice-key patch requires parent integration. Until its catalogue entries are present, the new control uses English fallback copy. No credential values belong in documentation, screenshots, diagnostics, exports or source.
+The 34 `school.control.*` voice catalogue entries are integrated in source, including English and Cantonese variants at all five tone levels. Rendered language acceptance remains pending. No credential values belong in documentation, screenshots, diagnostics, exports or source.
 
 ## Verification status
 

@@ -2,6 +2,924 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "school.control.the_shared_record_exceeds_8192_bytes": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record exceeds 8192 bytes."
+                ],
+                "levels": {
+                    "1": "The shared record exceeds 8192 bytes.",
+                    "2": "The shared record exceeds 8192 bytes.",
+                    "3": "The shared record exceeds 8192 bytes.",
+                    "4": "The shared record exceeds 8192 bytes.",
+                    "5": "The shared record exceeds 8192 bytes."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄超過 8192 bytes。"
+                ],
+                "levels": {
+                    "1": "共用記錄超過 8192 bytes。",
+                    "2": "共用記錄超過 8192 bytes。",
+                    "3": "共用記錄超過 8192 bytes。",
+                    "4": "共用記錄超過 8192 bytes。",
+                    "5": "共用記錄超過 8192 bytes。"
+                }
+            }
+        },
+        "school.control.the_shared_record_has_an_unavailable_format": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record has an unavailable format."
+                ],
+                "levels": {
+                    "1": "The shared record has an unavailable format.",
+                    "2": "The shared record has an unavailable format.",
+                    "3": "The shared record has an unavailable format.",
+                    "4": "The shared record has an unavailable format.",
+                    "5": "The shared record has an unavailable format."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄格式未能使用。"
+                ],
+                "levels": {
+                    "1": "共用記錄格式未能使用。",
+                    "2": "共用記錄格式未能使用。",
+                    "3": "共用記錄格式未能使用。",
+                    "4": "共用記錄格式未能使用。",
+                    "5": "共用記錄格式未能使用。"
+                }
+            }
+        },
+        "school.control.the_chosen_name_must_contain_1_80_characters_without_control_characters": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The chosen name must contain 1..80 characters without control characters."
+                ],
+                "levels": {
+                    "1": "The chosen name must contain 1..80 characters without control characters.",
+                    "2": "The chosen name must contain 1..80 characters without control characters.",
+                    "3": "The chosen name must contain 1..80 characters without control characters.",
+                    "4": "The chosen name must contain 1..80 characters without control characters.",
+                    "5": "The chosen name must contain 1..80 characters without control characters."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。"
+                ],
+                "levels": {
+                    "1": "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。",
+                    "2": "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。",
+                    "3": "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。",
+                    "4": "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。",
+                    "5": "所選名稱必須有 1..80 個字元，而且唔可以有控制字元。"
+                }
+            }
+        },
+        "school.control.the_shared_revision_is_invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared revision is invalid."
+                ],
+                "levels": {
+                    "1": "The shared revision is invalid.",
+                    "2": "The shared revision is invalid.",
+                    "3": "The shared revision is invalid.",
+                    "4": "The shared revision is invalid.",
+                    "5": "The shared revision is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用修訂編號無效。"
+                ],
+                "levels": {
+                    "1": "共用修訂編號無效。",
+                    "2": "共用修訂編號無效。",
+                    "3": "共用修訂編號無效。",
+                    "4": "共用修訂編號無效。",
+                    "5": "共用修訂編號無效。"
+                }
+            }
+        },
+        "school.control.the_local_verifier_is_invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The local verifier is invalid."
+                ],
+                "levels": {
+                    "1": "The local verifier is invalid.",
+                    "2": "The local verifier is invalid.",
+                    "3": "The local verifier is invalid.",
+                    "4": "The local verifier is invalid.",
+                    "5": "The local verifier is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機驗證資料無效。"
+                ],
+                "levels": {
+                    "1": "本機驗證資料無效。",
+                    "2": "本機驗證資料無效。",
+                    "3": "本機驗證資料無效。",
+                    "4": "本機驗證資料無效。",
+                    "5": "本機驗證資料無效。"
+                }
+            }
+        },
+        "school.control.the_local_verifier_has_unsupported_parameters": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The local verifier has unsupported parameters."
+                ],
+                "levels": {
+                    "1": "The local verifier has unsupported parameters.",
+                    "2": "The local verifier has unsupported parameters.",
+                    "3": "The local verifier has unsupported parameters.",
+                    "4": "The local verifier has unsupported parameters.",
+                    "5": "The local verifier has unsupported parameters."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機驗證資料使用未支援參數。"
+                ],
+                "levels": {
+                    "1": "本機驗證資料使用未支援參數。",
+                    "2": "本機驗證資料使用未支援參數。",
+                    "3": "本機驗證資料使用未支援參數。",
+                    "4": "本機驗證資料使用未支援參數。",
+                    "5": "本機驗證資料使用未支援參數。"
+                }
+            }
+        },
+        "school.control.the_enabled_shared_record_has_no_local_verifier": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The enabled shared record has no local verifier."
+                ],
+                "levels": {
+                    "1": "The enabled shared record has no local verifier.",
+                    "2": "The enabled shared record has no local verifier.",
+                    "3": "The enabled shared record has no local verifier.",
+                    "4": "The enabled shared record has no local verifier.",
+                    "5": "The enabled shared record has no local verifier."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已啟用嘅共用記錄冇本機驗證資料。"
+                ],
+                "levels": {
+                    "1": "已啟用嘅共用記錄冇本機驗證資料。",
+                    "2": "已啟用嘅共用記錄冇本機驗證資料。",
+                    "3": "已啟用嘅共用記錄冇本機驗證資料。",
+                    "4": "已啟用嘅共用記錄冇本機驗證資料。",
+                    "5": "已啟用嘅共用記錄冇本機驗證資料。"
+                }
+            }
+        },
+        "school.control.the_shared_record_path_is_unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record path is unavailable."
+                ],
+                "levels": {
+                    "1": "The shared record path is unavailable.",
+                    "2": "The shared record path is unavailable.",
+                    "3": "The shared record path is unavailable.",
+                    "4": "The shared record path is unavailable.",
+                    "5": "The shared record path is unavailable."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄位置未能使用。"
+                ],
+                "levels": {
+                    "1": "共用記錄位置未能使用。",
+                    "2": "共用記錄位置未能使用。",
+                    "3": "共用記錄位置未能使用。",
+                    "4": "共用記錄位置未能使用。",
+                    "5": "共用記錄位置未能使用。"
+                }
+            }
+        },
+        "school.control.the_shared_record_cannot_be_read_safely": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record cannot be read safely."
+                ],
+                "levels": {
+                    "1": "The shared record cannot be read safely.",
+                    "2": "The shared record cannot be read safely.",
+                    "3": "The shared record cannot be read safely.",
+                    "4": "The shared record cannot be read safely.",
+                    "5": "The shared record cannot be read safely."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能安全讀取共用記錄。"
+                ],
+                "levels": {
+                    "1": "未能安全讀取共用記錄。",
+                    "2": "未能安全讀取共用記錄。",
+                    "3": "未能安全讀取共用記錄。",
+                    "4": "未能安全讀取共用記錄。",
+                    "5": "未能安全讀取共用記錄。"
+                }
+            }
+        },
+        "school.control.the_shared_record_is_invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record is invalid."
+                ],
+                "levels": {
+                    "1": "The shared record is invalid.",
+                    "2": "The shared record is invalid.",
+                    "3": "The shared record is invalid.",
+                    "4": "The shared record is invalid.",
+                    "5": "The shared record is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄無效。"
+                ],
+                "levels": {
+                    "1": "共用記錄無效。",
+                    "2": "共用記錄無效。",
+                    "3": "共用記錄無效。",
+                    "4": "共用記錄無效。",
+                    "5": "共用記錄無效。"
+                }
+            }
+        },
+        "school.control.live_watching_is_unavailable_the_shared_record_must_be_readable_and_watched_before_changes_are_allowed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Live watching is unavailable. The shared record must be readable and watched before changes are allowed."
+                ],
+                "levels": {
+                    "1": "Live watching is unavailable. The shared record must be readable and watched before changes are allowed.",
+                    "2": "Live watching is unavailable. The shared record must be readable and watched before changes are allowed.",
+                    "3": "Live watching is unavailable. The shared record must be readable and watched before changes are allowed.",
+                    "4": "Live watching is unavailable. The shared record must be readable and watched before changes are allowed.",
+                    "5": "Live watching is unavailable. The shared record must be readable and watched before changes are allowed."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。"
+                ],
+                "levels": {
+                    "1": "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。",
+                    "2": "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。",
+                    "3": "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。",
+                    "4": "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。",
+                    "5": "即時監察未能使用。共用記錄必須可以讀取同監察，先可以修改。"
+                }
+            }
+        },
+        "school.control.shared_local_state_is_available": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Shared local state is available."
+                ],
+                "levels": {
+                    "1": "Shared local state is available.",
+                    "2": "Shared local state is available.",
+                    "3": "Shared local state is available.",
+                    "4": "Shared local state is available.",
+                    "5": "Shared local state is available."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用本機狀態可以使用。"
+                ],
+                "levels": {
+                    "1": "共用本機狀態可以使用。",
+                    "2": "共用本機狀態可以使用。",
+                    "3": "共用本機狀態可以使用。",
+                    "4": "共用本機狀態可以使用。",
+                    "5": "共用本機狀態可以使用。"
+                }
+            }
+        },
+        "school.control.the_shared_record_cannot_be_watched_safely": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record cannot be watched safely."
+                ],
+                "levels": {
+                    "1": "The shared record cannot be watched safely.",
+                    "2": "The shared record cannot be watched safely.",
+                    "3": "The shared record cannot be watched safely.",
+                    "4": "The shared record cannot be watched safely.",
+                    "5": "The shared record cannot be watched safely."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能安全監察共用記錄。"
+                ],
+                "levels": {
+                    "1": "未能安全監察共用記錄。",
+                    "2": "未能安全監察共用記錄。",
+                    "3": "未能安全監察共用記錄。",
+                    "4": "未能安全監察共用記錄。",
+                    "5": "未能安全監察共用記錄。"
+                }
+            }
+        },
+        "school.control.another_local_writer_is_updating_the_shared_record_try_again": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Another local writer is updating the shared record. Try again."
+                ],
+                "levels": {
+                    "1": "Another local writer is updating the shared record. Try again.",
+                    "2": "Another local writer is updating the shared record. Try again.",
+                    "3": "Another local writer is updating the shared record. Try again.",
+                    "4": "Another local writer is updating the shared record. Try again.",
+                    "5": "Another local writer is updating the shared record. Try again."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "另一個本機程序正更新共用記錄，請再試。"
+                ],
+                "levels": {
+                    "1": "另一個本機程序正更新共用記錄，請再試。",
+                    "2": "另一個本機程序正更新共用記錄，請再試。",
+                    "3": "另一個本機程序正更新共用記錄，請再試。",
+                    "4": "另一個本機程序正更新共用記錄，請再試。",
+                    "5": "另一個本機程序正更新共用記錄，請再試。"
+                }
+            }
+        },
+        "school.control.the_shared_record_cannot_be_saved": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record cannot be saved."
+                ],
+                "levels": {
+                    "1": "The shared record cannot be saved.",
+                    "2": "The shared record cannot be saved.",
+                    "3": "The shared record cannot be saved.",
+                    "4": "The shared record cannot be saved.",
+                    "5": "The shared record cannot be saved."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能儲存共用記錄。"
+                ],
+                "levels": {
+                    "1": "未能儲存共用記錄。",
+                    "2": "未能儲存共用記錄。",
+                    "3": "未能儲存共用記錄。",
+                    "4": "未能儲存共用記錄。",
+                    "5": "未能儲存共用記錄。"
+                }
+            }
+        },
+        "school.control.the_atomic_shared_record_update_did_not_complete": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The atomic shared-record update did not complete."
+                ],
+                "levels": {
+                    "1": "The atomic shared-record update did not complete.",
+                    "2": "The atomic shared-record update did not complete.",
+                    "3": "The atomic shared-record update did not complete.",
+                    "4": "The atomic shared-record update did not complete.",
+                    "5": "The atomic shared-record update did not complete."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄嘅原子更新未完成。"
+                ],
+                "levels": {
+                    "1": "共用記錄嘅原子更新未完成。",
+                    "2": "共用記錄嘅原子更新未完成。",
+                    "3": "共用記錄嘅原子更新未完成。",
+                    "4": "共用記錄嘅原子更新未完成。",
+                    "5": "共用記錄嘅原子更新未完成。"
+                }
+            }
+        },
+        "school.control.set_a_local_pin_or_password_first": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Set a local PIN or password first."
+                ],
+                "levels": {
+                    "1": "Set a local PIN or password first.",
+                    "2": "Set a local PIN or password first.",
+                    "3": "Set a local PIN or password first.",
+                    "4": "Set a local PIN or password first.",
+                    "5": "Set a local PIN or password first."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請先設定本機 PIN 或密碼。"
+                ],
+                "levels": {
+                    "1": "請先設定本機 PIN 或密碼。",
+                    "2": "請先設定本機 PIN 或密碼。",
+                    "3": "請先設定本機 PIN 或密碼。",
+                    "4": "請先設定本機 PIN 或密碼。",
+                    "5": "請先設定本機 PIN 或密碼。"
+                }
+            }
+        },
+        "school.control.the_local_credential_did_not_match": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The local credential did not match."
+                ],
+                "levels": {
+                    "1": "The local credential did not match.",
+                    "2": "The local credential did not match.",
+                    "3": "The local credential did not match.",
+                    "4": "The local credential did not match.",
+                    "5": "The local credential did not match."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機憑證唔吻合。"
+                ],
+                "levels": {
+                    "1": "本機憑證唔吻合。",
+                    "2": "本機憑證唔吻合。",
+                    "3": "本機憑證唔吻合。",
+                    "4": "本機憑證唔吻合。",
+                    "5": "本機憑證唔吻合。"
+                }
+            }
+        },
+        "school.control.use_4_1024_utf_8_bytes_and_verify_the_existing_local_credential_when_replacing_it": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it."
+                ],
+                "levels": {
+                    "1": "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it.",
+                    "2": "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it.",
+                    "3": "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it.",
+                    "4": "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it.",
+                    "5": "Use 4..1024 UTF-8 bytes and verify the existing local credential when replacing it."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。"
+                ],
+                "levels": {
+                    "1": "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。",
+                    "2": "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。",
+                    "3": "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。",
+                    "4": "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。",
+                    "5": "請用 4..1024 UTF-8 bytes，取代時須驗證現有本機憑證。"
+                }
+            }
+        },
+        "school.control.the_local_verifier_could_not_be_created": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The local verifier could not be created."
+                ],
+                "levels": {
+                    "1": "The local verifier could not be created.",
+                    "2": "The local verifier could not be created.",
+                    "3": "The local verifier could not be created.",
+                    "4": "The local verifier could not be created.",
+                    "5": "The local verifier could not be created."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能建立本機驗證資料。"
+                ],
+                "levels": {
+                    "1": "未能建立本機驗證資料。",
+                    "2": "未能建立本機驗證資料。",
+                    "3": "未能建立本機驗證資料。",
+                    "4": "未能建立本機驗證資料。",
+                    "5": "未能建立本機驗證資料。"
+                }
+            }
+        },
+        "school.control.enter_the_shared_local_pin_or_password": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Enter the shared local PIN or password"
+                ],
+                "levels": {
+                    "1": "Enter the shared local PIN or password",
+                    "2": "Enter the shared local PIN or password",
+                    "3": "Enter the shared local PIN or password",
+                    "4": "Enter the shared local PIN or password",
+                    "5": "Enter the shared local PIN or password"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "輸入共用本機 PIN 或密碼"
+                ],
+                "levels": {
+                    "1": "輸入共用本機 PIN 或密碼",
+                    "2": "輸入共用本機 PIN 或密碼",
+                    "3": "輸入共用本機 PIN 或密碼",
+                    "4": "輸入共用本機 PIN 或密碼",
+                    "5": "輸入共用本機 PIN 或密碼"
+                }
+            }
+        },
+        "school.control.chosen_name": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Chosen name"
+                ],
+                "levels": {
+                    "1": "Chosen name",
+                    "2": "Chosen name",
+                    "3": "Chosen name",
+                    "4": "Chosen name",
+                    "5": "Chosen name"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "所選名稱"
+                ],
+                "levels": {
+                    "1": "所選名稱",
+                    "2": "所選名稱",
+                    "3": "所選名稱",
+                    "4": "所選名稱",
+                    "5": "所選名稱"
+                }
+            }
+        },
+        "school.control.verify_the_shared_local_pin_or_password": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Verify the shared local PIN or password"
+                ],
+                "levels": {
+                    "1": "Verify the shared local PIN or password",
+                    "2": "Verify the shared local PIN or password",
+                    "3": "Verify the shared local PIN or password",
+                    "4": "Verify the shared local PIN or password",
+                    "5": "Verify the shared local PIN or password"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "驗證共用本機 PIN 或密碼"
+                ],
+                "levels": {
+                    "1": "驗證共用本機 PIN 或密碼",
+                    "2": "驗證共用本機 PIN 或密碼",
+                    "3": "驗證共用本機 PIN 或密碼",
+                    "4": "驗證共用本機 PIN 或密碼",
+                    "5": "驗證共用本機 PIN 或密碼"
+                }
+            }
+        },
+        "school.control.existing_shared_local_pin_or_password": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Existing shared local PIN or password"
+                ],
+                "levels": {
+                    "1": "Existing shared local PIN or password",
+                    "2": "Existing shared local PIN or password",
+                    "3": "Existing shared local PIN or password",
+                    "4": "Existing shared local PIN or password",
+                    "5": "Existing shared local PIN or password"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "現有共用本機 PIN 或密碼"
+                ],
+                "levels": {
+                    "1": "現有共用本機 PIN 或密碼",
+                    "2": "現有共用本機 PIN 或密碼",
+                    "3": "現有共用本機 PIN 或密碼",
+                    "4": "現有共用本機 PIN 或密碼",
+                    "5": "現有共用本機 PIN 或密碼"
+                }
+            }
+        },
+        "school.control.new_shared_local_pin_or_password_4_1024_utf_8_bytes": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "New shared local PIN or password (4..1024 UTF-8 bytes)"
+                ],
+                "levels": {
+                    "1": "New shared local PIN or password (4..1024 UTF-8 bytes)",
+                    "2": "New shared local PIN or password (4..1024 UTF-8 bytes)",
+                    "3": "New shared local PIN or password (4..1024 UTF-8 bytes)",
+                    "4": "New shared local PIN or password (4..1024 UTF-8 bytes)",
+                    "5": "New shared local PIN or password (4..1024 UTF-8 bytes)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）"
+                ],
+                "levels": {
+                    "1": "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）",
+                    "2": "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）",
+                    "3": "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）",
+                    "4": "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）",
+                    "5": "新共用本機 PIN 或密碼（4..1024 UTF-8 bytes）"
+                }
+            }
+        },
+        "school.control.this_is_a_convenience_lock_not_security_deleting_the_shared_local_record_intentionally_resets_it": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "This is a convenience lock, not security. Deleting the shared local record intentionally resets it."
+                ],
+                "levels": {
+                    "1": "This is a convenience lock, not security. Deleting the shared local record intentionally resets it.",
+                    "2": "This is a convenience lock, not security. Deleting the shared local record intentionally resets it.",
+                    "3": "This is a convenience lock, not security. Deleting the shared local record intentionally resets it.",
+                    "4": "This is a convenience lock, not security. Deleting the shared local record intentionally resets it.",
+                    "5": "This is a convenience lock, not security. Deleting the shared local record intentionally resets it."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。"
+                ],
+                "levels": {
+                    "1": "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。",
+                    "2": "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。",
+                    "3": "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。",
+                    "4": "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。",
+                    "5": "呢個係方便使用嘅鎖，唔係安全保護。刪除共用本機記錄會刻意重設。"
+                }
+            }
+        },
+        "school.control.unlock": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Unlock"
+                ],
+                "levels": {
+                    "1": "Unlock ",
+                    "2": "Unlock ",
+                    "3": "Unlock ",
+                    "4": "Unlock ",
+                    "5": "Unlock "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "解鎖"
+                ],
+                "levels": {
+                    "1": "解鎖 ",
+                    "2": "解鎖 ",
+                    "3": "解鎖 ",
+                    "4": "解鎖 ",
+                    "5": "解鎖 "
+                }
+            }
+        },
+        "school.control.enable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Enable"
+                ],
+                "levels": {
+                    "1": "Enable ",
+                    "2": "Enable ",
+                    "3": "Enable ",
+                    "4": "Enable ",
+                    "5": "Enable "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "啟用"
+                ],
+                "levels": {
+                    "1": "啟用 ",
+                    "2": "啟用 ",
+                    "3": "啟用 ",
+                    "4": "啟用 ",
+                    "5": "啟用 "
+                }
+            }
+        },
+        "school.control.rename": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Rename"
+                ],
+                "levels": {
+                    "1": "Rename ",
+                    "2": "Rename ",
+                    "3": "Rename ",
+                    "4": "Rename ",
+                    "5": "Rename "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "重新命名"
+                ],
+                "levels": {
+                    "1": "重新命名 ",
+                    "2": "重新命名 ",
+                    "3": "重新命名 ",
+                    "4": "重新命名 ",
+                    "5": "重新命名 "
+                }
+            }
+        },
+        "school.control.set_or_replace_the_local_credential_for": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Set or replace the local credential for"
+                ],
+                "levels": {
+                    "1": "Set or replace the local credential for ",
+                    "2": "Set or replace the local credential for ",
+                    "3": "Set or replace the local credential for ",
+                    "4": "Set or replace the local credential for ",
+                    "5": "Set or replace the local credential for "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "設定或取代本機憑證："
+                ],
+                "levels": {
+                    "1": "設定或取代本機憑證：",
+                    "2": "設定或取代本機憑證：",
+                    "3": "設定或取代本機憑證：",
+                    "4": "設定或取代本機憑證：",
+                    "5": "設定或取代本機憑證："
+                }
+            }
+        },
+        "school.control.the_shared_record_exceeds_json_depth_8": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The shared record exceeds JSON depth 8."
+                ],
+                "levels": {
+                    "1": "The shared record exceeds JSON depth 8.",
+                    "2": "The shared record exceeds JSON depth 8.",
+                    "3": "The shared record exceeds JSON depth 8.",
+                    "4": "The shared record exceeds JSON depth 8.",
+                    "5": "The shared record exceeds JSON depth 8."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "共用記錄超過 JSON 深度 8。"
+                ],
+                "levels": {
+                    "1": "共用記錄超過 JSON 深度 8。",
+                    "2": "共用記錄超過 JSON 深度 8。",
+                    "3": "共用記錄超過 JSON 深度 8。",
+                    "4": "共用記錄超過 JSON 深度 8。",
+                    "5": "共用記錄超過 JSON 深度 8。"
+                }
+            }
+        },
+        "school.control.unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Unavailable."
+                ],
+                "levels": {
+                    "1": "Unavailable.",
+                    "2": "Unavailable.",
+                    "3": "Unavailable.",
+                    "4": "Unavailable.",
+                    "5": "Unavailable."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能使用。"
+                ],
+                "levels": {
+                    "1": "未能使用。",
+                    "2": "未能使用。",
+                    "3": "未能使用。",
+                    "4": "未能使用。",
+                    "5": "未能使用。"
+                }
+            }
+        },
+        "school.control.active": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Active."
+                ],
+                "levels": {
+                    "1": "Active.",
+                    "2": "Active.",
+                    "3": "Active.",
+                    "4": "Active.",
+                    "5": "Active."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已啟用。"
+                ],
+                "levels": {
+                    "1": "已啟用。",
+                    "2": "已啟用。",
+                    "3": "已啟用。",
+                    "4": "已啟用。",
+                    "5": "已啟用。"
+                }
+            }
+        },
+        "school.control.inactive": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Inactive."
+                ],
+                "levels": {
+                    "1": "Inactive.",
+                    "2": "Inactive.",
+                    "3": "Inactive.",
+                    "4": "Inactive.",
+                    "5": "Inactive."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未啟用。"
+                ],
+                "levels": {
+                    "1": "未啟用。",
+                    "2": "未啟用。",
+                    "3": "未啟用。",
+                    "4": "未啟用。",
+                    "5": "未啟用。"
+                }
+            }
+        },
         "motion.authoring.target_scoped_scalar_motion_normal_state_tracks_run_when_the_target_is_shown_other_states_and_proper": {
             "category": "info",
             "en": {
