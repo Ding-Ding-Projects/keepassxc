@@ -83,18 +83,16 @@ the capability inventory rather than reduced to these category descriptions.
 | Remaining surface behavior | Guided forms, truthful defaults, rich controls, novice/expert shared values, presets, attention accommodations, local logo conversion, command palette, resizable decorated overlays, actual shortcuts, origin progress and contextual recovery. |
 | Delivery and evidence | Front-screen version/build time with timezone and seconds, Status Hub and truthful reply delivery, verified downloads, social graphics, complete vendored fonts, package/update provenance, line counts, current screenshots/recording and deterministic design parity. |
 
-The current explicit project instruction governs the startup surprise: a fresh 1%
-chance per launch, no more than one display per launch, and a persisted off switch
-that is honored absolutely. The earlier installed guidance specified 10% and no
-off switch; that conflict is resolved by the current user instruction's priority.
-The explicit capabilities are `one-percent-per-launch-draw` and
-`persisted-off-switch`, `at-most-once-per-launch` and `no-mid-task-flow`.
-Current `MaterialDimSum.cpp` still uses denominator 10 and ignores the retired
-off preference, so those runtime mismatches remain open. Acceptance must prove disabled/restarted suppression,
-first-run/error/update/mid-task exclusions, bundled local images with meaningful
-dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
-motion. All behavioral evidence remains pending; this inventory lane changes no
-runtime frequency or control.
+The current startup-surprise contract requires a fresh 10% draw per launch,
+no more than one display per launch and no opt-out control. Historical 1% and
+persisted-off-switch criteria are superseded, retained here only as history.
+The current capabilities are `ten-percent-per-launch-draw`, `no-opt-out-control`,
+`retired-opt-out-migration`, `at-most-once-per-launch` and `no-mid-task-flow`.
+`MaterialDimSum.cpp` uses denominator 10 and ignores the retired off preference;
+that source agreement is not runtime acceptance. Acceptance must prove migration
+from the retired preference, first-run/error/update/mid-task exclusions, bundled
+local images with meaningful dish alt text, automatic dismissal, no focus theft,
+quiet settings and reduced motion. All behavioral evidence remains pending.
 
 ## Evidence record and acceptance
 
@@ -245,10 +243,10 @@ offscreen Qt suite, package build or download does not complete a native item.
   Verify first-visible vault pane widths, hidden-page restoration and preservation
   of a remembered user division through resize and hide/show.
 - [ ] Exercise startup-surprise eligibility and exclusions: first run, error,
-  update and mid-task flows, persisted off after restart, at most once per launch,
+  update and mid-task flows, retired opt-out migration, no opt-out control, at most once per launch,
   quiet/reduced-motion behavior and no focus theft. A random absence does not prove
   an exclusion; use the reviewed deterministic fixture and separately verify the
-  declared 1% draw boundary.
+  declared 10% draw boundary.
 - [ ] Retain a genuine capture after every click in this sequence and for each
   final state. Inspect every image for the expected transition, readable controls,
   nonblank content and privacy. Bind each frame to source, executable hash, screen,

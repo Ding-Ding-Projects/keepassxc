@@ -20,7 +20,17 @@ The tab selector also evaluates a complete candidate result set before replacing
 
 The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.
 
-## Verification status
+## Current continuation, October 11, 2026
+
+Root `build.bat /s` later passed at `cdb8862bd2637b30464abae8ad13888885def592`, with independently verified stage provenance. Nine of twelve selected CTest suites passed; voice failed and two did not start. Separate direct search-registry and tab checks passed. Later SSH, vocabulary and voice source repairs require their own native execution. The GUI-enabled root candidate `4f5b3eb9` failed on an ambiguous list append; repair `e202657b88df87c5e36bc4fa03da3c5dbf2f3d69` is building through `build.bat /s -WithGuiTests`. Earlier evidence below remains historical.
+
+The current requirements authority maps all 105 identities and records 1,119 capabilities across 120,852 required surface cells. Its 95 focused checks passed, with zero accepted cells. Complete server targets, motion authoring, guidance and universal per-surface acceptance remain incomplete.
+
+Reader source `86e06cd96928f29487c422fe4f039b5364f4f6ba` collected 384 unique article/layout tuples, all independently inspected. Three surrounding English resource buttons were retained as a finding and subsequently repaired in source. Reader preservation `7a82d0ebb823e9f0d4d6e6b2162edc22c9ea89cc` combines current native and browser repairs, including schema/cache, trusted upload wiring and four internal documentation routes. Focused parser/storage and upload-wiring checks pass. Generated documentation bindings and genuine current browser interaction remain pending; old captures do not prove these changes. Owned browser/server processes and empty desktops were closed with receipts.
+
+Remote main remains `906e7b3230595b0abf73ea479955c50418d7d0b1`. Task branches are preservation, not completed delivery. No new release or destructive cleanup has occurred.
+
+## Historical verification status
 
 Root `build.bat /s` completed successfully at `0ffb00b9ae963e7629bacc2e2903c5df4a104490`. All five focused native checks passed: entry search, configuration, search registry, vault filters and tabs. The staged executable and every stage-receipt hash were independently verified. This establishes that source candidate's build and focused behavior checks, not complete GUI acceptance.
 
