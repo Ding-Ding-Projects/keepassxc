@@ -11,6 +11,8 @@ private slots:
     void persistenceIdentity();
     void atomicReconciliation();
     void searchableOverflow();
+    void opaqueOverflowSurface_data();
+    void opaqueOverflowSurface();
     void rejectedPatternsRetainRowsAndLifecycleResetClearsSearch();
     void pointerDragRequestsReorder();
 };

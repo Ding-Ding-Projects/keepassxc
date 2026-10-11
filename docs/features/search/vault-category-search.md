@@ -16,6 +16,12 @@ Tag search narrows available chips without changing selected tags. Selected chip
 
 The tab selector also evaluates a complete candidate result set before replacing its rows. Invalid, blocked or timed-out expressions retain the previous rows. Locking or closing a vault resets and closes an open selector; normal descriptor changes refresh it without changing tab order. Search labels and inline messages use the English/Cantonese voice catalogue, including bilingual mode. Changing language preserves the current query and regex-builder owner. Regex flags apply independently to each category.
 
+The all-tabs selector paints its own opaque themed surface with rounded corners,
+so underlying guidance and health rows cannot show through its interior. Source
+regressions render contrasting backgrounds in light, dark and reduced-motion
+configurations, including an intentionally unfilled negative control. The new
+native tests and rebuilt screenshot acceptance remain pending until executed.
+
 ## Entry details
 
 The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.

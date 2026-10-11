@@ -5,6 +5,8 @@
 #include "gui/material/MaterialTabOverflow.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSearchBar.h"
+#include "gui/material/MaterialTheme.h"
+#include "gui/material/MaterialMotion.h"
 
 #include <QAbstractButton>
 #include "core/Config.h"
@@ -14,10 +16,84 @@
 #include <QTemporaryDir>
 #include <QUuid>
 #include <QMouseEvent>
+#include <QImage>
+#include <QPainter>
+#include <QScopeGuard>
 #include <QSignalSpy>
 #include <QTest>
 
 using namespace Material;
+
+void TestMaterialTabs::opaqueOverflowSurface_data()
+{
+    QTest::addColumn<bool>("dark");
+    QTest::addColumn<bool>("reduced");
+    QTest::newRow("light-standard") << false << false;
+    QTest::newRow("dark-standard") << true << false;
+    QTest::newRow("light-reduced") << false << true;
+    QTest::newRow("dark-reduced") << true << true;
+}
+
+void TestMaterialTabs::opaqueOverflowSurface()
+{
+    QFETCH(bool, dark);
+    QFETCH(bool, reduced);
+    const auto previousMode = theme()->configuredMode();
+    const auto previousReduced = config()->get(Config::GUI_ReducedMotion);
+    const auto restore = qScopeGuard([&] {
+        theme()->setConfiguredMode(previousMode);
+        config()->set(Config::GUI_ReducedMotion, previousReduced);
+        MotionPolicy::instance()->refresh();
+    });
+    theme()->setConfiguredMode(dark ? QStringLiteral("dark") : QStringLiteral("light"));
+    config()->set(Config::GUI_ReducedMotion, reduced);
+    MotionPolicy::instance()->refresh();
+
+    class ContrastingHost final : public QWidget
+    {
+    public:
+        QColor background = QColor(255, 0, 255);
+    protected:
+        void paintEvent(QPaintEvent*) override { QPainter painter(this); painter.fillRect(rect(), background); }
+    } host;
+    host.resize(1440, 860);
+    host.show();
+    auto render = [&] {
+        QImage image(host.size(), QImage::Format_ARGB32_Premultiplied);
+        image.fill(Qt::transparent);
+        host.render(&image);
+        return image;
+    };
+    TabOverflow overflow(&host);
+    overflow.setTabs({{QStringLiteral("runtime-a"), {}, QStringLiteral("database"), QStringLiteral("Alpha"), false, false}},
+                     QStringLiteral("runtime-a"), {});
+    overflow.openOverlay();
+    QTRY_COMPARE(overflow.transition(), 1.0);
+    auto* sheet = overflow.sheetWidget();
+    QVERIFY(sheet);
+    const QPoint interior = sheet->mapTo(&host, QPoint(10, sheet->height() / 2));
+    const QPoint corner = sheet->mapTo(&host, QPoint(0, 0));
+    const auto expected = theme()->color(Role::SurfaceContainerLowest);
+    const auto first = render();
+    QCOMPARE(first.pixelColor(interior), expected);
+    QVERIFY(first.pixelColor(corner) != expected);
+    host.background = QColor(0, 255, 255);
+    host.update();
+    const auto second = render();
+    QCOMPARE(second.pixelColor(interior), expected);
+    QVERIFY(first.pixelColor(corner) != second.pixelColor(corner));
+
+    // A deliberately unfilled sheet must fail the same pixel oracle.
+    overflow.hide();
+    Overlay unfilled(&host);
+    auto* transparentSheet = new QWidget;
+    transparentSheet->setFixedSize(560, 360);
+    unfilled.setSheetWidget(transparentSheet);
+    unfilled.openOverlay();
+    QTRY_COMPARE(unfilled.transition(), 1.0);
+    const QPoint negativeInterior = transparentSheet->mapTo(&host, QPoint(10, 180));
+    QVERIFY(render().pixelColor(negativeInterior) != expected);
+}
 
 void TestMaterialTabs::persistenceIdentity()
 {

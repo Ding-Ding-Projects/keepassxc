@@ -1,6 +1,7 @@
 #include "MaterialTabOverflow.h"
 
 #include "MaterialButtons.h"
+#include "MaterialElevation.h"
 #include "MaterialRegexSafety.h"
 #include "MaterialSearchBar.h"
 #include "MaterialVoice.h"
@@ -10,16 +11,40 @@
 #include <QLabel>
 #include <QLayoutItem>
 #include <QLineEdit>
+#include <QPainter>
 #include <QScrollArea>
 #include <QRegularExpression>
 #include <QVBoxLayout>
 
 namespace Material
 {
+    namespace
+    {
+        class TabOverflowSheet final : public QWidget
+        {
+        public:
+            TabOverflowSheet()
+            {
+                connect(theme(), &Theme::changed, this, [this] { update(); });
+            }
+
+        protected:
+            void paintEvent(QPaintEvent* event) override
+            {
+                Q_UNUSED(event)
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                auto fill = theme()->color(Role::SurfaceContainerLowest);
+                fill.setAlpha(255);
+                paintSurface(&painter, rect(), Shape::ExtraLarge, fill);
+            }
+        };
+    }
+
     TabOverflow::TabOverflow(QWidget* parent)
         : Overlay(parent)
     {
-        m_sheet = new QWidget;
+        m_sheet = new TabOverflowSheet;
         m_sheet->setObjectName(QStringLiteral("materialTabOverflowSheet"));
         auto* root = new QVBoxLayout(m_sheet);
         root->setContentsMargins(20, 20, 20, 20);
