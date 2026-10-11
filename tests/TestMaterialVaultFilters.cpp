@@ -20,6 +20,7 @@
 #include "core/Config.h"
 #include "util/TemporaryFile.h"
 #include "gui/material/MaterialChip.h"
+#include "gui/material/MaterialButtons.h"
 #include "gui/material/MaterialEntryDetail.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/material/MaterialEntryDelegate.h"
@@ -31,6 +32,7 @@
 #include <QLineEdit>
 #include <QAction>
 #include <QLabel>
+#include <QVBoxLayout>
 #include <QScopedPointer>
 
 #include <QAbstractButton>
@@ -375,4 +377,67 @@ void TestMaterialVaultFilters::closingVaultClearsCategoryQueriesAndModes()
         QCOMPARE(bar->regexFlags(), QStringLiteral("i"));
     }
     QVERIFY(screen.sidebar()->selectedTags().isEmpty());
+}
+
+void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
+{
+    const auto originalLanguage = Voice::language();
+    // Retain the observed 230-pixel failure shape as an executable negative.
+    QWidget legacyHost;
+    legacyHost.setFixedWidth(230);
+    auto* legacyLayout = new QVBoxLayout(&legacyHost);
+    legacyLayout->setContentsMargins(0, 0, 0, 0);
+    legacyLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    auto* legacy = new TextButton(&legacyHost);
+    legacy->setText(QStringLiteral("Guide this search: Filter groups"));
+    legacy->setMinimumWidth(legacy->sizeHint().width());
+    legacyLayout->addWidget(legacy);
+    legacyHost.show();
+    QCoreApplication::processEvents();
+    const auto contained = [](QWidget* owner, QWidget* child) {
+        return owner->rect().contains(QRect(child->mapTo(owner, QPoint()), child->size()));
+    };
+    QVERIFY(!contained(&legacyHost, legacy));
+    legacyHost.hide();
+
+    // Hand-maintained cases for the two observed sidebar owners.
+    const QStringList categories{QStringLiteral("groups"), QStringLiteral("tags")};
+    for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
+        Voice::setLanguage(language);
+        for (const auto& category : categories) {
+            SearchBar bar;
+            const auto id = QStringLiteral("test.guidance.wrap.") + category;
+            QVERIFY(bar.setIdentity(id, category));
+            bar.setCopyKeys(QStringLiteral("search.") + category, QStringLiteral("search.") + category);
+            QScopedPointer<QWidget> host(bar.guidanceWidget(QStringLiteral("search.guidance.") + category));
+            host->setFixedWidth(230);
+            host->show();
+            host->adjustSize();
+            QCoreApplication::processEvents();
+            auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+            auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
+            auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+            QVERIFY(entry && panel && done);
+            const auto expected = Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ")
+                                  + Voice::say(QStringLiteral("search.") + category);
+            QCOMPARE(entry->text(), expected);
+            QCOMPARE(entry->accessibleName(), expected);
+            QVERIFY(contained(host.data(), entry));
+            QVERIFY(entry->sizePolicy().hasHeightForWidth());
+            QVERIFY(entry->height() >= entry->heightForWidth(entry->width()));
+            QVERIFY(entry->height() >= Layout::ButtonHeight);
+            if (language == Voice::Language::English || language == Voice::Language::Bilingual)
+                QVERIFY(entry->height() > Layout::ButtonHeight);
+            QVERIFY(panel->isHidden());
+            bar.setText(QStringLiteral("synthetic-query"));
+            entry->setFocus();
+            QTest::keyClick(entry, Qt::Key_Space);
+            QVERIFY(!panel->isHidden());
+            QCOMPARE(bar.text(), QStringLiteral("synthetic-query"));
+            done->click();
+            QVERIFY(panel->isHidden());
+            QVERIFY(contained(host.data(), entry));
+        }
+    }
+    Voice::setLanguage(originalLanguage);
 }
