@@ -165,9 +165,9 @@
     {
       "path": "docs/features/design/per-element-appearance-editor.md",
       "sourceSha256": "6c20f712cac4531207242564783b96d29e63c827e176c1c78cb833f066cc4057",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "逐元素外觀編輯器",
+      "markdown": "# 逐元素外觀編輯器\n\n功能識別碼：`per-element-appearance-editor` · 分類：設計同外觀\n\n## 運作方式\n\n每個有物件名稱嘅元素都可以原位改樣式。**Shift+右擊**任何元素，或者元素聚焦時按 **Ctrl+Shift+E**，外觀編輯器（`Material::AppearanceEditor`、`src/gui/material/MaterialAppearanceEditor.h`）就會喺旁邊以非模態440 px面板開啟，跟隨視窗移動或調整尺寸，並喺關閉按鈕或 <kbd>Escape</kbd> 關閉後返回原有焦點。面板會列出元素物件名稱同類別，有自己屬性搜尋、Regex 標籤同錨定建構工具（`appearance.editor`）；無法解析模式唔會改任何資料。\n\n編輯器有四個分頁：\n\n- **字體**：字體家族（Material select 列出所有已安裝字體，各自用自己字形顯示，有自己搜尋）、大小滑桿同自由輸入框、字重（Light、Regular、Medium、Bold）、斜體、底線、刪除線同上劃線開關、大小寫（原樣、ALL CAPS、全部小寫、Small Caps、每個字首大寫）、字距同行高。\n- **色彩**：背景同文字色用兩個無限色彩選擇器（`Material::ColorPicker`）：飽和度／亮度區、色相列同透明度列、可以讀寫 HEX、RGB、HSL、HSV、HWB、CMYK、LAB、LCH、OKLAB 同 OKLCH 嘅轉換器（喺任何表示法輸入都會更新其他表示法；錯誤文字保留喺使用者眼前並標示無效）、存在時嘅 CSS 名稱、對另一色嘅 WCAG 對比讀數（AAA／AA／大字／不合格）、最近色彩，以及有1至5速度級別嘅**動態彩虹**選項。\n- **形狀**：角半徑、元素高度、內間距、邊框寬度同顏色、層次（0至5投影）同透明度。\n- **預設**：複製目前樣式並貼去另一元素；以名稱儲存樣式；從可搜尋 select 套用或刪除已儲存預設；將全部預設以 JSON 匯出去剪貼簿，再由剪貼簿匯入。預設持久保存喺 `GUI/AppearancePresets`。\n\n每次變更即時寫入 `Material::ElementOverrides`，即時元素透過 `Material::AppearanceApplier` 跟隨；佢會監察每個元件出現，所以自訂元素無論喺邊度顯示都有自訂外觀。**Reset element** 精確還原一個元素隨附外觀（恢復樣式表、字體、最小高度同效果）；**Reset all** 清除所有覆寫。\n\n彩虹以旗標同級別儲存，唔係色彩字串，所以後續處理唔會用佢砌色調。全部彩虹畫面用同一共用計時器一齊轉，週期按級別由第1級24 s至第5級3 s；減少動態效果時色相固定，唔會循環。\n\n## 設定\n\n`GUI/ElementOverrides` 以物件名稱為鍵保存逐元素 JSON 覆寫；`GUI/AppearancePresets` 保存命名預設。每個欄位輸入都有界限，手改檔案唔可以偷偷放入900 px邊框或40 %行高。\n\n## 失敗情況\n\n冇物件名稱嘅元素唔可以直接成為目標，掛鉤會向上搵最近有名稱祖先。Qt 元件樣式表冇行高等價功能，所以額外行距以文字上下內邊距實現。層次同透明度都係圖形效果，Qt 每個元件只容許一個；設定層次時，透明度改為合併至背景 alpha。\n\n## 安全考慮\n\n冇網絡存取。預設只經剪貼簿匯出同匯入；唔係 JSON 物件、結構版本唔支援或超過200個預設，匯入都會拒絕。\n\n## 驗證\n\n`testmaterialappearanceeditor` 涵蓋覆寫模型往返同界限、編輯器寫入每類覆寫並由即時元素跟隨、重設恢復隨附外觀、預設（儲存、套用、刪除、複製、貼上、匯出、匯入，包括錯誤輸入）、屬性搜尋同正則表達式自選，以及 Shift+右擊掛鉤。`testmaterialcolorpicker` 對照公開 CIELAB／OKLab 數值驗證轉換器、每個表示法解析往返、WCAG 對比數值、選擇器驅動同鍵盤操作，以及彩虹特殊標記。\n\n## 延伸閱讀\n\n- [Material Design 3 外觀](material-3-appearance.md)\n- [下拉選單改用設有搜尋列嘅清單框](../search/dropdown-select.md)\n- [每個畫面都有搜尋列](../search/search-bar-every-surface.md)\n"
     },
     {
       "path": "docs/features/interface/README.md",
@@ -319,9 +319,9 @@
     {
       "path": "docs/features/records/personal-vocabulary-upload.md",
       "sourceSha256": "88b5c82cec9d50c21309caf76a049a97eeaa25e2b8880ab9009a2a8e9e2d8a00",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "個人詞彙上載",
+      "markdown": "# 個人詞彙上載\n\n功能識別碼：`personal-vocabulary-upload` · 分類：記錄同歷史\n\n## 運作方式\n\nSettings › Interface › Language & voice 有可見本機 JSON 上載控制，包括未選檔、已載入、無效、取代同清除狀態。控制永遠存在，即使未有檔案；未提供有效檔案之前，每個畫面都保留原有隨附文字。\n\n揀選檔案只讀一次，完整驗證後，標準形式快取至本機設定鍵 `GUI/PersonalVocabularyCache`。快取喺使用者文字界線套用：語言翻譯器之後安裝嘅翻譯器先問原翻譯器取得真正字串（英文、粵語或雙語配對），再套用詞彙。所以同一檔案適用每種語言模式，亦涵蓋由譯文建立嘅無障礙名稱。命令、URL、識別碼、檔案路徑同事實性外部記錄永遠唔會翻譯，所以永遠唔會改寫。\n\n取代按完整字詞、區分大小寫，先套用最長鍵，所以 `Database file` 優先於 `Database`，而 `DatabaseWidget` 保持不變。載入第二個檔案會完整取代快取；**Clear personal vocabulary** 清除快取並即時恢復原有文字。載入同清除會重新翻譯已開視窗；畫面喺變更之前組合嘅文字，會喺下次重建或下次啟動更新。\n\n已載入、已清除同無效通知都透過共用目錄（`share/voice/voice.json`：`vocabulary.loaded`、`vocabulary.cleared`、`vocabulary.invalid`）以每個幽默程度嘅英文同粵語呈現；每個程度都強制保留事實（項目數量、「只限呢部電腦」、結構界限）。各行標籤跟隨 Settings 中心語言模式。\n\n## 規範\n\n結構版本1，JSON物件恰好有兩個成員：\n\n```json\n{ \"schemaVersion\": 1, \"entries\": { \"original wording\": \"replacement\" } }\n```\n\n界限：檔案最多64 KiB、最多500個項目、鍵1至128字元、字串值最多512字元，唔容許 `__proto__`、`constructor` 或 `prototype` 鍵，亦唔容許額外成員。較早建置以 `replacements` 命名成員嘅檔案仍獲接受，快取會正規化為 `entries`。規範以外內容一律整份拒絕，永遠唔會部分套用。\n\n## 設定\n\nSettings › Personal vocabulary JSON（`Choose file…`）同 Clear personal vocabulary。唯一儲存狀態係本機設定已驗證快取，來源路徑永遠唔會保存。\n\n## 失敗情況\n\n- JSON格式不正確、結構版本錯誤、額外成員、非字串值、不安全鍵、檔案過大或項目過多，都會拒絕檔案並通知，之前快取（如有）繼續生效。\n- 儲存快取損壞就會安全停止套用：零個有效項目，呈現原有文字。\n- 每次重新載入都會重新驗證快取，手改設定唔會部分套用。\n\n## 安全考慮\n\n處理只喺本機：冇網絡請求、冇遙測，記錄唔會包含對應。負載永遠唔會進入匯出、歷史快照、擷取或公開記錄；Settings 通知只報項目數量。快取放喺本機設定，唔係漫遊設定。\n\n## 驗證\n\n- `testpersonalvocabulary` 涵蓋結構同每個界限、完整字詞最長優先套用、經 `QCoreApplication::translate` 翻譯器套用、取代、快取損壞安全停止，以及清除恢復原有文字。\n- `node design/parity/vocab-proof.mjs <exe> <repo> <outDir> <json> neutral|private` 喺隱藏桌面以真正檔案操作 Settings 上載控制，記錄載入、套用文字、重啟持久、取代、無效檔案拒絕同清除，保留擷取唔會含負載。\n\n## 延伸閱讀\n\n- [每個畫面都有搜尋列](../search/search-bar-every-surface.md)\n- [以本機 Git 保存嘅版本歷史](../records/local-history.md)\n"
     },
     {
       "path": "docs/features/search/README.md",
@@ -333,9 +333,9 @@
     {
       "path": "docs/features/search/context-menu-search.md",
       "sourceSha256": "7e8f266a417cdc9e463a4e92df389c9a3759c5bac4bea1c1f6d0cab3c26e8166",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "原生選單搜尋",
+      "markdown": "# 原生選單搜尋\n\n應用程式顯示每個 `QMenu` 都會喺 `aboutToShow` 回呼之後被中央攔截。`Material::MenuSearch` 新增本機 Material 搜尋行同結果狀態，包括 Qt 為文字編輯器同 `Qt::ActionsContextMenu` 產生嘅選單。現有 Material 搜尋行會重用。\n\n## 運作方式\n\n- 預設純文字，比對忽略大小寫同助記符號 &。\n- 每個選單有自己查詢、旗標、模式、驗證、完整正則表達式工作台、範例同工作台草稿狀態，唔會借用全域工作台草稿。現有預設片段由 `RegexBuilder` 提供。\n- 建構工具喺同一彈出畫面搜尋行正下方即時開啟，唔會另開頂層視窗，亦唔會釋放堆疊區域 `QMenu::exec()` 呼叫者。關閉工具會返回搜尋行焦點。Select 彈出畫面喺工具開啟時放寬一般固定寬度，預留其他行空間，關閉時恢復寬度。\n- 原有操作永遠唔會複製、改父物件或重排。勾選狀態、啟用狀態、回呼、子選單、快捷鍵文字同擁有權保持原生。\n- 隱藏操作保持隱藏。彈出關閉或共用操作移除時，控制器恢復篩選可見性。已關閉彈出畫面嘅排隊更新唔可以再次篩選共用操作，即使重新開啟都一樣。分隔線只出現喺仍然存在群組之間。\n- 輸入會篩選；方向鍵明確揀啟用結果。欄位按 Enter 唔會操作。查詢或旗標編輯會清除之前啟用操作，避免隱藏破壞性命令繼續成為 Enter 目標。\n- Escape 關閉彈出畫面，原開啟者仍然有效就返回其焦點。\n- 冇符合、數量同驗證會用英文、粵語同雙語語氣目錄，無障礙狀態交代結果數量。\n- 現有 Select 彈出保留清單鍵盤行為，包括 Enter 選擇同先清除 Escape。狀態會計算真正篩選選項，包括彈出開啟期間變更。只改旗標會重新套用現有搜尋使用者，唔會取代查詢。\n\n## 界限同私隱\n\n模式最多512個UTF-16字元、標籤最多2,048字元、篩選命令集最多1,024項，高風險結構會被拒絕。PCRE2 比對／深度指令限制個別比對，經過時間預算限制整個篩選。無效比對結果，包括耗盡 PCRE2 比對上限，都會丟棄全部部分結果，顯示本機資源上限狀態。借用 Select 搜尋亦用同一界限。無效或未完成搜尋會清除部分結果同目前清單行，唔提供可啟用結果，並透過選單同無障礙狀態公布驗證情況。只搜尋操作或選項標籤，唔會讀取文件欄位、憑證或剪貼簿內容。最多二十個查詢歷史留喺選單記憶體，隨選單銷毀，永遠唔會寫入設定、記錄或快照。\n\n## 驗證同限制\n\n`testmaterialmenu` 有二十九個針對性案例，包括三個排隊更新行同六個 Select 界限行，涵蓋安裝、現有搜尋重用、隔離、旗標、Unicode、無效模式同比對耗盡、動態重建、原生操作、Select 鍵盤／狀態行為、共用操作恢復、開啟者焦點、編輯器選單同行內工作台生命週期。真正 Select 建構工具按鈕會用嚟驗證彈出容納同寬度恢復；呢啲離屏結構斷言唔代表原生呈現一致性。程序使用暫存設定同 Qt 測試命名空間。\n\n人工路徑清單係 `design/context-menu-inventory.md`。來源實作唔係原生呈現承諾。真正封裝執行、螢幕縮放同鍵盤／焦點證據，仍然要透過核准隱藏桌面路徑收集。內嵌日曆日期格係自訂元件，唔係命令操作；月份／年份選擇器保留自己搜尋，但日期格篩選仍然係獨立實作缺口。任意 `QComboBox` 彈出唔係 `QMenu`，需要自己適配器。逐元素外觀同鎖定、自訂已儲存片段，同使用者查詢歷史選擇器，唔喺呢個原生選單基礎範圍。\n"
     },
     {
       "path": "docs/features/search/dropdown-select.md",
@@ -368,9 +368,9 @@
     {
       "path": "docs/features/search/vault-search-guidance.md",
       "sourceSha256": "4441ecf871d251756b3625cead7bec69f0a745f3c1ce418591b65e0aba4c1b96",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "資料庫搜尋指引",
+      "markdown": "# 資料庫搜尋指引\n\n五個搜尋分類嘅六個控制，都可以喺輸入欄正上方提供可選一步指引。入口開啟非模態行內面板，直接欄位仍然可以編輯。Return 關閉面板、保留查詢，並返回該欄位鍵盤焦點。編輯或切換語言都唔會重新打開已關閉指引。指引唔會另外搜尋，亦唔會保存查詢。\n\n## 人工維護控制清單\n\n| 控制識別碼 | 權威指引鍵 | 複雜度同獨有範圍 |\n| --- | --- | --- |\n| `vault.entries` | `search.guidance.entries` | 簡單一步：目前資料庫／群組項目中繼資料、排除秘密／自訂欄位、已選標籤互動 |\n| `vault.groups` | `search.guidance.groups` | 簡單一步：側欄資料夾名稱同祖先可見性，唔會揀資料夾 |\n| `vault.tags` | `search.guidance.tags` | 簡單一步：標籤選項，保留已選標籤同項目篩選 |\n| `vault.group-scope` | `search.guidance.group-scope` | 簡單一步：選單群組選項，選擇會改真正項目範圍 |\n| `tabs.open` | `search.guidance.tabs` | 簡單一步：已開分頁顯示標籤；篩選唔會關閉、重排或改穩定身份 |\n| `vault.attachments` | `search.guidance.details` | 簡單一步：詳情標籤／附件名稱，排除數值同位元組 |\n\n每段解說交代用途、空白／預設不分大小寫行為、範例、正則表達式選項、清除效果、無效模式恢復同不可用資料。英文同粵語文字由現有語氣目錄解析；雙語合併兩者。指引入口指出確切目標。Return 明確保留目前輸入。呢個單一步驟冇中途輸入、獨立執行、Back 狀態或回退承諾。\n\n## 驗證同限制\n\n`TestMaterialVaultFilters::contextualGuidanceInventoryAndDismissal` 獨立列出全部六個必要控制，並拒絕遺漏任何一行。佢檢查可選開啟、查詢不變、本地化無障礙入口、關閉、語言／查詢變更後唔重開，以及欄位已銷毀而停用指引容器仍然存在。`TestMaterialTabs::searchableOverflow` 另外檢查指引喺啟用之前保留查詢同篩選結果執行期身份。執行仍然待完成。原生焦點返回、正上方幾何、最小視口、顯示縮放／主題矩陣同螢幕閱讀器驗收仍然未驗證。\n\n每個分類亦有六個可探索說明操作，識別為 `<category>.help.input`、`.clear`、`.regex`、`.builder`、`.open` 同 `.done`。指令選單透過現有操作樹清單探索呢啲即時操作。揀選會開啟現有可選解說，顯示該子控制獨有情境說明，並保留查詢。輸入、regex、builder、指引入口同 Return 控制亦以工具提示提供解說。說明會交代空清除控制，同冇獨立 regex 開關嘅緊湊欄位，唔會假裝每個子控制都可用。\n\n針對性檢查獨立列出六個子身份、解析每個操作、檢查各自解說、輸入不變同關閉。原生操作探索同互動仍然未驗證。面板未提供可搜尋文章導覽，亦未為每個子控制提供獨立正上方精靈入口，呢啲共用功能仍然未完成。清單只涵蓋項目、資料夾、已開分頁、標籤同項目詳情之間嘅六個搜尋輸入。Group-scope 指引補充資料夾分類。其他資料庫控制同應用程式畫面唔喺呢份清單範圍。\n"
     },
     {
       "path": "docs/features/servers/README.md",
