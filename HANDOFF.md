@@ -1,3 +1,19 @@
+# October 11 preservation boundary
+
+The October 11 requirements refresh remains bound to instruction source df119a824c1a7e143f26b15e953e84cb92b13750. All 105 identities are mapped, covering 1,119 capabilities, 108 surfaces and 120,852 required cells. Accepted cells remain zero. Complete local Ollama support is missing. The eight-category converter has a bounded native binary-encoding foundation; the other seven categories remain disabled with explicit unmet requirements.
+
+The exact native root build `build.bat /s -WithGuiTests` passed at 3ce199347e48d0f5497dd1646cff73965152c187. Vault filters passed 11 cases and voice passed 10. Converter verification reported 6 passing cases and 1 failure: `atomicDestinationAndSource()` returned IoFailure instead of Success. Its exact cause is unproved. Subsequent publication repair 480f9ada0cc1524bb021ebdddf9c6cb5c0399f2d and converter navigation/localization repair e6f64a7d08ab4c4bfa783c49530cb116c3e06df7 are independently source-reviewed but uncompiled and unexecuted. They are included in reader candidate 900fa9db16cecbccb4f40675003e72b4db2eb4ca.
+
+Earlier native 8bb91c55 checks passed entry search (12 cases), tabs (11) and vault filters (11), including metadata exclusions and opaque-selector pixel fixtures. Genuine native captures at 7d074ca7 demonstrate detail search without attachments, retained detail filtering, selector filtering and lock/unlock clearing in one English/light/100% tuple. Guidance still overlaps in those pixels. A later constrained fixture passes, but new actual pixels are missing. Two-vault activation, closing, invalid-pattern interaction and the complete language/theme/scale/size matrix remain unverified.
+
+The website root `build.bat /s -WebsiteOnly` passed at dd3dda6720e5eb309f68a879aa6414c84174f028 with all 20 output hashes independently verified, 64 documentation records, 48 feature articles and six wiki snapshots. Later documentation bindings and source changes are unbuilt. Browser source 9c404368 produced 19 inspected genuine captures: 16 of 96 matrix frames and three focused narrow bilingual frames. Normal owned process, desktop and listener teardown passed; retained profile removal, strict evidence promotion and TCP-refusal proof remain incomplete. Neither build establishes current hosted deployment.
+
+Remote main remains f5949912caf3ebfe7c9ca9430d2141b4ebd21810. Local primary main 0ffb00b9ae963e7629bacc2e2903c5df4a104490 is 16 commits ahead and one behind its fetched upstream. Preserve both histories. Unfinished feature work is retained on task branches and must not be represented as verified main delivery. Old native resource ownership remains unresolved and those resources are retained.
+
+The goal crossed its 90% start boundary at 13,619,612 used of 15,000,000. No new build, test, runtime, image-generation lane or external investigation is started. This is preservation at a budget boundary, not completion. The goal remains active because no supported budget-boundary status exists. Account allowance is unknown. No new release, destructive cleanup or hosted publication is claimed.
+
+This section supersedes older pending-state summaries below. Historical evidence retains its original source binding.
+
 # Navigation delivery handoff
 
 ## Current requirements refresh and combined candidate, October 11, 2026
