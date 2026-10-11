@@ -8,6 +8,11 @@ Run `build.bat` for the native application, `build-installer.bat` for verified `
 `RELEASES`, and full-package output, or `download-dependencies.bat` to prepare the pinned user-scoped
 toolchain. Each accepts `/s` or `--silent`.
 
+Use `build.bat /s -WithGuiTests` to include the native GUI regression targets.
+This builds those targets through the same source-bound root entrypoint; it does not
+launch them or establish native interaction acceptance. GUI tests remain excluded
+from the ordinary build unless this switch is supplied.
+
 Before packaging, the installer script verifies that `HEAD` is readable and the source checkout has
 no tracked or untracked changes. Diagnostics report bounded change counts without printing paths.
 
@@ -27,7 +32,8 @@ work, with compilation and actual upload/connection acceptance pending. The sepa
 candidate collected 384 source-bound captures across eight changed articles; independent review
 found no visible layout defect in the captured portions but identified three untranslated
 surrounding buttons. These captures do not establish deployment, complete article pixels or
-full accessibility. The active root build remains pinned to its own earlier candidate.
+full accessibility. The root build passed at cdb8862b; its mixed focused-test results
+and the next GUI-enabled candidate remain separately recorded in the handoff.
 
 No new release is authorized by this work. Completed units must still reach verified `main`;
 unfinished branches are retained for recovery. See [handoff](HANDOFF.md) for exact source bindings.

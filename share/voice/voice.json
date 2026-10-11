@@ -6432,14 +6432,14 @@
             },
             "yue": {
                 "facts": [
-                    "Java {java} | Linux/{architecture} | {digest}"
+                    "Java {java} | Linux/{architecture} | {digest}，映像摘要"
                 ],
                 "levels": {
-                    "1": "Java {java} | Linux/{architecture} | {digest}",
-                    "2": "Java {java} | Linux/{architecture} | {digest}",
-                    "3": "Java {java} | Linux/{architecture} | {digest}",
-                    "4": "Java {java} | Linux/{architecture} | {digest}",
-                    "5": "Java {java} | Linux/{architecture} | {digest}"
+                    "1": "Java {java} | Linux/{architecture} | {digest}，映像摘要",
+                    "2": "Java {java} | Linux/{architecture} | {digest}，映像摘要",
+                    "3": "Java {java} | Linux/{architecture} | {digest}，映像摘要",
+                    "4": "Java {java} | Linux/{architecture} | {digest}，映像摘要",
+                    "5": "Java {java} | Linux/{architecture} | {digest}，映像摘要"
                 }
             }
         },
@@ -6567,14 +6567,14 @@
             },
             "yue": {
                 "facts": [
-                    "Java"
+                    "Java 版"
                 ],
                 "levels": {
-                    "1": "Java",
-                    "2": "Java",
-                    "3": "Java",
-                    "4": "Java",
-                    "5": "Java"
+                    "1": "Java 版",
+                    "2": "Java 版",
+                    "3": "Java 版",
+                    "4": "Java 版",
+                    "5": "Java 版"
                 }
             }
         },
@@ -6702,14 +6702,14 @@
             },
             "yue": {
                 "facts": [
-                    "Docker CLI (docker.exe docker)"
+                    "Docker CLI (docker.exe docker)，命令列工具"
                 ],
                 "levels": {
-                    "1": "Docker CLI (docker.exe docker)",
-                    "2": "Docker CLI (docker.exe docker)",
-                    "3": "Docker CLI (docker.exe docker)",
-                    "4": "Docker CLI (docker.exe docker)",
-                    "5": "Docker CLI (docker.exe docker)"
+                    "1": "Docker CLI (docker.exe docker)，命令列工具",
+                    "2": "Docker CLI (docker.exe docker)，命令列工具",
+                    "3": "Docker CLI (docker.exe docker)，命令列工具",
+                    "4": "Docker CLI (docker.exe docker)，命令列工具",
+                    "5": "Docker CLI (docker.exe docker)，命令列工具"
                 }
             }
         }
