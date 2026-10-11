@@ -66,7 +66,11 @@ private:
     QString selectedId() const;
     QString directoryFor(const QString& id) const;
     bool validRecord(const QJsonObject& record) const;
-    void status(const QString& text);
+    void bindCopy(QWidget* widget, const char* key, bool caption = true);
+    void refreshCopy();
+    void statusKey(const char* key, const QString& suffix = {});
+    QHash<QWidget*, QString> m_captionKeys, m_accessibleKeys;
+    QString m_statusKey = QStringLiteral("server.ready"), m_statusSuffix;
     QComboBox *m_target, *m_edition, *m_distribution, *m_versions;
     QLineEdit *m_name, *m_runtime, *m_jar, *m_docker;
     QComboBox* m_images;

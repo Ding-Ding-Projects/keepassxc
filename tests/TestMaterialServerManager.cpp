@@ -1,5 +1,9 @@
 #include "gui/material/MaterialServerManager.h"
 #include "core/Config.h"
+#include "gui/material/MaterialVoice.h"
+#include "gui/material/MaterialSearchBar.h"
+#include <QLabel>
+#include <QAbstractButton>
 #include <QApplication>
 #include <QStandardPaths>
 #include <QTemporaryDir>
@@ -55,6 +59,96 @@ protected:
 class TestMaterialServerManager : public QObject {
     Q_OBJECT
 private slots:
+    void dockerCopyInventoryAndLiveLanguageChanges() {
+        using namespace Material;
+        const QStringList required{
+            QStringLiteral("server.docker.image-accessible"),
+            QStringLiteral("server.docker.image-label"),
+            QStringLiteral("server.docker.cli"),
+            QStringLiteral("server.docker.choose-cli"),
+            QStringLiteral("server.docker.discover-images"),
+            QStringLiteral("server.docker.cancelled"),
+            QStringLiteral("server.docker.select-image"),
+            QStringLiteral("server.docker.choices-changed"),
+            QStringLiteral("server.docker.resolve-version"),
+            QStringLiteral("server.docker.registry-unavailable"),
+            QStringLiteral("server.docker.metadata-ready"),
+            QStringLiteral("server.docker.metadata-unavailable"),
+            QStringLiteral("server.docker.discovering"),
+            QStringLiteral("server.docker.cli-unavailable"),
+            QStringLiteral("server.docker.metadata-required"),
+            QStringLiteral("server.docker.daemon-unavailable"),
+            QStringLiteral("server.docker.image-unavailable"),
+            QStringLiteral("server.docker.stop-record-invalid"),
+            QStringLiteral("server.docker.record-invalid"),
+            QStringLiteral("server.docker.runtime-changed"),
+            QStringLiteral("server.docker.not-created"),
+            QStringLiteral("server.docker.configuration-invalid"),
+            QStringLiteral("server.docker.creation-failed"),
+            QStringLiteral("server.docker.identity-save-failed"),
+            QStringLiteral("server.docker.identity-invalid"),
+            QStringLiteral("server.docker.state-unavailable"),
+            QStringLiteral("server.docker.ownership-mismatch"),
+            QStringLiteral("server.docker.lifecycle-completed"),
+            QStringLiteral("server.docker.lifecycle-unknown"),
+            QStringLiteral("server.docker.image-summary"),
+            QStringLiteral("server.target.local-process"),
+            QStringLiteral("server.target.local-docker"),
+            QStringLiteral("server.target.ssh-process"),
+            QStringLiteral("server.target.ssh-docker"),
+            QStringLiteral("server.edition.java"),
+            QStringLiteral("server.edition.bedrock-unavailable"),
+            QStringLiteral("server.distribution.vanilla-java"),
+            QStringLiteral("server.filter.java-runtime"),
+            QStringLiteral("server.filter.server-jar"),
+            QStringLiteral("server.filter.docker-cli")};
+        QCOMPARE(required.size(),40);
+        const auto available=Voice::catalogueKeys();
+        for(const auto& key:required) {
+            QVERIFY2(available.contains(key),qPrintable(key));
+            for(int level=Voice::MinLevel;level<=Voice::MaxLevel;++level) {
+                const auto en=Voice::preview(Voice::Language::English,level,level,key).joined();
+                const auto yue=Voice::preview(Voice::Language::Cantonese,level,level,key).joined();
+                QVERIFY(!en.isEmpty());QVERIFY(!yue.isEmpty());QVERIFY(en!=key);QVERIFY(yue!=key);
+                const auto both=Voice::preview(Voice::Language::Bilingual,level,level,key);
+                QCOMPARE(both.primary,en);QCOMPARE(both.secondary,yue);
+            }
+        }
+        const auto original=Voice::language();Voice::setLanguage(Voice::Language::English);
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        manager.m_target->setCurrentIndex(1);
+        manager.m_versions->addItem(QStringLiteral("Fixture version"),QJsonObject{{"id","fixture"}});
+        const QJsonObject image{{"javaMajor",21},{"architecture","amd64"},{"digest","sha256:"+QString(64,QLatin1Char('a'))}};
+        manager.m_images->addItem(QStringLiteral("Before refresh"),image);
+        auto* item=new QListWidgetItem(QStringLiteral("Synthetic entry"),manager.m_inventory);item->setData(Qt::UserRole,QStringLiteral("fixture"));manager.m_inventory->setCurrentItem(item);
+        manager.searchBar()->setText(QStringLiteral("unmatched synthetic query"));
+        manager.statusKey("server.docker.state-unavailable");
+        const auto document=manager.m_document;
+        QSignalSpy targetChanges(manager.m_target,qOverload<int>(&QComboBox::currentIndexChanged));
+        QSignalSpy versionChanges(manager.m_versions,qOverload<int>(&QComboBox::currentIndexChanged));
+        QSignalSpy imageChanges(manager.m_images,qOverload<int>(&QComboBox::currentIndexChanged));
+        for(const auto language:{Voice::Language::English,Voice::Language::Cantonese,Voice::Language::Bilingual}) {
+            Voice::setLanguage(language);
+            QCOMPARE(manager.m_target->currentIndex(),1);QCOMPARE(manager.m_versions->currentIndex(),0);QCOMPARE(manager.m_images->currentIndex(),0);
+            QCOMPARE(manager.m_images->currentData().toJsonObject(),image);QCOMPARE(manager.m_document,document);
+            QCOMPARE(manager.searchBar()->text(),QStringLiteral("unmatched synthetic query"));QCOMPARE(manager.m_inventory->currentItem(),item);QVERIFY(item->isHidden());
+            QCOMPARE(manager.m_target->currentText(),Voice::say(QStringLiteral("server.target.local-docker")));
+            QCOMPARE(manager.m_images->accessibleName(),Voice::say(QStringLiteral("server.docker.image-accessible")));
+            QCOMPARE(manager.m_status->text(),Voice::say(QStringLiteral("server.docker.state-unavailable")));QCOMPARE(manager.m_status->accessibleName(),manager.m_status->text());
+            for(auto it=manager.m_captionKeys.cbegin();it!=manager.m_captionKeys.cend();++it) {
+                const auto expected=Voice::say(it.value());
+                if(auto* label=qobject_cast<QLabel*>(it.key()))QCOMPARE(label->text(),expected);
+                if(auto* button=qobject_cast<QAbstractButton*>(it.key()))QCOMPARE(button->text(),expected);
+            }
+            for(auto it=manager.m_accessibleKeys.cbegin();it!=manager.m_accessibleKeys.cend();++it) {
+                auto expected=Voice::say(it.value());const auto context=it.key()->property("serverBrowseFor").toString();
+                if(!context.isEmpty())expected=Voice::say(context)+QStringLiteral(": ")+Voice::say(QStringLiteral("server.browse"));
+                QCOMPARE(it.key()->accessibleName(),expected);
+            }
+        }
+        QCOMPARE(targetChanges.count(),0);QCOMPARE(versionChanges.count(),0);QCOMPARE(imageChanges.count(),0);
+        Voice::setLanguage(original);
+    }
     void dockerMetadataAbsoluteDeadlineStopsTrickleAndCancelsOnFinish() {
         QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
         delete manager.m_network;auto* network=new TrickleNetwork(&manager);manager.m_network=network;
@@ -253,8 +347,9 @@ private slots:
     void targetInventory() {
         const auto targets=ServerManager::targetNames();
         QCOMPARE(targets.size(),4);
-        QVERIFY(targets[1].contains(QStringLiteral("verified local image required")));
-        for(int i=2;i<4;++i) QVERIFY(targets[i].contains(QStringLiteral("unavailable")));
+        QCOMPARE(targets[1],Material::Voice::say(QStringLiteral("server.target.local-docker")));
+        QCOMPARE(targets[2],Material::Voice::say(QStringLiteral("server.target.ssh-process")));
+        QCOMPARE(targets[3],Material::Voice::say(QStringLiteral("server.target.ssh-docker")));
         for(int omitted=0;omitted<4;++omitted) { auto copy=targets;copy.removeAt(omitted);QVERIFY(copy.size()!=4); }
     }
     void namesAndMetadataBoundary() {

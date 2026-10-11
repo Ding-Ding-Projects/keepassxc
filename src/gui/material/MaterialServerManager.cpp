@@ -44,8 +44,7 @@ QString say(const char* key) { return Voice::say(QString::fromLatin1(key)); }
 }
 QStringList ServerManager::targetNames()
 {
-    return {QStringLiteral("Local Windows process"), QStringLiteral("Local Docker (verified local image required)"),
-            QStringLiteral("SSH process (unavailable)"), QStringLiteral("SSH Docker (unavailable)")};
+    return {say("server.target.local-process"),say("server.target.local-docker"),say("server.target.ssh-process"),say("server.target.ssh-docker")};
 }
 bool ServerManager::validName(const QString& name)
 {
@@ -123,58 +122,60 @@ ServerManager::ServerManager(QWidget* parent, const QString& inventoryRoot) : Sc
     m_network = new QNetworkAccessManager(this);
     auto* form = new QFormLayout;
     m_target = new QComboBox(this); m_target->addItems(targetNames());
-    m_edition = new QComboBox(this); m_edition->addItems({QStringLiteral("Java"), QStringLiteral("Bedrock (unavailable: installer not implemented)")});
-    m_distribution = new QComboBox(this); m_distribution->addItem(QStringLiteral("Official vanilla Java"));
+    m_edition = new QComboBox(this); m_edition->addItems({say("server.edition.java"),say("server.edition.bedrock-unavailable")});
+    m_distribution = new QComboBox(this); m_distribution->addItem(say("server.distribution.vanilla-java"));
     m_versions = new QComboBox(this); m_versions->setEditable(false);
     m_name = new QLineEdit(this); m_name->setMaxLength(80); m_name->setClearButtonEnabled(true);
     m_runtime = new QLineEdit(this); m_runtime->setReadOnly(true);
     m_jar = new QLineEdit(this); m_jar->setReadOnly(true);
     m_docker = new QLineEdit(this);m_docker->setReadOnly(true);
-    m_images = new QComboBox(this);m_images->setAccessibleName(tr("Verified Eclipse Temurin image and platform"));
-    form->addRow(tr("Docker runtime image"),m_images);
+    m_images = new QComboBox(this);bindCopy(m_images,"server.docker.image-accessible",false);
+    form->addRow(say("server.docker.image-label"),m_images);bindCopy(qobject_cast<QWidget*>(form->labelForField(m_images)),"server.docker.image-label");
     auto* dockerRow=new QWidget(this);auto* dockerLayout=new QHBoxLayout(dockerRow);dockerLayout->setContentsMargins(0,0,0,0);
-    m_docker->setAccessibleName(tr("Local Docker CLI"));dockerLayout->addWidget(m_docker);
-    auto* dockerBrowse=new TextButton(dockerRow);dockerBrowse->setText(tr("Choose Docker CLI"));dockerLayout->addWidget(dockerBrowse);form->addRow(tr("Local Docker CLI"),dockerRow);
-    connect(dockerBrowse,&QAbstractButton::clicked,this,[this]{const auto path=QFileDialog::getOpenFileName(this,tr("Local Docker CLI"),{},QStringLiteral("Docker CLI (docker.exe docker)"));if(!path.isEmpty())m_docker->setText(path);});
-    auto* imagesRefresh=new TextButton(this);imagesRefresh->setText(tr("Discover runtime images for selected Java version"));
+    bindCopy(m_docker,"server.docker.cli",false);dockerLayout->addWidget(m_docker);
+    auto* dockerBrowse=new TextButton(dockerRow);bindCopy(dockerBrowse,"server.docker.choose-cli");dockerLayout->addWidget(dockerBrowse);form->addRow(say("server.docker.cli"),dockerRow);bindCopy(qobject_cast<QWidget*>(form->labelForField(dockerRow)),"server.docker.cli");
+    connect(dockerBrowse,&QAbstractButton::clicked,this,[this]{const auto path=QFileDialog::getOpenFileName(this,say("server.docker.cli"),{},say("server.filter.docker-cli"));if(!path.isEmpty())m_docker->setText(path);});
+    auto* imagesRefresh=new TextButton(this);bindCopy(imagesRefresh,"server.docker.discover-images");
     form->addRow(imagesRefresh);connect(imagesRefresh,&QAbstractButton::clicked,this,&ServerManager::refreshDockerImages);
     m_memory = new QSpinBox(this); m_memory->setRange(512, 32768); m_memory->setValue(2048); m_memory->setSuffix(QStringLiteral(" MiB"));
     m_port = new QSpinBox(this); m_port->setRange(1, 65535); m_port->setValue(25565);
     m_eula = new QCheckBox(say("server.eula"), this);
-    auto add = [form](const QString& label, QWidget* control) { control->setAccessibleName(label); form->addRow(label, control); };
-    add(say("server.target"), m_target); add(say("server.edition"), m_edition);
-    add(say("server.distribution"), m_distribution); add(say("server.version"), m_versions);
-    add(say("server.name"), m_name); add(say("server.memory"), m_memory); add(say("server.port"), m_port);
-    auto picker = [this, form](QLineEdit* field, const QString& label, bool runtime) {
+    auto add = [this,form](const char* key,QWidget* control) {bindCopy(control,key,false);form->addRow(say(key),control);bindCopy(qobject_cast<QWidget*>(form->labelForField(control)),key);};
+    add("server.target", m_target); add("server.edition", m_edition);
+    add("server.distribution", m_distribution); add("server.version", m_versions);
+    add("server.name", m_name); add("server.memory", m_memory); add("server.port", m_port);
+    bindCopy(m_eula,"server.eula");
+    auto picker = [this, form](QLineEdit* field, const char* key, bool runtime) {
         auto* row = new QWidget(this); auto* layout = new QHBoxLayout(row); layout->setContentsMargins(0,0,0,0);
-        field->setAccessibleName(label); layout->addWidget(field);
-        auto* browse = new TextButton(row); browse->setText(say("server.browse")); browse->setAccessibleName(label + QStringLiteral(": ") + browse->text());
-        layout->addWidget(browse); form->addRow(label, row);
+        bindCopy(field,key,false);layout->addWidget(field);
+        auto* browse = new TextButton(row); bindCopy(browse,"server.browse");browse->setProperty("serverBrowseFor",QString::fromLatin1(key));
+        layout->addWidget(browse);form->addRow(say(key),row);bindCopy(qobject_cast<QWidget*>(form->labelForField(row)),key);
         connect(browse, &QAbstractButton::clicked, this, [this, field, runtime] {
-            const QString file = QFileDialog::getOpenFileName(this, runtime ? say("server.runtime") : say("server.jar"), {}, runtime ? QStringLiteral("Java runtime (java.exe java)") : QStringLiteral("Server distribution (*.jar)"));
+            const QString file = QFileDialog::getOpenFileName(this, runtime ? say("server.runtime") : say("server.jar"), {}, runtime ? say("server.filter.java-runtime") : say("server.filter.server-jar"));
             if (!file.isEmpty()) field->setText(file);
         });
     };
-    picker(m_runtime, say("server.runtime"), true); picker(m_jar, say("server.jar"), false);
+    picker(m_runtime,"server.runtime",true);picker(m_jar,"server.jar",false);
     auto targetChanged=[this,dockerRow,imagesRefresh]{const bool docker=m_target->currentIndex()==1;m_images->setEnabled(docker);dockerRow->setEnabled(docker);imagesRefresh->setEnabled(docker);m_runtime->parentWidget()->setEnabled(m_target->currentIndex()==0);};
     connect(m_target,qOverload<int>(&QComboBox::currentIndexChanged),this,targetChanged);targetChanged();
     contentLayout()->addLayout(form); contentLayout()->addWidget(m_eula);
     auto* eula = new QLabel(QStringLiteral("<a href=\"https://www.minecraft.net/en-us/eula\">Minecraft EULA</a>"), this); eula->setOpenExternalLinks(true); contentLayout()->addWidget(eula);
     m_versionStatus = new QLabel(say("server.no-metadata"), this); m_versionStatus->setWordWrap(true); contentLayout()->addWidget(m_versionStatus);
     auto* actions = new QHBoxLayout;
-    auto button = [this, actions](const char* key, auto action) { auto* b = new TextButton(this); b->setText(say(key)); b->setAccessibleName(b->text()); actions->addWidget(b); connect(b, &QAbstractButton::clicked, this, action); };
+    auto button = [this, actions](const char* key, auto action) { auto* b = new TextButton(this); bindCopy(b,key); actions->addWidget(b); connect(b, &QAbstractButton::clicked, this, action); };
     button("server.refresh", [this] { refreshVersions(); });
-    button("server.cancel", [this] { ++m_generation; if (m_reply) m_reply->abort(); m_reply.clear(); for(auto* command:m_dockerCommands)command->kill(); status(tr("Operation cancelled. Any container state must be inspected again.")); });
+    button("server.cancel", [this] { ++m_generation; if (m_reply) m_reply->abort(); m_reply.clear(); for(auto* command:m_dockerCommands)command->kill(); statusKey("server.docker.cancelled"); });
     button("server.create", [this] { createServer(); }); contentLayout()->addLayout(actions);
-    m_inventory = new QListWidget(this); m_inventory->setAccessibleName(say("server.inventory")); contentLayout()->addWidget(m_inventory);
+    m_inventory = new QListWidget(this); bindCopy(m_inventory,"server.inventory",false); contentLayout()->addWidget(m_inventory);
     auto* lifecycle = new QHBoxLayout; contentLayout()->addLayout(lifecycle);
-    auto life = [this, lifecycle](const char* key, auto action) { auto* b = new TextButton(this); b->setText(say(key)); b->setAccessibleName(b->text()); lifecycle->addWidget(b); connect(b, &QAbstractButton::clicked, this, action); };
+    auto life = [this, lifecycle](const char* key, auto action) { auto* b = new TextButton(this); bindCopy(b,key); lifecycle->addWidget(b); connect(b, &QAbstractButton::clicked, this, action); };
     life("server.start", [this] { startSelected(); }); life("server.stop", [this] { stopSelected(); });
     life("server.restart", [this] { const auto id = selectedId(); for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id && value.toObject().value("target").toString()==QLatin1String("docker")){dockerLifecycle(id,QStringLiteral("restart"));return;} auto* p = m_processes.value(id); if (!p) { startSelected(); return; } p->setProperty("restartRequested", true); stopSelected(); });
     m_status = new QLabel(say("server.ready"), this); m_status->setWordWrap(true); contentLayout()->addWidget(m_status);
     connect(m_versions, qOverload<int>(&QComboBox::currentIndexChanged), this, [this] { resolveVersion(); });
     connect(searchBar(), &SearchBar::textChanged, this, [this](const QString& query) { for (int i=0; i<m_inventory->count(); ++i) m_inventory->item(i)->setHidden(!m_inventory->item(i)->text().contains(query, Qt::CaseInsensitive)); });
-    loadInventory();
+    connect(Voice::notifier(),&Voice::Notifier::changed,this,&ServerManager::refreshCopy);
+    loadInventory();refreshCopy();
 }
 ServerManager::~ServerManager()
 {
@@ -183,7 +184,34 @@ ServerManager::~ServerManager()
     // Only children created by this manager are touched. No PID lookup/adoption occurs.
     for (auto* p : m_processes) { p->setProperty("restartRequested", false); p->disconnect(this); p->write("stop\n"); p->waitForFinished(1500); }
 }
-void ServerManager::status(const QString& text) { m_status->setText(text); }
+void ServerManager::bindCopy(QWidget* widget,const char* key,bool caption)
+{
+    if(!widget)return;
+    const auto id=QString::fromLatin1(key);m_accessibleKeys.insert(widget,id);
+    if(caption)m_captionKeys.insert(widget,id);
+    const auto text=Voice::say(id);widget->setAccessibleName(text);
+    if(auto* label=qobject_cast<QLabel*>(widget)){label->setTextFormat(Qt::PlainText);if(caption)label->setText(text);}
+    if(auto* button=qobject_cast<QAbstractButton*>(widget))if(caption)button->setText(text);
+}
+void ServerManager::statusKey(const char* key,const QString& suffix)
+{
+    m_statusKey=QString::fromLatin1(key);m_statusSuffix=suffix;
+    const auto text=Voice::say(m_statusKey)+suffix;m_status->setTextFormat(Qt::PlainText);m_status->setText(text);m_status->setAccessibleName(text);
+}
+void ServerManager::refreshCopy()
+{
+    setHeadline(say("server.title"));setSupportingText(say("server.scope"));
+    searchBar()->setIdentity(QStringLiteral("servers.inventory"),say("server.search"));
+    for(auto it=m_captionKeys.cbegin();it!=m_captionKeys.cend();++it){const auto text=Voice::say(it.value());if(auto* label=qobject_cast<QLabel*>(it.key()))label->setText(text);if(auto* button=qobject_cast<QAbstractButton*>(it.key()))button->setText(text);}
+    for(auto it=m_accessibleKeys.cbegin();it!=m_accessibleKeys.cend();++it)it.key()->setAccessibleName(Voice::say(it.value()));
+    for(auto* button:findChildren<QAbstractButton*>()){const auto key=button->property("serverBrowseFor").toString();if(!key.isEmpty())button->setAccessibleName(Voice::say(key)+QStringLiteral(": ")+say("server.browse"));}
+    const QSignalBlocker targetBlocker(m_target),editionBlocker(m_edition),distributionBlocker(m_distribution),imageBlocker(m_images);
+    const auto targets=targetNames();for(int i=0;i<targets.size();++i)m_target->setItemText(i,targets[i]);
+    m_edition->setItemText(0,say("server.edition.java"));m_edition->setItemText(1,say("server.edition.bedrock-unavailable"));m_distribution->setItemText(0,say("server.distribution.vanilla-java"));
+    for(int i=0;i<m_images->count();++i){const auto image=m_images->itemData(i).toJsonObject();m_images->setItemText(i,Voice::say(QStringLiteral("server.docker.image-summary"),{{"java",image.value("javaMajor").toInt()},{"architecture",image.value("architecture").toString()},{"digest",image.value("digest").toString()}},Voice::Category::Info));}
+    for(int i=0;i<m_inventory->count();++i){const auto id=m_inventory->item(i)->data(Qt::UserRole).toString();for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id)m_inventory->item(i)->setToolTip(validRecord(value.toObject())?say("server.owned"):say("server.invalid-record"));}
+    statusKey(m_statusKey.toLatin1().constData(),m_statusSuffix);
+}
 QString ServerManager::directoryFor(const QString& id) const
 {
     if (QUuid(id).isNull()) return {};
@@ -196,12 +224,12 @@ QString ServerManager::selectedId() const
 void ServerManager::loadInventory()
 {
     const QString inventoryPath=m_root+QStringLiteral("/inventory.json");
-    if (!containedPath(m_root,inventoryPath)) { status(say("server.invalid-inventory")); return; }
+    if (!containedPath(m_root,inventoryPath)) { statusKey("server.invalid-inventory"); return; }
     QFile file(inventoryPath);
-    if (file.exists() && (!file.open(QIODevice::ReadOnly) || file.size() > 1024*1024)) { status(say("server.invalid-inventory")); return; }
+    if (file.exists() && (!file.open(QIODevice::ReadOnly) || file.size() > 1024*1024)) { statusKey("server.invalid-inventory"); return; }
     if (file.isOpen()) {
         QJsonParseError error; const auto document = QJsonDocument::fromJson(file.read(1024*1024+1), &error);
-        if (error.error != QJsonParseError::NoError || !document.isObject() || !inventoryWithinLimits(document.object())) { status(say("server.invalid-inventory")); return; }
+        if (error.error != QJsonParseError::NoError || !document.isObject() || !inventoryWithinLimits(document.object())) { statusKey("server.invalid-inventory"); return; }
         m_document = document.object();
     } else m_document = QJsonObject{{"schema",1},{"servers",QJsonArray{}}};
     rebuildInventory();
@@ -256,19 +284,19 @@ void ServerManager::request(const QUrl& url, const QByteArray& expectedHash)
 {
     const auto generation = ++m_generation;
     if (m_reply) m_reply->abort();
-    if (!officialMetadataUrl(url)) { status(say("server.unsafe-url")); return; }
+    if (!officialMetadataUrl(url)) { statusKey("server.unsafe-url"); return; }
     QNetworkRequest request(url); request.setAttribute(QNetworkRequest::RedirectPolicyAttribute,QNetworkRequest::ManualRedirectPolicy); request.setTransferTimeout(15000);
     auto* reply = m_network->get(request); m_reply = reply;
     auto bytes = QSharedPointer<QByteArray>::create();
     connect(reply, &QNetworkReply::readyRead, this, [reply,bytes] { bytes->append(reply->read(qMax(qint64(0), MetadataLimit + 1 - bytes->size()))); if (bytes->size()>MetadataLimit) reply->abort(); });
-    status(say("server.loading"));
+    statusKey("server.loading");
     connect(reply, &QNetworkReply::finished, this, [this,reply,bytes,generation,expectedHash] {
         reply->deleteLater(); if (generation != m_generation) return;
         bytes->append(reply->read(qMax(qint64(0), MetadataLimit + 1 - bytes->size()))); m_reply.clear();
-        if (reply->error()!=QNetworkReply::NoError || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()!=200 || bytes->size()>MetadataLimit) { status(say("server.offline")); return; }
-        if (!expectedHash.isEmpty() && QCryptographicHash::hash(*bytes,QCryptographicHash::Sha1).toHex()!=expectedHash) { status(say("server.integrity")); return; }
+        if (reply->error()!=QNetworkReply::NoError || reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt()!=200 || bytes->size()>MetadataLimit) { statusKey("server.offline"); return; }
+        if (!expectedHash.isEmpty() && QCryptographicHash::hash(*bytes,QCryptographicHash::Sha1).toHex()!=expectedHash) { statusKey("server.integrity"); return; }
         QJsonParseError error; const auto document = QJsonDocument::fromJson(*bytes,&error);
-        if (error.error!=QJsonParseError::NoError || !document.isObject()) { status(say("server.invalid-metadata")); return; }
+        if (error.error!=QJsonParseError::NoError || !document.isObject()) { statusKey("server.invalid-metadata"); return; }
         const auto object = document.object();
         if (expectedHash.isEmpty()) {
             const QSignalBlocker blocker(m_versions); m_versions->clear();
@@ -278,57 +306,57 @@ void ServerManager::request(const QUrl& url, const QByteArray& expectedHash)
         } else {
             const auto server = object.value("downloads").toObject().value("server").toObject();
             const auto java = object.value("javaVersion").toObject().value("majorVersion").toInt();
-            if (server.value("sha1").toString().size()!=40 || server.value("size").toDouble()<=0 || server.value("size").toDouble()>JarLimit || java<=0) { status(say("server.unavailable-version")); return; }
+            if (server.value("sha1").toString().size()!=40 || server.value("size").toDouble()<=0 || server.value("size").toDouble()>JarLimit || java<=0) { statusKey("server.unavailable-version"); return; }
             m_resolved = object;
             m_versionStatus->setText(QStringLiteral("Java %1 | %2 | SHA-1 %3").arg(java).arg(server.value("size").toDouble(),0,'f',0).arg(server.value("sha1").toString()));
         }
-        status(say("server.metadata-ready"));
+        statusKey("server.metadata-ready");
     });
 }
 void ServerManager::createServer()
 {
-    if (!inventoryWithinLimits(m_document) || m_document.value("servers").toArray().size()>=256) { status(say("server.invalid-inventory")); return; }
-    if (m_target->currentIndex()>1 || m_edition->currentIndex()!=0) { status(say("server.unavailable-target")); return; }
-    if (m_document.value("schema").toInt()!=1 || !validName(m_name->text()) || !m_eula->isChecked() || m_resolved.isEmpty()) { status(say("server.creation-needs")); return; }
+    if (!inventoryWithinLimits(m_document) || m_document.value("servers").toArray().size()>=256) { statusKey("server.invalid-inventory"); return; }
+    if (m_target->currentIndex()>1 || m_edition->currentIndex()!=0) { statusKey("server.unavailable-target"); return; }
+    if (m_document.value("schema").toInt()!=1 || !validName(m_name->text()) || !m_eula->isChecked() || m_resolved.isEmpty()) { statusKey("server.creation-needs"); return; }
     const bool docker=m_target->currentIndex()==1;
     const QFileInfo runtime(docker?m_docker->text():m_runtime->text());
     const auto image=m_images->currentData().toJsonObject();
-    if(docker && !validDockerImage(image,m_resolved.value("javaVersion").toObject().value("majorVersion").toInt())){status(tr("Select verified runtime image metadata for this Java version."));return;}
+    if(docker && !validDockerImage(image,m_resolved.value("javaVersion").toObject().value("majorVersion").toInt())){statusKey("server.docker.select-image");return;}
     if(docker && !m_dockerCreationVerified) {
         const QJsonObject snapshot{{"runtime",runtime.absoluteFilePath()},{"image",image},{"memoryMiB",m_memory->value()}};
         const QString selectedVersion=m_resolved.value("id").toString();
         verifyDocker(snapshot,[this,snapshot,selectedVersion](bool ok){
             if(!ok)return;
-            if(m_target->currentIndex()!=1 || m_docker->text()!=snapshot.value("runtime").toString() || m_images->currentData().toJsonObject()!=snapshot.value("image").toObject() || m_resolved.value("id").toString()!=selectedVersion || m_memory->value()!=snapshot.value("memoryMiB").toInt()){status(tr("Creation choices changed. Verify them again."));return;}
+            if(m_target->currentIndex()!=1 || m_docker->text()!=snapshot.value("runtime").toString() || m_images->currentData().toJsonObject()!=snapshot.value("image").toObject() || m_resolved.value("id").toString()!=selectedVersion || m_memory->value()!=snapshot.value("memoryMiB").toInt()){statusKey("server.docker.choices-changed");return;}
             m_dockerCreationVerified=true;createServer();m_dockerCreationVerified=false;
         });return;
     }
-    if (!safePath(runtime.absoluteFilePath()) || !runtime.isFile() || (!docker && runtime.fileName().compare(QStringLiteral("java.exe"),Qt::CaseInsensitive)!=0 && runtime.fileName()!=QLatin1String("java"))) { status(say("server.runtime-invalid")); return; }
+    if (!safePath(runtime.absoluteFilePath()) || !runtime.isFile() || (!docker && runtime.fileName().compare(QStringLiteral("java.exe"),Qt::CaseInsensitive)!=0 && runtime.fileName()!=QLatin1String("java"))) { statusKey("server.runtime-invalid"); return; }
     QFile input(m_jar->text()); const auto distribution = m_resolved.value("downloads").toObject().value("server").toObject();
-    if (!safePath(m_jar->text()) || !input.open(QIODevice::ReadOnly) || input.size()!=qint64(distribution.value("size").toDouble()) || input.size()>JarLimit) { status(say("server.integrity")); return; }
-    QCryptographicHash hash(QCryptographicHash::Sha1); if (!hash.addData(&input) || hash.result().toHex()!=distribution.value("sha1").toString().toLatin1()) { status(say("server.integrity")); return; }
+    if (!safePath(m_jar->text()) || !input.open(QIODevice::ReadOnly) || input.size()!=qint64(distribution.value("size").toDouble()) || input.size()>JarLimit) { statusKey("server.integrity"); return; }
+    QCryptographicHash hash(QCryptographicHash::Sha1); if (!hash.addData(&input) || hash.result().toHex()!=distribution.value("sha1").toString().toLatin1()) { statusKey("server.integrity"); return; }
     const auto id=QUuid::createUuid().toString(QUuid::WithoutBraces); const auto dir=directoryFor(id);
     QJsonObject record{{"id",id},{"name",m_name->text().trimmed()},{"edition","java"},{"version",m_resolved.value("id")},{"runtime",runtime.absoluteFilePath()},{"memoryMiB",m_memory->value()},{"port",m_port->value()},{"sha1",distribution.value("sha1")},{"eulaAccepted",true},{"eulaAcceptedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)}};
     if(docker){record.insert("target","docker");record.insert("image",image);record.insert("runtimeVersion",m_verifiedDockerVersions.value(image.value("digest").toString()));}
     const auto previous=m_document; auto records=m_document.value("servers").toArray(); records.append(record); const auto proposed=updateRecord(m_document,QJsonObject{{"servers",records}});
-    if (!inventoryWithinLimits(proposed)) { status(say("server.invalid-inventory")); return; }
-    if (!containedPath(m_root,dir) || QFileInfo::exists(dir) || !QDir().mkpath(dir) || !containedPath(m_root,dir)) { status(say("server.write-error")); return; }
+    if (!inventoryWithinLimits(proposed)) { statusKey("server.invalid-inventory"); return; }
+    if (!containedPath(m_root,dir) || QFileInfo::exists(dir) || !QDir().mkpath(dir) || !containedPath(m_root,dir)) { statusKey("server.write-error"); return; }
     auto write = [&dir](const QString& name,const QByteArray& data) { if (!containedPath(dir,dir+QLatin1Char('/')+name)) return false; QSaveFile file(dir+QLatin1Char('/')+name); return file.open(QIODevice::WriteOnly) && file.write(data)==data.size() && file.commit(); };
-    if (!containedPath(dir,dir+QStringLiteral("/server.jar"))) { status(say("server.write-error")); return; }
+    if (!containedPath(dir,dir+QStringLiteral("/server.jar"))) { statusKey("server.write-error"); return; }
     QSaveFile copied(dir+QStringLiteral("/server.jar")); QCryptographicHash copyHash(QCryptographicHash::Sha1);
-    if (!input.seek(0) || !copied.open(QIODevice::WriteOnly)) { status(say("server.write-error")); return; }
+    if (!input.seek(0) || !copied.open(QIODevice::WriteOnly)) { statusKey("server.write-error"); return; }
     qint64 copiedBytes=0;
     while (!input.atEnd()) {
         const QByteArray chunk=input.read(65536);
         copiedBytes += chunk.size();
-        if (chunk.isEmpty() || copiedBytes > JarLimit || copied.write(chunk)!=chunk.size()) { status(say("server.write-error")); return; }
+        if (chunk.isEmpty() || copiedBytes > JarLimit || copied.write(chunk)!=chunk.size()) { statusKey("server.write-error"); return; }
         copyHash.addData(chunk);
     }
-    if(copiedBytes != qint64(distribution.value("size").toDouble()) || copyHash.result().toHex()!=distribution.value("sha1").toString().toLatin1() || !copied.commit()) { status(say("server.integrity")); return; }
-    if (!write(QStringLiteral("eula.txt"),"eula=true\n") || !write(QStringLiteral("server.properties"),"server-port="+QByteArray::number(m_port->value())+"\n")) { status(say("server.write-error")); return; }
+    if(copiedBytes != qint64(distribution.value("size").toDouble()) || copyHash.result().toHex()!=distribution.value("sha1").toString().toLatin1() || !copied.commit()) { statusKey("server.integrity"); return; }
+    if (!write(QStringLiteral("eula.txt"),"eula=true\n") || !write(QStringLiteral("server.properties"),"server-port="+QByteArray::number(m_port->value())+"\n")) { statusKey("server.write-error"); return; }
     m_document=proposed;
-    if (!saveInventory()) { m_document=previous; status(say("server.write-error")); return; }
-    rebuildInventory(); status(say("server.created"));
+    if (!saveInventory()) { m_document=previous; statusKey("server.write-error"); return; }
+    rebuildInventory(); statusKey("server.created");
 }
 void ServerManager::startSelected()
 {
@@ -337,35 +365,35 @@ void ServerManager::startSelected()
 void ServerManager::startById(const QString& id)
 {
     emit startAttempted(id);
-    if (id.isEmpty() || m_processes.contains(id)) { status(say("server.select-stopped")); return; }
+    if (id.isEmpty() || m_processes.contains(id)) { statusKey("server.select-stopped"); return; }
     QJsonObject record; for(const auto& value:m_document.value("servers").toArray()) if(value.toObject().value("id").toString()==id) record=value.toObject();
     if(record.value("target").toString()==QLatin1String("docker")){dockerLifecycle(id,QStringLiteral("start"));return;}
-    if (!validRecord(record)) { status(say("server.invalid-record")); return; }
+    if (!validRecord(record)) { statusKey("server.invalid-record"); return; }
     QFile jar(directoryFor(id)+QStringLiteral("/server.jar")); QCryptographicHash hash(QCryptographicHash::Sha1);
-    if(!jar.open(QIODevice::ReadOnly) || jar.size()>JarLimit || !hash.addData(&jar) || hash.result().toHex()!=record.value("sha1").toString().toLatin1()) { status(say("server.integrity")); return; }
-    const int memory=record.value("memoryMiB").toInt(); if(memory<512 || memory>32768) { status(say("server.invalid-record")); return; }
+    if(!jar.open(QIODevice::ReadOnly) || jar.size()>JarLimit || !hash.addData(&jar) || hash.result().toHex()!=record.value("sha1").toString().toLatin1()) { statusKey("server.integrity"); return; }
+    const int memory=record.value("memoryMiB").toInt(); if(memory<512 || memory>32768) { statusKey("server.invalid-record"); return; }
     auto* process=new QProcess(this); m_processes.insert(id,process); process->setWorkingDirectory(directoryFor(id));
     process->setStandardOutputFile(QProcess::nullDevice()); process->setStandardErrorFile(QProcess::nullDevice());
-    connect(process,&QProcess::started,this,[this,process] { status(say("server.running")+QString::number(process->processId())); });
-    connect(process,&QProcess::errorOccurred,this,[this,id,process](QProcess::ProcessError error) { status(say("server.process-error")); if(error==QProcess::FailedToStart) { m_processes.remove(id); process->deleteLater(); } });
+    connect(process,&QProcess::started,this,[this,process] { statusKey("server.running",QString::number(process->processId())); });
+    connect(process,&QProcess::errorOccurred,this,[this,id,process](QProcess::ProcessError error) { statusKey("server.process-error"); if(error==QProcess::FailedToStart) { m_processes.remove(id); process->deleteLater(); } });
     connect(process,qOverload<int,QProcess::ExitStatus>(&QProcess::finished),this,[this,id,process](int code,QProcess::ExitStatus) { processFinished(id,process,code); });
-    if (!validRecord(record)) { m_processes.remove(id); process->deleteLater(); status(say("server.invalid-record")); return; }
+    if (!validRecord(record)) { m_processes.remove(id); process->deleteLater(); statusKey("server.invalid-record"); return; }
     process->start(record.value("runtime").toString(),{QStringLiteral("-Xmx%1M").arg(memory),QStringLiteral("-jar"),QStringLiteral("server.jar"),QStringLiteral("nogui")});
 }
 void ServerManager::processFinished(const QString& id,QProcess* process,int code)
 {
     const bool restart=process->property("restartRequested").toBool();
     m_processes.remove(id); process->deleteLater();
-    status(say("server.exited")+QString::number(code));
+    statusKey("server.exited",QString::number(code));
     if (restart) startById(id);
 }
 void ServerManager::stopSelected()
 {
     const QString id=selectedId();
     for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id && value.toObject().value("target").toString()==QLatin1String("docker")){dockerLifecycle(id,QStringLiteral("stop"));return;}
-    auto* process=m_processes.value(id); if(!process || process->state()!=QProcess::Running) { status(say("server.not-running")); return; }
+    auto* process=m_processes.value(id); if(!process || process->state()!=QProcess::Running) { statusKey("server.not-running"); return; }
     // QProcess retains the exact owned process handle. There is no global name/PID termination.
-    if(process->write("stop\n")<0) status(say("server.process-error")); else status(say("server.stopping"));
+    if(process->write("stop\n")<0) statusKey("server.process-error"); else statusKey("server.stopping");
 }
 
 bool ServerManager::validDockerImage(const QJsonObject& image,int javaMajor)
@@ -418,20 +446,20 @@ void ServerManager::refreshDockerImages()
 {
     m_images->clear();
     const int major=m_resolved.value("javaVersion").toObject().value("majorVersion").toInt();
-    if(major<=0 || major>100){status(tr("Resolve an official server version before discovering runtime images."));return;}
+    if(major<=0 || major>100){statusKey("server.docker.resolve-version");return;}
     const QString source=QStringLiteral("https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/%1-jre").arg(major);
     ++m_generation;if(m_reply)m_reply->abort();
     const QUrl auth(QStringLiteral("https://auth.docker.io/token?service=registry.docker.io&scope=repository:library/eclipse-temurin:pull"));
     dockerMetadata(auth,{},[this,source,major](bool ok,const QByteArray& bytes,const QByteArray&){
         QJsonParseError error;const auto authorization=QJsonDocument::fromJson(bytes,&error).object().value("token").toString().toLatin1();
-        if(!ok || error.error!=QJsonParseError::NoError || authorization.isEmpty() || authorization.size()>16384 || authorization.contains('\r') || authorization.contains('\n')){status(tr("Anonymous public registry access is unavailable. No image was downloaded."));return;}
+        if(!ok || error.error!=QJsonParseError::NoError || authorization.isEmpty() || authorization.size()>16384 || authorization.contains('\r') || authorization.contains('\n')){statusKey("server.docker.registry-unavailable");return;}
         dockerMetadata(QUrl(source),authorization,[this,source,major](bool received,const QByteArray& manifest,const QByteArray& digest){
             const auto images=received?dockerImages(manifest,digest,major):QJsonArray{};
-            for(const auto& value:images){const auto image=value.toObject();m_images->addItem(QStringLiteral("Java %1 | Linux/%2 | %3").arg(major).arg(image.value("architecture").toString(),image.value("digest").toString()),image);}
-            status(m_images->count()?tr("Registry metadata verified. The exact image must already be installed locally."):tr("Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded."));
+            for(const auto& value:images){const auto image=value.toObject();m_images->addItem(Voice::say(QStringLiteral("server.docker.image-summary"),{{"java",major},{"architecture",image.value("architecture").toString()},{"digest",image.value("digest").toString()}},Voice::Category::Info),image);}
+            statusKey(m_images->count()?"server.docker.metadata-ready":"server.docker.metadata-unavailable");
         });
     });
-    status(tr("Discovering Eclipse Temurin metadata. No image download is requested."));
+    statusKey("server.docker.discovering");
 }
 QString ServerManager::dockerOwner() const
 {
@@ -441,7 +469,7 @@ void ServerManager::dockerCommand(const QString& executable,const QStringList& a
 {
     if(m_dockerTransport){const auto generation=m_generation;m_dockerTransport(arguments,[this,generation,completed](bool ok,const QByteArray& bytes){if(generation==m_generation)completed(ok,bytes);});return;}
     const QFileInfo cli(executable);
-    if(!safePath(executable) || !cli.isFile() || (cli.fileName().compare(QStringLiteral("docker.exe"),Qt::CaseInsensitive)!=0 && cli.fileName()!=QLatin1String("docker")) || !m_dockerCommands.isEmpty()) {status(tr("A verified local Docker CLI is required, or another operation is still running."));completed(false,{});return;}
+    if(!safePath(executable) || !cli.isFile() || (cli.fileName().compare(QStringLiteral("docker.exe"),Qt::CaseInsensitive)!=0 && cli.fileName()!=QLatin1String("docker")) || !m_dockerCommands.isEmpty()) {statusKey("server.docker.cli-unavailable");completed(false,{});return;}
     auto* process=new QProcess(this);m_dockerCommands.insert(QStringLiteral("active"),process);
     auto environment=QProcessEnvironment::systemEnvironment();
     for(const auto& key:environment.keys())if(key.startsWith(QStringLiteral("DOCKER_")))environment.remove(key);
@@ -463,11 +491,11 @@ void ServerManager::dockerCommand(const QString& executable,const QStringList& a
 void ServerManager::verifyDocker(const QJsonObject& record,const std::function<void(bool)>& completed)
 {
     const auto image=record.value("image").toObject();
-    if(!validDockerImage(image,image.value("javaMajor").toInt())){status(tr("Verified runtime metadata is required."));completed(false);return;}
+    if(!validDockerImage(image,image.value("javaMajor").toInt())){statusKey("server.docker.metadata-required");completed(false);return;}
     const QString runtime=record.value("runtime").toString();
     dockerCommand(runtime,{QStringLiteral("info"),QStringLiteral("--format"),QStringLiteral("{\"Architecture\":{{json .Architecture}},\"OSType\":{{json .OSType}},\"MemTotal\":{{json .MemTotal}}}")},[this,record,image,runtime,completed](bool ok,const QByteArray& bytes){
         const auto info=QJsonDocument::fromJson(bytes).object();QString arch=info.value("Architecture").toString();if(arch==QLatin1String("x86_64"))arch=QStringLiteral("amd64");if(arch==QLatin1String("aarch64"))arch=QStringLiteral("arm64");
-        if(!ok || info.value("OSType").toString()!=QLatin1String("linux") || arch!=image.value("architecture").toString() || info.value("MemTotal").toDouble()<record.value("memoryMiB").toInt()*1024.0*1024.0){status(tr("Local daemon is unavailable, incompatible, or has insufficient reported memory."));completed(false);return;}
+        if(!ok || info.value("OSType").toString()!=QLatin1String("linux") || arch!=image.value("architecture").toString() || info.value("MemTotal").toDouble()<record.value("memoryMiB").toInt()*1024.0*1024.0){statusKey("server.docker.daemon-unavailable");completed(false);return;}
         const QString reference=QStringLiteral("eclipse-temurin@")+image.value("digest").toString();
         dockerCommand(runtime,{QStringLiteral("image"),QStringLiteral("inspect"),QStringLiteral("--format"),QStringLiteral("{\"RepoDigests\":{{json .RepoDigests}},\"Os\":{{json .Os}},\"Architecture\":{{json .Architecture}},\"Config\":{\"Env\":{{json .Config.Env}}}}"),reference},[this,image,reference,completed](bool inspected,const QByteArray& output){
             const auto local=QJsonDocument::fromJson(output).object();bool digest=false;for(const auto& value:local.value("RepoDigests").toArray())if(value.toString()==reference || value.toString()==QStringLiteral("docker.io/library/")+reference)digest=true;
@@ -475,7 +503,7 @@ void ServerManager::verifyDocker(const QJsonObject& record,const std::function<v
             bool java=false;for(const auto& value:local.value("Config").toObject().value("Env").toArray())if(value.toString().startsWith(QStringLiteral("JAVA_VERSION="))){const auto version=value.toString().mid(13);runtimeVersion=version;java=QRegularExpression(QStringLiteral("\\A(?:jdk-)?%1(?:\\.[0-9]{1,4}){0,3}(?:\\+[0-9]{1,5})?\\z").arg(image.value("javaMajor").toInt())).match(version).hasMatch();}
             const bool valid=inspected && digest && java && local.value("Os").toString()==QLatin1String("linux") && local.value("Architecture")==image.value("architecture");
             if(valid)m_verifiedDockerVersions.insert(image.value("digest").toString(),runtimeVersion);
-            if(!valid)status(tr("The exact verified runtime image is not installed or its platform/version differs. No pull was attempted."));completed(valid);
+            if(!valid)statusKey("server.docker.image-unavailable");completed(valid);
         });
     });
 }
@@ -519,22 +547,22 @@ void ServerManager::dockerLifecycle(const QString& id,const QString& operation)
 {
     QJsonObject record;for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id)record=value.toObject();
     if(operation==QLatin1String("stop")) {
-        if(!validDockerStopRecord(record)){status(tr("The saved container ownership record or local CLI is invalid."));return;}
+        if(!validDockerStopRecord(record)){statusKey("server.docker.stop-record-invalid");return;}
         inspectDockerLifecycle(record,operation);return;
     }
-    if(!validRecord(record) || !QStringList{"start","stop","restart"}.contains(operation)){status(tr("The selected container record is invalid."));return;}
+    if(!validRecord(record) || !QStringList{"start","stop","restart"}.contains(operation)){statusKey("server.docker.record-invalid");return;}
     QFile jar(directoryFor(id)+QStringLiteral("/server.jar"));QCryptographicHash hash(QCryptographicHash::Sha1);
-    if(!jar.open(QIODevice::ReadOnly) || jar.size()>JarLimit || !hash.addData(&jar) || hash.result().toHex()!=record.value("sha1").toString().toLatin1()){status(say("server.integrity"));return;}
+    if(!jar.open(QIODevice::ReadOnly) || jar.size()>JarLimit || !hash.addData(&jar) || hash.result().toHex()!=record.value("sha1").toString().toLatin1()){statusKey("server.integrity");return;}
     verifyDocker(record,[this,record,id,operation](bool verified){if(!verified)return;
-        if(record.value("runtimeVersion").toString()!=m_verifiedDockerVersions.value(record.value("image").toObject().value("digest").toString())){status(tr("Installed Java runtime version differs from the saved record."));return;}
+        if(record.value("runtimeVersion").toString()!=m_verifiedDockerVersions.value(record.value("image").toObject().value("digest").toString())){statusKey("server.docker.runtime-changed");return;}
         if(!record.contains("containerId")) {
-            if(operation!=QLatin1String("start")){status(tr("No owned container has been created for this server."));return;}
-            const auto args=dockerCreateArguments(record,directoryFor(id),dockerOwner());if(args.isEmpty()){status(tr("Container configuration is invalid."));return;}
+            if(operation!=QLatin1String("start")){statusKey("server.docker.not-created");return;}
+            const auto args=dockerCreateArguments(record,directoryFor(id),dockerOwner());if(args.isEmpty()){statusKey("server.docker.configuration-invalid");return;}
             dockerCommand(record.value("runtime").toString(),args,[this,id](bool created,const QByteArray& bytes){
                 const QString container=QString::fromLatin1(bytes.trimmed());
-                if(!created || !QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(container).hasMatch()){status(tr("Container creation failed. No existing container was adopted."));return;}
+                if(!created || !QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(container).hasMatch()){statusKey("server.docker.creation-failed");return;}
                 const auto before=m_document;auto rows=m_document.value("servers").toArray();for(int i=0;i<rows.size();++i)if(rows[i].toObject().value("id").toString()==id)rows[i]=updateRecord(rows[i].toObject(),QJsonObject{{"containerId",container}});m_document.insert("servers",rows);
-                if(!saveInventory()){m_document=before;status(tr("Container was created but its identity could not be saved. It was not started."));return;}
+                if(!saveInventory()){m_document=before;statusKey("server.docker.identity-save-failed");return;}
                 dockerLifecycle(id,QStringLiteral("start"));
             });return;
         }
@@ -556,12 +584,12 @@ bool ServerManager::validDockerStopRecord(const QJsonObject& record) const
 void ServerManager::inspectDockerLifecycle(const QJsonObject& record,const QString& operation)
 {
         const QString identity=record.value("containerId").toString();
-        if(!QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(identity).hasMatch()){status(tr("Saved container identity is invalid."));return;}
+        if(!QRegularExpression(QStringLiteral("\\A[0-9a-f]{64}\\z")).match(identity).hasMatch()){statusKey("server.docker.identity-invalid");return;}
         dockerCommand(record.value("runtime").toString(),{"container","inspect","--format","{{json .}}",identity},[this,record,operation](bool ok,const QByteArray& bytes){
-            if(!ok){status(tr("Container state is unavailable. It has not been reported stopped."));return;}
-            const auto inspected=QJsonDocument::fromJson(bytes).object();if(!ownedContainer(inspected,record)){status(tr("Container ownership or configuration differs. No lifecycle action was sent."));return;}
+            if(!ok){statusKey("server.docker.state-unavailable");return;}
+            const auto inspected=QJsonDocument::fromJson(bytes).object();if(!ownedContainer(inspected,record)){statusKey("server.docker.ownership-mismatch");return;}
             const QString container=inspected.value("Id").toString();
-            dockerCommand(record.value("runtime").toString(),{"container",operation,container},[this](bool applied,const QByteArray&){status(applied?tr("Owned container lifecycle request completed. Game readiness is not verified."):tr("Container operation failed or connection was lost. Current state is unknown."));});
+            dockerCommand(record.value("runtime").toString(),{"container",operation,container},[this](bool applied,const QByteArray&){statusKey(applied?"server.docker.lifecycle-completed":"server.docker.lifecycle-unknown");});
         });
 }
 
