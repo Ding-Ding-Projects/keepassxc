@@ -4,7 +4,7 @@
 
 - [ ] Deliver the complete guided local Ollama suite, including exhaustive catalogue, hardware-fit evidence, batch pulls, local chat, offline recovery and safe profile rollback.
 - [ ] Deliver the universal local converter across all eight categories with bundled offline adapters, recoverable bounded queues and validated atomic outputs.
-  - [ ] Verify the native Binary Encodings source foundation: strict streaming hex/base64, explicit pickers, cancellation and atomic no-overwrite output. Compilation and native acceptance pending; seven other categories remain disabled.
+  - [ ] Verify the native Binary Encodings source foundation: strict streaming hex/base64, explicit pickers, cancellation and atomic no-overwrite output. Root build/stage passed at 3ce19934, but converter fixtures were 6/1/0 with atomicDestinationAndSource returning IoFailure. Later e6f64a7d search/live-copy and 480f9ada publication repairs are source-reviewed, uncompiled/unrun; native acceptance remains pending and seven other categories remain disabled.
 
 - [ ] Verify the updated native personal-vocabulary schema and localized rejection copy, then align the browser schema and prove real local upload, atomic replace, clear and corruption recovery.
 - [ ] Compile and exercise bounded SSH discovery, including synchronous startup completion and stale-attempt rejection. Complete remote lifecycle and version-specific compatibility separately.
