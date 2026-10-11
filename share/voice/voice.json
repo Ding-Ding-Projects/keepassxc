@@ -2,6 +2,519 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "server.ssh.host": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH host (DNS name or IPv4)"
+                ],
+                "levels": {
+                    "1": "SSH host (DNS name or IPv4)",
+                    "2": "SSH host (DNS name or IPv4)",
+                    "3": "SSH host (DNS name or IPv4)",
+                    "4": "SSH host (DNS name or IPv4)",
+                    "5": "SSH host (DNS name or IPv4)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 主機（DNS 名稱或 IPv4）"
+                ],
+                "levels": {
+                    "1": "SSH 主機（DNS 名稱或 IPv4）",
+                    "2": "SSH 主機（DNS 名稱或 IPv4）",
+                    "3": "SSH 主機（DNS 名稱或 IPv4）",
+                    "4": "SSH 主機（DNS 名稱或 IPv4）",
+                    "5": "SSH 主機（DNS 名稱或 IPv4）"
+                }
+            }
+        },
+        "server.ssh.user": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH user"
+                ],
+                "levels": {
+                    "1": "SSH user",
+                    "2": "SSH user",
+                    "3": "SSH user",
+                    "4": "SSH user",
+                    "5": "SSH user"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 使用者"
+                ],
+                "levels": {
+                    "1": "SSH 使用者",
+                    "2": "SSH 使用者",
+                    "3": "SSH 使用者",
+                    "4": "SSH 使用者",
+                    "5": "SSH 使用者"
+                }
+            }
+        },
+        "server.ssh.port": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH port"
+                ],
+                "levels": {
+                    "1": "SSH port",
+                    "2": "SSH port",
+                    "3": "SSH port",
+                    "4": "SSH port",
+                    "5": "SSH port"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 連接埠"
+                ],
+                "levels": {
+                    "1": "SSH 連接埠",
+                    "2": "SSH 連接埠",
+                    "3": "SSH 連接埠",
+                    "4": "SSH 連接埠",
+                    "5": "SSH 連接埠"
+                }
+            }
+        },
+        "server.ssh.executable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "OpenSSH executable"
+                ],
+                "levels": {
+                    "1": "OpenSSH executable",
+                    "2": "OpenSSH executable",
+                    "3": "OpenSSH executable",
+                    "4": "OpenSSH executable",
+                    "5": "OpenSSH executable"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "OpenSSH 執行檔"
+                ],
+                "levels": {
+                    "1": "OpenSSH 執行檔",
+                    "2": "OpenSSH 執行檔",
+                    "3": "OpenSSH 執行檔",
+                    "4": "OpenSSH 執行檔",
+                    "5": "OpenSSH 執行檔"
+                }
+            }
+        },
+        "server.ssh.identity": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH identity file (path only)"
+                ],
+                "levels": {
+                    "1": "SSH identity file (path only)",
+                    "2": "SSH identity file (path only)",
+                    "3": "SSH identity file (path only)",
+                    "4": "SSH identity file (path only)",
+                    "5": "SSH identity file (path only)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 身分檔案（只使用路徑）"
+                ],
+                "levels": {
+                    "1": "SSH 身分檔案（只使用路徑）",
+                    "2": "SSH 身分檔案（只使用路徑）",
+                    "3": "SSH 身分檔案（只使用路徑）",
+                    "4": "SSH 身分檔案（只使用路徑）",
+                    "5": "SSH 身分檔案（只使用路徑）"
+                }
+            }
+        },
+        "server.ssh.known-hosts": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Pre-approved known-hosts file"
+                ],
+                "levels": {
+                    "1": "Pre-approved known-hosts file",
+                    "2": "Pre-approved known-hosts file",
+                    "3": "Pre-approved known-hosts file",
+                    "4": "Pre-approved known-hosts file",
+                    "5": "Pre-approved known-hosts file"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已預先核准嘅 known-hosts 檔案"
+                ],
+                "levels": {
+                    "1": "已預先核准嘅 known-hosts 檔案",
+                    "2": "已預先核准嘅 known-hosts 檔案",
+                    "3": "已預先核准嘅 known-hosts 檔案",
+                    "4": "已預先核准嘅 known-hosts 檔案",
+                    "5": "已預先核准嘅 known-hosts 檔案"
+                }
+            }
+        },
+        "server.ssh.discover": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Discover host and runtime (read only)"
+                ],
+                "levels": {
+                    "1": "Discover host and runtime (read only)",
+                    "2": "Discover host and runtime (read only)",
+                    "3": "Discover host and runtime (read only)",
+                    "4": "Discover host and runtime (read only)",
+                    "5": "Discover host and runtime (read only)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "探索主機同執行環境（唯讀）"
+                ],
+                "levels": {
+                    "1": "探索主機同執行環境（唯讀）",
+                    "2": "探索主機同執行環境（唯讀）",
+                    "3": "探索主機同執行環境（唯讀）",
+                    "4": "探索主機同執行環境（唯讀）",
+                    "5": "探索主機同執行環境（唯讀）"
+                }
+            }
+        },
+        "server.ssh.cancel": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Cancel SSH discovery"
+                ],
+                "levels": {
+                    "1": "Cancel SSH discovery",
+                    "2": "Cancel SSH discovery",
+                    "3": "Cancel SSH discovery",
+                    "4": "Cancel SSH discovery",
+                    "5": "Cancel SSH discovery"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "取消 SSH 探索"
+                ],
+                "levels": {
+                    "1": "取消 SSH 探索",
+                    "2": "取消 SSH 探索",
+                    "3": "取消 SSH 探索",
+                    "4": "取消 SSH 探索",
+                    "5": "取消 SSH 探索"
+                }
+            }
+        },
+        "server.ssh.scope": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically."
+                ],
+                "levels": {
+                    "1": "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically.",
+                    "2": "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically.",
+                    "3": "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically.",
+                    "4": "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically.",
+                    "5": "Read-only discovery requires a POSIX host and Python 3. Remote creation and lifecycle are unavailable. No host keys are accepted automatically."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。"
+                ],
+                "levels": {
+                    "1": "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。",
+                    "2": "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。",
+                    "3": "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。",
+                    "4": "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。",
+                    "5": "唯讀探索需要 POSIX 主機同 Python 3。遠端建立同生命週期操作未提供，唔會自動接受主機金鑰。"
+                }
+            }
+        },
+        "server.ssh.changed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Connection choices changed. Discovery facts are unknown until refreshed."
+                ],
+                "levels": {
+                    "1": "Connection choices changed. Discovery facts are unknown until refreshed.",
+                    "2": "Connection choices changed. Discovery facts are unknown until refreshed.",
+                    "3": "Connection choices changed. Discovery facts are unknown until refreshed.",
+                    "4": "Connection choices changed. Discovery facts are unknown until refreshed.",
+                    "5": "Connection choices changed. Discovery facts are unknown until refreshed."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "連線選項已改變。重新探索之前，主機資料仍然未知。"
+                ],
+                "levels": {
+                    "1": "連線選項已改變。重新探索之前，主機資料仍然未知。",
+                    "2": "連線選項已改變。重新探索之前，主機資料仍然未知。",
+                    "3": "連線選項已改變。重新探索之前，主機資料仍然未知。",
+                    "4": "連線選項已改變。重新探索之前，主機資料仍然未知。",
+                    "5": "連線選項已改變。重新探索之前，主機資料仍然未知。"
+                }
+            }
+        },
+        "server.ssh.invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port."
+                ],
+                "levels": {
+                    "1": "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port.",
+                    "2": "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port.",
+                    "3": "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port.",
+                    "4": "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port.",
+                    "5": "Select a valid SSH executable, identity path and pre-approved known-hosts file, plus host, user and port."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。"
+                ],
+                "levels": {
+                    "1": "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。",
+                    "2": "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。",
+                    "3": "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。",
+                    "4": "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。",
+                    "5": "請選擇有效 SSH 執行檔、身分路徑同已核准 known-hosts 檔案，並填寫主機、使用者同連接埠。"
+                }
+            }
+        },
+        "server.ssh.loading": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Read-only SSH discovery is running. No remote management action is requested."
+                ],
+                "levels": {
+                    "1": "Read-only SSH discovery is running. No remote management action is requested.",
+                    "2": "Read-only SSH discovery is running. No remote management action is requested.",
+                    "3": "Read-only SSH discovery is running. No remote management action is requested.",
+                    "4": "Read-only SSH discovery is running. No remote management action is requested.",
+                    "5": "Read-only SSH discovery is running. No remote management action is requested."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "唯讀 SSH 探索進行中。冇要求遠端管理操作。"
+                ],
+                "levels": {
+                    "1": "唯讀 SSH 探索進行中。冇要求遠端管理操作。",
+                    "2": "唯讀 SSH 探索進行中。冇要求遠端管理操作。",
+                    "3": "唯讀 SSH 探索進行中。冇要求遠端管理操作。",
+                    "4": "唯讀 SSH 探索進行中。冇要求遠端管理操作。",
+                    "5": "唯讀 SSH 探索進行中。冇要求遠端管理操作。"
+                }
+            }
+        },
+        "server.ssh.ready": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Bounded host facts received. Remote management remains unavailable."
+                ],
+                "levels": {
+                    "1": "Bounded host facts received. Remote management remains unavailable.",
+                    "2": "Bounded host facts received. Remote management remains unavailable.",
+                    "3": "Bounded host facts received. Remote management remains unavailable.",
+                    "4": "Bounded host facts received. Remote management remains unavailable.",
+                    "5": "Bounded host facts received. Remote management remains unavailable."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已收到有界限主機資料。遠端管理仍然未提供。"
+                ],
+                "levels": {
+                    "1": "已收到有界限主機資料。遠端管理仍然未提供。",
+                    "2": "已收到有界限主機資料。遠端管理仍然未提供。",
+                    "3": "已收到有界限主機資料。遠端管理仍然未提供。",
+                    "4": "已收到有界限主機資料。遠端管理仍然未提供。",
+                    "5": "已收到有界限主機資料。遠端管理仍然未提供。"
+                }
+            }
+        },
+        "server.ssh.cancelled": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH discovery cancelled. Remote facts are unknown."
+                ],
+                "levels": {
+                    "1": "SSH discovery cancelled. Remote facts are unknown.",
+                    "2": "SSH discovery cancelled. Remote facts are unknown.",
+                    "3": "SSH discovery cancelled. Remote facts are unknown.",
+                    "4": "SSH discovery cancelled. Remote facts are unknown.",
+                    "5": "SSH discovery cancelled. Remote facts are unknown."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 探索已取消。遠端資料未知。"
+                ],
+                "levels": {
+                    "1": "SSH 探索已取消。遠端資料未知。",
+                    "2": "SSH 探索已取消。遠端資料未知。",
+                    "3": "SSH 探索已取消。遠端資料未知。",
+                    "4": "SSH 探索已取消。遠端資料未知。",
+                    "5": "SSH 探索已取消。遠端資料未知。"
+                }
+            }
+        },
+        "server.ssh.timeout": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH discovery exceeded 15 seconds. Remote facts are unknown."
+                ],
+                "levels": {
+                    "1": "SSH discovery exceeded 15 seconds. Remote facts are unknown.",
+                    "2": "SSH discovery exceeded 15 seconds. Remote facts are unknown.",
+                    "3": "SSH discovery exceeded 15 seconds. Remote facts are unknown.",
+                    "4": "SSH discovery exceeded 15 seconds. Remote facts are unknown.",
+                    "5": "SSH discovery exceeded 15 seconds. Remote facts are unknown."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 探索超過15秒。遠端資料未知。"
+                ],
+                "levels": {
+                    "1": "SSH 探索超過15秒。遠端資料未知。",
+                    "2": "SSH 探索超過15秒。遠端資料未知。",
+                    "3": "SSH 探索超過15秒。遠端資料未知。",
+                    "4": "SSH 探索超過15秒。遠端資料未知。",
+                    "5": "SSH 探索超過15秒。遠端資料未知。"
+                }
+            }
+        },
+        "server.ssh.unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred."
+                ],
+                "levels": {
+                    "1": "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred.",
+                    "2": "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred.",
+                    "3": "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred.",
+                    "4": "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred.",
+                    "5": "SSH discovery is unavailable or unproven. Check approved host identity, public-key authentication and POSIX/Python support. No stopped-server state is inferred."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。"
+                ],
+                "levels": {
+                    "1": "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。",
+                    "2": "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。",
+                    "3": "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。",
+                    "4": "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。",
+                    "5": "SSH 探索無法使用或未能證實。請檢查已核准主機身分、公鑰驗證同 POSIX／Python 支援。唔會推斷伺服器已停止。"
+                }
+            }
+        },
+        "server.ssh.unknown": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Unknown"
+                ],
+                "levels": {
+                    "1": "Unknown",
+                    "2": "Unknown",
+                    "3": "Unknown",
+                    "4": "Unknown",
+                    "5": "Unknown"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未知"
+                ],
+                "levels": {
+                    "1": "未知",
+                    "2": "未知",
+                    "3": "未知",
+                    "4": "未知",
+                    "5": "未知"
+                }
+            }
+        },
+        "server.ssh.detected": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Detected"
+                ],
+                "levels": {
+                    "1": "Detected",
+                    "2": "Detected",
+                    "3": "Detected",
+                    "4": "Detected",
+                    "5": "Detected"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已偵測"
+                ],
+                "levels": {
+                    "1": "已偵測",
+                    "2": "已偵測",
+                    "3": "已偵測",
+                    "4": "已偵測",
+                    "5": "已偵測"
+                }
+            }
+        },
+        "server.ssh.summary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}"
+                ],
+                "levels": {
+                    "1": "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}",
+                    "2": "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}",
+                    "3": "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}",
+                    "4": "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}",
+                    "5": "Platform {platform}/{architecture}; Java major {java}; Docker CLI {cli}; local daemon {daemon}"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}"
+                ],
+                "levels": {
+                    "1": "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}",
+                    "2": "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}",
+                    "3": "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}",
+                    "4": "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}",
+                    "5": "平台 {platform}/{architecture}；Java 主版本 {java}；Docker CLI {cli}；本機服務 {daemon}"
+                }
+            }
+        },
         "school.control.the_shared_record_exceeds_8192_bytes": {
             "category": "info",
             "en": {

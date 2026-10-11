@@ -149,6 +149,7 @@ set(gui_SOURCES
         gui/material/MaterialSettingsScreen.cpp
         gui/material/MaterialSheetCatalogue.cpp
         gui/material/MaterialServerManager.cpp
+        gui/material/MaterialSshProbe.cpp
         gui/material/MaterialShell.cpp
         gui/material/MaterialSnackbar.cpp
         gui/material/MaterialSpecSheet.cpp

@@ -1,4 +1,5 @@
 #include "MaterialServerManager.h"
+#include "MaterialSshProbe.h"
 #include "MaterialButtons.h"
 #include "MaterialSearchBar.h"
 #include "MaterialVoice.h"
@@ -156,6 +157,32 @@ ServerManager::ServerManager(QWidget* parent, const QString& inventoryRoot) : Sc
         });
     };
     picker(m_runtime,"server.runtime",true);picker(m_jar,"server.jar",false);
+    m_sshProbe=new SshProbe(this);
+    auto* sshBox=new QWidget(this);auto* sshForm=new QFormLayout(sshBox);
+    auto sshText=[this,sshForm](const char* key,bool file){
+        auto* field=new QLineEdit(this);field->setMaxLength(file?4096:253);field->setClearButtonEnabled(true);
+        bindCopy(field,key,false);auto* row=new QWidget(this);auto* layout=new QHBoxLayout(row);layout->setContentsMargins(0,0,0,0);layout->addWidget(field);
+        if(file){auto* browse=new TextButton(row);bindCopy(browse,"server.browse");browse->setProperty("serverBrowseFor",QString::fromLatin1(key));layout->addWidget(browse);
+            connect(browse,&QAbstractButton::clicked,this,[this,field,key]{const auto selected=QFileDialog::getOpenFileName(this,say(key));if(!selected.isEmpty())field->setText(selected);});}
+        sshForm->addRow(say(key),row);bindCopy(qobject_cast<QWidget*>(sshForm->labelForField(row)),key);
+        connect(field,&QLineEdit::textChanged,this,[this]{invalidateSsh();});return field;
+    };
+    m_sshHost=sshText("server.ssh.host",false);m_sshUser=sshText("server.ssh.user",false);m_sshUser->setMaxLength(64);
+    m_sshPort=new QSpinBox(this);m_sshPort->setRange(1,65535);m_sshPort->setValue(22);bindCopy(m_sshPort,"server.ssh.port",false);
+    sshForm->addRow(say("server.ssh.port"),m_sshPort);bindCopy(qobject_cast<QWidget*>(sshForm->labelForField(m_sshPort)),"server.ssh.port");
+    connect(m_sshPort,qOverload<int>(&QSpinBox::valueChanged),this,[this]{invalidateSsh();});
+    m_sshExecutable=sshText("server.ssh.executable",true);m_sshIdentity=sshText("server.ssh.identity",true);m_sshKnownHosts=sshText("server.ssh.known-hosts",true);
+    auto* discover=new TextButton(this);bindCopy(discover,"server.ssh.discover");sshForm->addRow(discover);connect(discover,&QAbstractButton::clicked,this,&ServerManager::discoverSsh);
+    auto* sshCancel=new TextButton(this);bindCopy(sshCancel,"server.ssh.cancel");sshForm->addRow(sshCancel);connect(sshCancel,&QAbstractButton::clicked,this,[this]{m_sshProbe->cancel();});
+    auto* scope=new QLabel(this);scope->setWordWrap(true);bindCopy(scope,"server.ssh.scope");sshForm->addRow(scope);form->addRow(sshBox);
+    connect(m_target,qOverload<int>(&QComboBox::currentIndexChanged),this,[this,sshBox]{sshBox->setEnabled(m_target->currentIndex()>=2);invalidateSsh();});sshBox->setEnabled(false);
+    connect(m_sshProbe,&SshProbe::completed,this,[this](quint64 attempt,const QString& state,const QJsonObject& facts){
+        if(attempt!=m_sshAttempt)return;m_sshFacts=facts;
+        if(state==QLatin1String("ready")){statusKey("server.ssh.ready");refreshCopy();}
+        else if(state==QLatin1String("cancelled"))statusKey("server.ssh.cancelled");
+        else if(state==QLatin1String("timeout"))statusKey("server.ssh.timeout");
+        else statusKey("server.ssh.unavailable");
+    });
     auto targetChanged=[this,dockerRow,imagesRefresh]{const bool docker=m_target->currentIndex()==1;m_images->setEnabled(docker);dockerRow->setEnabled(docker);imagesRefresh->setEnabled(docker);m_runtime->parentWidget()->setEnabled(m_target->currentIndex()==0);};
     connect(m_target,qOverload<int>(&QComboBox::currentIndexChanged),this,targetChanged);targetChanged();
     contentLayout()->addLayout(form); contentLayout()->addWidget(m_eula);
@@ -181,6 +208,7 @@ ServerManager::~ServerManager()
 {
     ++m_generation; if (m_reply) m_reply->abort();
     for(auto* command:m_dockerCommands){command->disconnect(this);command->kill();command->waitForFinished(500);}
+    m_sshAttempt=0;m_sshProbe->cancel();
     // Only children created by this manager are touched. No PID lookup/adoption occurs.
     for (auto* p : m_processes) { p->setProperty("restartRequested", false); p->disconnect(this); p->write("stop\n"); p->waitForFinished(1500); }
 }
@@ -210,6 +238,13 @@ void ServerManager::refreshCopy()
     m_edition->setItemText(0,say("server.edition.java"));m_edition->setItemText(1,say("server.edition.bedrock-unavailable"));m_distribution->setItemText(0,say("server.distribution.vanilla-java"));
     for(int i=0;i<m_images->count();++i){const auto image=m_images->itemData(i).toJsonObject();m_images->setItemText(i,Voice::say(QStringLiteral("server.docker.image-summary"),{{"java",image.value("javaMajor").toInt()},{"architecture",image.value("architecture").toString()},{"digest",image.value("digest").toString()}},Voice::Category::Info));}
     for(int i=0;i<m_inventory->count();++i){const auto id=m_inventory->item(i)->data(Qt::UserRole).toString();for(const auto& value:m_document.value("servers").toArray())if(value.toObject().value("id").toString()==id)m_inventory->item(i)->setToolTip(validRecord(value.toObject())?say("server.owned"):say("server.invalid-record"));}
+    if(m_statusKey==QLatin1String("server.ssh.ready") && !m_sshFacts.isEmpty()) {
+        m_statusSuffix=QStringLiteral(" | ")+Voice::say(QStringLiteral("server.ssh.summary"),{
+            {"platform",m_sshFacts.value("platform").toString()},{"architecture",m_sshFacts.value("architecture").toString()},
+            {"java",m_sshFacts.value("javaMajor").isNull()?say("server.ssh.unknown"):QString::number(m_sshFacts.value("javaMajor").toInt())},
+            {"cli",m_sshFacts.value("dockerCli").toBool()?say("server.ssh.detected"):say("server.ssh.unknown")},
+            {"daemon",m_sshFacts.value("dockerDaemon").isNull()?say("server.ssh.unknown"):m_sshFacts.value("dockerDaemon").toBool()?say("server.ssh.detected"):say("server.ssh.unavailable")}},Voice::Category::Info);
+    }
     statusKey(m_statusKey.toLatin1().constData(),m_statusSuffix);
 }
 QString ServerManager::directoryFor(const QString& id) const
@@ -593,4 +628,19 @@ void ServerManager::inspectDockerLifecycle(const QJsonObject& record,const QStri
         });
 }
 
+}
+
+namespace Material {
+void ServerManager::invalidateSsh()
+{
+    m_sshAttempt=0;m_sshProbe->cancel();m_sshFacts={};
+    if(m_status)statusKey("server.ssh.changed");
+}
+void ServerManager::discoverSsh()
+{
+    m_sshAttempt=0;m_sshProbe->cancel();m_sshFacts={};
+    SshProbe::Connection connection{m_sshExecutable->text(),m_sshHost->text(),m_sshUser->text(),m_sshIdentity->text(),m_sshKnownHosts->text(),m_sshPort->value()};
+    if(m_target->currentIndex()<2 || !SshProbe::validConnection(connection)){statusKey("server.ssh.invalid");return;}
+    statusKey("server.ssh.loading");m_sshAttempt=m_sshProbe->start(connection);
+}
 }

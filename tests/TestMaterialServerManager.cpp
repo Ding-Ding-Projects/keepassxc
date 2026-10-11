@@ -1,4 +1,5 @@
 #include "gui/material/MaterialServerManager.h"
+#include "gui/material/MaterialSshProbe.h"
 #include "core/Config.h"
 #include "gui/material/MaterialVoice.h"
 #include "gui/material/MaterialSearchBar.h"
@@ -59,6 +60,50 @@ protected:
 class TestMaterialServerManager : public QObject {
     Q_OBJECT
 private slots:
+    void sshDiscoveryInputsArgumentsAndTypedFacts() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));
+        const auto hosts=temporary.filePath(QStringLiteral("approved hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));QCOMPARE(file.write("synthetic fixture"),qint64(17));}
+        SshProbe::Connection connection{executable,QStringLiteral("synthetic.example.invalid"),QStringLiteral("synthetic-user"),identity,hosts,2222};
+        QVERIFY(SshProbe::validConnection(connection));const auto args=SshProbe::arguments(connection);
+        QCOMPARE(args.mid(0,2),QStringList({QStringLiteral("-F"),QStringLiteral("none")}));
+        for(const auto& option:{QStringLiteral("BatchMode=yes"),QStringLiteral("StrictHostKeyChecking=yes"),QStringLiteral("UpdateHostKeys=no"),QStringLiteral("ClearAllForwardings=yes"),QStringLiteral("IdentityAgent=none"),QStringLiteral("PreferredAuthentications=publickey")})QVERIFY(args.contains(option));
+        QCOMPARE(args.last(),SshProbe::remoteCommand());QVERIFY(!args.last().contains(connection.host));QVERIFY(!args.last().contains(connection.user));
+        QCOMPARE(args.at(args.indexOf(QStringLiteral("-i"))+1),identity);
+        for(const auto& bad:{QStringLiteral("-oProxyCommand=bad"),QStringLiteral("host;command"),QStringLiteral("user@host"),QStringLiteral("ssh://host"),QStringLiteral("host\nother")}){auto copy=connection;copy.host=bad;QVERIFY(SshProbe::arguments(copy).isEmpty());}
+        auto invalid=connection;invalid.user=QStringLiteral("-option");QVERIFY(!SshProbe::validConnection(invalid));invalid=connection;invalid.port=0;QVERIFY(!SshProbe::validConnection(invalid));
+        invalid=connection;invalid.identityFile=QStringLiteral("relative");QVERIFY(!SshProbe::validConnection(invalid));
+        QJsonObject facts;const QByteArray valid=R"({"schema":1,"platform":"Linux","architecture":"x86_64","javaMajor":21,"dockerCli":true,"dockerDaemon":null})";
+        QVERIFY(SshProbe::parseFacts(valid,facts));QCOMPARE(facts.value("javaMajor").toInt(),21);
+        for(const auto& bad:{QByteArray("{}"),QByteArray(4097,'x'),QByteArray(valid).replace("21","21.5"),QByteArray(valid).replace("Linux","unrecognized"),QByteArray(valid).replace("null","[]"),QByteArray(valid).replace("\"schema\":1","\"schema\":1,\"schema\":1")})QVERIFY(!SshProbe::parseFacts(bad,facts));
+    }
+    void sshDiscoveryDeadlineCancellationAndAttemptIdentity() {
+        using namespace Material;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+#ifdef Q_OS_WIN
+        const auto executable=temporary.filePath(QStringLiteral("ssh.exe"));
+#else
+        const auto executable=temporary.filePath(QStringLiteral("ssh"));
+#endif
+        const auto identity=temporary.filePath(QStringLiteral("identity"));const auto hosts=temporary.filePath(QStringLiteral("known_hosts"));
+        for(const auto& path:{executable,identity,hosts}){QFile file(path);QVERIFY(file.open(QIODevice::WriteOnly));file.write("synthetic");}
+        SshProbe probe;probe.m_testLaunch=[](const QString&,const QStringList&){};probe.m_deadlineMs=20;
+        QSignalSpy completed(&probe,&SshProbe::completed);
+        SshProbe::Connection connection{executable,QStringLiteral("synthetic.example.invalid"),QStringLiteral("synthetic"),identity,hosts,22};
+        const auto first=probe.start(connection);QVERIFY(probe.active());
+        QTRY_COMPARE(completed.count(),1);QCOMPARE(completed.last().at(0).toULongLong(),first);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("timeout"));QVERIFY(!probe.active());
+        const auto second=probe.start(connection);QVERIFY(second>first);probe.cancel();QCOMPARE(completed.count(),2);QCOMPARE(completed.last().at(0).toULongLong(),second);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("cancelled"));
+        probe.finish(QStringLiteral("ready"),QJsonObject{{"untrusted",true}});QCOMPARE(completed.count(),2);
+        const auto third=probe.start(connection);probe.appendOutput(QByteArray(4097,'x'));QCOMPARE(completed.last().at(0).toULongLong(),third);QCOMPARE(completed.last().at(1).toString(),QStringLiteral("unavailable"));
+        ServerManager manager(nullptr,temporary.path()+QStringLiteral("managed"));manager.m_target->setCurrentIndex(2);manager.m_sshFacts=QJsonObject{{"schema",1}};manager.m_sshHost->setText(QStringLiteral("changed.example.invalid"));QVERIFY(manager.m_sshFacts.isEmpty());QCOMPARE(manager.m_sshAttempt,quint64(0));
+    }
     void dockerCopyInventoryAndLiveLanguageChanges() {
         using namespace Material;
         const QStringList required{

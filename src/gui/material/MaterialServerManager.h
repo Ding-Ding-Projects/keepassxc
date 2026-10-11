@@ -21,6 +21,7 @@ class QProcess;
 
 class TestMaterialServerManager;
 namespace Material {
+class SshProbe;
 class ServerManager : public Screen
 {
     Q_OBJECT
@@ -40,6 +41,13 @@ private:
     friend class ::TestMaterialServerManager;
     void request(const QUrl& url, const QByteArray& expectedHash = {});
     void refreshDockerImages();
+    void discoverSsh();
+    void invalidateSsh();
+    SshProbe* m_sshProbe;
+    QLineEdit *m_sshHost, *m_sshUser, *m_sshExecutable, *m_sshIdentity, *m_sshKnownHosts;
+    QSpinBox* m_sshPort;
+    QJsonObject m_sshFacts;
+    quint64 m_sshAttempt = 0;
     void dockerMetadata(const QUrl& url, const QByteArray& authorization,
                         const std::function<void(bool,const QByteArray&,const QByteArray&)>& completed);
     void dockerCommand(const QString& executable, const QStringList& arguments,
@@ -81,7 +89,7 @@ private:
     std::function<void(const QStringList&, const std::function<void(bool,const QByteArray&)>&)> m_dockerTransport;
     QSpinBox *m_memory, *m_port;
     QCheckBox* m_eula;
-    QLabel *m_status, *m_versionStatus;
+    QLabel *m_status = nullptr, *m_versionStatus = nullptr;
     QListWidget* m_inventory;
     QNetworkAccessManager* m_network;
     QPointer<QNetworkReply> m_reply;
