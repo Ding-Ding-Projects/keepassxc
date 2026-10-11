@@ -2,6 +2,9 @@
 
 ## Current contract reconciliation
 
+- [ ] Deliver the complete guided local Ollama suite, including exhaustive catalogue, hardware-fit evidence, batch pulls, local chat, offline recovery and safe profile rollback.
+- [ ] Deliver the universal local converter across all eight categories with bundled offline adapters, recoverable bounded queues and validated atomic outputs.
+
 - [ ] Verify the updated native personal-vocabulary schema and localized rejection copy, then align the browser schema and prove real local upload, atomic replace, clear and corruption recovery.
 - [ ] Compile and exercise bounded SSH discovery, including synchronous startup completion and stale-attempt rejection. Complete remote lifecycle and version-specific compatibility separately.
 - [ ] Satisfy the expanded capability authority for complete guidance, animation authoring and workflow diagrams with actual implementation and current runtime proof.
@@ -68,7 +71,7 @@
 ## October 2026 complete interface scope
 
 - [x] Preserve the original 172 source-assessment rows and add a versioned, explicit native/website surface and capability inventory. The focused schema/evidence regression passes 94 checks, including removal of all 178 platform rows, 106 surfaces and 998 capability contracts. This item is inventory tooling only.
-- [ ] Implement and verify every canonical capability on every named native surface and website-owned equivalent. Current product evidence remains 0/105,788 verified capability cells, not a completion claim.
+- [ ] Implement and verify every canonical capability on every named native surface and website-owned equivalent. Current product evidence remains 0/120,852 verified capability cells, not a completion claim.
 - [ ] Complete search with an independent anchored full regex workbench in every context menu, dropdown, editor and settings section, including keyboard/touch routes and menu lifetime behavior.
 - [ ] Complete genuine Material Design 3 primitives, every-element appearance and motion with reduced-motion behavior, all language modes and every supported scale. Reviewed menu, motion and vault-sizing source is present from main 91772a16; full native acceptance remains pending.
 - [ ] Complete the detailed language/School/narration/schedules, tabs/groups/discovery, six lock policies, authenticator/encrypted history, notifications/exports/bulk actions, converter, local model suite, logo, offline documentation, provenance and Status Hub contracts recorded in [interface completeness](docs/features/delivery/interface-completion.md).
@@ -185,7 +188,7 @@
 - [ ] Give command palette results rich inline controls and exact-element teleport.
 - [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
 - [x] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding (three named records: widths 50 tuples, languages and themes 60 tuples at the expanded width, scales 30 tuples; 20 findings repaired; all three at 0 at `693367d1`).
-- [ ] Complete every required named-surface capability in the fail-closed feature inventory; `scripts/check-feature-inventory.mjs` currently reports 0/105,788 current capability cells verified. The earlier platform-only 0/172 summary is superseded by the expanded matrix above.
+- [ ] Complete every required named-surface capability in the fail-closed feature inventory; `scripts/check-feature-inventory.mjs` currently reports 0/120,852 current capability cells verified. The earlier platform-only 0/172 summary is superseded by the expanded matrix above.
 - [x] Make the feature-inventory guard reject duplicate canonical rows and malformed row values instead of silently accepting or crashing on them.
 
 ## Installer and updater

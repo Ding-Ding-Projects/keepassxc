@@ -1,5 +1,13 @@
 # Navigation delivery handoff
 
+## Current requirements refresh and combined candidate, October 11, 2026
+
+The latest fetch confirms instruction source df119a824c1a7e143f26b15e953e84cb92b13750 unchanged. All 105 identities remain mapped; the authority is 1,119 capabilities, 108 surfaces and 120,852 required cells, with zero accepted cells. The roadmap now explicitly retains complete Ollama and converter delivery and corrects two stale cell totals. These are obligations, not delivered workflows.
+
+Candidate 8bb91c55791e54667541e03b8772c808243b168b is preserved remotely and independently source-reviewed. It combines selector opacity, synthetic metadata exclusions and detail search without attachments. Its exact GUI-enabled root build is running in the separately pinned native checkout. Prior c3fee06f root build passed in 643 seconds and eleven vault-filter cases passed. Current browser source 9c404368 has an actual successful root website build, eleven focused checks, four index queries and three inspected narrow frames; its ninety-six-frame matrix remains running. No new native-pixel or complete current browser verdict is claimed.
+
+See CLOSEOUT_PROMPT.md for current next steps and preservation boundaries. The sections below retain historical source-bound evidence; their older pending states do not override this section.
+
 ## Native verification and guidance containment continuation
 
 The exact root `build.bat /s -WithGuiTests` passed at `e202657b88df87c5e36bc4fa03da3c5dbf2f3d69` in 1,378 seconds. Independent validation confirmed every stage hash, executable SHA-256 `4078c72ad4890f05e3fcdea93e250b3e8daa66286b201d805af0a746e49f5635` and receipt SHA-256 `36901faa73a7aa69e289ee87fc59af4ac8cb21cb0064a899b65877ffdcae3cce`. Thirteen focused native suites passed in 42.76 seconds. A separate history suite passed in 90.89 seconds. The targeted GUI language fixture passed three transitions, five total cases including initialization and cleanup, with offscreen warnings retained. None of these results include the later motion-inspector or guidance-wrapping source.

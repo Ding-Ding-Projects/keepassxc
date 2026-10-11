@@ -291,6 +291,8 @@ The current maintainer catalogue was fetched and compared again. All 105 catalog
 - The appearance editor includes complete animation and transition authoring, isolated inspector search, persistence, undo, reduced motion and actual timed rendering. Inspector search is source implemented; complete authoring acceptance remains incomplete.
 - Workflow explanations retain generated imagery and accessible text, with interactive, animated, keyboard-operable website equivalents, pause/replay and reduced motion. Inventory coverage does not prove delivery.
 - The full Minecraft server creator and manager requires real rich controls, complete version discovery and compatibility, flavour/custom-plugin installation and four target adapters. Read-only SSH discovery is a bounded source contribution, not full remote management.
+- The complete local Ollama suite requires exhaustive model/tag discovery, evidence-backed hardware-fit verdicts, batch pulls with partial outcomes, local chat, guided offline recovery and allowlisted launch profiles with snapshots and rollback. A model list alone does not satisfy it.
+- The universal local converter requires all eight adapter categories, bounded type detection, bundled offline dependencies, constant-memory recoverable queues and validated atomic outputs. Unavailable adapters must remain visibly disabled with their exact missing condition.
 - Product navigation must open into productive workspaces with live records and contextual actions. Documentation and command catalogues cannot substitute for integrated application workflows.
 - Startup surprise uses a fresh ten-percent draw with the specified exclusions and no opt-out; older one-percent/off-switch criteria remain historical.
 
