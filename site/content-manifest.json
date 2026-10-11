@@ -491,6 +491,27 @@
       }
     },
     {
+      "id": "motion-authoring",
+      "article": "docs/features/interface/motion-authoring.md",
+      "category": "interface",
+      "title": {
+        "en": "Animation and Transition authoring",
+        "zh-Hant": "動畫同轉場編輯"
+      },
+      "implementationStatus": "not-tracked",
+      "statusProvenance": {
+        "sourcePath": "docs/features/inventory.json",
+        "mapping": "article",
+        "featureIds": []
+      },
+      "evidence": {
+        "repository": "Ding-Ding-Projects/keepassxc",
+        "ref": "3e33d03c81cbcd86ca175dc3ab45883b84773235",
+        "path": "docs/features/interface/motion-authoring.md",
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/3e33d03c81cbcd86ca175dc3ab45883b84773235/docs/features/interface/motion-authoring.md"
+      }
+    },
+    {
       "id": "ui-motion",
       "article": "docs/features/interface/ui-motion.md",
       "category": "interface",
