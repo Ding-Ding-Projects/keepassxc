@@ -31,3 +31,7 @@ Search text never leaves the process.
 - [Regex builder](../search/regex-builder.md)
 - settings-search (not implemented yet; see `docs/features/inventory.json`)
 - [Browser-style tabs](../navigation/tabs.md)
+
+## Vault-first category update
+
+The vault adds `vault.tags` for independent tag-chip filtering. Selected tags remain visible. See [Vault category search](vault-category-search.md) for metadata-only matching, query lifecycle, and current verification limits.

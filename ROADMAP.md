@@ -189,3 +189,10 @@
 - [x] Fetch tags in the CodeQL checkout so the changelog provenance guard configures.
 - [x] Commit `social-preview.png` at the repository root, add Open Graph and Twitter card tags to the site, publish `site/` through a Pages workflow, and point the repository homepage at the Pages URL.
 - [ ] Upload `social-preview.png` in the repository's Settings → General → Social preview (manual; GitHub exposes no API for it).
+
+## Vault-first category search
+
+- [x] Add scoped source implementation and regression cases.
+- [ ] Compile through root build.bat and pass focused native regressions.
+- [ ] Verify synthetic-vault interaction and language/theme/scale capture matrix.
+- [ ] Verify main delivery, documentation publication, and safe scoped cleanup.

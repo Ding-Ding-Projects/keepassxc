@@ -566,3 +566,7 @@ The pass was closed early at the owner's request (usage limit reached), with the
 - No installer, GitHub Actions run, or runtime save/reopen interaction is claimed for this candidate.
 - No visual control or layout changed in this slice. Built-runtime history behavior remains unverified.
 - Issue #11 and roadmap implementation items remain open until their independent behavioral coverage and required publication evidence are complete.
+
+## Vault category search, current implementation
+
+Source candidates 34759e4b and 53d208ad add category search behavior and regression cases. Root build.bat /s stopped before compilation because RubyGems could not start (exit 14001, side-by-side configuration). Tests, native interaction and capture matrix are unverified. The first attempt was stopped before compilation to repair a reviewed status-filter regression. Existing historical commit-message publication findings were retained without rewriting history. Continue dependency diagnosis, run the exact root build, then focused native tests and isolated visual acceptance. Do not treat source delivery as product acceptance.

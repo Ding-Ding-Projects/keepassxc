@@ -366,3 +366,7 @@ All submissions go through review regardless of workflow.
 
 KeePassXC code is licensed under GPL-2 or GPL-3. The Material interface layer added by this fork
 carries the same licence. Third-party file licensing is detailed in [COPYING](./COPYING).
+
+## Vault category search update
+
+The vault category search implementation adds a local tag filter, metadata-only entry matching, clear controls, and query resets. Build and native acceptance are pending. See [the feature article](docs/features/search/vault-category-search.md).

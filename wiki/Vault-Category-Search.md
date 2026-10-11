@@ -1,0 +1,29 @@
+# Vault category search
+
+The vault workspace provides separate searches for saved entries, folders, open database tabs, tags, and entry field labels or attachment names. Each category owns its query. Existing search bars are reused rather than duplicated.
+
+## Entries and privacy
+
+The entry search matches unprotected title, username, URL and notes, plus tags and group names. It does not resolve placeholders while matching, so a username containing a password placeholder cannot make the underlying password searchable. Password and custom-attribute value searches are excluded from the database GUI. Existing expiry, health, UUID, attachment-name and presence filters remain available. Other search-engine callers retain their established behavior.
+
+Search text remains in memory. Vault context changes, locking and closing clear category queries and reset regex modes. Queries are not added to settings, exports or diagnostic output by these controls. This is not a promise of forensic memory erasure.
+
+## Folders, tabs and tags
+
+The folder search keeps matching descendants and their ancestors visible. Clearing it restores rows without editing the database. The tab-strip search button opens the all-tabs selector even when no tabs overflow; choosing a result activates its stable runtime identity.
+
+Tag search narrows available chips without changing selected tags. Selected chips remain visible and removable even when their names do not match. Clearing tag search restores available chips while preserving selection. Tag regex execution uses the existing bounded matcher. Invalid or unsafe tag patterns leave prior results standing with an inline message.
+
+## Entry details
+
+The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.
+
+## Verification status
+
+Source regression cases cover tag selection preservation, independent folder text, invalid patterns, clear behavior, metadata matches, secret exclusion, placeholder exclusion, protected notes, UUID and expiry filtering, and legacy engine compatibility. These cases require a compiled native test run before acceptance. Native interaction, supported language/theme/scale geometry and representative screenshots remain pending until a current source-bound build is available.
+
+## Related
+
+- [Search bars and registry](../docs/features/search/search-bar-every-surface.md)
+- [Regex builder](../docs/features/search/regex-builder.md)
+- [Browser-style tabs](../docs/features/navigation/tabs.md)
