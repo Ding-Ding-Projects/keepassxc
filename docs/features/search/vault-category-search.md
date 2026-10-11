@@ -34,6 +34,13 @@ Focused source regressions cover initially empty attachments, populated-to-empty
 transitions, clearing and effective control visibility. Native execution and
 rebuilt visual verification of this placement remain pending.
 
+Refreshing entry content reapplies the active attachment-name filter after the
+attachment rows are rebuilt, including repeated updates and changed attachments.
+If the current regex is invalid, fresh rows use the last accepted filter predicate
+while the current input and inline invalid message remain unchanged. Clearing the
+search restores all rows, including after another refresh. Focused regression
+cases are written; compilation and runtime verification of this repair remain pending.
+
 ## Verification status
 
 Source regression cases cover tag selection preservation, independent folder text, invalid patterns, clear behavior, metadata matches, secret exclusion, placeholder exclusion, protected notes, UUID and expiry filtering, and legacy engine compatibility. These cases require a compiled native test run before acceptance. Native interaction, supported language/theme/scale geometry and representative screenshots remain pending until a current source-bound build is available.
