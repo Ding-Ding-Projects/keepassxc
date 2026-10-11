@@ -327,6 +327,8 @@ namespace Material
         auto* explanation = new QLabel(panel);
         explanation->setObjectName(QStringLiteral("searchGuidanceExplanation"));
         explanation->setWordWrap(true);
+        explanation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+        explanation->setMinimumWidth(0);
         explanation->setTextInteractionFlags(Qt::TextSelectableByKeyboard | Qt::TextSelectableByMouse);
         auto* scroll = new QScrollArea(panel);
         scroll->setWidgetResizable(true);
@@ -335,7 +337,7 @@ namespace Material
         scroll->setMaximumHeight(180);
         scroll->setWidget(explanation);
         steps->addWidget(scroll);
-        auto* done = new TextButton(panel);
+        auto* done = new GuidanceEntry(panel);
         done->setObjectName(QStringLiteral("searchGuidanceDone"));
         steps->addWidget(done);
         layout->addWidget(panel);

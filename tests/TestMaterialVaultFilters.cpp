@@ -33,6 +33,9 @@
 #include <QAction>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QApplication>
 #include <QScopedPointer>
 
 #include <QAbstractButton>
@@ -405,19 +408,29 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
     for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
         Voice::setLanguage(language);
         for (const auto& category : categories) {
-            SearchBar bar;
+            QWidget owner;
+            owner.setFixedWidth(230);
+            auto* ownerLayout = new QVBoxLayout(&owner);
+            ownerLayout->setContentsMargins(0, 0, 0, 0);
+            ownerLayout->setSizeConstraint(QLayout::SetNoConstraint);
+            SearchBar bar(SearchBar::Variant::Surface, &owner);
             const auto id = QStringLiteral("test.guidance.wrap.") + category;
             QVERIFY(bar.setIdentity(id, category));
             bar.setCopyKeys(QStringLiteral("search.") + category, QStringLiteral("search.") + category);
             QScopedPointer<QWidget> host(bar.guidanceWidget(QStringLiteral("search.guidance.") + category));
             host->setFixedWidth(230);
-            host->show();
-            host->adjustSize();
+            ownerLayout->addWidget(host.data());
+            ownerLayout->addWidget(&bar);
+            owner.show();
+            owner.activateWindow();
+            owner.adjustSize();
             QCoreApplication::processEvents();
             auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
             auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
             auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
-            QVERIFY(entry && panel && done);
+            auto* scroll = panel->findChild<QScrollArea*>();
+            auto* explanation = panel->findChild<QLabel*>(QStringLiteral("searchGuidanceExplanation"));
+            QVERIFY(entry && panel && done && scroll && explanation);
             const auto expected = Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ")
                                   + Voice::say(QStringLiteral("search.") + category);
             QCOMPARE(entry->text(), expected);
@@ -433,9 +446,32 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             entry->setFocus();
             QTest::keyClick(entry, Qt::Key_Space);
             QVERIFY(!panel->isHidden());
+            owner.adjustSize();
+            QCoreApplication::processEvents();
+            QVERIFY(contained(host.data(), panel));
+            QVERIFY(contained(panel, done));
+            QVERIFY(contained(panel, scroll));
+            QVERIFY(contained(scroll, scroll->viewport()));
+            QCOMPARE(done->text(), Voice::say(QStringLiteral("search.guidance.done")));
+            QCOMPARE(done->accessibleName(), done->text());
+            QCOMPARE(explanation->accessibleName(), explanation->text());
+            QVERIFY(done->height() >= done->heightForWidth(done->width()));
+            QVERIFY(done->height() >= Layout::ButtonHeight);
+            // Vertical excess is intentionally exposed by this scroll area. Horizontal
+            // label escape is never intentional and must not require horizontal scrolling.
+            const QRect explanationRect(explanation->mapTo(scroll->viewport(), QPoint()), explanation->size());
+            QVERIFY(explanationRect.left() >= 0);
+            QVERIFY(explanationRect.right() < scroll->viewport()->width());
+            QCOMPARE(scroll->horizontalScrollBar()->maximum(), 0);
+            if (explanationRect.height() > scroll->viewport()->height())
+                QVERIFY(scroll->verticalScrollBar()->maximum() > 0);
             QCOMPARE(bar.text(), QStringLiteral("synthetic-query"));
-            done->click();
+            done->setFocus();
+            QTest::keyClick(done, Qt::Key_Space);
+            QCoreApplication::processEvents();
             QVERIFY(panel->isHidden());
+            QCOMPARE(bar.text(), QStringLiteral("synthetic-query"));
+            QTRY_COMPARE(QApplication::focusWidget(), bar.lineEdit());
             QVERIFY(contained(host.data(), entry));
         }
     }
