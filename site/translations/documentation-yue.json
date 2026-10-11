@@ -11,9 +11,9 @@
     {
       "path": "docs/features/delivery/README.md",
       "sourceSha256": "d29fc78e3a023ee8ade042ae9877a69951f081f8913518b5961b44278383b2bc",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "建置、安裝同更新",
+      "markdown": "# 建置、安裝同更新\n\n建置指令碼、Squirrel.Windows 安裝程式、自動更新同發佈證據。\n\n| 功能 | 文章 |\n| --- | --- |\n| 自動更新 | [auto-updates.md](auto-updates.md) |\n| 點心發佈代號 | [release-code-name.md](release-code-name.md) |\n| 發佈時序定稿 | [release-timing.md](release-timing.md) |\n| 每次發佈嘅行數 | [line-count-release.md](line-count-release.md) |\n| 一鍵建置同安裝程式指令碼 | [build-scripts.md](build-scripts.md) |\n| 未簽署 Squirrel.Windows 安裝程式 | [squirrel-installer.md](squirrel-installer.md) |\n| 封裝路徑、來源證明同應用程式本地編譯器執行階段 | [packaging-path-safety.md](packaging-path-safety.md) |\n| 首頁版本同更新時間來源證明 | [in-app-version-provenance.md](in-app-version-provenance.md) |\n| 社交預覽嵌入圖片 | [social-preview.md](social-preview.md) |\n| 網站下載同建置來源證明 | [website-release-provenance.md](website-release-provenance.md) |\n| 2026年9月修復驗證同剩餘驗收 | [repair-verification-2026-09.md](repair-verification-2026-09.md) |\n| 資料庫建立、儲存結果同新程序重新開啟 | [database-lifecycle-repair.md](database-lifecycle-repair.md) |\n| 各畫面介面完整度同目前證據 | [interface-completion.md](interface-completion.md) |\n| 目前規範對照同交付缺口 | [current-feature-coverage.md](current-feature-coverage.md) |\n"
     },
     {
       "path": "docs/features/delivery/auto-updates.md",
@@ -53,9 +53,9 @@
     {
       "path": "docs/features/delivery/in-app-version-provenance.md",
       "sourceSha256": "0d5e92348742b1f2af29b9b5659ae67601d6a027044fa7f51e207a6972d8a28d",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "首頁版本同更新時間來源證明",
+      "markdown": "# 首頁版本同更新時間來源證明\n\n功能識別碼：`in-app-version-provenance` · 分類：建置、安裝同更新\n\n## 運作方式\n\n歡迎畫面係未開啟任何資料庫之前嘅第一個畫面，顯示運行版本、建置來源嘅短 Git 修訂碼，以及嗰個修訂最後更新嘅確切時間：建置提交嘅提交者日期，轉換為使用者本地時間，附秒數同已標示時區縮寫，例如 `Version 2.8.8501 · revision e09d6e2 · updated 2026-09-01 19:20:33 HKT`。數值綁定至產物：CMake 喺設定時將 `git show -s --format=%cI HEAD` 記入 `KEEPASSXC_COMMIT_DATE`，短修訂碼記入 `KEEPASSXC_GIT_HEAD`，所以唔會用啟動時間、檔案時間或人手標籤。\n\n## 設定\n\n冇。呢行唔可以由使用者編輯，亦唔依賴任何設定。\n\n## 失敗情況\n\n冇 Git 中繼資料嘅建置（冇 `.git`，或建置機冇 Git）會帶空提交日期；嗰行會顯示 `updated-at time unavailable: the build carried no Git commit date` 同 `revision unavailable`，唔會捏造時間。\n\n## 安全考慮\n\n只顯示公開建置中繼資料。\n\n## 驗證\n\n啟動未開資料庫嘅建置應用程式，讀取歡迎畫面名為 `versionProvenanceLabel` 嘅標籤；冇上次資料庫嘅設定檔使用擷取路徑 `kpxc://capture/vault` 會顯示呢行。負面案例係喺冇 Git 嘅目錄用 `GIT_HEAD_OVERRIDE` 設定建置，再確認不可用文字。\n\n## 延伸閱讀\n\n- [一鍵建置同安裝程式指令碼](build-scripts.md)\n- [未簽署 Squirrel.Windows 安裝程式](squirrel-installer.md)\n- [每次發佈嘅行數](line-count-release.md)\n"
     },
     {
       "path": "docs/features/delivery/interface-completion.md",
@@ -102,9 +102,9 @@
     {
       "path": "docs/features/delivery/social-preview.md",
       "sourceSha256": "a326f807ad073a80247b1048ef0c19077688f3a58dbfd9a4901028836a14fefa",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "社交預覽嵌入圖片",
+      "markdown": "# 社交預覽嵌入圖片\n\n功能識別碼：`social-preview` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`social-preview.png`（1280 × 640）放喺儲存庫根目錄，由真實應用程式標誌同量度後換行文字產生。文件網站喺 `https://ding-ding-projects.github.io/keepassxc/social-preview.png` 提供位元組完全一樣嘅副本，HTML 頭部包含 `og:type`、`og:site_name`、`og:title`、`og:description`、`og:url`、有寬度、高度同替代文字嘅絕對 https `og:image`、設定為 `summary_large_image` 嘅 `twitter:card`，以及主題色。全部直接放喺提供嘅 HTML，唔係靠指令碼注入。\n\n## 設定\n\nPages 工作流程（`.github/workflows/pages.yml`）將根目錄主檔複製至已發佈網站，兩份檔案位元組唔完全一致就會拒絕部署。\n\n## 失敗情況\n\nGitHub 儲存庫社交預覽需要喺設定頁上載，冇 API；未經人手上載之前（Settings → General → Social preview → 根目錄嘅 `social-preview.png`），分享儲存庫連結會顯示 GitHub 產生嘅中繼資料卡，而唔係產品圖片。Discord 會強力快取圖片 URL，圖片有重大改變時要改檔名。\n\n## 安全考慮\n\n只嵌入公開品牌內容；爬蟲會匿名取得圖片。\n\n## 驗證\n\n取得已部署頁面並讀回標籤；毋須憑證取得圖片 URL，確認狀態 200 同 `image/png`。`33a1fec98bdb988b8fa59728b8f954829dfd3e38` 嘅 Pages 部署已於2026年9月8日喺[運行 34285869684](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34285869684)成功完成。\n\n## 延伸閱讀\n\n- [每次發佈嘅行數](line-count-release.md)\n- [一鍵建置同安裝程式指令碼](build-scripts.md)\n"
     },
     {
       "path": "docs/features/delivery/squirrel-installer.md",
@@ -137,16 +137,16 @@
     {
       "path": "docs/features/design/clipping-matrix.md",
       "sourceSha256": "c169408f6ea136f51f1059b26c674c4a041488cdebb599921d459910008587ad",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "裁切檢查矩陣",
+      "markdown": "# 裁切檢查矩陣\n\n功能識別碼：`clipping-matrix` · 分類：設計同外觀\n\n## 運作方式\n\n`design/parity/clipping-matrix.mjs` 喺離屏桌面驅動每個主介面目的地，覆蓋寬度分類（最小480、緊湊600、中等840、展開1200、大型1600、特大型1920）、三種語言模式、兩種主題，以及100、125、150同200百分比顯示縮放。每個組合都保留擷取同應用程式自己嘅元件探測（擷取路徑加 `&probe=1`）：視窗座標幾何、建議尺寸同實際尺寸、純文字標籤或按鈕有冇超出框寬、捲動範圍，以及捲動區域以外元件有冇部分離開畫面。\n\n## 設定\n\n`--quick` 執行兩種寬度、雙語、淺色、100百分比子集。應用程式嘅 `--capture-scale` 會喺 Qt 初始化之前設定 `QT_SCALE_FACTOR`。\n\n## 失敗情況\n\n問題包括純文字溢出嘅元件（單行文字向橫溢出；換行標籤按實際寬度計算所需高度大於獲分配高度，就向下溢出）、被壓至低於自己最小建議尺寸嘅末端控制，或者部分離開畫面而不可捲動嘅元件。問題清單係待辦工作；矩陣本身唔會令建置失敗。\n\n## 安全考慮\n\n同一致性擷取一樣隔離：即棄設定、測試金鑰檔同離屏桌面。\n\n## 驗證\n\n`design/parity/evidence/clipping/matrix.json` 記錄每個組合、擷取雜湊同問題。\n\n## 延伸閱讀\n\n- [設計參考一致性](../design/design-parity.md)\n- responsive-sizing（尚未實作；見 `docs/features/inventory.json`）\n- accessibility（尚未實作；見 `docs/features/inventory.json`）\n"
     },
     {
       "path": "docs/features/design/design-parity.md",
       "sourceSha256": "b96b857a7be322cdfbce822e2b71128832b82dcb5bd3606b0bcffb118361b708",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "設計參考一致性",
+      "markdown": "# 設計參考一致性\n\n功能識別碼：`design-parity` · 分類：設計同外觀\n\n## 運作方式\n\n`design/*.dc.html` 之下九份已提交參考係視覺來源依據。`design/parity/inventory.json` 恰好列出每份參考一次，附擷取組合（畫面、狀態、主題、視口、縮放、地區）。應用程式提供 `--capture-route kpxc://capture/<screen>?...`，會開啟測試資料庫、強制主題同語言、按組合調整主介面或目的地頁面尺寸、導覽，並寫入就緒收據。`design/parity/capture.mjs` 擷取參考（Edge headless 使用隨附、雜湊固定資產）同建置視窗（離屏桌面按控制代碼），`compare.mjs` 寫入有標示並排比較同 `diff.json`，`promote-evidence.mjs` 將新雜湊寫入清單，`audits/<row>.json` 保存人工 Material Design 3 基礎元件審查同未解決問題。\n\n## 設定\n\n各行由人手寫入 `design/parity/inventory.json`。測試資料庫由 `design/parity/fixtures/build-fixture.ps1` 重新產生；隨附資產由 `design/parity/vendor-reference-assets.mjs` 重新產生。\n\n## 失敗情況\n\n欠缺擷取、過時雜湊、待處理審查或待提交變更，都會令 `node design/parity/check-parity.mjs --require-evidence` 失敗。高視窗未完成繪製之前擷取會有黑行；測試工具最多重新擷取六次，之後報失敗。\n\n## 安全考慮\n\n測試資料庫只有設計示範資料庫嘅預留資料，並由產生嘅金鑰檔保護，冇真實憑證。測試工具傳入隔離本機設定，確保擷取唔會讀取使用者真實上次開啟資料庫。\n\n## 驗證\n\n`node design/parity/check-parity.mjs --require-evidence` 同 `node design/parity/test-parity-guard.mjs`（十個證據探測先失敗再通過）。比較圖片放喺 `design/parity/evidence/<row>/comparison.png`。\n\n## 延伸閱讀\n\n- [Material Design 3 外觀](../design/material-3-appearance.md)\n- [裁切檢查矩陣](../design/clipping-matrix.md)\n- [一鍵建置同安裝程式指令碼](../delivery/build-scripts.md)\n"
     },
     {
       "path": "docs/features/design/frameless-title-bar.md",
@@ -158,9 +158,9 @@
     {
       "path": "docs/features/design/material-3-appearance.md",
       "sourceSha256": "9264daaa325c688637c01c6b2fd0637ddc52c8aa2329ac13b6adc932c65a0ac7",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "Material Design 3 外觀",
+      "markdown": "# Material Design 3 外觀\n\n功能識別碼：`material-3-appearance` · 分類：設計同外觀\n\n## 運作方式\n\n每個元件都透過 `Material::Theme`（`src/gui/material/MaterialTheme.h`）取得色彩、字體、形狀、層次同動態效果。主題管理目前配色（種子色同淺／深色模式）、密度同字體比例，套用至應用程式樣式、調色盤同樣式表，並發出變更訊號，令即時介面毋須重新啟動就可以更新樣式。呢啲全應用程式樣式層無條件安裝，程序環境設定唔可以停用。種子色係 KeePassXC 藍、基準紫、資料庫綠同訊號琥珀；密度有緊湊、舒適同寬鬆，各行分別高40、52同64 px。\n\n## 設定\n\n`GUI/ApplicationTheme`（auto、light、dark）、`GUI/MaterialSeed`、`GUI/MaterialDensity`、`GUI/MaterialBackdrop`、`GUI/FontFamily`、`GUI/FontScale`、`GUI/FontWeight`、`GUI/ElementOverrides`，全部持久保存喺漫遊設定。\n\n## 失敗情況\n\n一致性審查列明每個畫面剩餘基礎元件差異。布林設定行呈現真正 Material 開關，由佢代表該行操作：一次點擊、一次啟用，擁有者套用值之後會重新同步開關。Appearance 頁面元素覆寫滑桿有屬性名稱同即時像素值說明，方便知道滑塊改緊邊個屬性。每個滑桿都係 `Material::Slider`（`src/gui/material/MaterialSlider.h`），採用 Material Design 3 結構：16 px 軌道被4 px把手條分開，按住時把手變幼，遠端有停止指示，拖曳時把手上方有數值標籤、鍵盤焦點環，按一下會直接跳去指標位置。每個下拉選單都係有自己搜尋列嘅 `Material::Select` 清單框（見[dropdown-select](../search/dropdown-select.md)）。Material 畫面冇保留原生組合框或滑桿；History 同 Changelog 日期欄位係最後原生控制，已記錄為未解決一致性問題。\n\n## 安全考慮\n\n冇網絡存取；字體來自已安裝系統字體，並有適合中日韓文字嘅後備鏈。\n\n## 驗證\n\n`testmaterialappearance`（五個案例，包括有說明覆寫滑桿）、`testmaterialslider`、`testmaterialselect` 同 `testmaterialshellresponsive::settingsSwitchRowsToggleAndStayInStep`，以及一致性項目 `appearance-default` 同 `shell-default`。\n\n## 延伸閱讀\n\n- [設計參考一致性](../design/design-parity.md)\n- font-customization（尚未實作；見 `docs/features/inventory.json`）\n- [逐元素外觀編輯器](per-element-appearance-editor.md)\n"
     },
     {
       "path": "docs/features/design/per-element-appearance-editor.md",
@@ -179,9 +179,9 @@
     {
       "path": "docs/features/interface/choice-control-promotion.md",
       "sourceSha256": "d462cc3a4fc628d627da5cbf37fbb4dd85cb84b98813dde1e8bcf7a10f7c7e37",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "瀏覽器、分享同 SSH 選項控制",
+      "markdown": "# 瀏覽器、分享同 SSH 選項控制\n\n功能識別碼：`choice-control-promotion` · 分類：介面\n\n## 運作方式同設定\n\n四個現有選項欄位使用 `Material::ComboBox`，即應用程式已設定樣式嘅 `QComboBox` 子類別：瀏覽器設定嘅瀏覽器類型、群組設定嘅分享類型，以及 SSH 金鑰產生器嘅金鑰類型同大小。物件名稱、表單屬性、訊號連接同控制器邏輯保持不變。\n\n瀏覽器設定保留 Firefox 同 Chromium 項目資料同持久選擇。分享保留模式資料同控制器相依啟用狀態。SSH 產生器保留 Ed25519、RSA 同 ECDSA、原有大小清單，以及 RSA 3072-bit 同 ECDSA 256-bit 預設。呢次提升唔會加入可編輯性，亦唔會改驗證器、金鑰產生、資料庫存取或持久格式。\n\n## 驗證同剩餘驗收\n\n受影響編譯擁有者係 `browser`、`keeshare` 同 `sshagent` CMake 目標。建置會驗證 Qt 產生表單使用已提升類別，並同真實控制器一齊編譯。現有瀏覽器通訊協定同 SSH 密碼學測試冇操作呢四個選項欄位，所以唔係呢次轉換嘅證據。\n\n呢個變更只確立類別採用。可搜尋彈出行為屬於共用組合框實作，整合之後需要驗證。原生呈現、鍵盤互動、無障礙，以及語言、主題同顯示縮放矩陣仍然待完成。隱藏桌面控制器已安裝，並用合成 Qt 測試資料通過安裝冒煙檢查。KeePassXC 設定檔同歷史隔離仍然受阻，等擁有者決定範圍。呢份測試資料唔代表任何 KeePassXC 互動或目前螢幕擷取。\n\n## 失敗情況同安全考慮\n\n每份表單都宣告子類別同 `gui/material/MaterialControls.h` 引入。欠缺宣告或控制器呼叫唔相容就會建置失敗。呢次提升冇加入網絡操作、憑證收集或記錄。之後互動檢查必須用隔離設定同合成資料，唔可以開啟個人資料庫，亦唔可以為現有使用者身份產生金鑰。\n"
     },
     {
       "path": "docs/features/interface/motion-authoring.md",
@@ -277,9 +277,9 @@
     {
       "path": "docs/features/navigation/tabs.md",
       "sourceSha256": "b198189adb208ec24d1a4fcdbbf96e4d9643fd0b8204c997fa0984c2efb09336",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "瀏覽器式分頁",
+      "markdown": "# 瀏覽器式分頁\n\n功能識別碼：`tabs` · 分類：導覽\n\n## 運作方式\n\n資料庫以 `Material::TabStrip`（`src/gui/material/MaterialTabStrip.h`）瀏覽器式分頁開啟，有穩定執行期識別碼、鍵盤導覽同重排、附插入標記嘅指標拖曳、固定分區、已登記可搜尋溢出畫面，以及持久保存次序。分頁拖曳只會喺超過拖曳門檻並落喺同一固定分區之後發出分頁移動要求，唔會開始移動視窗。\n\n## 設定\n\n### 文件網站導覽\n\n網站保留五個 Material 主要分頁，以及現有溢出、搜尋、重排、固定／分組控制。分頁容器而家採用完整內在標籤寬度，唔會將窄可用寬度分到低於標籤尺寸。分頁列保留橫向捲動同元件原有聚焦分頁捲動行為。呢個修復冇移除、縮寫或隱藏任何導覽文字。\n\n擷取基準 `edffb9db8be840e7a6db685d57990a1a57f6119c` 顯示320 CSS像素時標籤重疊。來源修復 `0404ed3f3cc1592bbcebab869abd7d4b7f728042` 通過咗針對性建置輸出 CSS 規範同導覽保留檢查。呢啲檢查證明具體寬度規範，唔係實際呈現幾何。要重複原有320／1440px、英文／粵語／雙語、淺色／深色同1／1.25／1.5／2裝置縮放矩陣，驗證標籤容納、捲動／溢出可達性同鍵盤焦點。新呈現驗收仍然待完成。\n\n`GUI/TabOrder`, `GUI/PinnedTabs`, `GUI/TabOverflow`, `GUI/ShowTabStrip`。\n\n## 失敗情況\n\n停靠其他邊緣、分組、四種分頁探索搜尋同批量關閉，仍然係未完成清單項目。\n\n## 安全考慮\n\n冇。\n\n## 驗證\n\n`testmaterialtabs`（三個案例）。\n\n## 延伸閱讀\n\n- tab-overflow（尚未實作；見 `docs/features/inventory.json`）\n- tab-pinning（尚未實作；見 `docs/features/inventory.json`）\n- [搜尋列同搜尋登記表](../search/search-bar-every-surface.md)\n"
     },
     {
       "path": "docs/features/records/README.md",
