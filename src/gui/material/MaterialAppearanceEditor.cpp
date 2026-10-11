@@ -17,6 +17,8 @@
 
 #include "MaterialAppearanceEditor.h"
 #include "MaterialMotion.h"
+#include "MaterialMotionAuthoring.h"
+#include "MaterialVoice.h"
 
 #include "core/Config.h"
 #include "MaterialButtons.h"
@@ -182,7 +184,34 @@ namespace Material
         if (key.isEmpty()) {
             return;
         }
-        const auto value = ElementOverrides::instance()->get(key);
+        auto value = ElementOverrides::instance()->get(key);
+        auto* player = widget->findChild<MotionPlayer*>(QStringLiteral("materialAuthoredMotion"), Qt::FindDirectChildrenOnly);
+        if (!value.motion.isEmpty() && MotionDocument::validate(value.motion)) {
+            if (!player) {
+                widget->setProperty("materialMotionBaseMinimumHeight", widget->minimumHeight());
+                player = new MotionPlayer(widget);
+                player->setObjectName(QStringLiteral("materialAuthoredMotion"));
+                connect(player, &MotionPlayer::frame, widget, [this, widget](const QJsonObject& frame) {
+                    widget->setProperty("materialMotionFrame", frame.toVariantMap());
+                    applyTo(widget);
+                });
+                connect(MotionPolicy::instance(), &MotionPolicy::changed, player, [player] {
+                    player->setReducedMotion(MotionPolicy::instance()->reducedMotion());
+                });
+            }
+            if (player->document() != value.motion) {
+                player->setDocument(value.motion);
+                player->setReducedMotion(MotionPolicy::instance()->reducedMotion());
+                if (widget->isVisible()) player->play();
+            }
+            const auto frame = QJsonObject::fromVariantMap(widget->property("materialMotionFrame").toMap());
+            auto combined = value.toJson();
+            for (auto it = frame.begin(); it != frame.end(); ++it) combined.insert(it.key(), it.value());
+            value = ElementOverrides::Override::fromJson(combined);
+        } else if (player && player->document() != MotionDocument::empty()) {
+            player->setDocument(MotionDocument::empty());
+            player->stop();
+        }
         const bool applied = widget->property(AppliedProperty).toBool();
         if (value.isEmpty()) {
             if (applied) {
@@ -212,6 +241,8 @@ namespace Material
         widget->setFont(font);
         if (value.height) {
             widget->setMinimumHeight(*value.height);
+        } else if (player && widget->property("materialMotionBaseMinimumHeight").isValid()) {
+            widget->setMinimumHeight(widget->property("materialMotionBaseMinimumHeight").toInt());
         }
         QString style = styleFor(value, key);
         if (value.lineHeight) {
@@ -272,9 +303,12 @@ namespace Material
         }
         switch (event->type()) {
         case QEvent::Hide:
+            if (auto* player = widget->findChild<MotionPlayer*>(QStringLiteral("materialAuthoredMotion"), Qt::FindDirectChildrenOnly)) player->stop();
             if (m_rainbowTimer->isActive()) tick();
             break;
         case QEvent::Show:
+            if (auto* player = widget->findChild<MotionPlayer*>(QStringLiteral("materialAuthoredMotion"), Qt::FindDirectChildrenOnly)) player->play();
+            Q_FALLTHROUGH();
         case QEvent::Polish:
             if (!widget->objectName().isEmpty() && !ElementOverrides::instance()->get(widget->objectName()).isEmpty()) {
                 applyTo(widget);
@@ -429,6 +463,10 @@ namespace Material
         m_tabs->addSegment(QStringLiteral("colour"), tr("Colour"));
         m_tabs->addSegment(QStringLiteral("shape"), tr("Shape"));
         m_tabs->addSegment(QStringLiteral("presets"), tr("Presets"));
+        m_tabs->addSegment(QStringLiteral("motion"), motionCopy(QStringLiteral("Animation and Transition")));
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, [this] {
+            m_tabs->setSegmentLabel(QStringLiteral("motion"), motionCopy(QStringLiteral("Animation and Transition")));
+        });
         outer->addWidget(m_tabs);
 
         m_pages = new QStackedWidget(this);
@@ -445,9 +483,11 @@ namespace Material
         m_pages->addWidget(buildColourPage());
         m_pages->addWidget(buildShapePage());
         m_pages->addWidget(buildPresetsPage());
+        m_motion = new MotionEditor(m_pages);
+        m_pages->addWidget(m_motion);
         outer->addWidget(scroll, 1);
         connect(m_tabs, &SegmentedButton::segmentSelected, this, [this](const QString& id) {
-            const QStringList ids{QStringLiteral("typography"), QStringLiteral("colour"), QStringLiteral("shape"), QStringLiteral("presets")};
+            const QStringList ids{QStringLiteral("typography"), QStringLiteral("colour"), QStringLiteral("shape"), QStringLiteral("presets"), QStringLiteral("motion")};
             m_pages->setCurrentIndex(qMax(0, ids.indexOf(id)));
         });
         m_tabs->setCurrentSegment(QStringLiteral("typography"));
@@ -871,7 +911,7 @@ namespace Material
     void AppearanceEditor::setCurrentTab(const QString& id)
     {
         m_tabs->setCurrentSegment(id);
-        const QStringList ids{QStringLiteral("typography"), QStringLiteral("colour"), QStringLiteral("shape"), QStringLiteral("presets")};
+        const QStringList ids{QStringLiteral("typography"), QStringLiteral("colour"), QStringLiteral("shape"), QStringLiteral("presets"), QStringLiteral("motion")};
         m_pages->setCurrentIndex(qMax(0, ids.indexOf(id)));
     }
 
@@ -903,6 +943,7 @@ namespace Material
     {
         m_updating = true;
         const auto value = currentOverride();
+        if (m_motion) m_motion->setTarget(m_key);
         const QFont base = m_target ? m_target->property(BaseFontProperty).isValid() ? m_target->property(BaseFontProperty).value<QFont>() : m_target->font()
                                     : theme()->font(TypeRole::BodyMedium);
         const int familyIndex = value.fontFamily ? m_fontFamily->findData(*value.fontFamily) : 0;
@@ -1028,6 +1069,7 @@ namespace Material
 
     void AppearanceEditor::hideEvent(QHideEvent* event)
     {
+        if (m_motion) m_motion->stopPreview();
         QWidget::hideEvent(event);
     }
 
@@ -1102,6 +1144,17 @@ namespace Material
         if (presets.size() > 200) {
             if (error) *error = tr("more than 200 presets");
             return false;
+        }
+        // Validate motion resource/type boundaries before importing any preset.
+        // Unknown bounded schema versions stay portable and are not rendered.
+        for (auto it = presets.begin(); it != presets.end(); ++it) {
+            const auto object = it.value().toObject();
+            if (!object.contains(QStringLiteral("motion"))) continue;
+            const auto motion = object.value(QStringLiteral("motion"));
+            if (!motion.isObject() || QJsonDocument(motion.toObject()).toJson(QJsonDocument::Compact).size() > 262144) {
+                if (error) *error = tr("Motion must be an object no larger than 256 KiB");
+                return false;
+            }
         }
         int imported = 0;
         for (auto it = presets.begin(); it != presets.end(); ++it) {

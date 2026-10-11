@@ -26,6 +26,8 @@ class TestMaterialAppearanceEditor : public QObject
 
 private slots:
     void initTestCase();
+    void motionInterpolationAndValidation();
+    void motionPersistenceAndCancellation();
     void overrideModelRoundTripsEveryField();
     void editorWritesOverridesAndTheElementFollows();
     void presetsCopyPasteExportImport();

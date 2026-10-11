@@ -37,6 +37,7 @@ class QTimer;
 
 namespace Material
 {
+    class MotionEditor;
     class ColorPicker;
     class FilledButton;
     class IconButton;
@@ -207,6 +208,7 @@ namespace Material
         SearchBar* m_search = nullptr;
         SegmentedButton* m_tabs = nullptr;
         QStackedWidget* m_pages = nullptr;
+        MotionEditor* m_motion = nullptr;
         QList<PropertyRow*> m_rows;
 
         Select* m_fontFamily = nullptr;

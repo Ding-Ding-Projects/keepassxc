@@ -125,6 +125,7 @@ set(gui_SOURCES
         gui/material/MaterialHistoryStore.cpp
         gui/material/MaterialIcons.cpp
         gui/material/MaterialMotion.cpp
+        gui/material/MaterialMotionAuthoring.cpp
         gui/material/MaterialNavigationRail.cpp
         gui/material/MaterialNotificationCentre.cpp
         gui/material/MaterialNotifier.cpp

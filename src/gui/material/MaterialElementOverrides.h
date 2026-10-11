@@ -41,6 +41,7 @@ namespace Material
             // is the speed 1..5. It is a flag, never a colour string.
             std::optional<bool> rainbow;
             std::optional<int> rainbowLevel;
+            QJsonObject motion; // Versioned portable input, including unavailable fields.
             QJsonObject toJson() const;
             static Override fromJson(const QJsonObject& object);
             bool isEmpty() const;

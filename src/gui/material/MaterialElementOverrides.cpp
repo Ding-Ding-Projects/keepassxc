@@ -8,6 +8,7 @@ namespace Material
     QJsonObject ElementOverrides::Override::toJson() const
     {
         QJsonObject object;
+        if (!motion.isEmpty()) object[QStringLiteral("motion")] = motion;
         if (height) object[QStringLiteral("height")] = *height;
         if (radius) object[QStringLiteral("radius")] = *radius;
         if (fontSize) object[QStringLiteral("fontSize")] = *fontSize;
@@ -35,6 +36,7 @@ namespace Material
     ElementOverrides::Override ElementOverrides::Override::fromJson(const QJsonObject& object)
     {
         Override value;
+        if (object.value(QStringLiteral("motion")).isObject()) value.motion = object.value(QStringLiteral("motion")).toObject();
         if (object.value(QStringLiteral("height")).isDouble()) value.height = qBound(24, object.value(QStringLiteral("height")).toInt(), 160);
         if (object.value(QStringLiteral("radius")).isDouble()) value.radius = qBound(0, object.value(QStringLiteral("radius")).toInt(), 80);
         if (object.value(QStringLiteral("fontSize")).isDouble()) value.fontSize = qBound(8, object.value(QStringLiteral("fontSize")).toInt(), 48);
@@ -73,7 +75,7 @@ namespace Material
     {
         return !height && !radius && !fontSize && !spacing && !background && !foreground && !fontFamily && !fontWeight
                && !italic && !underline && !strikeout && !overline && !letterSpacing && !lineHeight && !capitalization
-               && !elevation && !borderWidth && !borderColor && !opacity && !rainbow && !rainbowLevel;
+               && !elevation && !borderWidth && !borderColor && !opacity && !rainbow && !rainbowLevel && motion.isEmpty();
     }
 
     ElementOverrides::ElementOverrides()

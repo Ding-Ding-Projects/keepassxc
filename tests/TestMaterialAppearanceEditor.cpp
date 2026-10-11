@@ -18,6 +18,9 @@
 #include "TestMaterialAppearanceEditor.h"
 
 #include "core/Config.h"
+#include "gui/material/MaterialMotionAuthoring.h"
+#include <QJsonArray>
+#include <QJsonDocument>
 #include "util/TemporaryFile.h"
 #include "gui/material/MaterialAppearanceEditor.h"
 #include "gui/material/MaterialColorPicker.h"
@@ -273,4 +276,210 @@ void TestMaterialAppearanceEditor::propertySearchAndShiftRightClick()
     editor->propertySearch()->clear();
     QVERIFY(editor->visiblePropertyRows().size() > 15);
     editor->closeEditor();
+}
+
+namespace {
+    QJsonObject authoredMotion() {
+        QJsonObject t{
+            {
+                "name",QStringLiteral("Radius")
+            }, {
+                "state",QStringLiteral("normal")
+            }, {
+                "property",QStringLiteral("radius")
+            }
+            ,
+            {
+                "duration",1000
+            }, {
+                "delay",100
+            }, {
+                "easing",QStringLiteral("linear")
+            }
+            ,
+            {
+                "enabled",true
+            }, {
+                "mute",false
+            }, {
+                "solo",false
+            }, {
+                "futureTrack",17
+            }
+        };
+        t["keyframes"]=QJsonArray{
+            QJsonObject{
+                {
+                    "offset",0.0
+                }, {
+                    "value",0.0
+                }, {
+                    "futureFrame",true
+                }
+            }
+            ,
+            QJsonObject{
+                {
+                    "offset",0.5
+                }, {
+                    "value",20.0
+                }
+            }
+            ,
+            QJsonObject{
+                {
+                    "offset",1.0
+                }, {
+                    "value",40.0
+                }
+            }
+        };
+        return {
+            {
+                "schemaVersion",1
+            }, {
+                "futureRoot",QStringLiteral("retained")
+            }, {
+                "tracks",QJsonArray{
+                    t
+                }
+            }
+        };
+    }
+}
+void TestMaterialAppearanceEditor::motionInterpolationAndValidation()
+{
+    QCOMPARE(MotionDocument::properties(),QStringList({QStringLiteral("height"),QStringLiteral("radius"),QStringLiteral("fontSize"),QStringLiteral("spacing"),QStringLiteral("borderWidth")}));
+    const auto d=authoredMotion();
+    QVERIFY(MotionDocument::validate(d));
+    QCOMPARE(MotionDocument::duration(d),1100);
+    QCOMPARE(MotionDocument::sample(d,350,QStringLiteral("normal"),false).value("radius").toInt(),10);
+    QCOMPARE(MotionDocument::sample(d,-1,QStringLiteral("normal"),false).value("radius").toInt(),0);
+    QCOMPARE(MotionDocument::sample(d,2000,QStringLiteral("normal"),false).value("radius").toInt(),40);
+    QVERIFY(MotionDocument::sample(d,500,QStringLiteral("hover"),false).isEmpty());
+    QCOMPARE(MotionDocument::sample(d,0,QStringLiteral("normal"),true).value("radius").toInt(),40);
+    for(const auto* field:{
+        "duration","delay"
+    }
+    ) {
+        auto bad=d;
+        auto ts=bad.value("tracks").toArray();
+        auto t=ts[0].toObject();
+        t[field]=60001;
+        ts[0]=t;
+        bad["tracks"]=ts;
+        QVERIFY(!MotionDocument::validate(bad));
+    }
+    auto bad=d;
+    auto ts=bad.value("tracks").toArray();
+    auto t=ts[0].toObject();
+    auto fs=t.value("keyframes").toArray();
+    auto f=fs[1].toObject();
+    f["offset"]=0;
+    fs[1]=f;
+    t["keyframes"]=fs;
+    ts[0]=t;
+    bad["tracks"]=ts;
+    QVERIFY(!MotionDocument::validate(bad));
+    auto muted=d;
+    ts=muted.value("tracks").toArray();
+    t=ts[0].toObject();
+    t["mute"]=true;
+    ts[0]=t;
+    muted["tracks"]=ts;
+    QVERIFY(MotionDocument::sample(muted,500,QStringLiteral("normal"),false).isEmpty());
+    auto conflict=d;
+    ts=conflict.value("tracks").toArray();
+    t=ts[0].toObject();
+    t["delay"]=0;
+    t["duration"]=500;
+    ts.append(t);
+    conflict["tracks"]=ts;
+    QCOMPARE(MotionDocument::sample(conflict,500,QStringLiteral("normal"),false).value("radius").toInt(),40);
+    t=ts[0].toObject();
+    t["solo"]=true;
+    ts[0]=t;
+    conflict["tracks"]=ts;
+    QCOMPARE(MotionDocument::sample(conflict,500,QStringLiteral("normal"),false).value("radius").toInt(),16);
+    auto unavailable=d;
+    ts=unavailable.value("tracks").toArray();
+    t=ts[0].toObject();
+    t["property"]=QStringLiteral("futureTransform");
+    ts[0]=t;
+    unavailable["tracks"]=ts;
+    QVERIFY(MotionDocument::validate(unavailable));
+    QVERIFY(MotionDocument::sample(unavailable,500,QStringLiteral("normal"),false).isEmpty());
+    auto tooMany=d;QJsonArray many;
+    for(int i=0;i<33;++i)many.append(d.value("tracks").toArray().first());
+    tooMany["tracks"]=many;QVERIFY(!MotionDocument::validate(tooMany));
+    auto tooManyFrames=d;auto frameTracks=d.value("tracks").toArray();auto frameTrack=frameTracks.first().toObject();QJsonArray frameList;
+    for(int i=0;i<129;++i)frameList.append(QJsonObject{{"offset",i/128.0},{"value",0.0}});
+    frameTrack["keyframes"]=frameList;frameTracks[0]=frameTrack;tooManyFrames["tracks"]=frameTracks;QVERIFY(!MotionDocument::validate(tooManyFrames));
+    auto huge=d;
+    huge["padding"]=QString(262144,QLatin1Char('x'));
+    QVERIFY(!MotionDocument::validate(huge));
+    QCOMPARE(MotionDocument::duration(huge),0);
+}
+void TestMaterialAppearanceEditor::motionPersistenceAndCancellation()
+{
+    ElementOverrides::Override v;
+    v.motion=authoredMotion();
+    QCOMPARE(ElementOverrides::Override::fromJson(v.toJson()).motion,v.motion);
+    ElementOverrides::instance()->set(QStringLiteral("motionFixture"),v);
+    ElementOverrides::instance()->load();
+    QCOMPARE(ElementOverrides::instance()->get(QStringLiteral("motionFixture")).motion,v.motion);
+    AppearanceEditor editor;
+    QLabel target(QStringLiteral("Synthetic"));
+    target.setObjectName(QStringLiteral("motionFixture"));
+    AppearanceApplier::instance()->applyTo(&target);
+    auto* live=target.findChild<MotionPlayer*>(QStringLiteral("materialAuthoredMotion"));QVERIFY(live);
+    live->setReducedMotion(false);live->seek(350);QVERIFY(target.styleSheet().contains(QStringLiteral("border-radius:10px")));
+    live->stop();QVERIFY(!live->running());QVERIFY(!target.styleSheet().contains(QStringLiteral("border-radius:10px")));
+    editor.editElement(&target);
+    editor.setCurrentTab(QStringLiteral("motion"));
+    QCOMPARE(editor.currentTab(),QStringLiteral("motion"));
+    QVERIFY(editor.findChild<MotionEditor*>());
+    editor.presetName()->setText(QStringLiteral("Motion portable fixture"));
+    editor.savePresetButton()->click();
+    const auto exported=editor.exportPresets();
+    const auto presets=QJsonDocument::fromJson(exported.toUtf8()).object().value("presets").toObject();
+    QCOMPARE(presets.value("Motion portable fixture").toObject().value("motion").toObject(),v.motion);
+    QVERIFY(editor.importPresets(exported));
+    QJsonObject malformedPreset{{"schemaVersion",1},{"presets",QJsonObject{{"Bad motion",QJsonObject{{"motion",QJsonArray{}}}}}}};
+    QVERIFY(!editor.importPresets(QString::fromUtf8(QJsonDocument(malformedPreset).toJson())));
+    QCOMPARE(editor.presetNames().contains(QStringLiteral("Bad motion")),false);
+    editor.copyStyleButton()->click();
+    QLabel other(QStringLiteral("Other"));
+    other.setObjectName(QStringLiteral("motionOther"));
+    editor.editElement(&other);
+    editor.pasteStyleButton()->click();
+    QCOMPARE(ElementOverrides::instance()->get(QStringLiteral("motionOther")).motion,v.motion);
+    ElementOverrides::instance()->reset(QStringLiteral("motionOther"));
+    MotionPlayer player;
+    QSignalSpy frames(&player,&MotionPlayer::frame);
+    QVERIFY(player.setDocument(v.motion));
+    player.seek(600);
+    QCOMPARE(player.position(),600);
+    player.play();
+    QVERIFY(player.running());
+    player.pause();
+    QVERIFY(!player.running());
+    QCOMPARE(player.position(),600);
+    player.play(true);
+    QVERIFY(player.running());
+    player.stop();
+    QVERIFY(!player.running());
+    QCOMPARE(player.position(),0);
+    QVERIFY(frames.last().at(0).toJsonObject().isEmpty());
+    player.setReducedMotion(true);
+    player.play();
+    QVERIFY(!player.running());
+    QCOMPARE(player.position(),1100);
+    QCOMPARE(player.document(),v.motion);
+    auto bad=v.motion;
+    bad["schemaVersion"]=2;
+    QVERIFY(!player.setDocument(bad));
+    QCOMPARE(player.document(),v.motion);
+    editor.closeEditor();
+    ElementOverrides::instance()->reset(QStringLiteral("motionFixture"));
 }

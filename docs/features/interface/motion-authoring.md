@@ -1,0 +1,25 @@
+# Animation and Transition authoring
+
+The per-element appearance editor includes an Animation and Transition tab for a bounded first motion authoring unit. Open the appearance editor for an element, choose the motion tab and add a track. Edit its name, state, property, duration, delay, easing and boolean switches directly in the track table. Select a track to edit its keyframes. Offsets must strictly increase from zero to one and include both endpoints. Add midpoint inserts between adjacent frames; the initial and final frames cannot be removed. Invalid edits show a diagnostic and leave the saved document unchanged.
+
+The first live properties are height (24..160 px), corner radius (0..80 px), font size (8..48 pt), spacing (0..48 px) and border width (0..8 px). Values interpolate numerically and render at integer pixel/point values. Supported global curves are `linear`, `inOutCubic` and `outCubic`. Duration is 1..60000 milliseconds and delay is -60000..60000 milliseconds. Tracks use explicit starting values, fill before and after and ordered replace composition. The last eligible track for a property wins. Solo restricts eligible tracks within the requested state; disabled and muted tracks never contribute.
+
+The numeric playhead seeks in milliseconds. Play resumes from the current position, restarting at zero after completion. Reverse resumes backward, starting at the end when stopped at zero. Pause retains the playhead. Stop cancels the timer, resets the playhead and restores the preview's base appearance. Hiding or retargeting the editor stops its preview. Normal-state live tracks play when a matching target is shown and stop when it is hidden. They never replace actual operation completion or grant protected-action authority.
+
+Reduced motion uses the same effective policy as other application motion. It presents static final values without playback and retains all authored values. A player uses a monotonic elapsed clock and a 16 ms timer. At most 16 players may run simultaneously; a further play request remains stopped. A document is limited to 256 KiB, 32 tracks and 128 keyframes per track. Finite numeric values, identity strings, switches and ordering are validated before an authoring change replaces saved data.
+
+Motion is stored under each element's appearance override. Existing style copy/paste, named presets and preset JSON export/import carry that nested document. Unknown fields are retained without renderer effect. Unknown versions and unavailable values remain portable, with unavailable rendering. Reset motion clears its document. Element and global resets also clear motion. Undo/redo retain up to 100 complete snapshots during one target-editing session. Durable append-only history and scheduled settings remain incomplete.
+
+The complete, hand-maintained implementation and remaining-capability inventory is in [the motion authoring handoff](../../../design/motion-authoring/README.md). The remaining canonical workspace includes layered/state targets, transitions and triggers beyond show, paths, transforms, colors, repeat/fill/direction editing, custom and segment easing, timeline tools, multi-selection, grouping, sequencing, inspector search, command navigation and durable history. QWidget's lack of native CSS custom-property and scroll/view timeline rendering is a specific platform boundary; the other omissions require implementation.
+
+## Verification status
+
+Source fixtures in `TestMaterialAppearanceEditor` cover interpolation, mute/solo/order conflicts, timing and offset rejection, byte bounds, unknown-field persistence, preset/style round trips, cancellation, a direct live stylesheet consumer and reduced-motion behavior. They have not been executed for this candidate. Compilation, real target interactions, timed samples, performance/teardown and the complete language/theme/scale/viewport matrix remain pending. The separate motion voice-key patch must be integrated before localized catalogue copy is available; the source currently falls back to English if a key is absent.
+
+After the normal root build, the focused native command is:
+
+```powershell
+ctest --test-dir build-windows --output-on-failure --timeout 180 -R "^(testmaterialappearanceeditor|testmaterialmotion)$"
+```
+
+No network requests, external execution, credentials or vault content belong to motion documents. Portable data is never evaluated as code.
