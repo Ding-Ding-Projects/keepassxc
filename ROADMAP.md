@@ -1,5 +1,13 @@
 # Roadmap
 
+## Current contract reconciliation
+
+- [x] Record the 105 current maintainer contract identities with explicit product-family mappings and scoped exclusions. The focused check passes all 105 omission negatives and duplicate rejection; this is inventory tooling only.
+- [ ] Reconcile every applicable contract with current implementation and accepted per-surface evidence. Existing records contain zero accepted capability evidence rows.
+- [ ] Implement the newly required server creator and manager, including all four target adapters and version-bound rich controls, then verify real workflows.
+- [ ] Refresh every current presentation image from inspected source-bound captures, preserving historical originals and provenance.
+- [ ] Reconcile startup surprise behavior with the current 10% probability, no opt-out, public photo source and School-mode suppression requirements. Prior roadmap descriptions are historical and do not override this requirement.
+
 ## Preservation checkpoint, October 4, 2026
 
 - [x] Record the coordinator-reported 10% remaining allowance and preserve the navigation records. The wider goal remains incomplete; no cleanup is performed.

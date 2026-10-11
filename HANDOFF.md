@@ -569,6 +569,12 @@ The pass was closed early at the owner's request (usage limit reached), with the
 
 ## Vault category search, current implementation
 
+### Expanded current-contract requirement
+
+The owner now explicitly requests all current maintainer feature contracts, including new requirements, in addition to vault search and preservation-backed integration/cleanup. The 105-contract crosswalk and current coverage article record the expanded scope. Their omission check passes 105 removed-identity cases and duplicate rejection. No applicable feature is accepted by that mapping alone. Existing inventories record zero accepted capability evidence rows; the newly required server manager has no implementation. Current presentation refresh, startup surprise reconciliation and the remaining contract implementation/acceptance remain open.
+
+The pinned root build at `473f6612dd1e1839bac760896e355a07c30e4616` stopped with MSVC C1060 while compiling PasskeyImporter.cpp at two jobs. The exact root entrypoint is retrying with one job, and that translation unit has now compiled. No complete build or native-test success is claimed.
+
 Source candidates 34759e4b and 53d208ad add category search behavior and regression cases. Root build.bat /s stopped before compilation because RubyGems could not start (exit 14001, side-by-side configuration). Tests, native interaction and capture matrix are unverified. The first attempt was stopped before compilation to repair a reviewed status-filter regression. Existing historical commit-message publication findings were retained without rewriting history. Continue dependency diagnosis, run the exact root build, then focused native tests and isolated visual acceptance. Do not treat source delivery as product acceptance.
 
 ### Current search acceptance candidate

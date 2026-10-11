@@ -1,0 +1,1422 @@
+{
+  "schemaVersion": 1,
+  "baselineCommit": "8997ed9ced49c15c3333ae298d8e1e048cce29b1",
+  "canonicalContractCount": 105,
+  "inventoryAssessmentCommit": "07ce4dc158bcd7eb735cc309f009c531731f3133",
+  "baseline": {
+    "featureRows": 178,
+    "productFamilies": 89,
+    "capabilityContracts": 998,
+    "surfaceRows": 106,
+    "acceptedCapabilityEvidenceRows": 0
+  },
+  "note": "Explicit reviewed crosswalk from the current maintainer contract catalogue. Technical contract identifiers are retained literally. No applicable row is accepted until implementation, documentation, localization, persistence, regression and current built interaction/capture evidence are proved independently for every required surface.",
+  "rows": [
+    {
+      "canonicalId": "language",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "language-modes"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "funny-emoji",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "funny-level-english",
+        "funny-level-cantonese",
+        "dialog-emoji-toggle"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "personal-vocabulary",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "personal-vocabulary-upload"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "school-mode",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "school-mode"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "narration",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "narrator",
+        "narrator-voice-pickers"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "scheduled-settings",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "scheduled-settings",
+        "external-settings-sources",
+        "home-assistant-source"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "display-name",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "app-rename"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "adhd-modes",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "adhd-modes"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "dim-sum",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "dim-sum-surprise"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "dim-sum-photo-source",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "dim-sum-surprise"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "material-design",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "material-3-appearance"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "workflow-navigation",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "frameless-material-title-bar",
+        "tabs"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "motion",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "element-motion"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "appearance-editor",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "per-element-appearance-editor",
+        "font-customization"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "color-picker",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "infinite-color-picker",
+        "rainbow-color"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "logo-customization",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "app-logo-customization"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "overlay-panels",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "overlays-paint-surface",
+        "resizable-panels"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "collapse-filters",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "collapsible-filters"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "accessibility-sizing",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "accessibility",
+        "responsive-sizing",
+        "clipping-matrix"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "functional-ui",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "rich-controls",
+        "guided-forms"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "tabs",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "tabs",
+        "tab-docking",
+        "tab-groups",
+        "tab-overflow",
+        "tab-pinning",
+        "tab-searches",
+        "bulk-close-tabs"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "regex-search",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "regex-builder",
+        "search-bar-every-surface",
+        "dropdown-search",
+        "settings-search"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "command-palette",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "command-palette"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "context-menus",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "context-menu-search"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "menu-shortcuts",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "shortcut-display"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "rich-controls",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "rich-controls"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "guided-forms",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "guided-forms"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "settings-explanations",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "settings-explanations"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "blank-editors",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "blank-slate-presets"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "super-confirmation",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "super-confirmation"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "element-locks",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "toy-locks"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "support-tickets",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "support-tickets"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "unlock-ladder",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "unlock-ladder"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "authenticator",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "authenticator"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "qr-pairing",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "qr-pairing"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "honest-monetization",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "no-nag-policy"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "local-history",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "local-history",
+        "secret-mutation-history",
+        "history-panel-filters"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "exports",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "export-everything",
+        "archive-export"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "bulk-actions",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "bulk-actions"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "changelog",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "changelog-viewer",
+        "changelog-commit-links"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "offline-docs",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "offline-docs-browser"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "rendered-provider-text",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "rendered-provider-text"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "notifications",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "notifications",
+        "notification-centre"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "file-converter",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "file-converter"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "minecraft-server-manager",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "No product family or implementation was found in the bounded material-interface and website source search. Record and implement this requirement explicitly."
+    },
+    {
+      "canonicalId": "ollama-suite",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "ollama-manager"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "external-editor",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "external-editor",
+        "vscode-handoff"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "download-handoff",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "browser-extension-download-dialogs"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "forge-publishing",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "forge-publishing"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "progress-recovery",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "progress-where-started",
+        "recovery-reauth"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "completeness-parity",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "design-parity"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "front-provenance",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "in-app-version-provenance"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "product-evidence",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "readme-captures"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Refresh superseded screenshots, README presentation, documentation and website against the current built source; historical images do not prove current acceptance."
+    },
+    {
+      "canonicalId": "screen-recording",
+      "scope": [
+        "app",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "screen-recording"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "design-reference-parity",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "design-parity"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "design-folder",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "design-parity"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "layout-matrix",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "clipping-matrix"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "public-screenshot-gallery",
+      "scope": [
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "readme-captures"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "landing-site",
+      "scope": [
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "landing-page"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "mobile-site",
+      "scope": [
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "responsive-sizing"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "installer-download-button",
+      "scope": [
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "landing-page"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "feature-articles",
+      "scope": [
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "offline-docs-browser"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "vendored-fonts",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "vendored-fonts"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "shared-link-embed",
+      "scope": [
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "social-preview"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "homepage-link",
+      "scope": [
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "landing-page"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "vocabulary-unlock-boundary",
+      "scope": [
+        "app",
+        "site"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "personal-vocabulary-upload"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "status-hub",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "status-hub"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "discord-status-bridge",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Applies specifically to the shared status service, not this password-manager product.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "panic-webhooks",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Applies specifically to the shared status service, not this password-manager product.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "tidbyt-displays",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Applies specifically to the shared status service, not this password-manager product.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "build-entrypoints",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "build-scripts"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "fresh-build-run-command",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "build-scripts"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "dependency-fetcher",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "build-scripts"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "bundled-dependencies",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "dependency-bundling"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "squirrel-installer",
+      "scope": [
+        "app",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "squirrel-installer"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "self-signing",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "auto-updates",
+      "scope": [
+        "app"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "auto-updates"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "app-icon",
+      "scope": [
+        "app",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "app-logo-customization"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "release-workflow",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "release-timing",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "release-line-counts",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "line-count-release"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "release-dim-sum-photo",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "dim-sum-surprise"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "dim-sum-code-names",
+      "scope": [
+        "app",
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "release-code-name"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "ci-bootstrap",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "build-scripts"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "runner-selection",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "encrypted-public-builder",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "tabbed-readme",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "human-time-estimate",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "sanitized-instruction-copy",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "agents-md-vocabulary-block",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "vocabulary-hash-lock",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "roadmap-checklist",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "feature-docs",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "postman-collections",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "wiki-website-sync",
+      "scope": [
+        "site",
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [
+        "offline-docs-browser"
+      ],
+      "mappingState": "mapped-family-coverage-unproven",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "handoff-record",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "closeout-prompt",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "discussion-records",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "project-board",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "operational-skill",
+      "scope": [
+        "repository"
+      ],
+      "scopeReason": "Scope follows the current catalogue applicability; shared families do not transfer acceptance between surfaces.",
+      "productFamilies": [],
+      "mappingState": "new-inventory-row-required",
+      "evidenceState": "incomplete",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "readme-prompt-banner",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Instruction-corpus-only deliverable; this product is not the instruction corpus.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "shared-instruction-single-file-editions",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Instruction-corpus-only deliverable; this product is not the instruction corpus.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "project-profile",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Instruction-corpus-only deliverable; this product is not the instruction corpus.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "roblox-model-catalogue",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Applies to Roblox games; this product is a password manager.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    },
+    {
+      "canonicalId": "roblox-visual-realism",
+      "scope": [
+        "excluded"
+      ],
+      "scopeReason": "Applies to Roblox games; this product is a password manager.",
+      "productFamilies": [],
+      "mappingState": "excluded-with-reason",
+      "evidenceState": "not-applicable",
+      "note": "Mapping records an assessment obligation, not implementation or accepted interaction evidence."
+    }
+  ]
+}
