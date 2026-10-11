@@ -5119,6 +5119,1086 @@
                     "5": "短暫過場效果已啟用，靜態內容保持靜止。"
                 }
             }
+        },
+        "server.docker.image-accessible": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Verified Eclipse Temurin image and platform"
+                ],
+                "levels": {
+                    "1": "Verified Eclipse Temurin image and platform",
+                    "2": "Verified Eclipse Temurin image and platform",
+                    "3": "Verified Eclipse Temurin image and platform",
+                    "4": "Verified Eclipse Temurin image and platform",
+                    "5": "Verified Eclipse Temurin image and platform"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已核對嘅 Eclipse Temurin 映像同平台"
+                ],
+                "levels": {
+                    "1": "已核對嘅 Eclipse Temurin 映像同平台",
+                    "2": "已核對嘅 Eclipse Temurin 映像同平台",
+                    "3": "已核對嘅 Eclipse Temurin 映像同平台",
+                    "4": "已核對嘅 Eclipse Temurin 映像同平台",
+                    "5": "已核對嘅 Eclipse Temurin 映像同平台"
+                }
+            }
+        },
+        "server.docker.image-label": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Docker runtime image"
+                ],
+                "levels": {
+                    "1": "Docker runtime image",
+                    "2": "Docker runtime image",
+                    "3": "Docker runtime image",
+                    "4": "Docker runtime image",
+                    "5": "Docker runtime image"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Docker 執行環境映像"
+                ],
+                "levels": {
+                    "1": "Docker 執行環境映像",
+                    "2": "Docker 執行環境映像",
+                    "3": "Docker 執行環境映像",
+                    "4": "Docker 執行環境映像",
+                    "5": "Docker 執行環境映像"
+                }
+            }
+        },
+        "server.docker.cli": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Local Docker CLI"
+                ],
+                "levels": {
+                    "1": "Local Docker CLI",
+                    "2": "Local Docker CLI",
+                    "3": "Local Docker CLI",
+                    "4": "Local Docker CLI",
+                    "5": "Local Docker CLI"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機 Docker CLI"
+                ],
+                "levels": {
+                    "1": "本機 Docker CLI",
+                    "2": "本機 Docker CLI",
+                    "3": "本機 Docker CLI",
+                    "4": "本機 Docker CLI",
+                    "5": "本機 Docker CLI"
+                }
+            }
+        },
+        "server.docker.choose-cli": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose Docker CLI"
+                ],
+                "levels": {
+                    "1": "Choose Docker CLI",
+                    "2": "Choose Docker CLI",
+                    "3": "Choose Docker CLI",
+                    "4": "Choose Docker CLI",
+                    "5": "Choose Docker CLI"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選擇 Docker CLI"
+                ],
+                "levels": {
+                    "1": "選擇 Docker CLI",
+                    "2": "選擇 Docker CLI",
+                    "3": "選擇 Docker CLI",
+                    "4": "選擇 Docker CLI",
+                    "5": "選擇 Docker CLI"
+                }
+            }
+        },
+        "server.docker.discover-images": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Discover runtime images for selected Java version"
+                ],
+                "levels": {
+                    "1": "Discover runtime images for selected Java version",
+                    "2": "Discover runtime images for selected Java version",
+                    "3": "Discover runtime images for selected Java version",
+                    "4": "Discover runtime images for selected Java version",
+                    "5": "Discover runtime images for selected Java version"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "探索所選 Java 版本嘅執行環境映像"
+                ],
+                "levels": {
+                    "1": "探索所選 Java 版本嘅執行環境映像",
+                    "2": "探索所選 Java 版本嘅執行環境映像",
+                    "3": "探索所選 Java 版本嘅執行環境映像",
+                    "4": "探索所選 Java 版本嘅執行環境映像",
+                    "5": "探索所選 Java 版本嘅執行環境映像"
+                }
+            }
+        },
+        "server.docker.cancelled": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Operation cancelled. Any container state must be inspected again."
+                ],
+                "levels": {
+                    "1": "Operation cancelled. Any container state must be inspected again.",
+                    "2": "Operation cancelled. Any container state must be inspected again.",
+                    "3": "Operation cancelled. Any container state must be inspected again.",
+                    "4": "Operation cancelled. Any container state must be inspected again.",
+                    "5": "Operation cancelled. Any container state must be inspected again."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "操作已取消。必須重新檢查容器狀態。"
+                ],
+                "levels": {
+                    "1": "操作已取消。必須重新檢查容器狀態。",
+                    "2": "操作已取消。必須重新檢查容器狀態。",
+                    "3": "操作已取消。必須重新檢查容器狀態。",
+                    "4": "操作已取消。必須重新檢查容器狀態。",
+                    "5": "操作已取消。必須重新檢查容器狀態。"
+                }
+            }
+        },
+        "server.docker.select-image": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select verified runtime image metadata for this Java version."
+                ],
+                "levels": {
+                    "1": "Select verified runtime image metadata for this Java version.",
+                    "2": "Select verified runtime image metadata for this Java version.",
+                    "3": "Select verified runtime image metadata for this Java version.",
+                    "4": "Select verified runtime image metadata for this Java version.",
+                    "5": "Select verified runtime image metadata for this Java version."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請選擇已核對、適用於呢個 Java 版本嘅映像資料。"
+                ],
+                "levels": {
+                    "1": "請選擇已核對、適用於呢個 Java 版本嘅映像資料。",
+                    "2": "請選擇已核對、適用於呢個 Java 版本嘅映像資料。",
+                    "3": "請選擇已核對、適用於呢個 Java 版本嘅映像資料。",
+                    "4": "請選擇已核對、適用於呢個 Java 版本嘅映像資料。",
+                    "5": "請選擇已核對、適用於呢個 Java 版本嘅映像資料。"
+                }
+            }
+        },
+        "server.docker.choices-changed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Creation choices changed. Verify them again."
+                ],
+                "levels": {
+                    "1": "Creation choices changed. Verify them again.",
+                    "2": "Creation choices changed. Verify them again.",
+                    "3": "Creation choices changed. Verify them again.",
+                    "4": "Creation choices changed. Verify them again.",
+                    "5": "Creation choices changed. Verify them again."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "建立選項已改變。請重新核對。"
+                ],
+                "levels": {
+                    "1": "建立選項已改變。請重新核對。",
+                    "2": "建立選項已改變。請重新核對。",
+                    "3": "建立選項已改變。請重新核對。",
+                    "4": "建立選項已改變。請重新核對。",
+                    "5": "建立選項已改變。請重新核對。"
+                }
+            }
+        },
+        "server.docker.resolve-version": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Resolve an official server version before discovering runtime images."
+                ],
+                "levels": {
+                    "1": "Resolve an official server version before discovering runtime images.",
+                    "2": "Resolve an official server version before discovering runtime images.",
+                    "3": "Resolve an official server version before discovering runtime images.",
+                    "4": "Resolve an official server version before discovering runtime images.",
+                    "5": "Resolve an official server version before discovering runtime images."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請先解析官方伺服器版本，再探索執行環境映像。"
+                ],
+                "levels": {
+                    "1": "請先解析官方伺服器版本，再探索執行環境映像。",
+                    "2": "請先解析官方伺服器版本，再探索執行環境映像。",
+                    "3": "請先解析官方伺服器版本，再探索執行環境映像。",
+                    "4": "請先解析官方伺服器版本，再探索執行環境映像。",
+                    "5": "請先解析官方伺服器版本，再探索執行環境映像。"
+                }
+            }
+        },
+        "server.docker.registry-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Anonymous public registry access is unavailable. No image was downloaded."
+                ],
+                "levels": {
+                    "1": "Anonymous public registry access is unavailable. No image was downloaded.",
+                    "2": "Anonymous public registry access is unavailable. No image was downloaded.",
+                    "3": "Anonymous public registry access is unavailable. No image was downloaded.",
+                    "4": "Anonymous public registry access is unavailable. No image was downloaded.",
+                    "5": "Anonymous public registry access is unavailable. No image was downloaded."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "匿名公開登錄存取無法使用。冇下載任何映像。"
+                ],
+                "levels": {
+                    "1": "匿名公開登錄存取無法使用。冇下載任何映像。",
+                    "2": "匿名公開登錄存取無法使用。冇下載任何映像。",
+                    "3": "匿名公開登錄存取無法使用。冇下載任何映像。",
+                    "4": "匿名公開登錄存取無法使用。冇下載任何映像。",
+                    "5": "匿名公開登錄存取無法使用。冇下載任何映像。"
+                }
+            }
+        },
+        "server.docker.metadata-ready": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Registry metadata verified. The exact image must already be installed locally."
+                ],
+                "levels": {
+                    "1": "Registry metadata verified. The exact image must already be installed locally.",
+                    "2": "Registry metadata verified. The exact image must already be installed locally.",
+                    "3": "Registry metadata verified. The exact image must already be installed locally.",
+                    "4": "Registry metadata verified. The exact image must already be installed locally.",
+                    "5": "Registry metadata verified. The exact image must already be installed locally."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。"
+                ],
+                "levels": {
+                    "1": "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。",
+                    "2": "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。",
+                    "3": "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。",
+                    "4": "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。",
+                    "5": "登錄資料已核對。完全相同嘅映像必須已安裝喺本機。"
+                }
+            }
+        },
+        "server.docker.metadata-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded."
+                ],
+                "levels": {
+                    "1": "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded.",
+                    "2": "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded.",
+                    "3": "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded.",
+                    "4": "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded.",
+                    "5": "Runtime metadata is unavailable, invalid, or has no compatible Linux platform. No image was downloaded."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。"
+                ],
+                "levels": {
+                    "1": "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。",
+                    "2": "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。",
+                    "3": "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。",
+                    "4": "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。",
+                    "5": "執行環境資料無法使用、無效，或冇相容嘅 Linux 平台。冇下載任何映像。"
+                }
+            }
+        },
+        "server.docker.discovering": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Discovering Eclipse Temurin metadata. No image download is requested."
+                ],
+                "levels": {
+                    "1": "Discovering Eclipse Temurin metadata. No image download is requested.",
+                    "2": "Discovering Eclipse Temurin metadata. No image download is requested.",
+                    "3": "Discovering Eclipse Temurin metadata. No image download is requested.",
+                    "4": "Discovering Eclipse Temurin metadata. No image download is requested.",
+                    "5": "Discovering Eclipse Temurin metadata. No image download is requested."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正在探索 Eclipse Temurin 資料。冇要求下載映像。"
+                ],
+                "levels": {
+                    "1": "正在探索 Eclipse Temurin 資料。冇要求下載映像。",
+                    "2": "正在探索 Eclipse Temurin 資料。冇要求下載映像。",
+                    "3": "正在探索 Eclipse Temurin 資料。冇要求下載映像。",
+                    "4": "正在探索 Eclipse Temurin 資料。冇要求下載映像。",
+                    "5": "正在探索 Eclipse Temurin 資料。冇要求下載映像。"
+                }
+            }
+        },
+        "server.docker.cli-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "A verified local Docker CLI is required, or another operation is still running."
+                ],
+                "levels": {
+                    "1": "A verified local Docker CLI is required, or another operation is still running.",
+                    "2": "A verified local Docker CLI is required, or another operation is still running.",
+                    "3": "A verified local Docker CLI is required, or another operation is still running.",
+                    "4": "A verified local Docker CLI is required, or another operation is still running.",
+                    "5": "A verified local Docker CLI is required, or another operation is still running."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。"
+                ],
+                "levels": {
+                    "1": "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。",
+                    "2": "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。",
+                    "3": "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。",
+                    "4": "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。",
+                    "5": "需要已核對嘅本機 Docker CLI，或另一項操作仍在執行。"
+                }
+            }
+        },
+        "server.docker.metadata-required": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Verified runtime metadata is required."
+                ],
+                "levels": {
+                    "1": "Verified runtime metadata is required.",
+                    "2": "Verified runtime metadata is required.",
+                    "3": "Verified runtime metadata is required.",
+                    "4": "Verified runtime metadata is required.",
+                    "5": "Verified runtime metadata is required."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "需要已核對嘅執行環境資料。"
+                ],
+                "levels": {
+                    "1": "需要已核對嘅執行環境資料。",
+                    "2": "需要已核對嘅執行環境資料。",
+                    "3": "需要已核對嘅執行環境資料。",
+                    "4": "需要已核對嘅執行環境資料。",
+                    "5": "需要已核對嘅執行環境資料。"
+                }
+            }
+        },
+        "server.docker.daemon-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Local daemon is unavailable, incompatible, or has insufficient reported memory."
+                ],
+                "levels": {
+                    "1": "Local daemon is unavailable, incompatible, or has insufficient reported memory.",
+                    "2": "Local daemon is unavailable, incompatible, or has insufficient reported memory.",
+                    "3": "Local daemon is unavailable, incompatible, or has insufficient reported memory.",
+                    "4": "Local daemon is unavailable, incompatible, or has insufficient reported memory.",
+                    "5": "Local daemon is unavailable, incompatible, or has insufficient reported memory."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機服務無法使用、唔相容，或回報嘅記憶體不足。"
+                ],
+                "levels": {
+                    "1": "本機服務無法使用、唔相容，或回報嘅記憶體不足。",
+                    "2": "本機服務無法使用、唔相容，或回報嘅記憶體不足。",
+                    "3": "本機服務無法使用、唔相容，或回報嘅記憶體不足。",
+                    "4": "本機服務無法使用、唔相容，或回報嘅記憶體不足。",
+                    "5": "本機服務無法使用、唔相容，或回報嘅記憶體不足。"
+                }
+            }
+        },
+        "server.docker.image-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted."
+                ],
+                "levels": {
+                    "1": "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted.",
+                    "2": "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted.",
+                    "3": "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted.",
+                    "4": "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted.",
+                    "5": "The exact verified runtime image is not installed or its platform/version differs. No pull was attempted."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。"
+                ],
+                "levels": {
+                    "1": "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。",
+                    "2": "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。",
+                    "3": "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。",
+                    "4": "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。",
+                    "5": "完全相同嘅已核對映像未安裝，或平台、版本唔一致。冇嘗試拉取映像。"
+                }
+            }
+        },
+        "server.docker.stop-record-invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The saved container ownership record or local CLI is invalid."
+                ],
+                "levels": {
+                    "1": "The saved container ownership record or local CLI is invalid.",
+                    "2": "The saved container ownership record or local CLI is invalid.",
+                    "3": "The saved container ownership record or local CLI is invalid.",
+                    "4": "The saved container ownership record or local CLI is invalid.",
+                    "5": "The saved container ownership record or local CLI is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已儲存嘅容器擁有權記錄或本機 CLI 無效。"
+                ],
+                "levels": {
+                    "1": "已儲存嘅容器擁有權記錄或本機 CLI 無效。",
+                    "2": "已儲存嘅容器擁有權記錄或本機 CLI 無效。",
+                    "3": "已儲存嘅容器擁有權記錄或本機 CLI 無效。",
+                    "4": "已儲存嘅容器擁有權記錄或本機 CLI 無效。",
+                    "5": "已儲存嘅容器擁有權記錄或本機 CLI 無效。"
+                }
+            }
+        },
+        "server.docker.record-invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "The selected container record is invalid."
+                ],
+                "levels": {
+                    "1": "The selected container record is invalid.",
+                    "2": "The selected container record is invalid.",
+                    "3": "The selected container record is invalid.",
+                    "4": "The selected container record is invalid.",
+                    "5": "The selected container record is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "所選容器記錄無效。"
+                ],
+                "levels": {
+                    "1": "所選容器記錄無效。",
+                    "2": "所選容器記錄無效。",
+                    "3": "所選容器記錄無效。",
+                    "4": "所選容器記錄無效。",
+                    "5": "所選容器記錄無效。"
+                }
+            }
+        },
+        "server.docker.runtime-changed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Installed Java runtime version differs from the saved record."
+                ],
+                "levels": {
+                    "1": "Installed Java runtime version differs from the saved record.",
+                    "2": "Installed Java runtime version differs from the saved record.",
+                    "3": "Installed Java runtime version differs from the saved record.",
+                    "4": "Installed Java runtime version differs from the saved record.",
+                    "5": "Installed Java runtime version differs from the saved record."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。"
+                ],
+                "levels": {
+                    "1": "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。",
+                    "2": "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。",
+                    "3": "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。",
+                    "4": "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。",
+                    "5": "已安裝嘅 Java 執行環境版本同已儲存記錄唔一致。"
+                }
+            }
+        },
+        "server.docker.not-created": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No owned container has been created for this server."
+                ],
+                "levels": {
+                    "1": "No owned container has been created for this server.",
+                    "2": "No owned container has been created for this server.",
+                    "3": "No owned container has been created for this server.",
+                    "4": "No owned container has been created for this server.",
+                    "5": "No owned container has been created for this server."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個伺服器尚未建立自有容器。"
+                ],
+                "levels": {
+                    "1": "呢個伺服器尚未建立自有容器。",
+                    "2": "呢個伺服器尚未建立自有容器。",
+                    "3": "呢個伺服器尚未建立自有容器。",
+                    "4": "呢個伺服器尚未建立自有容器。",
+                    "5": "呢個伺服器尚未建立自有容器。"
+                }
+            }
+        },
+        "server.docker.configuration-invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container configuration is invalid."
+                ],
+                "levels": {
+                    "1": "Container configuration is invalid.",
+                    "2": "Container configuration is invalid.",
+                    "3": "Container configuration is invalid.",
+                    "4": "Container configuration is invalid.",
+                    "5": "Container configuration is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器配置無效。"
+                ],
+                "levels": {
+                    "1": "容器配置無效。",
+                    "2": "容器配置無效。",
+                    "3": "容器配置無效。",
+                    "4": "容器配置無效。",
+                    "5": "容器配置無效。"
+                }
+            }
+        },
+        "server.docker.creation-failed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container creation failed. No existing container was adopted."
+                ],
+                "levels": {
+                    "1": "Container creation failed. No existing container was adopted.",
+                    "2": "Container creation failed. No existing container was adopted.",
+                    "3": "Container creation failed. No existing container was adopted.",
+                    "4": "Container creation failed. No existing container was adopted.",
+                    "5": "Container creation failed. No existing container was adopted."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器建立失敗。冇接管任何現有容器。"
+                ],
+                "levels": {
+                    "1": "容器建立失敗。冇接管任何現有容器。",
+                    "2": "容器建立失敗。冇接管任何現有容器。",
+                    "3": "容器建立失敗。冇接管任何現有容器。",
+                    "4": "容器建立失敗。冇接管任何現有容器。",
+                    "5": "容器建立失敗。冇接管任何現有容器。"
+                }
+            }
+        },
+        "server.docker.identity-save-failed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container was created but its identity could not be saved. It was not started."
+                ],
+                "levels": {
+                    "1": "Container was created but its identity could not be saved. It was not started.",
+                    "2": "Container was created but its identity could not be saved. It was not started.",
+                    "3": "Container was created but its identity could not be saved. It was not started.",
+                    "4": "Container was created but its identity could not be saved. It was not started.",
+                    "5": "Container was created but its identity could not be saved. It was not started."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器已建立，但無法儲存其身分。容器未啟動。"
+                ],
+                "levels": {
+                    "1": "容器已建立，但無法儲存其身分。容器未啟動。",
+                    "2": "容器已建立，但無法儲存其身分。容器未啟動。",
+                    "3": "容器已建立，但無法儲存其身分。容器未啟動。",
+                    "4": "容器已建立，但無法儲存其身分。容器未啟動。",
+                    "5": "容器已建立，但無法儲存其身分。容器未啟動。"
+                }
+            }
+        },
+        "server.docker.identity-invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Saved container identity is invalid."
+                ],
+                "levels": {
+                    "1": "Saved container identity is invalid.",
+                    "2": "Saved container identity is invalid.",
+                    "3": "Saved container identity is invalid.",
+                    "4": "Saved container identity is invalid.",
+                    "5": "Saved container identity is invalid."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已儲存嘅容器身分無效。"
+                ],
+                "levels": {
+                    "1": "已儲存嘅容器身分無效。",
+                    "2": "已儲存嘅容器身分無效。",
+                    "3": "已儲存嘅容器身分無效。",
+                    "4": "已儲存嘅容器身分無效。",
+                    "5": "已儲存嘅容器身分無效。"
+                }
+            }
+        },
+        "server.docker.state-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container state is unavailable. It has not been reported stopped."
+                ],
+                "levels": {
+                    "1": "Container state is unavailable. It has not been reported stopped.",
+                    "2": "Container state is unavailable. It has not been reported stopped.",
+                    "3": "Container state is unavailable. It has not been reported stopped.",
+                    "4": "Container state is unavailable. It has not been reported stopped.",
+                    "5": "Container state is unavailable. It has not been reported stopped."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器狀態無法取得。未有回報為已停止。"
+                ],
+                "levels": {
+                    "1": "容器狀態無法取得。未有回報為已停止。",
+                    "2": "容器狀態無法取得。未有回報為已停止。",
+                    "3": "容器狀態無法取得。未有回報為已停止。",
+                    "4": "容器狀態無法取得。未有回報為已停止。",
+                    "5": "容器狀態無法取得。未有回報為已停止。"
+                }
+            }
+        },
+        "server.docker.ownership-mismatch": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container ownership or configuration differs. No lifecycle action was sent."
+                ],
+                "levels": {
+                    "1": "Container ownership or configuration differs. No lifecycle action was sent.",
+                    "2": "Container ownership or configuration differs. No lifecycle action was sent.",
+                    "3": "Container ownership or configuration differs. No lifecycle action was sent.",
+                    "4": "Container ownership or configuration differs. No lifecycle action was sent.",
+                    "5": "Container ownership or configuration differs. No lifecycle action was sent."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器擁有權或配置唔一致。冇傳送任何生命週期操作。"
+                ],
+                "levels": {
+                    "1": "容器擁有權或配置唔一致。冇傳送任何生命週期操作。",
+                    "2": "容器擁有權或配置唔一致。冇傳送任何生命週期操作。",
+                    "3": "容器擁有權或配置唔一致。冇傳送任何生命週期操作。",
+                    "4": "容器擁有權或配置唔一致。冇傳送任何生命週期操作。",
+                    "5": "容器擁有權或配置唔一致。冇傳送任何生命週期操作。"
+                }
+            }
+        },
+        "server.docker.lifecycle-completed": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned container lifecycle request completed. Game readiness is not verified."
+                ],
+                "levels": {
+                    "1": "Owned container lifecycle request completed. Game readiness is not verified.",
+                    "2": "Owned container lifecycle request completed. Game readiness is not verified.",
+                    "3": "Owned container lifecycle request completed. Game readiness is not verified.",
+                    "4": "Owned container lifecycle request completed. Game readiness is not verified.",
+                    "5": "Owned container lifecycle request completed. Game readiness is not verified."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。"
+                ],
+                "levels": {
+                    "1": "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。",
+                    "2": "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。",
+                    "3": "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。",
+                    "4": "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。",
+                    "5": "自有容器生命週期請求已完成。尚未核實遊戲就緒狀態。"
+                }
+            }
+        },
+        "server.docker.lifecycle-unknown": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Container operation failed or connection was lost. Current state is unknown."
+                ],
+                "levels": {
+                    "1": "Container operation failed or connection was lost. Current state is unknown.",
+                    "2": "Container operation failed or connection was lost. Current state is unknown.",
+                    "3": "Container operation failed or connection was lost. Current state is unknown.",
+                    "4": "Container operation failed or connection was lost. Current state is unknown.",
+                    "5": "Container operation failed or connection was lost. Current state is unknown."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "容器操作失敗或連線中斷。目前狀態未知。"
+                ],
+                "levels": {
+                    "1": "容器操作失敗或連線中斷。目前狀態未知。",
+                    "2": "容器操作失敗或連線中斷。目前狀態未知。",
+                    "3": "容器操作失敗或連線中斷。目前狀態未知。",
+                    "4": "容器操作失敗或連線中斷。目前狀態未知。",
+                    "5": "容器操作失敗或連線中斷。目前狀態未知。"
+                }
+            }
+        },
+        "server.docker.image-summary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Java {java} | Linux/{architecture} | {digest}"
+                ],
+                "levels": {
+                    "1": "Java {java} | Linux/{architecture} | {digest}",
+                    "2": "Java {java} | Linux/{architecture} | {digest}",
+                    "3": "Java {java} | Linux/{architecture} | {digest}",
+                    "4": "Java {java} | Linux/{architecture} | {digest}",
+                    "5": "Java {java} | Linux/{architecture} | {digest}"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Java {java} | Linux/{architecture} | {digest}"
+                ],
+                "levels": {
+                    "1": "Java {java} | Linux/{architecture} | {digest}",
+                    "2": "Java {java} | Linux/{architecture} | {digest}",
+                    "3": "Java {java} | Linux/{architecture} | {digest}",
+                    "4": "Java {java} | Linux/{architecture} | {digest}",
+                    "5": "Java {java} | Linux/{architecture} | {digest}"
+                }
+            }
+        },
+        "server.target.local-process": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Local Windows process"
+                ],
+                "levels": {
+                    "1": "Local Windows process",
+                    "2": "Local Windows process",
+                    "3": "Local Windows process",
+                    "4": "Local Windows process",
+                    "5": "Local Windows process"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機 Windows 程序"
+                ],
+                "levels": {
+                    "1": "本機 Windows 程序",
+                    "2": "本機 Windows 程序",
+                    "3": "本機 Windows 程序",
+                    "4": "本機 Windows 程序",
+                    "5": "本機 Windows 程序"
+                }
+            }
+        },
+        "server.target.local-docker": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Local Docker (verified local image required)"
+                ],
+                "levels": {
+                    "1": "Local Docker (verified local image required)",
+                    "2": "Local Docker (verified local image required)",
+                    "3": "Local Docker (verified local image required)",
+                    "4": "Local Docker (verified local image required)",
+                    "5": "Local Docker (verified local image required)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機 Docker（需要已核對嘅本機映像）"
+                ],
+                "levels": {
+                    "1": "本機 Docker（需要已核對嘅本機映像）",
+                    "2": "本機 Docker（需要已核對嘅本機映像）",
+                    "3": "本機 Docker（需要已核對嘅本機映像）",
+                    "4": "本機 Docker（需要已核對嘅本機映像）",
+                    "5": "本機 Docker（需要已核對嘅本機映像）"
+                }
+            }
+        },
+        "server.target.ssh-process": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH process (unavailable)"
+                ],
+                "levels": {
+                    "1": "SSH process (unavailable)",
+                    "2": "SSH process (unavailable)",
+                    "3": "SSH process (unavailable)",
+                    "4": "SSH process (unavailable)",
+                    "5": "SSH process (unavailable)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH 程序（無法使用）"
+                ],
+                "levels": {
+                    "1": "SSH 程序（無法使用）",
+                    "2": "SSH 程序（無法使用）",
+                    "3": "SSH 程序（無法使用）",
+                    "4": "SSH 程序（無法使用）",
+                    "5": "SSH 程序（無法使用）"
+                }
+            }
+        },
+        "server.target.ssh-docker": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "SSH Docker (unavailable)"
+                ],
+                "levels": {
+                    "1": "SSH Docker (unavailable)",
+                    "2": "SSH Docker (unavailable)",
+                    "3": "SSH Docker (unavailable)",
+                    "4": "SSH Docker (unavailable)",
+                    "5": "SSH Docker (unavailable)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "SSH Docker（無法使用）"
+                ],
+                "levels": {
+                    "1": "SSH Docker（無法使用）",
+                    "2": "SSH Docker（無法使用）",
+                    "3": "SSH Docker（無法使用）",
+                    "4": "SSH Docker（無法使用）",
+                    "5": "SSH Docker（無法使用）"
+                }
+            }
+        },
+        "server.edition.java": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Java"
+                ],
+                "levels": {
+                    "1": "Java",
+                    "2": "Java",
+                    "3": "Java",
+                    "4": "Java",
+                    "5": "Java"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Java"
+                ],
+                "levels": {
+                    "1": "Java",
+                    "2": "Java",
+                    "3": "Java",
+                    "4": "Java",
+                    "5": "Java"
+                }
+            }
+        },
+        "server.edition.bedrock-unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Bedrock (unavailable: installer not implemented)"
+                ],
+                "levels": {
+                    "1": "Bedrock (unavailable: installer not implemented)",
+                    "2": "Bedrock (unavailable: installer not implemented)",
+                    "3": "Bedrock (unavailable: installer not implemented)",
+                    "4": "Bedrock (unavailable: installer not implemented)",
+                    "5": "Bedrock (unavailable: installer not implemented)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Bedrock（無法使用：安裝功能尚未實作）"
+                ],
+                "levels": {
+                    "1": "Bedrock（無法使用：安裝功能尚未實作）",
+                    "2": "Bedrock（無法使用：安裝功能尚未實作）",
+                    "3": "Bedrock（無法使用：安裝功能尚未實作）",
+                    "4": "Bedrock（無法使用：安裝功能尚未實作）",
+                    "5": "Bedrock（無法使用：安裝功能尚未實作）"
+                }
+            }
+        },
+        "server.distribution.vanilla-java": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Official vanilla Java"
+                ],
+                "levels": {
+                    "1": "Official vanilla Java",
+                    "2": "Official vanilla Java",
+                    "3": "Official vanilla Java",
+                    "4": "Official vanilla Java",
+                    "5": "Official vanilla Java"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "官方原版 Java"
+                ],
+                "levels": {
+                    "1": "官方原版 Java",
+                    "2": "官方原版 Java",
+                    "3": "官方原版 Java",
+                    "4": "官方原版 Java",
+                    "5": "官方原版 Java"
+                }
+            }
+        },
+        "server.filter.java-runtime": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Java runtime (java.exe java)"
+                ],
+                "levels": {
+                    "1": "Java runtime (java.exe java)",
+                    "2": "Java runtime (java.exe java)",
+                    "3": "Java runtime (java.exe java)",
+                    "4": "Java runtime (java.exe java)",
+                    "5": "Java runtime (java.exe java)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Java 執行環境 (java.exe java)"
+                ],
+                "levels": {
+                    "1": "Java 執行環境 (java.exe java)",
+                    "2": "Java 執行環境 (java.exe java)",
+                    "3": "Java 執行環境 (java.exe java)",
+                    "4": "Java 執行環境 (java.exe java)",
+                    "5": "Java 執行環境 (java.exe java)"
+                }
+            }
+        },
+        "server.filter.server-jar": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Server distribution (*.jar)"
+                ],
+                "levels": {
+                    "1": "Server distribution (*.jar)",
+                    "2": "Server distribution (*.jar)",
+                    "3": "Server distribution (*.jar)",
+                    "4": "Server distribution (*.jar)",
+                    "5": "Server distribution (*.jar)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "伺服器發行檔 (*.jar)"
+                ],
+                "levels": {
+                    "1": "伺服器發行檔 (*.jar)",
+                    "2": "伺服器發行檔 (*.jar)",
+                    "3": "伺服器發行檔 (*.jar)",
+                    "4": "伺服器發行檔 (*.jar)",
+                    "5": "伺服器發行檔 (*.jar)"
+                }
+            }
+        },
+        "server.filter.docker-cli": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Docker CLI (docker.exe docker)"
+                ],
+                "levels": {
+                    "1": "Docker CLI (docker.exe docker)",
+                    "2": "Docker CLI (docker.exe docker)",
+                    "3": "Docker CLI (docker.exe docker)",
+                    "4": "Docker CLI (docker.exe docker)",
+                    "5": "Docker CLI (docker.exe docker)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Docker CLI (docker.exe docker)"
+                ],
+                "levels": {
+                    "1": "Docker CLI (docker.exe docker)",
+                    "2": "Docker CLI (docker.exe docker)",
+                    "3": "Docker CLI (docker.exe docker)",
+                    "4": "Docker CLI (docker.exe docker)",
+                    "5": "Docker CLI (docker.exe docker)"
+                }
+            }
         }
     }
 }
