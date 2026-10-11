@@ -2,10 +2,11 @@
 
 ## Current contract reconciliation
 
-- [ ] Deliver complete Animation and Transition editors with actual renderer consumers, persistence, undo/history, reduced-motion behavior and timed built evidence.
+- [ ] Deliver complete Animation and Transition editors with actual renderer consumers, persistence, undo/history, reduced-motion behavior and timed built evidence. The bounded scalar workspace and two reviewed source repairs are preserved at 6d58ca7b; 49 localized entries are integrated, with native checks still pending.
 - [ ] Deliver optional above-control guided workflows and unique contextual explanations with complete per-element inventories and omission regressions.
 
 - [x] Record the 105 current maintainer contract identities with explicit product-family mappings and scoped exclusions. The focused check passes all 105 omission negatives and duplicate rejection; this is inventory tooling only.
+- [x] Refresh the exact catalogue comparison at instruction-source df119a82: all 105 current identities remain explicitly mapped. This does not accept their implementations.
 - [ ] Reconcile every applicable contract with current implementation and accepted per-surface evidence. Existing records contain zero accepted capability evidence rows.
 - [ ] Implement the newly required server creator and manager, including all four target adapters and version-bound rich controls, then verify real workflows.
 - [ ] Refresh every current presentation image from inspected source-bound captures, preserving historical originals and provenance.

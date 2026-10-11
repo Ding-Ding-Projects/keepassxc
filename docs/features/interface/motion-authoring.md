@@ -14,7 +14,7 @@ The complete, hand-maintained implementation and remaining-capability inventory 
 
 ## Verification status
 
-Source fixtures in `TestMaterialAppearanceEditor` cover interpolation, mute/solo/order conflicts, timing and offset rejection, byte bounds, unknown-field persistence, preset/style round trips, cancellation, a direct live stylesheet consumer and reduced-motion behavior. They have not been executed for this candidate. Compilation, real target interactions, timed samples, performance/teardown and the complete language/theme/scale/viewport matrix remain pending. The separate motion voice-key patch must be integrated before localized catalogue copy is available; the source currently falls back to English if a key is absent.
+Source fixtures in `TestMaterialAppearanceEditor` cover interpolation, mute/solo/order conflicts, timing and offset rejection, byte bounds, unknown-field persistence, preset/style round trips, cancellation, a direct live stylesheet consumer and reduced-motion behavior. Repair fixtures also cover unavailable solo tracks, atomic rejection of invalid current-schema preset imports and future-schema round trips. Independent source review accepted both repairs. These fixtures have not been executed for this candidate. Compilation, real target interactions, timed samples, performance/teardown and the complete language/theme/scale/viewport matrix remain pending. All 49 motion catalogue keys are integrated with English, Cantonese and bilingual source copy; rendered localization remains unverified.
 
 After the normal root build, the focused native command is:
 

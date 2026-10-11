@@ -2,6 +2,1329 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "motion.authoring.target_scoped_scalar_motion_normal_state_tracks_run_when_the_target_is_shown_other_states_and_proper": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview."
+                ],
+                "levels": {
+                    "1": "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview.",
+                    "2": "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview.",
+                    "3": "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview.",
+                    "4": "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview.",
+                    "5": "Target-scoped scalar motion. Normal-state tracks run when the target is shown. Other states and properties are retained without a live preview."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。"
+                ],
+                "levels": {
+                    "1": "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。",
+                    "2": "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。",
+                    "3": "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。",
+                    "4": "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。",
+                    "5": "按目標編輯數值動態。一般狀態軌道會喺目標顯示時播放。其他狀態同屬性會保留，但未有即時預覽。"
+                }
+            }
+        },
+        "motion.authoring.animation_tracks_milliseconds_and_explicit_property_values": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Animation tracks, milliseconds and explicit property values"
+                ],
+                "levels": {
+                    "1": "Animation tracks, milliseconds and explicit property values",
+                    "2": "Animation tracks, milliseconds and explicit property values",
+                    "3": "Animation tracks, milliseconds and explicit property values",
+                    "4": "Animation tracks, milliseconds and explicit property values",
+                    "5": "Animation tracks, milliseconds and explicit property values"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動畫軌道、毫秒時間同明確屬性數值"
+                ],
+                "levels": {
+                    "1": "動畫軌道、毫秒時間同明確屬性數值",
+                    "2": "動畫軌道、毫秒時間同明確屬性數值",
+                    "3": "動畫軌道、毫秒時間同明確屬性數值",
+                    "4": "動畫軌道、毫秒時間同明確屬性數值",
+                    "5": "動畫軌道、毫秒時間同明確屬性數值"
+                }
+            }
+        },
+        "motion.authoring.name": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Name"
+                ],
+                "levels": {
+                    "1": "Name",
+                    "2": "Name",
+                    "3": "Name",
+                    "4": "Name",
+                    "5": "Name"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "名稱"
+                ],
+                "levels": {
+                    "1": "名稱",
+                    "2": "名稱",
+                    "3": "名稱",
+                    "4": "名稱",
+                    "5": "名稱"
+                }
+            }
+        },
+        "motion.authoring.state": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "State"
+                ],
+                "levels": {
+                    "1": "State",
+                    "2": "State",
+                    "3": "State",
+                    "4": "State",
+                    "5": "State"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "狀態"
+                ],
+                "levels": {
+                    "1": "狀態",
+                    "2": "狀態",
+                    "3": "狀態",
+                    "4": "狀態",
+                    "5": "狀態"
+                }
+            }
+        },
+        "motion.authoring.property": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Property"
+                ],
+                "levels": {
+                    "1": "Property",
+                    "2": "Property",
+                    "3": "Property",
+                    "4": "Property",
+                    "5": "Property"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "屬性"
+                ],
+                "levels": {
+                    "1": "屬性",
+                    "2": "屬性",
+                    "3": "屬性",
+                    "4": "屬性",
+                    "5": "屬性"
+                }
+            }
+        },
+        "motion.authoring.duration_ms": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Duration ms"
+                ],
+                "levels": {
+                    "1": "Duration ms",
+                    "2": "Duration ms",
+                    "3": "Duration ms",
+                    "4": "Duration ms",
+                    "5": "Duration ms"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "時長 ms"
+                ],
+                "levels": {
+                    "1": "時長 ms",
+                    "2": "時長 ms",
+                    "3": "時長 ms",
+                    "4": "時長 ms",
+                    "5": "時長 ms"
+                }
+            }
+        },
+        "motion.authoring.delay_ms": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Delay ms"
+                ],
+                "levels": {
+                    "1": "Delay ms",
+                    "2": "Delay ms",
+                    "3": "Delay ms",
+                    "4": "Delay ms",
+                    "5": "Delay ms"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "延遲 ms"
+                ],
+                "levels": {
+                    "1": "延遲 ms",
+                    "2": "延遲 ms",
+                    "3": "延遲 ms",
+                    "4": "延遲 ms",
+                    "5": "延遲 ms"
+                }
+            }
+        },
+        "motion.authoring.easing": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Easing"
+                ],
+                "levels": {
+                    "1": "Easing",
+                    "2": "Easing",
+                    "3": "Easing",
+                    "4": "Easing",
+                    "5": "Easing"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "緩動"
+                ],
+                "levels": {
+                    "1": "緩動",
+                    "2": "緩動",
+                    "3": "緩動",
+                    "4": "緩動",
+                    "5": "緩動"
+                }
+            }
+        },
+        "motion.authoring.enabled": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Enabled"
+                ],
+                "levels": {
+                    "1": "Enabled",
+                    "2": "Enabled",
+                    "3": "Enabled",
+                    "4": "Enabled",
+                    "5": "Enabled"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "啟用"
+                ],
+                "levels": {
+                    "1": "啟用",
+                    "2": "啟用",
+                    "3": "啟用",
+                    "4": "啟用",
+                    "5": "啟用"
+                }
+            }
+        },
+        "motion.authoring.mute": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Mute"
+                ],
+                "levels": {
+                    "1": "Mute",
+                    "2": "Mute",
+                    "3": "Mute",
+                    "4": "Mute",
+                    "5": "Mute"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "靜音"
+                ],
+                "levels": {
+                    "1": "靜音",
+                    "2": "靜音",
+                    "3": "靜音",
+                    "4": "靜音",
+                    "5": "靜音"
+                }
+            }
+        },
+        "motion.authoring.solo": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Solo"
+                ],
+                "levels": {
+                    "1": "Solo",
+                    "2": "Solo",
+                    "3": "Solo",
+                    "4": "Solo",
+                    "5": "Solo"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "獨奏"
+                ],
+                "levels": {
+                    "1": "獨奏",
+                    "2": "獨奏",
+                    "3": "獨奏",
+                    "4": "獨奏",
+                    "5": "獨奏"
+                }
+            }
+        },
+        "motion.authoring.add_track": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Add track"
+                ],
+                "levels": {
+                    "1": "Add track",
+                    "2": "Add track",
+                    "3": "Add track",
+                    "4": "Add track",
+                    "5": "Add track"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "新增軌道"
+                ],
+                "levels": {
+                    "1": "新增軌道",
+                    "2": "新增軌道",
+                    "3": "新增軌道",
+                    "4": "新增軌道",
+                    "5": "新增軌道"
+                }
+            }
+        },
+        "motion.authoring.duplicate": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Duplicate"
+                ],
+                "levels": {
+                    "1": "Duplicate",
+                    "2": "Duplicate",
+                    "3": "Duplicate",
+                    "4": "Duplicate",
+                    "5": "Duplicate"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "複製"
+                ],
+                "levels": {
+                    "1": "複製",
+                    "2": "複製",
+                    "3": "複製",
+                    "4": "複製",
+                    "5": "複製"
+                }
+            }
+        },
+        "motion.authoring.remove": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Remove"
+                ],
+                "levels": {
+                    "1": "Remove",
+                    "2": "Remove",
+                    "3": "Remove",
+                    "4": "Remove",
+                    "5": "Remove"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "移除"
+                ],
+                "levels": {
+                    "1": "移除",
+                    "2": "移除",
+                    "3": "移除",
+                    "4": "移除",
+                    "5": "移除"
+                }
+            }
+        },
+        "motion.authoring.move_up": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Move up"
+                ],
+                "levels": {
+                    "1": "Move up",
+                    "2": "Move up",
+                    "3": "Move up",
+                    "4": "Move up",
+                    "5": "Move up"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "上移"
+                ],
+                "levels": {
+                    "1": "上移",
+                    "2": "上移",
+                    "3": "上移",
+                    "4": "上移",
+                    "5": "上移"
+                }
+            }
+        },
+        "motion.authoring.keyframe_offsets_from_zero_to_one_and_property_values": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keyframe offsets from zero to one and property values"
+                ],
+                "levels": {
+                    "1": "Keyframe offsets from zero to one and property values",
+                    "2": "Keyframe offsets from zero to one and property values",
+                    "3": "Keyframe offsets from zero to one and property values",
+                    "4": "Keyframe offsets from zero to one and property values",
+                    "5": "Keyframe offsets from zero to one and property values"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "由零至一嘅關鍵影格偏移同屬性數值"
+                ],
+                "levels": {
+                    "1": "由零至一嘅關鍵影格偏移同屬性數值",
+                    "2": "由零至一嘅關鍵影格偏移同屬性數值",
+                    "3": "由零至一嘅關鍵影格偏移同屬性數值",
+                    "4": "由零至一嘅關鍵影格偏移同屬性數值",
+                    "5": "由零至一嘅關鍵影格偏移同屬性數值"
+                }
+            }
+        },
+        "motion.authoring.offset_0_1": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Offset 0..1"
+                ],
+                "levels": {
+                    "1": "Offset 0..1",
+                    "2": "Offset 0..1",
+                    "3": "Offset 0..1",
+                    "4": "Offset 0..1",
+                    "5": "Offset 0..1"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "偏移 0..1"
+                ],
+                "levels": {
+                    "1": "偏移 0..1",
+                    "2": "偏移 0..1",
+                    "3": "偏移 0..1",
+                    "4": "偏移 0..1",
+                    "5": "偏移 0..1"
+                }
+            }
+        },
+        "motion.authoring.value": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Value"
+                ],
+                "levels": {
+                    "1": "Value",
+                    "2": "Value",
+                    "3": "Value",
+                    "4": "Value",
+                    "5": "Value"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "數值"
+                ],
+                "levels": {
+                    "1": "數值",
+                    "2": "數值",
+                    "3": "數值",
+                    "4": "數值",
+                    "5": "數值"
+                }
+            }
+        },
+        "motion.authoring.add_midpoint": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Add midpoint"
+                ],
+                "levels": {
+                    "1": "Add midpoint",
+                    "2": "Add midpoint",
+                    "3": "Add midpoint",
+                    "4": "Add midpoint",
+                    "5": "Add midpoint"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "新增中點"
+                ],
+                "levels": {
+                    "1": "新增中點",
+                    "2": "新增中點",
+                    "3": "新增中點",
+                    "4": "新增中點",
+                    "5": "新增中點"
+                }
+            }
+        },
+        "motion.authoring.remove_keyframe": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Remove keyframe"
+                ],
+                "levels": {
+                    "1": "Remove keyframe",
+                    "2": "Remove keyframe",
+                    "3": "Remove keyframe",
+                    "4": "Remove keyframe",
+                    "5": "Remove keyframe"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "移除關鍵影格"
+                ],
+                "levels": {
+                    "1": "移除關鍵影格",
+                    "2": "移除關鍵影格",
+                    "3": "移除關鍵影格",
+                    "4": "移除關鍵影格",
+                    "5": "移除關鍵影格"
+                }
+            }
+        },
+        "motion.authoring.motion_preview": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Motion preview"
+                ],
+                "levels": {
+                    "1": "Motion preview",
+                    "2": "Motion preview",
+                    "3": "Motion preview",
+                    "4": "Motion preview",
+                    "5": "Motion preview"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動態預覽"
+                ],
+                "levels": {
+                    "1": "動態預覽",
+                    "2": "動態預覽",
+                    "3": "動態預覽",
+                    "4": "動態預覽",
+                    "5": "動態預覽"
+                }
+            }
+        },
+        "motion.authoring.timeline_position_in_milliseconds": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Timeline position in milliseconds"
+                ],
+                "levels": {
+                    "1": "Timeline position in milliseconds",
+                    "2": "Timeline position in milliseconds",
+                    "3": "Timeline position in milliseconds",
+                    "4": "Timeline position in milliseconds",
+                    "5": "Timeline position in milliseconds"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "時間軸位置，單位毫秒"
+                ],
+                "levels": {
+                    "1": "時間軸位置，單位毫秒",
+                    "2": "時間軸位置，單位毫秒",
+                    "3": "時間軸位置，單位毫秒",
+                    "4": "時間軸位置，單位毫秒",
+                    "5": "時間軸位置，單位毫秒"
+                }
+            }
+        },
+        "motion.authoring.play": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Play"
+                ],
+                "levels": {
+                    "1": "Play",
+                    "2": "Play",
+                    "3": "Play",
+                    "4": "Play",
+                    "5": "Play"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "播放"
+                ],
+                "levels": {
+                    "1": "播放",
+                    "2": "播放",
+                    "3": "播放",
+                    "4": "播放",
+                    "5": "播放"
+                }
+            }
+        },
+        "motion.authoring.pause": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Pause"
+                ],
+                "levels": {
+                    "1": "Pause",
+                    "2": "Pause",
+                    "3": "Pause",
+                    "4": "Pause",
+                    "5": "Pause"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "暫停"
+                ],
+                "levels": {
+                    "1": "暫停",
+                    "2": "暫停",
+                    "3": "暫停",
+                    "4": "暫停",
+                    "5": "暫停"
+                }
+            }
+        },
+        "motion.authoring.stop": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Stop"
+                ],
+                "levels": {
+                    "1": "Stop",
+                    "2": "Stop",
+                    "3": "Stop",
+                    "4": "Stop",
+                    "5": "Stop"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "停止"
+                ],
+                "levels": {
+                    "1": "停止",
+                    "2": "停止",
+                    "3": "停止",
+                    "4": "停止",
+                    "5": "停止"
+                }
+            }
+        },
+        "motion.authoring.reverse": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reverse"
+                ],
+                "levels": {
+                    "1": "Reverse",
+                    "2": "Reverse",
+                    "3": "Reverse",
+                    "4": "Reverse",
+                    "5": "Reverse"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "倒播"
+                ],
+                "levels": {
+                    "1": "倒播",
+                    "2": "倒播",
+                    "3": "倒播",
+                    "4": "倒播",
+                    "5": "倒播"
+                }
+            }
+        },
+        "motion.authoring.undo_motion_edit": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Undo motion edit"
+                ],
+                "levels": {
+                    "1": "Undo motion edit",
+                    "2": "Undo motion edit",
+                    "3": "Undo motion edit",
+                    "4": "Undo motion edit",
+                    "5": "Undo motion edit"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "復原動態修改"
+                ],
+                "levels": {
+                    "1": "復原動態修改",
+                    "2": "復原動態修改",
+                    "3": "復原動態修改",
+                    "4": "復原動態修改",
+                    "5": "復原動態修改"
+                }
+            }
+        },
+        "motion.authoring.redo_motion_edit": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Redo motion edit"
+                ],
+                "levels": {
+                    "1": "Redo motion edit",
+                    "2": "Redo motion edit",
+                    "3": "Redo motion edit",
+                    "4": "Redo motion edit",
+                    "5": "Redo motion edit"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "重做動態修改"
+                ],
+                "levels": {
+                    "1": "重做動態修改",
+                    "2": "重做動態修改",
+                    "3": "重做動態修改",
+                    "4": "重做動態修改",
+                    "5": "重做動態修改"
+                }
+            }
+        },
+        "motion.authoring.reset_motion": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reset motion"
+                ],
+                "levels": {
+                    "1": "Reset motion",
+                    "2": "Reset motion",
+                    "3": "Reset motion",
+                    "4": "Reset motion",
+                    "5": "Reset motion"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "重設動態"
+                ],
+                "levels": {
+                    "1": "重設動態",
+                    "2": "重設動態",
+                    "3": "重設動態",
+                    "4": "重設動態",
+                    "5": "重設動態"
+                }
+            }
+        },
+        "motion.authoring.motion_validation_and_capability_status": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Motion validation and capability status"
+                ],
+                "levels": {
+                    "1": "Motion validation and capability status",
+                    "2": "Motion validation and capability status",
+                    "3": "Motion validation and capability status",
+                    "4": "Motion validation and capability status",
+                    "5": "Motion validation and capability status"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動態驗證同功能狀態"
+                ],
+                "levels": {
+                    "1": "動態驗證同功能狀態",
+                    "2": "動態驗證同功能狀態",
+                    "3": "動態驗證同功能狀態",
+                    "4": "動態驗證同功能狀態",
+                    "5": "動態驗證同功能狀態"
+                }
+            }
+        },
+        "motion.authoring.incomplete_layered_targets_state_triggers_beyond_show_transitions_grouping_markers_paths_colors_tran": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation."
+                ],
+                "levels": {
+                    "1": "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation.",
+                    "2": "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation.",
+                    "3": "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation.",
+                    "4": "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation.",
+                    "5": "Incomplete: layered targets, state triggers beyond show, transitions, grouping, markers, paths, colors, transforms, repeat/fill/alternate, custom curves, segment easing, spring physics, scroll/view timelines, multi-selection, clipboard keyframes, scheduled settings and durable append-only history. Qt QWidget has no native CSS custom-property or scroll/view timeline renderer; portable inputs remain preserved. Other listed capabilities require implementation."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。"
+                ],
+                "levels": {
+                    "1": "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。",
+                    "2": "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。",
+                    "3": "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。",
+                    "4": "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。",
+                    "5": "尚未完成：圖層目標、顯示以外嘅狀態觸發、轉場、群組、標記、路徑、顏色、變形、重複／填充／交替、自訂曲線、分段緩動、彈簧物理、捲動／視圖時間軸、多選、關鍵影格剪貼簿、排程設定同永久追加歷史。Qt QWidget 冇原生 CSS 自訂屬性或捲動／視圖時間軸渲染器；可攜輸入仍會保留。其他列出功能需要實作。"
+                }
+            }
+        },
+        "motion.authoring.saved_for_1_normal_state_ordered_replace_explicit_endpoints_millisecond_clock_fill_before_and_after_": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered."
+                ],
+                "levels": {
+                    "1": "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered.",
+                    "2": "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered.",
+                    "3": "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered.",
+                    "4": "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered.",
+                    "5": "Saved for %1. Normal state; ordered replace, explicit endpoints, millisecond clock, fill before and after. Unknown fields are retained; unavailable values are not rendered."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。"
+                ],
+                "levels": {
+                    "1": "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。",
+                    "2": "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。",
+                    "3": "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。",
+                    "4": "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。",
+                    "5": "已儲存至 %1。一般狀態；依次取代、明確起訖值、毫秒時鐘、前後填充。未知欄位會保留；未能使用嘅值唔會渲染。"
+                }
+            }
+        },
+        "motion.authoring.timing_must_be_numeric": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Timing must be numeric."
+                ],
+                "levels": {
+                    "1": "Timing must be numeric.",
+                    "2": "Timing must be numeric.",
+                    "3": "Timing must be numeric.",
+                    "4": "Timing must be numeric.",
+                    "5": "Timing must be numeric."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "時間必須係數字。"
+                ],
+                "levels": {
+                    "1": "時間必須係數字。",
+                    "2": "時間必須係數字。",
+                    "3": "時間必須係數字。",
+                    "4": "時間必須係數字。",
+                    "5": "時間必須係數字。"
+                }
+            }
+        },
+        "motion.authoring.switches_require_true_or_false": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Switches require true or false."
+                ],
+                "levels": {
+                    "1": "Switches require true or false.",
+                    "2": "Switches require true or false.",
+                    "3": "Switches require true or false.",
+                    "4": "Switches require true or false.",
+                    "5": "Switches require true or false."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "開關必須填 true 或 false。"
+                ],
+                "levels": {
+                    "1": "開關必須填 true 或 false。",
+                    "2": "開關必須填 true 或 false。",
+                    "3": "開關必須填 true 或 false。",
+                    "4": "開關必須填 true 或 false。",
+                    "5": "開關必須填 true 或 false。"
+                }
+            }
+        },
+        "motion.authoring.keyframes_must_be_numeric": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keyframes must be numeric."
+                ],
+                "levels": {
+                    "1": "Keyframes must be numeric.",
+                    "2": "Keyframes must be numeric.",
+                    "3": "Keyframes must be numeric.",
+                    "4": "Keyframes must be numeric.",
+                    "5": "Keyframes must be numeric."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "關鍵影格必須係數字。"
+                ],
+                "levels": {
+                    "1": "關鍵影格必須係數字。",
+                    "2": "關鍵影格必須係數字。",
+                    "3": "關鍵影格必須係數字。",
+                    "4": "關鍵影格必須係數字。",
+                    "5": "關鍵影格必須係數字。"
+                }
+            }
+        },
+        "motion.authoring.animation_and_transition": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Animation and Transition"
+                ],
+                "levels": {
+                    "1": "Animation and Transition",
+                    "2": "Animation and Transition",
+                    "3": "Animation and Transition",
+                    "4": "Animation and Transition",
+                    "5": "Animation and Transition"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動畫與轉場"
+                ],
+                "levels": {
+                    "1": "動畫與轉場",
+                    "2": "動畫與轉場",
+                    "3": "動畫與轉場",
+                    "4": "動畫與轉場",
+                    "5": "動畫與轉場"
+                }
+            }
+        },
+        "motion.authoring.motion_document_exceeds_256_kib": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Motion document exceeds 256 KiB."
+                ],
+                "levels": {
+                    "1": "Motion document exceeds 256 KiB.",
+                    "2": "Motion document exceeds 256 KiB.",
+                    "3": "Motion document exceeds 256 KiB.",
+                    "4": "Motion document exceeds 256 KiB.",
+                    "5": "Motion document exceeds 256 KiB."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動態文件超過 256 KiB。"
+                ],
+                "levels": {
+                    "1": "動態文件超過 256 KiB。",
+                    "2": "動態文件超過 256 KiB。",
+                    "3": "動態文件超過 256 KiB。",
+                    "4": "動態文件超過 256 KiB。",
+                    "5": "動態文件超過 256 KiB。"
+                }
+            }
+        },
+        "motion.authoring.motion_requires_schemaversion_1_and_a_tracks_array": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Motion requires schemaVersion 1 and a tracks array."
+                ],
+                "levels": {
+                    "1": "Motion requires schemaVersion 1 and a tracks array.",
+                    "2": "Motion requires schemaVersion 1 and a tracks array.",
+                    "3": "Motion requires schemaVersion 1 and a tracks array.",
+                    "4": "Motion requires schemaVersion 1 and a tracks array.",
+                    "5": "Motion requires schemaVersion 1 and a tracks array."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "動態需要 schemaVersion 1 同 tracks 陣列。"
+                ],
+                "levels": {
+                    "1": "動態需要 schemaVersion 1 同 tracks 陣列。",
+                    "2": "動態需要 schemaVersion 1 同 tracks 陣列。",
+                    "3": "動態需要 schemaVersion 1 同 tracks 陣列。",
+                    "4": "動態需要 schemaVersion 1 同 tracks 陣列。",
+                    "5": "動態需要 schemaVersion 1 同 tracks 陣列。"
+                }
+            }
+        },
+        "motion.authoring.at_most_32_tracks_are_accepted": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "At most 32 tracks are accepted."
+                ],
+                "levels": {
+                    "1": "At most 32 tracks are accepted.",
+                    "2": "At most 32 tracks are accepted.",
+                    "3": "At most 32 tracks are accepted.",
+                    "4": "At most 32 tracks are accepted.",
+                    "5": "At most 32 tracks are accepted."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "最多接受 32 條軌道。"
+                ],
+                "levels": {
+                    "1": "最多接受 32 條軌道。",
+                    "2": "最多接受 32 條軌道。",
+                    "3": "最多接受 32 條軌道。",
+                    "4": "最多接受 32 條軌道。",
+                    "5": "最多接受 32 條軌道。"
+                }
+            }
+        },
+        "motion.authoring.each_track_must_be_an_object": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Each track must be an object."
+                ],
+                "levels": {
+                    "1": "Each track must be an object.",
+                    "2": "Each track must be an object.",
+                    "3": "Each track must be an object.",
+                    "4": "Each track must be an object.",
+                    "5": "Each track must be an object."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "每條軌道必須係物件。"
+                ],
+                "levels": {
+                    "1": "每條軌道必須係物件。",
+                    "2": "每條軌道必須係物件。",
+                    "3": "每條軌道必須係物件。",
+                    "4": "每條軌道必須係物件。",
+                    "5": "每條軌道必須係物件。"
+                }
+            }
+        },
+        "motion.authoring.track_identity_and_easing_require_bounded_nonempty_strings": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Track identity and easing require bounded nonempty strings."
+                ],
+                "levels": {
+                    "1": "Track identity and easing require bounded nonempty strings.",
+                    "2": "Track identity and easing require bounded nonempty strings.",
+                    "3": "Track identity and easing require bounded nonempty strings.",
+                    "4": "Track identity and easing require bounded nonempty strings.",
+                    "5": "Track identity and easing require bounded nonempty strings."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "軌道識別同緩動必須係長度有限嘅非空字串。"
+                ],
+                "levels": {
+                    "1": "軌道識別同緩動必須係長度有限嘅非空字串。",
+                    "2": "軌道識別同緩動必須係長度有限嘅非空字串。",
+                    "3": "軌道識別同緩動必須係長度有限嘅非空字串。",
+                    "4": "軌道識別同緩動必須係長度有限嘅非空字串。",
+                    "5": "軌道識別同緩動必須係長度有限嘅非空字串。"
+                }
+            }
+        },
+        "motion.authoring.track_switches_must_be_booleans": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Track switches must be booleans."
+                ],
+                "levels": {
+                    "1": "Track switches must be booleans.",
+                    "2": "Track switches must be booleans.",
+                    "3": "Track switches must be booleans.",
+                    "4": "Track switches must be booleans.",
+                    "5": "Track switches must be booleans."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "軌道開關必須係布林值。"
+                ],
+                "levels": {
+                    "1": "軌道開關必須係布林值。",
+                    "2": "軌道開關必須係布林值。",
+                    "3": "軌道開關必須係布林值。",
+                    "4": "軌道開關必須係布林值。",
+                    "5": "軌道開關必須係布林值。"
+                }
+            }
+        },
+        "motion.authoring.duration_must_be_1_60000_ms_and_delay_60000_60000_ms": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Duration must be 1..60000 ms and delay -60000..60000 ms."
+                ],
+                "levels": {
+                    "1": "Duration must be 1..60000 ms and delay -60000..60000 ms.",
+                    "2": "Duration must be 1..60000 ms and delay -60000..60000 ms.",
+                    "3": "Duration must be 1..60000 ms and delay -60000..60000 ms.",
+                    "4": "Duration must be 1..60000 ms and delay -60000..60000 ms.",
+                    "5": "Duration must be 1..60000 ms and delay -60000..60000 ms."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。"
+                ],
+                "levels": {
+                    "1": "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。",
+                    "2": "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。",
+                    "3": "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。",
+                    "4": "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。",
+                    "5": "時長必須係 1..60000 ms，延遲必須係 -60000..60000 ms。"
+                }
+            }
+        },
+        "motion.authoring.keyframes_must_be_an_array": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keyframes must be an array."
+                ],
+                "levels": {
+                    "1": "Keyframes must be an array.",
+                    "2": "Keyframes must be an array.",
+                    "3": "Keyframes must be an array.",
+                    "4": "Keyframes must be an array.",
+                    "5": "Keyframes must be an array."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "關鍵影格必須係陣列。"
+                ],
+                "levels": {
+                    "1": "關鍵影格必須係陣列。",
+                    "2": "關鍵影格必須係陣列。",
+                    "3": "關鍵影格必須係陣列。",
+                    "4": "關鍵影格必須係陣列。",
+                    "5": "關鍵影格必須係陣列。"
+                }
+            }
+        },
+        "motion.authoring.each_track_requires_2_128_keyframes": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Each track requires 2..128 keyframes."
+                ],
+                "levels": {
+                    "1": "Each track requires 2..128 keyframes.",
+                    "2": "Each track requires 2..128 keyframes.",
+                    "3": "Each track requires 2..128 keyframes.",
+                    "4": "Each track requires 2..128 keyframes.",
+                    "5": "Each track requires 2..128 keyframes."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "每條軌道需要 2..128 個關鍵影格。"
+                ],
+                "levels": {
+                    "1": "每條軌道需要 2..128 個關鍵影格。",
+                    "2": "每條軌道需要 2..128 個關鍵影格。",
+                    "3": "每條軌道需要 2..128 個關鍵影格。",
+                    "4": "每條軌道需要 2..128 個關鍵影格。",
+                    "5": "每條軌道需要 2..128 個關鍵影格。"
+                }
+            }
+        },
+        "motion.authoring.each_keyframe_must_be_an_object": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Each keyframe must be an object."
+                ],
+                "levels": {
+                    "1": "Each keyframe must be an object.",
+                    "2": "Each keyframe must be an object.",
+                    "3": "Each keyframe must be an object.",
+                    "4": "Each keyframe must be an object.",
+                    "5": "Each keyframe must be an object."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "每個關鍵影格必須係物件。"
+                ],
+                "levels": {
+                    "1": "每個關鍵影格必須係物件。",
+                    "2": "每個關鍵影格必須係物件。",
+                    "3": "每個關鍵影格必須係物件。",
+                    "4": "每個關鍵影格必須係物件。",
+                    "5": "每個關鍵影格必須係物件。"
+                }
+            }
+        },
+        "motion.authoring.offsets_must_strictly_increase_from_0_to_1": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Offsets must strictly increase from 0 to 1."
+                ],
+                "levels": {
+                    "1": "Offsets must strictly increase from 0 to 1.",
+                    "2": "Offsets must strictly increase from 0 to 1.",
+                    "3": "Offsets must strictly increase from 0 to 1.",
+                    "4": "Offsets must strictly increase from 0 to 1.",
+                    "5": "Offsets must strictly increase from 0 to 1."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "偏移必須由 0 至 1 嚴格遞增。"
+                ],
+                "levels": {
+                    "1": "偏移必須由 0 至 1 嚴格遞增。",
+                    "2": "偏移必須由 0 至 1 嚴格遞增。",
+                    "3": "偏移必須由 0 至 1 嚴格遞增。",
+                    "4": "偏移必須由 0 至 1 嚴格遞增。",
+                    "5": "偏移必須由 0 至 1 嚴格遞增。"
+                }
+            }
+        },
+        "motion.authoring.keyframe_value_exceeds_the_renderer_property_bounds": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keyframe value exceeds the renderer property bounds."
+                ],
+                "levels": {
+                    "1": "Keyframe value exceeds the renderer property bounds.",
+                    "2": "Keyframe value exceeds the renderer property bounds.",
+                    "3": "Keyframe value exceeds the renderer property bounds.",
+                    "4": "Keyframe value exceeds the renderer property bounds.",
+                    "5": "Keyframe value exceeds the renderer property bounds."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "關鍵影格數值超過渲染器屬性範圍。"
+                ],
+                "levels": {
+                    "1": "關鍵影格數值超過渲染器屬性範圍。",
+                    "2": "關鍵影格數值超過渲染器屬性範圍。",
+                    "3": "關鍵影格數值超過渲染器屬性範圍。",
+                    "4": "關鍵影格數值超過渲染器屬性範圍。",
+                    "5": "關鍵影格數值超過渲染器屬性範圍。"
+                }
+            }
+        },
+        "motion.authoring.tracks_require_explicit_initial_and_final_keyframes": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Tracks require explicit initial and final keyframes."
+                ],
+                "levels": {
+                    "1": "Tracks require explicit initial and final keyframes.",
+                    "2": "Tracks require explicit initial and final keyframes.",
+                    "3": "Tracks require explicit initial and final keyframes.",
+                    "4": "Tracks require explicit initial and final keyframes.",
+                    "5": "Tracks require explicit initial and final keyframes."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "軌道需要明確嘅起始同結束關鍵影格。"
+                ],
+                "levels": {
+                    "1": "軌道需要明確嘅起始同結束關鍵影格。",
+                    "2": "軌道需要明確嘅起始同結束關鍵影格。",
+                    "3": "軌道需要明確嘅起始同結束關鍵影格。",
+                    "4": "軌道需要明確嘅起始同結束關鍵影格。",
+                    "5": "軌道需要明確嘅起始同結束關鍵影格。"
+                }
+            }
+        },
         "server.title": {
             "category": "info",
             "en": {

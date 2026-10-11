@@ -20,7 +20,11 @@ These are implementation and acceptance obligations, not newly accepted capabili
 
 ## Explicit coverage gaps
 
-The `minecraft-server-manager` contract has no existing product family. A bounded search of the material interface and website source found no corresponding implementation. It remains an application delivery gap, not a working feature or a delegated external tool.
+The `minecraft-server-manager` contract had no existing product family at the recorded baseline. The current source adds a bounded owned local Java server workspace with official version discovery, verified local JAR intake and owned process controls. Its [implementation article](../servers/local-java-server-manager.md) lists the remaining targets and management capabilities. Native compilation and lifecycle acceptance remain pending. This first unit does not satisfy the complete server contract.
+
+The current source also adds a [bounded motion authoring workspace](../interface/motion-authoring.md), expanded search-control explanations and a public-photo provider. Motion solo eligibility and atomic preset import were independently reviewed after their source repairs. Localized motion catalogue entries are integrated in source. These changes require focused native checks, real interaction and current capture evidence before acceptance. School-mode suppression, full motion authoring and comprehensive per-element guidance remain incomplete.
+
+The catalogue was fetched and reconciled again at instruction-source commit `df119a824c1a7e143f26b15e953e84cb92b13750`. An independent exact comparison passed for all 105 identities, including the five public identifier projections. No new identity was missing from the crosswalk. Requirements strengthened within existing identities still require individual implementation and acceptance.
 
 Several repository delivery contracts have no corresponding family in the current UI-focused capability inventory. Their empty mapping is an explicit requirement for a new assessed row, not an exemption. Shared-status-service-only, instruction-corpus-only and Roblox-game-only requirements have individual exclusion reasons in the crosswalk.
 

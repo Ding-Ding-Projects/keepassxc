@@ -2,6 +2,10 @@
 
 ## Current expanded feature implementation, October 11, 2026
 
+The latest catalogue refresh at instruction-source `df119a824c1a7e143f26b15e953e84cb92b13750` again matched all 105 explicit crosswalk identities. No new identity was absent. This is inventory completeness only. Motion source at `6d58ca7b6527c85f92da2a04c015995e28b73fd2` resolves unavailable solo-track suppression and validates current-schema imports atomically before preset mutation; independent source review accepted both repairs. All 49 localized motion catalogue entries are integrated. Native acceptance remains pending.
+
+The pinned native build compiled and linked the executable, then failed in Qt deployment because the deployment tool resolves a stale installation prefix. Prepending the validated Qt binary directory did not resolve that failure, and that tentative script change is not an accepted repair. No staged provenance receipt or native test verdict exists yet. Diagnose the stale prefix before another root build attempt.
+
 The current catalogue contains 105 contract identities, all explicitly mapped with incomplete product evidence. Root build is pinned to `7d3d535da08e3a05877784af9ae7c35ddca68c9c` at one job. That source repairs `TestMerge.cpp:540`, where a raw `Group*` incorrectly used `.data()`. Independent source review confirmed direct deletion and parent cleanup semantics. Full build/native acceptance remains pending.
 
 The first server workspace source is preserved locally in `cbba3df58063eab0f7a8b7806a53436473d77295`. It is not complete server management. Independent review accepted those source repairs at d9046c26d66dd2f765ee0b0dfd40559face513fa; native execution remains pending and concurrent-rename races remain documented. No server or license workflow was executed. Search child help and palette unavailable-reason accessibility have source-reviewed changes and focused regression source; execution and full guidance coverage remain pending. The root continuation prompt carries the current queue and preservation boundaries.
