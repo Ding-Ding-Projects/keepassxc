@@ -252,7 +252,7 @@ if(WIN32)
 endif()
 
 add_unit_test(NAME testmaterialsearchregistry SOURCES TestMaterialSearchRegistry.cpp
-        LIBS ${TEST_LIBRARIES})
+        LIBS ${TEST_LIBRARIES} testsupport)
 add_unit_test(NAME testmaterialmenu SOURCES TestMaterialMenu.cpp LIBS ${TEST_LIBRARIES})
 set_tests_properties(testmaterialmenu PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
 if(WIN32)
