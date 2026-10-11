@@ -2,6 +2,222 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "search.guidance.tabs": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+            "2": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+            "3": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+            "4": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+            "5": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+            "2": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+            "3": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+            "4": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+            "5": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
+        }
+    }
+},
+        "search.guidance.open": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Guide this search"
+        ],
+        "levels": {
+            "1": "Guide this search",
+            "2": "Guide this search",
+            "3": "Guide this search",
+            "4": "Guide this search",
+            "5": "Guide this search"
+        }
+    },
+    "yue": {
+        "facts": [
+            "呢個搜尋嘅指引"
+        ],
+        "levels": {
+            "1": "呢個搜尋嘅指引",
+            "2": "呢個搜尋嘅指引",
+            "3": "呢個搜尋嘅指引",
+            "4": "呢個搜尋嘅指引",
+            "5": "呢個搜尋嘅指引"
+        }
+    }
+},
+        "search.guidance.done": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Return to search (keep current query)"
+        ],
+        "levels": {
+            "1": "Return to search (keep current query)",
+            "2": "Return to search (keep current query)",
+            "3": "Return to search (keep current query)",
+            "4": "Return to search (keep current query)",
+            "5": "Return to search (keep current query)"
+        }
+    },
+    "yue": {
+        "facts": [
+            "返回搜尋（保留目前內容）"
+        ],
+        "levels": {
+            "1": "返回搜尋（保留目前內容）",
+            "2": "返回搜尋（保留目前內容）",
+            "3": "返回搜尋（保留目前內容）",
+            "4": "返回搜尋（保留目前內容）",
+            "5": "返回搜尋（保留目前內容）"
+        }
+    }
+},
+        "search.guidance.entries": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+            "2": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+            "3": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+            "4": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+            "5": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+            "2": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+            "3": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+            "4": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+            "5": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
+        }
+    }
+},
+        "search.guidance.groups": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+            "2": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+            "3": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+            "4": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+            "5": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+            "2": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+            "3": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+            "4": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+            "5": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
+        }
+    }
+},
+        "search.guidance.tags": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+            "2": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+            "3": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+            "4": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+            "5": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+            "2": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+            "3": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+            "4": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+            "5": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
+        }
+    }
+},
+        "search.guidance.group-scope": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+            "2": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+            "3": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+            "4": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+            "5": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+            "2": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+            "3": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+            "4": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+            "5": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
+        }
+    }
+},
+        "search.guidance.details": {
+    "category": "info",
+    "en": {
+        "facts": [
+            "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
+        ],
+        "levels": {
+            "1": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+            "2": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+            "3": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+            "4": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+            "5": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
+        }
+    },
+    "yue": {
+        "facts": [
+            "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
+        ],
+        "levels": {
+            "1": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+            "2": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+            "3": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+            "4": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+            "5": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
+        }
+    }
+},
     "search.entries": {
         "category": "info",
         "en": {

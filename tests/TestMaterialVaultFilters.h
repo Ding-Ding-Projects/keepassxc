@@ -26,6 +26,7 @@ class TestMaterialVaultFilters : public QObject
 
 private slots:
     void initTestCase();
+    void contextualGuidanceInventoryAndDismissal();
     void groupFilterKeepsAncestorsOfMatches();
     void healthChipsArePresentAndCheckable();
     void tagSearchPreservesSelectionAndPreviousResults();

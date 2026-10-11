@@ -769,6 +769,7 @@ namespace Material
         m_searchBar->setIdentity(QStringLiteral("vault.entries"), tr("Vault entry search"));
         m_searchBar->setCopyKeys(QStringLiteral("search.entries"), QStringLiteral("search.entries"));
         connect(Voice::notifier(), &Voice::Notifier::changed, this, &VaultScreen::updateResultLine);
+        headerLayout->addWidget(m_searchBar->guidanceWidget(QStringLiteral("search.guidance.entries")));
         headerLayout->addWidget(m_searchBar);
 
         auto* summaryRow = new QWidget(header);
@@ -797,7 +798,12 @@ namespace Material
             filterGroupScopeMenu(m_groupScopeSearch->text());
         });
         m_groupScopeSearchAction = new QWidgetAction(m_groupScopeMenu);
-        m_groupScopeSearchAction->setDefaultWidget(m_groupScopeSearch);
+        auto* scopeHost = new QWidget(m_groupScopeMenu);
+        auto* scopeLayout = new QVBoxLayout(scopeHost);
+        scopeLayout->setContentsMargins(0, 0, 0, 0);
+        scopeLayout->addWidget(m_groupScopeSearch->guidanceWidget(QStringLiteral("search.guidance.group-scope")));
+        scopeLayout->addWidget(m_groupScopeSearch);
+        m_groupScopeSearchAction->setDefaultWidget(scopeHost);
         m_groupScopeMenu->addAction(m_groupScopeSearchAction);
         m_groupScopeMenu->addSeparator();
         connect(m_groupScopeMenu, &QMenu::aboutToShow, this, &VaultScreen::rebuildGroupScopeMenu);

@@ -26,6 +26,9 @@
 #include "MaterialVoice.h"
 
 #include <QApplication>
+#include <QLabel>
+#include <QScrollArea>
+#include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPainter>
@@ -240,6 +243,64 @@ namespace Material
         setPlaceholder(m_placeholder);
         if (!m_searchId.isEmpty()) setIdentity(m_searchId, m_searchLabel);
     }
+    QWidget* SearchBar::guidanceWidget(const QString& key)
+    {
+        if (m_guidanceWidget) return m_guidanceWidget;
+        m_guidanceKey = key;
+        auto* host = new QWidget(parentWidget());
+        host->setObjectName(m_searchId + QStringLiteral(".guidance"));
+        m_guidanceWidget = host;
+        auto* layout = new QVBoxLayout(host);
+        layout->setContentsMargins(0, 0, 0, 0);
+        auto* entry = new TextButton(host);
+        entry->setObjectName(QStringLiteral("searchGuidanceEntry"));
+        entry->setCheckable(true);
+        layout->addWidget(entry);
+        auto* panel = new QWidget(host);
+        panel->setObjectName(QStringLiteral("searchGuidancePanel"));
+        auto* steps = new QVBoxLayout(panel);
+        auto* explanation = new QLabel(panel);
+        explanation->setWordWrap(true);
+        explanation->setTextInteractionFlags(Qt::TextSelectableByKeyboard | Qt::TextSelectableByMouse);
+        auto* scroll = new QScrollArea(panel);
+        scroll->setWidgetResizable(true);
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setMinimumHeight(100);
+        scroll->setMaximumHeight(180);
+        scroll->setWidget(explanation);
+        steps->addWidget(scroll);
+        auto* done = new TextButton(panel);
+        done->setObjectName(QStringLiteral("searchGuidanceDone"));
+        steps->addWidget(done);
+        layout->addWidget(panel);
+        panel->hide();
+        auto refresh = [this, entry, explanation, done, key] {
+            entry->setText(Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ") + searchLabel());
+            entry->setAccessibleName(entry->text());
+            explanation->setText(Voice::say(key));
+            explanation->setAccessibleName(explanation->text());
+            done->setText(Voice::say(QStringLiteral("search.guidance.done")));
+            done->setAccessibleName(done->text());
+        };
+        refresh();
+        const QPointer<SearchBar> owner(this);
+        connect(Voice::notifier(), &Voice::Notifier::changed, host, [owner, refresh] {
+            if (owner) refresh();
+        });
+        connect(entry, &QAbstractButton::toggled, this, [this, panel, done](bool open) {
+            panel->setVisible(open);
+            if (open) done->setFocus(Qt::OtherFocusReason);
+            else m_lineEdit->setFocus(Qt::OtherFocusReason);
+        });
+        connect(done, &QAbstractButton::clicked, entry, [entry] { entry->setChecked(false); });
+        connect(this, &QObject::destroyed, host, [host, panel] {
+            panel->hide();
+            host->setEnabled(false);
+        });
+        return host;
+    }
+
+    QString SearchBar::guidanceKey() const { return m_guidanceKey; }
     QString SearchBar::searchLabel() const { return m_searchLabel; }
     QString SearchBar::regexFlags() const { return m_regexFlags; }
     void SearchBar::setRegexFlags(const QString& flags)

@@ -20,6 +20,7 @@
 
 #include <QString>
 #include <QWidget>
+#include <QPointer>
 
 class QLineEdit;
 
@@ -70,6 +71,9 @@ namespace Material
         QString placeholder() const;
         bool setIdentity(const QString& id, const QString& label);
         void setCopyKeys(const QString& placeholderKey, const QString& labelKey);
+        /** Optional one-step guidance, placed immediately above this field by its owner. */
+        QWidget* guidanceWidget(const QString& key);
+        QString guidanceKey() const;
         QString searchId() const;
         QString searchLabel() const;
         QString regexFlags() const;
@@ -115,6 +119,8 @@ namespace Material
         QString m_searchLabel;
         QString m_placeholderKey;
         QString m_searchLabelKey;
+        QString m_guidanceKey;
+        QPointer<QWidget> m_guidanceWidget;
         QString m_regexFlags = QStringLiteral("i");
     };
 

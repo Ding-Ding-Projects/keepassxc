@@ -967,6 +967,7 @@ namespace Material
         connect(m_attachmentFilter, &SearchBar::textChanged, this, [this] { applyDetailFilter(); });
         connect(m_attachmentFilter, &SearchBar::regexToggled, this, [this] { applyDetailFilter(); });
         connect(Voice::notifier(), &Voice::Notifier::changed, this, &EntryDetail::applyDetailFilter);
+        layout->addWidget(inset(m_attachmentFilter->guidanceWidget(QStringLiteral("search.guidance.details")), {PaneMargin, 0, PaneMargin, 8}));
         layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
         m_filterStatus = new QLabel(m_attachmentsSection);
         m_filterStatus->setWordWrap(true);

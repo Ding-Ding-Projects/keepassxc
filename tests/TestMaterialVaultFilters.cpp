@@ -25,9 +25,11 @@
 #include "gui/material/MaterialEntryDelegate.h"
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialVaultScreen.h"
+#include "gui/material/MaterialTabOverflow.h"
 #include "gui/material/MaterialVaultSidebar.h"
 #include "gui/material/MaterialVoice.h"
 #include <QLineEdit>
+#include <QScopedPointer>
 
 #include <QAbstractButton>
 #include <QCoreApplication>
@@ -45,6 +47,71 @@ using namespace Material;
 void TestMaterialVaultFilters::initTestCase()
 {
     Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), TemporaryFile::createTempConfigFile());
+}
+
+void TestMaterialVaultFilters::contextualGuidanceInventoryAndDismissal()
+{
+    // Hand-maintained independently of the registration call sites.
+    const QStringList required{QStringLiteral("vault.entries"), QStringLiteral("vault.groups"),
+                               QStringLiteral("vault.tags"), QStringLiteral("vault.group-scope"),
+                               QStringLiteral("vault.attachments"), QStringLiteral("tabs.open")};
+    VaultScreen screen;
+    TabOverflow tabs(&screen);
+    QStringList covered;
+    for (auto* bar : screen.findChildren<SearchBar*>()) {
+        if (required.contains(bar->searchId()) && !bar->guidanceKey().isEmpty()) covered.append(bar->searchId());
+    }
+    covered.removeDuplicates();
+    auto complete = [&required](const QStringList& rows) {
+        for (const auto& id : required) if (!rows.contains(id)) return false;
+        return true;
+    };
+    QVERIFY(complete(covered));
+    for (const auto& id : required) {
+        QStringList omitted = covered;
+        omitted.removeAll(id);
+        QVERIFY(!complete(omitted));
+    }
+    SearchBar bar;
+    QVERIFY(bar.setIdentity(QStringLiteral("test.guidance"), QStringLiteral("Tags")));
+    bar.setCopyKeys(QStringLiteral("search.tags"), QStringLiteral("search.tags"));
+    QScopedPointer<QWidget> guidance(bar.guidanceWidget(QStringLiteral("search.guidance.tags")));
+    auto* entry = guidance->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+    auto* done = guidance->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+    auto* panel = guidance->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
+    QVERIFY(entry && done && panel);
+    QVERIFY(panel->isHidden());
+    bar.setText(QStringLiteral("work"));
+    entry->click();
+    QVERIFY(!panel->isHidden());
+    const auto originalLanguage = Voice::language();
+    for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
+        Voice::setLanguage(language);
+        QVERIFY(!entry->accessibleName().isEmpty());
+        QVERIFY(!entry->accessibleName().contains(QStringLiteral("search.guidance")));
+        QCOMPARE(bar.text(), QStringLiteral("work"));
+    }
+    done->click();
+    QVERIFY(panel->isHidden());
+    Voice::setLanguage(originalLanguage);
+    QVERIFY(panel->isHidden());
+    bar.setText(QStringLiteral("travel"));
+    QVERIFY(panel->isHidden());
+    // A sibling guidance host can survive its originating field.
+    auto* transient = new SearchBar;
+    QVERIFY(transient->setIdentity(QStringLiteral("test.guidance-lifetime"), QStringLiteral("Tags")));
+    QScopedPointer<QWidget> surviving(transient->guidanceWidget(QStringLiteral("search.guidance.tags")));
+    auto* survivingEntry = surviving->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+    auto* survivingDone = surviving->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+    survivingEntry->click();
+    delete transient;
+    QVERIFY(!surviving->isEnabled());
+    QVERIFY(surviving->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"))->isHidden());
+    Voice::setLanguage(Voice::Language::Cantonese);
+    survivingDone->click();
+    survivingEntry->click();
+    Voice::setLanguage(originalLanguage);
+    QVERIFY(!surviving->isEnabled());
 }
 
 void TestMaterialVaultFilters::groupFilterKeepsAncestorsOfMatches()

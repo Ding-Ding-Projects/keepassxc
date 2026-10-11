@@ -291,6 +291,7 @@ namespace Material
         m_groupFilter->setCopyKeys(QStringLiteral("search.groups"), QStringLiteral("search.groups"));
         connect(m_groupFilter, &SearchBar::textChanged, this, &VaultSidebar::filterGroups);
         connect(m_groupFilter, &SearchBar::regexToggled, this, [this] { filterGroups(m_groupFilter->text()); });
+        root->addWidget(m_groupFilter->guidanceWidget(QStringLiteral("search.guidance.groups")));
         root->addWidget(m_groupFilter);
         m_groupStatus = new QLabel(this);
         m_groupStatus->setWordWrap(true);
@@ -339,6 +340,7 @@ namespace Material
         connect(m_tagFilter, &SearchBar::textChanged, this, &VaultSidebar::filterTags);
         connect(m_tagFilter, &SearchBar::regexToggled, this, &VaultSidebar::filterTags);
         connect(m_tagFilter, &SearchBar::regexFlagsChanged, this, &VaultSidebar::filterTags);
+        root->addWidget(m_tagFilter->guidanceWidget(QStringLiteral("search.guidance.tags")));
         root->addWidget(m_tagFilter);
         m_tagStatus = new QLabel(this);
         m_tagStatus->setWordWrap(true);
@@ -364,6 +366,7 @@ namespace Material
 
         m_tagsOverline->setVisible(false);
         m_tagFilter->hide();
+        m_tagFilter->guidanceWidget(QStringLiteral("search.guidance.tags"))->hide();
         m_tagContainer->setVisible(false);
 
         connect(theme(), &Theme::changed, this, &VaultSidebar::applyTheme);
@@ -480,6 +483,7 @@ namespace Material
         rebuildTagChips();
         m_tagsOverline->setVisible(!m_tags.isEmpty());
         m_tagFilter->setVisible(!m_tags.isEmpty());
+        m_tagFilter->guidanceWidget(QStringLiteral("search.guidance.tags"))->setVisible(!m_tags.isEmpty());
         filterTags();
         m_tagContainer->setVisible(!m_tags.isEmpty());
 

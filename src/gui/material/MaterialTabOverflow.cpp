@@ -41,6 +41,7 @@ namespace Material
         connect(m_search, &SearchBar::regexToggled, this, [this] { rebuild(); });
         connect(m_search, &SearchBar::regexFlagsChanged, this, [this] { rebuild(); });
         connect(Voice::notifier(), &Voice::Notifier::changed, this, [this] { if (isOpen()) rebuild(); });
+        root->addWidget(m_search->guidanceWidget(QStringLiteral("search.guidance.tabs")));
         root->addWidget(m_search);
 
         auto* list = new QWidget;
