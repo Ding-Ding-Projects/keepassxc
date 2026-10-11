@@ -1323,13 +1323,13 @@ namespace Material
     void VaultScreen::clearCategorySearches()
     {
         QScopedValueRollback<bool> guard(m_syncingSearch, true);
-        m_searchBar->clear();
-        m_sidebar->groupFilter()->clear();
-        m_sidebar->tagFilter()->clear();
+        for (SearchBar* bar : {m_searchBar, m_sidebar->groupFilter(), m_sidebar->tagFilter(),
+                               m_groupScopeSearch, m_detail->attachmentFilter(), m_sheetDetail->attachmentFilter()}) {
+            bar->clear();
+            bar->setRegexEnabled(false);
+            bar->setRegexFlags(QStringLiteral("i"));
+        }
         m_sidebar->setSelectedTags({});
-        m_groupScopeSearch->clear();
-        m_detail->attachmentFilter()->clear();
-        m_sheetDetail->attachmentFilter()->clear();
         m_regexInvalid = false;
     }
 

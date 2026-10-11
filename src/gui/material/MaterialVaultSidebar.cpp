@@ -22,6 +22,7 @@
 #include "MaterialGroupDelegate.h"
 #include "MaterialIcons.h"
 #include "MaterialSearchBar.h"
+#include "MaterialRegexSafety.h"
 #include "MaterialTheme.h"
 
 #include <QAbstractButton>
@@ -580,12 +581,23 @@ namespace Material
             return;
         }
         int matches = 0;
+        QList<bool> accepted;
         for (Chip* chip : m_tagChips) {
-            const bool match = query.isEmpty() || (m_tagFilter->isRegexEnabled()
-                ? pattern.match(chip->text()).hasMatch()
-                : chip->text().contains(query, Qt::CaseInsensitive));
-            chip->setVisible(match || chip->isChecked());
+            bool match = query.isEmpty() || chip->text().contains(query, Qt::CaseInsensitive);
+            if (m_tagFilter->isRegexEnabled() && !query.isEmpty()) {
+                const auto run = runBounded(query, optionsForFlags(m_tagFilter->regexFlags()), chip->text());
+                if (!run.compiled || run.blocked || run.timedOut) {
+                    m_tagStatus->setText(tr("Pattern could not run safely. Previous results retained."));
+                    m_tagStatus->show();
+                    return;
+                }
+                match = !run.matches.isEmpty();
+            }
+            accepted.append(match || chip->isChecked());
             if (match) ++matches;
+        }
+        for (int index = 0; index < m_tagChips.size(); ++index) {
+            m_tagChips.at(index)->setVisible(accepted.at(index));
         }
         m_tagStatus->setText(tr("No tag matches this search. Selected tags remain available."));
         m_tagStatus->setVisible(!query.isEmpty() && matches == 0);

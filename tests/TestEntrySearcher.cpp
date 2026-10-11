@@ -459,6 +459,10 @@ void TestEntrySearcher::testMetadataOnly()
     QVERIFY(metadata.search(QStringLiteral("private:synthetic-secret"), m_rootGroup).isEmpty());
     entry->attributes()->set(QStringLiteral("Notes"), QStringLiteral("protected-note"), true);
     QVERIFY(metadata.search(QStringLiteral("protected-note"), m_rootGroup).isEmpty());
+    QCOMPARE(metadata.search(QStringLiteral("uuid:") + entry->uuidToHex(), m_rootGroup).size(), 1);
+    entry->setExpiryTime(QDateTime::currentDateTimeUtc().addDays(-1));
+    entry->setExpires(true);
+    QCOMPARE(metadata.search(QStringLiteral("is:expired"), m_rootGroup).size(), 1);
     EntrySearcher legacy;
     QCOMPARE(legacy.search(QStringLiteral("password:synthetic-secret"), m_rootGroup).size(), 1);
 }

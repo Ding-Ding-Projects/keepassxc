@@ -145,7 +145,7 @@ bool EntrySearcher::isCaseSensitive() const
 bool EntrySearcher::searchEntryImpl(const Entry* entry)
 {
     // Pre-load in case they are needed
-    auto attributes_keys = entry->attributes()->customKeys();
+    auto attributes_keys = m_metadataOnly ? QStringList() : entry->attributes()->customKeys();
     auto attributes = QStringList(attributes_keys + entry->attributes()->values(attributes_keys));
     auto attachments = QStringList(entry->attachments()->keys());
     // Build a group hierarchy to allow searching for e.g. /group1/subgroup*
@@ -163,7 +163,8 @@ bool EntrySearcher::searchEntryImpl(const Entry* entry)
     for (const auto& term : m_searchTerms) {
         if (m_metadataOnly && term.field != Field::Undefined && term.field != Field::Title
             && term.field != Field::Username && term.field != Field::Url && term.field != Field::Notes
-            && term.field != Field::Tag && term.field != Field::Group) {
+            && term.field != Field::Tag && term.field != Field::Group && term.field != Field::Is
+            && term.field != Field::Has && term.field != Field::Uuid && term.field != Field::Attachment) {
             return false;
         }
         switch (term.field) {

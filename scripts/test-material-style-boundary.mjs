@@ -60,12 +60,12 @@ assertCatalogInventory(settingsCatalogs);
 assert.throws(
     () => assertCatalogInventory(settingsCatalogs.filter(name => name !== 'keepassxc_en.ts')),
     /exactly 46 files/,
-    'inventory Shek Q must turn red when a translation catalog is removed',
+    'inventory guard must turn red when a translation catalog is removed',
 );
 assert.throws(
     () => assertCatalogInventory(settingsCatalogs.map(name => name === 'keepassxc_en.ts' ? 'keepassxc_renamed.ts' : name)),
     /inventory changed/,
-    'inventory Shek Q must turn red when a translation catalog is renamed',
+    'inventory guard must turn red when a translation catalog is renamed',
 );
 
 let translatedClassicMessages = 0;
