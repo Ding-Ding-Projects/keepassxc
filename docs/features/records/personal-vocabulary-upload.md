@@ -35,11 +35,24 @@ Schema version 1, one JSON object with exactly two members:
 { "schemaVersion": 1, "entries": { "original wording": "replacement" } }
 ```
 
-Bounds: file at most 64 KiB, at most 500 entries, keys 1 to 128 characters, string values of at
-most 512 characters, no `__proto__`, `constructor` or `prototype` keys, no extra members. A file
-written by an earlier build with the member named `replacements` is accepted and normalised to
-`entries` in the cache. Anything outside the contract is refused as a whole; no partial application
-ever happens.
+The current shared contract accepts at most 256 KiB of UTF-8, nesting depth 8, keys of 1 to
+160 Unicode code points and string values of at most 1,000 Unicode code points. Entry count is
+dynamic within the byte bound. Duplicate decoded keys, invalid UTF-8, unpaired surrogates,
+`__proto__`, `constructor`, `prototype`, unexpected members and unsupported versions are rejected.
+`entries` must be an object; arrays and the historical `replacements` member are not accepted by
+the website loader.
+
+The website implements this contract in `site/personal-vocabulary.mjs`. Uploads read bytes with
+fatal UTF-8 decoding. Cache loads use the same complete parser. Validated replacement data lives
+only in the separate per-visitor browser cache `kpxc.material.site.vocabulary.v1`, never in the
+general preferences document. Invalid replacement preserves the last valid document; an invalid
+cache starts with original wording. Storage failure leaves the existing active document unchanged.
+Clearing removes the cache before restoring original wording. A generation check prevents an
+older asynchronous upload from undoing clear, replacement or a presentation-mode change.
+
+The native source retained in this reader branch still has historical 64 KiB, 500-entry and
+128/512-character limits. Its old behaviour above is not evidence that the current website or
+newer native task source has passed runtime acceptance.
 
 ## Configuration
 
@@ -49,7 +62,7 @@ state is the validated cache in local configuration; the source path is never pe
 ## Failure modes
 
 - Malformed JSON, a wrong schema version, an extra member, a non-string value, an unsafe key, an
-  oversized file or too many entries: the file is refused with a notification and the previous
+  oversized file or an out-of-bounds entry: the file is refused with a notification and the previous
   cache (if any) stays active.
 - A corrupt cache on disk fails closed: zero entries are active and original wording renders.
 - The cache is revalidated on every reload, so a hand-edited configuration cannot apply partially.
@@ -60,7 +73,17 @@ Handling is local-only: no network request, no telemetry, no log line carries a 
 payload never enters exports, history snapshots, captures or public records; the Settings
 notification reports only the entry count. The cache lives in the local (not roaming) configuration.
 
-## Verification
+## Website verification
+
+`node site/test-personal-vocabulary.mjs` exercises the actual parser and storage adapter with
+neutral synthetic data: empty and 700-entry documents, exact byte and Unicode bounds, decoded
+duplicate keys, invalid UTF-8 and surrogates, malformed/schema rejection, whole-word literal
+replacement, atomic failed replacement, storage failure, reload, corrupt-cache fail-closed and
+clear. It does not load a real private file. Browser interaction, accessibility, three-language
+states and restricted-mode restoration remain pending for this source revision. Earlier reader
+captures remain bound to their original source.
+
+## Native verification
 
 - `testpersonalvocabulary` covers the schema and every bound, whole-word longest-first
   application, translator application through `QCoreApplication::translate`, replace, corrupt-cache
