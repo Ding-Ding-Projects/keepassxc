@@ -32,6 +32,7 @@ const defaults={
   vocabulary:{schemaVersion:1,entries:{}},status:{question:'',replies:[]}
 };
 let state=structuredClone(defaults);
+const restrictedControlState=new WeakMap();
 const ownKeys=(value,keys)=>value&&typeof value==='object'&&!Array.isArray(value)&&Object.keys(value).every(key=>keys.includes(key));
 function validPreferences(value){return ownKeys(value,['schemaVersion','language','dark','panel','funny','emoji','school','narrator','tabs','appearance','vocabulary','status'])&&value.schemaVersion===2&&['en','yue','both'].includes(value.language)&&typeof value.dark==='boolean'&&Number.isInteger(value.panel)&&value.panel>=0&&value.panel<panels.length&&ownKeys(value.funny,['en','yue'])&&[value.funny.en,value.funny.yue].every(level=>Number.isInteger(level)&&level>=1&&level<=5)&&typeof value.emoji==='boolean'&&typeof value.school==='boolean'&&ownKeys(value.narrator,['enabled','enVoice','yueVoice'])&&typeof value.narrator.enabled==='boolean'&&typeof value.narrator.enVoice==='string'&&value.narrator.enVoice.length<=120&&typeof value.narrator.yueVoice==='string'&&value.narrator.yueVoice.length<=120&&ownKeys(value.tabs,['order','pinned','groups'])&&Array.isArray(value.tabs.order)&&value.tabs.order.length===panels.length&&new Set(value.tabs.order).size===panels.length&&value.tabs.order.every(id=>panels.includes(id))&&Array.isArray(value.tabs.pinned)&&value.tabs.pinned.every(id=>panels.includes(id))&&ownKeys(value.tabs.groups,Object.keys(value.tabs.groups))&&Object.entries(value.tabs.groups).every(([id,name])=>panels.includes(id)&&typeof name==='string'&&name.length<=40)&&ownKeys(value.appearance,['density','accent','font','scale','radius','spacing'])&&['comfortable','compact'].includes(value.appearance.density)&&/^#[0-9a-f]{6}$/i.test(value.appearance.accent)&&['system-ui','sans'].includes(value.appearance.font)&&Number.isFinite(value.appearance.scale)&&value.appearance.scale>=.8&&value.appearance.scale<=1.4&&Number.isInteger(value.appearance.radius)&&value.appearance.radius>=0&&value.appearance.radius<=32&&Number.isInteger(value.appearance.spacing)&&value.appearance.spacing>=0&&value.appearance.spacing<=32&&ownKeys(value.status,['question','replies'])&&typeof value.status.question==='string'&&value.status.question.length<=1000&&Array.isArray(value.status.replies)&&value.status.replies.length<=20&&value.status.replies.every(reply=>typeof reply==='string'&&reply.length<=1000);}
 try {
@@ -55,7 +56,25 @@ function renderProvenance(){
   const details=$('#release-details');details.replaceChildren();
   if(releaseData)for(const [label,value] of [['source',releaseData.sourceCommit],['installerSize',String(releaseData.installer.bytes)],['packageHash',releaseData.package.sha256]]){const term=document.createElement('dt'),definition=document.createElement('dd');term.textContent=text(label);definition.textContent=value;details.append(term,definition);}
 }
+function applyRestrictedControls(){
+ const wrappers=[...document.querySelectorAll('[data-school-suppressed]')];
+ if(state.school&&wrappers.some(wrapper=>wrapper.contains(document.activeElement)))$('#school-mode')?.focus({preventScroll:true});
+ for(const wrapper of wrappers){
+  if(state.school){
+   if(!restrictedControlState.has(wrapper))restrictedControlState.set(wrapper,Object.fromEntries(['hidden','inert','aria-hidden'].map(name=>[name,wrapper.getAttribute(name)])));
+   wrapper.setAttribute('hidden','');
+   wrapper.setAttribute('inert','');
+   wrapper.setAttribute('aria-hidden','true');
+  }else{
+   const prior=restrictedControlState.get(wrapper);
+   if(!prior)continue;
+   for(const [name,value] of Object.entries(prior)){if(value===null)wrapper.removeAttribute(name);else wrapper.setAttribute(name,value);}
+   restrictedControlState.delete(wrapper);
+  }
+ }
+}
 function renderLanguage(){
+  applyRestrictedControls();
   document.documentElement.lang=state.language==='yue'?'yue-Hant':'en';
   document.querySelectorAll('[data-copy]').forEach(element=>{const value=text(element.dataset.copy);if(element.tagName.endsWith('-BUTTON')){const label=document.createElement('span');label.className='button-copy';label.textContent=value;element.replaceChildren(label);}else{element.textContent=value;}});
   $('#doc-search').label=text('search');$('#language').label=text('language');$('#regex-pattern').label=text('pattern');$('#regex-flags').label=text('flags');$('#theme-switch').ariaLabel=text('darkTheme');
