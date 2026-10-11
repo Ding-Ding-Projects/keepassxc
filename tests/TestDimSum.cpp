@@ -29,7 +29,7 @@
 #include <QLocale>
 #include <QSet>
 #include <QStringList>
-#include <QSvgRenderer>
+#include "gui/material/MaterialDimSumPhotos.h"
 #include <QTest>
 #include <QWidget>
 
@@ -60,6 +60,8 @@ void TestDimSum::init()
     // testFiresOnlyOncePerLaunch in particular used to pass on a draw that
     // testLegacyPreferenceDoesNotDisable had already latched to false.
     DimSum::resetLaunchState();
+    DimSum::s_testCatalogue=true;
+    DimSum::s_catalogue=[] { QImage image(8,8,QImage::Format_RGB32);image.fill(Qt::white);return QVector<DimSum::Dish>{{QStringLiteral("Synthetic dish"),QStringLiteral("測試點心"),QStringLiteral("https://github.com/Ding-Ding-Projects/dim-sum-photos/releases/download/catalog-v1/fixture.png"),image}}; };
     QVERIFY(!DimSum::hasShown());
 
     config()->set(Config::GUI_DimSumSurprise, true);
@@ -80,7 +82,7 @@ void TestDimSum::cleanup()
 void TestDimSum::testCatalogueParses()
 {
     const auto dishes = DimSum::catalogue();
-    QVERIFY2(dishes.size() >= 10, "the bundled catalogue should carry at least ten dishes");
+    QCOMPARE(dishes.size(),1); // Explicit in-memory fixture, not a copied catalogue.
 
     // The catalogue is parsed once and handed out by value; it must not drift.
     QCOMPARE(DimSum::catalogue().size(), dishes.size());
@@ -97,15 +99,8 @@ void TestDimSum::testEveryDishHasBothNamesAndArt()
         QVERIFY2(!dish.cantonese.isEmpty(), qPrintable(QStringLiteral("missing Cantonese name for %1").arg(dish.asset)));
         QVERIFY(dish.isValid());
 
-        QVERIFY2(dish.asset.startsWith(QLatin1String(":/dimsum/")),
-                 qPrintable(QStringLiteral("%1 is not a bundled asset").arg(dish.asset)));
-        QVERIFY2(QFile::exists(dish.asset),
-                 qPrintable(QStringLiteral("%1 is not in the qrc").arg(dish.asset)));
-
-        // Present in the qrc is not the same as drawable.
-        QSvgRenderer renderer(dish.asset);
-        QVERIFY2(renderer.isValid(), qPrintable(QStringLiteral("%1 does not parse as SVG").arg(dish.asset)));
-        QVERIFY(!renderer.defaultSize().isEmpty());
+        QVERIFY(Material::DimSumPhotos::publicAssetUrl(QUrl(dish.asset)));
+        QVERIFY(!dish.image.isNull());
 
         // A dish listed twice would skew the draw.
         QVERIFY(!seenEnglish.contains(dish.english));

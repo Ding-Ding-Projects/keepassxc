@@ -112,6 +112,7 @@ set(gui_SOURCES
         gui/material/MaterialControls.cpp
         gui/material/MaterialDialog.cpp
         gui/material/MaterialCaptureRoute.cpp
+        gui/material/MaterialDimSumPhotos.cpp
         gui/material/MaterialDimSum.cpp
         gui/material/MaterialElevation.cpp
         gui/material/MaterialElementOverrides.cpp
@@ -271,7 +272,6 @@ set(gui_SOURCES
         quickunlock/QuickUnlockInterface.cpp
         quickunlock/PinUnlock.cpp
         ../share/changelog/changelog.qrc
-        ../share/dimsum/dimsum.qrc
         ../share/icons/icons.qrc
         ../share/icons/material/material_icons.qrc
         ../share/voice/voice.qrc

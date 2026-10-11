@@ -16,6 +16,7 @@
  */
 
 #include "MaterialDimSum.h"
+#include "MaterialDimSumPhotos.h"
 #include "MaterialMotion.h"
 
 #include "MaterialButtons.h"
@@ -43,7 +44,6 @@
 #include <QRandomGenerator>
 #include <QScreen>
 #include <QSignalBlocker>
-#include <QSvgRenderer>
 #include <QTimer>
 #include <QVBoxLayout>
 
@@ -53,13 +53,6 @@
 #include <QLibrary>
 #include <windows.h>
 #endif
-
-// Q_INIT_RESOURCE declares its helper in the enclosing namespace, so the
-// bundled dishes have to be registered from file scope.
-static void initDimSumResources()
-{
-    Q_INIT_RESOURCE(dimsum);
-}
 
 namespace Material
 {
@@ -104,6 +97,7 @@ namespace Material
         quint64 s_generation = 0;
         QPointer<QObject> s_monitor;
         QPointer<DimSumCard> s_card;
+        QPointer<DimSumPhotos> s_photos;
 
         class StartupMonitor : public QObject
         {
@@ -259,26 +253,10 @@ namespace Material
                 });
         }
 
-        QPixmap renderDish(const QString& asset, int size)
+        QPixmap renderDish(const QImage& image, int size)
         {
-            QSvgRenderer renderer(asset);
-            if (!renderer.isValid()) {
-                return {};
-            }
-
-            const auto* screen = QGuiApplication::primaryScreen();
-            const qreal dpr = screen ? screen->devicePixelRatio() : 1.0;
-
-            QPixmap pixmap(QSize(qRound(size * dpr), qRound(size * dpr)));
-            pixmap.setDevicePixelRatio(dpr);
-            pixmap.fill(Qt::transparent);
-
-            QPainter painter(&pixmap);
-            painter.setRenderHint(QPainter::Antialiasing, true);
-            painter.setRenderHint(QPainter::SmoothPixmapTransform, true);
-            renderer.render(&painter, QRectF(0, 0, size, size));
-            painter.end();
-            return pixmap;
+            if (image.isNull()) return {};
+            return QPixmap::fromImage(image.scaled(size,size,Qt::KeepAspectRatio,Qt::SmoothTransformation));
         }
     } // namespace
 
@@ -288,14 +266,14 @@ namespace Material
     bool DimSum::canShow()
         {
             return !s_shown && !s_suppressed
-                   && !s_quiet() && !DimSum::catalogue().isEmpty();
+                   && !s_quiet();
         }
 
     // -------------------------------------------------------------- DimSum::Dish
 
     bool DimSum::Dish::isValid() const
     {
-        return !english.isEmpty() && !cantonese.isEmpty() && !asset.isEmpty();
+        return !english.isEmpty() && !cantonese.isEmpty() && !asset.isEmpty() && !image.isNull();
     }
 
     QString DimSum::Dish::displayName() const
@@ -309,32 +287,14 @@ namespace Material
 
     // -------------------------------------------------------------------- DimSum
 
-    QVector<DimSum::Dish> DimSum::catalogue()
-    {
-        static const QVector<Dish> dishes = [] {
-            initDimSumResources();
-
-            QVector<Dish> parsed;
-            QFile file(QStringLiteral(":/dimsum/dimsum.json"));
-            if (!file.open(QIODevice::ReadOnly)) {
-                return parsed;
-            }
-
-            const QJsonArray array = QJsonDocument::fromJson(file.readAll()).object().value("dishes").toArray();
-            parsed.reserve(array.size());
-            for (const QJsonValue& value : array) {
-                const QJsonObject object = value.toObject();
-                const Dish dish{object.value("english").toString(),
-                                object.value("cantonese").toString(),
-                                object.value("asset").toString()};
-                if (dish.isValid()) {
-                    parsed.append(dish);
-                }
-            }
-            return parsed;
-        }();
-        return dishes;
-    }
+    bool DimSum::s_testCatalogue=false;
+    std::function<QVector<DimSum::Dish>()> DimSum::s_catalogue = [] {
+        const auto photo=DimSumPhotos::cachedPhoto();
+        if(photo.image.isNull())return QVector<Dish>{};
+        if(qApp) { qApp->setProperty("dimSumPhotoCoverage",photo.coverage.toVariantMap());qApp->setProperty("dimSumPhotoCatalogRevision",photo.revision);qApp->setProperty("dimSumPhotoIntegrity",photo.officialDigestAvailable?QStringLiteral("official-sha256"):QStringLiteral("https-size-and-local-hash-only")); }
+        return QVector<Dish>{{photo.english,photo.cantonese,photo.url,photo.image}};
+    };
+    QVector<DimSum::Dish> DimSum::catalogue() { return s_catalogue(); }
 
     void DimSum::beginStartup()
     {
@@ -378,7 +338,30 @@ namespace Material
         QTimer::singleShot(StartupGrace, qApp, [host, generation] {
             if (generation != s_generation) return;
             s_pending = false;
-            if (!showNow(host)) suppress();
+            if (s_testCatalogue && showNow(host)) return;
+            if (!host || !canShow() || !isUsableHost(host)) { suppress(); return; }
+            s_photos=new DimSumPhotos(qApp);
+            qApp->setProperty("dimSumPhotoState",QStringLiteral("resolving-public-photo"));
+            QObject::connect(s_photos,&DimSumPhotos::ready,qApp,[host,generation](const DimSumPhotos::Photo& photo) {
+                if(generation!=s_generation)return;
+                qApp->setProperty("dimSumPhotoCoverage",photo.coverage.toVariantMap());
+                qApp->setProperty("dimSumPhotoOfficialDigest",photo.officialDigestAvailable);
+                qApp->setProperty("dimSumPhotoCatalogRevision",photo.revision);
+                qApp->setProperty("dimSumPhotoIntegrity",photo.officialDigestAvailable?QStringLiteral("official-sha256"):QStringLiteral("https-size-and-local-hash-only"));
+                const Dish dish{photo.english,photo.cantonese,photo.url,photo.image};
+                if (!present(dish,host)) suppress();
+                else qApp->setProperty("dimSumPhotoState",QStringLiteral("validated-public-photo"));
+                if(s_photos)s_photos->deleteLater();s_photos=nullptr;
+            });
+            QObject::connect(s_photos,&DimSumPhotos::unavailable,qApp,[host,generation](const QString& reason) {
+                if(generation!=s_generation)return;
+                qApp->setProperty("dimSumPhotoState",QStringLiteral("unavailable"));
+                qApp->setProperty("dimSumPhotoReason",reason);
+                if(s_photos)s_photos->deleteLater();s_photos=nullptr;
+                if(showNow(host))qApp->setProperty("dimSumPhotoState",QStringLiteral("offline-validated-cache"));
+                else suppress();
+            });
+            s_photos->start();
         });
     }
 
@@ -390,8 +373,12 @@ namespace Material
         }
 
         const QVector<Dish> dishes = catalogue();
-        const Dish dish = dishes.at(QRandomGenerator::system()->bounded(dishes.size()));
-
+        if(dishes.isEmpty())return false;
+        return present(dishes.at(QRandomGenerator::system()->bounded(int(dishes.size()))),parent);
+    }
+    bool DimSum::present(const Dish& dish,QWidget* parent)
+    {
+        if(!dish.isValid() || !canShow() || !isUsableHost(parent))return false;
         s_shown = true;
         auto* card = new DimSumCard(dish, parent->window());
         s_card = card;
@@ -407,6 +394,7 @@ namespace Material
     void DimSum::suppress()
     {
         s_suppressed = true;
+        if(s_photos) { s_photos->cancel();s_photos->deleteLater();s_photos=nullptr; }
         if (s_card) {
             s_card->hide();
             s_card->deleteLater();
@@ -454,7 +442,9 @@ namespace Material
 
         m_artLabel = new QLabel(m_card);
         m_artLabel->setFixedSize(ArtSize, ArtSize);
-        m_artLabel->setPixmap(renderDish(m_dish.asset, ArtSize));
+        m_artLabel->setAccessibleName(m_dish.displayName());
+        m_artLabel->setAccessibleDescription(tr("Public catalogue photograph of %1").arg(m_dish.displayName()));
+        m_artLabel->setPixmap(renderDish(m_dish.image, ArtSize));
         m_artLabel->setStyleSheet(QStringLiteral("background: transparent;"));
         row->addWidget(m_artLabel, 0, Qt::AlignTop);
 

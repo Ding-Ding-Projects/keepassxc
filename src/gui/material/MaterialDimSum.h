@@ -21,12 +21,14 @@
 #include "MaterialTheme.h"
 
 #include <QPointer>
+#include <QImage>
 #include <QString>
 #include <QVector>
 #include <QWidget>
 #include <functional>
 
 class TestMaterialDimSum;
+class TestDimSum;
 
 class QLabel;
 
@@ -48,24 +50,25 @@ namespace Material
      * during an update, while a dialog is open, while the desktop is quiet, and
      * during a capture route. Legacy off preferences are retired at startup.
      *
-     * Everything it draws is bundled in `:/dimsum`; nothing is fetched.
+     * Photos resolve from the public catalogue and published assets, or a validated private cache.
      */
     class DimSum
     {
     public:
-        /** One catalogue entry: the dish in both languages plus its bundled art. */
+        /** One catalogue entry: the dish in both languages plus its validated public photo. */
         struct Dish
         {
             QString english;
             QString cantonese;
             QString asset;
+            QImage image;
 
             bool isValid() const;
             /** "Shrimp dumpling · 蝦餃", with the active language's name leading. */
             QString displayName() const;
         };
 
-        /** The bundled dishes, parsed once from `:/dimsum/dimsum.json`. */
+        /** The currently valid public-photo cache; never the legacy bundled artwork. */
         static QVector<Dish> catalogue();
 
         /** Latch startup eligibility before opening databases or processing user input. */
@@ -106,6 +109,10 @@ namespace Material
 
     private:
         friend class ::TestMaterialDimSum;
+        friend class ::TestDimSum;
+        static std::function<QVector<Dish>()> s_catalogue;
+        static bool s_testCatalogue;
+        static bool present(const Dish& dish, QWidget* parent);
         static std::function<quint32(quint32)> s_random;
         static std::function<bool()> s_quiet;
         static bool canShow();

@@ -21,7 +21,14 @@
 #include <QRandomGenerator>
 #include <QSettings>
 #include <QStandardPaths>
-#include <QSvgRenderer>
+#include "gui/material/MaterialDimSumPhotos.h"
+#include <QBuffer>
+#include <QFile>
+#include <QDateTime>
+#include <QImageReader>
+#include <QCryptographicHash>
+#include <QJsonArray>
+#include <QJsonDocument>
 #include <QTemporaryDir>
 #include <QTest>
 #include <QTimer>
@@ -36,10 +43,13 @@ private slots:
     void initTestCase()
     {
         QVERIFY(Crypto::init());
+        m_originalCatalogue=DimSum::s_catalogue;
     }
     void init()
     {
         DimSum::resetLaunchState();
+        DimSum::s_testCatalogue=true;
+        DimSum::s_catalogue=[] { QImage image(8,8,QImage::Format_RGB32);image.fill(Qt::white);return QVector<DimSum::Dish>{{QStringLiteral("Synthetic dish"),QStringLiteral("測試點心"),QStringLiteral("https://github.com/Ding-Ding-Projects/dim-sum-photos/releases/download/catalog-v1/fixture.png"),image}}; };
         config()->set(Config::GUI_DimSumSurprise, true);
         config()->set(Config::GUI_MinimizeOnStartup, false);
         config()->set(Config::OpenPreviousDatabasesOnStartup, true);
@@ -59,6 +69,8 @@ private slots:
     }
     void cleanupTestCase()
     {
+        DimSum::s_catalogue=m_originalCatalogue;
+        DimSum::s_testCatalogue=false;
         m_window.reset();
     }
     void drawBoundary_data()
@@ -292,15 +304,77 @@ private slots:
         QTest::qWait(1600);
         QVERIFY(!DimSum::hasShown());
     }
-    void assetsAreLocalAndNamed()
+    void publicPhotosAreNamedAndNoLegacyFallback()
     {
         QVERIFY(!DimSum::catalogue().isEmpty());
         for (const auto& dish : DimSum::catalogue()) {
-            QVERIFY(dish.asset.startsWith(QStringLiteral(":/dimsum/")));
-            QVERIFY(QSvgRenderer(dish.asset).isValid());
+            QVERIFY(Material::DimSumPhotos::publicAssetUrl(QUrl(dish.asset)));
+            QVERIFY(!dish.image.isNull());
             QVERIFY(dish.displayName().contains(dish.english));
             QVERIFY(dish.displayName().contains(dish.cantonese));
         }
+    }
+    void providerRejectsMissingAndAmbiguousAssets()
+    {
+        using Photos=Material::DimSumPhotos;
+        const QJsonObject row{{"name",QJsonObject{{"en","Fixture"},{"zhHant",QStringLiteral("測試")}}},{"image",QJsonObject{{"path","images/fixture.png"}}}};
+        const QJsonObject catalogue{{"schemaVersion","1.0.0"},{"total",1},{"imageSpecification",QJsonObject{{"format","png"},{"minimumWidth",1024},{"minimumHeight",1024}}},{"dishes",QJsonArray{row}}};
+        const auto dishes=Photos::parseCatalogue(QJsonDocument(catalogue).toJson());QCOMPARE(dishes.size(),1);
+        QVERIFY(Photos::joinAssets(dishes,{}).isEmpty());
+        QCOMPARE(Photos::resolveAssets(dishes,{}).unmatched,1);
+        QJsonObject asset{{"name","fixture.png"},{"state","uploaded"},{"size",100},{"browser_download_url","https://github.com/Ding-Ding-Projects/dim-sum-photos/releases/download/catalog-v1/fixture.png"},{"digest",QStringLiteral("sha256:")+QString(64,QLatin1Char('a'))}};
+        QCOMPARE(Photos::joinAssets(dishes,{asset}).size(),1);
+        auto conflicting=asset;conflicting.insert("digest",QStringLiteral("sha256:")+QString(64,QLatin1Char('b')));
+        QVERIFY(Photos::joinAssets(dishes,{asset,conflicting}).isEmpty());
+        QCOMPARE(Photos::resolveAssets(dishes,{asset,conflicting}).ambiguous,1);
+        asset.insert("state","starter");QVERIFY(Photos::joinAssets(dishes,{asset}).isEmpty());
+        QVERIFY(!Photos::publicAssetUrl(QUrl(QStringLiteral("https://example.com/fixture.png"))));
+        QVERIFY(!Photos::publicAssetUrl(QUrl(QStringLiteral("https://github.com/Ding-Ding-Projects/dim-sum-catalog-archive/releases/download/images-v1/fixture.png"))));
+        auto incomplete=catalogue;incomplete.insert("total",2);QVERIFY(Photos::parseCatalogue(QJsonDocument(incomplete).toJson()).isEmpty());
+    }
+    void providerValidatesPngDigestDimensionsAndNoCacheFallback()
+    {
+        using Photos=Material::DimSumPhotos;
+        QImage fixture(1024,1024,QImage::Format_RGB32);fixture.fill(Qt::white);
+        QByteArray bytes;QBuffer buffer(&bytes);QVERIFY(buffer.open(QIODevice::WriteOnly));QVERIFY(fixture.save(&buffer,"PNG"));
+        Photos::Photo photo;photo.bytes=bytes.size();photo.digest=QStringLiteral("sha256:")+QString::fromLatin1(QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex());
+        const int decoderBudget=QImageReader::allocationLimit();
+        QImage result;QVERIFY(Photos::validImage(bytes,photo,&result));QCOMPARE(result.size(),fixture.size());
+        QCOMPARE(QImageReader::allocationLimit(),decoderBudget);
+        QVERIFY(result.sizeInBytes()<=64*1024*1024);
+        auto wrong=photo;wrong.digest=QStringLiteral("sha256:")+QString(64,QLatin1Char('0'));QVERIFY(!Photos::validImage(bytes,wrong,nullptr));
+        wrong=photo;wrong.minimumWidth=2048;QVERIFY(!Photos::validImage(bytes,wrong,nullptr));
+        const QByteArray svg("<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"1024\" height=\"1024\"/>");
+        wrong=photo;wrong.bytes=svg.size();wrong.digest=QStringLiteral("sha256:")+QString::fromLatin1(QCryptographicHash::hash(svg,QCryptographicHash::Sha256).toHex());
+        QVERIFY(!Photos::validImage(svg,wrong,nullptr));
+        QTemporaryDir emptyCache;QVERIFY(emptyCache.isValid());QVERIFY(Photos::cachedPhoto(emptyCache.path()).image.isNull());
+        DimSum::s_catalogue=[] { return QVector<DimSum::Dish>{}; };
+        QVERIFY(!DimSum::showNow(nullptr));QVERIFY(!DimSum::hasShown());
+    }
+    void providerCacheRetainsDimensionsAndCoverage()
+    {
+        using Photos=Material::DimSumPhotos;
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());Photos provider(nullptr,temporary.path());
+        QImage fixture(1024,1024,QImage::Format_RGB32);fixture.fill(Qt::white);
+        QByteArray bytes;QBuffer buffer(&bytes);QVERIFY(buffer.open(QIODevice::WriteOnly));QVERIFY(fixture.save(&buffer,"PNG"));
+        Photos::Photo photo;photo.english=QStringLiteral("Fixture");photo.cantonese=QStringLiteral("測試");photo.filename=QStringLiteral("fixture.png");photo.url=QStringLiteral("https://github.com/Ding-Ding-Projects/dim-sum-photos/releases/download/catalog-v1/fixture.png");photo.bytes=bytes.size();photo.digest=QStringLiteral("sha256:")+QString::fromLatin1(QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex());
+        QVERIFY(Photos::validImage(bytes,photo,&photo.image));
+        provider.m_revision=QString(40,QLatin1Char('a'));provider.m_dishes={photo};provider.m_assets={QJsonObject{{"name",photo.filename},{"state","uploaded"},{"size",photo.bytes},{"digest",photo.digest},{"browser_download_url",photo.url}}};
+        QVERIFY(provider.saveCache(photo,bytes));
+        auto cached=Photos::cachedPhoto(temporary.path());QVERIFY(!cached.image.isNull());QCOMPARE(cached.minimumWidth,1024);QCOMPARE(cached.minimumHeight,1024);QVERIFY(cached.officialDigestAvailable);
+        QCOMPARE(cached.coverage.value("publishedDishes").toInt(),1);QCOMPARE(cached.coverage.value("unmatchedDishes").toInt(),0);
+        QFile receipt(temporary.path()+QStringLiteral("/receipt.json"));QVERIFY(receipt.open(QIODevice::ReadOnly));const auto original=QJsonDocument::fromJson(receipt.readAll()).object();receipt.close();
+        auto store=[&receipt](const QJsonObject& object) { QVERIFY(receipt.open(QIODevice::WriteOnly|QIODevice::Truncate));receipt.write(QJsonDocument(object).toJson());receipt.close(); };
+        for(const auto& key:{QStringLiteral("minimumWidth"),QStringLiteral("minimumHeight"),QStringLiteral("discoveredAssets"),QStringLiteral("publishedDishes"),QStringLiteral("completeAssetDiscovery")}) {
+            auto missing=original;missing.remove(key);store(missing);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        }
+        auto changed=original;changed.insert("minimumWidth",2048);store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.insert("officialDigest",QStringLiteral("sha256:")+QString(64,QLatin1Char('0')));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.insert("publishedDishes",2);store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.insert("english",QString(257,QLatin1Char('x')));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.insert("retrievedAt",QDateTime::currentDateTimeUtc().addSecs(-25*60*60).toString(Qt::ISODate));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.insert("officialDigest",QString());store(changed);cached=Photos::cachedPhoto(temporary.path());QVERIFY(!cached.image.isNull());QVERIFY(!cached.officialDigestAvailable);
+        store(original);QVERIFY(!Photos::cachedPhoto(temporary.path()).image.isNull());
     }
     void programmaticOpenCancelsPendingCard()
     {
@@ -311,6 +385,7 @@ private slots:
         programmaticOpen(true);
     }
 private:
+    std::function<QVector<DimSum::Dish>()> m_originalCatalogue;
     QScopedPointer<MainWindow> m_window;
     QStringList m_excludedEvents;
     bool eventFilter(QObject* watched, QEvent* event) override
