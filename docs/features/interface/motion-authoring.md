@@ -18,13 +18,13 @@ The motion tab has its own search field, separate from the appearance-property s
 
 The existing anchored regex builder belongs to search identity `appearance.editor.motion`; its flags apply to this field only. Invalid, blocked or timed-out patterns retain the last valid filter. Row visibility updates atomically after the bounded matcher finishes, and table refreshes reapply that filter. The field exposes a visible result count or unavailable-pattern message and the same accessible description. Ctrl+F within the motion tab focuses its search. Full command-palette teleport and advanced timeline navigation remain incomplete.
 
-New motion-search copy uses the existing motion catalogue adapter. The five new catalogue entries require integration before Cantonese and bilingual copy is complete; until then the adapter visibly uses English source text. Native localization and keyboard acceptance remain pending.
+New motion-search copy uses the existing motion catalogue adapter. The five new catalogue entries are integrated with English and Cantonese at all five levels; bilingual copy uses the existing adapter. Native localization and keyboard acceptance remain pending.
 
 ## Verification status
 
 The focused `motionInspectorSearchPreservesDocumentAndSelection` source fixture covers independent queries, clear, case flags, invalid and blocked patterns, selected-row preservation, unknown-field document preservation and registry/builder ownership. It has not been executed.
 
-Source fixtures in `TestMaterialAppearanceEditor` cover interpolation, mute/solo/order conflicts, timing and offset rejection, byte bounds, unknown-field persistence, preset/style round trips, cancellation, a direct live stylesheet consumer and reduced-motion behavior. Repair fixtures also cover unavailable solo tracks, atomic rejection of invalid current-schema preset imports and future-schema round trips. Independent source review accepted both repairs. These fixtures have not been executed for this candidate. Compilation, real target interactions, timed samples, performance/teardown and the complete language/theme/scale/viewport matrix remain pending. All 49 motion catalogue keys are integrated with English, Cantonese and bilingual source copy; rendered localization remains unverified.
+Source fixtures in `TestMaterialAppearanceEditor` cover interpolation, mute/solo/order conflicts, timing and offset rejection, byte bounds, unknown-field persistence, preset/style round trips, cancellation, a direct live stylesheet consumer and reduced-motion behavior. Repair fixtures also cover unavailable solo tracks, atomic rejection of invalid current-schema preset imports and future-schema round trips. Independent source review accepted both repairs. These fixtures have not been executed for this candidate. Compilation, real target interactions, timed samples, performance/teardown and the complete language/theme/scale/viewport matrix remain pending. All 54 motion catalogue keys are integrated with English, Cantonese and bilingual source copy; rendered localization remains unverified.
 
 After the normal root build, the focused native command is:
 

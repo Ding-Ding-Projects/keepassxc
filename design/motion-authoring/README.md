@@ -28,8 +28,8 @@ Preview states: empty, valid and stopped, playing forward, paused, reversing, co
 | Bounds and cancellation | 256 KiB/document, 32 tracks, 128 frames/track, 16 concurrent players, 16 ms timer | Validation before authoring replacement; invalid portable input retained with diagnostics | Native teardown/performance pending |
 | Style copy and presets/import/export | Existing ElementOverrides JSON, existing appearance operations | Nested versioned motion object, unknown root/track/frame fields preserved | Focused source fixtures written; execution pending |
 | Reset/history | Motion reset, element/global reset; bounded session undo/redo | Session snapshots only | Durable append-only history and scheduled settings incomplete |
-| Local track inspector search | Independent SearchBar `appearance.editor.motion`, existing anchored builder, Ctrl+F | Names/state/property only; session-local; last valid filter retained; selected track and document unchanged | Focused fixture written, not executed; five new catalogue entries pending integration |
-| Localization/accessibility | Voice catalogue keys, change notifier, table names, keyboard editing | Private key patch requires integration | English fallback until integration; three-mode native acceptance pending |
+| Local track inspector search | Independent SearchBar `appearance.editor.motion`, existing anchored builder, Ctrl+F | Names/state/property only; session-local; last valid filter retained; selected track and document unchanged | Focused fixture written, not executed; five new catalogue entries integrated; rendered localization pending |
+| Localization/accessibility | Voice catalogue keys, change notifier, table names, keyboard editing | 54 catalogue entries integrated in source | three-mode native acceptance pending |
 
 ## Renderer boundaries and remaining work
 
