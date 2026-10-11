@@ -133,15 +133,21 @@ namespace Material {
         QJsonObject result;
         if(!std::isfinite(ms)||!validate(d))return result;
         const auto ts=d.value("tracks").toArray();
+        const auto renderable = [&state](const QJsonObject& track) {
+            return properties().contains(track.value("property").toString())
+                   && curves().contains(track.value("easing").toString())
+                   && track.value("state").toString() == state
+                   && track.value("enabled").toBool() && !track.value("mute").toBool();
+        };
         bool solo=false;
         for(const auto& v:ts){
             auto t=v.toObject();
-            if(t.value("state")==state && t.value("enabled").toBool()&&!t.value("mute").toBool()&&t.value("solo").toBool())solo=true;
+            if(renderable(t) && t.value("solo").toBool())solo=true;
         }
         for(const auto& v:ts) {
             const auto t=v.toObject();
             const QString p=t.value("property").toString();
-            if(!properties().contains(p)||!curves().contains(t.value("easing").toString())||t.value("state")!=state||!t.value("enabled").toBool()||t.value("mute").toBool()||(solo&&!t.value("solo").toBool()))continue;
+            if(!renderable(t)||(solo&&!t.value("solo").toBool()))continue;
             const double x=reduced?1.0:qBound(0.0,(ms-t.value("delay").toDouble())/t.value("duration").toDouble(),1.0);
             const auto fs=t.value("keyframes").toArray();
             double value=fs.last().toObject().value("value").toDouble();

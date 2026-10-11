@@ -409,6 +409,17 @@ void TestMaterialAppearanceEditor::motionInterpolationAndValidation()
     unavailable["tracks"]=ts;
     QVERIFY(MotionDocument::validate(unavailable));
     QVERIFY(MotionDocument::sample(unavailable,500,QStringLiteral("normal"),false).isEmpty());
+    for (const auto* unavailableField : {"property", "easing"}) {
+        auto candidate=d;
+        auto candidateTracks=d.value("tracks").toArray();
+        auto unavailableSolo=candidateTracks.first().toObject();
+        unavailableSolo["solo"]=true;
+        unavailableSolo[unavailableField]=QStringLiteral("futureUnavailable");
+        candidateTracks.append(unavailableSolo);
+        candidate["tracks"]=candidateTracks;
+        QVERIFY(MotionDocument::validate(candidate));
+        QCOMPARE(MotionDocument::sample(candidate,350,QStringLiteral("normal"),false).value("radius").toInt(),10);
+    }
     auto tooMany=d;QJsonArray many;
     for(int i=0;i<33;++i)many.append(d.value("tracks").toArray().first());
     tooMany["tracks"]=many;QVERIFY(!MotionDocument::validate(tooMany));
@@ -448,6 +459,28 @@ void TestMaterialAppearanceEditor::motionPersistenceAndCancellation()
     QJsonObject malformedPreset{{"schemaVersion",1},{"presets",QJsonObject{{"Bad motion",QJsonObject{{"motion",QJsonArray{}}}}}}};
     QVERIFY(!editor.importPresets(QString::fromUtf8(QJsonDocument(malformedPreset).toJson())));
     QCOMPARE(editor.presetNames().contains(QStringLiteral("Bad motion")),false);
+    const QString beforeInvalidImport=editor.exportPresets();
+    for (int invalidCase=0; invalidCase<4; ++invalidCase) {
+        auto invalidMotion=authoredMotion();
+        auto tracks=invalidMotion.value("tracks").toArray();
+        auto track=tracks.first().toObject();
+        if(invalidCase==0) track["duration"]=0;
+        if(invalidCase==1) track["enabled"]=QStringLiteral("true");
+        if(invalidCase==2) track["keyframes"]=QJsonArray{};
+        if(invalidCase==3) invalidMotion.remove("tracks");
+        if(invalidCase!=3){tracks[0]=track;invalidMotion["tracks"]=tracks;}
+        QJsonObject candidatePresets;
+        candidatePresets["A valid candidate"]=QJsonObject{{"motion",authoredMotion()}};
+        candidatePresets["Z invalid candidate"]=QJsonObject{{"motion",invalidMotion}};
+        const QJsonObject candidate{{"schemaVersion",1},{"presets",candidatePresets}};
+        QVERIFY(!editor.importPresets(QString::fromUtf8(QJsonDocument(candidate).toJson())));
+        QCOMPARE(editor.exportPresets(),beforeInvalidImport);
+    }
+    auto futureMotion=authoredMotion();futureMotion["schemaVersion"]=2;futureMotion["futureTool"]=QStringLiteral("retained unavailable");
+    const QJsonObject futurePreset{{"schemaVersion",1},{"presets",QJsonObject{{"Future motion",QJsonObject{{"motion",futureMotion}}}}}};
+    QVERIFY(editor.importPresets(QString::fromUtf8(QJsonDocument(futurePreset).toJson())));
+    const auto futureRoundTrip=QJsonDocument::fromJson(editor.exportPresets().toUtf8()).object().value("presets").toObject();
+    QCOMPARE(futureRoundTrip.value("Future motion").toObject().value("motion").toObject(),futureMotion);
     editor.copyStyleButton()->click();
     QLabel other(QStringLiteral("Other"));
     other.setObjectName(QStringLiteral("motionOther"));

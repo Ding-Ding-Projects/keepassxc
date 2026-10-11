@@ -56,6 +56,7 @@
 #include <QWindow>
 
 #include <functional>
+#include <cmath>
 
 namespace Material
 {
@@ -1154,6 +1155,20 @@ namespace Material
             if (!motion.isObject() || QJsonDocument(motion.toObject()).toJson(QJsonDocument::Compact).size() > 262144) {
                 if (error) *error = tr("Motion must be an object no larger than 256 KiB");
                 return false;
+            }
+            const auto document = motion.toObject();
+            const auto version = document.value(QStringLiteral("schemaVersion"));
+            if (!version.isDouble() || !std::isfinite(version.toDouble())
+                || version.toDouble() < 1 || std::floor(version.toDouble()) != version.toDouble()) {
+                if (error) *error = tr("Motion schemaVersion must be a positive integer");
+                return false;
+            }
+            if (version == QJsonValue(1)) {
+                QString diagnostic;
+                if (!MotionDocument::validate(document, &diagnostic)) {
+                    if (error) *error = motionCopy(diagnostic);
+                    return false;
+                }
             }
         }
         int imported = 0;
