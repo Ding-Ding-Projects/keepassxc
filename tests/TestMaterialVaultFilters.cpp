@@ -166,6 +166,8 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     QCOMPARE(detail.visibleFieldKeys().size(), 4);
 
     detail.attachmentFilter()->setText(QStringLiteral("acme"));
+    QVERIFY(detail.visibleFieldKeys().isEmpty());
+    detail.attachmentFilter()->setText(QStringLiteral("Username"));
     QCOMPARE(detail.visibleFieldKeys(), QStringList{QStringLiteral("Username")});
     auto rows = detail.findChildren<QAbstractButton*>();
     int visibleAttachments = 0;
@@ -195,4 +197,31 @@ void TestMaterialVaultFilters::detailFilterNarrowsFieldsAndAttachments()
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailHistory")));
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailCopyPassword"))->isEnabled());
     QVERIFY(detail.findChild<QAbstractButton*>(QStringLiteral("entryDetailOpenUrl"))->isEnabled());
+}
+
+void TestMaterialVaultFilters::tagSearchPreservesSelectionAndPreviousResults()
+{
+    VaultSidebar sidebar;
+    sidebar.setTags({QStringLiteral("work"), QStringLiteral("personal"), QStringLiteral("travel")});
+    sidebar.setSelectedTags({QStringLiteral("work")});
+    sidebar.show();
+    sidebar.tagFilter()->setText(QStringLiteral("travel"));
+    auto visible = [&sidebar](const QString& text) {
+        for (auto* chip : sidebar.findChildren<Chip*>()) {
+            if (chip->text() == text) return !chip->isHidden();
+        }
+        return false;
+    };
+    QVERIFY(visible(QStringLiteral("work")));
+    QVERIFY(visible(QStringLiteral("travel")));
+    QVERIFY(!visible(QStringLiteral("personal")));
+    QCOMPARE(sidebar.selectedTags(), QStringList{QStringLiteral("work")});
+    QCOMPARE(sidebar.groupFilter()->text(), QString());
+    sidebar.tagFilter()->setRegexEnabled(true);
+    sidebar.tagFilter()->setText(QStringLiteral("["));
+    QVERIFY(visible(QStringLiteral("travel")));
+    QVERIFY(!visible(QStringLiteral("personal")));
+    sidebar.tagFilter()->clear();
+    QVERIFY(visible(QStringLiteral("personal")));
+    QCOMPARE(sidebar.selectedTags(), QStringList{QStringLiteral("work")});
 }

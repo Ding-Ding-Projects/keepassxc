@@ -10,6 +10,7 @@
 #include <QLayoutItem>
 #include <QLineEdit>
 #include <QScrollArea>
+#include <QRegularExpression>
 #include <QVBoxLayout>
 
 namespace Material
@@ -32,6 +33,7 @@ namespace Material
         m_search->setPlaceholder(tr("Search every open database tab"));
         connect(m_search, &SearchBar::textChanged, this, [this] { rebuild(); });
         connect(m_search, &SearchBar::regexToggled, this, [this] { rebuild(); });
+        connect(m_search, &SearchBar::regexFlagsChanged, this, [this] { rebuild(); });
         root->addWidget(m_search);
 
         auto* list = new QWidget;
@@ -53,6 +55,7 @@ namespace Material
         m_empty->hide();
         root->addWidget(m_empty);
 
+        connect(this, &Overlay::closed, m_search, &SearchBar::clear);
         setSheetWidth(560);
         setSheetTopMargin(72);
         setSheetWidget(m_sheet);
@@ -85,8 +88,14 @@ namespace Material
 
     void TabOverflow::rebuild()
     {
-        clearRows();
         const QString query = m_search->text();
+        if (m_search->isRegexEnabled() && !query.isEmpty() && !QRegularExpression(query).isValid()) {
+            m_empty->setText(tr("Invalid regular expression. Previous results retained."));
+            m_empty->show();
+            return;
+        }
+        m_empty->setText(tr("No open tab matches this search."));
+        clearRows();
         int matches = 0;
         for (const auto& tab : m_tabs) {
             bool matched = query.isEmpty() || tab.label.contains(query, Qt::CaseInsensitive);

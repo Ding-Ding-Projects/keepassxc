@@ -440,3 +440,25 @@ void TestEntrySearcher::testTotpSearch()
     QVERIFY(!m_searchResult.contains(entry2));
     QVERIFY(!m_searchResult.contains(entry3));
 }
+
+void TestEntrySearcher::testMetadataOnly()
+{
+    auto* entry = new Entry();
+    entry->setGroup(m_rootGroup);
+    entry->setTitle(QStringLiteral("Mail"));
+    entry->setUsername(QStringLiteral("{PASSWORD}"));
+    entry->setPassword(QStringLiteral("synthetic-secret"));
+    entry->setNotes(QStringLiteral("invoice"));
+    entry->attributes()->set(QStringLiteral("private"), QStringLiteral("synthetic-secret"), true);
+    EntrySearcher metadata(false, true, true);
+    QCOMPARE(metadata.search(QStringLiteral("Mail"), m_rootGroup).size(), 1);
+    QCOMPARE(metadata.search(QStringLiteral("invoice"), m_rootGroup).size(), 1);
+    QVERIFY(metadata.search(QStringLiteral("synthetic-secret"), m_rootGroup).isEmpty());
+    QVERIFY(metadata.search(QStringLiteral("password:synthetic-secret"), m_rootGroup).isEmpty());
+    QVERIFY(metadata.search(QStringLiteral("attribute:synthetic-secret"), m_rootGroup).isEmpty());
+    QVERIFY(metadata.search(QStringLiteral("private:synthetic-secret"), m_rootGroup).isEmpty());
+    entry->attributes()->set(QStringLiteral("Notes"), QStringLiteral("protected-note"), true);
+    QVERIFY(metadata.search(QStringLiteral("protected-note"), m_rootGroup).isEmpty());
+    EntrySearcher legacy;
+    QCOMPARE(legacy.search(QStringLiteral("password:synthetic-secret"), m_rootGroup).size(), 1);
+}

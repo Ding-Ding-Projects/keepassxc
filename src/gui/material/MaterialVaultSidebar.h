@@ -94,6 +94,8 @@ namespace Material
         QTreeView* groupView() const;
         /** The filter field above the tree; plain text by default, regex on request. */
         SearchBar* groupFilter() const;
+        SearchBar* tagFilter() const;
+        void filterTags();
         /** Hide every group whose name (and descendants' names) miss @p query. */
         void filterGroups(const QString& query);
 
@@ -121,6 +123,9 @@ namespace Material
 
         QLabel* m_groupsOverline = nullptr;
         SearchBar* m_groupFilter = nullptr;
+        SearchBar* m_tagFilter = nullptr;
+        QLabel* m_tagStatus = nullptr;
+        QLabel* m_groupStatus = nullptr;
         QLabel* m_tagsOverline = nullptr;
         QTreeView* m_groupView = nullptr;
         GroupDelegate* m_groupDelegate = nullptr;

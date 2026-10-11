@@ -290,6 +290,10 @@ namespace Material
         connect(m_groupFilter, &SearchBar::textChanged, this, &VaultSidebar::filterGroups);
         connect(m_groupFilter, &SearchBar::regexToggled, this, [this] { filterGroups(m_groupFilter->text()); });
         root->addWidget(m_groupFilter);
+        m_groupStatus = new QLabel(this);
+        m_groupStatus->setWordWrap(true);
+        m_groupStatus->hide();
+        root->addWidget(m_groupStatus);
 
         m_groupDelegate = new GroupDelegate(this);
         m_groupDelegate->setIndentStep(IndentStep);
@@ -323,6 +327,18 @@ namespace Material
 
         m_tagsOverline = createOverline(tr("Tags"), TagsOverlineTop, this);
         root->addWidget(m_tagsOverline);
+        m_tagFilter = new SearchBar(SearchBar::Variant::Surface, this);
+        m_tagFilter->setIdentity(QStringLiteral("vault.tags"), tr("Vault tag search"));
+        m_tagFilter->setPlaceholder(tr("Search tags"));
+        m_tagFilter->lineEdit()->setClearButtonEnabled(true);
+        connect(m_tagFilter, &SearchBar::textChanged, this, &VaultSidebar::filterTags);
+        connect(m_tagFilter, &SearchBar::regexToggled, this, &VaultSidebar::filterTags);
+        connect(m_tagFilter, &SearchBar::regexFlagsChanged, this, &VaultSidebar::filterTags);
+        root->addWidget(m_tagFilter);
+        m_tagStatus = new QLabel(this);
+        m_tagStatus->setWordWrap(true);
+        m_tagStatus->hide();
+        root->addWidget(m_tagStatus);
 
         m_tagContainer = new QWidget(this);
         m_tagLayout = new FlowLayout(m_tagContainer, TagSpacing, TagSpacing);
@@ -342,6 +358,7 @@ namespace Material
         connect(m_editorRow, &QAbstractButton::clicked, this, &VaultSidebar::externalEditorRequested);
 
         m_tagsOverline->setVisible(false);
+        m_tagFilter->hide();
         m_tagContainer->setVisible(false);
 
         connect(theme(), &Theme::changed, this, &VaultSidebar::applyTheme);
@@ -397,6 +414,8 @@ namespace Material
         if (regex && !needle.isEmpty()) {
             pattern = QRegularExpression(needle, QRegularExpression::CaseInsensitiveOption);
             if (!pattern.isValid()) {
+                m_groupStatus->setText(tr("Invalid regular expression. Previous results retained."));
+                m_groupStatus->show();
                 return; // an unparsable pattern changes nothing until it parses
             }
         }
@@ -417,7 +436,9 @@ namespace Material
             }
             return anyVisible;
         };
-        apply(QModelIndex());
+        const bool matches = apply(QModelIndex());
+        m_groupStatus->setText(tr("No folder matches this search."));
+        m_groupStatus->setVisible(!needle.isEmpty() && !matches);
         updateGroupViewHeight();
     }
 
@@ -449,6 +470,8 @@ namespace Material
 
         rebuildTagChips();
         m_tagsOverline->setVisible(!m_tags.isEmpty());
+        m_tagFilter->setVisible(!m_tags.isEmpty());
+        filterTags();
         m_tagContainer->setVisible(!m_tags.isEmpty());
 
         if (m_selectedTags != previous) {
@@ -480,6 +503,7 @@ namespace Material
         }
         m_updatingChips = false;
 
+        filterTags();
         emit tagsChanged(m_selectedTags);
     }
 
@@ -531,9 +555,40 @@ namespace Material
                     return;
                 }
                 m_selectedTags = selected;
+                filterTags();
                 emit tagsChanged(m_selectedTags);
             });
         }
+        filterTags();
+        m_tagContainer->updateGeometry();
+    }
+
+    SearchBar* VaultSidebar::tagFilter() const
+    {
+        return m_tagFilter;
+    }
+
+    void VaultSidebar::filterTags()
+    {
+        const QString query = m_tagFilter->text().trimmed();
+        QRegularExpression pattern(query, m_tagFilter->regexFlags().contains(QLatin1Char('i'))
+                                             ? QRegularExpression::CaseInsensitiveOption
+                                             : QRegularExpression::NoPatternOption);
+        if (m_tagFilter->isRegexEnabled() && !query.isEmpty() && !pattern.isValid()) {
+            m_tagStatus->setText(tr("Invalid regular expression. Previous results retained."));
+            m_tagStatus->show();
+            return;
+        }
+        int matches = 0;
+        for (Chip* chip : m_tagChips) {
+            const bool match = query.isEmpty() || (m_tagFilter->isRegexEnabled()
+                ? pattern.match(chip->text()).hasMatch()
+                : chip->text().contains(query, Qt::CaseInsensitive));
+            chip->setVisible(match || chip->isChecked());
+            if (match) ++matches;
+        }
+        m_tagStatus->setText(tr("No tag matches this search. Selected tags remain available."));
+        m_tagStatus->setVisible(!query.isEmpty() && matches == 0);
         m_tagContainer->updateGeometry();
     }
 

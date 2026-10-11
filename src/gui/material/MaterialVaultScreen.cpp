@@ -1205,7 +1205,12 @@ namespace Material
         }
         m_databaseConnections.clear();
 
+        clearCategorySearches();
         m_dbWidget = dbWidget;
+        if (dbWidget && !dbWidget->isLocked()) {
+            QScopedValueRollback<bool> guard(m_syncingSearch, true);
+            dbWidget->search(QString());
+        }
 
         if (!dbWidget) {
             m_entryModel->setSourceModel(nullptr);
@@ -1252,6 +1257,7 @@ namespace Material
             updateVisiblePage();
         });
         m_databaseConnections << connect(dbWidget, &DatabaseWidget::databaseLocked, this, [this] {
+            clearCategorySearches();
             m_detail->clear();
             m_sheetDetail->clear();
             updateVisiblePage();
@@ -1312,6 +1318,19 @@ namespace Material
         syncSelectionFromDatabase();
         updateResultLine();
         updateVisiblePage();
+    }
+
+    void VaultScreen::clearCategorySearches()
+    {
+        QScopedValueRollback<bool> guard(m_syncingSearch, true);
+        m_searchBar->clear();
+        m_sidebar->groupFilter()->clear();
+        m_sidebar->tagFilter()->clear();
+        m_sidebar->setSelectedTags({});
+        m_groupScopeSearch->clear();
+        m_detail->attachmentFilter()->clear();
+        m_sheetDetail->attachmentFilter()->clear();
+        m_regexInvalid = false;
     }
 
     void VaultScreen::focusSearch()
@@ -1394,9 +1413,8 @@ namespace Material
         m_resultLabel->setStyleSheet(resultLineStyle());
 
         if (m_regexInvalid) {
-            m_resultLabel->setText(tr("Invalid regular expression — showing nothing until it parses."));
+            m_resultLabel->setText(tr("Invalid regular expression. Previous results retained."));
             m_emptyLabel->setText(tr("No entry matches this search."));
-            m_listStack->setCurrentWidget(m_emptyState);
             return;
         }
 

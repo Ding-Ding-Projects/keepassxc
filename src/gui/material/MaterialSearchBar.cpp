@@ -118,6 +118,7 @@ namespace Material
 
         m_lineEdit = new QLineEdit(this);
         m_lineEdit->setFrame(false);
+        m_lineEdit->setClearButtonEnabled(true);
         m_lineEdit->setAttribute(Qt::WA_MacShowFocusRect, false);
         layout->addWidget(m_lineEdit, 1);
 

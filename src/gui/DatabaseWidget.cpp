@@ -97,7 +97,7 @@ DatabaseWidget::DatabaseWidget(QSharedPointer<Database> db, QWidget* parent)
     , m_totpTimer(new QTimer(this))
     , m_saveAttempts(0)
     , m_remoteSettings(new RemoteSettings(m_db, this))
-    , m_entrySearcher(new EntrySearcher(false))
+    , m_entrySearcher(new EntrySearcher(false, true, true))
 {
     Q_ASSERT(m_db);
     m_totpTimer->setObjectName(QStringLiteral("totpRefreshTimer"));

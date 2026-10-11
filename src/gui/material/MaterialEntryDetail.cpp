@@ -965,6 +965,10 @@ namespace Material
         connect(m_attachmentFilter, &SearchBar::textChanged, this, [this] { applyDetailFilter(); });
         connect(m_attachmentFilter, &SearchBar::regexToggled, this, [this] { applyDetailFilter(); });
         layout->addWidget(inset(m_attachmentFilter, {PaneMargin, 0, PaneMargin, 8}));
+        m_filterStatus = new QLabel(m_attachmentsSection);
+        m_filterStatus->setWordWrap(true);
+        m_filterStatus->hide();
+        layout->addWidget(inset(m_filterStatus, {PaneMargin, 0, PaneMargin, 8}));
 
         m_attachmentsList = new QWidget(m_attachmentsSection);
         m_attachmentsLayout = new QVBoxLayout(m_attachmentsList);
@@ -1044,10 +1048,13 @@ namespace Material
             // An unparsable pattern changes nothing rather than hiding
             // everything or quietly turning into a literal search.
             if (!pattern.isValid()) {
+                m_filterStatus->setText(tr("Invalid regular expression. Previous results retained."));
+                m_filterStatus->show();
                 return;
             }
             useRegex = true;
         }
+        m_filterStatus->hide();
         auto accepts = [&](const QString& haystack) {
             if (needle.isEmpty()) {
                 return true;
@@ -1068,7 +1075,7 @@ namespace Material
                       {m_modifiedRow, m_data.modified}};
         for (const auto& field : fields) {
             if (field.row) {
-                field.row->setVisible(accepts(field.row->key() + QLatin1Char(' ') + field.value));
+                field.row->setVisible(accepts(field.row->key()));
             }
         }
         const auto rows = m_attachmentsList->findChildren<QAbstractButton*>(QString(), Qt::FindDirectChildrenOnly);

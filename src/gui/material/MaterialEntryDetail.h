@@ -202,6 +202,7 @@ namespace Material
         QLabel* m_notesLabel = nullptr;
         QWidget* m_attachmentsSection = nullptr;
         SearchBar* m_attachmentFilter = nullptr;
+        QLabel* m_filterStatus = nullptr;
         QWidget* m_attachmentsList = nullptr;
         QVBoxLayout* m_attachmentsLayout = nullptr;
         QWidget* m_historySection = nullptr;

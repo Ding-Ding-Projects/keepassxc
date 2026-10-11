@@ -22,9 +22,10 @@
 #include "core/Group.h"
 #include "core/Tools.h"
 
-EntrySearcher::EntrySearcher(bool caseSensitive, bool skipProtected)
+EntrySearcher::EntrySearcher(bool caseSensitive, bool skipProtected, bool metadataOnly)
     : m_caseSensitive(caseSensitive)
     , m_skipProtected(skipProtected)
+    , m_metadataOnly(metadataOnly)
 {
 }
 
@@ -155,14 +156,22 @@ bool EntrySearcher::searchEntryImpl(const Entry* entry)
 
     // By default, empty term matches every entry.
     // However when skipping protected fields, we will reject everything instead
+    auto metadata = [entry](const QString& key) {
+        return entry->attributes()->isProtected(key) ? QString() : entry->attributes()->value(key);
+    };
     bool found = !m_skipProtected;
     for (const auto& term : m_searchTerms) {
+        if (m_metadataOnly && term.field != Field::Undefined && term.field != Field::Title
+            && term.field != Field::Username && term.field != Field::Url && term.field != Field::Notes
+            && term.field != Field::Tag && term.field != Field::Group) {
+            return false;
+        }
         switch (term.field) {
         case Field::Title:
-            found = term.regex.match(entry->resolvePlaceholder(entry->title())).hasMatch();
+            found = term.regex.match((m_metadataOnly ? metadata(QStringLiteral("Title")) : entry->resolvePlaceholder(entry->title()))).hasMatch();
             break;
         case Field::Username:
-            found = term.regex.match(entry->resolvePlaceholder(entry->username())).hasMatch();
+            found = term.regex.match((m_metadataOnly ? metadata(QStringLiteral("UserName")) : entry->resolvePlaceholder(entry->username()))).hasMatch();
             break;
         case Field::Password:
             if (m_skipProtected) {
@@ -171,10 +180,10 @@ bool EntrySearcher::searchEntryImpl(const Entry* entry)
             found = term.regex.match(entry->resolvePlaceholder(entry->password())).hasMatch();
             break;
         case Field::Url:
-            found = term.regex.match(entry->resolvePlaceholder(entry->url())).hasMatch();
+            found = term.regex.match((m_metadataOnly ? metadata(QStringLiteral("URL")) : entry->resolvePlaceholder(entry->url()))).hasMatch();
             break;
         case Field::Notes:
-            found = term.regex.match(entry->notes()).hasMatch();
+            found = term.regex.match(m_metadataOnly ? metadata(QStringLiteral("Notes")) : entry->notes()).hasMatch();
             break;
         case Field::AttributeKV:
             found = !attributes.filter(term.regex).empty();
@@ -233,10 +242,10 @@ bool EntrySearcher::searchEntryImpl(const Entry* entry)
             break;
         default:
             // Terms without a specific field try to match title, username, url, and notes
-            found = term.regex.match(entry->resolvePlaceholder(entry->title())).hasMatch()
-                    || term.regex.match(entry->resolvePlaceholder(entry->username())).hasMatch()
-                    || term.regex.match(entry->resolvePlaceholder(entry->url())).hasMatch()
-                    || entry->tagList().indexOf(term.regex) != -1 || term.regex.match(entry->notes()).hasMatch();
+            found = term.regex.match((m_metadataOnly ? metadata(QStringLiteral("Title")) : entry->resolvePlaceholder(entry->title()))).hasMatch()
+                    || term.regex.match((m_metadataOnly ? metadata(QStringLiteral("UserName")) : entry->resolvePlaceholder(entry->username()))).hasMatch()
+                    || term.regex.match((m_metadataOnly ? metadata(QStringLiteral("URL")) : entry->resolvePlaceholder(entry->url()))).hasMatch()
+                    || entry->tagList().indexOf(term.regex) != -1 || term.regex.match(m_metadataOnly ? metadata(QStringLiteral("Notes")) : entry->notes()).hasMatch();
         }
 
         // negate the result if exclude:

@@ -54,7 +54,7 @@ public:
         bool exclude;
     };
 
-    explicit EntrySearcher(bool caseSensitive = false, bool skipProtected = false);
+    explicit EntrySearcher(bool caseSensitive = false, bool skipProtected = false, bool metadataOnly = false);
 
     QList<Entry*> search(const QList<SearchTerm>& searchTerms, const Group* baseGroup, bool forceSearch = false);
     QList<Entry*> search(const QString& searchString, const Group* baseGroup, bool forceSearch = false);
@@ -73,6 +73,7 @@ private:
 
     bool m_caseSensitive;
     bool m_skipProtected;
+    bool m_metadataOnly;
     QList<SearchTerm> m_searchTerms;
 
     friend class TestEntrySearcher;

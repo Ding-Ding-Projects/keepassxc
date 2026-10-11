@@ -248,6 +248,7 @@ namespace Material
         /** Run that watch only while a code is actually on screen. */
         void updateTotpTimer();
         void runSearch();
+        void clearCategorySearches();
 
         void rebuildHealthChips();
         void syncSelectionToDatabase();
