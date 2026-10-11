@@ -3,9 +3,11 @@
 
 #include "MaterialScreen.h"
 #include <QJsonObject>
+#include <QJsonArray>
 #include <QHash>
 #include <QPointer>
 #include <QUrl>
+#include <functional>
 
 class QComboBox;
 class QLineEdit;
@@ -37,6 +39,18 @@ signals:
 private:
     friend class ::TestMaterialServerManager;
     void request(const QUrl& url, const QByteArray& expectedHash = {});
+    void refreshDockerImages();
+    void dockerMetadata(const QUrl& url, const QByteArray& authorization,
+                        const std::function<void(bool,const QByteArray&,const QByteArray&)>& completed);
+    void dockerCommand(const QString& executable, const QStringList& arguments,
+                       const std::function<void(bool, const QByteArray&)>& completed);
+    void verifyDocker(const QJsonObject& record, const std::function<void(bool)>& completed);
+    void dockerLifecycle(const QString& id, const QString& operation);
+    static QJsonArray dockerImages(const QByteArray& manifest, const QByteArray& digest, int javaMajor);
+    static bool validDockerImage(const QJsonObject& image, int javaMajor);
+    static QStringList dockerCreateArguments(const QJsonObject& record, const QString& directory, const QString& owner);
+    bool ownedContainer(const QJsonObject& inspected, const QJsonObject& record) const;
+    QString dockerOwner() const;
     void refreshVersions();
     void resolveVersion();
     void createServer();
@@ -52,7 +66,12 @@ private:
     bool validRecord(const QJsonObject& record) const;
     void status(const QString& text);
     QComboBox *m_target, *m_edition, *m_distribution, *m_versions;
-    QLineEdit *m_name, *m_runtime, *m_jar;
+    QLineEdit *m_name, *m_runtime, *m_jar, *m_docker;
+    QComboBox* m_images;
+    QHash<QString, QProcess*> m_dockerCommands;
+    bool m_dockerCreationVerified = false;
+    QHash<QString, QString> m_verifiedDockerVersions;
+    std::function<void(const QStringList&, const std::function<void(bool,const QByteArray&)>&)> m_dockerTransport;
     QSpinBox *m_memory, *m_port;
     QCheckBox* m_eula;
     QLabel *m_status, *m_versionStatus;

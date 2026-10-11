@@ -14,6 +14,8 @@
 #include <QListWidget>
 #include <QLineEdit>
 #include <QCheckBox>
+#include <QComboBox>
+#include <QUuid>
 #include <QProcess>
 #include <QSignalSpy>
 #ifdef Q_OS_WIN
@@ -108,10 +110,97 @@ private slots:
         QVERIFY(!QFileInfo::exists(target+QStringLiteral("/managed")));
 #endif
     }
+    void dockerRegistryIndexRequiresIntegrityAndCompleteBounds() {
+        const QJsonObject entry{{"mediaType","application/vnd.oci.image.manifest.v1+json"},{"size",2048},{"digest","sha256:"+QString(64,QLatin1Char('a'))},{"platform",QJsonObject{{"os","linux"},{"architecture","amd64"}}}};
+        QJsonObject index{{"schemaVersion",2},{"mediaType","application/vnd.oci.image.index.v1+json"},{"manifests",QJsonArray{entry}}};
+        auto bytes=QJsonDocument(index).toJson(QJsonDocument::Compact);
+        auto digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        const auto images=ServerManager::dockerImages(bytes,digest,21);QCOMPARE(images.size(),1);
+        QVERIFY(ServerManager::validDockerImage(images.first().toObject(),21));
+        QVERIFY(ServerManager::dockerImages(bytes,QByteArray("sha256:")+QByteArray(64,'b'),21).isEmpty());
+        QVERIFY(ServerManager::dockerImages(bytes.left(bytes.size()-1),digest,21).isEmpty());
+        QJsonArray excessive;for(int i=0;i<257;++i)excessive.append(entry);index.insert("manifests",excessive);
+        bytes=QJsonDocument(index).toJson(QJsonDocument::Compact);digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        QVERIFY(ServerManager::dockerImages(bytes,digest,21).isEmpty());
+        index.insert("manifests",QJsonArray{QJsonObject{{"digest",entry.value("digest")}}});bytes=QJsonDocument(index).toJson();digest=QByteArray("sha256:")+QCryptographicHash::hash(bytes,QCryptographicHash::Sha256).toHex();
+        QVERIFY(ServerManager::dockerImages(bytes,digest,21).isEmpty());
+    }
+    void dockerImageMetadataAndTypedArguments() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest","sha256:"+QString(64,QLatin1Char('a'))},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        QVERIFY(ServerManager::validDockerImage(image,21));QVERIFY(!ServerManager::validDockerImage(image,17));
+        for(const auto& key:{"provider","source","digest","indexDigest","os","architecture","retrievedAt"}){auto bad=image;bad.insert(key,QStringLiteral("unverified"));QVERIFY(!ServerManager::validDockerImage(bad,21));}
+        QJsonObject record{{"id",QUuid::createUuid().toString(QUuid::WithoutBraces)},{"image",image},{"memoryMiB",2048},{"port",25565}};
+        const auto args=ServerManager::dockerCreateArguments(record,temporary.path(),QStringLiteral("fixture-owner"));
+        QVERIFY(!args.isEmpty());QVERIFY(args.contains(QStringLiteral("never")));QVERIFY(args.contains(QStringLiteral("127.0.0.1:25565:25565/tcp")));
+        QCOMPARE(args.at(args.indexOf(QStringLiteral("--entrypoint"))+1),QStringLiteral("java"));
+        QCOMPARE(args.last(),QStringLiteral("nogui"));QVERIFY(!args.contains(QStringLiteral("--privileged")));
+        QVERIFY(ServerManager::dockerCreateArguments(record,temporary.path()+QStringLiteral(",unexpected"),QStringLiteral("fixture-owner")).isEmpty());
+        auto invalid=record;invalid.insert("port",65536);QVERIFY(ServerManager::dockerCreateArguments(invalid,temporary.path(),QStringLiteral("fixture-owner")).isEmpty());
+        invalid=record;invalid.insert("memoryMiB",1);QVERIFY(ServerManager::dockerCreateArguments(invalid,temporary.path(),QStringLiteral("fixture-owner")).isEmpty());
+    }
+    void dockerVerificationRejectsOfflineAndMismatchedRuntime() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        const QString digest=QStringLiteral("sha256:")+QString(64,QLatin1Char('a'));
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest",digest},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        const QJsonObject record{{"runtime","unused fixture"},{"memoryMiB",2048},{"image",image}};
+        bool called=false,result=true;int requests=0;
+        manager.m_dockerTransport=[&](const QStringList&,const std::function<void(bool,const QByteArray&)>& complete){++requests;complete(false,{});};
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,1);
+        requests=0;called=false;
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            ++requests;
+            if(args.first()==QLatin1String("info")){complete(true,QJsonDocument(QJsonObject{{"Architecture","x86_64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());return;}
+            complete(true,QJsonDocument(QJsonObject{{"RepoDigests",QJsonArray{"eclipse-temurin@"+digest}},{"Os","linux"},{"Architecture","amd64"},{"Config",QJsonObject{{"Env",QJsonArray{"JAVA_VERSION=jdk-17.0.1+1"}}}}}).toJson());
+        };
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,2);
+        requests=0;called=false;
+        manager.m_dockerTransport=[&](const QStringList&,const std::function<void(bool,const QByteArray&)>& complete){++requests;complete(true,QJsonDocument(QJsonObject{{"Architecture","aarch64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());};
+        manager.verifyDocker(record,[&](bool ok){called=true;result=ok;});QVERIFY(called);QVERIFY(!result);QCOMPARE(requests,1);
+    }
+    void dockerOwnershipAndSelectionSafeLifecycle() {
+        QTemporaryDir temporary;QVERIFY(temporary.isValid());ServerManager manager(nullptr,temporary.path()+QStringLiteral("/managed"));
+        const QString id=QUuid::createUuid().toString(QUuid::WithoutBraces),container(64,QLatin1Char('b'));
+        const QString dir=manager.directoryFor(id);QVERIFY(QDir().mkpath(dir));
+        const QString runtime=temporary.path()+QStringLiteral("/docker.exe");QFile cli(runtime);QVERIFY(cli.open(QIODevice::WriteOnly));cli.write("fixture, never executed");cli.close();
+        const QByteArray jarBytes("synthetic server distribution");QFile jar(dir+QStringLiteral("/server.jar"));QVERIFY(jar.open(QIODevice::WriteOnly));jar.write(jarBytes);jar.close();
+        const QString digest=QStringLiteral("sha256:")+QString(64,QLatin1Char('a'));
+        const QJsonObject image{{"provider","docker.io/library/eclipse-temurin"},{"source","https://registry-1.docker.io/v2/library/eclipse-temurin/manifests/21-jre"},{"javaMajor",21},{"indexDigest","sha256:"+QString(64,QLatin1Char('e'))},{"digest",digest},{"os","linux"},{"architecture","amd64"},{"retrievedAt","2026-10-11T12:00:00Z"}};
+        QJsonObject record{{"id",id},{"name","Synthetic container"},{"edition","java"},{"target","docker"},{"runtime",runtime},{"image",image},{"runtimeVersion","jdk-21.0.9+10"},{"memoryMiB",2048},{"port",25565},{"eulaAccepted",true},{"sha1",QString::fromLatin1(QCryptographicHash::hash(jarBytes,QCryptographicHash::Sha1).toHex())},{"containerId",container},{"futureField",42}};
+        const QJsonObject config{{"Labels",QJsonObject{{"org.keepassxc.material.server",id},{"org.keepassxc.material.inventory",manager.dockerOwner()}}},{"Image","eclipse-temurin@"+digest},{"Entrypoint",QJsonArray{"java"}},{"Cmd",QJsonArray{"-Xmx2048M","-jar","/data/server.jar","nogui"}}};
+        const QJsonObject host{{"Privileged",false},{"NetworkMode","bridge"},{"Memory",2048.0*1024*1024},{"PortBindings",QJsonObject{{"25565/tcp",QJsonArray{QJsonObject{{"HostIp","127.0.0.1"},{"HostPort","25565"}}}}}}};
+        const QJsonObject inspected{{"Id",container},{"Name","/keepassxc-"+id},{"Config",config},{"HostConfig",host},{"Mounts",QJsonArray{QJsonObject{{"Type","bind"},{"Destination","/data"},{"Source",dir}}}}};
+        QVERIFY(manager.validRecord(record));QVERIFY(manager.ownedContainer(inspected,record));
+        for(const auto& key:{"Id","Name","Config","HostConfig","Mounts"}){auto bad=inspected;bad.remove(key);QVERIFY(!manager.ownedContainer(bad,record));}
+        auto foreign=record;foreign.insert("containerId",QString(64,QLatin1Char('c')));QVERIFY(!manager.ownedContainer(inspected,foreign));
+        manager.m_document=QJsonObject{{"schema",1},{"servers",QJsonArray{record}},{"extension","retained"}};manager.rebuildInventory();
+        QList<QStringList> calls;std::function<void(bool,const QByteArray&)> pendingInspect;
+        manager.m_dockerTransport=[&](const QStringList& args,const std::function<void(bool,const QByteArray&)>& complete){
+            calls.append(args);
+            if(args.first()==QLatin1String("info")){complete(true,QJsonDocument(QJsonObject{{"Architecture","x86_64"},{"OSType","linux"},{"MemTotal",4096.0*1024*1024}}).toJson());return;}
+            if(args.first()==QLatin1String("image")){complete(true,QJsonDocument(QJsonObject{{"RepoDigests",QJsonArray{"eclipse-temurin@"+digest}},{"Os","linux"},{"Architecture","amd64"},{"Config",QJsonObject{{"Env",QJsonArray{"JAVA_VERSION=jdk-21.0.9+10"}}}}}).toJson());return;}
+            if(args.value(1)==QLatin1String("inspect")){pendingInspect=complete;return;}
+            complete(true,{});
+        };
+        manager.dockerLifecycle(id,QStringLiteral("restart"));QVERIFY(bool(pendingInspect));
+        auto* other=new QListWidgetItem(QStringLiteral("Other"),manager.m_inventory);other->setData(Qt::UserRole,QStringLiteral("other"));manager.m_inventory->setCurrentItem(other);
+        pendingInspect(true,QJsonDocument(inspected).toJson());
+        QCOMPARE(calls.last(),QStringList({"container","restart",container}));
+        QCOMPARE(manager.m_document.value("servers").toArray().first().toObject().value("futureField").toInt(),42);
+        QVERIFY(manager.saveInventory());manager.loadInventory();QCOMPARE(manager.m_document.value("extension").toString(),QStringLiteral("retained"));
+        calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("stop"));QVERIFY(bool(pendingInspect));
+        auto wrong=inspected;wrong.insert("Id",QString(64,QLatin1Char('d')));pendingInspect(true,QJsonDocument(wrong).toJson());
+        QCOMPARE(calls.size(),3); // Verification and inspection only, no lifecycle mutation.
+        calls.clear();pendingInspect={};manager.dockerLifecycle(id,QStringLiteral("start"));QVERIFY(bool(pendingInspect));
+        ++manager.m_generation;pendingInspect(true,QJsonDocument(inspected).toJson());QCOMPARE(calls.size(),3);
+        auto badPort=inspected;auto changedHost=host;changedHost.insert("PortBindings",QJsonObject{});badPort.insert("HostConfig",changedHost);QVERIFY(!manager.ownedContainer(badPort,record));
+        auto badMount=inspected;badMount.insert("Mounts",QJsonArray{QJsonObject{{"Type","bind"},{"Destination","/data"},{"Source",temporary.path()}}});QVERIFY(!manager.ownedContainer(badMount,record));
+    }
     void targetInventory() {
         const auto targets=ServerManager::targetNames();
         QCOMPARE(targets.size(),4);
-        for(int i=1;i<4;++i) QVERIFY(targets[i].contains(QStringLiteral("unavailable")));
+        QVERIFY(targets[1].contains(QStringLiteral("verified local image required")));
+        for(int i=2;i<4;++i) QVERIFY(targets[i].contains(QStringLiteral("unavailable")));
         for(int omitted=0;omitted<4;++omitted) { auto copy=targets;copy.removeAt(omitted);QVERIFY(copy.size()!=4); }
     }
     void namesAndMetadataBoundary() {
