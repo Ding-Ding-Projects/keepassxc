@@ -370,6 +370,10 @@ private slots:
         }
         auto changed=original;changed.insert("minimumWidth",2048);store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
         changed=original;changed.insert("officialDigest",QStringLiteral("sha256:")+QString(64,QLatin1Char('0')));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        changed=original;changed.remove("officialDigest");store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        for(const auto& malformed:{QJsonValue(QJsonValue::Null),QJsonValue(QJsonArray{}),QJsonValue(QJsonObject{})}) {
+            changed=original;changed.insert("officialDigest",malformed);store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
+        }
         changed=original;changed.insert("publishedDishes",2);store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
         changed=original;changed.insert("english",QString(257,QLatin1Char('x')));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());
         changed=original;changed.insert("retrievedAt",QDateTime::currentDateTimeUtc().addSecs(-25*60*60).toString(Qt::ISODate));store(changed);QVERIFY(Photos::cachedPhoto(temporary.path()).image.isNull());

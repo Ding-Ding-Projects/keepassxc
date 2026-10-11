@@ -124,6 +124,7 @@ DimSumPhotos::Photo DimSumPhotos::cachedPhoto(const QString& root)
     photo.minimumWidth=object.value("minimumWidth").toInt();photo.minimumHeight=object.value("minimumHeight").toInt();
     if(photo.minimumWidth<1 || photo.minimumHeight<1 || photo.minimumWidth>4096 || photo.minimumHeight>4096)return {};
     photo.english=object.value("english").toString();photo.cantonese=object.value("cantonese").toString();photo.url=object.value("assetUrl").toString();photo.revision=object.value("catalogueRevision").toString();photo.digest=object.value("cachedDigest").toString();photo.bytes=qint64(object.value("bytes").toDouble());
+    if(!object.contains("officialDigest") || !object.value("officialDigest").isString())return {};
     const auto officialDigest=object.value("officialDigest").toString();
     if(!officialDigest.isEmpty() && officialDigest!=photo.digest)return {};
     const int discovered=object.value("discoveredAssets").toInt(-1),published=object.value("publishedDishes").toInt(-1),catalogue=object.value("catalogueDishes").toInt(-1),unmatched=object.value("unmatchedDishes").toInt(-1),ambiguous=object.value("ambiguousDishes").toInt(-1);
