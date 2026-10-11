@@ -902,7 +902,9 @@ namespace Material
         });
         content->addWidget(m_fontWeight);
 
-        m_fontPreview = new QLabel(tr("Example entry\n帶子蝦餃 · 筍尖蝦餃 · 腸粉\nuser@example.test · ••••3391"));
+        m_fontPreview = new QLabel(SchoolMode::instance()->restricted()
+                                      ? tr("Example entry\nWork email · Home account · Notes\nuser@example.test · ••••3391")
+                                      : tr("Example entry\n帶子蝦餃 · 筍尖蝦餃 · 腸粉\nuser@example.test · ••••3391"));
         m_fontPreview->setObjectName(QStringLiteral("appearanceFontPreview"));
         m_fontPreview->setAccessibleName(tr("Live interface font preview"));
         m_fontPreview->setWordWrap(true);

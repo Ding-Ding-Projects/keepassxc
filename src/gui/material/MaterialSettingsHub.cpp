@@ -423,6 +423,7 @@ namespace Material
             return;
         }
         m_classic = editor;
+        editor->setProperty(SchoolMode::UnrestrictedCapability, true);
         if(SchoolMode::instance()->restricted()){editor->setParent(this);editor->hide();return;}
         m_sheet->addSidebarSection(tr("EVERYTHING ELSE"));
         m_sheet->addWidgetPage(
@@ -730,6 +731,7 @@ namespace Material
         // The Shortcuts page is read from the real actions rather than bound to
         // Config, and rebinding is the classic editor's job.
         if (pageId == QLatin1String("shortcuts")) {
+            if (SchoolMode::instance()->restricted())return;
             if (m_classic) {
                 showClassicEditor();
                 Notify::info(rowKey.section(QLatin1Char('/'), 1),
@@ -1942,7 +1944,9 @@ namespace Material
         if (!built) {
             return;
         }
-        built->setNote(tr("Every action in the application, with its key binding. "
+        if(SchoolMode::instance()->restricted()) {
+            built->setNote(tr("Available actions and their key bindings."));
+        } else built->setNote(tr("Every action in the application, with its key binding. "
                           "Activating a row opens the Shortcuts page of the classic editor, "
                           "which is where a binding is changed."));
 
@@ -1954,7 +1958,7 @@ namespace Material
         const auto actions = ActionCollection::instance() ? ActionCollection::instance()->actions()
                                                           : QList<QAction*>();
         for (const QAction* action : actions) {
-            if (!action || action->text().isEmpty() || action->isSeparator()) {
+            if (!SchoolMode::instance()->allowsAction(action) || action->text().isEmpty() || action->isSeparator()) {
                 continue;
             }
             const QString label = QString(action->text()).remove(QLatin1Char('&'));

@@ -19,6 +19,9 @@ public:
     static bool validate(const QJsonObject& record, QString* error = nullptr);
     bool available() const { return m_available; }
     bool restricted() const { return !m_available || m_record.value(QStringLiteral("enabled")).toBool(); }
+    /** Mark an action or its owning subtree when it exposes omitted capabilities. */
+    static constexpr const char* UnrestrictedCapability = "materialRequiresUnrestrictedMode";
+    bool allowsAction(const QObject* action) const;
     QString name() const;
     QString status() const { return m_status; }
     bool hasCredential() const;

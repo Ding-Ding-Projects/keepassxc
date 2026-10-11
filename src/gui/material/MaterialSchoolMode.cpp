@@ -121,6 +121,13 @@ SchoolMode::SchoolMode(const QString& path,QObject* parent):QObject(parent),m_pa
     reload();m_initializing=false;
 }
 SchoolMode::~SchoolMode(){if(m_englishInstalled)QCoreApplication::removeTranslator(m_english);}
+bool SchoolMode::allowsAction(const QObject* action) const {
+    if(!action)return false;
+    if(!restricted())return true;
+    for(auto* owner=action;owner;owner=owner->parent())
+        if(owner->property(UnrestrictedCapability).toBool())return false;
+    return true;
+}
 QString SchoolMode::name() const {return m_record.value(QStringLiteral("name")).toString(QStringLiteral("School mode"));}
 bool SchoolMode::hasCredential() const {return m_record.value(QStringLiteral("credential")).isObject();}
 bool SchoolMode::validate(const QJsonObject& r,QString* error) {

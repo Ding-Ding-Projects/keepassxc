@@ -5,6 +5,11 @@
 /* Copyright (C) 2026 KeePassXC Team <team@keepassxc.org>
  * SPDX-License-Identifier: GPL-2.0-or-later */
 #include "gui/material/MaterialSchoolMode.h"
+#include "gui/material/MaterialCommandPalette.h"
+#include "gui/material/MaterialSpecSheet.h"
+#include <QAction>
+#include <QLineEdit>
+#include <QEvent>
 #include "gui/material/MaterialVoice.h"
 #include "gui/material/MaterialSettingsScreen.h"
 #include "gui/material/MaterialSettingsHub.h"
@@ -100,6 +105,59 @@ private slots:
         QFile parent(m_profile.filePath(QStringLiteral("not-a-directory")));QVERIFY(parent.open(QIODevice::WriteOnly));parent.close();
         SchoolMode unavailable(parent.fileName()+QStringLiteral("/state.json"));QVERIFY(!unavailable.available());QVERIFY(unavailable.restricted());
     }
+    void paletteOmitsRestrictedCapabilitiesAndCancelsQueuedActivation() {
+        const QByteArray credential("synthetic-fixture-only");
+        QVERIFY(m_mode->setCredential({},credential));
+        QWidget source;
+        auto* general=new QAction(QStringLiteral("Ordinary action"),&source);
+        auto* tagged=new QAction(QStringLiteral("Tagged capability"),&source);
+        tagged->setProperty(SchoolMode::UnrestrictedCapability,true);
+        auto* subtree=new QWidget(&source);
+        subtree->setProperty(SchoolMode::UnrestrictedCapability,true);
+        auto* nested=new QAction(QStringLiteral("Nested capability"),subtree);
+        CommandPalette palette(&source);palette.setActionSource(&source);palette.openOverlay();
+        QCOMPARE(palette.commandCount(),3);
+        auto* search=palette.findChild<SearchBar*>();QVERIFY(search);
+        search->setRegexEnabled(true);search->setRegexFlags(QStringLiteral("i"));
+        search->setText(QStringLiteral("Tagged"));
+        QSignalSpy activated(tagged,&QAction::triggered);
+        QTest::keyClick(search->lineEdit(),Qt::Key_Return);
+        QVERIFY(m_mode->enable());
+        QCoreApplication::sendPostedEvents(nullptr,QEvent::MetaCall);
+        QCOMPARE(activated.count(),0);
+        QCOMPARE(palette.commandCount(),1);
+        QCoreApplication::sendPostedEvents(nullptr,QEvent::DeferredDelete);
+        for(auto* row:palette.findChildren<QWidget*>()) {
+            QVERIFY(row->accessibleName()!=QStringLiteral("Tagged capability"));
+            QVERIFY(row->accessibleName()!=QStringLiteral("Nested capability"));
+        }
+        QCOMPARE(search->text(),QStringLiteral("Tagged"));
+        QVERIFY(search->isRegexEnabled());QCOMPARE(search->regexFlags(),QStringLiteral("i"));
+        QVERIFY(m_mode->allowsAction(general));QVERIFY(!m_mode->allowsAction(tagged));QVERIFY(!m_mode->allowsAction(nested));
+        QVERIFY(m_mode->unlock(credential));QCOMPARE(palette.commandCount(),3);
+        tagged->setEnabled(false);QVERIFY(m_mode->enable());QVERIFY(m_mode->unlock(credential));
+        QVERIFY(!tagged->isEnabled());
+        QFile corrupt(path());QVERIFY(corrupt.open(QIODevice::WriteOnly|QIODevice::Truncate));corrupt.write("{");corrupt.close();m_mode->reload();
+        QVERIFY(!m_mode->available());QCOMPARE(palette.commandCount(),1);
+        QVERIFY(QFile::remove(path()));m_mode->reload();QCOMPARE(palette.commandCount(),3);
+    }
+    void classicDirectRoutesRemainAbsentUntilUnlock() {
+        const QByteArray credential("synthetic-fixture-only");
+        QVERIFY(m_mode->setCredential({},credential));
+        SettingsHub hub;
+        auto* classic=new QWidget;
+        auto* action=new QAction(QStringLiteral("Classic child action"),classic);
+        hub.setClassicEditor(classic);
+        hub.showClassicEditor();QCOMPARE(hub.currentPage(),QStringLiteral("classic"));
+        QVERIFY(m_mode->enable());
+        QVERIFY(!hub.specSheet()->page(QStringLiteral("classic")));
+        QVERIFY(!m_mode->allowsAction(action));
+        hub.setCurrentPage(QStringLiteral("classic"));QVERIFY(hub.currentPage()!=QStringLiteral("classic"));
+        hub.showClassicEditor();QVERIFY(hub.currentPage()!=QStringLiteral("classic"));
+        QVERIFY(m_mode->unlock(credential));
+        hub.showClassicEditor();QCOMPARE(hub.currentPage(),QStringLiteral("classic"));
+        QVERIFY(m_mode->allowsAction(action));
+    }
     void chosenNamesRenderLiterallyAcrossUpdates() {
         const QByteArray credential("synthetic-fixture-only");
         QVERIFY(m_mode->setCredential({},credential));
@@ -157,17 +215,21 @@ private slots:
         SettingsScreen overview;SettingsHub hub;
         QVERIFY(overview.findChild<QWidget*>(QStringLiteral("sharedModeControl")));
         QVERIFY(overview.findChild<QWidget*>(QStringLiteral("appearanceLanguageAndTone")));
+        const auto originalPreview=overview.findChild<QLabel*>(QStringLiteral("appearanceFontPreview"))->text();
         QVERIFY(m_mode->setCredential({},QByteArray("synthetic-fixture-only")));
         QVERIFY(m_mode->rename(QStringLiteral("Quiet work"),QByteArray("synthetic-fixture-only")));
         QVERIFY(m_mode->enable());
         QVERIFY(!overview.findChild<QWidget*>(QStringLiteral("appearanceLanguageAndTone")));
         QVERIFY(DimSum::catalogue().isEmpty());
+        auto* neutralPreview=overview.findChild<QLabel*>(QStringLiteral("appearanceFontPreview"));QVERIFY(neutralPreview);
+        QCOMPARE(neutralPreview->text(),QStringLiteral("Example entry\nWork email · Home account · Notes\nuser@example.test · ••••3391"));
         QCOMPARE(Voice::language(),Voice::Language::English);QCOMPARE(Voice::funnyLevel(Voice::Language::English),1);
         Voice::setLanguage(Voice::Language::Cantonese);Voice::setFunnyLevel(Voice::Language::English,2);
         QCOMPARE(config()->get(Config::GUI_VoiceLanguage).toString(),QStringLiteral("Bilingual"));QCOMPARE(config()->get(Config::GUI_FunnyLevelEnglish).toInt(),5);
         auto* control=overview.findChild<SchoolModeControl*>();QVERIFY(control);QCOMPARE(control->accessibleName(),QStringLiteral("Quiet work"));
         QVERIFY(m_mode->unlock(QByteArray("synthetic-fixture-only")));
         QVERIFY(overview.findChild<QWidget*>(QStringLiteral("appearanceLanguageAndTone")));
+        QCOMPARE(overview.findChild<QLabel*>(QStringLiteral("appearanceFontPreview"))->text(),originalPreview);
         QCOMPARE(Voice::language(),Voice::Language::Bilingual);QCOMPARE(Voice::funnyLevel(Voice::Language::English),5);QCOMPARE(Voice::funnyLevel(Voice::Language::Cantonese),4);
     }
 };

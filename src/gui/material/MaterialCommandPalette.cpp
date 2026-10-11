@@ -23,6 +23,8 @@
 #include "MaterialTheme.h"
 #include "MaterialSearchBar.h"
 #include "MaterialRegexSafety.h"
+#include "MaterialSchoolMode.h"
+#include "MaterialVoice.h"
 
 #include <QAction>
 #include <QEvent>
@@ -342,6 +344,8 @@ namespace Material
             m_searchEdit->lineEdit()->setFocus(Qt::PopupFocusReason);
             m_searchEdit->lineEdit()->selectAll();
         });
+        connect(SchoolMode::instance(), &SchoolMode::changed, this, &CommandPalette::refreshCommands);
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, &CommandPalette::refreshCommands);
         applyTheme();
     }
 
@@ -438,6 +442,15 @@ namespace Material
         applyFilter(QString());
     }
 
+    void CommandPalette::refreshCommands()
+    {
+        // Refresh current copy and results without changing the user's search state.
+        m_searchEdit->setPlaceholder(tr("Search every action, setting and shortcut"));
+        m_searchEdit->setIdentity(QStringLiteral("command-palette.commands"), tr("Command palette search"));
+        collect();
+        applyFilter(m_searchEdit->text());
+    }
+
     void CommandPalette::collect()
     {
         m_commands.clear();
@@ -449,7 +462,7 @@ namespace Material
 
         const auto actions = source->findChildren<QAction*>();
         for (QAction* action : actions) {
-            if (action->isSeparator() || action->text().isEmpty()) {
+            if (!SchoolMode::instance()->allowsAction(action) || action->isSeparator() || action->text().isEmpty()) {
                 continue;
             }
             // A submenu's own action does nothing when triggered; its children
@@ -509,7 +522,7 @@ namespace Material
         QString group;
         for (int i = 0; i < m_commands.size(); ++i) {
             const Command& command = m_commands.at(i);
-            if (!command.action) {
+            if (!command.action || !SchoolMode::instance()->allowsAction(command.action)) {
                 continue;
             }
             bool matched = true;
@@ -627,15 +640,20 @@ namespace Material
             return;
         }
         QAction* action = static_cast<CommandRow*>(m_rows.at(m_selected))->action();
-        if (!action || !action->isEnabled()) {
+        if (!action || !action->isEnabled() || !SchoolMode::instance()->allowsAction(action)) {
             return;
         }
 
         closeOverlay();
         // The command may open a modal dialog; let the closing transition start
         // before it takes the event loop over.
-        QMetaObject::invokeMethod(action, "trigger", Qt::QueuedConnection);
-        emit commandTriggered(action);
+        const QPointer<QAction> pending(action);
+        QMetaObject::invokeMethod(this, [this, pending] {
+            if (!pending || !pending->isEnabled() || !SchoolMode::instance()->allowsAction(pending))return;
+            const QPointer<CommandPalette> alive(this);
+            pending->trigger();
+            if(alive && pending)emit alive->commandTriggered(pending);
+        }, Qt::QueuedConnection);
     }
 
     bool CommandPalette::eventFilter(QObject* watched, QEvent* event)
