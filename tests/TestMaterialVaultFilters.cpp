@@ -438,7 +438,12 @@ void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
             QCOMPARE(entry->accessibleName(), expected);
             QVERIFY(contained(host.data(), entry));
             QVERIFY(entry->sizePolicy().hasHeightForWidth());
-            QVERIFY(entry->height() >= entry->heightForWidth(entry->width()));
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+            QCoreApplication::processEvents();
+            QTRY_VERIFY2(entry->height() >= entry->heightForWidth(entry->width()),
+                         qPrintable(QStringLiteral("category=%1 language=%2 allocated=%3x%4 requiredHeight=%5 host=%6x%7")
+                                        .arg(category).arg(int(language)).arg(entry->width()).arg(entry->height())
+                                        .arg(entry->heightForWidth(entry->width())).arg(host->width()).arg(host->height())));
             QVERIFY(entry->height() >= Layout::ButtonHeight);
             if (language == Voice::Language::English || language == Voice::Language::Bilingual)
                 QVERIFY(entry->height() > Layout::ButtonHeight);

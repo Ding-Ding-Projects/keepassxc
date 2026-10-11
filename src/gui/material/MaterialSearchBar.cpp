@@ -58,6 +58,11 @@ namespace Material
 
             QSize sizeHint() const override { return {48, Layout::ButtonHeight}; }
             QSize minimumSizeHint() const override { return {48, Layout::ButtonHeight}; }
+            void setText(const QString& value)
+            {
+                TextButton::setText(value);
+                updateWrappedMinimum();
+            }
             int heightForWidth(int width) const override
             {
                 QTextLayout label(text(), labelFont());
@@ -65,6 +70,16 @@ namespace Material
             }
 
         protected:
+            bool event(QEvent* event) override
+            {
+                const bool handled = TextButton::event(event);
+                if (event->type() == QEvent::Resize || event->type() == QEvent::FontChange
+                    || event->type() == QEvent::StyleChange) {
+                    updateWrappedMinimum();
+                }
+                return handled;
+            }
+
             void paintEvent(QPaintEvent*) override
             {
                 QPainter painter(this);
@@ -82,6 +97,14 @@ namespace Material
             }
 
         private:
+            void updateWrappedMinimum()
+            {
+                // Height-for-width is a preference during constrained allocation. Make
+                // the complete wrapped label a minimum at the actual allocated width too.
+                const int required = heightForWidth(width());
+                if (minimumHeight() != required) setMinimumHeight(required);
+            }
+
             qreal layoutLabel(QTextLayout& label, int width) const
             {
                 QTextOption option;
