@@ -15,6 +15,7 @@
 #include <QBuffer>
 #include <QFile>
 #include <QFileInfo>
+#include <QDir>
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -166,6 +167,19 @@ private slots:
 #ifdef Q_OS_WIN
         QCOMPARE(Converter::convert(source, destination, Converter::Operation::HexEncode), Converter::Result::Success);
         QFile result(destination); QVERIFY(result.open(QIODevice::ReadOnly)); QCOMPARE(result.readAll(), QByteArray("616263")); result.close();
+        QVERIFY(QDir(directory.path()).entryList(QStringList{QStringLiteral(".conversion-*")}, QDir::Files | QDir::Hidden).isEmpty());
+        const auto racedDestination = directory.filePath(QStringLiteral("created-during-verification.txt"));
+        const auto racedResult = Converter::convertWithObserver(source, racedDestination, Converter::Operation::HexEncode, nullptr,
+            [&](int phase) {
+                if (phase != 2) return;
+                QFile occupied(racedDestination);
+                QVERIFY(occupied.open(QIODevice::WriteOnly | QIODevice::NewOnly));
+                QCOMPARE(occupied.write("existing"), qint64(8));
+            });
+        QCOMPARE(racedResult, Converter::Result::IoFailure);
+        QFile occupied(racedDestination); QVERIFY(occupied.open(QIODevice::ReadOnly));
+        QCOMPARE(occupied.readAll(), QByteArray("existing")); occupied.close();
+        QVERIFY(QDir(directory.path()).entryList(QStringList{QStringLiteral(".conversion-*")}, QDir::Files | QDir::Hidden).isEmpty());
         QCOMPARE(Converter::convert(source, destination, Converter::Operation::Base64Encode), Converter::Result::UnsafePath);
         QVERIFY(result.open(QIODevice::ReadOnly)); QCOMPARE(result.readAll(), QByteArray("616263"));
 #endif
