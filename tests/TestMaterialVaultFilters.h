@@ -29,6 +29,7 @@ private slots:
     void groupFilterKeepsAncestorsOfMatches();
     void healthChipsArePresentAndCheckable();
     void tagSearchPreservesSelectionAndPreviousResults();
+    void closingVaultClearsCategoryQueriesAndModes();
     void detailFilterNarrowsFieldsAndAttachments();
     void entryRowsPaintTagChips();
 };

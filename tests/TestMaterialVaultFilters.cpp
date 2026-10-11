@@ -225,3 +225,26 @@ void TestMaterialVaultFilters::tagSearchPreservesSelectionAndPreviousResults()
     QVERIFY(visible(QStringLiteral("personal")));
     QCOMPARE(sidebar.selectedTags(), QStringList{QStringLiteral("work")});
 }
+
+void TestMaterialVaultFilters::closingVaultClearsCategoryQueriesAndModes()
+{
+    VaultScreen screen;
+    auto* entries = screen.searchBar();
+    auto* folders = screen.sidebar()->groupFilter();
+    auto* tags = screen.sidebar()->tagFilter();
+    auto* details = screen.detail()->attachmentFilter();
+    screen.sidebar()->setTags({QStringLiteral("selected")});
+    screen.sidebar()->setSelectedTags({QStringLiteral("selected")});
+    for (SearchBar* bar : {entries, folders, tags, details}) {
+        bar->setText(QStringLiteral("sample"));
+        bar->setRegexEnabled(true);
+        bar->setRegexFlags(QStringLiteral("m"));
+    }
+    screen.setDatabaseWidget(nullptr);
+    for (SearchBar* bar : {entries, folders, tags, details}) {
+        QVERIFY(bar->text().isEmpty());
+        QVERIFY(!bar->isRegexEnabled());
+        QCOMPARE(bar->regexFlags(), QStringLiteral("i"));
+    }
+    QVERIFY(screen.sidebar()->selectedTags().isEmpty());
+}
