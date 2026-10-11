@@ -18,6 +18,8 @@ const cantonese = {
   regexTitle:'文件搜尋運算式',regexIntro:'使用 JavaScript 正規運算式，最多 300 個字元，喺獨立 worker 執行，時限為 250 毫秒。',plainSearch:'改用純文字',cancel:'取消',apply:'套用',
 };
 const extra = {
+  notificationsTitle:['Notifications','通知'],notificationsEnable:['Enable non-blocking notifications','啟用非阻斷通知'],notificationCentre:['Notification centre','通知中心'],notificationsEmpty:['No site notifications are recorded.','未有網頁通知記錄。'],notificationsOpen:['Open notification centre','開啟通知中心'],notificationsClose:['Close notification centre','關閉通知中心'],notificationsEnabled:['Notifications enabled.','已啟用通知。'],notificationsDisabled:['Notifications disabled.','已停用通知。'],notificationDismiss:['Dismiss notification','關閉通知'],
+  externalToolsTitle:['External tools and offline help','外部工具同離線說明'],externalToolsDescription:['The desktop application owns external editor handoff. This page links to the documented behavior and source documentation.','外部編輯器交接由桌面應用程式負責。呢頁提供已記錄行為同原始文件嘅連結。'],
   offlineDocumentationSource:['Offline documentation source','離線文件來源'],featureDocumentation:['Feature documentation','功能文件'],externalEditorDocumentation:['External editor documentation','外部編輯器文件'],
   unavailable:['Version and timestamp unavailable.','版本同時間未能取得。'],
   website:['Website','網頁'],updated:['Updated','更新時間'],release:['Released version','已發佈版本'],source:['Source commit','來源 commit'],packageHash:['Package SHA-256','套件 SHA-256'],installerSize:['Installer bytes','安裝程式位元組'],
@@ -78,7 +80,7 @@ function renderLanguage(){
   document.documentElement.lang=state.language==='yue'?'yue-Hant':'en';
   document.querySelectorAll('[data-copy]').forEach(element=>{const value=text(element.dataset.copy);if(element.tagName.endsWith('-BUTTON')){const label=document.createElement('span');label.className='button-copy';label.textContent=value;element.replaceChildren(label);}else{element.textContent=value;}});
   $('#doc-search').label=text('search');$('#language').label=text('language');$('#regex-pattern').label=text('pattern');$('#regex-flags').label=text('flags');$('#theme-switch').ariaLabel=text('darkTheme');
-  renderProvenance();searchDocs();refreshDocumentationCopy();renderVocabularyControls();
+  renderProvenance();searchDocs();refreshDocumentationCopy();renderVocabularyControls();renderNotificationControls();
 }
 function selectPanel(index,focus=false){const id=state.tabs?.order?.[index]||panels[index];state.panel=panels.indexOf(id);$('#navigation').activeTabIndex=state.tabs?.order?.indexOf(id)??index;panels.forEach(panelId=>$('#'+panelId).hidden=panelId!==id);save();if(focus){const heading=$('#'+id).querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'nearest'});}}}
 $('#navigation').addEventListener('change',()=>selectPanel($('#navigation').activeTabIndex));
@@ -122,11 +124,13 @@ initializeDocumentation({language:()=>state.school?'en':state.language,showDocs:
 const make=(tag,attributes={},content='')=>{const node=document.createElement(tag);Object.entries(attributes).forEach(([key,value])=>{if(key in node)node[key]=value;else node.setAttribute(key,value);});if(content)node.textContent=content;return node;};
 const option=(value,label)=>{const node=make('md-select-option',{value});node.append(make('div',{slot:'headline'},label));return node;};
 const setText=(node,value)=>{node.replaceChildren(document.createTextNode(value));};
-const addNotice=(message,kind='info')=>{
+const addNotice=(message,kind='info',copyKey='')=>{
   const centre=$('#notification-centre-panel');if(!centre)return;
-  const item=make('div',{role:'status',className:`notice notice-${kind}`},message);
-  const dismiss=make('md-icon-button',{ariaLabel:'Dismiss notification'});dismiss.innerHTML='<span aria-hidden="true">×</span>';dismiss.addEventListener('click',()=>item.remove());item.append(dismiss);centre.prepend(item);
-  if(kind!=='error')setTimeout(()=>item.remove(),5500);
+  const item=make('div',{role:'status',className:`notice notice-${kind}`});
+  const body=make('span',{},message);if(copyKey)body.dataset.notificationCopy=copyKey;item.append(body);
+  const remove=()=>{item.remove();renderNotificationControls();};
+  const dismiss=make('md-icon-button',{ariaLabel:text('notificationDismiss')});dismiss.dataset.notificationDismiss='';dismiss.innerHTML='<span aria-hidden="true">×</span>';dismiss.addEventListener('click',remove);item.append(dismiss);centre.prepend(item);renderNotificationControls();
+  if(kind!=='error')setTimeout(remove,5500);
 };
 const persist=(notice)=>{save();if(notice)addNotice(notice);};
 const activeFunny=()=>state.language==='yue'?state.funny.yue:state.funny.en;
@@ -192,7 +196,16 @@ function addTabControls(){
   pin.addEventListener('click',()=>{const id=panels[state.panel];state.tabs.pinned=state.tabs.pinned.includes(id)?state.tabs.pinned.filter(value=>value!==id):[...state.tabs.pinned,id];groupField.value=state.tabs.groups[id]||'';groupDialog.show();});groupClose.addEventListener('click',()=>groupDialog.close());groupSave.addEventListener('click',()=>{const id=panels[state.panel],name=groupField.value.trim();if(name)state.tabs.groups[id]=name;else delete state.tabs.groups[id];groupDialog.close();applyTabs();persist('Pinned tabs and group saved.');});
   applyTabs();
 }
-function addNotificationCentre(){const toggle=$('#notifications-switch'),button=$('#notification-centre'),panel=$('#notification-centre-panel');let enabled=toggle.selected;toggle.addEventListener('change',()=>{enabled=toggle.selected;persist(enabled?'Notifications enabled.':'Notifications disabled.');});button.addEventListener('click',()=>{panel.hidden=!panel.hidden;button.textContent=panel.hidden?'Open notification centre':'Close notification centre';});const original=addNotice;window.__siteNotice=(message,kind)=>{if(enabled)original(message,kind);};}
+function renderNotificationControls(){
+ const toggle=$('#notifications-switch'),button=$('#notification-centre'),panel=$('#notification-centre-panel');
+ if(!toggle||!button||!panel)return;
+ toggle.ariaLabel=text('notificationsEnable');panel.setAttribute('aria-label',text('notificationCentre'));
+ const value=text(panel.hidden?'notificationsOpen':'notificationsClose'),label=document.createElement('span');label.className='button-copy';label.textContent=value;button.replaceChildren(label);button.ariaLabel=value;button.setAttribute('aria-expanded',String(!panel.hidden));
+ const empty=$('#notifications-empty');if(empty)empty.hidden=!!panel.querySelector('.notice');
+ panel.querySelectorAll('[data-notification-copy]').forEach(element=>{element.textContent=text(element.dataset.notificationCopy);});
+ panel.querySelectorAll('[data-notification-dismiss]').forEach(element=>{element.ariaLabel=text('notificationDismiss');});
+}
+function addNotificationCentre(){const toggle=$('#notifications-switch'),button=$('#notification-centre'),panel=$('#notification-centre-panel');let enabled=toggle.selected;toggle.addEventListener('change',()=>{enabled=toggle.selected;save();const key=enabled?'notificationsEnabled':'notificationsDisabled';addNotice(text(key),'info',key);});button.addEventListener('click',()=>{panel.hidden=!panel.hidden;renderNotificationControls();});const original=addNotice;window.__siteNotice=(message,kind)=>{if(enabled)original(message,kind);};renderNotificationControls();}
 function addRegexBuilder(){
   const dialog=$('#regex-dialog'),content=dialog.querySelector('[slot="content"]');const tools=make('div',{id:'regex-tools',ariaLabel:'Regex builder'});[['literal','Literal'],['class','Character class'],['anchor','Anchor'],['group','Group'],['alternation','Alternation'],['quantifier','Quantifier']].forEach(([value,label])=>{const button=make('md-outlined-button',{},label);button.addEventListener('click',()=>{const patterns={literal:'text',class:'[A-Za-z]',anchor:'^$',group:'()',alternation:'|',quantifier:'+'};const input=$('#regex-pattern');input.value+=patterns[value];input.focus();});tools.append(button);});
   const rawFlags=make('md-outlined-text-field',{id:'regex-raw-flags',label:'Raw flags',value:'i',maxLength:8});
