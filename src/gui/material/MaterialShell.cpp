@@ -16,6 +16,7 @@
  */
 
 #include "MaterialShell.h"
+#include "MaterialServerManager.h"
 #include "MaterialControls.h"
 
 #include "MaterialIcons.h"
@@ -166,6 +167,9 @@ namespace Material
             update();
         });
 
+        QTimer::singleShot(0, this, [this] {
+            addDestination(QStringLiteral("servers"), new ServerManager(this), QStringLiteral("dns"), tr("Minecraft servers"), tr("Owned local Java servers"));
+        });
         s_instance = this;
         applyBreakpoint(breakpointFor(width()));
     }
