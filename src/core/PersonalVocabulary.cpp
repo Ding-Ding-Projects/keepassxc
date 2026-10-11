@@ -64,7 +64,7 @@ namespace
         for (qsizetype index = 0; index < text.size(); ++index) {
             const auto character = text.at(index);
             if (character == QLatin1Char('{') || character == QLatin1Char('[')) {
-                frames.append({character == QLatin1Char('{'), {}});
+                frames.append(Frame{character == QLatin1Char('{'), QSet<QString>{}});
                 if (frames.size() > PersonalVocabulary::MaxDepth) {
                     return false;
                 }
