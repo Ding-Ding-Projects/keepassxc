@@ -5428,19 +5428,19 @@
         "vocabulary.invalid": {
             "category": "error",
             "en": {
-                "facts": ["not loaded", "schema version 1", "500", "64 KiB"],
+                "facts": ["not loaded", "schema version 1", "256 KiB", "depth 8", "160", "1000"],
                 "levels": {
-                    "1": "Vocabulary not loaded. The file must be JSON with schema version 1, at most 500 bounded string entries and no larger than 64 KiB.",
-                    "3": "Vocabulary not loaded — the file must use schema version 1, hold at most 500 bounded string entries and stay under 64 KiB.",
-                    "5": "Vocabulary not loaded: that file did not pass the door. It must use schema version 1, carry at most 500 bounded string entries and weigh no more than 64 KiB."
+                    "1": "Vocabulary not loaded. Use schema version 1, UTF-8 JSON at most 256 KiB, depth 8, unique keys of 1 to 160 Unicode code points and string values up to 1000 code points. Entry count has no fixed cap within these bounds.",
+                    "3": "Vocabulary not loaded: the file needs schema version 1, UTF-8 JSON at most 256 KiB, depth 8, unique keys of 1 to 160 Unicode code points and string values up to 1000 code points. Entry count has no fixed cap within these bounds.",
+                    "5": "Vocabulary not loaded: the file missed the door check. Use schema version 1, UTF-8 JSON at most 256 KiB, depth 8, unique keys of 1 to 160 Unicode code points and string values up to 1000 code points. Entry count has no fixed cap within these bounds."
                 }
             },
             "yue": {
-                "facts": ["未載入", "schema version 1", "500", "64 KiB"],
+                "facts": ["未載入", "schema version 1", "256 KiB", "depth 8", "160", "1000"],
                 "levels": {
-                    "1": "詞彙未載入。檔案必須係 JSON、schema version 1、最多 500 條有界字串、唔大過 64 KiB。",
-                    "3": "詞彙未載入，檔案要用 schema version 1，最多 500 條有界字串，唔可以大過 64 KiB。",
-                    "5": "詞彙未載入：呢個檔案過唔到門口。要用 schema version 1，最多 500 條有界字串，仲要唔大過 64 KiB。"
+                    "1": "詞彙未載入。請用 schema version 1、最多 256 KiB 嘅 UTF-8 JSON、depth 8；鍵名要唯一，長度為 1 至 160 個 Unicode 碼點，字串值最多 1000 個碼點。符合呢啲界限就冇固定條數上限。",
+                    "3": "詞彙未載入：檔案要用 schema version 1、最多 256 KiB 嘅 UTF-8 JSON、depth 8；鍵名要唯一，長度為 1 至 160 個 Unicode 碼點，字串值最多 1000 個碼點。符合呢啲界限就冇固定條數上限。",
+                    "5": "詞彙未載入：呢個檔案未過門口檢查。請用 schema version 1、最多 256 KiB 嘅 UTF-8 JSON、depth 8；鍵名要唯一，長度為 1 至 160 個 Unicode 碼點，字串值最多 1000 個碼點。符合呢啲界限就冇固定條數上限。"
                 }
             }
         },

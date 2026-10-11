@@ -35,8 +35,10 @@ Schema version 1, one JSON object with exactly two members:
 { "schemaVersion": 1, "entries": { "original wording": "replacement" } }
 ```
 
-Bounds: file at most 64 KiB, at most 500 entries, keys 1 to 128 characters, string values of at
-most 512 characters, no `__proto__`, `constructor` or `prototype` keys, no extra members. A file
+Bounds: UTF-8 file at most 256 KiB, JSON depth at most 8, keys 1 to 160 Unicode code points,
+string values of at most 1,000 Unicode code points, no `__proto__`, `constructor` or `prototype`
+keys, no duplicate members (including escaped equivalent names), and no extra members.
+The entry inventory is dynamic, bounded by the file limit rather than a fixed entry count. A file
 written by an earlier build with the member named `replacements` is accepted and normalised to
 `entries` in the cache. Anything outside the contract is refused as a whole; no partial application
 ever happens.
@@ -49,7 +51,7 @@ state is the validated cache in local configuration; the source path is never pe
 ## Failure modes
 
 - Malformed JSON, a wrong schema version, an extra member, a non-string value, an unsafe key, an
-  oversized file or too many entries: the file is refused with a notification and the previous
+  oversized file, excessive depth, duplicate member or invalid Unicode: the file is refused with a notification and the previous
   cache (if any) stays active.
 - A corrupt cache on disk fails closed: zero entries are active and original wording renders.
 - The cache is revalidated on every reload, so a hand-edited configuration cannot apply partially.
@@ -65,6 +67,9 @@ notification reports only the entry count. The cache lives in the local (not roa
 - `testpersonalvocabulary` covers the schema and every bound, whole-word longest-first
   application, translator application through `QCoreApplication::translate`, replace, corrupt-cache
   fail-closed and clear restoring original wording.
+- Updated source fixtures cover 750 entries, supplementary Unicode at the exact key/value limits,
+  exact file-byte limits, escaped duplicate keys, invalid UTF-8, unpaired surrogates and excessive
+  depth. Compilation and execution of these new cases remain pending for the current candidate.
 - `node design/parity/vocab-proof.mjs <exe> <repo> <outDir> <json> neutral|private` drives the Settings upload control with a real file on the hidden
   desktop and records load, applied wording, restart persistence, replace, invalid-file refusal and
   clear, keeping the payload out of the retained captures.

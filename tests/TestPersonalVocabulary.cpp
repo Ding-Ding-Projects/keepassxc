@@ -58,13 +58,32 @@ void TestPersonalVocabulary::validatesBoundedSchema()
     QVERIFY(!PersonalVocabulary::validate(QByteArray(PersonalVocabulary::MaxFileBytes + 1, 'x')).valid);
     QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QStringLiteral("Database"), 3}})).valid);
     QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QStringLiteral("__proto__"), QStringLiteral("x")}})).valid);
-    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QString(129, 'k'), QStringLiteral("x")}})).valid);
-    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QStringLiteral("k"), QString(513, 'v')}})).valid);
-    QJsonObject tooMany;
-    for (int index = 0; index <= PersonalVocabulary::MaxEntries; ++index) {
-        tooMany.insert(QStringLiteral("key%1").arg(index), QStringLiteral("v"));
+    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QString(161, 'k'), QStringLiteral("x")}})).valid);
+    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QStringLiteral("k"), QString(1001, 'v')}})).valid);
+    QJsonObject dynamicInventory;
+    for (int index = 0; index < 750; ++index) {
+        dynamicInventory.insert(QStringLiteral("key%1").arg(index), QStringLiteral("v"));
     }
-    QVERIFY(!PersonalVocabulary::validate(file(tooMany)).valid);
+    QVERIFY(PersonalVocabulary::validate(file(dynamicInventory)).valid);
+    // Supplementary characters count once, rather than as two UTF-16 units.
+    const auto supplementary = QString::fromUtf8("\xF0\x9F\x8C\x90");
+    const auto unicodeBounds = QJsonObject{{supplementary.repeated(160), supplementary.repeated(1000)}};
+    QVERIFY(PersonalVocabulary::validate(file(unicodeBounds)).valid);
+    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{supplementary.repeated(161), QStringLiteral("x")}})).valid);
+    QVERIFY(!PersonalVocabulary::validate(file(QJsonObject{{QStringLiteral("k"), supplementary.repeated(1001)}})).valid);
+    const auto compact = QJsonDocument(QJsonObject{{QStringLiteral("schemaVersion"), 1}, {QStringLiteral("entries"), good}}).toJson(QJsonDocument::Compact);
+    auto exactBytes = compact;
+    exactBytes.append(QByteArray(PersonalVocabulary::MaxFileBytes - exactBytes.size(), ' '));
+    QVERIFY(PersonalVocabulary::validate(exactBytes).valid);
+    QVERIFY(!PersonalVocabulary::validate(exactBytes + ' ').valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"entries\":{\"k\":\"a\",\"k\":\"b\"}}")).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"entries\":{\"k\":\"a\",\"\\u006b\":\"b\"}}")).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"schemaVersion\":1,\"entries\":{}}")).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1.5,\"entries\":{}}")).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"entries\":{\"k\":\"") + char(0xff) + "\"}}").valid);
+    QVERIFY(!PersonalVocabulary::validate(compact + char(0xe2)).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"entries\":{\"k\":\"\\ud800\"}}")).valid);
+    QVERIFY(!PersonalVocabulary::validate(QByteArray("{\"schemaVersion\":1,\"entries\":{\"k\":") + QByteArray(9, '[') + "0" + QByteArray(9, ']') + "}}").valid);
     // Extra members are refused; nothing outside the declared schema applies.
     QJsonObject extra{{QStringLiteral("schemaVersion"), 1}, {QStringLiteral("entries"), good}, {QStringLiteral("x"), 1}};
     QVERIFY(!PersonalVocabulary::validate(QJsonDocument(extra).toJson()).valid);

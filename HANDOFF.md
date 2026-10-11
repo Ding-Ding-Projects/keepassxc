@@ -1,5 +1,17 @@
 # Navigation delivery handoff
 
+## Current schema and SSH continuation, October 11, 2026
+
+This section supersedes the current-state statements below while preserving their historical evidence. The SSH branch contains bounded read-only host/runtime discovery at `d79ad3c84501c15939d766f900c53f5a42e1b9f7` and independently reviewed immediate-completion ordering repair `feedfadea832ec944e3bb88ad0326cc5853180e6`. Remote creation, lifecycle and complete version/configuration/extension compatibility remain incomplete. No real SSH host connection or native execution has been performed for this unit.
+
+The native personal-vocabulary validator now has source for 256 KiB UTF-8 input, depth 8, dynamic entry counts, 160/1000 Unicode code-point limits, decoded duplicate-member rejection and invalid-Unicode rejection. Boundary fixtures and localized rejection copy are updated. Independent source/header review found no concrete parser defect; compilation, execution and real upload acceptance remain pending. The website schema repair is a separate active unit in the reader branch.
+
+The root build at `49a2547bab915b2ad3a6a1d218f8282602a54e41` failed on a missing complete QTimer definition. Repair `cdb8862bd2637b30464abae8ad13888885def592` is pushed and its exact root `build.bat /s` remains running. It does not include this SSH/schema continuation. The earlier verified native source and five passing checks remain bound to `0ffb00b9ae963e7629bacc2e2903c5df4a104490`.
+
+Reader source `86e06cd96928f29487c422fe4f039b5364f4f6ba` has 384 collected tuples across eight changed articles: 200 original and 184 recovered with source-derived content assertions. Original failures remain retained. Both owned processes/listeners are absent and both empty desktops closed with proof. Pixel review is pending; collection does not establish visual acceptance or deployment. Wiki `0ab8ac4f147a4aa4998f78e4154bfb3129ee1410` is preserved. Main remains `906e7b3230595b0abf73ea479955c50418d7d0b1`.
+
+The independent current-catalogue review confirms all 105 identities but identifies understated personal-vocabulary, guidance, motion, workflow-diagram and server descriptor obligations. See the current feature-coverage article. Issue 20 comment 6107605988 and Discussion 21 comment 18861383 record this milestone with exact body readback. Authenticated status reporting remains unestablished. No new release or destructive cleanup is authorized by this preservation record.
+
 ## Current expanded feature implementation, October 11, 2026
 
 All 105 current canonical feature identities are explicitly represented in the product crosswalk. This establishes inventory completeness, not implemented or accepted completeness. The expanded inventory retains 90 families, 180 platform rows, 108 surfaces, 1,045 capabilities and 112,860 required cells, with zero fully accepted cells. Historical acceptance remains separate.
