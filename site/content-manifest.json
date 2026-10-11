@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "evidenceCommit": "010cb52fdad18d97af6938c11db8113dbb701247",
+  "evidenceCommit": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
   "articles": [
     {
       "id": "auto-updates",
@@ -20,9 +20,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/auto-updates.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/auto-updates.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/auto-updates.md"
       }
     },
     {
@@ -43,9 +43,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/build-scripts.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/build-scripts.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/build-scripts.md"
       }
     },
     {
@@ -64,9 +64,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/current-feature-coverage.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/current-feature-coverage.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/current-feature-coverage.md"
       }
     },
     {
@@ -85,9 +85,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/database-lifecycle-repair.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/database-lifecycle-repair.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/database-lifecycle-repair.md"
       }
     },
     {
@@ -108,9 +108,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/in-app-version-provenance.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/in-app-version-provenance.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/in-app-version-provenance.md"
       }
     },
     {
@@ -129,9 +129,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/interface-completion.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/interface-completion.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/interface-completion.md"
       }
     },
     {
@@ -152,9 +152,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/line-count-release.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/line-count-release.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/line-count-release.md"
       }
     },
     {
@@ -173,9 +173,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/packaging-path-safety.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/packaging-path-safety.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/packaging-path-safety.md"
       }
     },
     {
@@ -196,9 +196,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/release-code-name.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/release-code-name.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/release-code-name.md"
       }
     },
     {
@@ -217,9 +217,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/release-timing.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/release-timing.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/release-timing.md"
       }
     },
     {
@@ -238,9 +238,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/repair-verification-2026-09.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/repair-verification-2026-09.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/repair-verification-2026-09.md"
       }
     },
     {
@@ -261,9 +261,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/social-preview.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/social-preview.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/social-preview.md"
       }
     },
     {
@@ -284,9 +284,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/squirrel-installer.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/squirrel-installer.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/squirrel-installer.md"
       }
     },
     {
@@ -305,9 +305,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/delivery/website-release-provenance.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/delivery/website-release-provenance.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/delivery/website-release-provenance.md"
       }
     },
     {
@@ -326,9 +326,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/app-logo-customization.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/app-logo-customization.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/app-logo-customization.md"
       }
     },
     {
@@ -349,9 +349,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/clipping-matrix.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/clipping-matrix.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/clipping-matrix.md"
       }
     },
     {
@@ -372,9 +372,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/design-parity.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/design-parity.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/design-parity.md"
       }
     },
     {
@@ -395,9 +395,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/frameless-title-bar.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/frameless-title-bar.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/frameless-title-bar.md"
       }
     },
     {
@@ -418,9 +418,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/material-3-appearance.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/material-3-appearance.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/material-3-appearance.md"
       }
     },
     {
@@ -443,9 +443,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/design/per-element-appearance-editor.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/design/per-element-appearance-editor.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/design/per-element-appearance-editor.md"
       }
     },
     {
@@ -464,9 +464,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/interface/choice-control-promotion.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/interface/choice-control-promotion.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/interface/choice-control-promotion.md"
       }
     },
     {
@@ -485,9 +485,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/interface/ui-motion.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/interface/ui-motion.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/interface/ui-motion.md"
       }
     },
     {
@@ -506,9 +506,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/interface/vault-pane-sizing.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/interface/vault-pane-sizing.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/interface/vault-pane-sizing.md"
       }
     },
     {
@@ -529,9 +529,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/dim-sum-surprise.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/dim-sum-surprise.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/dim-sum-surprise.md"
       }
     },
     {
@@ -552,9 +552,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/funny-level-cantonese.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/funny-level-cantonese.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/funny-level-cantonese.md"
       }
     },
     {
@@ -575,9 +575,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/funny-level-english.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/funny-level-english.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/funny-level-english.md"
       }
     },
     {
@@ -598,9 +598,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/language-modes.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/language-modes.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/language-modes.md"
       }
     },
     {
@@ -621,9 +621,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/notification-centre.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/notification-centre.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/notification-centre.md"
       }
     },
     {
@@ -644,9 +644,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/messaging/notifications.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/messaging/notifications.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/messaging/notifications.md"
       }
     },
     {
@@ -667,9 +667,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/navigation/command-palette.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/navigation/command-palette.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/navigation/command-palette.md"
       }
     },
     {
@@ -690,9 +690,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/navigation/external-editor.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/navigation/external-editor.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/navigation/external-editor.md"
       }
     },
     {
@@ -713,9 +713,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/navigation/tabs.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/navigation/tabs.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/navigation/tabs.md"
       }
     },
     {
@@ -736,9 +736,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/records/changelog-commit-links.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/records/changelog-commit-links.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/records/changelog-commit-links.md"
       }
     },
     {
@@ -759,9 +759,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/records/changelog-viewer.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/records/changelog-viewer.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/records/changelog-viewer.md"
       }
     },
     {
@@ -782,9 +782,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/records/history-panel-filters.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/records/history-panel-filters.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/records/history-panel-filters.md"
       }
     },
     {
@@ -805,9 +805,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/records/local-history.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/records/local-history.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/records/local-history.md"
       }
     },
     {
@@ -828,9 +828,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/records/personal-vocabulary-upload.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/records/personal-vocabulary-upload.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/records/personal-vocabulary-upload.md"
       }
     },
     {
@@ -849,9 +849,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/context-menu-search.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/context-menu-search.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/context-menu-search.md"
       }
     },
     {
@@ -872,9 +872,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/dropdown-select.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/dropdown-select.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/dropdown-select.md"
       }
     },
     {
@@ -895,9 +895,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/regex-builder.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/regex-builder.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/regex-builder.md"
       }
     },
     {
@@ -918,9 +918,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/search-bar-every-surface.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/search-bar-every-surface.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/search-bar-every-surface.md"
       }
     },
     {
@@ -939,9 +939,9 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/vault-category-search.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/vault-category-search.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/vault-category-search.md"
       }
     },
     {
@@ -960,9 +960,30 @@
       },
       "evidence": {
         "repository": "Ding-Ding-Projects/keepassxc",
-        "ref": "010cb52fdad18d97af6938c11db8113dbb701247",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
         "path": "docs/features/search/vault-search-guidance.md",
-        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/010cb52fdad18d97af6938c11db8113dbb701247/docs/features/search/vault-search-guidance.md"
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/search/vault-search-guidance.md"
+      }
+    },
+    {
+      "id": "local-java-server-manager",
+      "article": "docs/features/servers/local-java-server-manager.md",
+      "category": "servers",
+      "title": {
+        "en": "Owned local Java server manager",
+        "zh-Hant": "專屬本地 Java 伺服器管理"
+      },
+      "implementationStatus": "not-tracked",
+      "statusProvenance": {
+        "sourcePath": "docs/features/inventory.json",
+        "mapping": "article",
+        "featureIds": []
+      },
+      "evidence": {
+        "repository": "Ding-Ding-Projects/keepassxc",
+        "ref": "d9046c26d66dd2f765ee0b0dfd40559face513fa",
+        "path": "docs/features/servers/local-java-server-manager.md",
+        "url": "https://github.com/Ding-Ding-Projects/keepassxc/blob/d9046c26d66dd2f765ee0b0dfd40559face513fa/docs/features/servers/local-java-server-manager.md"
       }
     }
   ]
