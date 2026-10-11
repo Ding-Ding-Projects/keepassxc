@@ -30,6 +30,9 @@
 #include <QStandardPaths>
 #include <QTimer>
 #include <QUuid>
+#ifdef Q_OS_WIN
+#include <qt_windows.h>
+#endif
 #include <QVBoxLayout>
 
 namespace Material {
@@ -54,19 +57,68 @@ bool ServerManager::officialMetadataUrl(const QUrl& url)
            && url.fragment().isEmpty() && url.query().isEmpty()
            && (url.host() == QLatin1String("piston-meta.mojang.com") || url.host() == QLatin1String("launchermeta.mojang.com"));
 }
+bool ServerManager::inventoryWithinLimits(const QJsonObject& document)
+{
+    return document.value("schema").toInt()==1 && document.value("servers").isArray()
+           && document.value("servers").toArray().size()<=256
+           && QJsonDocument(document).toJson().size()<=1024*1024;
+}
+bool ServerManager::safePath(const QString& path)
+{
+    if (path.isEmpty() || !QFileInfo(path).isAbsolute()) return false;
+    QString current=QDir::cleanPath(QDir::fromNativeSeparators(path));
+#ifdef Q_OS_WIN
+    // Local drive paths only; UNC, device namespaces and alternate streams are unsupported.
+    if (current.size()<3 || current.at(1)!=QLatin1Char(':') || current.at(2)!=QLatin1Char('/') || current.mid(2).contains(QLatin1Char(':'))) return false;
+#endif
+    for (;;) {
+        const QFileInfo info(current);
+        if (info.isSymLink()) return false;
+#ifdef Q_OS_WIN
+        const QString native=QDir::toNativeSeparators(current);
+        const DWORD attributes=GetFileAttributesW(reinterpret_cast<LPCWSTR>(native.utf16()));
+        if (attributes==INVALID_FILE_ATTRIBUTES) {
+            const DWORD error=GetLastError();
+            if (error!=ERROR_FILE_NOT_FOUND && error!=ERROR_PATH_NOT_FOUND) return false;
+        } else if (attributes & FILE_ATTRIBUTE_REPARSE_POINT) return false;
+#endif
+        if (info.exists() && info.canonicalFilePath().isEmpty()) return false;
+        const QString parent=info.dir().absolutePath();
+        if (parent==current) break;
+        current=parent;
+    }
+    return true;
+}
+bool ServerManager::containedPath(const QString& root,const QString& path)
+{
+    if (!safePath(root) || !safePath(path)) return false;
+    const QString base=QDir::cleanPath(QFileInfo(root).absoluteFilePath());
+    const QString child=QDir::cleanPath(QFileInfo(path).absoluteFilePath());
+#ifdef Q_OS_WIN
+    constexpr auto sensitivity=Qt::CaseInsensitive;
+#else
+    constexpr auto sensitivity=Qt::CaseSensitive;
+#endif
+    if (!child.startsWith(base+QLatin1Char('/'),sensitivity)) return false;
+    const QString canonicalBase=QFileInfo(root).canonicalFilePath();
+    const QString canonicalChild=QFileInfo(path).canonicalFilePath();
+    if (!canonicalBase.isEmpty() && !canonicalChild.isEmpty()
+        && !canonicalChild.startsWith(canonicalBase+QLatin1Char('/'),sensitivity)) return false;
+    return true;
+}
 QJsonObject ServerManager::updateRecord(QJsonObject previous, const QJsonObject& changes)
 {
     for (auto it = changes.begin(); it != changes.end(); ++it) previous.insert(it.key(), it.value());
     return previous;
 }
-ServerManager::ServerManager(QWidget* parent) : Screen(parent)
+ServerManager::ServerManager(QWidget* parent, const QString& inventoryRoot) : Screen(parent)
 {
     setObjectName(QStringLiteral("materialServerManager"));
     setHeadline(say("server.title"));
     setSupportingText(say("server.scope"));
     setSearchVisible(true);
     searchBar()->setIdentity(QStringLiteral("servers.inventory"), say("server.search"));
-    m_root = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + QStringLiteral("/managed-servers");
+    m_root = inventoryRoot.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation) + QStringLiteral("/managed-servers") : inventoryRoot;
     m_network = new QNetworkAccessManager(this);
     auto* form = new QFormLayout;
     m_target = new QComboBox(this); m_target->addItems(targetNames());
@@ -130,19 +182,22 @@ QString ServerManager::selectedId() const
 }
 void ServerManager::loadInventory()
 {
-    QFile file(m_root + QStringLiteral("/inventory.json"));
+    const QString inventoryPath=m_root+QStringLiteral("/inventory.json");
+    if (!containedPath(m_root,inventoryPath)) { status(say("server.invalid-inventory")); return; }
+    QFile file(inventoryPath);
     if (file.exists() && (!file.open(QIODevice::ReadOnly) || file.size() > 1024*1024)) { status(say("server.invalid-inventory")); return; }
     if (file.isOpen()) {
-        QJsonParseError error; const auto document = QJsonDocument::fromJson(file.readAll(), &error);
-        if (error.error != QJsonParseError::NoError || !document.isObject() || document.object().value("schema").toInt() != 1 || !document.object().value("servers").isArray() || document.object().value("servers").toArray().size()>256) { status(say("server.invalid-inventory")); return; }
+        QJsonParseError error; const auto document = QJsonDocument::fromJson(file.read(1024*1024+1), &error);
+        if (error.error != QJsonParseError::NoError || !document.isObject() || !inventoryWithinLimits(document.object())) { status(say("server.invalid-inventory")); return; }
         m_document = document.object();
     } else m_document = QJsonObject{{"schema",1},{"servers",QJsonArray{}}};
     rebuildInventory();
 }
 bool ServerManager::saveInventory()
 {
-    if (QFileInfo(m_root).isSymLink() || !QDir().mkpath(m_root)) return false;
-    QSaveFile file(m_root + QStringLiteral("/inventory.json"));
+    const QString inventoryPath=m_root+QStringLiteral("/inventory.json");
+    if (!inventoryWithinLimits(m_document) || !containedPath(m_root,inventoryPath) || !QDir().mkpath(m_root) || !containedPath(m_root,inventoryPath)) return false;
+    QSaveFile file(inventoryPath);
     const auto bytes = QJsonDocument(m_document).toJson();
     return file.open(QIODevice::WriteOnly) && file.write(bytes) == bytes.size() && file.commit();
 }
@@ -160,9 +215,9 @@ bool ServerManager::validRecord(const QJsonObject& r) const
 {
     const auto dir = directoryFor(r.value("id").toString());
     const QFileInfo runtime(r.value("runtime").toString());
-    return !dir.isEmpty() && !QFileInfo(m_root).isSymLink() && !QFileInfo(dir).isSymLink() && QFileInfo(dir).absolutePath() == QFileInfo(m_root).absoluteFilePath()
+    return !dir.isEmpty() && containedPath(m_root,dir) && containedPath(dir,dir+QStringLiteral("/server.jar")) && QFileInfo(dir).absolutePath() == QFileInfo(m_root).absoluteFilePath()
            && r.value("edition").toString() == QLatin1String("java") && r.value("eulaAccepted").toBool()
-           && runtime.isAbsolute() && runtime.isFile() && !runtime.isSymLink()
+           && runtime.isAbsolute() && safePath(runtime.filePath()) && runtime.isFile()
            && (runtime.fileName().compare(QStringLiteral("java.exe"),Qt::CaseInsensitive)==0 || runtime.fileName()==QLatin1String("java"))
            && QFileInfo(dir + QStringLiteral("/server.jar")).isFile() && !QFileInfo(dir + QStringLiteral("/server.jar")).isSymLink();
 }
@@ -210,16 +265,21 @@ void ServerManager::request(const QUrl& url, const QByteArray& expectedHash)
 }
 void ServerManager::createServer()
 {
+    if (!inventoryWithinLimits(m_document) || m_document.value("servers").toArray().size()>=256) { status(say("server.invalid-inventory")); return; }
     if (m_target->currentIndex()!=0 || m_edition->currentIndex()!=0) { status(say("server.unavailable-target")); return; }
     if (m_document.value("schema").toInt()!=1 || !validName(m_name->text()) || !m_eula->isChecked() || m_resolved.isEmpty()) { status(say("server.creation-needs")); return; }
     const QFileInfo runtime(m_runtime->text());
-    if (!runtime.isAbsolute() || !runtime.isFile() || runtime.isSymLink() || (runtime.fileName().compare(QStringLiteral("java.exe"),Qt::CaseInsensitive)!=0 && runtime.fileName()!=QLatin1String("java"))) { status(say("server.runtime-invalid")); return; }
+    if (!safePath(m_runtime->text()) || !runtime.isFile() || (runtime.fileName().compare(QStringLiteral("java.exe"),Qt::CaseInsensitive)!=0 && runtime.fileName()!=QLatin1String("java"))) { status(say("server.runtime-invalid")); return; }
     QFile input(m_jar->text()); const auto distribution = m_resolved.value("downloads").toObject().value("server").toObject();
-    if (QFileInfo(m_jar->text()).isSymLink() || !input.open(QIODevice::ReadOnly) || input.size()!=qint64(distribution.value("size").toDouble()) || input.size()>JarLimit) { status(say("server.integrity")); return; }
+    if (!safePath(m_jar->text()) || !input.open(QIODevice::ReadOnly) || input.size()!=qint64(distribution.value("size").toDouble()) || input.size()>JarLimit) { status(say("server.integrity")); return; }
     QCryptographicHash hash(QCryptographicHash::Sha1); if (!hash.addData(&input) || hash.result().toHex()!=distribution.value("sha1").toString().toLatin1()) { status(say("server.integrity")); return; }
     const auto id=QUuid::createUuid().toString(QUuid::WithoutBraces); const auto dir=directoryFor(id);
-    if (QFileInfo(m_root).isSymLink() || QFileInfo::exists(dir) || !QDir().mkpath(dir)) { status(say("server.write-error")); return; }
-    auto write = [&dir](const QString& name,const QByteArray& data) { QSaveFile file(dir+QLatin1Char('/')+name); return file.open(QIODevice::WriteOnly) && file.write(data)==data.size() && file.commit(); };
+    QJsonObject record{{"id",id},{"name",m_name->text().trimmed()},{"edition","java"},{"version",m_resolved.value("id")},{"runtime",runtime.absoluteFilePath()},{"memoryMiB",m_memory->value()},{"port",m_port->value()},{"sha1",distribution.value("sha1")},{"eulaAccepted",true},{"eulaAcceptedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)}};
+    const auto previous=m_document; auto records=m_document.value("servers").toArray(); records.append(record); const auto proposed=updateRecord(m_document,QJsonObject{{"servers",records}});
+    if (!inventoryWithinLimits(proposed)) { status(say("server.invalid-inventory")); return; }
+    if (!containedPath(m_root,dir) || QFileInfo::exists(dir) || !QDir().mkpath(dir) || !containedPath(m_root,dir)) { status(say("server.write-error")); return; }
+    auto write = [&dir](const QString& name,const QByteArray& data) { if (!containedPath(dir,dir+QLatin1Char('/')+name)) return false; QSaveFile file(dir+QLatin1Char('/')+name); return file.open(QIODevice::WriteOnly) && file.write(data)==data.size() && file.commit(); };
+    if (!containedPath(dir,dir+QStringLiteral("/server.jar"))) { status(say("server.write-error")); return; }
     QSaveFile copied(dir+QStringLiteral("/server.jar")); QCryptographicHash copyHash(QCryptographicHash::Sha1);
     if (!input.seek(0) || !copied.open(QIODevice::WriteOnly)) { status(say("server.write-error")); return; }
     qint64 copiedBytes=0;
@@ -231,14 +291,18 @@ void ServerManager::createServer()
     }
     if(copiedBytes != qint64(distribution.value("size").toDouble()) || copyHash.result().toHex()!=distribution.value("sha1").toString().toLatin1() || !copied.commit()) { status(say("server.integrity")); return; }
     if (!write(QStringLiteral("eula.txt"),"eula=true\n") || !write(QStringLiteral("server.properties"),"server-port="+QByteArray::number(m_port->value())+"\n")) { status(say("server.write-error")); return; }
-    QJsonObject record{{"id",id},{"name",m_name->text().trimmed()},{"edition","java"},{"version",m_resolved.value("id")},{"runtime",runtime.absoluteFilePath()},{"memoryMiB",m_memory->value()},{"port",m_port->value()},{"sha1",distribution.value("sha1")},{"eulaAccepted",true},{"eulaAcceptedAt",QDateTime::currentDateTimeUtc().toString(Qt::ISODate)}};
-    const auto previous=m_document; auto records=m_document.value("servers").toArray(); records.append(record); m_document=updateRecord(m_document,QJsonObject{{"servers",records}});
+    m_document=proposed;
     if (!saveInventory()) { m_document=previous; status(say("server.write-error")); return; }
     rebuildInventory(); status(say("server.created"));
 }
 void ServerManager::startSelected()
 {
-    const auto id=selectedId(); if (id.isEmpty() || m_processes.contains(id)) { status(say("server.select-stopped")); return; }
+    startById(selectedId());
+}
+void ServerManager::startById(const QString& id)
+{
+    emit startAttempted(id);
+    if (id.isEmpty() || m_processes.contains(id)) { status(say("server.select-stopped")); return; }
     QJsonObject record; for(const auto& value:m_document.value("servers").toArray()) if(value.toObject().value("id").toString()==id) record=value.toObject();
     if (!validRecord(record)) { status(say("server.invalid-record")); return; }
     QFile jar(directoryFor(id)+QStringLiteral("/server.jar")); QCryptographicHash hash(QCryptographicHash::Sha1);
@@ -248,8 +312,16 @@ void ServerManager::startSelected()
     process->setStandardOutputFile(QProcess::nullDevice()); process->setStandardErrorFile(QProcess::nullDevice());
     connect(process,&QProcess::started,this,[this,process] { status(say("server.running")+QString::number(process->processId())); });
     connect(process,&QProcess::errorOccurred,this,[this,id,process](QProcess::ProcessError error) { status(say("server.process-error")); if(error==QProcess::FailedToStart) { m_processes.remove(id); process->deleteLater(); } });
-    connect(process,qOverload<int,QProcess::ExitStatus>(&QProcess::finished),this,[this,id,process](int code,QProcess::ExitStatus) { const bool restart=process->property("restartRequested").toBool(); m_processes.remove(id); process->deleteLater(); status(say("server.exited")+QString::number(code)); if(restart && selectedId()==id) startSelected(); });
+    connect(process,qOverload<int,QProcess::ExitStatus>(&QProcess::finished),this,[this,id,process](int code,QProcess::ExitStatus) { processFinished(id,process,code); });
+    if (!validRecord(record)) { m_processes.remove(id); process->deleteLater(); status(say("server.invalid-record")); return; }
     process->start(record.value("runtime").toString(),{QStringLiteral("-Xmx%1M").arg(memory),QStringLiteral("-jar"),QStringLiteral("server.jar"),QStringLiteral("nogui")});
+}
+void ServerManager::processFinished(const QString& id,QProcess* process,int code)
+{
+    const bool restart=process->property("restartRequested").toBool();
+    m_processes.remove(id); process->deleteLater();
+    status(say("server.exited")+QString::number(code));
+    if (restart) startById(id);
 }
 void ServerManager::stopSelected()
 {

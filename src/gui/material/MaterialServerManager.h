@@ -17,18 +17,25 @@ class QNetworkAccessManager;
 class QNetworkReply;
 class QProcess;
 
+class TestMaterialServerManager;
 namespace Material {
 class ServerManager : public Screen
 {
     Q_OBJECT
 public:
-    explicit ServerManager(QWidget* parent = nullptr);
+    explicit ServerManager(QWidget* parent = nullptr, const QString& inventoryRoot = {});
     ~ServerManager() override;
     static QStringList targetNames();
     static bool validName(const QString& name);
     static bool officialMetadataUrl(const QUrl& url);
+    static bool inventoryWithinLimits(const QJsonObject& document);
+    static bool safePath(const QString& path);
+    static bool containedPath(const QString& root, const QString& path);
     static QJsonObject updateRecord(QJsonObject previous, const QJsonObject& changes);
+signals:
+    void startAttempted(const QString& id);
 private:
+    friend class ::TestMaterialServerManager;
     void request(const QUrl& url, const QByteArray& expectedHash = {});
     void refreshVersions();
     void resolveVersion();
@@ -37,6 +44,8 @@ private:
     bool saveInventory();
     void rebuildInventory();
     void startSelected();
+    void startById(const QString& id);
+    void processFinished(const QString& id, QProcess* process, int code);
     void stopSelected();
     QString selectedId() const;
     QString directoryFor(const QString& id) const;
