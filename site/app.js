@@ -156,7 +156,7 @@ function openPersonalVocabularyPicker(event){
 function renderVocabularyControls(){
  const mode=state.school?'en':state.language;
  const copy=(en,yue)=>mode==='both'?`${en} · ${yue}`:mode==='yue'?yue:en;
- const set=(id,en,yue)=>{const element=$('#'+id);if(element){const value=copy(en,yue);element.textContent=value;if(element.tagName.endsWith('-BUTTON'))element.ariaLabel=value;}};
+ const set=(id,en,yue)=>{const element=$('#'+id);if(element){const value=copy(en,yue);if(element.tagName.endsWith('-BUTTON')){const label=document.createElement('span');label.className='button-copy';label.textContent=value;element.replaceChildren(label);element.ariaLabel=value;}else element.textContent=value;}};
  set('personal-vocabulary-title','Personal vocabulary','個人用詞');
  set('school-personal-vocabulary-description','Choose a local JSON file to replace visible wording. File data stays in this browser.','揀選本機 JSON 檔案替換顯示用詞。檔案資料只留喺呢個瀏覽器。');
  set('personal-vocabulary-upload',vocabularyStatus==='loaded'?'Replace vocabulary JSON file':'Choose vocabulary JSON file',vocabularyStatus==='loaded'?'替換個人用詞 JSON 檔案':'揀選個人用詞 JSON 檔案');
