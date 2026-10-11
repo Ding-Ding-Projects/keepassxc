@@ -34,7 +34,7 @@ private slots:
     void testCatalogueParses();
     void testEveryDishHasBothNamesAndArt();
     void testDisplayNameCarriesBothLanguages();
-    void testDisabledSuppressesAbsolutely();
+    void testLegacyPreferenceDoesNotDisable();
     void testFiresOnlyOncePerLaunch();
 
 private:

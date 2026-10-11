@@ -1140,9 +1140,6 @@ namespace Material
             {Config::GUI_MinimizeOnStartup,
              tr("Start minimised"),
              tr("KeePassXC starts hidden and waits in the tray or task bar.")},
-            {Config::GUI_DimSumSurprise,
-             Voice::say(QStringLiteral("dim-sum.setting")),
-             Voice::say(QStringLiteral("dim-sum.setting-description"))},
             {Config::MinimizeAfterUnlock,
              tr("Minimise after unlocking"),
              tr("The window steps aside once the database is open.")},
@@ -1187,23 +1184,6 @@ namespace Material
             toggle->setChecked(config()->get(spec.key).toBool());
             const Config::ConfigKey key = spec.key;
             connect(toggle, &QAbstractButton::toggled, this, [key](bool checked) { config()->set(key, checked); });
-            if (key == Config::GUI_DimSumSurprise) {
-                toggle->setObjectName(QStringLiteral("dimSumSurpriseToggle"));
-                auto refresh = [label, sub, toggle] {
-                    label->setText(Voice::say(QStringLiteral("dim-sum.setting")));
-                    sub->setText(Voice::say(QStringLiteral("dim-sum.setting-description")));
-                    toggle->setAccessibleName(label->text());
-                    toggle->setAccessibleDescription(sub->text());
-                };
-                refresh();
-                connect(Voice::notifier(), &Voice::Notifier::changed, toggle, refresh);
-                connect(config(), &Config::changed, toggle, [toggle](Config::ConfigKey changed) {
-                    if (changed != Config::GUI_DimSumSurprise) return;
-                    const QSignalBlocker blocker(toggle);
-                    toggle->setChecked(config()->get(changed).toBool());
-                });
-                haystack << QStringLiteral("dim sum startup surprise 點心 開機 1% GUI/DimSumSurprise");
-            }
             rowLayout->addWidget(toggle, 0, Qt::AlignVCenter);
 
             content->addWidget(row);

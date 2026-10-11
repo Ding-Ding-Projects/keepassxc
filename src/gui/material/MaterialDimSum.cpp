@@ -65,8 +65,8 @@ namespace Material
 {
     namespace
     {
-        /** One launch in a hundred, drawn from the system entropy source. */
-        constexpr int OddsDenominator = 100;
+        /** One launch in ten, drawn from the system entropy source. */
+        constexpr int OddsDenominator = 10;
 
         /** Room the card leaves itself for the el3 shadow. */
         constexpr int ShadowMargin = 24;
@@ -287,7 +287,7 @@ namespace Material
         /** Every suppression rule, with the draw itself left out. */
     bool DimSum::canShow()
         {
-            return config()->get(Config::GUI_DimSumSurprise).toBool() && !s_shown && !s_suppressed
+            return !s_shown && !s_suppressed
                    && !s_quiet() && !DimSum::catalogue().isEmpty();
         }
 
@@ -340,14 +340,13 @@ namespace Material
     {
         if (s_started) return;
         s_started = true;
-        if (!config()->get(Config::GUI_DimSumSurprise).toBool() || isFirstRun() || restoresDatabaseAtStartup()) {
+        // Retire the legacy opt-out so existing profiles rejoin the draw.
+        config()->remove(Config::GUI_DimSumSurprise);
+        if (isFirstRun() || restoresDatabaseAtStartup()) {
             suppress();
         }
         s_monitor = new StartupMonitor(qApp);
         qApp->installEventFilter(s_monitor);
-        QObject::connect(config(), &Config::changed, s_monitor, [](Config::ConfigKey key) {
-            if (key == Config::GUI_DimSumSurprise && !config()->get(key).toBool()) suppress();
-        });
     }
 
     bool DimSum::shouldShow()
@@ -355,7 +354,7 @@ namespace Material
         beginStartup();
         // Cheap, live vetoes must also override an already winning draw. Only
         // the random draw and initial environment query are cached.
-        if (s_shown || s_suppressed || !config()->get(Config::GUI_DimSumSurprise).toBool()) return false;
+        if (s_shown || s_suppressed) return false;
         if (!s_drawn) {
             s_drawn = true;
             s_draw = canShow() && s_random(OddsDenominator) == 0;

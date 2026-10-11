@@ -64,7 +64,7 @@ private slots:
     void drawBoundary_data()
     {
         QTest::addColumn<quint32>("value");
-        for (quint32 value = 0; value < 100; ++value)
+        for (quint32 value = 0; value < 10; ++value)
             QTest::newRow(qPrintable(QString::number(value))) << value;
     }
     void drawBoundary()
@@ -74,23 +74,20 @@ private slots:
         int calls = 0;
         DimSum::s_random = [&](quint32 bound) { seenBound = bound; ++calls; return value; };
         QCOMPARE(DimSum::shouldShow(), value == 0);
-        QCOMPARE(seenBound, quint32(100));
+        QCOMPARE(seenBound, quint32(10));
         for (int count = 0; count < 20; ++count) QCOMPARE(DimSum::shouldShow(), value == 0);
         QCOMPARE(calls, 1);
     }
-    void disabledIsPersistedAndReturnsBeforeEnvironment()
+    void legacyOffPreferenceRejoinsDraw()
     {
         config()->set(Config::GUI_DimSumSurprise, false);
         config()->sync();
-        QSettings stored(config()->getFileName(), QSettings::IniFormat);
-        QCOMPARE(stored.value(QStringLiteral("GUI/DimSumSurprise")).toBool(), false);
         Config::createConfigFromFile(qEnvironmentVariable("KPXC_CONFIG"), qEnvironmentVariable("KPXC_CONFIG_LOCAL"));
         QVERIFY(!config()->get(Config::GUI_DimSumSurprise).toBool());
-        int environmentCalls = 0;
-        DimSum::s_quiet = [&] { ++environmentCalls; return false; };
-        QVERIFY(!DimSum::shouldShow());
-        QVERIFY(!DimSum::showNow(nullptr));
-        QCOMPARE(environmentCalls, 0);
+        QVERIFY(DimSum::shouldShow());
+        config()->sync();
+        QSettings stored(config()->getFileName(), QSettings::IniFormat);
+        QVERIFY(!stored.contains(QStringLiteral("GUI/DimSumSurprise")));
     }
     void restoredLaunch_data()
     {
@@ -157,11 +154,11 @@ private slots:
             QVERIFY(!DimSum::shouldShow());
         }
     }
-    void preferenceOverridesWinningDraw()
+    void legacyPreferenceCannotCancelWinningDraw()
     {
         QVERIFY(DimSum::shouldShow());
         config()->set(Config::GUI_DimSumSurprise, false);
-        QVERIFY(!DimSum::shouldShow());
+        QVERIFY(DimSum::shouldShow());
     }
 
     void firstRunDoesNotDraw()
@@ -187,29 +184,12 @@ private slots:
         config()->set(Config::LastDatabases, QStringList{QStringLiteral("synthetic-history-only.kdbx")});
         QVERIFY(!DimSum::shouldShow());
     }
-    void settingsControlIsLocalizedAndPersists()
+    void settingsHasNoOptOut()
     {
         Material::SettingsScreen settings;
-        auto* toggle = settings.findChild<QAbstractButton*>(QStringLiteral("dimSumSurpriseToggle"));
-        QVERIFY(toggle);
-        QVERIFY(toggle->focusPolicy() != Qt::NoFocus);
-        QVERIFY(toggle->isChecked());
-        toggle->click();
-        QVERIFY(!config()->get(Config::GUI_DimSumSurprise).toBool());
-        config()->sync();
-        QSettings stored(config()->getFileName(), QSettings::IniFormat);
-        QVERIFY(!stored.value(QStringLiteral("GUI/DimSumSurprise"), true).toBool());
-        for (auto language : {Material::Voice::Language::English, Material::Voice::Language::Cantonese,
-                              Material::Voice::Language::Bilingual}) {
-            Material::Voice::setLanguage(language);
-            QCOMPARE(toggle->accessibleName(), Material::Voice::say(QStringLiteral("dim-sum.setting")));
-            QVERIFY(toggle->accessibleDescription().contains(QStringLiteral("1%")));
-            QVERIFY(!toggle->accessibleName().contains(QStringLiteral("dim-sum.setting")));
-        }
-        config()->set(Config::GUI_DimSumSurprise, true);
-        QVERIFY(toggle->isChecked());
+        QVERIFY(!settings.findChild<QAbstractButton*>(QStringLiteral("dimSumSurpriseToggle")));
     }
-    void disablingVisibleCardIsImmediate()
+    void legacyPreferenceCannotDismissVisibleCard()
     {
         QWidget host;
         host.show();
@@ -217,9 +197,9 @@ private slots:
         QTRY_VERIFY(host.isActiveWindow());
         QVERIFY(DimSum::showNow(&host));
         QPointer<DimSumCard> card = host.findChild<DimSumCard*>();
-        QVERIFY(card && card->isVisible());
         config()->set(Config::GUI_DimSumSurprise, false);
-        QVERIFY(!card || !card->isVisible());
+        QVERIFY(card && card->isVisible());
+        DimSum::suppress();
         QTRY_VERIFY(card.isNull());
     }
     void quietAtPresentationCancelsWithoutRetry()

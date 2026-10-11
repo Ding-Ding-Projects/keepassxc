@@ -40,13 +40,13 @@ namespace Material
     /**
      * The dim sum startup surprise.
      *
-     * One launch in a hundred, a small card rises into the bottom right corner
+     * One launch in ten, a small card rises into the bottom right corner
      * carrying a randomly drawn dish and its name in both English and
      * Cantonese, holds for six seconds and fades away. It is decoration and
      * nothing else: it never gates startup, never takes focus, never blocks a
      * click, and it stands down entirely on a first run, on an error path,
      * during an update, while a dialog is open, while the desktop is quiet, and
-     * during a capture route. The persisted off switch always takes precedence.
+     * during a capture route. Legacy off preferences are retired at startup.
      *
      * Everything it draws is bundled in `:/dimsum`; nothing is fetched.
      */
@@ -71,7 +71,7 @@ namespace Material
         /** Latch startup eligibility before opening databases or processing user input. */
         static void beginStartup();
 
-        /** The 1% draw plus every suppression rule. Drawn at most once per launch. */
+        /** The 10% draw plus every suppression rule. Drawn at most once per launch. */
         static bool shouldShow();
 
         /** Present the card if this launch drew it. Returns immediately either way. */

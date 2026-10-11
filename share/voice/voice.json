@@ -384,26 +384,26 @@
   "category": "info",
   "en": {
     "facts": [
-      "Allow a 1% chance per eligible launch. Turn off to prevent it completely."
+      "A 10% chance per eligible launch, without an off switch."
     ],
     "levels": {
-      "1": "Allow a 1% chance per eligible launch. Turn off to prevent it completely.",
-      "2": "Allow a 1% chance per eligible launch. Turn off to prevent it completely.",
-      "3": "Allow a 1% chance per eligible launch. Turn off to prevent it completely.",
-      "4": "Allow a 1% chance per eligible launch. Turn off to prevent it completely.",
-      "5": "Allow a 1% chance per eligible launch. Turn off to prevent it completely."
+      "1": "A 10% chance per eligible launch, without an off switch.",
+      "2": "A 10% chance per eligible launch, without an off switch.",
+      "3": "A 10% chance per eligible launch, without an off switch.",
+      "4": "A 10% chance per eligible launch, without an off switch.",
+      "5": "A 10% chance per eligible launch, without an off switch."
     }
   },
   "yue": {
     "facts": [
-      "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。"
+      "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
     ],
     "levels": {
-      "1": "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。",
-      "2": "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。",
-      "3": "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。",
-      "4": "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。",
-      "5": "每次合適嘅啟動有 1% 機會顯示。關閉後完全唔會出現。"
+      "1": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+      "2": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+      "3": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+      "4": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+      "5": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
     }
   }
 },

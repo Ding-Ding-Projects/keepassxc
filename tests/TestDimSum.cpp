@@ -58,7 +58,7 @@ void TestDimSum::init()
     // one process, so without this each of them would be reading whatever the
     // previous one left behind instead of the rule it means to exercise -
     // testFiresOnlyOncePerLaunch in particular used to pass on a draw that
-    // testDisabledSuppressesAbsolutely had already latched to false.
+    // testLegacyPreferenceDoesNotDisable had already latched to false.
     DimSum::resetLaunchState();
     QVERIFY(!DimSum::hasShown());
 
@@ -125,12 +125,11 @@ void TestDimSum::testDisplayNameCarriesBothLanguages()
     }
 }
 
-void TestDimSum::testDisabledSuppressesAbsolutely()
+void TestDimSum::testLegacyPreferenceDoesNotDisable()
 {
     config()->set(Config::GUI_DimSumSurprise, false);
-    QVERIFY(!DimSum::showNow(m_window.data()));
-    QVERIFY(!DimSum::hasShown());
-    for (int i = 0; i < 200; ++i) QVERIFY(!DimSum::shouldShow());
+    DimSum::beginStartup();
+    QVERIFY(config()->get(Config::GUI_DimSumSurprise).toBool());
 }
 void TestDimSum::testFiresOnlyOncePerLaunch()
 {
