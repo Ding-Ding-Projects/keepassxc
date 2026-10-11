@@ -5,7 +5,7 @@ import {tmpdir} from 'node:os';
 import {resolve} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {buildDocumentation} from '../site/build-documentation.mjs';
-import {documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory,translationInventoryForDocuments} from '../site/documentation-languages.mjs';
+import {documentLanguages,documentationTitle,documentationHeadingIds,documentationHashTarget,focusDocumentationTarget,validateTranslationInventory,translationInventoryForDocuments} from '../site/documentation-languages.mjs';
 
 const hash=text=>createHash('sha256').update(text).digest('hex');
 const root=mkdtempSync(resolve(tmpdir(),'documentation-languages-'));
@@ -22,6 +22,15 @@ try{
     const result=build();assert.equal(result.schemaVersion,2);
     const ids=documentationHeadingIds(['Same','Same','Same-1','yue--Same','','']);assert.equal(new Set(ids).size,ids.length);
     assert.equal(new Set(ids.flatMap(id=>[`en--${id}`,`yue--${id}`])).size,ids.length*2);
+    let focused=null,scrolled=null;
+    const routeElements=['en--details','yue--details'].map((id,index)=>({id,dataset:{headingIndex:'0'},tabIndex:0,matches:()=>index===1,focus(){focused=this;},scrollIntoView(){scrolled=this;}}));
+    focusDocumentationTarget(documentationHashTarget(routeElements,['details'],'#details'));
+    assert.equal(focused,routeElements[0]);assert.equal(scrolled,focused);assert.equal(focused.tabIndex,-1);
+    focusDocumentationTarget(documentationHashTarget(routeElements,['details'],'#yue--details'));
+    assert.equal(focused,routeElements[1]);assert.equal(focused.tabIndex,0);
+    assert.equal(documentationHashTarget(routeElements,['details'],'#%XX'),null);
+    assert.equal(documentationHashTarget(routeElements,['details'],'#missing'),null);
+    focused=null;focusDocumentationTarget(routeElements[0],false);assert.equal(focused,null);
     const article=result.documents[0];assert.deepEqual(documentLanguages(article,'both').map(record=>record.markdown),[source,translated]);
     assert.doesNotThrow(()=>validateTranslationInventory(translationInventoryForDocuments(result.documents),result.documents));
     for(const property of ['path','extra','__proto__']){

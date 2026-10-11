@@ -1,6 +1,6 @@
 import {marked} from 'marked';
 import DOMPurify from 'dompurify';
-import {documentationLimits,documentLanguages,documentationTitle,documentationHeadingIds,validateTranslationInventory,translationInventoryForDocuments} from './documentation-languages.mjs';
+import {documentationLimits,documentLanguages,documentationTitle,documentationHeadingIds,documentationHashTarget,focusDocumentationTarget,validateTranslationInventory,translationInventoryForDocuments} from './documentation-languages.mjs';
 
 export const documentationHref=(path,hash='')=>`?article=${encodeURIComponent(path)}${hash}`;
 let refresh=()=>{};
@@ -110,11 +110,10 @@ export async function initializeDocumentation({language,showDocs}){
         }
         updateCopy();
         if(hash){
-            let requested;try{requested=decodeURIComponent(hash.slice(1));}catch{return;}
-            const target=[...body.querySelectorAll('[id]')].find(element=>element.id===requested)||[...body.querySelectorAll('[data-heading-index]')].find(element=>ids[Number(element.dataset.headingIndex)]===requested.replace(/^(?:en|yue)--/,''));
-            target?.scrollIntoView({block:'start'});
+            const target=documentationHashTarget([...body.querySelectorAll('[data-heading-index]')],ids,hash);
+            focusDocumentationTarget(target,focus);
         }
-        else if(focus){const heading=body.querySelector('h1,h2')||body;heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'start'});}
+        else if(focus)focusDocumentationTarget(body.querySelector('h1,h2')||body);
     }
     function updateCopy(){
         navigation.setAttribute('aria-label',copy('Documentation categories and wiki','文件分類同維基'));

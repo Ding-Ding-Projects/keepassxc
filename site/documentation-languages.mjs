@@ -3,6 +3,16 @@ export const documentationLimits={bundleBytes:2097152,documentCharacters:131072,
 const hash=/^[a-f0-9]{64}$/;
 const object=value=>value!==null&&typeof value==='object'&&!Array.isArray(value);
 const keys=(value,expected)=>object(value)&&Object.keys(value).sort().join(',')===[...expected].sort().join(',');
+export function documentationHashTarget(elements,canonicalIds,hash){
+    let requested;try{requested=decodeURIComponent(hash.slice(1));}catch{return null;}
+    const canonical=canonicalIds.includes(requested)?requested:requested.replace(/^(?:en|yue)--/,'');
+    return elements.find(element=>element.id===requested)||elements.find(element=>canonicalIds[Number(element.dataset.headingIndex)]===canonical)||null;
+}
+export function focusDocumentationTarget(target,focus=true){
+    if(!target)return;
+    if(focus){if(!target.matches('a[href],button,input,select,textarea'))target.tabIndex=-1;target.focus({preventScroll:true});}
+    target.scrollIntoView({block:'start'});
+}
 export function translationInventoryForDocuments(documents){
     return {schemaVersion:1,documents:documents.map(article=>{
         if(!keys(article.translation,['sourceSha256','status','title','markdown']))throw Error('Invalid delivered translation fields.');

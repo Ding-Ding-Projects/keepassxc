@@ -18,9 +18,9 @@
     {
       "path": "docs/features/delivery/auto-updates.md",
       "sourceSha256": "e7b401f2013e3ef47f399e96fea995d6487b887ca70020b2224177180e5888ff",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "自動更新",
+      "markdown": "# 自動更新\n\n功能識別碼：`auto-updates` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`UpdateChecker`（`src/networking/UpdateChecker.h`）讀取分支專屬有版本 Squirrel 清單，串流完整套件，先檢查儲存空間，再原子定稿並驗證 SHA-256 同 SHA-1，透過已驗證本機 Squirrel feed 暫存，並顯示持久非阻塞就緒操作，支援延後、未儲存資料庫保護，同 `Update.exe --processStart` 重新啟動。清單請求、套件傳送或更新器程序進行中會忽略新檢查，避免重疊計時器或人工要求取代即時更新狀態。重複背景失敗只發一次通知，直至狀態變更或使用者重試。\n\n## 設定\n\n`GUI_CheckForUpdatesIncludeBetas` 預設false。穩定檢查要求 `https://github.com/Ding-Ding-Projects/keepassxc/releases/latest/download/update-manifest-v1.json`。啟用包含beta時，更新器先要求呢個儲存庫公開 GitHub REST 發佈索引，使用 `per_page=20`，再從有界限回應選擇最高相容數字版本，同時考慮穩定同預先發佈項目。所以較新穩定發佈優先於較舊預先發佈，唔受索引次序影響。呢個刻意只涵蓋有界限近期發佈範圍，唔係完整歷史發佈掃描。\n\n合資格發佈係非草稿、標籤 `vMAJOR.MINOR.PATCH`，使用0至65535標準十進位部分，同確切儲存庫／標籤綁定 `update-manifest-v1.json` 附件。排除前置零同 `-beta1` 等後綴，因為目前 Squirrel 封裝同執行檔版本規範使用三個數字部分。GitHub `prerelease` 旗標可以標示相容數字標籤發佈。有效索引冇合資格清單會退回穩定端點。格式不正確、過大、重新導向、不可用或受速率限制索引回應會明確失敗，唔會靜默退回。Feed保持未簽署。\n\n## 失敗情況\n\n隔離N至N+1安裝、延後、重啟同回退證明仍然待完成。索引同清單請求要求HTTP 200，有30秒閒置同絕對期限，分別最多保留256 KiB同64 KiB，再加一個溢出哨兵位元組。HTTP 403／429速率限制同其他非200回應使用連線失敗狀態，保留現有下次檢查排程。JSON結構同大小錯誤報各自失敗狀態。只有有效清單先會將下次成功檢查日期推後七日。\n\n管理器或有效回應銷毀會令目前檢查失敗一次。完成回應喺取代之前斷開連接，世代檢查忽略過時回呼。狀態變更通知即時重試會保留自己版本選擇同人工要求情境。套件重新導向去 GitHub HTTPS容許清單以外會被拒絕，報重新導向拒絕，唔會當離線連線失敗。\n\n## 安全考慮\n\nHTTPS傳送同套件雜湊提供完整性；程式碼簽署永久停用，所以唔聲稱簽名。索引請求有明確更新器 User-Agent 同 GitHub JSON Accept 標頭；清單請求用JSON Accept。固定索引端點唔接受重新導向。Qt跟隨清單重新導向之前需要批准，只容許呢個儲存庫發佈下載路徑，同確切 GitHub 附件儲存主機 `objects.githubusercontent.com` 同 `release-assets.githubusercontent.com`，必須HTTPS，冇憑證、片段或非標準連接埠。\n\n索引所選清單必須報確切數字版本。每份清單，包括穩定後備，都將說明URL、完整套件檔名同套件URL綁定至呢個儲存庫標準 `vVERSION` 發佈路徑。只有容許主機名稱唔代表授權唔同儲存庫、標籤或套件。\n\n## 驗證\n\n`testupdatecheck` 有受控網絡回歸，涵蓋穩定選擇、數字預先發佈、穩定對預先發佈排序、不支援標籤同無效附件排除、標頭、HTTP同網絡失敗、格式不正確／過大回應、重新導向、確切清單／套件身份、回應銷毀、過時回呼同可重入重試，亦保留套件、重啟命令同下載生命週期覆蓋。測試用隔離暫存設定同注入回應，冇真實網絡流量。新增索引矩陣必須執行原生套件先可以聲稱通過。`testsquirrellifecycle` 另外涵蓋安裝程式生命週期行為。\n\n## 延伸閱讀\n\n- [未簽署 Squirrel.Windows 安裝程式](../delivery/squirrel-installer.md)\n- [一鍵建置同安裝程式指令碼](../delivery/build-scripts.md)\n"
     },
     {
       "path": "docs/features/delivery/build-scripts.md",
@@ -115,10 +115,10 @@
     },
     {
       "path": "docs/features/delivery/website-release-provenance.md",
-      "sourceSha256": "87897c393f4cc49c6cf971bb8899e347b9a117e0a67b0465e87ccc3fd101d354",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "sourceSha256": "f759cad043aa0653f80ee8a2ed8157335a61de4869d1c0f27bcc76f208bfe445",
+      "status": "complete",
+      "title": "網站發佈來源證明",
+      "markdown": "# 網站發佈來源證明\n\n文件以明確圖示連結選擇 `./favicon.ico`。正常建置將現有專案自有 `share/windows/keepassxc.ico` 複製去嗰個輸出路徑，毋須轉換或網絡相依套件。針對性建置輸出檢查驗證 ICO 標頭同確切位元組一致。呢點修復擷取基準本機 favicon 404背後欠缺資產；仍然需要新瀏覽器執行驗證重新建置請求同冇主控台錯誤。\n\n網站可下載版本由已發佈穩定版本、其 `build-provenance.json` 同 `update-manifest-v1.json` 投射。產生器喺寫入 `site/release.json` 之前拒絕任何不一致。\n\n執行 `node scripts/site-release-data.mjs RELEASE_JSON PROVENANCE_JSON MANIFEST_JSON RECEIPT_JSON site/release.json`。優先用下面取得命令，透過 GitHub CLI 解析並剝離發佈標籤。人工輸入必須包括由該標籤解析嘅 `targetCommit`，以及用明確附件模式取得嘅三份附加中繼資料檔。產生器唔發網絡請求，每個輸入最多一 MiB，並處理現有 PowerShell 產物嘅 UTF-8 BOM。\n\n驗證要求穩定版本、x64 `KeePassXC.Material` 身份、來源提交、已記錄 UTC 建置時間、執行檔雜湊一致、確切專案自有發佈 URL、唯一必要附件，同套件位元組數量一致。輸出省略建置機路徑，記錄來源證明嘅建置時間，永遠唔用產生器時鐘。\n\n發佈標籤必須解析至確切已記錄來源提交。附加安裝程式收據必須報 `NotSigned`，並匹配來源、版本、架構、安裝程式位元組數量同套件雜湊。呢個係中繼資料一致性驗證，唔證明安裝程式執行、拖曳行為、更新器行為或真確性。套件保持未簽署。將來網站畫面遇到欠缺或無效中繼資料，必須呈現不可用狀態，唔可以捏造版本或時間。\n\n`node scripts/test-site-release-data.mjs` 驗證有效投射、私人建置路徑省略、BOM處理、位元組上限、十九個無效輸入案例同一個欠缺收據案例。`node scripts/fetch-site-release-data.mjs OUTPUT_JSON [TAG]` 透過 GitHub CLI 取得所選已發佈中繼資料，並套用同一驗證。建置時設定 `KPXC_REFRESH_RELEASE=1`，會直接將最新穩定發佈取得至產生輸出，受追蹤來源保持不變。欠缺或不一致發佈中繼資料會令發佈失敗，唔會顯示捏造下載。\n\nPages 工作流程會喺main分支變更、人工啟動，同main分支交付工作流程成功完成時更新。發佈唔建立來源提交，所以唔會觸發來源推送循環。已有針對性呈現證據；`33a1fec98bdb988b8fa59728b8f954829dfd3e38` 嘅 Pages 部署喺[運行34285869684](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34285869684)成功完成。\n\n網站建置喺 `licenses/` 包含本機隨附執行階段相依套件授權同通知檔。訪客瀏覽器唔會載入建置工具。\n\n## 本機交付文件同維基\n\n網站建置而家將 `docs/features/` 之下每篇 Markdown 文章同分類索引，連同 `docs/wiki/` 之下完整已提交維基快照，封裝至 `documentation.json`。文件閱讀器喺現有文件工作區呈現文章。已知文章、分類、維基同標題連結留喺已部署網站內，完整內容旁邊仍然有清楚標示原始來源連結。\n\n取得、審閱並提交專案維基之後，用 `node scripts/sync-wiki-snapshot.mjs WIKI_CHECKOUT` 更新快照。命令核對維基來源同潔淨狀態，記錄修訂、頁面清單、內容雜湊同來源 blob 識別碼，並拒絕靜默退役頁面。佢本身唔會取得或證明最新狀態。發佈之前要比較已記錄修訂同維基遠端頂端。建置拒絕欠缺、改動或重複快照頁面。歷史驗收聲明保持歷史性質。\n\nMarkdown 由固定、本機隨附 Marked 解析，插入之前由固定 DOMPurify 淨化。完整多語文件bundle有2 MiB UTF-8位元組上限同15秒取得期限。每份文件每種語言最多131,072字元，最多100份文件。建置會拒絕文件圖片，直至提供已審閱本機資產對應，唔會靜靜地發佈欠缺或外部圖片。目前交付文章清單冇圖片。文件文字唔係可執行指令來源。\n\n`node scripts/test-site-documentation.mjs` 測試遞迴文章包含、完整維基清單、內容變更、欠缺清單記錄、無效blob來源證明、未對應圖片同恢復來源成功。產生者檢查通過唔代表呈現版面、鍵盤導覽、已部署路徑或即時最新狀態；嗰啲要用建置瀏覽器流程同即時讀回。\n"
     },
     {
       "path": "docs/features/design/README.md",
@@ -382,9 +382,9 @@
     {
       "path": "docs/features/servers/local-java-server-manager.md",
       "sourceSha256": "ad49530d7ff306de418f3a8f373410d9c8465f39f3838b21e42708b40b1c2aa4",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "自主管理嘅本機 Java 伺服器管理器",
+      "markdown": "# 自主管理嘅本機 Java 伺服器管理器\n\n## 已實作來源範圍\n\nMinecraft servers 目的地提供自有清單、有型別建立欄位、明確版本類型／發行版／目標選擇器、記憶體同連接埠步進控制、檔案選擇器、明確 EULA 同意、版本探索，以及本機開始／停止／重新啟動操作。目前只實作官方原版 Java 同本機 Windows 程序。Local Docker、SSH process 同 SSH Docker 仍然可見，並交代不可用原因。Bedrock 安裝仍然不可用。\n\n重新整理由 `https://piston-meta.mojang.com/mc/game/version_manifest_v2.json` 取得完整官方 Java 清單，包括回傳嘅歷史同 snapshot 項目。揀版本會取得其中繼資料，並核對清單 SHA-1。中繼資料請求只容許固定官方 HTTPS 主機，拒絕重新導向同內嵌憑證，回應上限4 MiB，15秒後逾時。取消會令待處理世代失效。離線回應保留現有選擇並明確報狀態；呢個單元唔會保存目錄。\n\n只有中繼資料提供伺服器摘要碼／大小同 Java 主版本，該版本先合資格。歷史版本欠缺伺服器／執行階段欄位就標示不可用，唔會猜。使用者揀 Java 執行檔同已下載伺服器 JAR。建立會按官方中繼資料核對 JAR 大小同 SHA-1，從已驗證控制代碼複製，再核對複製後位元組，並建立新 UUID 自有目錄，寫入明確接受 EULA 同所選伺服器連接埠。永遠唔會接管現有世界或目錄。部分建立失敗會保留自有目錄供恢復。\n\n管理器喺應用程式本機資料之下儲存有版本清單，保留現有未知文件／記錄欄位。建立預檢同儲存都拒絕超過256筆記錄或1 MiB序列化 JSON 嘅清單，包括未知欄位。建議追加記錄會喺建立目錄之前檢查。格式不正確清單會阻擋建立，唔會被取代。每個現有路徑祖先都會檢查，包括清單、執行階段、來源 JAR 同管理目的地。符號連結同 Windows 重解析點（包括 junction）會被拒絕。只支援本機 Windows 磁碟路徑；UNC／裝置路徑同替代資料流不可用。管理寫入同啟動亦要求標準路徑包含關係。操作之前會重複檢查，但按路徑 API 無法消除惡意並行重新命名／重解析競態；未實作按控制代碼相對檔案系統操作。開始會重新驗證 JAR 摘要碼同執行階段路徑，透過 QProcess 執行引數清單。只控制呢個管理器建立嘅程序。Started 只代表自有程序／PID存在，唔代表遊戲已就緒。Stop 將停止協定行送去確切程序；restart 等待退出，再啟動已捕捉伺服器身份，唔受之後清單選擇影響。關閉管理器要求正常停止；QProcess 銷毀會結束剩餘自有子程序。唔會探索或接管無關程序。呢個有界限單元會丟棄記錄。\n\n## 限制同未完成覆蓋\n\n呢個係首個實作單元，唔係完整通用伺服器管理器。執行階段主版本相容、執行檔來源／摘要碼、連接埠可用性、就緒、容量同原生生命週期驗收仍然未驗證。建立會同步執行有界限本機雜湊／複製。執行階段準備、發行版下載、部分建立交易回退、版本／頻道篩選、可搜尋選擇器、逐版本屬性描述、Bedrock／歷史、容器／SSH適配器、模組／外掛／套件、世界、備份、使用者／權限、排程、管理API、匯出同完整圖形介面規範仍然未完成。記憶體範圍係管理器安全上限，唔代表每個版本支援資源。未知清單欄位序列化後保留；唔會接管或編輯現有伺服器設定。\n\n英文／粵語／雙語語氣鍵另行提供作整合。導覽標籤同表單切換語言後更新仍然未完成。指引、進階外觀、歷史、批量操作、錨定正則表達式篩選同伺服器專屬狀態報告要跟進。實作期間冇操作真實伺服器、中繼資料請求、授權接受或程序啟動。\n\n## 針對性驗證\n\n`testmaterialservermanager` 涵蓋四目標清單、遺漏反例、名稱驗證、容許中繼資料來源同未知欄位保留、建立檔案之前記錄／序列化大小界限、選擇改變後按捕捉身份重啟，以及暫存祖先符號連結／junction拒絕。主機冇非特權連結支援時，連結測試資料會明確交代理由並略過，永遠唔要求提升權限。建置同執行仍然待完成。確切根目錄建置後，執行 `ctest --test-dir build-windows --output-on-failure --timeout 180 -R \"^testmaterialservermanager$\"`。真正建立／生命週期同視口／語言／主題／縮放矩陣，需要即棄自有伺服器同來源／雜湊綁定擷取。\n"
     },
     {
       "path": "docs/wiki/Building.md",
