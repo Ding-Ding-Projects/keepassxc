@@ -518,6 +518,8 @@ endif()
 
 add_unit_test(NAME testmaterialschoolmode SOURCES TestMaterialSchoolMode.cpp
         LIBS ${TEST_LIBRARIES} testsupport)
+add_unit_test(NAME testmaterialfileconverter SOURCES TestMaterialFileConverter.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
 set_tests_properties(testmaterialschoolmode PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
 if(WIN32)
     add_custom_command(TARGET testmaterialschoolmode POST_BUILD

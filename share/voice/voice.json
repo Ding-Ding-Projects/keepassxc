@@ -4350,626 +4350,626 @@
             }
         },
         "search.guidance.tabs": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
-            "2": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
-            "3": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
-            "4": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
-            "5": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
-            "2": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
-            "3": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
-            "4": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
-            "5": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+                    "2": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+                    "3": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+                    "4": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab.",
+                    "5": "Step 1 of 1: Find an already open database tab by its displayed label. Empty text shows every open tab; text ignores case by default. Try Alpha. Only tab labels are matched, never entry values, passwords or database contents. Filtering does not close, reorder or change tab identity. Select a result to activate that same tab. Use the regex builder for patterns and flags. Clear restores choices; closing the selector resets this local query. Invalid or unsafe patterns retain prior results: correct the pattern, use plain text, or clear it. With no open tabs there is nothing to select. Return to search preserves the query without activating a tab."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+                    "2": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+                    "3": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+                    "4": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。",
+                    "5": "第 1 步，共 1 步：按顯示名稱搵已開啟嘅資料庫分頁。空白顯示全部已開分頁，文字預設唔分大小寫。可試 Alpha。只比對分頁名稱，唔會讀取項目值、密碼或資料庫內容。篩選唔會關閉、重排或改變分頁識別。選擇結果會啟用同一分頁。正則工具可設定模式及選項。清空會還原選項；關閉選擇器會重設呢個本機搜尋。無效或唔安全模式保留原有結果；請修正、改用文字或清空。冇已開分頁就冇選項。返回搜尋保留內容，唔會啟用分頁。"
+                }
+            }
+        },
         "search.guidance.open": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Guide this search"
-        ],
-        "levels": {
-            "1": "Guide this search",
-            "2": "Guide this search",
-            "3": "Guide this search",
-            "4": "Guide this search",
-            "5": "Guide this search"
-        }
-    },
-    "yue": {
-        "facts": [
-            "呢個搜尋嘅指引"
-        ],
-        "levels": {
-            "1": "呢個搜尋嘅指引",
-            "2": "呢個搜尋嘅指引",
-            "3": "呢個搜尋嘅指引",
-            "4": "呢個搜尋嘅指引",
-            "5": "呢個搜尋嘅指引"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Guide this search"
+                ],
+                "levels": {
+                    "1": "Guide this search",
+                    "2": "Guide this search",
+                    "3": "Guide this search",
+                    "4": "Guide this search",
+                    "5": "Guide this search"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個搜尋嘅指引"
+                ],
+                "levels": {
+                    "1": "呢個搜尋嘅指引",
+                    "2": "呢個搜尋嘅指引",
+                    "3": "呢個搜尋嘅指引",
+                    "4": "呢個搜尋嘅指引",
+                    "5": "呢個搜尋嘅指引"
+                }
+            }
+        },
         "search.guidance.done": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Return to search (keep current query)"
-        ],
-        "levels": {
-            "1": "Return to search (keep current query)",
-            "2": "Return to search (keep current query)",
-            "3": "Return to search (keep current query)",
-            "4": "Return to search (keep current query)",
-            "5": "Return to search (keep current query)"
-        }
-    },
-    "yue": {
-        "facts": [
-            "返回搜尋（保留目前內容）"
-        ],
-        "levels": {
-            "1": "返回搜尋（保留目前內容）",
-            "2": "返回搜尋（保留目前內容）",
-            "3": "返回搜尋（保留目前內容）",
-            "4": "返回搜尋（保留目前內容）",
-            "5": "返回搜尋（保留目前內容）"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Return to search (keep current query)"
+                ],
+                "levels": {
+                    "1": "Return to search (keep current query)",
+                    "2": "Return to search (keep current query)",
+                    "3": "Return to search (keep current query)",
+                    "4": "Return to search (keep current query)",
+                    "5": "Return to search (keep current query)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "返回搜尋（保留目前內容）"
+                ],
+                "levels": {
+                    "1": "返回搜尋（保留目前內容）",
+                    "2": "返回搜尋（保留目前內容）",
+                    "3": "返回搜尋（保留目前內容）",
+                    "4": "返回搜尋（保留目前內容）",
+                    "5": "返回搜尋（保留目前內容）"
+                }
+            }
+        },
         "search.guidance.entries": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
-            "2": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
-            "3": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
-            "4": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
-            "5": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
-            "2": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
-            "3": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
-            "4": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
-            "5": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+                    "2": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+                    "3": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+                    "4": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search.",
+                    "5": "Step 1 of 1: Search entries in the current database and chosen group scope. Start with an empty query; text ignores case by default. Try a title, username, URL, note or tag. Passwords, protected fields, custom attributes and resolved placeholders are excluded. The regex builder changes matching flags only for this field. Clear the field to remove its query; selected tags can still restrict results. An invalid pattern retains the last complete results: correct it, turn regex off, or clear it. A locked or closed database has no searchable entries. Return to search keeps your query; guidance never runs a separate search."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+                    "2": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+                    "3": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+                    "4": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。",
+                    "5": "第 1 步，共 1 步：搜尋目前資料庫及所選群組範圍內嘅項目。預設內容為空，文字搜尋唔分大小寫。可試標題、使用者名稱、網址、備註或標籤。唔會搜尋密碼、受保護欄位、自訂屬性或展開後嘅替代值。正則運算式工具只改呢個欄位嘅比對選項。清空後移除文字條件，但所選標籤仍會限制結果。無效模式會保留上次完整結果；請修正、關閉正則模式或清空。資料庫鎖定或關閉時無項目可搜。返回搜尋會保留內容，指引唔會另行執行搜尋。"
+                }
+            }
+        },
         "search.guidance.groups": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
-            "2": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
-            "3": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
-            "4": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
-            "5": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
-            "2": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
-            "3": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
-            "4": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
-            "5": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+                    "2": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+                    "3": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+                    "4": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query.",
+                    "5": "Step 1 of 1: Filter folder names in this sidebar, keeping ancestors of matching folders visible. Empty text shows all folders; text ignores case by default. Try Cloud. This does not search entry values or change the chosen folder. Passwords and other entry fields are never read. Use the regex builder for explicit patterns and flags. Clear restores all folder rows. An invalid pattern keeps prior rows: correct it, turn regex off, or clear it. With no database there are no folders. Return to search preserves the query."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+                    "2": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+                    "3": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+                    "4": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。",
+                    "5": "第 1 步，共 1 步：篩選側欄嘅資料夾名稱，符合項目嘅上層資料夾仍會顯示。空白會顯示全部，文字預設唔分大小寫。可試 Cloud。呢個搜尋唔會讀取項目內容或改變所選資料夾，亦唔會讀取密碼及其他項目欄位。正則工具可設定模式及選項。清空會還原全部資料夾。無效模式保留原有結果；請修正、關閉正則模式或清空。冇資料庫就冇資料夾可搜。返回搜尋會保留內容。"
+                }
+            }
+        },
         "search.guidance.tags": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
-            "2": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
-            "3": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
-            "4": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
-            "5": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
-            "2": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
-            "3": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
-            "4": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
-            "5": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+                    "2": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+                    "3": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+                    "4": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query.",
+                    "5": "Step 1 of 1: Filter tag names, not entries. Empty text shows all tags; text ignores case by default. Try work. Selected tags remain visible and keep filtering entries even when their names miss this query. No passwords or entry values are inspected. Use the regex builder to choose patterns and flags. Clear restores tag choices without deselecting them. Invalid or unsafe patterns retain prior choices: correct the pattern, use plain text, or clear it. A database without tags has no choices. Return to search keeps the query."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+                    "2": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+                    "3": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+                    "4": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。",
+                    "5": "第 1 步，共 1 步：篩選標籤名稱，唔係搜尋項目。空白會顯示全部標籤，文字預設唔分大小寫。可試 work。已選標籤即使唔符合呢個搜尋仍會顯示，亦繼續篩選項目。唔會讀取密碼或項目內容。正則工具可設定模式及選項。清空會還原標籤選項，但唔會取消選取。無效或唔安全嘅模式保留原有選項；請修正、改用文字或清空。冇標籤嘅資料庫冇選項。返回搜尋會保留內容。"
+                }
+            }
+        },
         "search.guidance.group-scope": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
-            "2": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
-            "3": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
-            "4": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
-            "5": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
-            "2": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
-            "3": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
-            "4": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
-            "5": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
-        }
-    }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+                    "2": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+                    "3": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+                    "4": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection.",
+                    "5": "Step 1 of 1: Find a group in this scope menu, then select its real menu action to change the entry search scope. Empty text shows all group choices; text ignores case by default. Try Banking. This query does not inspect entries, passwords or custom attributes. Regex mode and flags belong only to this menu. Clear restores all choices. Invalid or unsafe patterns retain prior choices: correct, use plain text, or clear. Without an open database there are no groups. Returning keeps this query and makes no selection."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+                    "2": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+                    "3": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+                    "4": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。",
+                    "5": "第 1 步，共 1 步：喺範圍選單搵群組，再選擇真正嘅選單項目以改變項目搜尋範圍。空白顯示全部，文字預設唔分大小寫。可試 Banking。呢個搜尋唔會讀取項目、密碼或自訂屬性。正則模式及選項只屬於呢個選單。清空會還原全部選項。無效或唔安全模式保留原有選項；請修正、改用文字或清空。冇開啟資料庫就冇群組。返回會保留內容，唔會自動選取。"
+                }
+            }
+        },
         "search.guidance.details": {
-    "category": "info",
-    "en": {
-        "facts": [
-            "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
-        ],
-        "levels": {
-            "1": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
-            "2": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
-            "3": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
-            "4": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
-            "5": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
-        }
-    },
-    "yue": {
-        "facts": [
-            "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
-        ],
-        "levels": {
-            "1": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
-            "2": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
-            "3": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
-            "4": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
-            "5": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
-        }
-    }
-},
-    "search.entries": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Search entries"
-            ],
-            "levels": {
-                "1": "Search entries",
-                "2": "Search entries",
-                "3": "Search entries",
-                "4": "Search entries",
-                "5": "Search entries"
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
+                ],
+                "levels": {
+                    "1": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+                    "2": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+                    "3": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+                    "4": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query.",
+                    "5": "Step 1 of 1: Filter labels and attachment names in the selected entry detail. Empty text shows all available rows; text ignores case by default. Try Username or recovery. Values, passwords, protected contents and attachment bytes are excluded. This does not change the entry search or selected entry. Use the regex builder for patterns and flags. Clear restores rows. An invalid pattern retains prior rows: correct it, turn regex off, or clear it. Select an entry when details are unavailable. Return to search preserves the query."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
+                ],
+                "levels": {
+                    "1": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+                    "2": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+                    "3": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+                    "4": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。",
+                    "5": "第 1 步，共 1 步：篩選所選項目詳情嘅欄位標籤及附件名稱。空白顯示全部可用列，文字預設唔分大小寫。可試 Username 或 recovery。唔會搜尋欄位值、密碼、受保護內容或附件資料。唔會改變項目搜尋或所選項目。正則工具可設定模式及選項。清空會還原各列。無效模式保留原有結果；請修正、關閉正則模式或清空。未有詳情時請先選項目。返回搜尋會保留內容。"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "搜尋項目"
-            ],
-            "levels": {
-                "1": "搜尋項目",
-                "2": "搜尋項目",
-                "3": "搜尋項目",
-                "4": "搜尋項目",
-                "5": "搜尋項目"
-            }
-        }
-    },
-    "search.groups": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Filter groups"
-            ],
-            "levels": {
-                "1": "Filter groups",
-                "2": "Filter groups",
-                "3": "Filter groups",
-                "4": "Filter groups",
-                "5": "Filter groups"
-            }
-        },
-        "yue": {
-            "facts": [
-                "篩選資料夾"
-            ],
-            "levels": {
-                "1": "篩選資料夾",
-                "2": "篩選資料夾",
-                "3": "篩選資料夾",
-                "4": "篩選資料夾",
-                "5": "篩選資料夾"
-            }
-        }
-    },
-    "search.tags": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Search tags"
-            ],
-            "levels": {
-                "1": "Search tags",
-                "2": "Search tags",
-                "3": "Search tags",
-                "4": "Search tags",
-                "5": "Search tags"
+        "search.entries": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search entries"
+                ],
+                "levels": {
+                    "1": "Search entries",
+                    "2": "Search entries",
+                    "3": "Search entries",
+                    "4": "Search entries",
+                    "5": "Search entries"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋項目"
+                ],
+                "levels": {
+                    "1": "搜尋項目",
+                    "2": "搜尋項目",
+                    "3": "搜尋項目",
+                    "4": "搜尋項目",
+                    "5": "搜尋項目"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "搜尋標籤"
-            ],
-            "levels": {
-                "1": "搜尋標籤",
-                "2": "搜尋標籤",
-                "3": "搜尋標籤",
-                "4": "搜尋標籤",
-                "5": "搜尋標籤"
-            }
-        }
-    },
-    "search.group-scope": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Search groups"
-            ],
-            "levels": {
-                "1": "Search groups",
-                "2": "Search groups",
-                "3": "Search groups",
-                "4": "Search groups",
-                "5": "Search groups"
-            }
-        },
-        "yue": {
-            "facts": [
-                "搜尋資料夾"
-            ],
-            "levels": {
-                "1": "搜尋資料夾",
-                "2": "搜尋資料夾",
-                "3": "搜尋資料夾",
-                "4": "搜尋資料夾",
-                "5": "搜尋資料夾"
-            }
-        }
-    },
-    "search.details": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Search field labels and attachments"
-            ],
-            "levels": {
-                "1": "Search field labels and attachments",
-                "2": "Search field labels and attachments",
-                "3": "Search field labels and attachments",
-                "4": "Search field labels and attachments",
-                "5": "Search field labels and attachments"
+        "search.groups": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Filter groups"
+                ],
+                "levels": {
+                    "1": "Filter groups",
+                    "2": "Filter groups",
+                    "3": "Filter groups",
+                    "4": "Filter groups",
+                    "5": "Filter groups"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "篩選資料夾"
+                ],
+                "levels": {
+                    "1": "篩選資料夾",
+                    "2": "篩選資料夾",
+                    "3": "篩選資料夾",
+                    "4": "篩選資料夾",
+                    "5": "篩選資料夾"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "搜尋欄位名稱同附件"
-            ],
-            "levels": {
-                "1": "搜尋欄位名稱同附件",
-                "2": "搜尋欄位名稱同附件",
-                "3": "搜尋欄位名稱同附件",
-                "4": "搜尋欄位名稱同附件",
-                "5": "搜尋欄位名稱同附件"
-            }
-        }
-    },
-    "search.tabs": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "Search open vault tabs"
-            ],
-            "levels": {
-                "1": "Search open vault tabs",
-                "2": "Search open vault tabs",
-                "3": "Search open vault tabs",
-                "4": "Search open vault tabs",
-                "5": "Search open vault tabs"
-            }
-        },
-        "yue": {
-            "facts": [
-                "搜尋已開啟嘅密碼庫分頁"
-            ],
-            "levels": {
-                "1": "搜尋已開啟嘅密碼庫分頁",
-                "2": "搜尋已開啟嘅密碼庫分頁",
-                "3": "搜尋已開啟嘅密碼庫分頁",
-                "4": "搜尋已開啟嘅密碼庫分頁",
-                "5": "搜尋已開啟嘅密碼庫分頁"
-            }
-        }
-    },
-    "search.invalid": {
-        "category": "error",
-        "en": {
-            "facts": [
-                "Invalid regular expression. Previous results retained."
-            ],
-            "levels": {
-                "1": "Invalid regular expression. Previous results retained.",
-                "2": "Invalid regular expression. Previous results retained.",
-                "3": "Invalid regular expression. Previous results retained.",
-                "4": "Invalid regular expression. Previous results retained.",
-                "5": "Invalid regular expression. Previous results retained."
+        "search.tags": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search tags"
+                ],
+                "levels": {
+                    "1": "Search tags",
+                    "2": "Search tags",
+                    "3": "Search tags",
+                    "4": "Search tags",
+                    "5": "Search tags"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋標籤"
+                ],
+                "levels": {
+                    "1": "搜尋標籤",
+                    "2": "搜尋標籤",
+                    "3": "搜尋標籤",
+                    "4": "搜尋標籤",
+                    "5": "搜尋標籤"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "正規運算式無效，保留上次結果。"
-            ],
-            "levels": {
-                "1": "正規運算式無效，保留上次結果。",
-                "2": "正規運算式無效，保留上次結果。",
-                "3": "正規運算式無效，保留上次結果。",
-                "4": "正規運算式無效，保留上次結果。",
-                "5": "正規運算式無效，保留上次結果。"
-            }
-        }
-    },
-    "search.unsafe": {
-        "category": "error",
-        "en": {
-            "facts": [
-                "Pattern could not run safely. Previous results retained."
-            ],
-            "levels": {
-                "1": "Pattern could not run safely. Previous results retained.",
-                "2": "Pattern could not run safely. Previous results retained.",
-                "3": "Pattern could not run safely. Previous results retained.",
-                "4": "Pattern could not run safely. Previous results retained.",
-                "5": "Pattern could not run safely. Previous results retained."
-            }
-        },
-        "yue": {
-            "facts": [
-                "運算式無法安全執行，保留上次結果。"
-            ],
-            "levels": {
-                "1": "運算式無法安全執行，保留上次結果。",
-                "2": "運算式無法安全執行，保留上次結果。",
-                "3": "運算式無法安全執行，保留上次結果。",
-                "4": "運算式無法安全執行，保留上次結果。",
-                "5": "運算式無法安全執行，保留上次結果。"
-            }
-        }
-    },
-    "search.no-folders": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "No folder matches this search."
-            ],
-            "levels": {
-                "1": "No folder matches this search.",
-                "2": "No folder matches this search.",
-                "3": "No folder matches this search.",
-                "4": "No folder matches this search.",
-                "5": "No folder matches this search."
+        "search.group-scope": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search groups"
+                ],
+                "levels": {
+                    "1": "Search groups",
+                    "2": "Search groups",
+                    "3": "Search groups",
+                    "4": "Search groups",
+                    "5": "Search groups"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋資料夾"
+                ],
+                "levels": {
+                    "1": "搜尋資料夾",
+                    "2": "搜尋資料夾",
+                    "3": "搜尋資料夾",
+                    "4": "搜尋資料夾",
+                    "5": "搜尋資料夾"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "冇符合搜尋嘅資料夾。"
-            ],
-            "levels": {
-                "1": "冇符合搜尋嘅資料夾。",
-                "2": "冇符合搜尋嘅資料夾。",
-                "3": "冇符合搜尋嘅資料夾。",
-                "4": "冇符合搜尋嘅資料夾。",
-                "5": "冇符合搜尋嘅資料夾。"
-            }
-        }
-    },
-    "search.no-tags": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "No tag matches this search. Selected tags remain available."
-            ],
-            "levels": {
-                "1": "No tag matches this search. Selected tags remain available.",
-                "2": "No tag matches this search. Selected tags remain available.",
-                "3": "No tag matches this search. Selected tags remain available.",
-                "4": "No tag matches this search. Selected tags remain available.",
-                "5": "No tag matches this search. Selected tags remain available."
-            }
-        },
-        "yue": {
-            "facts": [
-                "冇符合搜尋嘅標籤，已選標籤仍然保留。"
-            ],
-            "levels": {
-                "1": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
-                "2": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
-                "3": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
-                "4": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
-                "5": "冇符合搜尋嘅標籤，已選標籤仍然保留。"
-            }
-        }
-    },
-    "search.no-tabs": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "No open tab matches this search."
-            ],
-            "levels": {
-                "1": "No open tab matches this search.",
-                "2": "No open tab matches this search.",
-                "3": "No open tab matches this search.",
-                "4": "No open tab matches this search.",
-                "5": "No open tab matches this search."
+        "search.details": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search field labels and attachments"
+                ],
+                "levels": {
+                    "1": "Search field labels and attachments",
+                    "2": "Search field labels and attachments",
+                    "3": "Search field labels and attachments",
+                    "4": "Search field labels and attachments",
+                    "5": "Search field labels and attachments"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋欄位名稱同附件"
+                ],
+                "levels": {
+                    "1": "搜尋欄位名稱同附件",
+                    "2": "搜尋欄位名稱同附件",
+                    "3": "搜尋欄位名稱同附件",
+                    "4": "搜尋欄位名稱同附件",
+                    "5": "搜尋欄位名稱同附件"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "冇符合搜尋嘅已開啟分頁。"
-            ],
-            "levels": {
-                "1": "冇符合搜尋嘅已開啟分頁。",
-                "2": "冇符合搜尋嘅已開啟分頁。",
-                "3": "冇符合搜尋嘅已開啟分頁。",
-                "4": "冇符合搜尋嘅已開啟分頁。",
-                "5": "冇符合搜尋嘅已開啟分頁。"
-            }
-        }
-    },
-    "search.no-entries": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "No entry matches this search."
-            ],
-            "levels": {
-                "1": "No entry matches this search.",
-                "2": "No entry matches this search.",
-                "3": "No entry matches this search.",
-                "4": "No entry matches this search.",
-                "5": "No entry matches this search."
-            }
-        },
-        "yue": {
-            "facts": [
-                "冇符合搜尋嘅項目。"
-            ],
-            "levels": {
-                "1": "冇符合搜尋嘅項目。",
-                "2": "冇符合搜尋嘅項目。",
-                "3": "冇符合搜尋嘅項目。",
-                "4": "冇符合搜尋嘅項目。",
-                "5": "冇符合搜尋嘅項目。"
-            }
-        }
-    },
-    "search.empty-group": {
-        "category": "info",
-        "en": {
-            "facts": [
-                "This group has no entries."
-            ],
-            "levels": {
-                "1": "This group has no entries.",
-                "2": "This group has no entries.",
-                "3": "This group has no entries.",
-                "4": "This group has no entries.",
-                "5": "This group has no entries."
+        "search.tabs": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search open vault tabs"
+                ],
+                "levels": {
+                    "1": "Search open vault tabs",
+                    "2": "Search open vault tabs",
+                    "3": "Search open vault tabs",
+                    "4": "Search open vault tabs",
+                    "5": "Search open vault tabs"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋已開啟嘅密碼庫分頁"
+                ],
+                "levels": {
+                    "1": "搜尋已開啟嘅密碼庫分頁",
+                    "2": "搜尋已開啟嘅密碼庫分頁",
+                    "3": "搜尋已開啟嘅密碼庫分頁",
+                    "4": "搜尋已開啟嘅密碼庫分頁",
+                    "5": "搜尋已開啟嘅密碼庫分頁"
+                }
             }
         },
-        "yue": {
-            "facts": [
-                "呢個資料夾未有項目。"
-            ],
-            "levels": {
-                "1": "呢個資料夾未有項目。",
-                "2": "呢個資料夾未有項目。",
-                "3": "呢個資料夾未有項目。",
-                "4": "呢個資料夾未有項目。",
-                "5": "呢個資料夾未有項目。"
+        "search.invalid": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Invalid regular expression. Previous results retained."
+                ],
+                "levels": {
+                    "1": "Invalid regular expression. Previous results retained.",
+                    "2": "Invalid regular expression. Previous results retained.",
+                    "3": "Invalid regular expression. Previous results retained.",
+                    "4": "Invalid regular expression. Previous results retained.",
+                    "5": "Invalid regular expression. Previous results retained."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正規運算式無效，保留上次結果。"
+                ],
+                "levels": {
+                    "1": "正規運算式無效，保留上次結果。",
+                    "2": "正規運算式無效，保留上次結果。",
+                    "3": "正規運算式無效，保留上次結果。",
+                    "4": "正規運算式無效，保留上次結果。",
+                    "5": "正規運算式無效，保留上次結果。"
+                }
             }
-        }
-    },
+        },
+        "search.unsafe": {
+            "category": "error",
+            "en": {
+                "facts": [
+                    "Pattern could not run safely. Previous results retained."
+                ],
+                "levels": {
+                    "1": "Pattern could not run safely. Previous results retained.",
+                    "2": "Pattern could not run safely. Previous results retained.",
+                    "3": "Pattern could not run safely. Previous results retained.",
+                    "4": "Pattern could not run safely. Previous results retained.",
+                    "5": "Pattern could not run safely. Previous results retained."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "運算式無法安全執行，保留上次結果。"
+                ],
+                "levels": {
+                    "1": "運算式無法安全執行，保留上次結果。",
+                    "2": "運算式無法安全執行，保留上次結果。",
+                    "3": "運算式無法安全執行，保留上次結果。",
+                    "4": "運算式無法安全執行，保留上次結果。",
+                    "5": "運算式無法安全執行，保留上次結果。"
+                }
+            }
+        },
+        "search.no-folders": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No folder matches this search."
+                ],
+                "levels": {
+                    "1": "No folder matches this search.",
+                    "2": "No folder matches this search.",
+                    "3": "No folder matches this search.",
+                    "4": "No folder matches this search.",
+                    "5": "No folder matches this search."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "冇符合搜尋嘅資料夾。"
+                ],
+                "levels": {
+                    "1": "冇符合搜尋嘅資料夾。",
+                    "2": "冇符合搜尋嘅資料夾。",
+                    "3": "冇符合搜尋嘅資料夾。",
+                    "4": "冇符合搜尋嘅資料夾。",
+                    "5": "冇符合搜尋嘅資料夾。"
+                }
+            }
+        },
+        "search.no-tags": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No tag matches this search. Selected tags remain available."
+                ],
+                "levels": {
+                    "1": "No tag matches this search. Selected tags remain available.",
+                    "2": "No tag matches this search. Selected tags remain available.",
+                    "3": "No tag matches this search. Selected tags remain available.",
+                    "4": "No tag matches this search. Selected tags remain available.",
+                    "5": "No tag matches this search. Selected tags remain available."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "冇符合搜尋嘅標籤，已選標籤仍然保留。"
+                ],
+                "levels": {
+                    "1": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                    "2": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                    "3": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                    "4": "冇符合搜尋嘅標籤，已選標籤仍然保留。",
+                    "5": "冇符合搜尋嘅標籤，已選標籤仍然保留。"
+                }
+            }
+        },
+        "search.no-tabs": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No open tab matches this search."
+                ],
+                "levels": {
+                    "1": "No open tab matches this search.",
+                    "2": "No open tab matches this search.",
+                    "3": "No open tab matches this search.",
+                    "4": "No open tab matches this search.",
+                    "5": "No open tab matches this search."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "冇符合搜尋嘅已開啟分頁。"
+                ],
+                "levels": {
+                    "1": "冇符合搜尋嘅已開啟分頁。",
+                    "2": "冇符合搜尋嘅已開啟分頁。",
+                    "3": "冇符合搜尋嘅已開啟分頁。",
+                    "4": "冇符合搜尋嘅已開啟分頁。",
+                    "5": "冇符合搜尋嘅已開啟分頁。"
+                }
+            }
+        },
+        "search.no-entries": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "No entry matches this search."
+                ],
+                "levels": {
+                    "1": "No entry matches this search.",
+                    "2": "No entry matches this search.",
+                    "3": "No entry matches this search.",
+                    "4": "No entry matches this search.",
+                    "5": "No entry matches this search."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "冇符合搜尋嘅項目。"
+                ],
+                "levels": {
+                    "1": "冇符合搜尋嘅項目。",
+                    "2": "冇符合搜尋嘅項目。",
+                    "3": "冇符合搜尋嘅項目。",
+                    "4": "冇符合搜尋嘅項目。",
+                    "5": "冇符合搜尋嘅項目。"
+                }
+            }
+        },
+        "search.empty-group": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "This group has no entries."
+                ],
+                "levels": {
+                    "1": "This group has no entries.",
+                    "2": "This group has no entries.",
+                    "3": "This group has no entries.",
+                    "4": "This group has no entries.",
+                    "5": "This group has no entries."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個資料夾未有項目。"
+                ],
+                "levels": {
+                    "1": "呢個資料夾未有項目。",
+                    "2": "呢個資料夾未有項目。",
+                    "3": "呢個資料夾未有項目。",
+                    "4": "呢個資料夾未有項目。",
+                    "5": "呢個資料夾未有項目。"
+                }
+            }
+        },
         "dim-sum.setting": {
-  "category": "info",
-  "en": {
-    "facts": [
-      "Startup dim sum surprise"
-    ],
-    "levels": {
-      "1": "Startup dim sum surprise",
-      "2": "Startup dim sum surprise",
-      "3": "Startup dim sum surprise",
-      "4": "Startup dim sum surprise",
-      "5": "Startup dim sum surprise"
-    }
-  },
-  "yue": {
-    "facts": [
-      "開機點心驚喜"
-    ],
-    "levels": {
-      "1": "開機點心驚喜",
-      "2": "開機點心驚喜",
-      "3": "開機點心驚喜",
-      "4": "開機點心驚喜",
-      "5": "開機點心驚喜"
-    }
-  }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Startup dim sum surprise"
+                ],
+                "levels": {
+                    "1": "Startup dim sum surprise",
+                    "2": "Startup dim sum surprise",
+                    "3": "Startup dim sum surprise",
+                    "4": "Startup dim sum surprise",
+                    "5": "Startup dim sum surprise"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "開機點心驚喜"
+                ],
+                "levels": {
+                    "1": "開機點心驚喜",
+                    "2": "開機點心驚喜",
+                    "3": "開機點心驚喜",
+                    "4": "開機點心驚喜",
+                    "5": "開機點心驚喜"
+                }
+            }
+        },
         "dim-sum.setting-description": {
-  "category": "info",
-  "en": {
-    "facts": [
-      "A 10% chance per eligible launch, without an off switch."
-    ],
-    "levels": {
-      "1": "A 10% chance per eligible launch, without an off switch.",
-      "2": "A 10% chance per eligible launch, without an off switch.",
-      "3": "A 10% chance per eligible launch, without an off switch.",
-      "4": "A 10% chance per eligible launch, without an off switch.",
-      "5": "A 10% chance per eligible launch, without an off switch."
-    }
-  },
-  "yue": {
-    "facts": [
-      "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
-    ],
-    "levels": {
-      "1": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
-      "2": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
-      "3": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
-      "4": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
-      "5": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
-    }
-  }
-},
+            "category": "info",
+            "en": {
+                "facts": [
+                    "A 10% chance per eligible launch, without an off switch."
+                ],
+                "levels": {
+                    "1": "A 10% chance per eligible launch, without an off switch.",
+                    "2": "A 10% chance per eligible launch, without an off switch.",
+                    "3": "A 10% chance per eligible launch, without an off switch.",
+                    "4": "A 10% chance per eligible launch, without an off switch.",
+                    "5": "A 10% chance per eligible launch, without an off switch."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
+                ],
+                "levels": {
+                    "1": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+                    "2": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+                    "3": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+                    "4": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。",
+                    "5": "每次合適嘅啟動有 10% 機會顯示，冇關閉選項。"
+                }
+            }
+        },
         "menu.search": {
             "category": "info",
             "en": {
@@ -5162,7 +5162,10 @@
         "clipboard.copied": {
             "category": "success",
             "en": {
-                "facts": ["clipboard", "cleared in {seconds} seconds"],
+                "facts": [
+                    "clipboard",
+                    "cleared in {seconds} seconds"
+                ],
                 "levels": {
                     "1": "Copied to the clipboard. It will be cleared in {seconds} seconds.",
                     "3": "Copied — it is on the clipboard and will be cleared in {seconds} seconds.",
@@ -5170,7 +5173,10 @@
                 }
             },
             "yue": {
-                "facts": ["剪貼簿", "{seconds} 秒後清除"],
+                "facts": [
+                    "剪貼簿",
+                    "{seconds} 秒後清除"
+                ],
                 "levels": {
                     "1": "已複製到剪貼簿，{seconds} 秒後清除。",
                     "3": "複製咗喇，而家喺剪貼簿度，{seconds} 秒後清除。",
@@ -5181,7 +5187,10 @@
         "database.saved": {
             "category": "success",
             "en": {
-                "facts": ["{name}", "saved"],
+                "facts": [
+                    "{name}",
+                    "saved"
+                ],
                 "levels": {
                     "1": "Database “{name}” saved.",
                     "3": "“{name}” saved — every change is on disk.",
@@ -5189,7 +5198,10 @@
                 }
             },
             "yue": {
-                "facts": ["{name}", "已儲存"],
+                "facts": [
+                    "{name}",
+                    "已儲存"
+                ],
                 "levels": {
                     "1": "資料庫「{name}」已儲存。",
                     "3": "「{name}」已儲存，所有改動都寫咗入磁碟。",
@@ -5200,7 +5212,10 @@
         "database.locked": {
             "category": "security",
             "en": {
-                "facts": ["{name}", "locked"],
+                "facts": [
+                    "{name}",
+                    "locked"
+                ],
                 "levels": {
                     "1": "Database “{name}” is locked.",
                     "3": "“{name}” is locked. Your master key opens it again.",
@@ -5208,7 +5223,10 @@
                 }
             },
             "yue": {
-                "facts": ["{name}", "已鎖定"],
+                "facts": [
+                    "{name}",
+                    "已鎖定"
+                ],
                 "levels": {
                     "1": "資料庫「{name}」已鎖定。",
                     "3": "「{name}」已鎖定，要用主密碼先開得返。",
@@ -5219,7 +5237,10 @@
         "entry.deleted": {
             "category": "destructive",
             "en": {
-                "facts": ["{title}", "recycle bin"],
+                "facts": [
+                    "{title}",
+                    "recycle bin"
+                ],
                 "levels": {
                     "1": "Entry “{title}” was moved to the recycle bin.",
                     "3": "“{title}” is in the recycle bin now, and you can still restore it from there.",
@@ -5227,7 +5248,10 @@
                 }
             },
             "yue": {
-                "facts": ["{title}", "回收筒"],
+                "facts": [
+                    "{title}",
+                    "回收筒"
+                ],
                 "levels": {
                     "1": "項目「{title}」已移去回收筒。",
                     "3": "「{title}」而家喺回收筒，想要返隨時可以還原。",
@@ -5238,7 +5262,10 @@
         "entry.restored": {
             "category": "success",
             "en": {
-                "facts": ["{title}", "recycle bin"],
+                "facts": [
+                    "{title}",
+                    "recycle bin"
+                ],
                 "levels": {
                     "1": "Entry “{title}” was restored from the recycle bin.",
                     "3": "“{title}” is back out of the recycle bin and in your database.",
@@ -5246,7 +5273,10 @@
                 }
             },
             "yue": {
-                "facts": ["{title}", "回收筒"],
+                "facts": [
+                    "{title}",
+                    "回收筒"
+                ],
                 "levels": {
                     "1": "項目「{title}」已由回收筒還原。",
                     "3": "「{title}」由回收筒還原咗，返咗入資料庫。",
@@ -5257,7 +5287,11 @@
         "autotype.sent": {
             "category": "info",
             "en": {
-                "facts": ["Auto-Type", "{title}", "{window}"],
+                "facts": [
+                    "Auto-Type",
+                    "{title}",
+                    "{window}"
+                ],
                 "levels": {
                     "1": "Auto-Type sent the sequence for “{title}” to “{window}”.",
                     "3": "Auto-Type typed “{title}” into “{window}” for you.",
@@ -5265,7 +5299,11 @@
                 }
             },
             "yue": {
-                "facts": ["自動輸入", "{title}", "{window}"],
+                "facts": [
+                    "自動輸入",
+                    "{title}",
+                    "{window}"
+                ],
                 "levels": {
                     "1": "自動輸入已將「{title}」輸入到「{window}」。",
                     "3": "自動輸入幫你將「{title}」打咗入「{window}」。",
@@ -5276,7 +5314,10 @@
         "report.exported": {
             "category": "success",
             "en": {
-                "facts": ["Report exported", "{path}"],
+                "facts": [
+                    "Report exported",
+                    "{path}"
+                ],
                 "levels": {
                     "1": "Report exported to {path}.",
                     "3": "Report exported — it is waiting at {path}.",
@@ -5284,7 +5325,10 @@
                 }
             },
             "yue": {
-                "facts": ["報告已匯出", "{path}"],
+                "facts": [
+                    "報告已匯出",
+                    "{path}"
+                ],
                 "levels": {
                     "1": "報告已匯出到 {path}。",
                     "3": "報告已匯出，擺咗喺 {path}。",
@@ -5295,7 +5339,13 @@
         "passkey.copied.warning": {
             "category": "security",
             "en": {
-                "facts": ["{count}", "clipboard", "base64", "any other application on this computer", "cleared in {seconds} seconds"],
+                "facts": [
+                    "{count}",
+                    "clipboard",
+                    "base64",
+                    "any other application on this computer",
+                    "cleared in {seconds} seconds"
+                ],
                 "levels": {
                     "1": "You are about to copy {count} passkey(s) to the clipboard as base64 text. The clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
                     "3": "Heads up — {count} passkey(s) are about to go onto the clipboard as base64 text, and the clipboard can be read by any other application on this computer. It is cleared in {seconds} seconds.",
@@ -5303,7 +5353,13 @@
                 }
             },
             "yue": {
-                "facts": ["{count}", "base64", "剪貼簿", "本機任何其他程式都可以讀取剪貼簿", "{seconds} 秒後清除"],
+                "facts": [
+                    "{count}",
+                    "base64",
+                    "剪貼簿",
+                    "本機任何其他程式都可以讀取剪貼簿",
+                    "{seconds} 秒後清除"
+                ],
                 "levels": {
                     "1": "你將會把 {count} 個通行密鑰以 base64 文字複製到剪貼簿。本機任何其他程式都可以讀取剪貼簿。{seconds} 秒後清除。",
                     "3": "留意：{count} 個通行密鑰會以 base64 文字複製到剪貼簿，本機任何其他程式都可以讀取剪貼簿，{seconds} 秒後清除。",
@@ -5314,7 +5370,10 @@
         "passkey.imported": {
             "category": "success",
             "en": {
-                "facts": ["Passkey imported", "{title}"],
+                "facts": [
+                    "Passkey imported",
+                    "{title}"
+                ],
                 "levels": {
                     "1": "Passkey imported into entry “{title}”.",
                     "3": "Passkey imported — it lives in “{title}” now.",
@@ -5322,7 +5381,10 @@
                 }
             },
             "yue": {
-                "facts": ["通行密鑰已匯入", "{title}"],
+                "facts": [
+                    "通行密鑰已匯入",
+                    "{title}"
+                ],
                 "levels": {
                     "1": "通行密鑰已匯入項目「{title}」。",
                     "3": "通行密鑰已匯入，而家收埋喺「{title}」度。",
@@ -5333,7 +5395,13 @@
         "database.save.failed": {
             "category": "error",
             "en": {
-                "facts": ["Writing the database", "{name}", "failed", "{error}", "still unsaved"],
+                "facts": [
+                    "Writing the database",
+                    "{name}",
+                    "failed",
+                    "{error}",
+                    "still unsaved"
+                ],
                 "levels": {
                     "1": "Writing the database “{name}” failed: {error}. Your changes are still unsaved.",
                     "3": "Writing the database “{name}” failed: {error}. Nothing was lost, but your changes are still unsaved — try again or save to another location.",
@@ -5341,7 +5409,13 @@
                 }
             },
             "yue": {
-                "facts": ["寫入資料庫", "{name}", "失敗", "{error}", "仍然未儲存"],
+                "facts": [
+                    "寫入資料庫",
+                    "{name}",
+                    "失敗",
+                    "{error}",
+                    "仍然未儲存"
+                ],
                 "levels": {
                     "1": "寫入資料庫「{name}」失敗：{error}。你嘅修改仍然未儲存。",
                     "3": "寫入資料庫「{name}」失敗：{error}。冇嘢唔見咗，但你嘅修改仍然未儲存，可以再試或者揀第二個位置。",
@@ -5352,7 +5426,11 @@
         "database.open.failed": {
             "category": "error",
             "en": {
-                "facts": ["Unable to open the database", "{name}", "{error}"],
+                "facts": [
+                    "Unable to open the database",
+                    "{name}",
+                    "{error}"
+                ],
                 "levels": {
                     "1": "Unable to open the database “{name}”: {error}",
                     "3": "Unable to open the database “{name}”: {error}. The file was left exactly as it was.",
@@ -5360,7 +5438,11 @@
                 }
             },
             "yue": {
-                "facts": ["無法開啟資料庫", "{name}", "{error}"],
+                "facts": [
+                    "無法開啟資料庫",
+                    "{name}",
+                    "{error}"
+                ],
                 "levels": {
                     "1": "無法開啟資料庫「{name}」：{error}",
                     "3": "無法開啟資料庫「{name}」：{error}。個檔案原封不動。",
@@ -5371,7 +5453,11 @@
         "entry.delete.confirm": {
             "category": "destructive",
             "en": {
-                "facts": ["{title}", "permanently delete the entry", "This cannot be undone"],
+                "facts": [
+                    "{title}",
+                    "permanently delete the entry",
+                    "This cannot be undone"
+                ],
                 "levels": {
                     "1": "Do you really want to permanently delete the entry “{title}”? This cannot be undone.",
                     "3": "Do you really want to permanently delete the entry “{title}”? This cannot be undone, and nothing goes to the recycle bin.",
@@ -5379,7 +5465,11 @@
                 }
             },
             "yue": {
-                "facts": ["{title}", "永久刪除項目", "此操作無法復原"],
+                "facts": [
+                    "{title}",
+                    "永久刪除項目",
+                    "此操作無法復原"
+                ],
                 "levels": {
                     "1": "你確定要永久刪除項目「{title}」嗎？此操作無法復原。",
                     "3": "你確定要永久刪除項目「{title}」嗎？此操作無法復原，亦唔會入回收筒。",
@@ -5390,7 +5480,11 @@
         "vocabulary.loaded": {
             "category": "success",
             "en": {
-                "facts": ["{count}", "active", "this computer only"],
+                "facts": [
+                    "{count}",
+                    "active",
+                    "this computer only"
+                ],
                 "levels": {
                     "1": "Personal vocabulary loaded: {count} entries active. The validated cache stays on this computer only.",
                     "3": "Vocabulary loaded — {count} entries active, and the validated cache lives on this computer only.",
@@ -5398,7 +5492,11 @@
                 }
             },
             "yue": {
-                "facts": ["{count}", "生效", "只留喺呢部電腦"],
+                "facts": [
+                    "{count}",
+                    "生效",
+                    "只留喺呢部電腦"
+                ],
                 "levels": {
                     "1": "個人詞彙已載入：{count} 條生效。已驗證嘅快取只留喺呢部電腦。",
                     "3": "詞彙載入咗，{count} 條生效，已驗證嘅快取只留喺呢部電腦。",
@@ -5409,7 +5507,10 @@
         "vocabulary.cleared": {
             "category": "success",
             "en": {
-                "facts": ["cleared", "original wording"],
+                "facts": [
+                    "cleared",
+                    "original wording"
+                ],
                 "levels": {
                     "1": "Personal vocabulary cleared. The original wording is active again.",
                     "3": "Vocabulary cleared — the original wording is active again.",
@@ -5417,7 +5518,10 @@
                 }
             },
             "yue": {
-                "facts": ["已清除", "原文"],
+                "facts": [
+                    "已清除",
+                    "原文"
+                ],
                 "levels": {
                     "1": "個人詞彙已清除。原文重新生效。",
                     "3": "詞彙清除咗，原文重新生效。",
@@ -5428,7 +5532,14 @@
         "vocabulary.invalid": {
             "category": "error",
             "en": {
-                "facts": ["not loaded", "schema version 1", "256 KiB", "depth 8", "160", "1000"],
+                "facts": [
+                    "not loaded",
+                    "schema version 1",
+                    "256 KiB",
+                    "depth 8",
+                    "160",
+                    "1000"
+                ],
                 "levels": {
                     "1": "Vocabulary not loaded. Use schema version 1, UTF-8 JSON at most 256 KiB, depth 8, unique keys of 1 to 160 Unicode code points and string values up to 1000 code points. Entry count has no fixed cap within these bounds.",
                     "3": "Vocabulary not loaded: the file needs schema version 1, UTF-8 JSON at most 256 KiB, depth 8, unique keys of 1 to 160 Unicode code points and string values up to 1000 code points. Entry count has no fixed cap within these bounds.",
@@ -5436,7 +5547,14 @@
                 }
             },
             "yue": {
-                "facts": ["未載入", "schema version 1", "256 KiB", "depth 8", "160", "1000"],
+                "facts": [
+                    "未載入",
+                    "schema version 1",
+                    "256 KiB",
+                    "depth 8",
+                    "160",
+                    "1000"
+                ],
                 "levels": {
                     "1": "詞彙未載入。請用 schema version 1、最多 256 KiB 嘅 UTF-8 JSON、depth 8；鍵名要唯一，長度為 1 至 160 個 Unicode 碼點，字串值最多 1000 個碼點。符合呢啲界限就冇固定條數上限。",
                     "3": "詞彙未載入：檔案要用 schema version 1、最多 256 KiB 嘅 UTF-8 JSON、depth 8；鍵名要唯一，長度為 1 至 160 個 Unicode 碼點，字串值最多 1000 個碼點。符合呢啲界限就冇固定條數上限。",
@@ -5444,7 +5562,7 @@
                 }
             }
         },
-    "motion.reduced.label": {
+        "motion.reduced.label": {
             "category": "info",
             "en": {
                 "facts": [
@@ -6845,6 +6963,870 @@
                     "3": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
                     "4": "呢個模式未能使用，保留上一次有效嘅軌道篩選。",
                     "5": "呢個模式未能使用，保留上一次有效嘅軌道篩選。"
+                }
+            }
+        },
+        "converter.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Local file converter"
+                ],
+                "levels": {
+                    "1": "Local file converter",
+                    "2": "Local file converter",
+                    "3": "Local file converter",
+                    "4": "Local file converter",
+                    "5": "Local file converter"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "本機檔案轉換器"
+                ],
+                "levels": {
+                    "1": "本機檔案轉換器",
+                    "2": "本機檔案轉換器",
+                    "3": "本機檔案轉換器",
+                    "4": "本機檔案轉換器",
+                    "5": "本機檔案轉換器"
+                }
+            }
+        },
+        "converter.boundary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable."
+                ],
+                "levels": {
+                    "1": "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable.",
+                    "2": "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable.",
+                    "3": "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable.",
+                    "4": "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable.",
+                    "5": "Binary input: 64 MiB; encoded input: 128 MiB. Canonical lowercase hex or padded base64, no whitespace. Sources preserved; no overwrite. Seven other categories unavailable."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。"
+                ],
+                "levels": {
+                    "1": "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。",
+                    "2": "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。",
+                    "3": "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。",
+                    "4": "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。",
+                    "5": "二進位輸入：64 MiB；已編碼輸入：128 MiB。標準小寫十六進位或有填補 base64，唔接受空白。保留來源，唔覆寫。其餘七類不可用。"
+                }
+            }
+        },
+        "converter.documents": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Documents / PDF"
+                ],
+                "levels": {
+                    "1": "Documents / PDF",
+                    "2": "Documents / PDF",
+                    "3": "Documents / PDF",
+                    "4": "Documents / PDF",
+                    "5": "Documents / PDF"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "文件／PDF"
+                ],
+                "levels": {
+                    "1": "文件／PDF",
+                    "2": "文件／PDF",
+                    "3": "文件／PDF",
+                    "4": "文件／PDF",
+                    "5": "文件／PDF"
+                }
+            }
+        },
+        "converter.images": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Images"
+                ],
+                "levels": {
+                    "1": "Images",
+                    "2": "Images",
+                    "3": "Images",
+                    "4": "Images",
+                    "5": "Images"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "圖片"
+                ],
+                "levels": {
+                    "1": "圖片",
+                    "2": "圖片",
+                    "3": "圖片",
+                    "4": "圖片",
+                    "5": "圖片"
+                }
+            }
+        },
+        "converter.audio": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Audio"
+                ],
+                "levels": {
+                    "1": "Audio",
+                    "2": "Audio",
+                    "3": "Audio",
+                    "4": "Audio",
+                    "5": "Audio"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "音訊"
+                ],
+                "levels": {
+                    "1": "音訊",
+                    "2": "音訊",
+                    "3": "音訊",
+                    "4": "音訊",
+                    "5": "音訊"
+                }
+            }
+        },
+        "converter.video": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Video"
+                ],
+                "levels": {
+                    "1": "Video",
+                    "2": "Video",
+                    "3": "Video",
+                    "4": "Video",
+                    "5": "Video"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "影片"
+                ],
+                "levels": {
+                    "1": "影片",
+                    "2": "影片",
+                    "3": "影片",
+                    "4": "影片",
+                    "5": "影片"
+                }
+            }
+        },
+        "converter.archives": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Archives"
+                ],
+                "levels": {
+                    "1": "Archives",
+                    "2": "Archives",
+                    "3": "Archives",
+                    "4": "Archives",
+                    "5": "Archives"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "壓縮檔"
+                ],
+                "levels": {
+                    "1": "壓縮檔",
+                    "2": "壓縮檔",
+                    "3": "壓縮檔",
+                    "4": "壓縮檔",
+                    "5": "壓縮檔"
+                }
+            }
+        },
+        "converter.data": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Structured Data / Spreadsheets"
+                ],
+                "levels": {
+                    "1": "Structured Data / Spreadsheets",
+                    "2": "Structured Data / Spreadsheets",
+                    "3": "Structured Data / Spreadsheets",
+                    "4": "Structured Data / Spreadsheets",
+                    "5": "Structured Data / Spreadsheets"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "結構化資料／試算表"
+                ],
+                "levels": {
+                    "1": "結構化資料／試算表",
+                    "2": "結構化資料／試算表",
+                    "3": "結構化資料／試算表",
+                    "4": "結構化資料／試算表",
+                    "5": "結構化資料／試算表"
+                }
+            }
+        },
+        "converter.code": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Code / Text"
+                ],
+                "levels": {
+                    "1": "Code / Text",
+                    "2": "Code / Text",
+                    "3": "Code / Text",
+                    "4": "Code / Text",
+                    "5": "Code / Text"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "程式碼／文字"
+                ],
+                "levels": {
+                    "1": "程式碼／文字",
+                    "2": "程式碼／文字",
+                    "3": "程式碼／文字",
+                    "4": "程式碼／文字",
+                    "5": "程式碼／文字"
+                }
+            }
+        },
+        "converter.binary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Binary Encodings"
+                ],
+                "levels": {
+                    "1": "Binary Encodings",
+                    "2": "Binary Encodings",
+                    "3": "Binary Encodings",
+                    "4": "Binary Encodings",
+                    "5": "Binary Encodings"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "二進位編碼"
+                ],
+                "levels": {
+                    "1": "二進位編碼",
+                    "2": "二進位編碼",
+                    "3": "二進位編碼",
+                    "4": "二進位編碼",
+                    "5": "二進位編碼"
+                }
+            }
+        },
+        "converter.unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Disabled: no bundled offline adapter and packaged verification for this category."
+                ],
+                "levels": {
+                    "1": "Disabled: no bundled offline adapter and packaged verification for this category.",
+                    "2": "Disabled: no bundled offline adapter and packaged verification for this category.",
+                    "3": "Disabled: no bundled offline adapter and packaged verification for this category.",
+                    "4": "Disabled: no bundled offline adapter and packaged verification for this category.",
+                    "5": "Disabled: no bundled offline adapter and packaged verification for this category."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已停用：呢個分類未有隨附離線轉接器同封裝驗證。"
+                ],
+                "levels": {
+                    "1": "已停用：呢個分類未有隨附離線轉接器同封裝驗證。",
+                    "2": "已停用：呢個分類未有隨附離線轉接器同封裝驗證。",
+                    "3": "已停用：呢個分類未有隨附離線轉接器同封裝驗證。",
+                    "4": "已停用：呢個分類未有隨附離線轉接器同封裝驗證。",
+                    "5": "已停用：呢個分類未有隨附離線轉接器同封裝驗證。"
+                }
+            }
+        },
+        "converter.hex-encode": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Encode bytes as hex"
+                ],
+                "levels": {
+                    "1": "Encode bytes as hex",
+                    "2": "Encode bytes as hex",
+                    "3": "Encode bytes as hex",
+                    "4": "Encode bytes as hex",
+                    "5": "Encode bytes as hex"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "將位元組編碼為十六進位"
+                ],
+                "levels": {
+                    "1": "將位元組編碼為十六進位",
+                    "2": "將位元組編碼為十六進位",
+                    "3": "將位元組編碼為十六進位",
+                    "4": "將位元組編碼為十六進位",
+                    "5": "將位元組編碼為十六進位"
+                }
+            }
+        },
+        "converter.hex-decode": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Decode canonical hex"
+                ],
+                "levels": {
+                    "1": "Decode canonical hex",
+                    "2": "Decode canonical hex",
+                    "3": "Decode canonical hex",
+                    "4": "Decode canonical hex",
+                    "5": "Decode canonical hex"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "解碼標準十六進位"
+                ],
+                "levels": {
+                    "1": "解碼標準十六進位",
+                    "2": "解碼標準十六進位",
+                    "3": "解碼標準十六進位",
+                    "4": "解碼標準十六進位",
+                    "5": "解碼標準十六進位"
+                }
+            }
+        },
+        "converter.base64-encode": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Encode bytes as base64"
+                ],
+                "levels": {
+                    "1": "Encode bytes as base64",
+                    "2": "Encode bytes as base64",
+                    "3": "Encode bytes as base64",
+                    "4": "Encode bytes as base64",
+                    "5": "Encode bytes as base64"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "將位元組編碼為 base64"
+                ],
+                "levels": {
+                    "1": "將位元組編碼為 base64",
+                    "2": "將位元組編碼為 base64",
+                    "3": "將位元組編碼為 base64",
+                    "4": "將位元組編碼為 base64",
+                    "5": "將位元組編碼為 base64"
+                }
+            }
+        },
+        "converter.base64-decode": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Decode canonical base64"
+                ],
+                "levels": {
+                    "1": "Decode canonical base64",
+                    "2": "Decode canonical base64",
+                    "3": "Decode canonical base64",
+                    "4": "Decode canonical base64",
+                    "5": "Decode canonical base64"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "解碼標準 base64"
+                ],
+                "levels": {
+                    "1": "解碼標準 base64",
+                    "2": "解碼標準 base64",
+                    "3": "解碼標準 base64",
+                    "4": "解碼標準 base64",
+                    "5": "解碼標準 base64"
+                }
+            }
+        },
+        "converter.operation": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Encoding operation"
+                ],
+                "levels": {
+                    "1": "Encoding operation",
+                    "2": "Encoding operation",
+                    "3": "Encoding operation",
+                    "4": "Encoding operation",
+                    "5": "Encoding operation"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "編碼操作"
+                ],
+                "levels": {
+                    "1": "編碼操作",
+                    "2": "編碼操作",
+                    "3": "編碼操作",
+                    "4": "編碼操作",
+                    "5": "編碼操作"
+                }
+            }
+        },
+        "converter.source": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose source file"
+                ],
+                "levels": {
+                    "1": "Choose source file",
+                    "2": "Choose source file",
+                    "3": "Choose source file",
+                    "4": "Choose source file",
+                    "5": "Choose source file"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選擇來源檔案"
+                ],
+                "levels": {
+                    "1": "選擇來源檔案",
+                    "2": "選擇來源檔案",
+                    "3": "選擇來源檔案",
+                    "4": "選擇來源檔案",
+                    "5": "選擇來源檔案"
+                }
+            }
+        },
+        "converter.destination": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose new destination file"
+                ],
+                "levels": {
+                    "1": "Choose new destination file",
+                    "2": "Choose new destination file",
+                    "3": "Choose new destination file",
+                    "4": "Choose new destination file",
+                    "5": "Choose new destination file"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選擇新目的地檔案"
+                ],
+                "levels": {
+                    "1": "選擇新目的地檔案",
+                    "2": "選擇新目的地檔案",
+                    "3": "選擇新目的地檔案",
+                    "4": "選擇新目的地檔案",
+                    "5": "選擇新目的地檔案"
+                }
+            }
+        },
+        "converter.cancel": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Cancel conversion"
+                ],
+                "levels": {
+                    "1": "Cancel conversion",
+                    "2": "Cancel conversion",
+                    "3": "Cancel conversion",
+                    "4": "Cancel conversion",
+                    "5": "Cancel conversion"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "取消轉換"
+                ],
+                "levels": {
+                    "1": "取消轉換",
+                    "2": "取消轉換",
+                    "3": "取消轉換",
+                    "4": "取消轉換",
+                    "5": "取消轉換"
+                }
+            }
+        },
+        "converter.run": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Convert and verify"
+                ],
+                "levels": {
+                    "1": "Convert and verify",
+                    "2": "Convert and verify",
+                    "3": "Convert and verify",
+                    "4": "Convert and verify",
+                    "5": "Convert and verify"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "轉換並驗證"
+                ],
+                "levels": {
+                    "1": "轉換並驗證",
+                    "2": "轉換並驗證",
+                    "3": "轉換並驗證",
+                    "4": "轉換並驗證",
+                    "5": "轉換並驗證"
+                }
+            }
+        },
+        "converter.empty": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose a source and a new destination. No file is read automatically."
+                ],
+                "levels": {
+                    "1": "Choose a source and a new destination. No file is read automatically.",
+                    "2": "Choose a source and a new destination. No file is read automatically.",
+                    "3": "Choose a source and a new destination. No file is read automatically.",
+                    "4": "Choose a source and a new destination. No file is read automatically.",
+                    "5": "Choose a source and a new destination. No file is read automatically."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請選擇來源同新目的地。唔會自動讀取檔案。"
+                ],
+                "levels": {
+                    "1": "請選擇來源同新目的地。唔會自動讀取檔案。",
+                    "2": "請選擇來源同新目的地。唔會自動讀取檔案。",
+                    "3": "請選擇來源同新目的地。唔會自動讀取檔案。",
+                    "4": "請選擇來源同新目的地。唔會自動讀取檔案。",
+                    "5": "請選擇來源同新目的地。唔會自動讀取檔案。"
+                }
+            }
+        },
+        "converter.running": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Converting and reopening output for validation. Cancel remains available."
+                ],
+                "levels": {
+                    "1": "Converting and reopening output for validation. Cancel remains available.",
+                    "2": "Converting and reopening output for validation. Cancel remains available.",
+                    "3": "Converting and reopening output for validation. Cancel remains available.",
+                    "4": "Converting and reopening output for validation. Cancel remains available.",
+                    "5": "Converting and reopening output for validation. Cancel remains available."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正在轉換並重新開啟輸出驗證。仍然可以取消。"
+                ],
+                "levels": {
+                    "1": "正在轉換並重新開啟輸出驗證。仍然可以取消。",
+                    "2": "正在轉換並重新開啟輸出驗證。仍然可以取消。",
+                    "3": "正在轉換並重新開啟輸出驗證。仍然可以取消。",
+                    "4": "正在轉換並重新開啟輸出驗證。仍然可以取消。",
+                    "5": "正在轉換並重新開啟輸出驗證。仍然可以取消。"
+                }
+            }
+        },
+        "converter.success": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Conversion verified. Source preserved; new destination created."
+                ],
+                "levels": {
+                    "1": "Conversion verified. Source preserved; new destination created.",
+                    "2": "Conversion verified. Source preserved; new destination created.",
+                    "3": "Conversion verified. Source preserved; new destination created.",
+                    "4": "Conversion verified. Source preserved; new destination created.",
+                    "5": "Conversion verified. Source preserved; new destination created."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "轉換已驗證。來源保留，已建立新目的地。"
+                ],
+                "levels": {
+                    "1": "轉換已驗證。來源保留，已建立新目的地。",
+                    "2": "轉換已驗證。來源保留，已建立新目的地。",
+                    "3": "轉換已驗證。來源保留，已建立新目的地。",
+                    "4": "轉換已驗證。來源保留，已建立新目的地。",
+                    "5": "轉換已驗證。來源保留，已建立新目的地。"
+                }
+            }
+        },
+        "converter.cancelled": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Conversion cancelled. No destination published."
+                ],
+                "levels": {
+                    "1": "Conversion cancelled. No destination published.",
+                    "2": "Conversion cancelled. No destination published.",
+                    "3": "Conversion cancelled. No destination published.",
+                    "4": "Conversion cancelled. No destination published.",
+                    "5": "Conversion cancelled. No destination published."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "轉換已取消，冇發佈目的地。"
+                ],
+                "levels": {
+                    "1": "轉換已取消，冇發佈目的地。",
+                    "2": "轉換已取消，冇發佈目的地。",
+                    "3": "轉換已取消，冇發佈目的地。",
+                    "4": "轉換已取消，冇發佈目的地。",
+                    "5": "轉換已取消，冇發佈目的地。"
+                }
+            }
+        },
+        "converter.invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published."
+                ],
+                "levels": {
+                    "1": "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published.",
+                    "2": "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published.",
+                    "3": "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published.",
+                    "4": "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published.",
+                    "5": "Invalid encoding, unsupported password database, or round-trip mismatch. No destination published."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。"
+                ],
+                "levels": {
+                    "1": "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。",
+                    "2": "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。",
+                    "3": "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。",
+                    "4": "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。",
+                    "5": "編碼無效、不支援密碼資料庫，或往返驗證不符。冇發佈目的地。"
+                }
+            }
+        },
+        "converter.io": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Cannot read, write, validate storage capacity or publish output. No destination replaced."
+                ],
+                "levels": {
+                    "1": "Cannot read, write, validate storage capacity or publish output. No destination replaced.",
+                    "2": "Cannot read, write, validate storage capacity or publish output. No destination replaced.",
+                    "3": "Cannot read, write, validate storage capacity or publish output. No destination replaced.",
+                    "4": "Cannot read, write, validate storage capacity or publish output. No destination replaced.",
+                    "5": "Cannot read, write, validate storage capacity or publish output. No destination replaced."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。"
+                ],
+                "levels": {
+                    "1": "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。",
+                    "2": "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。",
+                    "3": "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。",
+                    "4": "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。",
+                    "5": "無法讀取、寫入、驗證儲存空間或發佈輸出。冇取代目的地。"
+                }
+            }
+        },
+        "converter.unsafe": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Existing destination or unsupported path. Choose a new local destination."
+                ],
+                "levels": {
+                    "1": "Existing destination or unsupported path. Choose a new local destination.",
+                    "2": "Existing destination or unsupported path. Choose a new local destination.",
+                    "3": "Existing destination or unsupported path. Choose a new local destination.",
+                    "4": "Existing destination or unsupported path. Choose a new local destination.",
+                    "5": "Existing destination or unsupported path. Choose a new local destination."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "目的地已存在或路徑不支援。請選擇新本機目的地。"
+                ],
+                "levels": {
+                    "1": "目的地已存在或路徑不支援。請選擇新本機目的地。",
+                    "2": "目的地已存在或路徑不支援。請選擇新本機目的地。",
+                    "3": "目的地已存在或路徑不支援。請選擇新本機目的地。",
+                    "4": "目的地已存在或路徑不支援。請選擇新本機目的地。",
+                    "5": "目的地已存在或路徑不支援。請選擇新本機目的地。"
+                }
+            }
+        },
+        "converter.limit": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Input exceeds conversion limit. No destination published."
+                ],
+                "levels": {
+                    "1": "Input exceeds conversion limit. No destination published.",
+                    "2": "Input exceeds conversion limit. No destination published.",
+                    "3": "Input exceeds conversion limit. No destination published.",
+                    "4": "Input exceeds conversion limit. No destination published.",
+                    "5": "Input exceeds conversion limit. No destination published."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "輸入超過轉換上限。冇發佈目的地。"
+                ],
+                "levels": {
+                    "1": "輸入超過轉換上限。冇發佈目的地。",
+                    "2": "輸入超過轉換上限。冇發佈目的地。",
+                    "3": "輸入超過轉換上限。冇發佈目的地。",
+                    "4": "輸入超過轉換上限。冇發佈目的地。",
+                    "5": "輸入超過轉換上限。冇發佈目的地。"
+                }
+            }
+        },
+        "converter.platform": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Atomic publication requires Windows. No destination published."
+                ],
+                "levels": {
+                    "1": "Atomic publication requires Windows. No destination published.",
+                    "2": "Atomic publication requires Windows. No destination published.",
+                    "3": "Atomic publication requires Windows. No destination published.",
+                    "4": "Atomic publication requires Windows. No destination published.",
+                    "5": "Atomic publication requires Windows. No destination published."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "原子發佈需要 Windows。冇發佈目的地。"
+                ],
+                "levels": {
+                    "1": "原子發佈需要 Windows。冇發佈目的地。",
+                    "2": "原子發佈需要 Windows。冇發佈目的地。",
+                    "3": "原子發佈需要 Windows。冇發佈目的地。",
+                    "4": "原子發佈需要 Windows。冇發佈目的地。",
+                    "5": "原子發佈需要 Windows。冇發佈目的地。"
+                }
+            }
+        },
+        "converter.detect-hex": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Hex-compatible prefix. Full input validation occurs during conversion."
+                ],
+                "levels": {
+                    "1": "Hex-compatible prefix. Full input validation occurs during conversion.",
+                    "2": "Hex-compatible prefix. Full input validation occurs during conversion.",
+                    "3": "Hex-compatible prefix. Full input validation occurs during conversion.",
+                    "4": "Hex-compatible prefix. Full input validation occurs during conversion.",
+                    "5": "Hex-compatible prefix. Full input validation occurs during conversion."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "前綴符合十六進位。轉換時會驗證完整輸入。"
+                ],
+                "levels": {
+                    "1": "前綴符合十六進位。轉換時會驗證完整輸入。",
+                    "2": "前綴符合十六進位。轉換時會驗證完整輸入。",
+                    "3": "前綴符合十六進位。轉換時會驗證完整輸入。",
+                    "4": "前綴符合十六進位。轉換時會驗證完整輸入。",
+                    "5": "前綴符合十六進位。轉換時會驗證完整輸入。"
+                }
+            }
+        },
+        "converter.detect-base64": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Base64-compatible prefix. Full input validation occurs during conversion."
+                ],
+                "levels": {
+                    "1": "Base64-compatible prefix. Full input validation occurs during conversion.",
+                    "2": "Base64-compatible prefix. Full input validation occurs during conversion.",
+                    "3": "Base64-compatible prefix. Full input validation occurs during conversion.",
+                    "4": "Base64-compatible prefix. Full input validation occurs during conversion.",
+                    "5": "Base64-compatible prefix. Full input validation occurs during conversion."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "前綴符合 base64。轉換時會驗證完整輸入。"
+                ],
+                "levels": {
+                    "1": "前綴符合 base64。轉換時會驗證完整輸入。",
+                    "2": "前綴符合 base64。轉換時會驗證完整輸入。",
+                    "3": "前綴符合 base64。轉換時會驗證完整輸入。",
+                    "4": "前綴符合 base64。轉換時會驗證完整輸入。",
+                    "5": "前綴符合 base64。轉換時會驗證完整輸入。"
+                }
+            }
+        },
+        "converter.detect-binary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text."
+                ],
+                "levels": {
+                    "1": "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text.",
+                    "2": "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text.",
+                    "3": "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text.",
+                    "4": "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text.",
+                    "5": "Arbitrary binary prefix. Choose an encoding operation; decoding requires canonical text."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。"
+                ],
+                "levels": {
+                    "1": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。",
+                    "2": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。",
+                    "3": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。",
+                    "4": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。",
+                    "5": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。"
                 }
             }
         }

@@ -69,6 +69,7 @@
 #include "gui/material/MaterialCommandPalette.h"
 #include "gui/material/MaterialDimSum.h"
 #include "gui/material/MaterialGeneratorSheet.h"
+#include "gui/material/MaterialFileConverter.h"
 #include "gui/material/MaterialHistoryFeed.h"
 #include "gui/material/MaterialHistoryScreen.h"
 #include "gui/material/MaterialHistoryStore.h"
@@ -871,6 +872,8 @@ MainWindow::MainWindow()
         QStringLiteral("database"), databaseSheet, QStringLiteral("database"), tr("Database"), pages(databaseSheet));
     materialShell->addDestination(
         QStringLiteral("tools"), toolsSheet, QStringLiteral("construction"), tr("Tools"), pages(toolsSheet));
+    materialShell->addDestination(QStringLiteral("converter"), new Material::FileConverter(materialShell),
+                                  QStringLiteral("transform"), Material::Voice::say(QStringLiteral("converter.title")), QString());
     materialShell->addDestination(
         QStringLiteral("history"), historyScreen, QStringLiteral("history"), tr("History"), QString());
     materialShell->addDestination(QStringLiteral("changelog"),
