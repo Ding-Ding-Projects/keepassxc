@@ -8,6 +8,16 @@ The existing feature inventory has 178 rows across 89 families and two aggregate
 
 Recorded application rows comprise 49 missing, 37 partial and 3 unverified. Recorded website rows comprise 85 missing, 1 partial and 3 unverified. These are historical inventory states, not a fresh implementation verdict. Current search work can supersede older missing rows only after its actual implementation and required evidence are incorporated.
 
+## Strengthened requirements in the current review
+
+The refreshed catalogue still contains 105 contracts. The current review includes the following requirements within existing families as well as the new server manager:
+
+- Each appearance editor needs a complete Animation and Transition tab: renderer-supported properties, tracks, keyframes, timelines, easing, playback, triggers, sequencing and interruption, with real consumers rather than stored values alone. Reduced-motion rendering preserves authored values separately. Acceptance needs timed recordings or sampled-render evidence as well as still images.
+- Each capable interactive control needs optional guidance immediately above that control. Simple controls receive a contextual step; complicated workflows receive validated progression, Back, Cancel and recovery. Every rendered element needs a unique authoritative explanation covering actual purpose, defaults, consequences, validation and recovery. Explicit per-element inventories and omission regressions cover both requirements.
+- Every current presentation screenshot reference needs inspected replacement evidence after an interface-changing delivery. This includes application, website, README, articles, wiki, gallery and download presentation. A stale-current-image negative regression must reject old images presented as current, while preserving historical originals and provenance.
+
+These are implementation and acceptance obligations, not newly accepted capabilities. The existing family mapping must be expanded to their individual consumers and evidence before completion.
+
 ## Explicit coverage gaps
 
 The `minecraft-server-manager` contract has no existing product family. A bounded search of the material interface and website source found no corresponding implementation. It remains an application delivery gap, not a working feature or a delegated external tool.
