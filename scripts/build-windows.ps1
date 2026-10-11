@@ -67,14 +67,47 @@ if (-not $qtRoot) {
 }
 if (-not $qtRoot) { throw 'The pinned Qt 6.8.3 MSVC x64 installation could not be found in QT_ROOT_DIR or a supported user-scoped toolchain location.' }
 $qtRoot = [IO.Path]::GetFullPath($qtRoot)
+Assert-KpxcNoLinks $qtRoot
 $qtVersion = (& (Join-Path $qtRoot 'bin\qmake.exe') -query QT_VERSION).Trim()
 if ($LASTEXITCODE -ne 0 -or $qtVersion -ne '6.8.3') { throw "Expected Qt 6.8.3 at $qtRoot; qmake reported '$qtVersion'." }
+# A separate byte-identical deployment installation can recover a host path-alias collision
+# without moving the compilation toolchain or silently accepting another Qt runtime.
+$qtDeployRoot = $qtRoot
+if ($env:QT_DEPLOY_ROOT_DIR) {
+    $qtDeployRoot = Resolve-KpxcDirectory $root $env:QT_DEPLOY_ROOT_DIR
+    foreach ($subtree in @('bin', 'plugins', 'qml', 'translations')) {
+        $sourceDirectory = Join-Path $qtRoot $subtree
+        $deploymentDirectory = Join-Path $qtDeployRoot $subtree
+        $sourceFiles = @(Get-KpxcDirectoryFiles $sourceDirectory)
+        $deploymentFiles = @(Get-KpxcDirectoryFiles $deploymentDirectory)
+        if ($sourceFiles.Count -ne $deploymentFiles.Count) { throw "Deployment Qt inventory differs: $subtree." }
+        $sourceNames = @($sourceFiles | ForEach-Object { $_.FullName.Substring($sourceDirectory.Length).TrimStart('\', '/') } | Sort-Object)
+        $deploymentNames = @($deploymentFiles | ForEach-Object { $_.FullName.Substring($deploymentDirectory.Length).TrimStart('\', '/') } | Sort-Object)
+        if (@(Compare-Object $sourceNames $deploymentNames -CaseSensitive).Count) { throw "Deployment Qt paths differ: $subtree." }
+        foreach ($sourceFile in $sourceFiles) {
+            $relative = $sourceFile.FullName.Substring($sourceDirectory.Length).TrimStart('\', '/')
+            $deploymentFile = Join-Path $deploymentDirectory $relative
+            Assert-KpxcNoLinks $sourceFile.FullName
+            Assert-KpxcNoLinks $deploymentFile
+            if (-not (Test-Path -LiteralPath $deploymentFile -PathType Leaf) -or (Get-Sha256 $sourceFile.FullName) -ne (Get-Sha256 $deploymentFile)) {
+                throw "Deployment Qt bytes differ: $subtree/$relative."
+            }
+        }
+    }
+    $deployVersion = (& (Join-Path $qtDeployRoot 'bin\qmake.exe') -query QT_VERSION).Trim()
+    if ($LASTEXITCODE -ne 0 -or $deployVersion -ne $qtVersion) { throw 'Deployment Qt version does not match the compilation installation.' }
+}
+$env:PATH = "$(Join-Path $qtDeployRoot 'bin');$env:PATH"
+$qtPaths = Get-Command qtpaths.exe -ErrorAction Stop
+if ([IO.Path]::GetFullPath($qtPaths.Source) -ine [IO.Path]::GetFullPath((Join-Path $qtDeployRoot 'bin\qtpaths.exe'))) {
+    throw 'Qt deployment resolved qtpaths.exe outside the validated installation.'
+}
 # A discovered compiler alone does not prove its headers, libraries, or runtime source.
 $compilerPath = Initialize-KpxcMsvcEnvironment
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
-$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
+$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot", "-DWINDEPLOYQT_EXE=$(Join-Path $qtDeployRoot 'bin\windeployqt.exe')") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
 Invoke-Native cmake $configureArguments
 $parallelArguments = @('--parallel')
 if ($env:CMAKE_BUILD_PARALLEL_LEVEL) {
