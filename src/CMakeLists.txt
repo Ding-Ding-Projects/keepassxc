@@ -164,6 +164,7 @@ set(gui_SOURCES
         gui/material/MaterialVaultScreen.cpp
         gui/material/MaterialVaultSidebar.cpp
         gui/material/MaterialVoice.cpp
+        gui/material/MaterialSchoolMode.cpp
         gui/AboutDialog.cpp
         gui/ActionCollection.cpp
         gui/Application.cpp

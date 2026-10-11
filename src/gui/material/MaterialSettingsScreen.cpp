@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSettingsScreen.h"
+#include "MaterialSchoolMode.h"
 
 #include "MaterialAppearanceEditor.h"
 #include "MaterialMotion.h"
@@ -543,7 +544,7 @@ namespace Material
         m_grid->addWidget(createAppearanceCard(), 0, 0, Qt::AlignTop);
         m_grid->addWidget(createTypographyCard(), 0, 1, Qt::AlignTop);
         m_grid->addWidget(createLogoCard(), 0, 2, Qt::AlignTop);
-        m_grid->addWidget(createLanguageCard(), 1, 0, Qt::AlignTop);
+        if (!SchoolMode::instance()->restricted()) { m_languageCard=createLanguageCard();m_grid->addWidget(m_languageCard,1,0,Qt::AlignTop); }
         m_grid->addWidget(createOverridesCard(), 1, 1, Qt::AlignTop);
         m_grid->addWidget(createBehaviourCard(), 1, 2, Qt::AlignTop);
         m_grid->addWidget(createIntegrationsCard(), 2, 0, Qt::AlignTop);
@@ -556,6 +557,10 @@ namespace Material
         m_gridHost->setMaximumWidth(GridMaxWidth);
         m_gridHost->setLayout(m_grid);
 
+        m_schoolRestricted=SchoolMode::instance()->restricted();
+        m_modeControl = new SchoolModeControl(SchoolMode::instance(), this);
+        contentLayout()->addWidget(m_modeControl);
+        connect(SchoolMode::instance(), &SchoolMode::changed, this, &SettingsScreen::refreshSchoolMode);
         contentLayout()->addWidget(m_gridHost);
         contentLayout()->addStretch(1);
 
@@ -1008,6 +1013,7 @@ namespace Material
     Card* SettingsScreen::createLanguageCard()
     {
         auto* card = new SettingsCard;
+        card->setObjectName(QStringLiteral("appearanceLanguageAndTone"));
         card->setTitleText(tr("Language & tone"));
 
         auto* content = card->contentLayout();
@@ -1291,7 +1297,11 @@ namespace Material
             valid = validation.compiled && !validation.blocked && !validation.timedOut;
             error = validation.error;
         }
-        int matches = 0;
+        const auto modeText=SchoolMode::instance()->name()+QLatin1Char(' ')+SchoolMode::instance()->status();
+        bool modeMatch=needle.isEmpty()||modeText.contains(needle,Qt::CaseInsensitive);
+        if(regex)modeMatch=valid&&!runBounded(needle,optionsForFlags(searchBar()->regexFlags()),modeText).matches.isEmpty();
+        m_modeControl->setVisible(modeMatch);
+        int matches = modeMatch ? 1 : 0;
         for (const auto& entry : m_cards) {
             bool match = needle.isEmpty() || entry.haystack.contains(needle.toLower());
             if (regex && valid) {
@@ -1399,8 +1409,28 @@ namespace Material
         m_updating = false;
     }
 
+    void SettingsScreen::refreshSchoolMode()
+    {
+        const bool restricted=SchoolMode::instance()->restricted();
+        if(restricted==m_schoolRestricted){applyFilter(searchBar()->text());return;}
+        m_schoolRestricted=restricted;m_updating=true;
+        m_cards.clear();m_swatches.clear();
+        while(auto* item=m_grid->takeAt(0)){delete item->widget();delete item;}
+        m_languageCard=nullptr;m_languageSegment=nullptr;m_englishFunnySlider=nullptr;m_cantoneseFunnySlider=nullptr;
+        m_englishFunnyValue=nullptr;m_cantoneseFunnyValue=nullptr;m_previewLabel=nullptr;
+        m_grid->addWidget(createAppearanceCard(),0,0,Qt::AlignTop);
+        m_grid->addWidget(createTypographyCard(),0,1,Qt::AlignTop);
+        m_grid->addWidget(createLogoCard(),0,2,Qt::AlignTop);
+        if(!restricted){m_languageCard=createLanguageCard();m_grid->addWidget(m_languageCard,1,0,Qt::AlignTop);}
+        m_grid->addWidget(createOverridesCard(),1,1,Qt::AlignTop);
+        m_grid->addWidget(createBehaviourCard(),1,2,Qt::AlignTop);
+        m_grid->addWidget(createIntegrationsCard(),2,0,Qt::AlignTop);
+        m_updating=false;applyResponsiveGrid();applyFilter(searchBar()->text());
+    }
+
     void SettingsScreen::refreshFromVoice()
     {
+        if (!m_languageSegment) return;
         m_updating = true;
 
         m_languageSegment->setCurrentSegment(languageSegmentId(Voice::language()));
@@ -1413,6 +1443,7 @@ namespace Material
 
     void SettingsScreen::commitVoiceLevels()
     {
+        if (!m_englishFunnySlider || SchoolMode::instance()->restricted()) return;
         Voice::setFunnyLevel(Voice::Language::English, m_englishFunnySlider->value());
         Voice::setFunnyLevel(Voice::Language::Cantonese, m_cantoneseFunnySlider->value());
     }

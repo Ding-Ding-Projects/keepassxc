@@ -204,6 +204,8 @@ namespace Material
         void handleRow(const QString& pageId, const QString& rowKey);
         void editBinding(const Binding& binding);
 
+        void rebuildForSchoolMode();
+        bool m_embeddedOverview = false;
         SettingsScreen* m_overview = nullptr;
         SpecSheet* m_sheet = nullptr;
         QPointer<QWidget> m_classic;

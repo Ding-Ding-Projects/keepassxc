@@ -16,6 +16,7 @@
  */
 
 #include "MaterialDimSum.h"
+#include "MaterialSchoolMode.h"
 #include "MaterialDimSumPhotos.h"
 #include "MaterialMotion.h"
 
@@ -265,7 +266,7 @@ namespace Material
         /** Every suppression rule, with the draw itself left out. */
     bool DimSum::canShow()
         {
-            return !s_shown && !s_suppressed
+            return !SchoolMode::instance()->restricted() && !s_shown && !s_suppressed
                    && !s_quiet();
         }
 
@@ -278,6 +279,7 @@ namespace Material
 
     QString DimSum::Dish::displayName() const
     {
+        if (SchoolMode::instance()->restricted()) return {};
         // Both names always; only their order follows the active language mode.
         if (Voice::language() == Voice::Language::Cantonese) {
             return QStringLiteral("%1 · %2").arg(cantonese, english);
@@ -294,12 +296,17 @@ namespace Material
         if(qApp) { qApp->setProperty("dimSumPhotoCoverage",photo.coverage.toVariantMap());qApp->setProperty("dimSumPhotoCatalogRevision",photo.revision);qApp->setProperty("dimSumPhotoIntegrity",photo.officialDigestAvailable?QStringLiteral("official-sha256"):QStringLiteral("https-size-and-local-hash-only")); }
         return QVector<Dish>{{photo.english,photo.cantonese,photo.url,photo.image}};
     };
-    QVector<DimSum::Dish> DimSum::catalogue() { return s_catalogue(); }
+    QVector<DimSum::Dish> DimSum::catalogue() { return SchoolMode::instance()->restricted() ? QVector<Dish>{} : s_catalogue(); }
 
     void DimSum::beginStartup()
     {
         if (s_started) return;
         s_started = true;
+        static const auto schoolConnection = QObject::connect(SchoolMode::instance(), &SchoolMode::changed, qApp, [] {
+            if (SchoolMode::instance()->restricted()) DimSum::suppress();
+        });
+        Q_UNUSED(schoolConnection)
+        if (SchoolMode::instance()->restricted()) suppress();
         // Retire the legacy opt-out so existing profiles rejoin the draw.
         config()->remove(Config::GUI_DimSumSurprise);
         if (isFirstRun() || restoresDatabaseAtStartup()) {

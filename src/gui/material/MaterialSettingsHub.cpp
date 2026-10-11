@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSettingsHub.h"
+#include "MaterialSchoolMode.h"
 #include "MaterialControls.h"
 
 #include "MaterialButtons.h"
@@ -336,10 +337,28 @@ namespace Material
         root->setContentsMargins(0, 0, 0, 0);
         root->setSpacing(0);
 
-        m_sheet = new SpecSheet(this);
-        root->addWidget(m_sheet, 1);
+        m_embeddedOverview = overview == Overview::Embedded;
+        root->addWidget(new SchoolModeControl(SchoolMode::instance(), this));
+        rebuildForSchoolMode();
+        connect(SchoolMode::instance(), &SchoolMode::changed, this, &SettingsHub::rebuildForSchoolMode);
+        connect(config(), &Config::changed, this, [this](Config::ConfigKey) {
+            refreshAll();
+            HistoryStore::instance()->recordSettingsEvent(tr("Changed an application setting"));
+        });
 
-        if (overview == Overview::Embedded) {
+        refreshAll();
+    }
+
+    void SettingsHub::rebuildForSchoolMode()
+    {
+        const QString previous=m_sheet ? m_sheet->currentPage() : QString();
+        const QString query=m_sheet && activeSearchBar() ? activeSearchBar()->text() : QString();
+        if(m_classic){m_classic->setParent(this);m_classic->hide();}
+        delete m_sheet;m_sheet=nullptr;m_overview=nullptr;m_bindings.clear();m_index.clear();
+        m_sheet = new SpecSheet(this);
+        static_cast<QVBoxLayout*>(layout())->addWidget(m_sheet, 1);
+
+        if (m_embeddedOverview) {
             buildOverview();
         }
 
@@ -360,12 +379,13 @@ namespace Material
                 emit builderRequested(page->searchBar());
             }
         });
-        connect(config(), &Config::changed, this, [this](Config::ConfigKey) {
-            refreshAll();
-            HistoryStore::instance()->recordSettingsEvent(tr("Changed an application setting"));
-        });
-
+        if(m_classic && !SchoolMode::instance()->restricted()) {
+            m_sheet->addSidebarSection(tr("EVERYTHING ELSE"));
+            m_sheet->addWidgetPage(QStringLiteral("classic"),QStringLiteral("edit_document"),tr("Classic editor"),m_classic);
+        }
         refreshAll();
+        if(previous!=QLatin1String("classic") || !SchoolMode::instance()->restricted())m_sheet->setCurrentPage(previous);
+        if(auto* search=activeSearchBar())search->setText(query);
     }
 
     SettingsHub::~SettingsHub() = default;
@@ -403,6 +423,7 @@ namespace Material
             return;
         }
         m_classic = editor;
+        if(SchoolMode::instance()->restricted()){editor->setParent(this);editor->hide();return;}
         m_sheet->addSidebarSection(tr("EVERYTHING ELSE"));
         m_sheet->addWidgetPage(
             QStringLiteral("classic"), QStringLiteral("edit_document"), tr("Classic editor"), editor);
@@ -420,12 +441,13 @@ namespace Material
 
     void SettingsHub::setCurrentPage(const QString& id)
     {
+        if(id==QLatin1String("classic") && SchoolMode::instance()->restricted())return;
         m_sheet->setCurrentPage(id);
     }
 
     void SettingsHub::showClassicEditor()
     {
-        if (m_classic) {
+        if (m_classic && !SchoolMode::instance()->restricted()) {
             m_sheet->setCurrentPage(QStringLiteral("classic"));
         }
     }
@@ -954,6 +976,7 @@ namespace Material
         // state with a second editor.
         const QString appearance = tr("Language and content");
 
+        if (!SchoolMode::instance()->restricted()) {
         QList<Option> languages;
         languages.append({QStringLiteral("system"), tr("Follow the system")});
         const auto available = Translator::availableLanguages();
@@ -970,6 +993,7 @@ namespace Material
                   tr("Takes effect after KeePassXC restarts."),
                   Config::GUI_Language,
                   languages);
+        }
         addToggle(interfacePage,
                   appearance,
                   QStringLiteral("code"),
@@ -1156,6 +1180,7 @@ namespace Material
                   60,
                   tr("seconds"));
 
+        if (!SchoolMode::instance()->restricted()) {
         const QString voice = tr("Voice");
         addChoice(interfacePage,
                   voice,
@@ -1236,6 +1261,8 @@ namespace Material
                        Notify::success(tr("Vocabulary cleared"), Voice::say(QStringLiteral("vocabulary.cleared"), {}, Voice::Category::Success));
                        refreshAll();
                    });
+
+        }
 
         const QString updates = tr("Updates and notices");
         addToggle(page,

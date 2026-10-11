@@ -35,6 +35,7 @@ class QResizeEvent;
 namespace Material
 {
     class Select;
+    class SchoolModeControl;
 
     class Card;
     class OutlinedButton;
@@ -152,6 +153,10 @@ namespace Material
         Card* createLogoCard();
         Card* createOverridesCard();
         Card* createLanguageCard();
+        void refreshSchoolMode();
+        bool m_schoolRestricted = false;
+        Card* m_languageCard = nullptr;
+        SchoolModeControl* m_modeControl = nullptr;
         Card* createBehaviourCard();
         Card* createIntegrationsCard();
 
