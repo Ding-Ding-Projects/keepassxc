@@ -20,3 +20,13 @@ The release tag must resolve to the exact recorded source commit. The attached i
 The Pages workflow refreshes on main-branch changes, manual dispatch, and successful completion of the main-branch delivery workflow. Publication creates no source commit, so it cannot trigger a source-push loop. Focused rendering evidence exists; the Pages deployment for `33a1fec98bdb988b8fa59728b8f954829dfd3e38` completed successfully in [run 34285869684](https://github.com/Ding-Ding-Projects/keepassxc/actions/runs/34285869684).
 
 The website build includes license and notice files for its locally bundled runtime dependencies in `licenses/`. Build tooling is not loaded by the visitor's browser.
+
+## Locally delivered documentation and wiki
+
+The website build now packages every Markdown article and category index under `docs/features/`, together with the complete checked-in wiki snapshot under `docs/wiki/`, into `documentation.json`. The documentation reader renders those articles inside the existing documentation workspace. Known article, category, wiki and heading links stay within the deployed website. Clearly labelled original-source links remain available alongside the full content.
+
+Refresh the snapshot with `node scripts/sync-wiki-snapshot.mjs WIKI_CHECKOUT` after fetching, reviewing and committing the project wiki. The command verifies the wiki origin and clean state, records its revision, page inventory, content hashes and source blob identifiers, and refuses silently retired pages. It does not fetch or prove freshness itself. Compare the recorded revision with the wiki's remote tip before publication. The build rejects missing, altered or duplicate snapshot pages. Historical acceptance statements remain historical.
+
+Markdown is parsed by pinned, locally bundled Marked and sanitized by pinned DOMPurify before insertion. Article retrieval has a 512 KiB byte bound and a 15-second deadline. The build rejects documentation images until a reviewed local asset mapping is supplied, rather than silently publishing missing or external images. The current delivered article inventory contains no images. Documentation text is not a source of executable instructions.
+
+`node scripts/test-site-documentation.mjs` exercises recursive article inclusion, complete wiki inventory, changed content, missing inventory records, invalid blob provenance, unmapped images and restored-source success. Passing this producer check does not establish rendered layout, keyboard navigation, deployed routes or live freshness; those require the built browser workflow and live readback.

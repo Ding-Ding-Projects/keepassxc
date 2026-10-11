@@ -372,3 +372,5 @@ carries the same licence. Third-party file licensing is detailed in [COPYING](./
 The vault category search implementation adds a local tag filter, metadata-only entry matching, clear controls, and query resets. Build and native acceptance are pending. See [the feature article](docs/features/search/vault-category-search.md).
 
 The current acceptance candidate also preserves previous tab results on rejected expressions, resets the selector on vault lock/close, localizes search copy, and preserves regex-builder ownership across language changes. Focused native checks and current screenshots are still pending; successful packaging alone does not establish them.
+
+The documentation source now includes a complete [wiki snapshot](docs/wiki/README.md) and a local article reader. Its inventory checks passed; current browser acceptance and deployment readback remain pending.

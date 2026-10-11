@@ -198,3 +198,5 @@
 - [ ] Compile through root build.bat and pass focused native regressions.
 - [ ] Verify synthetic-vault interaction and language/theme/scale capture matrix.
 - [ ] Verify main delivery, documentation publication, and safe scoped cleanup.
+- [x] Implement complete local article/wiki delivery source with immutable snapshot checks.
+- [ ] Verify built documentation navigation, sanitization, supported geometry and live publication.

@@ -1,0 +1,30 @@
+import {execFileSync} from 'node:child_process';
+import {createHash} from 'node:crypto';
+import {mkdirSync,writeFileSync,readFileSync,existsSync} from 'node:fs';
+import {resolve} from 'node:path';
+import {fileURLToPath} from 'node:url';
+
+const repository=fileURLToPath(new URL('../',import.meta.url));
+const wiki=process.argv[2];
+if(!wiki)throw Error('Pass the path of the clean, fetched project wiki checkout.');
+const git=(...args)=>execFileSync('git',['-C',resolve(wiki),...args]);
+const origin=git('remote','get-url','origin').toString().trim();
+if(!/^(?:https:\/\/github\.com\/|git@github\.com:)Ding-Ding-Projects\/keepassxc\.wiki(?:\.git)?$/.test(origin))throw Error('Unexpected wiki origin.');
+if(git('status','--porcelain').toString().trim())throw Error('Commit wiki changes before snapshotting.');
+const revision=git('rev-parse','HEAD').toString().trim();
+const names=git('ls-tree','--name-only',revision).toString().trim().split('\n').filter(name=>name.endsWith('.md')).sort();
+if(!names.length||names.some(name=>!/^[-A-Za-z0-9_ ]+\.md$/.test(name)))throw Error('Unsupported wiki page inventory.');
+const destination=resolve(repository,'docs/wiki');
+const previous=resolve(destination,'inventory.json');
+if(existsSync(destination)&&!existsSync(previous))throw Error('Existing wiki snapshot has no ownership inventory.');
+const previousNames=existsSync(previous)?JSON.parse(readFileSync(previous,'utf8')).pages.map(page=>page.file):[];
+if(previousNames.some(name=>!names.includes(name)))throw Error('A retired snapshot page needs reviewed removal before synchronization.');
+mkdirSync(destination,{recursive:true});
+const pages=names.map(file=>{
+    const bytes=git('show',`${revision}:${file}`);
+    writeFileSync(resolve(destination,file),bytes);
+    return {file,sha256:createHash('sha256').update(bytes).digest('hex'),sourceBlob:git('rev-parse',`${revision}:${file}`).toString().trim()};
+});
+writeFileSync(previous,JSON.stringify({schemaVersion:1,repository:'Ding-Ding-Projects/keepassxc.wiki',revision,pages},null,2)+'\n');
+writeFileSync(resolve(destination,'README.md'),'# Wiki articles\n\nComplete project wiki content, retained at source revision `'+revision+'`. Historical verification limits remain historical.\n\n'+pages.map(page=>`- [${page.file.slice(0,-3).replaceAll('-',' ')}](${encodeURI(page.file)})`).join('\n')+'\n');
+console.log(`Snapshotted ${pages.length} wiki pages at ${revision}.`);

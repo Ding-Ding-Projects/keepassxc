@@ -1,4 +1,5 @@
 import {build} from 'esbuild';
+import {buildDocumentation} from './build-documentation.mjs';
 import {mkdirSync,copyFileSync,readFileSync,writeFileSync,readdirSync,rmSync,existsSync,mkdtempSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
@@ -36,7 +37,7 @@ function ensureContained(rootDirectory,candidate,label){
 function recreateOutputDirectory(directory){rmSync(directory,{recursive:true,force:true});mkdirSync(directory,{recursive:true});}
 function assertAbsent(filename,label){requireValue(!existsSync(filename),`${label} survived output recreation.`);}
 
-const changes=execFileSync('git',['status','--porcelain','--untracked-files=normal','--','site','docs/features','social-preview.png'],{cwd:repository,encoding:'utf8'}).trim();
+const changes=execFileSync('git',['status','--porcelain','--untracked-files=normal','--','site','docs/features','docs/wiki','social-preview.png'],{cwd:repository,encoding:'utf8'}).trim();
 if(changes)throw Error('Commit every website, documentation, and social-preview input before producing its versioned build.');
 const buildSourceCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim();
 
@@ -206,6 +207,8 @@ if(buildProbe==='published-release'){
 validatePublishedRelease(release);
 const contentManifest=readJson(resolve(root,'content-manifest.json'));
 validateContentManifest(contentManifest);
+const documentationBundle=buildDocumentation(repository,outputDirectory,buildSourceCommit);
+for(const article of contentManifest.articles){if(!documentationBundle.documents.some(document=>document.path===article.article))throw Error('An article is absent from locally delivered documentation.');}
 if(buildProbe==='manifest-schema')runManifestSchemaProbe(contentManifest);
 copyFileSync(new URL('../social-preview.png',import.meta.url),new URL('dist/social-preview.png',import.meta.url));
 copyFileSync(new URL('../share/windows/keepassxc.ico',import.meta.url),new URL('dist/favicon.ico',import.meta.url));

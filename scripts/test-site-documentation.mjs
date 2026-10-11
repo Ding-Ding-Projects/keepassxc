@@ -1,0 +1,40 @@
+import assert from 'node:assert/strict';
+import {createHash} from 'node:crypto';
+import {mkdtempSync,mkdirSync,writeFileSync,readFileSync,rmSync} from 'node:fs';
+import {tmpdir} from 'node:os';
+import {resolve,join,sep} from 'node:path';
+import {buildDocumentation} from '../site/build-documentation.mjs';
+
+const root=mkdtempSync(join(tmpdir(),'keepassxc-documentation-'));
+assert.ok(resolve(root).startsWith(resolve(tmpdir())+sep+'keepassxc-documentation-'));
+try{
+    const wiki=resolve(root,'docs/wiki'),features=resolve(root,'docs/features/search/nested'),output=resolve(root,'output');
+    for(const directory of [wiki,features,output])mkdirSync(directory,{recursive:true});
+    const original='# Wiki home\n\nComplete synthetic content.\n';
+    writeFileSync(resolve(wiki,'Home.md'),original);
+    writeFileSync(resolve(wiki,'README.md'),'# Wiki index\n\n[Home](Home.md)\n');
+    writeFileSync(resolve(root,'docs/features/README.md'),'# Feature categories\n');
+    writeFileSync(resolve(features,'article.md'),'# Nested article\n\nFull synthetic text.\n');
+    const inventory={schemaVersion:1,repository:'Ding-Ding-Projects/keepassxc.wiki',revision:'a'.repeat(40),pages:[{file:'Home.md',sha256:createHash('sha256').update(original).digest('hex'),sourceBlob:'b'.repeat(40)}]};
+    const inventoryPath=resolve(wiki,'inventory.json');
+    const saveInventory=()=>writeFileSync(inventoryPath,JSON.stringify(inventory));
+    saveInventory();
+    const build=()=>buildDocumentation(root,output,'c'.repeat(40));
+    const result=build();
+    assert.equal(result.documents.length,4);
+    assert.equal(result.documents.find(document=>document.path==='docs/features/search/nested/article.md').markdown,'# Nested article\n\nFull synthetic text.\n');
+    assert.equal(JSON.parse(readFileSync(resolve(output,'documentation.json'),'utf8')).wikiRevision,inventory.revision);
+    writeFileSync(resolve(wiki,'Home.md'),original+'Unrecorded edit.\n');
+    assert.throws(build,/content differs/);
+    writeFileSync(resolve(wiki,'Home.md'),original);
+    inventory.pages=[];saveInventory();
+    assert.throws(build,/inventory differs/);
+    inventory.pages=[{file:'Home.md',sha256:createHash('sha256').update(original).digest('hex'),sourceBlob:'invalid'}];saveInventory();
+    assert.throws(build,/page provenance/);
+    inventory.pages[0].sourceBlob='b'.repeat(40);saveInventory();
+    writeFileSync(resolve(features,'article.md'),'# Image\n\n![Unmapped](missing.png)\n');
+    assert.throws(build,/local asset mapping/);
+    writeFileSync(resolve(features,'article.md'),'# Nested article\n\nFull synthetic text.\n');
+    assert.equal(build().documents.length,4);
+    console.log('PASS: complete nested articles and wiki inventory; changed, omitted, unproven and unmapped-image inputs rejected; restored source passed.');
+}finally{rmSync(root,{recursive:true,force:true});}

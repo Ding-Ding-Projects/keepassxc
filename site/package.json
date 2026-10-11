@@ -3,7 +3,15 @@
   "private": true,
   "version": "1.0.0",
   "type": "module",
-  "scripts": { "build": "node build.mjs" },
-  "dependencies": { "@material/web": "2.5.0" },
-  "devDependencies": { "esbuild": "0.28.2" }
+  "scripts": {
+    "build": "node build.mjs"
+  },
+  "dependencies": {
+    "@material/web": "2.5.0",
+    "dompurify": "3.4.16",
+    "marked": "18.1.0"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
+  }
 }

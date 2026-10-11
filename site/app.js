@@ -1,4 +1,5 @@
 import '@material/web/all.js';
+import {documentationHref,initializeDocumentation,refreshDocumentationCopy} from './documentation.js';
 
 const $ = (selector) => document.querySelector(selector);
 const panels = ['overview', 'downloads', 'docs', 'changelog', 'settings'];
@@ -52,7 +53,7 @@ function renderLanguage(){
   document.documentElement.lang=state.language==='yue'?'yue-Hant':'en';
   document.querySelectorAll('[data-copy]').forEach(element=>{const value=text(element.dataset.copy);if(element.tagName.endsWith('-BUTTON')){const label=document.createElement('span');label.className='button-copy';label.textContent=value;element.replaceChildren(label);}else{element.textContent=value;}});
   $('#doc-search').label=text('search');$('#language').label=text('language');$('#regex-pattern').label=text('pattern');$('#regex-flags').label=text('flags');$('#theme-switch').ariaLabel=text('darkTheme');
-  renderProvenance();searchDocs();
+  renderProvenance();searchDocs();refreshDocumentationCopy();
 }
 function selectPanel(index,focus=false){const id=state.tabs?.order?.[index]||panels[index];state.panel=panels.indexOf(id);$('#navigation').activeTabIndex=state.tabs?.order?.indexOf(id)??index;panels.forEach(panelId=>$('#'+panelId).hidden=panelId!==id);save();if(focus){const heading=$('#'+id).querySelector('h2');if(heading){heading.tabIndex=-1;heading.focus({preventScroll:true});heading.scrollIntoView({block:'nearest'});}}}
 $('#navigation').addEventListener('change',()=>selectPanel($('#navigation').activeTabIndex));
@@ -62,7 +63,7 @@ function theme(){document.documentElement.dataset.theme=state.dark?'dark':'light
 $('#theme-switch').addEventListener('change',()=>{state.dark=$('#theme-switch').selected;theme();save();});
 let articles=[];
 const articleLabel=(article)=>state.language==='both'?`${article[0]} · ${article[1]}`:article[state.language==='yue'?1:0];
-function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href='https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/'+articles[index][2];const label=document.createElement('span');label.className='button-copy';label.textContent=articleLabel(articles[index]);button.append(label);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
+function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href=documentationHref('docs/features/'+articles[index][2]);const label=document.createElement('span');label.className='button-copy';label.textContent=articleLabel(articles[index]);button.append(label);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
 function searchDocs(){
   clearTimeout(timer);if(worker){worker.terminate();worker=null;}
   const query=$('#doc-search').value||'';
@@ -89,6 +90,7 @@ readJson('./build-provenance.json').then(data=>{if(data.schemaVersion!==1||!/^\d
 readJson('./release.json').then(data=>{const base=`https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v${data.version}/`;if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||data.unsigned!==true||!validTime(data.updatedAtUtc)||data.installer?.url!==base+'Setup.exe'||!Number.isSafeInteger(data.installer.bytes)||data.installer.bytes<=0||!/^[a-f0-9]{40}$/i.test(data.sourceCommit)||!/^[a-f0-9]{64}$/i.test(data.package?.sha256)||data.notesUrl!==`https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v${data.version}`)throw Error('Invalid release metadata');releaseData=data;document.querySelectorAll('.installer').forEach(button=>{button.href=data.installer.url;button.disabled=false;});$('#release-notes').href=data.notesUrl;$('#release-notes').disabled=false;renderProvenance();}).catch(()=>renderProvenance());
 readJson('./content-manifest.json').then(data=>{loadContentManifest(data);searchDocs();}).catch(()=>{articles=[];searchDocs();});
 theme();selectPanel(state.panel);renderLanguage();
+initializeDocumentation({language:()=>state.school?'en':state.language,showDocs:()=>selectPanel(state.tabs.order.indexOf('docs'))}).catch(()=>{$('#search-status').textContent=state.language==='yue'?'完整文件未能取得。':'Complete documentation is unavailable.';});
 
 // The page remains useful without a server. These controls retain only browser-local preferences
 // and report unavailable integrations instead of pretending to deliver data elsewhere.
