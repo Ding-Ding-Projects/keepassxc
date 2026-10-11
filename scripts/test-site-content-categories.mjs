@@ -36,5 +36,13 @@ check('client still rejects an unknown category', () => {
   invalid.articles[0].category = 'unknown-category';
   assert.throws(() => load(invalid), /Invalid content manifest/);
 });
+check('client still rejects 101 articles and an unsupported schema', () => {
+  const oversized = structuredClone(manifest);
+  oversized.articles = Array.from({length:101},(_,index)=>({...structuredClone(manifest.articles[0]),id:`fixture-${index}`}));
+  assert.throws(() => load(oversized), /Invalid content manifest/);
+  const invalid = structuredClone(manifest);
+  invalid.schemaVersion = 99;
+  assert.throws(() => load(invalid), /Invalid content manifest/);
+});
 console.log(`${passed} checks passed; ${failed} failed.`);
 process.exitCode = failed ? 1 : 0;

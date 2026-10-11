@@ -1,6 +1,7 @@
 import '@material/web/all.js';
 import {validateWebsiteProvenance} from './build-provenance.mjs';
 import {documentationHref,initializeDocumentation,refreshDocumentationCopy} from './documentation.js';
+import {readMetadataJson as readJson} from './metadata.mjs';
 
 const $ = (selector) => document.querySelector(selector);
 const panels = ['overview', 'downloads', 'docs', 'changelog', 'settings'];
@@ -19,7 +20,7 @@ const extra = {
   unavailable:['Version and timestamp unavailable.','版本同時間未能取得。'],
   website:['Website','網頁'],updated:['Updated','更新時間'],release:['Released version','已發佈版本'],source:['Source commit','來源 commit'],packageHash:['Package SHA-256','套件 SHA-256'],installerSize:['Installer bytes','安裝程式位元組'],
   search:['Search','搜尋'],language:['Language','語言'],pattern:['Pattern','模式'],flags:['Flags','旗標'],plain:['Plain text','純文字'],matches:['matching articles','篇符合文章'],noMatch:['No matching articles.','冇符合嘅文章。'],
-  searchFailed:['The expression is invalid or exceeded its time limit.','運算式無效或者超過時限。'],preferenceFailed:['Browser storage is unavailable. Changes apply for this visit only.','瀏覽器儲存空間未能使用，修改只會喺今次瀏覽生效。'],
+  searchFailed:['The expression is invalid or exceeded its time limit.','運算式無效或者超過時限。'],docsUnavailable:['The article index is unavailable. Reload to try again.','文章索引未能取得，可以重新載入再試。'],preferenceFailed:['Browser storage is unavailable. Changes apply for this visit only.','瀏覽器儲存空間未能使用，修改只會喺今次瀏覽生效。'],
 };
 const defaults={
   schemaVersion:2,language:'en',dark:matchMedia('(prefers-color-scheme: dark)').matches,panel:0,
@@ -62,11 +63,12 @@ $('#show-docs').addEventListener('click',()=>selectPanel(state.tabs.order.indexO
 $('#language').value=state.language;$('#language').addEventListener('change',()=>{state.language=$('#language').value;save();renderLanguage();});
 function theme(){document.documentElement.dataset.theme=state.dark?'dark':'light';$('#theme-switch').selected=state.dark;}
 $('#theme-switch').addEventListener('change',()=>{state.dark=$('#theme-switch').selected;theme();save();});
-let articles=[];
+let articles=[],articlesAvailable=false;
 const articleLabel=(article)=>state.language==='both'?`${article[0]} · ${article[1]}`:article[state.language==='yue'?1:0];
 function renderArticles(indices){const list=$('#doc-list');list.replaceChildren();for(const index of indices){const button=document.createElement('md-outlined-button');button.href=documentationHref('docs/features/'+articles[index][2]);const label=document.createElement('span');label.className='button-copy';label.textContent=articleLabel(articles[index]);button.append(label);list.append(button);}$('#search-status').textContent=indices.length?`${indices.length} ${text('matches')} · ${regex?'Regex':text('plain')}`:text('noMatch');}
 function searchDocs(){
   clearTimeout(timer);if(worker){worker.terminate();worker=null;}
+  if(!articlesAvailable){$('#doc-list').replaceChildren();$('#search-status').textContent=text('docsUnavailable');return;}
   const query=$('#doc-search').value||'';
   if(!regex){renderArticles(articles.flatMap((article,index)=>articleLabel(article).toLocaleLowerCase().includes(query.toLocaleLowerCase())?[index]:[]));return;}
   const reportFailure=()=>{$('#doc-list').replaceChildren();$('#search-status').textContent=text('searchFailed');};
@@ -81,7 +83,6 @@ $('#regex-open').addEventListener('click',()=>{regexOrigin='docs';$('#regex-patt
 $('#regex-cancel').addEventListener('click',()=>$('#regex-dialog').close());
 $('#regex-clear').addEventListener('click',()=>{regex=null;$('#regex-dialog').close();searchDocs();});
 $('#regex-apply').addEventListener('click',()=>{const pattern=$('#regex-pattern').value||'',flags=regexFlags();if(pattern.length>300||!/^[dgimsuvy]*$/.test(flags)||new Set(flags).size!==flags.length){$('#regex-error').textContent=text('searchFailed');return;}if(regexOrigin==='changelog'){const field=$('#changelog-search');if(field){field.value=pattern;field.dispatchEvent(new Event('input',{bubbles:true}));}}else{regex={flags};$('#doc-search').value=pattern;searchDocs();}$('#regex-dialog').close();});
-async function readJson(path){const response=await fetch(path,{cache:'no-cache'});if(!response.ok)throw Error('Metadata unavailable');const reader=response.body.getReader();const chunks=[];let total=0;while(true){const {done,value}=await reader.read();if(done)break;total+=value.byteLength;if(total>32768){await reader.cancel();throw Error('Metadata too large');}chunks.push(value);}const bytes=new Uint8Array(total);let offset=0;for(const chunk of chunks){bytes.set(chunk,offset);offset+=chunk.length;}return JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(bytes));}
 function loadContentManifest(data){
   const categories=['delivery','design','interface','messaging','navigation','records','search','servers'],statuses=['implemented','partial','missing','not-tracked'];if(!ownKeys(data,['schemaVersion','evidenceCommit','articles'])||data.schemaVersion!==2||!/^[a-f0-9]{40}$/.test(data.evidenceCommit)||!Array.isArray(data.articles)||data.articles.length<1||data.articles.length>100||new Set(data.articles.map(entry=>entry?.id)).size!==data.articles.length||data.articles.some(entry=>!ownKeys(entry,['id','article','category','title','implementationStatus','statusProvenance','evidence'])||typeof entry.id!=='string'||typeof entry.article!=='string'||!/^docs\/features\/[a-z0-9/_-]+\.md$/i.test(entry.article)||!categories.includes(entry.category)||!statuses.includes(entry.implementationStatus)||!ownKeys(entry.title,['en','zh-Hant'])||!entry.title.en.trim()||!entry.title['zh-Hant'].trim()||!ownKeys(entry.statusProvenance,['sourcePath','mapping','featureIds'])||!ownKeys(entry.evidence,['repository','ref','path','url'])||entry.evidence.repository!=='Ding-Ding-Projects/keepassxc'||entry.evidence.ref!==data.evidenceCommit||entry.evidence.path!==entry.article||entry.evidence.url!==`https://github.com/Ding-Ding-Projects/keepassxc/blob/${data.evidenceCommit}/${entry.article}`))throw Error('Invalid content manifest');
   articles=data.articles.map(entry=>[entry.title.en,entry.title['zh-Hant'],entry.article.slice('docs/features/'.length)]);
@@ -89,7 +90,7 @@ function loadContentManifest(data){
 const validTime=value=>typeof value==='string'&&Number.isFinite(Date.parse(value));
 readJson('./build-provenance.json').then(data=>{buildData=validateWebsiteProvenance(data);renderProvenance();}).catch(()=>renderProvenance());
 readJson('./release.json').then(data=>{const base=`https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v${data.version}/`;if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||data.unsigned!==true||!validTime(data.updatedAtUtc)||data.installer?.url!==base+'Setup.exe'||!Number.isSafeInteger(data.installer.bytes)||data.installer.bytes<=0||!/^[a-f0-9]{40}$/i.test(data.sourceCommit)||!/^[a-f0-9]{64}$/i.test(data.package?.sha256)||data.notesUrl!==`https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v${data.version}`)throw Error('Invalid release metadata');releaseData=data;document.querySelectorAll('.installer').forEach(button=>{button.href=data.installer.url;button.disabled=false;});$('#release-notes').href=data.notesUrl;$('#release-notes').disabled=false;renderProvenance();}).catch(()=>renderProvenance());
-readJson('./content-manifest.json').then(data=>{loadContentManifest(data);searchDocs();}).catch(()=>{articles=[];searchDocs();});
+readJson('./content-manifest.json').then(data=>{loadContentManifest(data);articlesAvailable=true;searchDocs();}).catch(()=>{articles=[];articlesAvailable=false;searchDocs();});
 theme();selectPanel(state.panel);renderLanguage();
 initializeDocumentation({language:()=>state.school?'en':state.language,showDocs:()=>selectPanel(state.tabs.order.indexOf('docs'))}).catch(()=>{$('#search-status').textContent=state.language==='yue'?'完整文件未能取得。':'Complete documentation is unavailable.';});
 
