@@ -23,6 +23,7 @@
 #include "MaterialShell.h"
 #include "MaterialSpecSheet.h"
 #include "MaterialTheme.h"
+#include "MaterialVoice.h"
 #include "config-keepassx.h"
 #include "core/Config.h"
 #include "gui/MainWindow.h"
@@ -334,7 +335,7 @@ namespace Material
                                              : request.languageMode == QLatin1String("cantonese")
                                                    ? QStringLiteral("Cantonese")
                                                    : QStringLiteral("Bilingual");
-                config()->set(Config::GUI_VoiceLanguage, language);
+                Voice::setLanguage(Voice::languageFromString(language));
                 theme()->setMode(request.theme == QLatin1String("dark") ? Mode::Dark : Mode::Light);
 
                 const bool navigated = window->captureNavigate(request.screen, request.page);
