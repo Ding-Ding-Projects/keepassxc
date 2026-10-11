@@ -368,6 +368,13 @@ function Assert-KpxcPeX64([string]$Path) {
     } finally { $reader.Dispose(); $stream.Dispose() }
 }
 
+function Get-KpxcMsvcCrtDirectory([string]$RedistDirectory, [int]$ToolsetMinor) {
+    $crtLabel = if ($ToolsetMinor -ge 30 -and $ToolsetMinor -lt 50) { 'Microsoft.VC143.CRT' }
+                elseif ($ToolsetMinor -ge 50 -and $ToolsetMinor -lt 60) { 'Microsoft.VC145.CRT' }
+                else { throw 'The selected MSVC toolset runtime layout is unsupported.' }
+    return Join-Path $RedistDirectory ('x64\' + $crtLabel)
+}
+
 function Test-KpxcMsvcEnvironment([string]$CompilerPath) {
     if (-not $env:INCLUDE -or -not $env:LIB -or -not $env:VCToolsRedistDir -or -not $env:VCToolsInstallDir -or -not $env:WindowsSdkDir -or -not $env:WindowsSDKVersion) { return $false }
     if ($CompilerPath -notmatch '^(.*)[\\/]VC[\\/]Tools[\\/]MSVC[\\/]([0-9.]+)[\\/]bin[\\/]Hostx64[\\/]x64[\\/]cl[.]exe$') { return $false }
@@ -377,7 +384,7 @@ function Test-KpxcMsvcEnvironment([string]$CompilerPath) {
     try {
         if ([IO.Path]::GetFullPath($env:VCToolsInstallDir).TrimEnd([char[]]'\/') -ine $toolset) { return $false }
         if (-not (Test-KpxcContains (Join-Path $installation 'VC\Redist\MSVC') $env:VCToolsRedistDir)) { return $false }
-        $runtime=Join-Path $env:VCToolsRedistDir 'x64\Microsoft.VC143.CRT\msvcp140.dll'
+        $runtime=Join-Path (Get-KpxcMsvcCrtDirectory $env:VCToolsRedistDir ([int]$toolsetVersion.Split('.')[1])) 'msvcp140.dll'
         Assert-KpxcNoLinks $runtime
         if(-not (Test-Path -LiteralPath $runtime -PathType Leaf)){return $false}
         $runtimeVersion=[Diagnostics.FileVersionInfo]::GetVersionInfo($runtime)
@@ -462,7 +469,7 @@ function Copy-KpxcMsvcRuntime([string]$Stage, [string]$CompilerPath, [string]$Re
     $allowed = Join-Path $installation 'VC\Redist\MSVC'
     $redist = Resolve-KpxcDirectory $allowed $RedistDirectory
     if (-not (Test-KpxcContains $allowed $redist)) { throw 'VCToolsRedistDir is outside the selected MSVC installation.' }
-    $crt = Join-Path $redist 'x64\Microsoft.VC143.CRT'
+    $crt = Get-KpxcMsvcCrtDirectory $redist ([int]$family.Split('.')[1])
     Assert-KpxcNoLinks $crt
     $files = @(Get-ChildItem -LiteralPath $crt -Filter '*.dll' -File -ErrorAction Stop)
     foreach ($required in @('msvcp140.dll','msvcp140_1.dll','msvcp140_2.dll','msvcp140_atomic_wait.dll','msvcp140_codecvt_ids.dll','vcruntime140.dll','vcruntime140_1.dll','concrt140.dll')) {

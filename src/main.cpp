@@ -20,6 +20,8 @@
 #include <QDir>
 #include <QFile>
 #include <QThreadPool>
+#include <QStandardPaths>
+#include <QRegularExpression>
 #include <QWindow>
 
 #include "cli/Utils.h"
@@ -79,10 +81,33 @@ int main(int argc, char** argv)
             qputenv("QT_ENABLE_HIGHDPI_SCALING", "0");
         }
     }
+    QString verificationProfile;
+    bool hasCaptureRoute = false;
+    bool verificationRequested = false;
+    for (int i = 1; i < argc; ++i) {
+        const QString argument = QString::fromLocal8Bit(argv[i]);
+        if (argument == QLatin1String("--")) break;
+        if (argument == QLatin1String("--capture-route") || argument.startsWith(QLatin1String("--capture-route="))) hasCaptureRoute = true;
+        if (argument == QLatin1String("--verification-profile")) {
+            verificationRequested = true;
+            if (i + 1 < argc) verificationProfile = QString::fromLocal8Bit(argv[++i]);
+        } else if (argument.startsWith(QLatin1String("--verification-profile="))) {
+            verificationRequested = true;
+            verificationProfile = argument.mid(QStringLiteral("--verification-profile=").size());
+        }
+    }
+    if (verificationRequested) {
+        if (verificationProfile.isEmpty() || !hasCaptureRoute || QRegularExpression(QStringLiteral("^[A-Za-z0-9_-]{1,64}$")).match(verificationProfile).capturedLength() != verificationProfile.size()) {
+            qCritical("Verification profiles require a capture route and a safe unique identifier.");
+            return EXIT_FAILURE;
+        }
+        QStandardPaths::setTestModeEnabled(true);
+        QCoreApplication::setApplicationName(QStringLiteral("KeePassXC-Verification-") + verificationProfile);
+    }
     Application app(argc, argv);
     // don't set organizationName as that changes the return value of
     // QStandardPaths::writableLocation(QDesktopServices::DataLocation)
-    Application::setApplicationName("KeePassXC");
+    if (verificationProfile.isEmpty()) Application::setApplicationName("KeePassXC");
     Application::setApplicationVersion(KEEPASSXC_VERSION);
     app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
 
@@ -126,6 +151,8 @@ int main(int argc, char** argv)
     QCommandLineOption captureScaleOption(
         "capture-scale", QObject::tr("display scale factor for a capture route, e.g. 1.25"), "factor");
 
+    QCommandLineOption verificationProfileOption(
+        "verification-profile", QObject::tr("use isolated standard paths for a capture run"), "identifier");
     QCommandLineOption helpOption = parser.addHelpOption();
     QCommandLineOption versionOption = parser.addVersionOption();
     QCommandLineOption debugInfoOption(QStringList() << "debug-info", QObject::tr("Displays debugging information."));
@@ -141,6 +168,7 @@ int main(int argc, char** argv)
     parser.addOption(captureRouteOption);
     parser.addOption(captureReceiptOption);
     parser.addOption(captureScaleOption);
+    parser.addOption(verificationProfileOption);
 
     parser.process(applicationArguments);
 

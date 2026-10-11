@@ -71,6 +71,10 @@ Application::Application(int& argc, char** argv)
 
     // Build identifier
     auto identifier = QStringLiteral("keepassxc");
+    if (QStandardPaths::isTestModeEnabled()
+        && QCoreApplication::applicationName().startsWith(QStringLiteral("KeePassXC-Verification-"))) {
+        identifier += QLatin1Char('-') + QCoreApplication::applicationName();
+    }
     auto username = Tools::cleanUsername();
     if (!username.isEmpty()) {
         identifier += QChar('-') + username;
