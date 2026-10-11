@@ -8,6 +8,8 @@ Feature id: `build-scripts` · Category: Build, install and update
 
 ## Configuration
 
+The documentation website records its own build-start timestamp once in `build-provenance.json`, together with its exact source and a version-plus-source build identity. The front screen displays that identity and build update time. Product release provenance and installer downloads retain their separate recorded release time. Both producer and consumer validate the website record; a release-origin timestamp is not accepted as website build provenance. `scripts/test-site-build-provenance.mjs` rejects mismatched identity, invalid dates, wrong provenance origin and every missing field. Native application provenance has a separate acceptance boundary.
+
 `QT_ROOT_DIR` and `KPXC_VCPKG_ROOT` override the user-scoped toolchain locations.
 
 ## Failure modes

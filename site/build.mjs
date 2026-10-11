@@ -1,5 +1,6 @@
 import {build} from 'esbuild';
 import {buildDocumentation} from './build-documentation.mjs';
+import {createWebsiteProvenance} from './build-provenance.mjs';
 import {mkdirSync,copyFileSync,readFileSync,writeFileSync,readdirSync,rmSync,existsSync,mkdtempSync} from 'node:fs';
 import {execFileSync} from 'node:child_process';
 import {fileURLToPath} from 'node:url';
@@ -40,6 +41,7 @@ function assertAbsent(filename,label){requireValue(!existsSync(filename),`${labe
 const changes=execFileSync('git',['status','--porcelain','--untracked-files=normal','--','site','docs/features','docs/wiki','social-preview.png'],{cwd:repository,encoding:'utf8'}).trim();
 if(changes)throw Error('Commit every website, documentation, and social-preview input before producing its versioned build.');
 const buildSourceCommit=execFileSync('git',['rev-parse','HEAD'],{cwd:repository,encoding:'utf8'}).trim();
+const websiteBuildStartedAt=new Date().toISOString();
 
 function validateRelease(release){
   exactKeys(release,['schemaVersion','version','tag','sourceCommit','updatedAtUtc','updatedAtSource','notesUrl','installer','package','unsigned'],'Release metadata');
@@ -223,5 +225,5 @@ for(const name of runtimePackages){
   for(const file of files){const target=name.replace(/[@/]/g,'_')+'-'+file;copyFileSync(new URL(file,directory),new URL(target,licenseDirectory));licenseIndex.push(`${name}: ${target}`);}
 }
 writeFileSync(new URL('README.txt',licenseDirectory),licenseIndex.join('\n')+'\n');
-writeFileSync(new URL('dist/build-provenance.json',import.meta.url),JSON.stringify({schemaVersion:1,version:release.version,sourceCommit:buildSourceCommit,productReleaseSourceCommit:release.sourceCommit,updatedAtUtc:release.updatedAtUtc,updatedAtSource:release.updatedAtSource},null,2)+'\n');
+writeFileSync(new URL('dist/build-provenance.json',import.meta.url),JSON.stringify(createWebsiteProvenance(release.version,buildSourceCommit,release.sourceCommit,websiteBuildStartedAt),null,2)+'\n');
 console.log(`Built website ${release.version} from source ${buildSourceCommit} with published release provenance ${release.sourceCommit}.`);

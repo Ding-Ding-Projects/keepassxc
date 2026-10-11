@@ -1,4 +1,5 @@
 import '@material/web/all.js';
+import {validateWebsiteProvenance} from './build-provenance.mjs';
 import {documentationHref,initializeDocumentation,refreshDocumentationCopy} from './documentation.js';
 
 const $ = (selector) => document.querySelector(selector);
@@ -44,7 +45,7 @@ const text=(key)=>{const pair=extra[key]||[english.get(key)||key,cantonese[key]|
 const save=()=>{try{localStorage.setItem('kpxc.material.site.v1',JSON.stringify(state));}catch{$('#preference-status').textContent=text('preferenceFailed');}};
 const localTime=(utc)=>new Intl.DateTimeFormat(state.language==='yue'?'zh-HK':'en-CA',{dateStyle:'medium',timeStyle:'long'}).format(new Date(utc));
 function renderProvenance(){
-  $('#build-status').textContent=buildData?`${text('website')} ${buildData.version} · ${text('updated')} ${localTime(buildData.updatedAtUtc)}`:text('unavailable');
+  $('#build-status').textContent=buildData?`${text('website')} ${buildData.buildIdentity} · ${text('updated')} ${localTime(buildData.updatedAtUtc)}`:text('unavailable');
   document.querySelectorAll('[data-release]').forEach(element=>element.textContent=releaseData?`${text('release')} ${releaseData.version} · ${text('updated')} ${localTime(releaseData.updatedAtUtc)}`:text('unavailable'));
   const details=$('#release-details');details.replaceChildren();
   if(releaseData)for(const [label,value] of [['source',releaseData.sourceCommit],['installerSize',String(releaseData.installer.bytes)],['packageHash',releaseData.package.sha256]]){const term=document.createElement('dt'),definition=document.createElement('dd');term.textContent=text(label);definition.textContent=value;details.append(term,definition);}
@@ -86,7 +87,7 @@ function loadContentManifest(data){
   articles=data.articles.map(entry=>[entry.title.en,entry.title['zh-Hant'],entry.article.slice('docs/features/'.length)]);
 }
 const validTime=value=>typeof value==='string'&&Number.isFinite(Date.parse(value));
-readJson('./build-provenance.json').then(data=>{if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||!validTime(data.updatedAtUtc)||!/^[a-f0-9]{40}$/.test(data.sourceCommit))throw Error('Invalid build metadata');buildData=data;renderProvenance();}).catch(()=>renderProvenance());
+readJson('./build-provenance.json').then(data=>{buildData=validateWebsiteProvenance(data);renderProvenance();}).catch(()=>renderProvenance());
 readJson('./release.json').then(data=>{const base=`https://github.com/Ding-Ding-Projects/keepassxc/releases/download/v${data.version}/`;if(data.schemaVersion!==1||!/^\d+\.\d+\.\d+$/.test(data.version)||data.unsigned!==true||!validTime(data.updatedAtUtc)||data.installer?.url!==base+'Setup.exe'||!Number.isSafeInteger(data.installer.bytes)||data.installer.bytes<=0||!/^[a-f0-9]{40}$/i.test(data.sourceCommit)||!/^[a-f0-9]{64}$/i.test(data.package?.sha256)||data.notesUrl!==`https://github.com/Ding-Ding-Projects/keepassxc/releases/tag/v${data.version}`)throw Error('Invalid release metadata');releaseData=data;document.querySelectorAll('.installer').forEach(button=>{button.href=data.installer.url;button.disabled=false;});$('#release-notes').href=data.notesUrl;$('#release-notes').disabled=false;renderProvenance();}).catch(()=>renderProvenance());
 readJson('./content-manifest.json').then(data=>{loadContentManifest(data);searchDocs();}).catch(()=>{articles=[];searchDocs();});
 theme();selectPanel(state.panel);renderLanguage();
