@@ -229,3 +229,11 @@
 - [ ] Compile and execute capture-language repair and later feature-unit native checks at the task candidate.
 - [ ] Accept current native workflows and full supported language/theme/size/scale matrix.
 - [ ] Finish applicable feature contracts, current presentation captures, default-branch integration, hosted delivery and safe task-owned cleanup.
+
+## Refreshed current requirements
+
+- [x] Re-fetch the current catalogue and confirm all 105 feature identities remain mapped.
+- [ ] Complete the strengthened shared restricted-mode, contextual guidance, motion authoring, interactive workflow diagrams and four-target server workflows, with independent current runtime evidence.
+- [x] Pass root build with GUI tests enabled at `e202657b88df87c5e36bc4fa03da3c5dbf2f3d69`, thirteen focused native suites and the targeted three-language capture-label fixture.
+- [ ] Compile and execute later guidance containment and motion-inspector search cases; the earlier successful binary does not contain those later repairs.
+- [ ] Verify actual browser omission/restoration at the newer restricted-controls source; the active frozen reader matrix predates it.
