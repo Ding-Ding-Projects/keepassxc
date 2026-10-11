@@ -212,3 +212,14 @@
 - [ ] Verify main delivery, documentation publication, and safe scoped cleanup.
 - [x] Implement complete local article/wiki delivery source with immutable snapshot checks.
 - [ ] Verify built documentation navigation, sanitization, supported geometry and live publication.
+
+## Current bounded verification, October 11, 2026
+
+- [x] Pass root build and five focused native checks at `0ffb00b9ae963e7629bacc2e2903c5df4a104490`, with independent stage provenance verification.
+- [x] Verify reader article-index empty/plain/no-match/clear behavior, 48 captured layout tuples and five keyboard checks at `51521199478ac825a8cfdede991543cd939e622f`, with exact owned teardown and bounded pixel review.
+- [x] Independently read all 63 English/Cantonese source pairs at that reader source and record the narrow finding and inherited inconsistencies.
+- [x] Correct the reviewed wording and source claims, and synchronize six wiki snapshots to verified wiki revision `0ab8ac4f147a4aa4998f78e4154bfb3129ee1410`.
+- [ ] Build and verify the refreshed reader candidate and changed articles; preserve earlier matrix evidence under its actual source.
+- [ ] Compile and execute capture-language repair and later feature-unit native checks at the task candidate.
+- [ ] Accept current native workflows and full supported language/theme/size/scale matrix.
+- [ ] Finish applicable feature contracts, current presentation captures, default-branch integration, hosted delivery and safe task-owned cleanup.
