@@ -20,6 +20,7 @@
 #include "core/Config.h"
 #include "util/TemporaryFile.h"
 #include "gui/material/MaterialChip.h"
+#include "gui/material/MaterialButtons.h"
 #include "gui/material/MaterialEntryDetail.h"
 #include "gui/material/MaterialTheme.h"
 #include "gui/material/MaterialEntryDelegate.h"
@@ -31,10 +32,15 @@
 #include <QLineEdit>
 #include <QAction>
 #include <QLabel>
+#include <QVBoxLayout>
+#include <QScrollArea>
+#include <QScrollBar>
+#include <QApplication>
 #include <QScopedPointer>
 
 #include <QAbstractButton>
 #include <QCoreApplication>
+#include <QEvent>
 #include <QStandardItemModel>
 #include <QImage>
 #include <QPainter>
@@ -375,4 +381,107 @@ void TestMaterialVaultFilters::closingVaultClearsCategoryQueriesAndModes()
         QCOMPARE(bar->regexFlags(), QStringLiteral("i"));
     }
     QVERIFY(screen.sidebar()->selectedTags().isEmpty());
+}
+
+void TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts()
+{
+    const auto originalLanguage = Voice::language();
+    // Retain the observed 230-pixel failure shape as an executable negative.
+    QWidget legacyHost;
+    legacyHost.setFixedWidth(230);
+    auto* legacyLayout = new QVBoxLayout(&legacyHost);
+    legacyLayout->setContentsMargins(0, 0, 0, 0);
+    legacyLayout->setSizeConstraint(QLayout::SetNoConstraint);
+    auto* legacy = new TextButton(&legacyHost);
+    legacy->setText(QStringLiteral("Guide this search: Filter groups"));
+    legacy->setMinimumWidth(legacy->sizeHint().width());
+    legacyLayout->addWidget(legacy);
+    legacyHost.show();
+    QCoreApplication::processEvents();
+    const auto contained = [](QWidget* owner, QWidget* child) {
+        return owner->rect().contains(QRect(child->mapTo(owner, QPoint()), child->size()));
+    };
+    QVERIFY(!contained(&legacyHost, legacy));
+    legacyHost.hide();
+
+    // Hand-maintained cases for the two observed sidebar owners.
+    const QStringList categories{QStringLiteral("groups"), QStringLiteral("tags")};
+    for (auto language : {Voice::Language::English, Voice::Language::Cantonese, Voice::Language::Bilingual}) {
+        Voice::setLanguage(language);
+        for (const auto& category : categories) {
+            QWidget owner;
+            owner.setFixedWidth(230);
+            auto* ownerLayout = new QVBoxLayout(&owner);
+            ownerLayout->setContentsMargins(0, 0, 0, 0);
+            ownerLayout->setSizeConstraint(QLayout::SetNoConstraint);
+            SearchBar bar(SearchBar::Variant::Surface, &owner);
+            const auto id = QStringLiteral("test.guidance.wrap.") + category;
+            QVERIFY(bar.setIdentity(id, category));
+            bar.setCopyKeys(QStringLiteral("search.") + category, QStringLiteral("search.") + category);
+            QScopedPointer<QWidget> host(bar.guidanceWidget(QStringLiteral("search.guidance.") + category));
+            host->setFixedWidth(230);
+            ownerLayout->addWidget(host.data());
+            ownerLayout->addWidget(&bar);
+            owner.show();
+            owner.activateWindow();
+            owner.adjustSize();
+            QCoreApplication::processEvents();
+            auto* entry = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceEntry"));
+            auto* panel = host->findChild<QWidget*>(QStringLiteral("searchGuidancePanel"));
+            auto* done = host->findChild<QAbstractButton*>(QStringLiteral("searchGuidanceDone"));
+            auto* scroll = panel->findChild<QScrollArea*>();
+            auto* explanation = panel->findChild<QLabel*>(QStringLiteral("searchGuidanceExplanation"));
+            QVERIFY(entry && panel && done && scroll && explanation);
+            const auto expected = Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ")
+                                  + Voice::say(QStringLiteral("search.") + category);
+            QCOMPARE(entry->text(), expected);
+            QCOMPARE(entry->accessibleName(), expected);
+            QVERIFY(contained(host.data(), entry));
+            QVERIFY(entry->sizePolicy().hasHeightForWidth());
+            QVERIFY(entry->height() >= entry->heightForWidth(entry->width()));
+            QVERIFY(entry->height() >= Layout::ButtonHeight);
+            if (language == Voice::Language::English || language == Voice::Language::Bilingual)
+                QVERIFY(entry->height() > Layout::ButtonHeight);
+            QVERIFY(panel->isHidden());
+            bar.setText(QStringLiteral("synthetic-query"));
+            entry->setFocus();
+            QTest::keyClick(entry, Qt::Key_Space);
+            QVERIFY(!panel->isHidden());
+            owner.adjustSize();
+            QCoreApplication::processEvents();
+            QVERIFY(contained(host.data(), panel));
+            QVERIFY(contained(panel, done));
+            QVERIFY(contained(panel, scroll));
+            QVERIFY(contained(scroll, scroll->viewport()));
+            QCOMPARE(done->text(), Voice::say(QStringLiteral("search.guidance.done")));
+            QCOMPARE(done->accessibleName(), done->text());
+            QCOMPARE(explanation->accessibleName(), explanation->text());
+            // Let the scroll area's deferred layout settle before checking the complete
+            // wrapped explanation, not merely the currently visible viewport portion.
+            QCoreApplication::sendPostedEvents(nullptr, QEvent::LayoutRequest);
+            QCoreApplication::processEvents();
+            QTRY_VERIFY(explanation->width() > 0
+                        && explanation->heightForWidth(explanation->width()) > 0
+                        && explanation->height() >= explanation->heightForWidth(explanation->width()));
+            QVERIFY(done->height() >= done->heightForWidth(done->width()));
+            QVERIFY(done->height() >= Layout::ButtonHeight);
+            // Vertical excess is intentionally exposed by this scroll area. Horizontal
+            // label escape is never intentional and must not require horizontal scrolling.
+            const QRect explanationRect(explanation->mapTo(scroll->viewport(), QPoint()), explanation->size());
+            QVERIFY(explanationRect.left() >= 0);
+            QVERIFY(explanationRect.right() < scroll->viewport()->width());
+            QCOMPARE(scroll->horizontalScrollBar()->maximum(), 0);
+            if (explanationRect.height() > scroll->viewport()->height())
+                QVERIFY(scroll->verticalScrollBar()->maximum() > 0);
+            QCOMPARE(bar.text(), QStringLiteral("synthetic-query"));
+            done->setFocus();
+            QTest::keyClick(done, Qt::Key_Space);
+            QCoreApplication::processEvents();
+            QVERIFY(panel->isHidden());
+            QCOMPARE(bar.text(), QStringLiteral("synthetic-query"));
+            QTRY_COMPARE(QApplication::focusWidget(), bar.lineEdit());
+            QVERIFY(contained(host.data(), entry));
+        }
+    }
+    Voice::setLanguage(originalLanguage);
 }

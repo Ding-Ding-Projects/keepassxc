@@ -1,5 +1,14 @@
 # Navigation delivery handoff
 
+## Native verification and guidance containment continuation
+
+The exact root `build.bat /s -WithGuiTests` passed at `e202657b88df87c5e36bc4fa03da3c5dbf2f3d69` in 1,378 seconds. Independent validation confirmed every stage hash, executable SHA-256 `4078c72ad4890f05e3fcdea93e250b3e8daa66286b201d805af0a746e49f5635` and receipt SHA-256 `36901faa73a7aa69e289ee87fc59af4ac8cb21cb0064a899b65877ffdcae3cce`. Thirteen focused native suites passed in 42.76 seconds. A separate history suite passed in 90.89 seconds. The targeted GUI language fixture passed three transitions, five total cases including initialization and cleanup, with offscreen warnings retained. None of these results include the later motion-inspector or guidance-wrapping source.
+
+A genuine fresh synthetic-vault English/light/1440 by 860/scale-1 capture confirms the language repair visibly. It also exposes group/tag guidance children wider than their 230-pixel hosts by 45 and 36 pixels. Independent pixel/geometry/source review confirmed unintended parent-boundary clipping. Source repair `b38364d9bd8890c9096beb5c01e34a46b2473c6a` adds a guidance-specific wrapping entry without changing shared buttons, with six narrow-host category/language cases and a legacy negative. Independent source review, compilation, fixture execution and repeated actual tuple remain pending. Current synthetic history-unavailable notification remains an observed runtime gap; Git is discoverable and the focused suite passes, so its cause is unproved.
+
+Current public main `f5949912caf3ebfe7c9ca9430d2141b4ebd21810` contains only a narrow correction to four explanatory role fields in three historical design records. Capture facts and original private preservation copies are verified unchanged. Current main and three active task tips were read back. Historical objects remain retained; no history rewrite or hosted-exposure verdict is claimed. The full UTF-8 scan covered 2,098 files; 658 binary/non-UTF-8 files have no prose verdict. Independent classification reviewed all 23 matched paths: three corrected historical prose paths and twenty literal or unrelated contexts.
+
+
 ## Motion inspector source continuation
 
 Source unit `12b19ee48efb5bd1d7c52adee64b35859275384f` adds an independent motion-track inspector search using the existing registry, anchored regex builder and bounded matcher. It filters track metadata without changing selection or saved documents; invalid candidates retain the last valid filter. Independent source review found no concrete regression, with matcher interruption limits explicitly retained. Five catalogue entries are integrated in English and Cantonese at all five levels. Focused fixtures are written but uncompiled and unexecuted. Native keyboard, accessibility, localization and layout acceptance remain pending. The separate GUI-enabled e202657b build does not include this later unit.

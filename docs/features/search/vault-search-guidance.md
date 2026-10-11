@@ -22,3 +22,20 @@ Each explanation states purpose, empty/default case-insensitive behavior, exampl
 Each category also owns six discoverable help actions, identified by `<category>.help.input`, `.clear`, `.regex`, `.builder`, `.open` and `.done`. The command palette discovers these live actions through its existing action-tree inventory. Choosing one opens the existing optional explanation with that child's unique contextual help and preserves the query. The input, regex, builder, guidance entry and Return controls also expose their explanation as a tooltip. Help explains empty clear controls and compact fields that have no separate regex toggle rather than pretending every child is available.
 
 The focused check independently lists those six child identities, resolves each action, checks distinct explanations, unchanged input and dismissal. Native action discovery and interaction remain unverified. The panel does not yet provide searchable article navigation or a separate above-control wizard entry for every child. Those shared capabilities remain incomplete. The inventory covers only these six search inputs across entries, folders, open tabs, tags and entry details. Group-scope guidance supplements the folder category. Other vault controls and application surfaces remain outside this inventory.
+
+## Narrow sidebar guidance entries
+
+The optional guidance entry uses a dedicated wrapping Material text-button subclass. It keeps
+its complete contextual label and accessible name, allocates height from its available width,
+and retains the existing minimum touch height, focus ring, button state colours and keyboard
+activation. The shared button implementation is unchanged. Text wraps at word boundaries and
+can break a long unspaced run when necessary; it is not silently cut or replaced with an ellipsis.
+Opening/dismissing guidance, query state and builder ownership retain their existing behaviour.
+
+`TestMaterialVaultFilters::guidanceEntriesWrapWithinNarrowHosts` contains the hand-maintained
+group/tag cases at a 230-pixel host width in English, Cantonese and bilingual modes. Its negative
+recreates the former full-label minimum-width button escaping that host. The repaired cases check
+mapped child containment, complete text/accessibility names, height-for-width and touch height,
+keyboard activation, dismissal and query preservation. These source fixtures have not been built
+or executed. Native pixel, keyboard, accessibility, language/theme/scale and minimum-viewport
+acceptance remain pending for this repair; earlier captures retain their original source binding.
