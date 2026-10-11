@@ -34,6 +34,7 @@
 #include <QLineEdit>
 #include <QPainter>
 #include <QRegularExpression>
+#include <QScrollArea>
 #include <QTreeView>
 #include <QVBoxLayout>
 
@@ -275,7 +276,21 @@ namespace Material
         setObjectName(QStringLiteral("materialVaultSidebar"));
         setMinimumWidth(180);
 
-        auto* root = new QVBoxLayout(this);
+        auto* outer = new QVBoxLayout(this);
+        outer->setContentsMargins(0, 0, 0, 0);
+        auto* scroll = new QScrollArea(this);
+        scroll->setObjectName(QStringLiteral("materialVaultSidebarScroll"));
+        scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setWidgetResizable(true);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        auto* content = new QWidget;
+        content->setObjectName(QStringLiteral("materialVaultSidebarContent"));
+        auto* root = new QVBoxLayout(content);
+        // Preserve every child's minimum allocation. Short panes expose overflow
+        // through the outer scrollbar rather than overlapping guidance actions.
+        root->setSizeConstraint(QLayout::SetMinimumSize);
+        scroll->setWidget(content);
+        outer->addWidget(scroll);
         root->setContentsMargins(HorizontalPadding, VerticalPadding, HorizontalPadding, VerticalPadding);
         root->setSpacing(RowSpacing);
 
@@ -359,6 +374,7 @@ namespace Material
         root->addStretch(1);
 
         auto* editorRow = new ExternalEditorRow(this);
+        editorRow->setObjectName(QStringLiteral("materialVaultExternalEditor"));
         editorRow->setText(tr("Open database folder in external editor"));
         m_editorRow = editorRow;
         root->addWidget(m_editorRow);

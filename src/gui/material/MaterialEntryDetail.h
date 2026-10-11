@@ -22,6 +22,7 @@
 
 #include <QList>
 #include <QMargins>
+#include <QRegularExpression>
 #include <QScrollArea>
 #include <QString>
 #include <QStringList>
@@ -137,6 +138,7 @@ namespace Material
         QWidget* buildHeader();
         QWidget* buildActions();
         QWidget* buildCredentials();
+        QWidget* buildDetailFilter();
         QWidget* buildNotes();
         QWidget* buildAttachments();
         QWidget* buildHistory();
@@ -201,8 +203,12 @@ namespace Material
         QWidget* m_notesSection = nullptr;
         QLabel* m_notesLabel = nullptr;
         QWidget* m_attachmentsSection = nullptr;
+        QWidget* m_detailFilterSection = nullptr;
         SearchBar* m_attachmentFilter = nullptr;
         QLabel* m_filterStatus = nullptr;
+        QString m_acceptedDetailNeedle;
+        QRegularExpression m_acceptedDetailPattern;
+        bool m_acceptedDetailRegex = false;
         QWidget* m_attachmentsList = nullptr;
         QVBoxLayout* m_attachmentsLayout = nullptr;
         QWidget* m_historySection = nullptr;

@@ -22,6 +22,45 @@ them, drive a real interface or establish native acceptance.
 
 This explicit override can recover a host-specific short-name alias collision without moving a shared installation. First preserve the original installation, create a task-owned full copy in a new path, compare the complete file inventory and hashes, and verify each destination path survives the Win32 short-name/long-name round trip unchanged. Set the override only for that validated copy. The builder does not automatically diagnose collisions or provision this recovery copy.
 
+## Website-only build
+
+Run `build.bat /s -WebsiteOnly` to install the locked website dependencies and
+produce `site/dist` through the real root entrypoint. This mode branches before
+native toolchain preparation, does not build or install the desktop application,
+and does not launch a browser. Native build options do not change this mode.
+
+The product-owned `scripts/website-node.manifest.json` pins the official Node.js
+24.19.0 Windows x64 portable archive and executable SHA-256. Missing Node is
+downloaded over HTTPS from the exact official URL, checked before extraction,
+and installed in the current user's local application-data toolchain directory
+without administrator rights. Valid caches are reused. An invalid existing cache
+is retained and causes failure. `KPXC_WEBSITE_NODE_ROOT` can select an existing
+portable installation, but its executable size, executable hash and bundled npm
+version must match the manifest. This cache check does not independently hash
+every npm file or eliminate concurrent filesystem replacement races.
+
+The mode requires Git and a clean committed source tree. It invokes the pinned
+Node executable directly for `npm ci --no-audit --no-fund` and `build.mjs`, and
+propagates the exact nonzero child exit through `build.bat`. Existing release
+metadata validation in the website builder still requires its supported GitHub
+CLI access. Linked output, receipt and selected tool paths are rejected. The
+website builder retains its own release and source-manifest validation.
+
+Each execution writes an ignored `artifacts/website-build/execution-<id>.json`
+receipt when its receipt directory can be established safely. It records start
+and end times, source revisions and clean-state observations, package-lock and
+tool hashes, the actual child exit, and every generated output file's relative
+path, byte count and SHA-256. Successful output must carry matching
+`build-provenance.json` source identity. Failures retain a failed receipt rather
+than advertising stale output as successful. Download staging and disposable
+fixture directories are retained for diagnosis.
+
+`scripts/test-website-build.ps1` exercises real child exit propagation, rejected
+alternate-stream and junction paths, dirty and changed source, failure receipts
+and exact output hashes with simulated bootstrap/build transport. These focused
+fixtures do not constitute an actual website build, fresh-environment bootstrap,
+browser acceptance or deployment proof. Those receipts remain separate.
+
 ## Failure modes
 
 Historical failures included missing MSVC environment headers and a readline

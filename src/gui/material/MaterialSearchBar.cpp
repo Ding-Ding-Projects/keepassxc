@@ -34,11 +34,97 @@
 #include <QHBoxLayout>
 #include <QLineEdit>
 #include <QPainter>
+#include <QTextLayout>
+#include <QTextOption>
+#include <cmath>
 
 namespace Material
 {
     namespace
     {
+        // Guidance lives in narrow sidebars as well as full-width workspaces.
+        // Keep the Material text-button interaction and colours, but wrap its label.
+        class GuidanceEntry final : public TextButton
+        {
+        public:
+            explicit GuidanceEntry(QWidget* parent) : TextButton(parent)
+            {
+                QSizePolicy policy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+                policy.setHeightForWidth(true);
+                setSizePolicy(policy);
+                setMinimumWidth(48);
+                setMinimumHeight(Layout::ButtonHeight);
+            }
+
+            QSize sizeHint() const override { return {48, Layout::ButtonHeight}; }
+            QSize minimumSizeHint() const override { return {48, Layout::ButtonHeight}; }
+            void setText(const QString& value)
+            {
+                TextButton::setText(value);
+                updateWrappedMinimum();
+            }
+            int heightForWidth(int width) const override
+            {
+                QTextLayout label(text(), labelFont());
+                return qMax(Layout::ButtonHeight, int(std::ceil(layoutLabel(label, width))) + 12);
+            }
+
+        protected:
+            bool event(QEvent* event) override
+            {
+                const bool handled = TextButton::event(event);
+                if (event->type() == QEvent::Resize || event->type() == QEvent::FontChange
+                    || event->type() == QEvent::StyleChange) {
+                    updateWrappedMinimum();
+                }
+                return handled;
+            }
+
+            void paintEvent(QPaintEvent*) override
+            {
+                QPainter painter(this);
+                painter.setRenderHint(QPainter::Antialiasing);
+                paintSurface(&painter, rect(), radius(), containerColor(), borderColor());
+                if (hasFocus()) {
+                    painter.setPen(QPen(theme()->color(Role::Primary), 2));
+                    painter.setBrush(Qt::NoBrush);
+                    painter.drawPath(roundedPath(QRectF(rect()).adjusted(2, 2, -2, -2), qMax(0, radius() - 2)));
+                }
+                QTextLayout label(text(), labelFont());
+                const auto labelHeight = layoutLabel(label, width());
+                painter.setPen(contentColor());
+                label.draw(&painter, QPointF(leadingPadding(), (height() - labelHeight) / 2));
+            }
+
+        private:
+            void updateWrappedMinimum()
+            {
+                // Height-for-width is a preference during constrained allocation. Make
+                // the complete wrapped label a minimum at the actual allocated width too.
+                const int required = heightForWidth(width());
+                if (minimumHeight() != required) setMinimumHeight(required);
+            }
+
+            qreal layoutLabel(QTextLayout& label, int width) const
+            {
+                QTextOption option;
+                option.setWrapMode(QTextOption::WrapAtWordBoundaryOrAnywhere);
+                option.setAlignment(Qt::AlignHCenter);
+                label.setTextOption(option);
+                label.beginLayout();
+                qreal height = 0;
+                while (true) {
+                    auto line = label.createLine();
+                    if (!line.isValid()) break;
+                    line.setLineWidth(qMax(1, width - leadingPadding() - trailingPadding()));
+                    line.setPosition(QPointF(0, height));
+                    height += line.height();
+                }
+                label.endLayout();
+                return height;
+            }
+        };
+
         constexpr int FocusRingWidth = 2;
         constexpr int ProminentWidthHint = 420;
         constexpr int SurfaceWidthHint = 340;
@@ -254,25 +340,30 @@ namespace Material
         m_guidanceWidget = host;
         auto* layout = new QVBoxLayout(host);
         layout->setContentsMargins(0, 0, 0, 0);
-        auto* entry = new TextButton(host);
+        layout->setSizeConstraint(QLayout::SetMinimumSize);
+        auto* entry = new GuidanceEntry(host);
         entry->setObjectName(QStringLiteral("searchGuidanceEntry"));
         entry->setCheckable(true);
         layout->addWidget(entry);
         auto* panel = new QWidget(host);
         panel->setObjectName(QStringLiteral("searchGuidancePanel"));
         auto* steps = new QVBoxLayout(panel);
+        steps->setSizeConstraint(QLayout::SetMinimumSize);
         auto* explanation = new QLabel(panel);
         explanation->setObjectName(QStringLiteral("searchGuidanceExplanation"));
         explanation->setWordWrap(true);
+        explanation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+        explanation->setMinimumWidth(0);
         explanation->setTextInteractionFlags(Qt::TextSelectableByKeyboard | Qt::TextSelectableByMouse);
         auto* scroll = new QScrollArea(panel);
         scroll->setWidgetResizable(true);
         scroll->setFrameShape(QFrame::NoFrame);
+        scroll->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
         scroll->setMinimumHeight(100);
         scroll->setMaximumHeight(180);
         scroll->setWidget(explanation);
         steps->addWidget(scroll);
-        auto* done = new TextButton(panel);
+        auto* done = new GuidanceEntry(panel);
         done->setObjectName(QStringLiteral("searchGuidanceDone"));
         steps->addWidget(done);
         layout->addWidget(panel);

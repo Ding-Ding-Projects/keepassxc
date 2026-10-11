@@ -43,8 +43,8 @@ The default group for new passkey entries is **KeePassXC-Browser Passkeys**.
 The entry also gains a `Passkey` tag and the browser passkey icon.
 
 > [!IMPORTANT]
-> The credential id, private key, and user handle **must** be written protected. An unprotected private key sits in the KDBX in plaintext, which defeats the point of storing it there.
-
+> The credential id, private key, and user handle **must** retain their protected attribute flags. Attribute protection applies the inner protected stream to those serialized XML values; it is distinct from the outer encryption of the KDBX payload. An unprotected attribute lacks that additional inner protection, but it is still inside the encrypted KDBX payload, not plaintext on disk. Plaintext XML exports have a separate exposure boundary and must be handled as sensitive data.
+>
 ## Overwrite protection
 
 If the target entry already has a passkey, the save is gated behind a confirmation prompt and aborts unless the user picks **Overwrite**. A new entry never hits this path.

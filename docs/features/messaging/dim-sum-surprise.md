@@ -42,7 +42,7 @@ Transport has a 45-second total deadline, 10-second request timeout, 100-request
 
 Focused provider cases are `publicPhotosAreNamedAndNoLegacyFallback`, `providerRejectsMissingAndAmbiguousAssets`, `providerValidatesPngDigestDimensionsAndNoCacheFallback` and `providerCacheRetainsDimensionsAndCoverage` in `TestMaterialDimSum.cpp`. They use in-memory synthetic images and metadata. Their native execution remains pending. Historical passing results above do not cover this provider.
 
-School mode is not implemented. Its required suppression of dim sum remains incomplete and is not inferred from quiet-mode suppression. Native rendering, focus, motion, supported geometry and language acceptance remain unverified for these changes.
+Shared-mode suppression has bounded source implementation in task revision `df94c74b36080f8902bff8edc6a482014ea7d721`. A restricted shared record vetoes startup eligibility; a live restriction change cancels pending photo work and removes a visible card. The catalogue and display-name entry points return empty while restricted, and unlocking does not schedule a replacement draw during that launch. This reader branch does not yet contain `MaterialSchoolMode`; its reader acceptance does not verify that newer feature source. Universal suppression across other products and every rendered reference remains incomplete. Native rendering, focus, motion, supported geometry and language acceptance remain unverified for the newer suppression unit.
 
 ## Related articles
 

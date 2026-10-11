@@ -83,18 +83,16 @@ the capability inventory rather than reduced to these category descriptions.
 | Remaining surface behavior | Guided forms, truthful defaults, rich controls, novice/expert shared values, presets, attention accommodations, local logo conversion, command palette, resizable decorated overlays, actual shortcuts, origin progress and contextual recovery. |
 | Delivery and evidence | Front-screen version/build time with timezone and seconds, Status Hub and truthful reply delivery, verified downloads, social graphics, complete vendored fonts, package/update provenance, line counts, current screenshots/recording and deterministic design parity. |
 
-The current explicit project instruction governs the startup surprise: a fresh 1%
-chance per launch, no more than one display per launch, and a persisted off switch
-that is honored absolutely. The earlier installed guidance specified 10% and no
-off switch; that conflict is resolved by the current user instruction's priority.
-The explicit capabilities are `one-percent-per-launch-draw` and
-`persisted-off-switch`, `at-most-once-per-launch` and `no-mid-task-flow`.
-Current `MaterialDimSum.cpp` still uses denominator 10 and ignores the retired
-off preference, so those runtime mismatches remain open. Acceptance must prove disabled/restarted suppression,
-first-run/error/update/mid-task exclusions, bundled local images with meaningful
-dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
-motion. All behavioral evidence remains pending; this inventory lane changes no
-runtime frequency or control.
+The current startup-surprise contract requires a fresh 10% draw per launch,
+no more than one display per launch and no opt-out control. Historical 1% and
+persisted-off-switch criteria are superseded, retained here only as history.
+The current capabilities are `ten-percent-per-launch-draw`, `no-opt-out-control`,
+`retired-opt-out-migration`, `at-most-once-per-launch` and `no-mid-task-flow`.
+`MaterialDimSum.cpp` uses denominator 10 and ignores the retired off preference;
+that source agreement is not runtime acceptance. Acceptance must prove migration
+from the retired preference, first-run/error/update/mid-task exclusions, bundled
+local images with meaningful dish alt text, automatic dismissal, no focus theft,
+quiet settings and reduced motion. All behavioral evidence remains pending.
 
 ## Evidence record and acceptance
 
@@ -245,10 +243,10 @@ offscreen Qt suite, package build or download does not complete a native item.
   Verify first-visible vault pane widths, hidden-page restoration and preservation
   of a remembered user division through resize and hide/show.
 - [ ] Exercise startup-surprise eligibility and exclusions: first run, error,
-  update and mid-task flows, persisted off after restart, at most once per launch,
+  update and mid-task flows, retired opt-out migration, no opt-out control, at most once per launch,
   quiet/reduced-motion behavior and no focus theft. A random absence does not prove
   an exclusion; use the reviewed deterministic fixture and separately verify the
-  declared 1% draw boundary.
+  declared 10% draw boundary.
 - [ ] Retain a genuine capture after every click in this sequence and for each
   final state. Inspect every image for the expected transition, readable controls,
   nonblank content and privacy. Bind each frame to source, executable hash, screen,
@@ -282,3 +280,20 @@ Suggested articles: [Database lifecycle acceptance](database-lifecycle-repair.md
 [Clipping matrix](../design/clipping-matrix.md),
 [Per-element appearance](../design/per-element-appearance-editor.md),
 [Regex builder](../search/regex-builder.md).
+
+## Current contract refresh, October 11, 2026
+
+The current maintainer catalogue was fetched and compared again. All 105 catalogue identities remain mapped; this refresh found no newly added identity. Strengthened requirements remain delivery obligations even when their identity is unchanged:
+
+- Local vocabulary upload validates 256 KiB UTF-8, depth eight, dynamic entry counts, 160-code-point keys and 1,000-code-point values before applying or caching anything.
+- Shared restricted mode omits affected controls and routes, preserves preferences, propagates live between supported applications and requires the shared verified unlock choice. The browser's six marked wrappers now have source-level omission and restoration checks; shared-record and full-route acceptance remain incomplete.
+- Optional contextual guidance appears above its exact control, retains the direct workflow and proves equivalent permissions, validation, confirmation, operation and history. Narrow opening and dismissal controls are repaired in source; new native tests and captures remain pending.
+- The appearance editor includes complete animation and transition authoring, isolated inspector search, persistence, undo, reduced motion and actual timed rendering. Inspector search is source implemented; complete authoring acceptance remains incomplete.
+- Workflow explanations retain generated imagery and accessible text, with interactive, animated, keyboard-operable website equivalents, pause/replay and reduced motion. Inventory coverage does not prove delivery.
+- The full Minecraft server creator and manager requires real rich controls, complete version discovery and compatibility, flavour/custom-plugin installation and four target adapters. Read-only SSH discovery is a bounded source contribution, not full remote management.
+- The complete local Ollama suite requires exhaustive model/tag discovery, evidence-backed hardware-fit verdicts, batch pulls with partial outcomes, local chat, guided offline recovery and allowlisted launch profiles with snapshots and rollback. A model list alone does not satisfy it.
+- The universal local converter requires all eight adapter categories, bounded type detection, bundled offline dependencies, constant-memory recoverable queues and validated atomic outputs. Unavailable adapters must remain visibly disabled with their exact missing condition.
+- Product navigation must open into productive workspaces with live records and contextual actions. Documentation and command catalogues cannot substitute for integrated application workflows.
+- Startup surprise uses a fresh ten-percent draw with the specified exclusions and no opt-out; older one-percent/off-switch criteria remain historical.
+
+The current authority still requires 1,119 capabilities across 108 surfaces, or 120,852 required cells. Zero cells are accepted. This is an honest completeness ledger, not a count of independent implementations or a completion claim.

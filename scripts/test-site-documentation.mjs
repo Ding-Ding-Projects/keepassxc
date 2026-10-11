@@ -19,6 +19,9 @@ try{
     const inventoryPath=resolve(wiki,'inventory.json');
     const saveInventory=()=>writeFileSync(inventoryPath,JSON.stringify(inventory));
     saveInventory();
+    const translationDirectory=resolve(root,'site/translations');mkdirSync(translationDirectory,{recursive:true});
+    const sourcePaths=['docs/features/README.md','docs/features/search/nested/article.md','docs/wiki/Home.md','docs/wiki/README.md'];
+    writeFileSync(resolve(translationDirectory,'documentation-yue.json'),JSON.stringify({schemaVersion:1,documents:sourcePaths.map(path=>({path,sourceSha256:createHash('sha256').update(readFileSync(resolve(root,path),'utf8')).digest('hex'),status:'missing',title:'',markdown:''}))}));
     const build=()=>buildDocumentation(root,output,'c'.repeat(40));
     const result=build();
     assert.equal(result.documents.length,4);

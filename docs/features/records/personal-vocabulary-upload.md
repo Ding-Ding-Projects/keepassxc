@@ -35,13 +35,26 @@ Schema version 1, one JSON object with exactly two members:
 { "schemaVersion": 1, "entries": { "original wording": "replacement" } }
 ```
 
-Bounds: UTF-8 file at most 256 KiB, JSON depth at most 8, keys 1 to 160 Unicode code points,
-string values of at most 1,000 Unicode code points, no `__proto__`, `constructor` or `prototype`
-keys, no duplicate members (including escaped equivalent names), and no extra members.
-The entry inventory is dynamic, bounded by the file limit rather than a fixed entry count. A file
-written by an earlier build with the member named `replacements` is accepted and normalised to
-`entries` in the cache. Anything outside the contract is refused as a whole; no partial application
-ever happens.
+The current shared contract accepts at most 256 KiB of UTF-8, nesting depth 8, keys of 1 to
+160 Unicode code points and string values of at most 1,000 Unicode code points. Entry count is
+dynamic within the byte bound. Duplicate decoded keys, invalid UTF-8, unpaired surrogates,
+`__proto__`, `constructor`, `prototype`, unexpected members and unsupported versions are rejected.
+`entries` must be an object; arrays and the historical `replacements` member are not accepted by
+the website loader.
+
+The website implements this contract in `site/personal-vocabulary.mjs`. Uploads read bytes with
+fatal UTF-8 decoding. Cache loads use the same complete parser. Validated replacement data lives
+only in the separate per-visitor browser cache `kpxc.material.site.vocabulary.v1`, never in the
+general preferences document. Invalid replacement preserves the last valid document; an invalid
+cache starts with original wording. Storage failure leaves the existing active document unchanged.
+Clearing removes the cache before restoring original wording. A generation check prevents an
+older asynchronous upload from undoing clear, replacement or a presentation-mode change.
+
+The native validator now implements the same byte, depth and Unicode bounds, with dynamic
+entry counts and decoded duplicate-member rejection. For compatibility, the native loader alone
+accepts the historical `replacements` member and normalizes it to `entries` in its cache. The
+website loader accepts only the canonical `entries` object. Neither source repair establishes
+real upload acceptance; current native compilation and browser interaction remain pending.
 
 ## Configuration
 
@@ -62,7 +75,17 @@ Handling is local-only: no network request, no telemetry, no log line carries a 
 payload never enters exports, history snapshots, captures or public records; the Settings
 notification reports only the entry count. The cache lives in the local (not roaming) configuration.
 
-## Verification
+## Website verification
+
+`node site/test-personal-vocabulary.mjs` exercises the actual parser and storage adapter with
+neutral synthetic data: empty and 700-entry documents, exact byte and Unicode bounds, decoded
+duplicate keys, invalid UTF-8 and surrogates, malformed/schema rejection, whole-word literal
+replacement, atomic failed replacement, storage failure, reload, corrupt-cache fail-closed and
+clear. It does not load a real private file. Browser interaction, accessibility, three-language
+states and restricted-mode restoration remain pending for this source revision. Earlier reader
+captures remain bound to their original source.
+
+## Native verification
 
 - `testpersonalvocabulary` covers the schema and every bound, whole-word longest-first
   application, translator application through `QCoreApplication::translate`, replace, corrupt-cache

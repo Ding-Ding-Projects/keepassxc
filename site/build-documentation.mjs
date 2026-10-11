@@ -1,6 +1,7 @@
 import {createHash} from 'node:crypto';
-import {readFileSync,readdirSync,writeFileSync} from 'node:fs';
+import {readFileSync,readdirSync,writeFileSync,lstatSync} from 'node:fs';
 import {resolve,relative} from 'node:path';
+import {validateTranslationInventory,documentationLimits} from './documentation-languages.mjs';
 
 export function buildDocumentation(repository,outputDirectory,sourceCommit){
     if(!/^[a-f0-9]{40}$/.test(sourceCommit))throw Error('Invalid documentation source commit.');
@@ -25,9 +26,33 @@ export function buildDocumentation(repository,outputDirectory,sourceCommit){
         const markdown=readFileSync(file,'utf8').replaceAll('\r\n','\n');
         if(/!\[[^\]]*\]\(|<img\b/i.test(markdown))throw Error(`Documentation images require a reviewed local asset mapping: ${path}`);
         const title=markdown.match(/^#\s+(.+)$/m)?.[1]||path;
-        return {path,title,category:path.startsWith('docs/wiki/')?'wiki':path.split('/')[2]||'features',markdown};
+        return {path,title,category:path.startsWith('docs/wiki/')?'wiki':path.split('/')[2]||'features',markdown,sourceSha256:createHash('sha256').update(markdown).digest('hex')};
     });
-    const bundle={schemaVersion:1,sourceCommit,wikiRevision:wiki.revision,documents};
-    writeFileSync(resolve(outputDirectory,'documentation.json'),JSON.stringify(bundle)+'\n');
+    const translationPath=resolve(repository,'site/translations/documentation-yue.json');
+    for(const candidate of [resolve(repository,'site/translations'),translationPath])if(lstatSync(candidate).isSymbolicLink())throw Error('Translation symbolic links are not supported.');
+    if(lstatSync(translationPath).size>documentationLimits.bundleBytes)throw Error('Translation inventory exceeds its delivery bound.');
+    const translationBytes=readFileSync(translationPath);
+    if(translationBytes.length>documentationLimits.bundleBytes)throw Error('Translation inventory exceeds its delivery bound.');
+    const translations=validateTranslationInventory(JSON.parse(new TextDecoder('utf-8',{fatal:true}).decode(translationBytes)),documents);
+    for(const document of documents){
+        const entry=translations.documents.find(entry=>entry.path===document.path);
+        document.translation={status:entry.status,title:entry.title,markdown:entry.markdown,sourceSha256:entry.sourceSha256};
+        if(entry.status==='complete'){
+            if(entry.markdown.match(/^#\s+(.+)$/m)?.[1]!==entry.title)throw Error('Translation title differs from its article heading.');
+            if(/!\[[^\]]*\]\(|<img\b/i.test(entry.markdown))throw Error('Translated images require a reviewed local asset mapping.');
+            const headings=text=>text.replace(/^(```|~~~)[\s\S]*?^\1.*$/gm,'').match(/^#{1,6}\s+/gm)||[];
+            if(JSON.stringify(headings(document.markdown))!==JSON.stringify(headings(entry.markdown)))throw Error(`Translation heading structure differs: ${document.path}`);
+            const fences=text=>text.match(/^(```|~~~)[\s\S]*?^\1.*$/gm)||[];
+            if(JSON.stringify(fences(document.markdown))!==JSON.stringify(fences(entry.markdown)))throw Error(`Translation code blocks differ: ${document.path}`);
+            const literals=text=>(text.replace(/^(```|~~~)[\s\S]*?^\1.*$/gm,'').match(/`[^`\n]+`/g)||[]).sort();
+            if(JSON.stringify(literals(document.markdown))!==JSON.stringify(literals(entry.markdown)))throw Error(`Translation technical literals differ: ${document.path}`);
+            const links=text=>(text.match(/\]\([^\n]*?\)/g)||[]).sort();
+            if(JSON.stringify(links(document.markdown))!==JSON.stringify(links(entry.markdown)))throw Error(`Translation link destinations differ: ${document.path}`);
+        }
+    }
+    const bundle={schemaVersion:2,sourceCommit,wikiRevision:wiki.revision,documents};
+    const serialized=JSON.stringify(bundle)+'\n';
+    if(Buffer.byteLength(serialized)>documentationLimits.bundleBytes||documents.length>documentationLimits.documents||documents.some(document=>document.markdown.length>documentationLimits.documentCharacters))throw Error('Documentation exceeds its delivery bound.');
+    writeFileSync(resolve(outputDirectory,'documentation.json'),serialized);
     return bundle;
 }

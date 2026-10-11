@@ -32,6 +32,8 @@ The reader watches the containing directory, its parent anchor and the file when
 
 The [implementation handoff](../../../design/school-mode/README.md) maps consumers and incomplete work. Universal enforcement remains incomplete: other applications must adopt the schema; global palette and direct routes, all existing rendered surfaces, direct personal-vocabulary consumers, translator-priority changes, built-in food references elsewhere and complete settings export/import interactions still need work. Existing translated widgets outside the rebuilt settings do not gain verified English presentation merely because future lookups do. Raw duplicate-key rejection and complete filesystem/ACL hardening are also pending. No claim of universal completion or passkey support is made.
 
+The independently reviewed follow-up source unit `ed216ef963bf129c7522565453663a811bfd7cb0` adds explicit action/subtree capability markers, palette omission and live refresh while retaining query and regex flags, queued eligibility rechecks, classic direct-route suppression and a neutral font sample. Unmarked future capabilities and direct routes, global retranslation and native acceptance remain incomplete. Native checks have not run.
+
 The 34 `school.control.*` voice catalogue entries are integrated in source, including English and Cantonese variants at all five tone levels. Rendered language acceptance remains pending. No credential values belong in documentation, screenshots, diagnostics, exports or source.
 
 ## Verification status
@@ -43,3 +45,39 @@ After a reviewed root build, the focused command is:
 ```powershell
 ctest --test-dir build-windows --output-on-failure --timeout 180 -R "^testmaterialschoolmode$"
 ```
+
+## Website marked-control omission
+
+The static reader has a bounded browser-local presentation switch, separate from the native
+shared-record implementation described above. While active, every existing
+`data-school-suppressed` settings subtree receives `hidden`, `inert` and `aria-hidden="true"`.
+If focus is inside one of those subtrees, it returns to the still-discoverable mode control before
+omission. The loaded vocabulary status belongs to the omitted subtree; the cache is preserved,
+not erased or described as currently active through an exposed status.
+
+The hand-maintained required inventory is:
+
+| Wrapper | Owned controls |
+| --- | --- |
+| `school-language-control` | Language selection |
+| `school-english-tone-control` | English tone level |
+| `school-cantonese-tone-control` | Cantonese tone level |
+| `school-emoji-control` | Emoji preference |
+| `school-narrator-controls` | Narrator and voice selection |
+| `school-vocabulary-controls` | Local vocabulary upload, replace, clear and status |
+
+Turning the switch off restores each wrapper's exact prior `hidden`, `inert` and `aria-hidden`
+attribute presence and value. Repeated restricted renders do not overwrite that snapshot. Stored
+choices and validated vocabulary remain unchanged. Existing asynchronous-upload cancellation and
+restricted upload/clear action blocking remain in force.
+
+`node site/test-restricted-controls.mjs` checks the actual rendering function with isolated
+synthetic controls: all six required markers, deliberate missing-marker rejection, focus return,
+omission attributes, repeated-render stability, exact restoration and preference preservation.
+The source fixture passed; real browser keyboard, accessibility-tree and pixel acceptance for
+this revision remain pending.
+
+This is not universal shared-mode delivery. The website still lacks the shared local record,
+credential/PIN unlock, user-renaming protocol and cross-application propagation. Complete palette
+and direct-route omission, unrelated unmarked surfaces, and enforcement in other applications
+remain incomplete. Hiding these marked subtrees is a presentation operation, not a security boundary.

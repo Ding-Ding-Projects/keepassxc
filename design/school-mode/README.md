@@ -35,3 +35,16 @@ This is a target-native Qt source handoff for the shared local mode service and 
 Run the exact root build with tests enabled after this candidate is independently reviewed. Then execute `testmaterialschoolmode` alongside the existing Voice, settings and DimSum suites. Exercise two cooperating processes, credential replacement, rename, intentionally deleted record, unreadable record, watch exhaustion, active search, opening/closing settings, classic-route removal, queued file changes and source-text translation priority. Prove every affected surface in English/Cantonese/bilingual modes before and after activation, without credential material or private user data in captures. Cover normal/minimum geometry and high display scales.
 
 Full universal delivery remains incomplete until every consumer and route is enforced and real runtime evidence exists. A shared module alone does not make other products honor the mode.
+
+## Website bounded continuation
+
+The reader's marked settings omission is independent of the native shared-record protocol.
+`site/app.js` snapshots and restores exact hidden/inert/ARIA attributes for the six wrappers
+listed in the [feature article](../../docs/features/interface/school-mode.md#website-marked-control-omission).
+Focus returns to the local mode control before an owning subtree is omitted. Vocabulary status
+is omitted with its controls while stored replacement data and preferences remain intact.
+The hand-maintained inventory and deliberate missing-marker negative live in
+`site/test-restricted-controls.mjs`; isolated source fixtures passed. Real browser keyboard,
+accessibility and rendered acceptance remain pending. Shared record, PIN/password unlock,
+renaming, cross-application propagation and complete palette/direct-route coverage are not
+implemented by this browser-local switch. No universal-delivery or security-boundary claim is made.

@@ -16,9 +16,30 @@ Tag search narrows available chips without changing selected tags. Selected chip
 
 The tab selector also evaluates a complete candidate result set before replacing its rows. Invalid, blocked or timed-out expressions retain the previous rows. Locking or closing a vault resets and closes an open selector; normal descriptor changes refresh it without changing tab order. Search labels and inline messages use the English/Cantonese voice catalogue, including bilingual mode. Changing language preserves the current query and regex-builder owner. Regex flags apply independently to each category.
 
+The all-tabs selector paints its own opaque themed surface with rounded corners,
+so underlying guidance and health rows cannot show through its interior. Source
+regressions render contrasting backgrounds in light, dark and reduced-motion
+configurations, including an intentionally unfilled negative control. The new
+native tests and rebuilt screenshot acceptance remain pending until executed.
+
 ## Entry details
 
 The detail search matches field labels and attachment filenames only. It does not match displayed field values, password values or attachment contents. Invalid regex keeps the previous rows visible.
+
+One combined search and its guidance appear before the field content whenever an
+entry is present, including entries without attachments. Only the attachment
+heading and list disappear when attachments are empty. Removing attachments
+preserves the current search; clearing the entry hides the search and guidance.
+Focused source regressions cover initially empty attachments, populated-to-empty
+transitions, clearing and effective control visibility. Native execution and
+rebuilt visual verification of this placement remain pending.
+
+Refreshing entry content reapplies the active attachment-name filter after the
+attachment rows are rebuilt, including repeated updates and changed attachments.
+If the current regex is invalid, fresh rows use the last accepted filter predicate
+while the current input and inline invalid message remain unchanged. Clearing the
+search restores all rows, including after another refresh. Focused regression
+cases are written; compilation and runtime verification of this repair remain pending.
 
 ## Verification status
 
