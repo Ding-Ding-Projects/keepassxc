@@ -25,9 +25,9 @@
     {
       "path": "docs/features/delivery/build-scripts.md",
       "sourceSha256": "0a02197c90bf0c6688899b59a2939e8c929f0d58acc279ddbcf42ceaa1476db2",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "一鍵建置同安裝程式指令碼",
+      "markdown": "# 一鍵建置同安裝程式指令碼\n\n功能識別碼：`build-scripts` · 分類：建置、安裝同更新\n\n## 運作方式\n\n`build.bat`（用 `/s` 靜默執行）透過 `download-dependencies.bat` 解析固定工具鏈，自己匯出 MSVC x64 環境，以 CMake 同 Ninja 設定、建置，安裝至 `stage\\app`，並報告執行檔雜湊。`build-installer.bat` 從該暫存產生已驗證 Squirrel 套件。\n\n## 設定\n\n文件網站喺 `build-provenance.json` 一次記錄自己建置開始時間，連同確切來源同版本加來源建置身份。首頁顯示嗰個身份同建置更新時間。產品發佈來源證明同安裝程式下載保留獨立已記錄發佈時間。產生者同使用者都驗證網站記錄；發佈來源時間唔會獲接納為網站建置來源證明。`scripts/test-site-build-provenance.mjs` 拒絕身份不符、無效日期、錯誤來源同每個欠缺欄位。原生應用程式來源證明有獨立驗收界線。\n\n`QT_ROOT_DIR` 同 `KPXC_VCPKG_ROOT` 覆寫使用者範圍工具鏈位置。\n\n`QT_DEPLOY_ROOT_DIR` 可以選擇獨立 Qt 部署安裝，同時編譯保留 `QT_ROOT_DIR`。執行工具之前，建置器會比較編譯安裝同部署安裝嘅 `bin`、`plugins`、`qml` 同 `translations` 每個相對檔案路徑同 SHA-256，包括隱藏檔案。連結／重解析路徑會被拒絕，Qt 版本必須相同。所選 `qtpaths.exe` 放喺子程序 PATH 最前面，所選 `windeployqt.exe` 明確傳畀每次 CMake 設定，避免過時快取揀咗其他部署工具。呢啲路徑檢查唔會消除惡意並行檔案系統重新命名競態。\n\n呢個明確覆寫可以修復主機特有短名稱別名碰撞，毋須移動共用安裝。先保留原安裝，喺新路徑建立任務自有完整副本，比較完整檔案清單同雜湊，並驗證每條目的地路徑經 Win32 短／長名稱往返後保持不變。只可以為嗰份已驗證副本設定覆寫。建置器唔會自動診斷碰撞或提供呢份恢復副本。\n\n## 失敗情況\n\n之前普通 shell 第一次編譯會因為冇指令碼匯出 MSVC 環境而喺 `<assert.h>` 失敗，已修復。建置目錄路徑含空格會破壞 readline pkg-config 引入路徑，要用冇空格目錄建置。\n\n## 安全考慮\n\n永遠唔會安裝秘密或簽署憑證；只對單一程序繞過執行原則。\n\n## 驗證\n\n喺新 shell 執行 `build.bat /s`，確認輸出 `Built application:` 同 SHA-256。\n\n10月11日來源修復仍然等待確切根目錄入口運行。另一個獨立固定根目錄建置，透過外部已驗證位元組完全相同副本同產生快取選擇，完成部署；嗰次診斷恢復唔代表呢份修訂指令碼已通過。原生檢查同全新機器驗收仍然分開。\n\n## 延伸閱讀\n\n- [未簽署 Squirrel.Windows 安裝程式](../delivery/squirrel-installer.md)\n- [設計參考一致性](../design/design-parity.md)\n"
     },
     {
       "path": "docs/features/delivery/current-feature-coverage.md",
@@ -305,16 +305,16 @@
     {
       "path": "docs/features/records/history-panel-filters.md",
       "sourceSha256": "95f8b43f4308ad12b4253ec7635cf29fe2442a11e8ad6cad8efd2add85692964",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "歷史面板篩選",
+      "markdown": "# 歷史面板篩選\n\n功能識別碼：`history-panel-filters` · 分類：記錄同歷史\n\n## 運作方式\n\nHistory 目的地（`Material::HistoryScreen`）按種類標籤（all、created、edited、deleted、restored、settings）、日期範圍同有界限正則表達式搜尋篩選修訂。日期範圍有兩個 Material 日期欄位，接受本地或 ISO 日期，並有錨定日曆選擇器，月份同年份選擇器都係可搜尋 select。畫面提供選擇、匯出，以及逐修訂 Diff 同 Restore 控制。篩選行下面嘅只追加橫幅交代令恢復安全嘅唯一規則。每行先顯示種類徽章（CREATE 代表離開項目建立時狀態嘅步驟，另有 EDIT、SETTINGS、RESTORE 或 DELETE；顏色配合圖示，並納入無障礙名稱），旁邊保留標籤，右邊係短摘要碼，下面係中繼資料行。900 px或以上時，清單旁邊有設計嘅392 px詳情卡描述目前修訂（預設最新；點擊或喺行上按 Return 揀另一個）：次要容器標頭有種類徽章、短摘要碼、標籤同 UTC 時間；Record 行指出項目、群組、檔案或設定；What changed 段落；Diff 各行按開頭 +、- 或空格上色（唔列出數值，只列出邊啲欄位改變）；提示純文字記錄永遠唔包含項目內容、密碼或附件位元組；以及 Restore（無法放回嘅儲存會停用並交代理由）、Compare 同 Export 操作。低於900 px時詳情卡讓位，每行重新有自己嘅 Diff 同 Restore，確保冇功能變得無法到達。\n\n## 設定\n\n除咗儲存保留規則之外，冇其他設定。\n\n## 失敗情況\n\n參考時間軸顯示種類徽章同詳情卡，建置面板有差異，記錄為一致性問題 `history-default-1`。\n\n## 安全考慮\n\n匯出只包含經遮蔽中繼資料。\n\n## 驗證\n\n`testmaterialhistory` 同一致性項目 `history-default`。\n\n## 延伸閱讀\n\n- [以本機 Git 保存嘅版本歷史](../records/local-history.md)\n- [正則表達式建構工具](../search/regex-builder.md)\n"
     },
     {
       "path": "docs/features/records/local-history.md",
       "sourceSha256": "1342caa3663eef8cb361ee9f03d7663fe980c8b938d2b10db22a8481ef31401e",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "以本機 Git 保存嘅版本歷史",
+      "markdown": "# 以本機 Git 保存嘅版本歷史\n\n功能識別碼：`local-history` · 分類：記錄同歷史\n\n## 運作方式\n\n每個資料庫都喺應用程式資料之下有隔離本機 Git 儲存庫（`Material::HistoryStore`、`src/gui/material/MaterialHistoryStore.h`）。每次 KDBX 儲存都喺加密自訂資料攜帶穩定不透明資料庫身份同有版本嘅 Git bundle。Bundle 包含經遮蔽修訂中繼資料、項目指紋同加密 KDBX 快照。\n\n主要檔案寫入之前，應用程式會喺暫存儲存庫準備新修訂同 bundle。KDBX 內容同 bundle 再經現有原子儲存路徑一齊寫入。只有寫入成功，先會將已準備修訂合併至本機歷史儲存庫。資料庫寫入失敗會丟棄暫存儲存庫，保留之前內嵌 bundle。獨立應用程式歷史索引更新失敗，唔會令成功資料庫儲存變成失敗；下次開啟仍然可以從 KDBX bundle 恢復。\n\n資料庫身份喺檔案系統移動後保持穩定。Save As 為目的地建立新身份，同時保留來源歷史祖先。備份檔案攜帶備份當時可用歷史，唔會改來源資料庫身份。並行歷史喺修訂檔案冇衝突時以只追加方式合併；呢個歷史操作永遠唔會合併資料庫內容。恢復本身係新修訂，所以永遠唔會重寫歷史。\n\n## 設定\n\n保留同修剪控制喺 Settings › History；每個資料庫嘅儲存路徑穩定。\n\n## 失敗情況\n\n內嵌 bundle 上限係256 MiB壓縮資料、1 GiB展開物件資料、1,000,000個Git物件、100,000個歷史祖先同256層巢狀樹。界限或歷史儲存失敗阻止準備 bundle 時，資料庫仍會連同之前內嵌歷史儲存，並以非阻塞通知交代最新修訂未能內嵌。格式不正確、過大、外來、雜湊不符同本機過時 bundle，會喺匯入之前被拒絕。開啟 KDBX 檔案時本機應用程式歷史仍然可用；有效內嵌 bundle 可以喺檔案搬去另一裝置時恢復歷史。\n\n## 安全考慮\n\n快照保留資料庫自己嘅加密，bundle 放喺加密 KDBX 負載內。每個資料庫儲存庫永遠唔會放喺使用者資料夾內，亦冇遠端。Bundle 解碼會先檢查身份、版本、路徑清單、提交同物件數量、展開物件大小、快照容器簽名、SHA-256摘要碼同目前資料庫指紋，再合併。本機儲存庫已有後代時可以偵測過時 bundle。喺新裝置冇外部可信記錄，就無法分辨 KDBX 檔案同 bundle 一齊完整回退。\n\n## 驗證\n\n現有 `testmaterialhistory` 套件涵蓋真正 Git 同 KDBX 往返、並行寫入者同已刪除項目恢復。加入 KDBX3／KDBX4 轉移、Save As 祖先、分歧歷史聯集、格式不正確摘要碼同 bundle 拒絕，以及界限輔助工具覆蓋之後，目前本機 `testmaterialhistory` CTest 運行通過1／1。呢啲只係來源層面針對性證據。最新編輯之後完整正式編譯、備份行為、儲存失敗回退、重播、過大惡意輸入執行、外來身份，同封裝儲存／重開互動，仍然未驗證；確切候選狀態見 `HANDOFF.md`。\n\n## 延伸閱讀\n\n- [歷史面板篩選](../records/history-panel-filters.md)\n- [變更記錄檢視器](../records/changelog-viewer.md)\n"
     },
     {
       "path": "docs/features/records/personal-vocabulary-upload.md",
@@ -354,9 +354,9 @@
     {
       "path": "docs/features/search/search-bar-every-surface.md",
       "sourceSha256": "a0ab33f1d8ade0988ab948b15d247df7500f185731b6ca0970fae7c9978030fc",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "搜尋列同搜尋登記表",
+      "markdown": "# 搜尋列同搜尋登記表\n\n功能識別碼：`search-bar-every-surface` · 分類：搜尋同正則表達式\n\n## 運作方式\n\n`Material::SearchRegistry`（`src/gui/material/MaterialSearchRegistry.h`）管理每個已登記 `Material::SearchBar`：記錄目前欄位、將建構工具要求送去視窗、工具關閉時恢復焦點，並保持每個欄位嘅查詢、模式、旗標同模式選擇互相獨立。Vault、Reports、History、Changelog、Settings 頁面、浮層、通知中心同指令選單都會登記搜尋列；緊湊 More 導覽同群組後備畫面各有自己嘅有界限建構工具。\n\n資料庫有四個搜尋：應用程式列嘅項目搜尋（`vault.entries`）、群組樹上方群組篩選（`vault.groups`，預設純文字，要求時先用正則表達式；符合時保持祖先可見並展開）、範圍選單內群組範圍搜尋（`vault.group-scope`），以及詳情面板「Filter attachments & fields」搜尋（`vault.attachments`），收窄欄位容器（Username、Password、URL、Modified）同附件行；無法解析正則表達式會保留之前結果。項目搜尋旁邊健康標籤（Breached、Weak、Reused、Healthy）按判斷篩選清單並顯示即時數量；Breached 冇數量，因為外洩暴露需要線上檢查，而資料庫唔會做。\n\n搜尋列要求建構工具時，登記表會固定嗰條搜尋列為工具擁有者。工具開啟期間焦點會移動（工具自己欄位，之後浮層關閉時視窗交接嘅位置），每次移動都可能令另一條搜尋列變成目前欄位；恢復焦點會返回提出要求嘅搜尋列，唔係焦點途中經過嘅其他搜尋列。\n\n## 設定\n\n`GUI/SearchWaitForEnter` 保留資料庫欄位按 Enter 先搜尋嘅舊行為。\n\n## 失敗情況\n\n未轉為 Material 嘅舊對話框同選單冇搜尋列或建構工具，仍然係未完成清單項目（`dropdown-search`、`context-menu-search`）。\n\n## 安全考慮\n\n搜尋文字永遠唔會離開程序。\n\n## 驗證\n\n`testmaterialsearchregistry`（四個案例）；`testmaterialvaultfilters`（群組篩選保留祖先、正則表達式自選同無法解析模式；健康標籤存在、可勾選同無障礙）；`testmaterialshellresponsive`（焦點恢復至建構工具擁有者）。\n\n## 延伸閱讀\n\n- [正則表達式建構工具](../search/regex-builder.md)\n- settings-search（尚未實作；見 `docs/features/inventory.json`）\n- [瀏覽器式分頁](../navigation/tabs.md)\n\n## 資料庫優先分類更新\n\n資料庫新增 `vault.tags`，提供獨立標籤篩選。已選標籤保持可見。[資料庫分類搜尋](vault-category-search.md) 交代只比對中繼資料、查詢生命週期同目前驗證限制。\n"
     },
     {
       "path": "docs/features/search/vault-category-search.md",
@@ -389,9 +389,9 @@
     {
       "path": "docs/wiki/Building.md",
       "sourceSha256": "68510163876224ca95d58d35896ade8de54cc6ca9eb69a0571f293dd63fab96c",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "喺 Windows x64 建置",
+      "markdown": "# 喺 Windows x64 建置\n\n目前建置使用 MSVC x64 同 Qt 6.8.3。其他作業系統同編譯器唔喺目前交付範圍。請用儲存庫已提交包裝指令；固定相依套件清單同引導路徑先係依據。\n\n```powershell\n.\\download-dependencies.bat /s\n.\\build.bat /s\n.\\build-installer.bat /s -Version 2.8.13202\n```\n\n上面版本只係本機候選示例。請明確揀選預期候選版本，唔可以將舊執行檔或套件改名當成新版本。呢啲命令會建置同封裝，唔代表授權覆蓋現有使用者安裝。\n\n外部自有輸出目錄可以用 `scripts/build-windows.ps1` 或 `scripts/build-squirrel.ps1`，配合文件所列 `BuildDirectory`、`StageDirectory` 同 `ArtifactDirectory` 參數。包裝工具要求已提交來源、驗證路徑擁有權、保留之前世代、暫存所選編譯器 MSVC 執行階段 DLL，並將應用程式版本同檔案雜湊綁定至來源證明收據。\n\n`-UseExistingStage` 只接受已記錄提交、版本、清單同執行檔符合所要求候選嘅暫存，唔係將之前建置改標籤嘅方法。\n\n快取編譯器路徑只有大小寫唔同，亦要有檔案系統身份證明先保留。真正唔同編譯器要用新建置目錄。喺 PowerShell 直接呼叫 CMake 時，要為完整版本引數加引號，例如 `\"-DOVERRIDE_VERSION=2.8.13202\"`，並為每個候選提交重新設定，確保產生來源證明保持最新。\n\n## 封裝同驗證界線\n\n支援安裝程式係真正未簽署 Squirrel.Windows：`Setup.exe`、`RELEASES`、完整 `.nupkg`，以及有產生時嘅差異套件。可能出現 Unknown Publisher 或 SmartScreen 警告。套件雜湊證明完整性一致，唔係發佈者真確性。\n\n本機套件位元組驗證同針對性測試，與安裝同更新驗收分開。安裝必須用即棄普通使用者或 VM，配合支援無頭路徑。改 `LOCALAPPDATA` 唔係隔離，系統情境安裝亦唔係普通使用者證據。\n\n請參閱持續維護嘅[建置指令碼文章](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/delivery/build-scripts.md)、[封裝安全文章](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/delivery/packaging-path-safety.md)同[目前驗證記錄](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/delivery/repair-verification-2026-09.md)。\n"
     },
     {
       "path": "docs/wiki/CLOSEOUT_PROMPT.md",
@@ -431,9 +431,9 @@
     {
       "path": "docs/wiki/Vault-Category-Search.md",
       "sourceSha256": "bd8ffa0b45c9e2779b242973d808ddd1fe3db17cf17c41f245272922aa1b00a6",
-      "status": "missing",
-      "title": "",
-      "markdown": ""
+      "status": "complete",
+      "title": "資料庫分類搜尋",
+      "markdown": "# 資料庫分類搜尋\n\n資料庫工作區分別提供已儲存項目、資料夾、已開啟資料庫分頁、標籤，以及項目欄位名稱或附件檔名搜尋。每個分類有自己嘅查詢，重用現有搜尋列，唔會重複新增。\n\n## 項目同私隱\n\n項目搜尋會比對未受保護嘅標題、使用者名稱、URL 同備註，亦會比對標籤同群組名稱。比對時唔會解析預留位置，所以使用者名稱即使含有密碼預留位置，都唔會令背後嘅密碼變成可搜尋內容。資料庫圖形介面唔提供密碼或自訂屬性值搜尋。現有到期、健康狀態、UUID、附件檔名同存在與否篩選仍然可用。其他搜尋引擎呼叫者保留原有行為。\n\n搜尋文字只留喺記憶體。資料庫情境改變、鎖定同關閉會清除分類查詢，並重設正則表達式模式。呢啲控制項唔會將查詢加入設定、匯出或診斷輸出。呢點唔代表承諾鑑證級記憶體清除。\n\n## 資料夾、分頁同標籤\n\n資料夾搜尋會保留符合嘅後代項目同祖先項目可見。清除搜尋會恢復各行，唔會修改資料庫。分頁列搜尋按鈕即使冇分頁溢出，都會開啟全部分頁選擇器；揀選結果會按穩定嘅執行期識別碼啟用分頁。\n\n標籤搜尋會收窄可選標籤，唔會改變已選標籤。已選標籤即使名稱唔符合查詢，都會保持可見同可以移除。清除標籤搜尋會恢復可選標籤，同時保留選擇。標籤正則表達式使用現有有界限比對器。無效或唔安全嘅標籤模式會保留之前結果，並顯示行內訊息。\n\n分頁選擇器亦會先評估完整候選結果，再取代各行。無效、被阻擋或逾時嘅表達式會保留之前各行。鎖定或關閉資料庫會重設並關閉已開啟選擇器；一般描述資料變動會更新選擇器，唔會改變分頁次序。搜尋標籤同行內訊息使用英文／粵語語氣目錄，支援雙語模式。切換語言會保留目前查詢同正則表達式建構工具嘅擁有欄位。正則表達式旗標會獨立套用至每個分類。\n\n## 項目詳情\n\n詳情搜尋只比對欄位名稱同附件檔名，唔會比對顯示出嚟嘅欄位值、密碼值或附件內容。無效正則表達式會保留之前各行可見。\n\n## 驗證狀態\n\n來源回歸案例涵蓋標籤選擇保留、獨立資料夾文字、無效模式、清除行為、中繼資料比對、秘密排除、預留位置排除、受保護備註、UUID 同到期篩選，以及舊引擎相容性。驗收之前必須編譯並執行原生測試。原生互動、支援嘅語言／主題／縮放幾何，以及代表性螢幕擷取，仍然要等目前來源綁定嘅建置可用先驗證。\n\n額外針對性案例涵蓋被拒絕分頁模式嘅結果保留、分頁查詢重設、切換語言時嘅查詢同建構工具擁有權、正則表達式大小寫，以及擷取設定檔隔離。修復之後，現有來源樣式檢查已通過。原生執行仍然待驗證。擷取使用專用驗證識別碼，隔離執行個體同標準路徑，忽略繼承嘅設定覆寫同可攜模式，並喺應用程式啟動之前拒絕明確設定覆寫。\n\n## 相關文章\n\n- [搜尋列同登記表](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/search/search-bar-every-surface.md)\n- [正則表達式建構工具](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/search/regex-builder.md)\n- [瀏覽器式分頁](https://github.com/Ding-Ding-Projects/keepassxc/blob/main/docs/features/navigation/tabs.md)\n"
     }
   ]
 }
