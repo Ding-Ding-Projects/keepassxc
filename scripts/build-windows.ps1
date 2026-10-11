@@ -76,12 +76,20 @@ $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
 $configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
 Invoke-Native cmake $configureArguments
+$parallelArguments = @('--parallel')
+if ($env:CMAKE_BUILD_PARALLEL_LEVEL) {
+    $parallelLevel = 0
+    if (-not [int]::TryParse($env:CMAKE_BUILD_PARALLEL_LEVEL, [ref]$parallelLevel) -or $parallelLevel -lt 1 -or $parallelLevel -gt 64) {
+        throw 'CMAKE_BUILD_PARALLEL_LEVEL must be an integer from 1 to 64.'
+    }
+    $parallelArguments += [string]$parallelLevel
+}
 if ($WithTests) {
     Phase 'Building the native application and local test targets.'
-    Invoke-Native cmake @('--build',$build,'--parallel')
+    Invoke-Native cmake (@('--build',$build) + $parallelArguments)
 } else {
     Phase 'Building production targets only.'
-    Invoke-Native cmake @('--build',$build,'--parallel','--target','KeePassXC','keepassxc-cli','keepassxc-proxy','docs')
+    Invoke-Native cmake (@('--build',$build) + $parallelArguments + @('--target','KeePassXC','keepassxc-cli','keepassxc-proxy','docs'))
 }
 Phase "Installing to $stage."
 $stageBuildState=@{}
