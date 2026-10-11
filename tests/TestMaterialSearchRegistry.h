@@ -13,6 +13,7 @@ private slots:
     void registrationAndOwnership();
     void duplicateIdentityRejected();
     void existingConsumerSurfacesRegister();
+    void paletteExplainsUnavailableActions();
     void storedNotificationActionsCanBeReplacedSafely();
 };
 

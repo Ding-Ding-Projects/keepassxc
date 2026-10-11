@@ -29,6 +29,8 @@
 #include "gui/material/MaterialVaultSidebar.h"
 #include "gui/material/MaterialVoice.h"
 #include <QLineEdit>
+#include <QAction>
+#include <QLabel>
 #include <QScopedPointer>
 
 #include <QAbstractButton>
@@ -97,6 +99,31 @@ void TestMaterialVaultFilters::contextualGuidanceInventoryAndDismissal()
     QVERIFY(panel->isHidden());
     bar.setText(QStringLiteral("travel"));
     QVERIFY(panel->isHidden());
+    const QStringList childControls{QStringLiteral("input"), QStringLiteral("clear"), QStringLiteral("regex"),
+                                    QStringLiteral("builder"), QStringLiteral("open"), QStringLiteral("done")};
+    auto* hiddenHelp = bar.findChild<QAction*>(QStringLiteral("test.guidance.help.input"));
+    QVERIFY(hiddenHelp && !hiddenHelp->isEnabled());
+    QVERIFY(!hiddenHelp->statusTip().isEmpty());
+    bar.show();
+    QCoreApplication::processEvents();
+    QStringList descriptions;
+    for (const auto& control : childControls) {
+        auto* help = bar.findChild<QAction*>(QStringLiteral("test.guidance.help.") + control);
+        QVERIFY(help);
+        QVERIFY(help->isEnabled());
+        QVERIFY(!help->text().contains(QStringLiteral("search.guidance")));
+        help->trigger();
+        QVERIFY(!panel->isHidden());
+        const auto description = guidance->findChild<QLabel*>(QStringLiteral("searchGuidanceExplanation"))->text();
+        QVERIFY(!description.contains(QStringLiteral("search.guidance.control")));
+        QVERIFY(!descriptions.contains(description));
+        descriptions.append(description);
+        QCOMPARE(bar.text(), QStringLiteral("travel"));
+        done->click();
+        QVERIFY(panel->isHidden());
+    }
+    bar.hide();
+    QVERIFY(!hiddenHelp->isEnabled());
     // A sibling guidance host can survive its originating field.
     auto* transient = new SearchBar;
     QVERIFY(transient->setIdentity(QStringLiteral("test.guidance-lifetime"), QStringLiteral("Tags")));

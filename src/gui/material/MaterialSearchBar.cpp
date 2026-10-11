@@ -26,6 +26,8 @@
 #include "MaterialVoice.h"
 
 #include <QApplication>
+#include <QAction>
+#include <QEvent>
 #include <QLabel>
 #include <QScrollArea>
 #include <QVBoxLayout>
@@ -260,6 +262,7 @@ namespace Material
         panel->setObjectName(QStringLiteral("searchGuidancePanel"));
         auto* steps = new QVBoxLayout(panel);
         auto* explanation = new QLabel(panel);
+        explanation->setObjectName(QStringLiteral("searchGuidanceExplanation"));
         explanation->setWordWrap(true);
         explanation->setTextInteractionFlags(Qt::TextSelectableByKeyboard | Qt::TextSelectableByMouse);
         auto* scroll = new QScrollArea(panel);
@@ -277,10 +280,17 @@ namespace Material
         auto refresh = [this, entry, explanation, done, key] {
             entry->setText(Voice::say(QStringLiteral("search.guidance.open")) + QStringLiteral(": ") + searchLabel());
             entry->setAccessibleName(entry->text());
-            explanation->setText(Voice::say(key));
+            explanation->setText(Voice::say(key)
+                                 + (m_guidanceControl.isEmpty() ? QString() : QStringLiteral("\n\n")
+                                    + Voice::say(QStringLiteral("search.guidance.control.") + m_guidanceControl)));
             explanation->setAccessibleName(explanation->text());
             done->setText(Voice::say(QStringLiteral("search.guidance.done")));
             done->setAccessibleName(done->text());
+            m_lineEdit->setToolTip(Voice::say(QStringLiteral("search.guidance.control.input")));
+            m_regexChip->setToolTip(Voice::say(QStringLiteral("search.guidance.control.regex")));
+            m_builderButton->setToolTip(Voice::say(QStringLiteral("search.guidance.control.builder")));
+            entry->setToolTip(Voice::say(QStringLiteral("search.guidance.control.open")));
+            done->setToolTip(Voice::say(QStringLiteral("search.guidance.control.done")));
         };
         refresh();
         const QPointer<SearchBar> owner(this);
@@ -293,6 +303,31 @@ namespace Material
             else m_lineEdit->setFocus(Qt::OtherFocusReason);
         });
         connect(done, &QAbstractButton::clicked, entry, [entry] { entry->setChecked(false); });
+        // Actions belong to the field, so the command palette's live QAction
+        // inventory discovers help for the exact category and child control.
+        const QStringList controls{QStringLiteral("input"), QStringLiteral("clear"), QStringLiteral("regex"),
+                                   QStringLiteral("builder"), QStringLiteral("open"), QStringLiteral("done")};
+        for (const auto& control : controls) {
+            auto* help = new QAction(this);
+            help->setProperty("materialSearchHelp", true);
+            help->setObjectName(m_searchId + QStringLiteral(".help.") + control);
+            auto refreshHelp = [this, help, control] {
+                help->setText(searchLabel() + QStringLiteral(": ")
+                              + Voice::say(QStringLiteral("search.guidance.control.") + control + QStringLiteral(".title")));
+                help->setToolTip(Voice::say(QStringLiteral("search.guidance.control.") + control));
+                updateHelpAvailability();
+            };
+            refreshHelp();
+            connect(Voice::notifier(), &Voice::Notifier::changed, help, refreshHelp);
+            connect(help, &QAction::triggered, this, [this, entry, refresh, control] {
+                if (!m_guidanceWidget || !isVisible()) return;
+                m_guidanceControl = control;
+                refresh();
+                entry->setChecked(true);
+                m_guidanceWidget->show();
+            });
+        }
+        connect(host, &QObject::destroyed, this, [this] { updateHelpAvailability(); });
         connect(this, &QObject::destroyed, host, [host, panel] {
             panel->hide();
             host->setEnabled(false);
@@ -301,6 +336,23 @@ namespace Material
     }
 
     QString SearchBar::guidanceKey() const { return m_guidanceKey; }
+
+    void SearchBar::updateHelpAvailability()
+    {
+        for (auto* action : findChildren<QAction*>(QString(), Qt::FindDirectChildrenOnly)) {
+            if (!action->property("materialSearchHelp").toBool()) continue;
+            const bool available = isVisible() && m_guidanceWidget;
+            action->setEnabled(available);
+            action->setStatusTip(available ? QString() : Voice::say(QStringLiteral("search.guidance.control.unavailable")));
+        }
+    }
+
+    bool SearchBar::event(QEvent* event)
+    {
+        const bool handled = QWidget::event(event);
+        if (event->type() == QEvent::Show || event->type() == QEvent::Hide) updateHelpAvailability();
+        return handled;
+    }
     QString SearchBar::searchLabel() const { return m_searchLabel; }
     QString SearchBar::regexFlags() const { return m_regexFlags; }
     void SearchBar::setRegexFlags(const QString& flags)

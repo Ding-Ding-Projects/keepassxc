@@ -2,6 +2,1599 @@
     "version": 1,
     "comment": "Every variant of an id states the same facts; only the voice changes. The `facts` lists are enforced at run time: a variant that drops one is never shown.",
     "strings": {
+        "server.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Minecraft servers"
+                ],
+                "levels": {
+                    "1": "Minecraft servers",
+                    "2": "Minecraft servers",
+                    "3": "Minecraft servers",
+                    "4": "Minecraft servers",
+                    "5": "Minecraft servers"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Minecraft 伺服器"
+                ],
+                "levels": {
+                    "1": "Minecraft 伺服器",
+                    "2": "Minecraft 伺服器",
+                    "3": "Minecraft 伺服器",
+                    "4": "Minecraft 伺服器",
+                    "5": "Minecraft 伺服器"
+                }
+            }
+        },
+        "server.scope": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned local Java servers. Other targets and Bedrock are not implemented."
+                ],
+                "levels": {
+                    "1": "Owned local Java servers. Other targets and Bedrock are not implemented.",
+                    "2": "Owned local Java servers. Other targets and Bedrock are not implemented.",
+                    "3": "Owned local Java servers. Other targets and Bedrock are not implemented.",
+                    "4": "Owned local Java servers. Other targets and Bedrock are not implemented.",
+                    "5": "Owned local Java servers. Other targets and Bedrock are not implemented."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。"
+                ],
+                "levels": {
+                    "1": "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。",
+                    "2": "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。",
+                    "3": "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。",
+                    "4": "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。",
+                    "5": "管理自有本機 Java 伺服器。其他目標及 Bedrock 尚未實作。"
+                }
+            }
+        },
+        "server.search": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Search owned servers"
+                ],
+                "levels": {
+                    "1": "Search owned servers",
+                    "2": "Search owned servers",
+                    "3": "Search owned servers",
+                    "4": "Search owned servers",
+                    "5": "Search owned servers"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋自有伺服器"
+                ],
+                "levels": {
+                    "1": "搜尋自有伺服器",
+                    "2": "搜尋自有伺服器",
+                    "3": "搜尋自有伺服器",
+                    "4": "搜尋自有伺服器",
+                    "5": "搜尋自有伺服器"
+                }
+            }
+        },
+        "server.target": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Execution target"
+                ],
+                "levels": {
+                    "1": "Execution target",
+                    "2": "Execution target",
+                    "3": "Execution target",
+                    "4": "Execution target",
+                    "5": "Execution target"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "執行目標"
+                ],
+                "levels": {
+                    "1": "執行目標",
+                    "2": "執行目標",
+                    "3": "執行目標",
+                    "4": "執行目標",
+                    "5": "執行目標"
+                }
+            }
+        },
+        "server.edition": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Edition"
+                ],
+                "levels": {
+                    "1": "Edition",
+                    "2": "Edition",
+                    "3": "Edition",
+                    "4": "Edition",
+                    "5": "Edition"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "版本系列"
+                ],
+                "levels": {
+                    "1": "版本系列",
+                    "2": "版本系列",
+                    "3": "版本系列",
+                    "4": "版本系列",
+                    "5": "版本系列"
+                }
+            }
+        },
+        "server.distribution": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Distribution"
+                ],
+                "levels": {
+                    "1": "Distribution",
+                    "2": "Distribution",
+                    "3": "Distribution",
+                    "4": "Distribution",
+                    "5": "Distribution"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "發行版本"
+                ],
+                "levels": {
+                    "1": "發行版本",
+                    "2": "發行版本",
+                    "3": "發行版本",
+                    "4": "發行版本",
+                    "5": "發行版本"
+                }
+            }
+        },
+        "server.version": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Version from official metadata"
+                ],
+                "levels": {
+                    "1": "Version from official metadata",
+                    "2": "Version from official metadata",
+                    "3": "Version from official metadata",
+                    "4": "Version from official metadata",
+                    "5": "Version from official metadata"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "官方資料版本"
+                ],
+                "levels": {
+                    "1": "官方資料版本",
+                    "2": "官方資料版本",
+                    "3": "官方資料版本",
+                    "4": "官方資料版本",
+                    "5": "官方資料版本"
+                }
+            }
+        },
+        "server.name": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Server name"
+                ],
+                "levels": {
+                    "1": "Server name",
+                    "2": "Server name",
+                    "3": "Server name",
+                    "4": "Server name",
+                    "5": "Server name"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "伺服器名稱"
+                ],
+                "levels": {
+                    "1": "伺服器名稱",
+                    "2": "伺服器名稱",
+                    "3": "伺服器名稱",
+                    "4": "伺服器名稱",
+                    "5": "伺服器名稱"
+                }
+            }
+        },
+        "server.memory": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Java memory limit"
+                ],
+                "levels": {
+                    "1": "Java memory limit",
+                    "2": "Java memory limit",
+                    "3": "Java memory limit",
+                    "4": "Java memory limit",
+                    "5": "Java memory limit"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "Java 記憶體上限"
+                ],
+                "levels": {
+                    "1": "Java 記憶體上限",
+                    "2": "Java 記憶體上限",
+                    "3": "Java 記憶體上限",
+                    "4": "Java 記憶體上限",
+                    "5": "Java 記憶體上限"
+                }
+            }
+        },
+        "server.port": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Server port"
+                ],
+                "levels": {
+                    "1": "Server port",
+                    "2": "Server port",
+                    "3": "Server port",
+                    "4": "Server port",
+                    "5": "Server port"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "伺服器連接埠"
+                ],
+                "levels": {
+                    "1": "伺服器連接埠",
+                    "2": "伺服器連接埠",
+                    "3": "伺服器連接埠",
+                    "4": "伺服器連接埠",
+                    "5": "伺服器連接埠"
+                }
+            }
+        },
+        "server.browse": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Browse"
+                ],
+                "levels": {
+                    "1": "Browse",
+                    "2": "Browse",
+                    "3": "Browse",
+                    "4": "Browse",
+                    "5": "Browse"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "瀏覽"
+                ],
+                "levels": {
+                    "1": "瀏覽",
+                    "2": "瀏覽",
+                    "3": "瀏覽",
+                    "4": "瀏覽",
+                    "5": "瀏覽"
+                }
+            }
+        },
+        "server.runtime": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select Java runtime (matching displayed major version)"
+                ],
+                "levels": {
+                    "1": "Select Java runtime (matching displayed major version)",
+                    "2": "Select Java runtime (matching displayed major version)",
+                    "3": "Select Java runtime (matching displayed major version)",
+                    "4": "Select Java runtime (matching displayed major version)",
+                    "5": "Select Java runtime (matching displayed major version)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選擇 Java 執行環境（須符合顯示嘅主要版本）"
+                ],
+                "levels": {
+                    "1": "選擇 Java 執行環境（須符合顯示嘅主要版本）",
+                    "2": "選擇 Java 執行環境（須符合顯示嘅主要版本）",
+                    "3": "選擇 Java 執行環境（須符合顯示嘅主要版本）",
+                    "4": "選擇 Java 執行環境（須符合顯示嘅主要版本）",
+                    "5": "選擇 Java 執行環境（須符合顯示嘅主要版本）"
+                }
+            }
+        },
+        "server.jar": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select official server JAR for digest verification"
+                ],
+                "levels": {
+                    "1": "Select official server JAR for digest verification",
+                    "2": "Select official server JAR for digest verification",
+                    "3": "Select official server JAR for digest verification",
+                    "4": "Select official server JAR for digest verification",
+                    "5": "Select official server JAR for digest verification"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "選擇官方伺服器 JAR 作摘要驗證"
+                ],
+                "levels": {
+                    "1": "選擇官方伺服器 JAR 作摘要驗證",
+                    "2": "選擇官方伺服器 JAR 作摘要驗證",
+                    "3": "選擇官方伺服器 JAR 作摘要驗證",
+                    "4": "選擇官方伺服器 JAR 作摘要驗證",
+                    "5": "選擇官方伺服器 JAR 作摘要驗證"
+                }
+            }
+        },
+        "server.eula": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "I have reviewed and accept the Minecraft EULA for this server."
+                ],
+                "levels": {
+                    "1": "I have reviewed and accept the Minecraft EULA for this server.",
+                    "2": "I have reviewed and accept the Minecraft EULA for this server.",
+                    "3": "I have reviewed and accept the Minecraft EULA for this server.",
+                    "4": "I have reviewed and accept the Minecraft EULA for this server.",
+                    "5": "I have reviewed and accept the Minecraft EULA for this server."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已閱讀並接受呢個伺服器嘅 Minecraft EULA。"
+                ],
+                "levels": {
+                    "1": "已閱讀並接受呢個伺服器嘅 Minecraft EULA。",
+                    "2": "已閱讀並接受呢個伺服器嘅 Minecraft EULA。",
+                    "3": "已閱讀並接受呢個伺服器嘅 Minecraft EULA。",
+                    "4": "已閱讀並接受呢個伺服器嘅 Minecraft EULA。",
+                    "5": "已閱讀並接受呢個伺服器嘅 Minecraft EULA。"
+                }
+            }
+        },
+        "server.no-metadata": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Refresh official versions, then choose one. No server is downloaded automatically."
+                ],
+                "levels": {
+                    "1": "Refresh official versions, then choose one. No server is downloaded automatically.",
+                    "2": "Refresh official versions, then choose one. No server is downloaded automatically.",
+                    "3": "Refresh official versions, then choose one. No server is downloaded automatically.",
+                    "4": "Refresh official versions, then choose one. No server is downloaded automatically.",
+                    "5": "Refresh official versions, then choose one. No server is downloaded automatically."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。"
+                ],
+                "levels": {
+                    "1": "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。",
+                    "2": "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。",
+                    "3": "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。",
+                    "4": "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。",
+                    "5": "請更新官方版本，再選擇一個版本。唔會自動下載伺服器。"
+                }
+            }
+        },
+        "server.refresh": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Refresh official versions"
+                ],
+                "levels": {
+                    "1": "Refresh official versions",
+                    "2": "Refresh official versions",
+                    "3": "Refresh official versions",
+                    "4": "Refresh official versions",
+                    "5": "Refresh official versions"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "更新官方版本"
+                ],
+                "levels": {
+                    "1": "更新官方版本",
+                    "2": "更新官方版本",
+                    "3": "更新官方版本",
+                    "4": "更新官方版本",
+                    "5": "更新官方版本"
+                }
+            }
+        },
+        "server.cancel": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Cancel metadata request"
+                ],
+                "levels": {
+                    "1": "Cancel metadata request",
+                    "2": "Cancel metadata request",
+                    "3": "Cancel metadata request",
+                    "4": "Cancel metadata request",
+                    "5": "Cancel metadata request"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "取消資料請求"
+                ],
+                "levels": {
+                    "1": "取消資料請求",
+                    "2": "取消資料請求",
+                    "3": "取消資料請求",
+                    "4": "取消資料請求",
+                    "5": "取消資料請求"
+                }
+            }
+        },
+        "server.create": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Create owned server"
+                ],
+                "levels": {
+                    "1": "Create owned server",
+                    "2": "Create owned server",
+                    "3": "Create owned server",
+                    "4": "Create owned server",
+                    "5": "Create owned server"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "建立自有伺服器"
+                ],
+                "levels": {
+                    "1": "建立自有伺服器",
+                    "2": "建立自有伺服器",
+                    "3": "建立自有伺服器",
+                    "4": "建立自有伺服器",
+                    "5": "建立自有伺服器"
+                }
+            }
+        },
+        "server.inventory": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned server inventory"
+                ],
+                "levels": {
+                    "1": "Owned server inventory",
+                    "2": "Owned server inventory",
+                    "3": "Owned server inventory",
+                    "4": "Owned server inventory",
+                    "5": "Owned server inventory"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有伺服器清單"
+                ],
+                "levels": {
+                    "1": "自有伺服器清單",
+                    "2": "自有伺服器清單",
+                    "3": "自有伺服器清單",
+                    "4": "自有伺服器清單",
+                    "5": "自有伺服器清單"
+                }
+            }
+        },
+        "server.start": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Start selected server"
+                ],
+                "levels": {
+                    "1": "Start selected server",
+                    "2": "Start selected server",
+                    "3": "Start selected server",
+                    "4": "Start selected server",
+                    "5": "Start selected server"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "啟動所選伺服器"
+                ],
+                "levels": {
+                    "1": "啟動所選伺服器",
+                    "2": "啟動所選伺服器",
+                    "3": "啟動所選伺服器",
+                    "4": "啟動所選伺服器",
+                    "5": "啟動所選伺服器"
+                }
+            }
+        },
+        "server.stop": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Stop selected server gracefully"
+                ],
+                "levels": {
+                    "1": "Stop selected server gracefully",
+                    "2": "Stop selected server gracefully",
+                    "3": "Stop selected server gracefully",
+                    "4": "Stop selected server gracefully",
+                    "5": "Stop selected server gracefully"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正常停止所選伺服器"
+                ],
+                "levels": {
+                    "1": "正常停止所選伺服器",
+                    "2": "正常停止所選伺服器",
+                    "3": "正常停止所選伺服器",
+                    "4": "正常停止所選伺服器",
+                    "5": "正常停止所選伺服器"
+                }
+            }
+        },
+        "server.restart": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Restart selected server"
+                ],
+                "levels": {
+                    "1": "Restart selected server",
+                    "2": "Restart selected server",
+                    "3": "Restart selected server",
+                    "4": "Restart selected server",
+                    "5": "Restart selected server"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "重新啟動所選伺服器"
+                ],
+                "levels": {
+                    "1": "重新啟動所選伺服器",
+                    "2": "重新啟動所選伺服器",
+                    "3": "重新啟動所選伺服器",
+                    "4": "重新啟動所選伺服器",
+                    "5": "重新啟動所選伺服器"
+                }
+            }
+        },
+        "server.ready": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select or create an owned server. No existing server is adopted."
+                ],
+                "levels": {
+                    "1": "Select or create an owned server. No existing server is adopted.",
+                    "2": "Select or create an owned server. No existing server is adopted.",
+                    "3": "Select or create an owned server. No existing server is adopted.",
+                    "4": "Select or create an owned server. No existing server is adopted.",
+                    "5": "Select or create an owned server. No existing server is adopted."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請選擇或建立自有伺服器。唔會接管現有伺服器。"
+                ],
+                "levels": {
+                    "1": "請選擇或建立自有伺服器。唔會接管現有伺服器。",
+                    "2": "請選擇或建立自有伺服器。唔會接管現有伺服器。",
+                    "3": "請選擇或建立自有伺服器。唔會接管現有伺服器。",
+                    "4": "請選擇或建立自有伺服器。唔會接管現有伺服器。",
+                    "5": "請選擇或建立自有伺服器。唔會接管現有伺服器。"
+                }
+            }
+        },
+        "server.cancelled": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Metadata request cancelled. Existing inventory is unchanged."
+                ],
+                "levels": {
+                    "1": "Metadata request cancelled. Existing inventory is unchanged.",
+                    "2": "Metadata request cancelled. Existing inventory is unchanged.",
+                    "3": "Metadata request cancelled. Existing inventory is unchanged.",
+                    "4": "Metadata request cancelled. Existing inventory is unchanged.",
+                    "5": "Metadata request cancelled. Existing inventory is unchanged."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已取消資料請求。現有清單冇改變。"
+                ],
+                "levels": {
+                    "1": "已取消資料請求。現有清單冇改變。",
+                    "2": "已取消資料請求。現有清單冇改變。",
+                    "3": "已取消資料請求。現有清單冇改變。",
+                    "4": "已取消資料請求。現有清單冇改變。",
+                    "5": "已取消資料請求。現有清單冇改變。"
+                }
+            }
+        },
+        "server.invalid-inventory": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Inventory is invalid or too large. Preserve the file and repair it before creating servers."
+                ],
+                "levels": {
+                    "1": "Inventory is invalid or too large. Preserve the file and repair it before creating servers.",
+                    "2": "Inventory is invalid or too large. Preserve the file and repair it before creating servers.",
+                    "3": "Inventory is invalid or too large. Preserve the file and repair it before creating servers.",
+                    "4": "Inventory is invalid or too large. Preserve the file and repair it before creating servers.",
+                    "5": "Inventory is invalid or too large. Preserve the file and repair it before creating servers."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "清單無效或過大。請保留檔案並修復，之後先建立伺服器。"
+                ],
+                "levels": {
+                    "1": "清單無效或過大。請保留檔案並修復，之後先建立伺服器。",
+                    "2": "清單無效或過大。請保留檔案並修復，之後先建立伺服器。",
+                    "3": "清單無效或過大。請保留檔案並修復，之後先建立伺服器。",
+                    "4": "清單無效或過大。請保留檔案並修復，之後先建立伺服器。",
+                    "5": "清單無效或過大。請保留檔案並修復，之後先建立伺服器。"
+                }
+            }
+        },
+        "server.owned": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned profile; runtime and distribution are checked again before launch."
+                ],
+                "levels": {
+                    "1": "Owned profile; runtime and distribution are checked again before launch.",
+                    "2": "Owned profile; runtime and distribution are checked again before launch.",
+                    "3": "Owned profile; runtime and distribution are checked again before launch.",
+                    "4": "Owned profile; runtime and distribution are checked again before launch.",
+                    "5": "Owned profile; runtime and distribution are checked again before launch."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有設定；啟動前會再次檢查執行環境及發行檔案。"
+                ],
+                "levels": {
+                    "1": "自有設定；啟動前會再次檢查執行環境及發行檔案。",
+                    "2": "自有設定；啟動前會再次檢查執行環境及發行檔案。",
+                    "3": "自有設定；啟動前會再次檢查執行環境及發行檔案。",
+                    "4": "自有設定；啟動前會再次檢查執行環境及發行檔案。",
+                    "5": "自有設定；啟動前會再次檢查執行環境及發行檔案。"
+                }
+            }
+        },
+        "server.invalid-record": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Profile is unavailable: ownership, consent, runtime or distribution validation failed."
+                ],
+                "levels": {
+                    "1": "Profile is unavailable: ownership, consent, runtime or distribution validation failed.",
+                    "2": "Profile is unavailable: ownership, consent, runtime or distribution validation failed.",
+                    "3": "Profile is unavailable: ownership, consent, runtime or distribution validation failed.",
+                    "4": "Profile is unavailable: ownership, consent, runtime or distribution validation failed.",
+                    "5": "Profile is unavailable: ownership, consent, runtime or distribution validation failed."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。"
+                ],
+                "levels": {
+                    "1": "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。",
+                    "2": "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。",
+                    "3": "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。",
+                    "4": "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。",
+                    "5": "設定未能使用：擁有權、同意、執行環境或發行檔案驗證未通過。"
+                }
+            }
+        },
+        "server.unsafe-url": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Metadata URL is not an approved official HTTPS origin."
+                ],
+                "levels": {
+                    "1": "Metadata URL is not an approved official HTTPS origin.",
+                    "2": "Metadata URL is not an approved official HTTPS origin.",
+                    "3": "Metadata URL is not an approved official HTTPS origin.",
+                    "4": "Metadata URL is not an approved official HTTPS origin.",
+                    "5": "Metadata URL is not an approved official HTTPS origin."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "資料網址唔屬於允許嘅官方 HTTPS 來源。"
+                ],
+                "levels": {
+                    "1": "資料網址唔屬於允許嘅官方 HTTPS 來源。",
+                    "2": "資料網址唔屬於允許嘅官方 HTTPS 來源。",
+                    "3": "資料網址唔屬於允許嘅官方 HTTPS 來源。",
+                    "4": "資料網址唔屬於允許嘅官方 HTTPS 來源。",
+                    "5": "資料網址唔屬於允許嘅官方 HTTPS 來源。"
+                }
+            }
+        },
+        "server.loading": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Loading official metadata; cancellation is available."
+                ],
+                "levels": {
+                    "1": "Loading official metadata; cancellation is available.",
+                    "2": "Loading official metadata; cancellation is available.",
+                    "3": "Loading official metadata; cancellation is available.",
+                    "4": "Loading official metadata; cancellation is available.",
+                    "5": "Loading official metadata; cancellation is available."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "載入官方資料中，可以取消。"
+                ],
+                "levels": {
+                    "1": "載入官方資料中，可以取消。",
+                    "2": "載入官方資料中，可以取消。",
+                    "3": "載入官方資料中，可以取消。",
+                    "4": "載入官方資料中，可以取消。",
+                    "5": "載入官方資料中，可以取消。"
+                }
+            }
+        },
+        "server.offline": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Metadata unavailable or offline. Existing version choices are retained; retry Refresh."
+                ],
+                "levels": {
+                    "1": "Metadata unavailable or offline. Existing version choices are retained; retry Refresh.",
+                    "2": "Metadata unavailable or offline. Existing version choices are retained; retry Refresh.",
+                    "3": "Metadata unavailable or offline. Existing version choices are retained; retry Refresh.",
+                    "4": "Metadata unavailable or offline. Existing version choices are retained; retry Refresh.",
+                    "5": "Metadata unavailable or offline. Existing version choices are retained; retry Refresh."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "資料未能取得或離線。保留現有版本選項，請重試更新。"
+                ],
+                "levels": {
+                    "1": "資料未能取得或離線。保留現有版本選項，請重試更新。",
+                    "2": "資料未能取得或離線。保留現有版本選項，請重試更新。",
+                    "3": "資料未能取得或離線。保留現有版本選項，請重試更新。",
+                    "4": "資料未能取得或離線。保留現有版本選項，請重試更新。",
+                    "5": "資料未能取得或離線。保留現有版本選項，請重試更新。"
+                }
+            }
+        },
+        "server.integrity": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Distribution size or digest verification failed. Select the exact official JAR."
+                ],
+                "levels": {
+                    "1": "Distribution size or digest verification failed. Select the exact official JAR.",
+                    "2": "Distribution size or digest verification failed. Select the exact official JAR.",
+                    "3": "Distribution size or digest verification failed. Select the exact official JAR.",
+                    "4": "Distribution size or digest verification failed. Select the exact official JAR.",
+                    "5": "Distribution size or digest verification failed. Select the exact official JAR."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。"
+                ],
+                "levels": {
+                    "1": "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。",
+                    "2": "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。",
+                    "3": "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。",
+                    "4": "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。",
+                    "5": "發行檔案大小或摘要驗證未通過。請選擇完全相符嘅官方 JAR。"
+                }
+            }
+        },
+        "server.invalid-metadata": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Official metadata could not be parsed. Retry later."
+                ],
+                "levels": {
+                    "1": "Official metadata could not be parsed. Retry later.",
+                    "2": "Official metadata could not be parsed. Retry later.",
+                    "3": "Official metadata could not be parsed. Retry later.",
+                    "4": "Official metadata could not be parsed. Retry later.",
+                    "5": "Official metadata could not be parsed. Retry later."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能解析官方資料，請稍後重試。"
+                ],
+                "levels": {
+                    "1": "未能解析官方資料，請稍後重試。",
+                    "2": "未能解析官方資料，請稍後重試。",
+                    "3": "未能解析官方資料，請稍後重試。",
+                    "4": "未能解析官方資料，請稍後重試。",
+                    "5": "未能解析官方資料，請稍後重試。"
+                }
+            }
+        },
+        "server.catalogue": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Official catalogue entries: "
+                ],
+                "levels": {
+                    "1": "Official catalogue entries: ",
+                    "2": "Official catalogue entries: ",
+                    "3": "Official catalogue entries: ",
+                    "4": "Official catalogue entries: ",
+                    "5": "Official catalogue entries: "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "官方目錄項目："
+                ],
+                "levels": {
+                    "1": "官方目錄項目：",
+                    "2": "官方目錄項目：",
+                    "3": "官方目錄項目：",
+                    "4": "官方目錄項目：",
+                    "5": "官方目錄項目："
+                }
+            }
+        },
+        "server.unavailable-version": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit."
+                ],
+                "levels": {
+                    "1": "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit.",
+                    "2": "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit.",
+                    "3": "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit.",
+                    "4": "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit.",
+                    "5": "Selected version lacks a resolved server distribution/runtime or exceeds this manager limit."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。"
+                ],
+                "levels": {
+                    "1": "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。",
+                    "2": "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。",
+                    "3": "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。",
+                    "4": "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。",
+                    "5": "所選版本未有已解析嘅伺服器發行檔案或執行環境，或超出管理器限制。"
+                }
+            }
+        },
+        "server.metadata-ready": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA."
+                ],
+                "levels": {
+                    "1": "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA.",
+                    "2": "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA.",
+                    "3": "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA.",
+                    "4": "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA.",
+                    "5": "Metadata resolved. Select matching runtime and JAR, then explicitly accept the EULA."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。"
+                ],
+                "levels": {
+                    "1": "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。",
+                    "2": "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。",
+                    "3": "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。",
+                    "4": "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。",
+                    "5": "已解析資料。請選擇相符嘅執行環境及 JAR，並明確接受 EULA。"
+                }
+            }
+        },
+        "server.unavailable-target": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Only local vanilla Java is implemented. Selected target or edition is unavailable."
+                ],
+                "levels": {
+                    "1": "Only local vanilla Java is implemented. Selected target or edition is unavailable.",
+                    "2": "Only local vanilla Java is implemented. Selected target or edition is unavailable.",
+                    "3": "Only local vanilla Java is implemented. Selected target or edition is unavailable.",
+                    "4": "Only local vanilla Java is implemented. Selected target or edition is unavailable.",
+                    "5": "Only local vanilla Java is implemented. Selected target or edition is unavailable."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "目前只實作本機原版 Java。所選目標或版本系列未能使用。"
+                ],
+                "levels": {
+                    "1": "目前只實作本機原版 Java。所選目標或版本系列未能使用。",
+                    "2": "目前只實作本機原版 Java。所選目標或版本系列未能使用。",
+                    "3": "目前只實作本機原版 Java。所選目標或版本系列未能使用。",
+                    "4": "目前只實作本機原版 Java。所選目標或版本系列未能使用。",
+                    "5": "目前只實作本機原版 Java。所選目標或版本系列未能使用。"
+                }
+            }
+        },
+        "server.creation-needs": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Creation needs a valid inventory/name, resolved version and explicit EULA consent."
+                ],
+                "levels": {
+                    "1": "Creation needs a valid inventory/name, resolved version and explicit EULA consent.",
+                    "2": "Creation needs a valid inventory/name, resolved version and explicit EULA consent.",
+                    "3": "Creation needs a valid inventory/name, resolved version and explicit EULA consent.",
+                    "4": "Creation needs a valid inventory/name, resolved version and explicit EULA consent.",
+                    "5": "Creation needs a valid inventory/name, resolved version and explicit EULA consent."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。"
+                ],
+                "levels": {
+                    "1": "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。",
+                    "2": "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。",
+                    "3": "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。",
+                    "4": "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。",
+                    "5": "建立前需要有效清單及名稱、已解析版本，以及明確接受 EULA。"
+                }
+            }
+        },
+        "server.runtime-invalid": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified."
+                ],
+                "levels": {
+                    "1": "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified.",
+                    "2": "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified.",
+                    "3": "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified.",
+                    "4": "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified.",
+                    "5": "Choose an absolute path to a real Java executable. Runtime compatibility remains to be verified."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。"
+                ],
+                "levels": {
+                    "1": "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。",
+                    "2": "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。",
+                    "3": "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。",
+                    "4": "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。",
+                    "5": "請選擇真實 Java 執行檔嘅絕對路徑。執行環境相容性仍待驗證。"
+                }
+            }
+        },
+        "server.write-error": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Could not persist all server files. Partial owned files are retained for recovery."
+                ],
+                "levels": {
+                    "1": "Could not persist all server files. Partial owned files are retained for recovery.",
+                    "2": "Could not persist all server files. Partial owned files are retained for recovery.",
+                    "3": "Could not persist all server files. Partial owned files are retained for recovery.",
+                    "4": "Could not persist all server files. Partial owned files are retained for recovery.",
+                    "5": "Could not persist all server files. Partial owned files are retained for recovery."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。"
+                ],
+                "levels": {
+                    "1": "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。",
+                    "2": "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。",
+                    "3": "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。",
+                    "4": "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。",
+                    "5": "未能儲存全部伺服器檔案。保留部分自有檔案以便復原。"
+                }
+            }
+        },
+        "server.created": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned server created. It has not been started or runtime-verified."
+                ],
+                "levels": {
+                    "1": "Owned server created. It has not been started or runtime-verified.",
+                    "2": "Owned server created. It has not been started or runtime-verified.",
+                    "3": "Owned server created. It has not been started or runtime-verified.",
+                    "4": "Owned server created. It has not been started or runtime-verified.",
+                    "5": "Owned server created. It has not been started or runtime-verified."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已建立自有伺服器，尚未啟動或驗證執行結果。"
+                ],
+                "levels": {
+                    "1": "已建立自有伺服器，尚未啟動或驗證執行結果。",
+                    "2": "已建立自有伺服器，尚未啟動或驗證執行結果。",
+                    "3": "已建立自有伺服器，尚未啟動或驗證執行結果。",
+                    "4": "已建立自有伺服器，尚未啟動或驗證執行結果。",
+                    "5": "已建立自有伺服器，尚未啟動或驗證執行結果。"
+                }
+            }
+        },
+        "server.select-stopped": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Select a stopped owned server first."
+                ],
+                "levels": {
+                    "1": "Select a stopped owned server first.",
+                    "2": "Select a stopped owned server first.",
+                    "3": "Select a stopped owned server first.",
+                    "4": "Select a stopped owned server first.",
+                    "5": "Select a stopped owned server first."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請先選擇已停止嘅自有伺服器。"
+                ],
+                "levels": {
+                    "1": "請先選擇已停止嘅自有伺服器。",
+                    "2": "請先選擇已停止嘅自有伺服器。",
+                    "3": "請先選擇已停止嘅自有伺服器。",
+                    "4": "請先選擇已停止嘅自有伺服器。",
+                    "5": "請先選擇已停止嘅自有伺服器。"
+                }
+            }
+        },
+        "server.running": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned process started; game readiness unverified. PID: "
+                ],
+                "levels": {
+                    "1": "Owned process started; game readiness unverified. PID: ",
+                    "2": "Owned process started; game readiness unverified. PID: ",
+                    "3": "Owned process started; game readiness unverified. PID: ",
+                    "4": "Owned process started; game readiness unverified. PID: ",
+                    "5": "Owned process started; game readiness unverified. PID: "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有程序已啟動；遊戲就緒狀態未驗證。PID："
+                ],
+                "levels": {
+                    "1": "自有程序已啟動；遊戲就緒狀態未驗證。PID：",
+                    "2": "自有程序已啟動；遊戲就緒狀態未驗證。PID：",
+                    "3": "自有程序已啟動；遊戲就緒狀態未驗證。PID：",
+                    "4": "自有程序已啟動；遊戲就緒狀態未驗證。PID：",
+                    "5": "自有程序已啟動；遊戲就緒狀態未驗證。PID："
+                }
+            }
+        },
+        "server.process-error": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned process operation failed; inspect the selected runtime and distribution."
+                ],
+                "levels": {
+                    "1": "Owned process operation failed; inspect the selected runtime and distribution.",
+                    "2": "Owned process operation failed; inspect the selected runtime and distribution.",
+                    "3": "Owned process operation failed; inspect the selected runtime and distribution.",
+                    "4": "Owned process operation failed; inspect the selected runtime and distribution.",
+                    "5": "Owned process operation failed; inspect the selected runtime and distribution."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有程序操作未成功；請檢查所選執行環境及發行檔案。"
+                ],
+                "levels": {
+                    "1": "自有程序操作未成功；請檢查所選執行環境及發行檔案。",
+                    "2": "自有程序操作未成功；請檢查所選執行環境及發行檔案。",
+                    "3": "自有程序操作未成功；請檢查所選執行環境及發行檔案。",
+                    "4": "自有程序操作未成功；請檢查所選執行環境及發行檔案。",
+                    "5": "自有程序操作未成功；請檢查所選執行環境及發行檔案。"
+                }
+            }
+        },
+        "server.exited": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Owned process exited with code: "
+                ],
+                "levels": {
+                    "1": "Owned process exited with code: ",
+                    "2": "Owned process exited with code: ",
+                    "3": "Owned process exited with code: ",
+                    "4": "Owned process exited with code: ",
+                    "5": "Owned process exited with code: "
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自有程序已結束，代碼："
+                ],
+                "levels": {
+                    "1": "自有程序已結束，代碼：",
+                    "2": "自有程序已結束，代碼：",
+                    "3": "自有程序已結束，代碼：",
+                    "4": "自有程序已結束，代碼：",
+                    "5": "自有程序已結束，代碼："
+                }
+            }
+        },
+        "server.not-running": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Selected server has no running process owned by this manager."
+                ],
+                "levels": {
+                    "1": "Selected server has no running process owned by this manager.",
+                    "2": "Selected server has no running process owned by this manager.",
+                    "3": "Selected server has no running process owned by this manager.",
+                    "4": "Selected server has no running process owned by this manager.",
+                    "5": "Selected server has no running process owned by this manager."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "所選伺服器冇由呢個管理器擁有嘅執行中程序。"
+                ],
+                "levels": {
+                    "1": "所選伺服器冇由呢個管理器擁有嘅執行中程序。",
+                    "2": "所選伺服器冇由呢個管理器擁有嘅執行中程序。",
+                    "3": "所選伺服器冇由呢個管理器擁有嘅執行中程序。",
+                    "4": "所選伺服器冇由呢個管理器擁有嘅執行中程序。",
+                    "5": "所選伺服器冇由呢個管理器擁有嘅執行中程序。"
+                }
+            }
+        },
+        "server.stopping": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Graceful stop requested for the exact owned process; waiting for exit."
+                ],
+                "levels": {
+                    "1": "Graceful stop requested for the exact owned process; waiting for exit.",
+                    "2": "Graceful stop requested for the exact owned process; waiting for exit.",
+                    "3": "Graceful stop requested for the exact owned process; waiting for exit.",
+                    "4": "Graceful stop requested for the exact owned process; waiting for exit.",
+                    "5": "Graceful stop requested for the exact owned process; waiting for exit."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "已要求指定自有程序正常停止，等待結束。"
+                ],
+                "levels": {
+                    "1": "已要求指定自有程序正常停止，等待結束。",
+                    "2": "已要求指定自有程序正常停止，等待結束。",
+                    "3": "已要求指定自有程序正常停止，等待結束。",
+                    "4": "已要求指定自有程序正常停止，等待結束。",
+                    "5": "已要求指定自有程序正常停止，等待結束。"
+                }
+            }
+        },
+        "search.guidance.control.unavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed."
+                ],
+                "levels": {
+                    "1": "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed.",
+                    "2": "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed.",
+                    "3": "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed.",
+                    "4": "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed.",
+                    "5": "Open this search category first. Help is unavailable while its owning screen, menu or tab selector is closed. No query is changed."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。"
+                ],
+                "levels": {
+                    "1": "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。",
+                    "2": "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。",
+                    "3": "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。",
+                    "4": "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。",
+                    "5": "請先開啟呢個搜尋分類。所屬畫面、選單或分頁選擇器關閉時，說明暫時無法使用。搜尋文字保持不變。"
+                }
+            }
+        },
+        "search.guidance.control.input": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries."
+                ],
+                "levels": {
+                    "1": "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries.",
+                    "2": "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries.",
+                    "3": "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries.",
+                    "4": "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries.",
+                    "5": "Enter text for this category only. The default query is empty. For example, type Mail to find matching metadata. Password values are excluded. An invalid pattern keeps the last valid results; correct it or clear the field. Locking or closing the vault clears sensitive queries."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。"
+                ],
+                "levels": {
+                    "1": "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。",
+                    "2": "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。",
+                    "3": "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。",
+                    "4": "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。",
+                    "5": "只搜尋呢個分類。預設搜尋文字係空白。例如輸入 Mail 尋找相符資料，唔會搜尋密碼內容。無效模式會保留上次有效結果；請修正或者清除。鎖定或關閉資料庫會清除敏感搜尋文字。"
+                }
+            }
+        },
+        "search.guidance.control.input.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: search input"
+                ],
+                "levels": {
+                    "1": "Help: search input",
+                    "2": "Help: search input",
+                    "3": "Help: search input",
+                    "4": "Help: search input",
+                    "5": "Help: search input"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "搜尋文字說明"
+                ],
+                "levels": {
+                    "1": "搜尋文字說明",
+                    "2": "搜尋文字說明",
+                    "3": "搜尋文字說明",
+                    "4": "搜尋文字說明",
+                    "5": "搜尋文字說明"
+                }
+            }
+        },
+        "search.guidance.control.clear": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again."
+                ],
+                "levels": {
+                    "1": "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again.",
+                    "2": "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again.",
+                    "3": "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again.",
+                    "4": "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again.",
+                    "5": "Clear removes only this field’s query and restores its unfiltered choices. It does not delete records, remove selected tag filters, change other category queries or switch folders. The clear control is unavailable when the field is empty. Enter new text to search again."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。"
+                ],
+                "levels": {
+                    "1": "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。",
+                    "2": "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。",
+                    "3": "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。",
+                    "4": "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。",
+                    "5": "清除只會移除呢個欄位嘅搜尋文字，恢復未篩選選項。唔會刪除記錄、取消已選標籤、改變其他分類搜尋或切換資料夾。欄位空白時無需清除；重新輸入即可再搜尋。"
+                }
+            }
+        },
+        "search.guidance.control.clear.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: clear search"
+                ],
+                "levels": {
+                    "1": "Help: clear search",
+                    "2": "Help: clear search",
+                    "3": "Help: clear search",
+                    "4": "Help: clear search",
+                    "5": "Help: clear search"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "清除搜尋說明"
+                ],
+                "levels": {
+                    "1": "清除搜尋說明",
+                    "2": "清除搜尋說明",
+                    "3": "清除搜尋說明",
+                    "4": "清除搜尋說明",
+                    "5": "清除搜尋說明"
+                }
+            }
+        },
+        "search.guidance.control.regex": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle."
+                ],
+                "levels": {
+                    "1": "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle.",
+                    "2": "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle.",
+                    "3": "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle.",
+                    "4": "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle.",
+                    "5": "This toggle changes how this category interprets its text. Plain text is the default. Enable regular expressions for a pattern such as ^Mail. Invalid or unsafe patterns preserve previous results. Disable the toggle or clear the query to recover. Compact fields expose pattern mode through their builder instead of a separate toggle."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。"
+                ],
+                "levels": {
+                    "1": "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。",
+                    "2": "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。",
+                    "3": "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。",
+                    "4": "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。",
+                    "5": "呢個開關決定本分類點樣解讀文字，預設係普通文字。開啟正則模式可用 ^Mail 等模式。無效或不安全模式會保留原有結果；關閉模式或清除文字即可恢復。精簡欄位透過建立器提供模式，冇獨立開關。"
+                }
+            }
+        },
+        "search.guidance.control.regex.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: regular expression mode"
+                ],
+                "levels": {
+                    "1": "Help: regular expression mode",
+                    "2": "Help: regular expression mode",
+                    "3": "Help: regular expression mode",
+                    "4": "Help: regular expression mode",
+                    "5": "Help: regular expression mode"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "正則模式說明"
+                ],
+                "levels": {
+                    "1": "正則模式說明",
+                    "2": "正則模式說明",
+                    "3": "正則模式說明",
+                    "4": "正則模式說明",
+                    "5": "正則模式說明"
+                }
+            }
+        },
+        "search.guidance.control.builder": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results."
+                ],
+                "levels": {
+                    "1": "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results.",
+                    "2": "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results.",
+                    "3": "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results.",
+                    "4": "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results.",
+                    "5": "Open the builder for this exact search field. Compose a pattern and supported flags, inspect validation, then apply it to this category. Opening alone does not change the query. Cancel preserves it. The builder is unavailable on fields whose owner disables pattern controls. Invalid patterns keep the previous results."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。"
+                ],
+                "levels": {
+                    "1": "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。",
+                    "2": "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。",
+                    "3": "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。",
+                    "4": "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。",
+                    "5": "開啟呢個搜尋欄位專用嘅建立器，組合模式及支援旗標，檢查驗證後再套用。單純開啟唔會改變搜尋，取消亦會保留。停用模式控制嘅欄位無法使用建立器。無效模式會保留原有結果。"
+                }
+            }
+        },
+        "search.guidance.control.builder.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: pattern builder"
+                ],
+                "levels": {
+                    "1": "Help: pattern builder",
+                    "2": "Help: pattern builder",
+                    "3": "Help: pattern builder",
+                    "4": "Help: pattern builder",
+                    "5": "Help: pattern builder"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "模式建立器說明"
+                ],
+                "levels": {
+                    "1": "模式建立器說明",
+                    "2": "模式建立器說明",
+                    "3": "模式建立器說明",
+                    "4": "模式建立器說明",
+                    "5": "模式建立器說明"
+                }
+            }
+        },
+        "search.guidance.control.open": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it."
+                ],
+                "levels": {
+                    "1": "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it.",
+                    "2": "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it.",
+                    "3": "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it.",
+                    "4": "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it.",
+                    "5": "Open this optional explanation above the category search. It starts closed and does not run a search, clear text or change filters. Use the direct field at any time. Dismissed guidance stays closed until you choose it again; changing language does not reopen it."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。"
+                ],
+                "levels": {
+                    "1": "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。",
+                    "2": "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。",
+                    "3": "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。",
+                    "4": "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。",
+                    "5": "自行開啟分類搜尋上方嘅說明。預設收起，唔會執行搜尋、清除文字或改變篩選；任何時候都可以直接使用欄位。收起後會保持關閉，直至再次選擇；轉語言唔會自動重開。"
+                }
+            }
+        },
+        "search.guidance.control.open.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: optional search guidance"
+                ],
+                "levels": {
+                    "1": "Help: optional search guidance",
+                    "2": "Help: optional search guidance",
+                    "3": "Help: optional search guidance",
+                    "4": "Help: optional search guidance",
+                    "5": "Help: optional search guidance"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "自選搜尋指引說明"
+                ],
+                "levels": {
+                    "1": "自選搜尋指引說明",
+                    "2": "自選搜尋指引說明",
+                    "3": "自選搜尋指引說明",
+                    "4": "自選搜尋指引說明",
+                    "5": "自選搜尋指引說明"
+                }
+            }
+        },
+        "search.guidance.control.done": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation."
+                ],
+                "levels": {
+                    "1": "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation.",
+                    "2": "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation.",
+                    "3": "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation.",
+                    "4": "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation.",
+                    "5": "Return to search closes only the explanation and moves keyboard focus to its originating field. Your query and selected filters stay unchanged. It does not apply a pattern or activate a result. Open guidance again whenever you need the explanation."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。"
+                ],
+                "levels": {
+                    "1": "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。",
+                    "2": "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。",
+                    "3": "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。",
+                    "4": "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。",
+                    "5": "返回搜尋只會收起說明，並將鍵盤焦點移返原本欄位。搜尋文字及已選篩選保持不變，唔會套用模式或啟動結果。需要時可以再次開啟指引。"
+                }
+            }
+        },
+        "search.guidance.control.done.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Help: return to search"
+                ],
+                "levels": {
+                    "1": "Help: return to search",
+                    "2": "Help: return to search",
+                    "3": "Help: return to search",
+                    "4": "Help: return to search",
+                    "5": "Help: return to search"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "返回搜尋說明"
+                ],
+                "levels": {
+                    "1": "返回搜尋說明",
+                    "2": "返回搜尋說明",
+                    "3": "返回搜尋說明",
+                    "4": "返回搜尋說明",
+                    "5": "返回搜尋說明"
+                }
+            }
+        },
         "search.guidance.tabs": {
     "category": "info",
     "en": {

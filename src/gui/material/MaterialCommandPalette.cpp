@@ -158,6 +158,16 @@ namespace Material
                 setCursor(Qt::PointingHandCursor);
                 setFocusPolicy(Qt::NoFocus);
                 setAccessibleName(action ? action->text().remove(QLatin1Char('&')) : QString());
+                auto refreshDescription = [this] {
+                    if (!m_action) return;
+                    const QString description = m_action->isEnabled() ? m_action->toolTip()
+                                                                      : m_action->statusTip();
+                    setToolTip(description);
+                    setAccessibleDescription(description);
+                    update();
+                };
+                refreshDescription();
+                if (action) connect(action, &QAction::changed, this, refreshDescription);
             }
 
             void setSelected(bool selected)
@@ -262,7 +272,7 @@ namespace Material
             }
 
         private:
-            QAction* m_action = nullptr;
+            QPointer<QAction> m_action;
             QString m_shortcut;
             std::function<void()> m_activate;
             bool m_selected = false;

@@ -10,6 +10,7 @@
 #include <QStandardPaths>
 
 #include <QApplication>
+#include <QAction>
 #include <QAbstractButton>
 #include <QLineEdit>
 #include <QTest>
@@ -121,6 +122,34 @@ void TestMaterialSearchRegistry::existingConsumerSurfacesRegister()
     delete centre;
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("command-palette.commands")), nullptr);
     QCOMPARE(SearchRegistry::instance()->bar(QStringLiteral("notification-centre.history")), nullptr);
+}
+
+void TestMaterialSearchRegistry::paletteExplainsUnavailableActions()
+{
+    QWidget host;
+    auto* action = new QAction(QStringLiteral("Synthetic contextual help"), &host);
+    action->setEnabled(false);
+    action->setStatusTip(QStringLiteral("Open the synthetic category first."));
+    auto* palette = new CommandPalette(&host);
+    palette->setActionSource(&host);
+    host.show();
+    palette->openOverlay();
+    QApplication::processEvents();
+    QWidget* row = nullptr;
+    for (auto* candidate : palette->findChildren<QWidget*>()) {
+        if (candidate->accessibleName() == action->text()) row = candidate;
+    }
+    QVERIFY(row);
+    QCOMPARE(row->accessibleDescription(), action->statusTip());
+    QCOMPARE(row->toolTip(), action->statusTip());
+    action->setStatusTip(QStringLiteral("The synthetic category is still closed."));
+    QCOMPARE(row->accessibleDescription(), action->statusTip());
+    action->setToolTip(QStringLiteral("Explain this synthetic control."));
+    action->setEnabled(true);
+    QCOMPARE(row->accessibleDescription(), action->toolTip());
+    delete action;
+    row->update();
+    QApplication::processEvents();
 }
 
 void TestMaterialSearchRegistry::storedNotificationActionsCanBeReplacedSafely()

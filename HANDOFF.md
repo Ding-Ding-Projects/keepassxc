@@ -1,5 +1,11 @@
 # Navigation delivery handoff
 
+## Current expanded feature implementation, October 11, 2026
+
+The current catalogue contains 105 contract identities, all explicitly mapped with incomplete product evidence. Root build is pinned to `7d3d535da08e3a05877784af9ae7c35ddca68c9c` at one job. That source repairs `TestMerge.cpp:540`, where a raw `Group*` incorrectly used `.data()`. Independent source review confirmed direct deletion and parent cleanup semantics. Full build/native acceptance remains pending.
+
+The first server workspace source is preserved locally in `cbba3df58063eab0f7a8b7806a53436473d77295`. It is not complete server management. Independent review requires matching inventory capacity, restart by captured identity and rejection of linked path ancestors; repairs are in progress. No server or license workflow was executed. Search child help and palette unavailable-reason accessibility have source-reviewed changes and focused regression source; execution and full guidance coverage remain pending. The root continuation prompt carries the current queue and preservation boundaries.
+
 ## Preservation checkpoint, October 4, 2026
 
 The coordinator reports 10% remaining allowance. This is a preservation-only

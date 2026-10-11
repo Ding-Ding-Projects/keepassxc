@@ -102,12 +102,14 @@ namespace Material
         void returnPressed();
 
     protected:
+        bool event(QEvent* event) override;
         void paintEvent(QPaintEvent* event) override;
         void resizeEvent(QResizeEvent* event) override;
 
     private:
         void applyTheme();
         void applyPlaceholder();
+        void updateHelpAvailability();
 
         QLineEdit* m_lineEdit = nullptr;
         Chip* m_regexChip = nullptr;
@@ -120,6 +122,7 @@ namespace Material
         QString m_placeholderKey;
         QString m_searchLabelKey;
         QString m_guidanceKey;
+        QString m_guidanceControl;
         QPointer<QWidget> m_guidanceWidget;
         QString m_regexFlags = QStringLiteral("i");
     };
