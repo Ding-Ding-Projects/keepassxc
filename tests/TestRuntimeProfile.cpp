@@ -1,7 +1,13 @@
 #include "core/RuntimeProfile.h"
 #include "config-keepassx.h"
 #include "core/Database.h"
+#include "core/Config.h"
+#include "crypto/Crypto.h"
+#include "keys/CompositeKey.h"
 #include "keys/FileKey.h"
+#include "keys/PasswordKey.h"
+#include "format/OpVaultReader.h"
+#include "gui/FileDialog.h"
 #include "gui/Icons.h"
 #include "gui/material/MaterialHistoryStore.h"
 #ifdef KPXC_FEATURE_UPDATES
@@ -12,6 +18,12 @@
 #include <QDir>
 #include <QFile>
 #include <QProcess>
+#include <QSettings>
+#ifdef KPXC_FEATURE_BROWSER
+#include "browser/BrowserShared.h"
+#include <QLocalServer>
+#include <QLocalSocket>
+#endif
 #include <QTemporaryDir>
 #include <QTest>
 
@@ -22,6 +34,9 @@ private slots:
     void normalIdentity();
     void invalidDirectories();
     void isolatedRoots();
+#ifdef KPXC_FEATURE_BROWSER
+    void proxyInvalidProfile();
+#endif
 };
 
 static int probe(const QStringList& arguments)
@@ -38,16 +53,57 @@ static int probe(const QStringList& arguments)
     }
     if (RuntimeProfile::location(QStandardPaths::ConfigLocation) == RuntimeProfile::location(QStandardPaths::CacheLocation)) return 13;
     if (RuntimeProfile::ipcIdentifier(QStringLiteral("keepassxc")) == QStringLiteral("keepassxc")) return 14;
-    if (RuntimeProfile::contains(QDir::tempPath() + QStringLiteral("/../external.kdbx"))) return 15;
+    const QString externalPath = QDir(RuntimeProfile::root()).absoluteFilePath(QStringLiteral("../external.kdbx"));
+    if (RuntimeProfile::contains(externalPath)) return 15;
+    if (!RuntimeProfile::contains(RuntimeProfile::location(QStandardPaths::TempLocation) + QStringLiteral("/../inside.kdbx"))) return 27;
     if (RuntimeProfile::contains(QStringLiteral("relative.kdbx"))) return 16;
     if (RuntimeProfile::contains(RuntimeProfile::root() + QStringLiteral("/../external.kdbx"))) return 17;
     if (RuntimeProfile::initialize({arguments.first()}, &error)) return 18;
+    if (!Crypto::init()) return 28;
+
+    // Requesting an external synthetic INI must still use the profile INI.
+    const QString externalConfig = QDir(RuntimeProfile::root()).absoluteFilePath(QStringLiteral("../external.ini"));
+    const QByteArray sentinel("[General]\nGUI/FontFamily=ExternalSentinel\n");
+    QFile outside(externalConfig);
+    if (!outside.open(QIODevice::WriteOnly) || outside.write(sentinel) != sentinel.size()) return 29;
+    outside.close();
+    Config::createConfigFromFile(externalConfig);
+    if (!RuntimeProfile::contains(config()->getFileName())
+        || config()->get(Config::GUI_FontFamily).toString() == QStringLiteral("ExternalSentinel")) return 30;
+    config()->set(Config::GUI_FontFamily, QStringLiteral("ProfileOnlyFont"));
+    config()->sync();
+    QSettings profileSettings(QDir(RuntimeProfile::location(QStandardPaths::CacheLocation)).filePath(QStringLiteral("keepassxc.ini")), QSettings::IniFormat);
+    if (profileSettings.value(QStringLiteral("GUI/FontFamily")).toString() != QStringLiteral("ProfileOnlyFont")) return 31;
+    if (!outside.open(QIODevice::ReadOnly) || outside.readAll() != sentinel) return 32;
+    outside.close();
+
     Database database;
     if (database.open(QStringLiteral("/external-personal.kdbx"), {}, &error)
         || !error.contains(QStringLiteral("verification profile"))) return 25;
     FileKey key;
     if (key.load(QStringLiteral("/external-personal.keyx"), &error)
         || !error.contains(QStringLiteral("verification profile"))) return 26;
+    fileDialog()->setNextFileName(externalPath);
+    if (!fileDialog()->getSaveFileName().isEmpty()) return 33;
+    fileDialog()->setNextDirectory(QFileInfo(externalPath).absolutePath());
+    if (!fileDialog()->getExistingDirectory().isEmpty()) return 34;
+    const QString internalPath = QDir(RuntimeProfile::root()).filePath(QStringLiteral("synthetic.kdbx"));
+    if (QFileInfo::exists(internalPath) && !QFile::remove(internalPath)) return 47;
+    fileDialog()->setNextFileName(internalPath);
+    if (fileDialog()->getSaveFileName() != internalPath) return 35;
+    fileDialog()->setNextDirectory(RuntimeProfile::root());
+    if (fileDialog()->getExistingDirectory() != RuntimeProfile::root()) return 36;
+    if (database.saveAs(externalPath, Database::Atomic, {}, &error)
+        || !error.contains(QStringLiteral("verification profile")) || QFileInfo::exists(externalPath)) return 37;
+    if (database.saveAs(internalPath, Database::Atomic, externalPath, &error)
+        || !error.contains(QStringLiteral("verification profile")) || QFileInfo::exists(internalPath)) return 38;
+    auto compositeKey = QSharedPointer<CompositeKey>::create();
+    compositeKey->addKey(QSharedPointer<PasswordKey>::create(QStringLiteral("synthetic-verification-only")));
+    if (!database.setKey(compositeKey) || !database.saveAs(internalPath, Database::Atomic, {}, &error)) return 39;
+    if (!QFileInfo::exists(internalPath)) return 40;
+    OpVaultReader reader;
+    QDir outsideVault(QFileInfo(externalPath).absolutePath());
+    if (reader.convert(outsideVault, QString()).data() || !reader.errorString().contains(QStringLiteral("verification profile"))) return 41;
     Material::HistoryStore history(QStringLiteral("/external-history"));
     if (!RuntimeProfile::contains(history.logPath())) return 19;
     icons()->setApplicationLogoCacheDirectoryForTests(QStringLiteral("/external-logos"));
@@ -66,6 +122,30 @@ static int probe(const QStringList& arguments)
     });
     if (UpdateChecker::launchRestartCommand(QStringLiteral("Update.exe"), {}, {}) || launched) return 23;
     UpdateChecker::resetRestartLauncherForTests();
+#endif
+#ifdef KPXC_FEATURE_BROWSER
+    QLocalServer server;
+    server.setSocketOptions(QLocalServer::UserAccessOption);
+    if (!server.listen(BrowserShared::localServerPath())) return 42;
+    QProcess proxy;
+    proxy.start(QString::fromLocal8Bit(KEEPASSXC_PROXY_TEST_PATH),
+                {QStringLiteral("--verification-profile"), RuntimeProfile::root()});
+    if (!proxy.waitForStarted(10000) || !server.waitForNewConnection(10000)) {
+        proxy.kill();
+        proxy.waitForFinished(5000);
+        return 43;
+    }
+    auto* connection = server.nextPendingConnection();
+    if (!connection) return 44;
+    connection->close();
+    delete connection;
+    proxy.closeWriteChannel();
+    if (!proxy.waitForFinished(10000)) {
+        proxy.kill();
+        proxy.waitForFinished(5000);
+        return 45;
+    }
+    if (proxy.exitStatus() != QProcess::NormalExit || proxy.exitCode() != 0 || !proxy.readAllStandardOutput().isEmpty()) return 46;
 #endif
     QFile output(arguments.at(3));
     if (!output.open(QIODevice::WriteOnly)) return 24;
@@ -138,6 +218,20 @@ void TestRuntimeProfile::isolatedRoots()
         QCOMPARE(output.readAll(), identifier);
     }
 }
+
+#ifdef KPXC_FEATURE_BROWSER
+void TestRuntimeProfile::proxyInvalidProfile()
+{
+    QProcess proxy;
+    proxy.start(QString::fromLocal8Bit(KEEPASSXC_PROXY_TEST_PATH),
+                {QStringLiteral("--verification-profile"), QStringLiteral("relative-invalid-profile")});
+    QVERIFY(proxy.waitForFinished(10000));
+    QCOMPARE(proxy.exitStatus(), QProcess::NormalExit);
+    QVERIFY(proxy.exitCode() != 0);
+    QVERIFY(proxy.readAllStandardOutput().isEmpty());
+    QVERIFY(!proxy.readAllStandardError().isEmpty());
+}
+#endif
 
 int main(int argc, char** argv)
 {

@@ -52,6 +52,11 @@ set(TEST_LIBRARIES keepassxc_gui Qt6::Test)
 
 add_unit_test(NAME testruntimeprofile SOURCES TestRuntimeProfile.cpp
         LIBS ${TEST_LIBRARIES})
+if(KPXC_FEATURE_BROWSER)
+    target_link_libraries(testruntimeprofile browser Qt6::Network)
+    add_dependencies(testruntimeprofile keepassxc-proxy)
+    target_compile_definitions(testruntimeprofile PRIVATE KEEPASSXC_PROXY_TEST_PATH="$<TARGET_FILE:keepassxc-proxy>")
+endif()
 
 set(testsupport_SOURCES
         modeltest.cpp
