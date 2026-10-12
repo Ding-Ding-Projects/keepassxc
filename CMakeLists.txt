@@ -410,7 +410,12 @@ find_program(WINDEPLOYQT_EXE windeployqt HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/t
 if(NOT WINDEPLOYQT_EXE)
     message(FATAL_ERROR "windeployqt is required to build on Windows")
 endif()
+find_program(QTPATHS_EXE qtpaths HINTS ${Qt6_PREFIX}/bin ${Qt6_PREFIX}/tools/qt/bin)
+if(WIN32 AND NOT QTPATHS_EXE)
+    message(FATAL_ERROR "qtpaths from the selected Qt installation is required for deployment")
+endif()
 message(STATUS "Using windeployqt: ${WINDEPLOYQT_EXE}")
+message(STATUS "Using deployment qtpaths: ${QTPATHS_EXE}")
 # Where Qt's own runtime DLLs live. Test targets prepend this directory to PATH.
 get_filename_component(QT_BIN_DIR "${WINDEPLOYQT_EXE}" DIRECTORY)
 

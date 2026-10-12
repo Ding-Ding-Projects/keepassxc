@@ -11,6 +11,7 @@ $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
 . (Join-Path $PSScriptRoot 'PackagingSafety.ps1')
 . (Join-Path $PSScriptRoot 'ExecutableVersionContract.ps1')
+. (Join-Path $PSScriptRoot 'QtDeployment.ps1')
 $build = Resolve-KpxcDirectory $root $BuildDirectory
 $stage = Resolve-KpxcDirectory $root $InstallDirectory
 Assert-KpxcBuildPaths $root @($build, $stage)
@@ -69,12 +70,13 @@ if (-not $qtRoot) { throw 'The pinned Qt 6.8.3 MSVC x64 installation could not b
 $qtRoot = [IO.Path]::GetFullPath($qtRoot)
 $qtVersion = (& (Join-Path $qtRoot 'bin\qmake.exe') -query QT_VERSION).Trim()
 if ($LASTEXITCODE -ne 0 -or $qtVersion -ne '6.8.3') { throw "Expected Qt 6.8.3 at $qtRoot; qmake reported '$qtVersion'." }
+$qtDeployment = Initialize-KpxcQtDeployment $qtRoot $build
 # A discovered compiler alone does not prove its headers, libraries, or runtime source.
 $compilerPath = Initialize-KpxcMsvcEnvironment
 $toolchain = Join-Path $vcpkgRoot 'scripts\buildsystems\vcpkg.cmake'
 $testsOption = if ($WithTests) { 'ON' } else { 'OFF' }
 Phase "Configuring $build."
-$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
+$configureArguments=@('-S',$root,'-B',$build,'-G','Ninja','-DCMAKE_BUILD_TYPE=Release',"-DOVERRIDE_VERSION=$Version","-DWITH_TESTS=$testsOption",'-DKPXC_FEATURE_DOCS=ON',"-DASCIIDOCTOR_EXE=$asciidoctorExe","-DCMAKE_TOOLCHAIN_FILE=$toolchain",'-DVCPKG_TARGET_TRIPLET=x64-windows','-DX_VCPKG_APPLOCAL_DEPS_INSTALL=ON',"-DCMAKE_PREFIX_PATH=$qtRoot", "-DWINDEPLOYQT_EXE=$($qtDeployment.windeployqt)", "-DQTPATHS_EXE=$($qtDeployment.qtpaths)") + @(Get-KpxcCmakeCompilerArguments $build $compilerPath)
 Invoke-Native cmake $configureArguments
 if ($WithTests) {
     Phase 'Building the native application and local test targets.'
