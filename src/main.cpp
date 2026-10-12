@@ -20,11 +20,13 @@
 #include <QDir>
 #include <QFile>
 #include <QThreadPool>
+#include <QTextStream>
 #include <QWindow>
 
 #include "cli/Utils.h"
 #include "config-keepassx.h"
 #include "core/Tools.h"
+#include "core/RuntimeProfile.h"
 #include "crypto/Crypto.h"
 #include "gui/Application.h"
 #include "gui/MainWindow.h"
@@ -57,6 +59,22 @@ int main(int argc, char** argv)
 {
     QT_REQUIRE_VERSION(argc, argv, QT_VERSION_STR)
 
+    QStringList rawArguments;
+    for (int i = 0; i < argc; ++i) rawArguments.append(QString::fromLocal8Bit(argv[i]));
+    QString profileError;
+    if (!RuntimeProfile::initialize(rawArguments, &profileError)) {
+        QTextStream(stderr) << profileError << Qt::endl;
+        return EXIT_FAILURE;
+    }
+    if (RuntimeProfile::isActive()) {
+        for (const auto& argument : rawArguments) {
+            if (argument.startsWith(QStringLiteral("--squirrel"))) {
+                QTextStream(stderr) << "Installer lifecycle operations are disabled in verification profiles." << Qt::endl;
+                return EXIT_FAILURE;
+            }
+        }
+    }
+
 #ifdef Q_OS_WIN
     // Set OPENSSL_* variables to an invalid location to prevent DLL injection via openssl.cnf.
     // vcpkg by default hard-codes this to its packages location, which may be user-writable.
@@ -87,11 +105,13 @@ int main(int argc, char** argv)
     app.setProperty("KPXC_QUALIFIED_APPNAME", "org.keepassxc.KeePassXC");
 
     QStringList applicationArguments = app.arguments();
-    if (const auto lifecycleExit =
-            SquirrelLifecycle::handle(applicationArguments, QCoreApplication::applicationDirPath())) {
-        return *lifecycleExit;
+    if (!RuntimeProfile::isActive()) {
+        if (const auto lifecycleExit =
+                SquirrelLifecycle::handle(applicationArguments, QCoreApplication::applicationDirPath())) {
+            return *lifecycleExit;
+        }
+        SquirrelLifecycle::consume(applicationArguments);
     }
-    SquirrelLifecycle::consume(applicationArguments);
 
     // HACK: Prevent long-running threads from deadlocking the program with only 1 CPU
     // See https://github.com/keepassxreboot/keepassxc/issues/10391
@@ -141,8 +161,27 @@ int main(int argc, char** argv)
     parser.addOption(captureRouteOption);
     parser.addOption(captureReceiptOption);
     parser.addOption(captureScaleOption);
+    parser.addOption(QCommandLineOption("verification-profile", QObject::tr("isolated synthetic verification directory"), "directory"));
 
     parser.process(applicationArguments);
+
+    if (RuntimeProfile::isActive()) {
+        if (parser.isSet(configOption) || parser.isSet(localConfigOption)) {
+            QTextStream(stderr) << "Custom config files are disabled in verification profiles." << Qt::endl;
+            return EXIT_FAILURE;
+        }
+        QStringList paths = parser.positionalArguments();
+        if (parser.isSet(keyfileOption)) paths.append(parser.value(keyfileOption));
+        for (const auto& path : paths) {
+            if (!RuntimeProfile::contains(path)) {
+                QTextStream(stderr) << "Verification input files must reside inside the verification profile." << Qt::endl;
+                return EXIT_FAILURE;
+            }
+        }
+        config()->set(Config::OpenPreviousDatabasesOnStartup, false);
+        config()->remove(Config::LastOpenedDatabases);
+        config()->remove(Config::LastActiveDatabase);
+    }
 
     // Exit early if we're only showing the help / version
     if (parser.isSet(versionOption) || parser.isSet(helpOption)) {
@@ -289,7 +328,7 @@ int main(int argc, char** argv)
     int exitCode = Application::exec();
 
     // Check if restart was requested
-    if (exitCode == RESTART_EXITCODE) {
+    if (exitCode == RESTART_EXITCODE && !RuntimeProfile::isActive()) {
 #ifdef KPXC_FEATURE_UPDATES
         const bool updateRestart = updateCheck()->state() == UpdateChecker::State::ReadyToRestart
                                    || updateCheck()->state() == UpdateChecker::State::Deferred;

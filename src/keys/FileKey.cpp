@@ -17,6 +17,7 @@
  */
 
 #include "FileKey.h"
+#include "core/RuntimeProfile.h"
 
 #include "core/Tools.h"
 #include "crypto/CryptoHash.h"
@@ -128,6 +129,10 @@ bool FileKey::load(QIODevice* device, QString* errorMsg)
  */
 bool FileKey::load(const QString& fileName, QString* errorMsg)
 {
+    if (RuntimeProfile::isActive() && !RuntimeProfile::contains(fileName)) {
+        if (errorMsg) *errorMsg = QObject::tr("Verification key files must reside inside the verification profile.");
+        return false;
+    }
     QFile file(fileName);
     if (!file.open(QFile::ReadOnly)) {
         if (errorMsg) {

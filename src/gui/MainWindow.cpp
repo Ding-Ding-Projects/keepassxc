@@ -17,6 +17,7 @@
  */
 
 #include "MainWindow.h"
+#include "core/RuntimeProfile.h"
 #include "ui_MainWindow.h"
 
 #include <QCloseEvent>
@@ -1451,6 +1452,11 @@ void MainWindow::clearLastDatabases()
 
 void MainWindow::openDatabase(const QString& filePath, const QString& password, const QString& keyfile)
 {
+    if (RuntimeProfile::isActive()
+        && (!RuntimeProfile::contains(filePath) || (!keyfile.isEmpty() && !RuntimeProfile::contains(keyfile)))) {
+        showErrorMessage(tr("Verification databases and key files must reside inside the verification profile."));
+        return;
+    }
     // Forwarded file requests can enter an embedded credential form without
     // user input or a modal event. End startup decoration before opening it.
     Material::DimSum::suppress();
