@@ -2,6 +2,8 @@
 
 #include "core/Config.h"
 #include <QJsonDocument>
+#include <QJsonArray>
+#include <QSignalBlocker>
 
 namespace Material
 {
@@ -119,9 +121,41 @@ namespace Material
 
     QStringList ElementOverrides::customisedKeys() const { return m_overrides.keys(); }
 
+    void ElementOverrides::migrateLegacy(const QString& source, const QString& target)
+    {
+        if (!m_migrationStateValid || source.isEmpty() || target.isEmpty()
+            || m_consumedMigrations.contains(target)) return;
+        const auto value = get(source);
+        if (value.isEmpty()) return;
+        // Consume independently of the current style. Resetting a migrated or
+        // already-customized target must not resurrect its retained legacy alias.
+        m_consumedMigrations.insert(target);
+        const bool copied = get(target).isEmpty();
+        if (copied) m_overrides.insert(target, value);
+        save();
+        config()->sync();
+        if (copied) emit overrideChanged(target);
+    }
+
     void ElementOverrides::load()
     {
         m_overrides.clear();
+        m_consumedMigrations.clear();
+        QJsonParseError migrationError;
+        const auto migrations = QJsonDocument::fromJson(config()->get(Config::GUI_ElementOverrideMigrations).toString().toUtf8(), &migrationError);
+        const auto state = migrations.object();
+        m_migrationStateValid = migrationError.error == QJsonParseError::NoError && migrations.isObject()
+                                && state.value(QStringLiteral("version")).toInt() == 1
+                                && state.value(QStringLiteral("targets")).isArray();
+        if (m_migrationStateValid) {
+            for (const auto& target : state.value(QStringLiteral("targets")).toArray()) {
+                if (!target.isString() || target.toString().isEmpty()) {
+                    m_migrationStateValid = false;
+                    break;
+                }
+                m_consumedMigrations.insert(target.toString());
+            }
+        }
         QJsonParseError error;
         const auto document = QJsonDocument::fromJson(config()->get(Config::GUI_ElementOverrides).toString().toUtf8(), &error);
         if (error.error != QJsonParseError::NoError || !document.isObject()) return;
@@ -135,6 +169,17 @@ namespace Material
 
     void ElementOverrides::save() const
     {
+        if (m_migrationStateValid) {
+            auto targets = m_consumedMigrations.values();
+            targets.sort();
+            QJsonArray consumed;
+            for (const auto& target : targets) consumed.append(target);
+            const QJsonObject migrations{{QStringLiteral("version"), 1}, {QStringLiteral("targets"), consumed}};
+            // Both fields share the local INI. Do not notify observers between
+            // recording consumption and publishing the corresponding style.
+            const QSignalBlocker blocker(config());
+            config()->set(Config::GUI_ElementOverrideMigrations, QString::fromUtf8(QJsonDocument(migrations).toJson(QJsonDocument::Compact)));
+        }
         QJsonObject root;
         for (auto it = m_overrides.cbegin(); it != m_overrides.cend(); ++it) root[it.key()] = it.value().toJson();
         config()->set(Config::GUI_ElementOverrides, QString::fromUtf8(QJsonDocument(root).toJson(QJsonDocument::Compact)));

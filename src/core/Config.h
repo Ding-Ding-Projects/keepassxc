@@ -226,6 +226,9 @@ public:
 
         Messages_NoLegacyKeyFileWarning,
 
+        // Internal one-time appearance identity migrations, retained after element reset.
+        GUI_ElementOverrideMigrations,
+
         // Special internal value
         Deleted
     };

@@ -141,6 +141,7 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_FontScale, {QS("GUI/FontScale"), Local, 1.0}},
     {Config::GUI_FontWeight, {QS("GUI/FontWeight"), Local, 400}},
     {Config::GUI_ElementOverrides, {QS("GUI/ElementOverrides"), Local, QS("{}")}},
+    {Config::GUI_ElementOverrideMigrations, {QS("GUI/ElementOverrideMigrations"), Local, QS("{\"version\":1,\"targets\":[]}")}},
     {Config::GUI_AppearancePresets, {QS("GUI/AppearancePresets"), Local, QS("{}")}},
     // The selected image itself is deliberately not a configuration value. Icons stores only a
     // validated, normalised PNG under the application's private data location.

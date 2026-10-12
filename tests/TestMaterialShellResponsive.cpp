@@ -32,6 +32,7 @@
 #include <QWheelEvent>
 #include <QTest>
 #include <QSet>
+#include <QProcess>
 
 using namespace Material;
 
@@ -567,6 +568,22 @@ void TestMaterialShellResponsive::settingsLegacyOverridesMigrateWithoutConflatio
     overrides->set(page->row(unique)->objectName(), newer);
     SettingsHub::migrateLegacyRowOverrides(&sheet);
     QCOMPARE(overrides->get(page->row(unique)->objectName()).radius.value_or(-1), 23);
+    const QString target = page->row(unique)->objectName();
+    overrides->reset(target);
+    QVERIFY(overrides->get(target).isEmpty());
+    SettingsHub::migrateLegacyRowOverrides(&sheet);
+    QVERIFY(overrides->get(target).isEmpty());
+    QCOMPARE(overrides->get(QStringLiteral("specRow_test_unique_icon")).toJson(), legacy.toJson());
+    config()->sync();
+    // A fresh process reloads persisted settings and reconstructs the sheet.
+    // An in-memory singleton alone would not prove restart persistence.
+    QProcess restart;
+    restart.start(QCoreApplication::applicationFilePath(),
+                  {QStringLiteral("--probe-consumed-migration"), QString::fromUtf8(qgetenv("KPXC_CONFIG")),
+                   QString::fromUtf8(qgetenv("KPXC_CONFIG_LOCAL")), unique});
+    QVERIFY(restart.waitForFinished(30000));
+    QCOMPARE(restart.exitStatus(), QProcess::NormalExit);
+    QCOMPARE(restart.exitCode(), 0);
     for (const auto& key : {QStringLiteral("specRow_test_unique_icon"), QStringLiteral("specRow_test_shared_icon"), page->row(unique)->objectName()}) overrides->reset(key);
 }
 
@@ -618,6 +635,20 @@ int main(int argc, char** argv)
     QApplication application(argc, argv);
     Config::createConfigFromFile(profile.filePath(QStringLiteral("roaming.ini")),
                                  profile.filePath(QStringLiteral("local.ini")));
+    const auto arguments = application.arguments();
+    if (arguments.size() == 5 && arguments.at(1) == QStringLiteral("--probe-consumed-migration")) {
+        Config::createConfigFromFile(arguments.at(2), arguments.at(3));
+        auto* overrides = ElementOverrides::instance();
+        overrides->load();
+        const QString target = QStringLiteral("specRow_") + arguments.at(4);
+        if (!overrides->get(target).isEmpty() || overrides->get(QStringLiteral("specRow_test_unique_icon")).isEmpty()) return 2;
+        SpecSheet sheet;
+        sheet.addPage(QStringLiteral("legacy-test"), QStringLiteral("settings"), QStringLiteral("Legacy test"));
+        sheet.addRow(QStringLiteral("legacy-test"), QStringLiteral("Section"), QStringLiteral("test_unique_icon"),
+                     QStringLiteral("Unique"), {}, PillKind::Action, QStringLiteral("Run"), arguments.at(4));
+        SettingsHub::migrateLegacyRowOverrides(&sheet);
+        return overrides->get(target).isEmpty() && !overrides->get(QStringLiteral("specRow_test_unique_icon")).isEmpty() ? 0 : 3;
+    }
     TestMaterialShellResponsive tests;
     return QTest::qExec(&tests, argc, argv);
 }

@@ -872,12 +872,9 @@ namespace Material
         for (const auto& source : sources) {
             const auto targets = aliases.value(source);
             if (source.isEmpty() || targets.size() != 1) continue;
-            const auto value = overrides->get(source);
-            if (!value.isEmpty() && overrides->get(targets.first()).isEmpty()) {
-                // Keep the legacy entry for other surfaces and rollback. Never
-                // choose one of several same-icon rows or replace a newer edit.
-                overrides->set(targets.first(), value);
-            }
+            // Keep originals for rollback while consuming migration separately
+            // from the current override, so a later reset remains a reset.
+            overrides->migrateLegacy(source, targets.first());
         }
     }
 

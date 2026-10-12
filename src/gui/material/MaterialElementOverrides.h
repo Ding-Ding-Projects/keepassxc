@@ -6,6 +6,7 @@
 #include <QJsonObject>
 #include <QObject>
 #include <QString>
+#include <QSet>
 #include <optional>
 
 namespace Material
@@ -54,6 +55,8 @@ namespace Material
         QStringList customisedKeys() const;
         void load();
         void save() const;
+        /** Consume a one-time legacy identity migration even when a newer target override already exists. */
+        void migrateLegacy(const QString& source, const QString& target);
 
     signals:
         void overrideChanged(const QString& key);
@@ -61,6 +64,8 @@ namespace Material
     private:
         ElementOverrides();
         QHash<QString, Override> m_overrides;
+        QSet<QString> m_consumedMigrations;
+        bool m_migrationStateValid = true;
     };
 }
 
