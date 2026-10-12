@@ -21,8 +21,8 @@ function Initialize-KpxcQtDeployment([string]$QtRoot, [string]$BuildDirectory) {
         New-Item -ItemType Junction -Path $alias -Target $selectedRoot | Out-Null
     }
     foreach ($tool in @('qmake.exe', 'qtpaths.exe', 'windeployqt.exe')) {
-        if ((Get-FileHash -LiteralPath (Join-Path $alias "bin\$tool") -Algorithm SHA256).Hash -cne
-            (Get-FileHash -LiteralPath (Join-Path $selectedRoot "bin\$tool") -Algorithm SHA256).Hash) {
+        if ((Get-KpxcHash (Join-Path $alias "bin\$tool")) -cne
+            (Get-KpxcHash (Join-Path $selectedRoot "bin\$tool"))) {
             throw 'Qt deployment alias does not expose the selected tool binaries.'
         }
     }
