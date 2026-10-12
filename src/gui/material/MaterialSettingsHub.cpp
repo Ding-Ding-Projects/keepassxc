@@ -29,6 +29,8 @@
 #include "MaterialSpecSheet.h"
 #include "MaterialTheme.h"
 #include "MaterialHistoryStore.h"
+#include "MaterialElementOverrides.h"
+#include "MaterialSwitch.h"
 
 #include "core/Translator.h"
 #include "MaterialCommandPalette.h"
@@ -360,6 +362,7 @@ namespace Material
                 emit builderRequested(page->searchBar());
             }
         });
+        migrateLegacyRowOverrides(m_sheet);
         connect(config(), &Config::changed, this, [this](Config::ConfigKey) {
             refreshAll();
             HistoryStore::instance()->recordSettingsEvent(tr("Changed an application setting"));
@@ -444,6 +447,156 @@ namespace Material
 
     // ------------------------------------------------------------- row binding
 
+    QString SettingsHub::configurationRowIdentity(const QString& pageId, Config::ConfigKey key)
+    {
+        QString name;
+        switch (key) {
+        case Config::AutoGeneratePasswordForNewEntries: name = QStringLiteral("AutoGeneratePasswordForNewEntries"); break;
+        case Config::AutoReloadOnChange: name = QStringLiteral("AutoReloadOnChange"); break;
+        case Config::AutoSaveAfterEveryChange: name = QStringLiteral("AutoSaveAfterEveryChange"); break;
+        case Config::AutoSaveNonDataChanges: name = QStringLiteral("AutoSaveNonDataChanges"); break;
+        case Config::AutoSaveOnExit: name = QStringLiteral("AutoSaveOnExit"); break;
+        case Config::AutoTypeDelay: name = QStringLiteral("AutoTypeDelay"); break;
+        case Config::AutoTypeEntryTitleMatch: name = QStringLiteral("AutoTypeEntryTitleMatch"); break;
+        case Config::AutoTypeEntryURLMatch: name = QStringLiteral("AutoTypeEntryURLMatch"); break;
+        case Config::AutoTypeHideExpiredEntry: name = QStringLiteral("AutoTypeHideExpiredEntry"); break;
+        case Config::AutoTypeStartDelay: name = QStringLiteral("AutoTypeStartDelay"); break;
+        case Config::BackupBeforeSave: name = QStringLiteral("BackupBeforeSave"); break;
+        case Config::BackupFilePathPattern: name = QStringLiteral("BackupFilePathPattern"); break;
+        case Config::Browser_AllowExpiredCredentials: name = QStringLiteral("Browser_AllowExpiredCredentials"); break;
+        case Config::Browser_AllowGetDatabaseEntriesRequest: name = QStringLiteral("Browser_AllowGetDatabaseEntriesRequest"); break;
+        case Config::Browser_AllowLocalhostWithPasskeys: name = QStringLiteral("Browser_AllowLocalhostWithPasskeys"); break;
+        case Config::Browser_AlwaysAllowUpdate: name = QStringLiteral("Browser_AlwaysAllowUpdate"); break;
+        case Config::Browser_AutoInstallExtension: name = QStringLiteral("Browser_AutoInstallExtension"); break;
+        case Config::Browser_BestMatchOnly: name = QStringLiteral("Browser_BestMatchOnly"); break;
+        case Config::Browser_CustomBrowserLocation: name = QStringLiteral("Browser_CustomBrowserLocation"); break;
+        case Config::Browser_CustomBrowserType: name = QStringLiteral("Browser_CustomBrowserType"); break;
+        case Config::Browser_CustomProxyLocation: name = QStringLiteral("Browser_CustomProxyLocation"); break;
+        case Config::Browser_Enabled: name = QStringLiteral("Browser_Enabled"); break;
+        case Config::Browser_MatchUrlScheme: name = QStringLiteral("Browser_MatchUrlScheme"); break;
+        case Config::Browser_NoMigrationPrompt: name = QStringLiteral("Browser_NoMigrationPrompt"); break;
+        case Config::Browser_SearchInAllDatabases: name = QStringLiteral("Browser_SearchInAllDatabases"); break;
+        case Config::Browser_ShowNotification: name = QStringLiteral("Browser_ShowNotification"); break;
+        case Config::Browser_SupportBrowserProxy: name = QStringLiteral("Browser_SupportBrowserProxy"); break;
+        case Config::Browser_SupportKphFields: name = QStringLiteral("Browser_SupportKphFields"); break;
+        case Config::Browser_UnlockDatabase: name = QStringLiteral("Browser_UnlockDatabase"); break;
+        case Config::Browser_UpdateBinaryPath: name = QStringLiteral("Browser_UpdateBinaryPath"); break;
+        case Config::Browser_UseCustomBrowser: name = QStringLiteral("Browser_UseCustomBrowser"); break;
+        case Config::Browser_UseCustomProxy: name = QStringLiteral("Browser_UseCustomProxy"); break;
+        case Config::DefaultDatabaseFileName: name = QStringLiteral("DefaultDatabaseFileName"); break;
+        case Config::DropToBackgroundOnCopy: name = QStringLiteral("DropToBackgroundOnCopy"); break;
+        case Config::FaviconDownloadTimeout: name = QStringLiteral("FaviconDownloadTimeout"); break;
+        case Config::GUI_AlwaysOnTop: name = QStringLiteral("GUI_AlwaysOnTop"); break;
+        case Config::GUI_CheckForUpdates: name = QStringLiteral("GUI_CheckForUpdates"); break;
+        case Config::GUI_CheckForUpdatesIncludeBetas: name = QStringLiteral("GUI_CheckForUpdatesIncludeBetas"); break;
+        case Config::GUI_ColorPasswords: name = QStringLiteral("GUI_ColorPasswords"); break;
+        case Config::GUI_ExternalEditorPath: name = QStringLiteral("GUI_ExternalEditorPath"); break;
+        case Config::GUI_FunnyLevelCantonese: name = QStringLiteral("GUI_FunnyLevelCantonese"); break;
+        case Config::GUI_FunnyLevelEnglish: name = QStringLiteral("GUI_FunnyLevelEnglish"); break;
+        case Config::GUI_HideGroupPanel: name = QStringLiteral("GUI_HideGroupPanel"); break;
+        case Config::GUI_HideMenubar: name = QStringLiteral("GUI_HideMenubar"); break;
+        case Config::GUI_HidePasswords: name = QStringLiteral("GUI_HidePasswords"); break;
+        case Config::GUI_HidePreviewPanel: name = QStringLiteral("GUI_HidePreviewPanel"); break;
+        case Config::GUI_HideToolbar: name = QStringLiteral("GUI_HideToolbar"); break;
+        case Config::GUI_HideUsernames: name = QStringLiteral("GUI_HideUsernames"); break;
+        case Config::GUI_Language: name = QStringLiteral("GUI_Language"); break;
+        case Config::GUI_LaunchAtStartup: name = QStringLiteral("GUI_LaunchAtStartup"); break;
+        case Config::GUI_MinimizeOnClose: name = QStringLiteral("GUI_MinimizeOnClose"); break;
+        case Config::GUI_MinimizeOnStartup: name = QStringLiteral("GUI_MinimizeOnStartup"); break;
+        case Config::GUI_MinimizeToTray: name = QStringLiteral("GUI_MinimizeToTray"); break;
+        case Config::GUI_MonospaceNotes: name = QStringLiteral("GUI_MonospaceNotes"); break;
+        case Config::GUI_MovableToolbar: name = QStringLiteral("GUI_MovableToolbar"); break;
+        case Config::GUI_PersonalVocabularyCache: name = QStringLiteral("GUI_PersonalVocabularyCache"); break;
+        case Config::GUI_SearchWaitForEnter: name = QStringLiteral("GUI_SearchWaitForEnter"); break;
+        case Config::GUI_ShowDialogEmojis: name = QStringLiteral("GUI_ShowDialogEmojis"); break;
+        case Config::GUI_ShowExpiredEntriesOnDatabaseUnlock: name = QStringLiteral("GUI_ShowExpiredEntriesOnDatabaseUnlock"); break;
+        case Config::GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays: name = QStringLiteral("GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays"); break;
+        case Config::GUI_ShowTrayIcon: name = QStringLiteral("GUI_ShowTrayIcon"); break;
+        case Config::GUI_TrayIconAppearance: name = QStringLiteral("GUI_TrayIconAppearance"); break;
+        case Config::GUI_VoiceDisclosureShown: name = QStringLiteral("GUI_VoiceDisclosureShown"); break;
+        case Config::GUI_VoiceLanguage: name = QStringLiteral("GUI_VoiceLanguage"); break;
+        case Config::GlobalAutoTypeKey: name = QStringLiteral("GlobalAutoTypeKey"); break;
+        case Config::GlobalAutoTypeModifiers: name = QStringLiteral("GlobalAutoTypeModifiers"); break;
+        case Config::GlobalAutoTypeRetypeTime: name = QStringLiteral("GlobalAutoTypeRetypeTime"); break;
+        case Config::HideWindowOnCopy: name = QStringLiteral("HideWindowOnCopy"); break;
+        case Config::KeeShare_Active: name = QStringLiteral("KeeShare_Active"); break;
+        case Config::KeeShare_Foreign: name = QStringLiteral("KeeShare_Foreign"); break;
+        case Config::KeeShare_Own: name = QStringLiteral("KeeShare_Own"); break;
+        case Config::KeeShare_QuietSuccess: name = QStringLiteral("KeeShare_QuietSuccess"); break;
+        case Config::LastActiveDatabase: name = QStringLiteral("LastActiveDatabase"); break;
+        case Config::LastDatabases: name = QStringLiteral("LastDatabases"); break;
+        case Config::LastDir: name = QStringLiteral("LastDir"); break;
+        case Config::LastKeyFiles: name = QStringLiteral("LastKeyFiles"); break;
+        case Config::Messages_NoLegacyKeyFileWarning: name = QStringLiteral("Messages_NoLegacyKeyFileWarning"); break;
+        case Config::MinimizeAfterUnlock: name = QStringLiteral("MinimizeAfterUnlock"); break;
+        case Config::MinimizeOnCopy: name = QStringLiteral("MinimizeOnCopy"); break;
+        case Config::MinimizeOnOpenUrl: name = QStringLiteral("MinimizeOnOpenUrl"); break;
+        case Config::NumberOfRememberedLastDatabases: name = QStringLiteral("NumberOfRememberedLastDatabases"); break;
+        case Config::OpenPreviousDatabasesOnStartup: name = QStringLiteral("OpenPreviousDatabasesOnStartup"); break;
+        case Config::OpenURLOnDoubleClick: name = QStringLiteral("OpenURLOnDoubleClick"); break;
+        case Config::PasswordGenerator_AdditionalChars: name = QStringLiteral("PasswordGenerator_AdditionalChars"); break;
+        case Config::PasswordGenerator_AdvancedMode: name = QStringLiteral("PasswordGenerator_AdvancedMode"); break;
+        case Config::PasswordGenerator_Braces: name = QStringLiteral("PasswordGenerator_Braces"); break;
+        case Config::PasswordGenerator_Dashes: name = QStringLiteral("PasswordGenerator_Dashes"); break;
+        case Config::PasswordGenerator_EASCII: name = QStringLiteral("PasswordGenerator_EASCII"); break;
+        case Config::PasswordGenerator_EnsureEvery: name = QStringLiteral("PasswordGenerator_EnsureEvery"); break;
+        case Config::PasswordGenerator_ExcludeAlike: name = QStringLiteral("PasswordGenerator_ExcludeAlike"); break;
+        case Config::PasswordGenerator_ExcludedChars: name = QStringLiteral("PasswordGenerator_ExcludedChars"); break;
+        case Config::PasswordGenerator_Length: name = QStringLiteral("PasswordGenerator_Length"); break;
+        case Config::PasswordGenerator_Logograms: name = QStringLiteral("PasswordGenerator_Logograms"); break;
+        case Config::PasswordGenerator_LowerCase: name = QStringLiteral("PasswordGenerator_LowerCase"); break;
+        case Config::PasswordGenerator_Math: name = QStringLiteral("PasswordGenerator_Math"); break;
+        case Config::PasswordGenerator_Numbers: name = QStringLiteral("PasswordGenerator_Numbers"); break;
+        case Config::PasswordGenerator_Punctuation: name = QStringLiteral("PasswordGenerator_Punctuation"); break;
+        case Config::PasswordGenerator_Quotes: name = QStringLiteral("PasswordGenerator_Quotes"); break;
+        case Config::PasswordGenerator_SpecialChars: name = QStringLiteral("PasswordGenerator_SpecialChars"); break;
+        case Config::PasswordGenerator_Type: name = QStringLiteral("PasswordGenerator_Type"); break;
+        case Config::PasswordGenerator_UpperCase: name = QStringLiteral("PasswordGenerator_UpperCase"); break;
+        case Config::PasswordGenerator_WordCase: name = QStringLiteral("PasswordGenerator_WordCase"); break;
+        case Config::PasswordGenerator_WordCount: name = QStringLiteral("PasswordGenerator_WordCount"); break;
+        case Config::PasswordGenerator_WordList: name = QStringLiteral("PasswordGenerator_WordList"); break;
+        case Config::PasswordGenerator_WordSeparator: name = QStringLiteral("PasswordGenerator_WordSeparator"); break;
+        case Config::RememberLastDatabases: name = QStringLiteral("RememberLastDatabases"); break;
+        case Config::RememberLastKeyFiles: name = QStringLiteral("RememberLastKeyFiles"); break;
+        case Config::SSHAgent_AuthSockOverride: name = QStringLiteral("SSHAgent_AuthSockOverride"); break;
+        case Config::SSHAgent_Enabled: name = QStringLiteral("SSHAgent_Enabled"); break;
+        case Config::SSHAgent_SecurityKeyProviderOverride: name = QStringLiteral("SSHAgent_SecurityKeyProviderOverride"); break;
+        case Config::SSHAgent_UseOpenSSH: name = QStringLiteral("SSHAgent_UseOpenSSH"); break;
+        case Config::SSHAgent_UsePageant: name = QStringLiteral("SSHAgent_UsePageant"); break;
+        case Config::SearchLimitGroup: name = QStringLiteral("SearchLimitGroup"); break;
+        case Config::Security_AutoTypeAsk: name = QStringLiteral("Security_AutoTypeAsk"); break;
+        case Config::Security_AutoTypeSkipMainWindowConfirmation: name = QStringLiteral("Security_AutoTypeSkipMainWindowConfirmation"); break;
+        case Config::Security_ClearClipboard: name = QStringLiteral("Security_ClearClipboard"); break;
+        case Config::Security_ClearClipboardTimeout: name = QStringLiteral("Security_ClearClipboardTimeout"); break;
+        case Config::Security_ClearSearch: name = QStringLiteral("Security_ClearSearch"); break;
+        case Config::Security_ClearSearchTimeout: name = QStringLiteral("Security_ClearSearchTimeout"); break;
+        case Config::Security_DatabasePasswordMinimumQuality: name = QStringLiteral("Security_DatabasePasswordMinimumQuality"); break;
+        case Config::Security_EnableCopyOnDoubleClick: name = QStringLiteral("Security_EnableCopyOnDoubleClick"); break;
+        case Config::Security_HideNotes: name = QStringLiteral("Security_HideNotes"); break;
+        case Config::Security_HidePasswordPreviewPanel: name = QStringLiteral("Security_HidePasswordPreviewPanel"); break;
+        case Config::Security_HideTotpPreviewPanel: name = QStringLiteral("Security_HideTotpPreviewPanel"); break;
+        case Config::Security_IconDownloadFallback: name = QStringLiteral("Security_IconDownloadFallback"); break;
+        case Config::Security_LockDatabaseIdle: name = QStringLiteral("Security_LockDatabaseIdle"); break;
+        case Config::Security_LockDatabaseIdleSeconds: name = QStringLiteral("Security_LockDatabaseIdleSeconds"); break;
+        case Config::Security_LockDatabaseMinimize: name = QStringLiteral("Security_LockDatabaseMinimize"); break;
+        case Config::Security_LockDatabaseOnUserSwitch: name = QStringLiteral("Security_LockDatabaseOnUserSwitch"); break;
+        case Config::Security_LockDatabaseScreenLock: name = QStringLiteral("Security_LockDatabaseScreenLock"); break;
+        case Config::Security_NoConfirmMoveEntryToRecycleBin: name = QStringLiteral("Security_NoConfirmMoveEntryToRecycleBin"); break;
+        case Config::Security_PasswordEmptyPlaceholder: name = QStringLiteral("Security_PasswordEmptyPlaceholder"); break;
+        case Config::Security_PasswordsHidden: name = QStringLiteral("Security_PasswordsHidden"); break;
+        case Config::Security_QuickUnlock: name = QStringLiteral("Security_QuickUnlock"); break;
+        case Config::Security_RelockAutoType: name = QStringLiteral("Security_RelockAutoType"); break;
+        case Config::SingleInstance: name = QStringLiteral("SingleInstance"); break;
+        case Config::URLDoubleClickAction: name = QStringLiteral("URLDoubleClickAction"); break;
+        case Config::UpdateCheckMessageShown: name = QStringLiteral("UpdateCheckMessageShown"); break;
+        case Config::UseAtomicSaves: name = QStringLiteral("UseAtomicSaves"); break;
+        case Config::UseDirectWriteSaves: name = QStringLiteral("UseDirectWriteSaves"); break;
+        case Config::UseGroupIconOnEntryCreation: name = QStringLiteral("UseGroupIconOnEntryCreation"); break;
+        default: return {};
+        }
+        return QStringLiteral("settings/%1/config/%2").arg(pageId, name);
+    }
+
     void SettingsHub::addToggle(const QString& pageId,
                                 const QString& section,
                                 const QString& symbol,
@@ -453,7 +606,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = configurationRowIdentity(pageId, key);
         binding.label = label;
         binding.sub = sub;
         binding.key = key;
@@ -462,7 +615,7 @@ namespace Material
         PillKind kind = PillKind::Off;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
         // A boolean setting is a switch in the design, not an On/Off pill.
         if (auto* page = m_sheet->page(pageId)) {
             if (auto* row = page->row(binding.rowKey)) {
@@ -486,7 +639,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = configurationRowIdentity(pageId, key);
         binding.label = label;
         binding.sub = sub;
         binding.key = key;
@@ -498,7 +651,7 @@ namespace Material
         PillKind kind = PillKind::Value;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);
@@ -514,7 +667,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = configurationRowIdentity(pageId, key);
         binding.label = label;
         binding.sub = sub;
         binding.key = key;
@@ -524,7 +677,7 @@ namespace Material
         PillKind kind = PillKind::Value;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);
@@ -540,7 +693,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = configurationRowIdentity(pageId, key);
         binding.label = label;
         binding.sub = sub;
         binding.key = key;
@@ -549,7 +702,7 @@ namespace Material
         PillKind kind = PillKind::Mono;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);
@@ -564,7 +717,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = configurationRowIdentity(pageId, key);
         binding.label = label;
         binding.sub = sub;
         binding.key = key;
@@ -573,13 +726,14 @@ namespace Material
         PillKind kind = PillKind::Mono;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);
     }
 
     void SettingsHub::addCommand(const QString& pageId,
+                                 const QString& commandId,
                                  const QString& section,
                                  const QString& symbol,
                                  const QString& label,
@@ -589,7 +743,7 @@ namespace Material
     {
         Binding binding;
         binding.pageId = pageId;
-        binding.rowKey = section + QLatin1Char('/') + label;
+        binding.rowKey = QStringLiteral("settings/%1/command/%2").arg(pageId, commandId);
         binding.label = label;
         binding.sub = sub;
         binding.control = Control::Command;
@@ -599,7 +753,7 @@ namespace Material
         PillKind kind = PillKind::Action;
         QString text;
         pillFor(binding, &kind, &text);
-        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text);
+        m_sheet->addRow(pageId, section, symbol, label, sub, kind, text, binding.rowKey);
 
         m_index.insert(pageId + IndexSeparator + binding.rowKey, m_bindings.size());
         m_bindings.append(binding);
@@ -676,12 +830,16 @@ namespace Material
         if (!row) {
             return;
         }
+        row->setProperty("materialSettingsPageId", binding.pageId);
+        row->setProperty("materialConfigKey", binding.control == Control::Command ? -1 : int(binding.key));
         PillKind kind = PillKind::Off;
         QString text;
         pillFor(binding, &kind, &text);
-        row->setPill(kind, text);
+        QString provenance;
+        QString currentValue;
         if (binding.control == Control::Command) {
-            row->setProvenance(tr("Action · no stored setting"));
+            provenance = tr("Action · no stored setting");
+            currentValue = text;
         } else {
             const QVariant current = config()->get(binding.key);
             const QVariant fallback = config()->getDefault(binding.key);
@@ -690,9 +848,36 @@ namespace Material
                 const QString text = value.toString();
                 return text.isEmpty() ? QStringLiteral("(empty)") : text;
             };
-            row->setProvenance(config()->isUserSet(binding.key)
-                                   ? tr("Persisted user value: %1").arg(display(current))
-                                   : tr("Compiled default: %1").arg(display(fallback)));
+            currentValue = display(current);
+            provenance = config()->isUserSet(binding.key)
+                             ? tr("Persisted user value: %1").arg(currentValue)
+                             : tr("Compiled default: %1").arg(display(fallback));
+        }
+        row->setCurrentState(kind, text, provenance, currentValue);
+    }
+
+    void SettingsHub::migrateLegacyRowOverrides(SpecSheet* sheet)
+    {
+        if (!sheet) return;
+        QHash<QString, QStringList> aliases;
+        for (auto* row : sheet->findChildren<SpecSheetRow*>()) {
+            aliases[row->property("materialLegacyRowId").toString()].append(row->objectName());
+            if (row->switchControl()) {
+                aliases[row->property("materialLegacySwitchId").toString()].append(row->switchControl()->objectName());
+            }
+        }
+        auto* overrides = ElementOverrides::instance();
+        auto sources = aliases.keys();
+        sources.sort();
+        for (const auto& source : sources) {
+            const auto targets = aliases.value(source);
+            if (source.isEmpty() || targets.size() != 1) continue;
+            const auto value = overrides->get(source);
+            if (!value.isEmpty() && overrides->get(targets.first()).isEmpty()) {
+                // Keep the legacy entry for other surfaces and rollback. Never
+                // choose one of several same-icon rows or replace a newer edit.
+                overrides->set(targets.first(), value);
+            }
         }
     }
 
@@ -710,7 +895,9 @@ namespace Material
         if (pageId == QLatin1String("shortcuts")) {
             if (m_classic) {
                 showClassicEditor();
-                Notify::info(rowKey.section(QLatin1Char('/'), 1),
+                auto* page = m_sheet->page(pageId);
+                auto* row = page ? page->row(rowKey) : nullptr;
+                Notify::info(row ? row->accessibleName() : tr("Shortcut"),
                              tr("Key bindings are changed on the Shortcuts page, which is now open."));
             }
             return;
@@ -833,6 +1020,7 @@ namespace Material
                 tr("Full path of the editor that opens the database folder. Leave empty to use the system file manager."),
                 Config::GUI_ExternalEditorPath);
         addCommand(externalPage,
+                   QStringLiteral("open-database-folder"),
                    externalSection,
                    QStringLiteral("folder_open"),
                    tr("Open the current database folder"),
@@ -1195,6 +1383,7 @@ namespace Material
                   tr("Adds relevant decorative emoji while keeping action labels and accessible names factual."),
                   Config::GUI_ShowDialogEmojis);
         addCommand(interfacePage,
+                   QStringLiteral("load-personal-vocabulary"),
                    voice,
                    QStringLiteral("upload_file"),
                    tr("Personal vocabulary JSON"),
@@ -1224,6 +1413,7 @@ namespace Material
                        refreshAll();
                    });
         addCommand(interfacePage,
+                   QStringLiteral("clear-personal-vocabulary"),
                    voice,
                    QStringLiteral("delete_sweep"),
                    tr("Clear personal vocabulary"),
@@ -1269,6 +1459,7 @@ namespace Material
             built->setSectionNote(settingsFile, tr("Config is a plain INI file; these three actions own it."));
         }
         addCommand(page,
+                   QStringLiteral("reset-settings"),
                    settingsFile,
                    QStringLiteral("restart_alt"),
                    tr("Reset settings to default…"),
@@ -1276,6 +1467,7 @@ namespace Material
                    tr("Reset"),
                    [this] { resetSettings(); });
         addCommand(page,
+                   QStringLiteral("import-settings"),
                    settingsFile,
                    QStringLiteral("file_download"),
                    tr("Import settings…"),
@@ -1283,6 +1475,7 @@ namespace Material
                    tr("Import"),
                    [this] { importSettings(); });
         addCommand(page,
+                   QStringLiteral("export-settings"),
                    settingsFile,
                    QStringLiteral("file_upload"),
                    tr("Export settings…"),
@@ -1934,7 +2127,10 @@ namespace Material
                           label,
                           action->toolTip() == label ? QString() : action->toolTip(),
                           shortcut.isEmpty() ? PillKind::Off : PillKind::Mono,
-                          keys);
+                          keys,
+                          QStringLiteral("settings/shortcuts/action/%1")
+                              .arg(action->objectName().isEmpty() ? QStringLiteral("unidentified-%1").arg(listed)
+                                                                  : action->objectName()));
             ++listed;
         }
 
@@ -1944,7 +2140,8 @@ namespace Material
                           tr("No actions have been registered yet"),
                           tr("The window builds its action list before this page is read."),
                           PillKind::Off,
-                          tr("Empty"));
+                          tr("Empty"),
+                          QStringLiteral("settings/shortcuts/status/no-actions"));
         }
     }
 

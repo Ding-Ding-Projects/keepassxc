@@ -363,7 +363,7 @@ namespace Material
                                     continue;
                                 }
                                 sheet->setCurrentPage(QStringLiteral("interface"));
-                                if (auto* row = page->findChild<QWidget*>(QStringLiteral("specRow_upload_file"))) {
+                                if (auto* row = page->findChild<QWidget*>(QStringLiteral("specRow_settings/interface/command/load-personal-vocabulary"))) {
                                     page->ensureWidgetVisible(row, 0, 80);
                                 }
                                 break;

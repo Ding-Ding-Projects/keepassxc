@@ -8,6 +8,8 @@
 #include "gui/material/MaterialSearchBar.h"
 #include "gui/material/MaterialSearchRegistry.h"
 #include "gui/material/MaterialSpecSheet.h"
+#include "gui/material/MaterialSettingsHub.h"
+#include "gui/material/MaterialElementOverrides.h"
 #include "gui/material/MaterialSwitch.h"
 #include "gui/material/MaterialTopAppBar.h"
 
@@ -29,6 +31,7 @@
 #include <QScrollBar>
 #include <QWheelEvent>
 #include <QTest>
+#include <QSet>
 
 using namespace Material;
 
@@ -489,6 +492,115 @@ void TestMaterialShellResponsive::settingsSwitchRowsToggleAndStayInStep()
     QCOMPARE(activated.count(), 0);
     row->setPill(PillKind::Off, QStringLiteral("Off"));
     QVERIFY(!toggle->isChecked());
+}
+
+void TestMaterialShellResponsive::settingsIdentitiesIgnoreLabelsAndIcons()
+{
+    const QString first = SettingsHub::configurationRowIdentity(QStringLiteral("general"), Config::SingleInstance);
+    const QString second = SettingsHub::configurationRowIdentity(QStringLiteral("general"), Config::AutoSaveOnExit);
+    QCOMPARE(first, QStringLiteral("settings/general/config/SingleInstance"));
+    QVERIFY(first != second);
+    QVERIFY(first != SettingsHub::configurationRowIdentity(QStringLiteral("advanced"), Config::SingleInstance));
+    SpecSheetPage english(QStringLiteral("general"), QStringLiteral("General"));
+    SpecSheetPage cantonese(QStringLiteral("general"), QStringLiteral("一般"));
+    english.addRow(QStringLiteral("Startup"), QStringLiteral("settings"), QStringLiteral("One instance"), {}, PillKind::On, QStringLiteral("On"), first);
+    english.addRow(QStringLiteral("Startup"), QStringLiteral("settings"), QStringLiteral("Save on exit"), {}, PillKind::On, QStringLiteral("On"), second);
+    cantonese.addRow(QStringLiteral("啟動"), QStringLiteral("different-icon"), QStringLiteral("單一執行個體"), {}, PillKind::On, QStringLiteral("開"), first);
+    QCOMPARE(english.row(first)->objectName(), cantonese.row(first)->objectName());
+    QVERIFY(english.row(first)->objectName() != english.row(second)->objectName());
+    english.row(first)->setSwitch(true);
+    english.row(second)->setSwitch(true);
+    QVERIFY(english.row(first)->switchControl()->objectName() != english.row(second)->switchControl()->objectName());
+}
+
+void TestMaterialShellResponsive::settingsCurrentValueSearchUpdatesAtomically()
+{
+    SpecSheetPage page(QStringLiteral("search-test"), QStringLiteral("Search test"));
+    const QString identity = QStringLiteral("settings/search-test/config/Example");
+    page.addRow(QStringLiteral("Section"), QStringLiteral("settings"), QStringLiteral("Example"), QStringLiteral("Description"), PillKind::Value, QStringLiteral("OldValueUnique"), identity);
+    auto* row = page.row(identity);
+    QVERIFY(row);
+    row->setCurrentState(PillKind::Value, QStringLiteral("OldValueUnique"), QStringLiteral("Persisted user value: OldValueUnique"), QStringLiteral("OldValueUnique"));
+    page.setSearchText(QStringLiteral("OldValueUnique"));
+    QVERIFY(!row->isHidden());
+    QSignalSpy published(row, &SpecSheetRow::searchMetadataChanged);
+    row->setCurrentState(PillKind::Value, QStringLiteral("NewValueUnique"), QStringLiteral("Persisted user value: NewValueUnique"), QStringLiteral("NewValueUnique"));
+    QCOMPARE(published.count(), 1);
+    QVERIFY(row->isHidden());
+    QVERIFY(!row->searchableText().contains(QStringLiteral("OldValueUnique")));
+    QCOMPARE(row->pill()->text(), QStringLiteral("NewValueUnique"));
+    QCOMPARE(row->currentValue(), QStringLiteral("NewValueUnique"));
+    page.setSearchText(QStringLiteral("newvalueunique"));
+    QVERIFY(!row->isHidden());
+    page.searchBar()->setRegexEnabled(true);
+    page.setSearchText(QStringLiteral("\\bNewValueUnique\\b"));
+    QVERIFY(!row->isHidden());
+    row->setCurrentState(PillKind::Value, QStringLiteral("ThirdValueUnique"), QStringLiteral("Persisted user value: ThirdValueUnique"), QStringLiteral("ThirdValueUnique"));
+    QVERIFY(row->isHidden());
+    page.setSearchText(QStringLiteral("\\bThirdValueUnique\\b"));
+    QVERIFY(!row->isHidden());
+}
+
+void TestMaterialShellResponsive::settingsLegacyOverridesMigrateWithoutConflation()
+{
+    SpecSheet sheet;
+    sheet.addPage(QStringLiteral("legacy-test"), QStringLiteral("settings"), QStringLiteral("Legacy test"));
+    const QString unique = QStringLiteral("settings/legacy-test/command/unique");
+    const QString ambiguousA = QStringLiteral("settings/legacy-test/command/a");
+    const QString ambiguousB = QStringLiteral("settings/legacy-test/command/b");
+    sheet.addRow(QStringLiteral("legacy-test"), QStringLiteral("Section"), QStringLiteral("test_unique_icon"), QStringLiteral("Unique"), {}, PillKind::Action, QStringLiteral("Run"), unique);
+    sheet.addRow(QStringLiteral("legacy-test"), QStringLiteral("Section"), QStringLiteral("test_shared_icon"), QStringLiteral("A"), {}, PillKind::Action, QStringLiteral("Run"), ambiguousA);
+    sheet.addRow(QStringLiteral("legacy-test"), QStringLiteral("Section"), QStringLiteral("test_shared_icon"), QStringLiteral("B"), {}, PillKind::Action, QStringLiteral("Run"), ambiguousB);
+    auto* overrides = ElementOverrides::instance();
+    ElementOverrides::Override legacy;
+    legacy.radius = 19;
+    overrides->set(QStringLiteral("specRow_test_unique_icon"), legacy);
+    overrides->set(QStringLiteral("specRow_test_shared_icon"), legacy);
+    SettingsHub::migrateLegacyRowOverrides(&sheet);
+    auto* page = sheet.page(QStringLiteral("legacy-test"));
+    QCOMPARE(overrides->get(page->row(unique)->objectName()).radius.value_or(-1), 19);
+    QVERIFY(overrides->get(page->row(ambiguousA)->objectName()).isEmpty());
+    QVERIFY(overrides->get(page->row(ambiguousB)->objectName()).isEmpty());
+    QVERIFY(!overrides->get(QStringLiteral("specRow_test_shared_icon")).isEmpty());
+    ElementOverrides::Override newer;
+    newer.radius = 23;
+    overrides->set(page->row(unique)->objectName(), newer);
+    SettingsHub::migrateLegacyRowOverrides(&sheet);
+    QCOMPARE(overrides->get(page->row(unique)->objectName()).radius.value_or(-1), 23);
+    for (const auto& key : {QStringLiteral("specRow_test_unique_icon"), QStringLiteral("specRow_test_shared_icon"), page->row(unique)->objectName()}) overrides->reset(key);
+}
+
+void TestMaterialShellResponsive::settingsHubRefreshesUnshortenedValues()
+{
+    const auto original = config()->get(Config::GUI_ExternalEditorPath);
+    const QString previous = QStringLiteral("/synthetic/PreviousUniqueEditorValue/with/a/long/path/ending/previous");
+    const QString current = QStringLiteral("/synthetic/CurrentUniqueEditorValue/with/a/long/path/ending/current");
+    config()->set(Config::GUI_ExternalEditorPath, previous);
+    {
+        SettingsHub hub(SettingsHub::Overview::Hosted, nullptr);
+        QSet<QString> identities;
+        for (auto* item : hub.findChildren<SpecSheetRow*>()) {
+            QVERIFY(item->key().startsWith(QStringLiteral("settings/")));
+            QVERIFY(!identities.contains(item->objectName()));
+            identities.insert(item->objectName());
+        }
+        auto* page = hub.specSheet()->page(QStringLiteral("external-tools"));
+        QVERIFY(page);
+        auto* row = page->row(SettingsHub::configurationRowIdentity(QStringLiteral("external-tools"), Config::GUI_ExternalEditorPath));
+        QVERIFY(row);
+        page->setSearchText(QStringLiteral("PreviousUniqueEditorValue"));
+        QVERIFY(!row->isHidden());
+        config()->set(Config::GUI_ExternalEditorPath, current);
+        QVERIFY(row->isHidden());
+        QVERIFY(!row->searchableText().contains(QStringLiteral("PreviousUniqueEditorValue")));
+        QCOMPARE(row->currentValue(), current);
+        page->setSearchText(QStringLiteral("CurrentUniqueEditorValue"));
+        QVERIFY(!row->isHidden());
+        page->searchBar()->setRegexEnabled(true);
+        page->setSearchText(QStringLiteral("CurrentUniqueEditorValue.*ending/current"));
+        QVERIFY(!row->isHidden());
+    }
+    config()->set(Config::GUI_ExternalEditorPath, original);
 }
 
 int main(int argc, char** argv)

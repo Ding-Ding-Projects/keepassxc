@@ -63,7 +63,7 @@ namespace Material
                      QWidget* parent = nullptr);
         ~SpecSheetRow() override;
 
-        /** Identifier of this row within its page, "<section>/<label>". */
+        /** Explicit stable identity when supplied, otherwise the legacy section/label lookup key. */
         QString key() const;
 
         void setPill(PillKind kind, const QString& text);
@@ -75,6 +75,11 @@ namespace Material
         void setSwitch(bool on);
         Switch* switchControl() const;
         void setProvenance(const QString& text);
+        /** Publish display, provenance and full current-value search text as one update. */
+        void setCurrentState(PillKind kind, const QString& text, const QString& provenance, const QString& currentValue);
+        void setSearchContext(const QString& section);
+        QString currentValue() const;
+        QString searchableText() const;
         QString provenance() const;
         PillLabel* pill() const;
 
@@ -83,6 +88,7 @@ namespace Material
 
     signals:
         void activated(const QString& key);
+        void searchMetadataChanged();
 
     protected:
         void paintEvent(QPaintEvent* event) override;
@@ -97,6 +103,9 @@ namespace Material
         QString m_label;
         QString m_sub;
         QString m_provenance;
+        QString m_searchSection;
+        QString m_currentValue;
+        void refreshSearchMetadata();
         PillLabel* m_pill = nullptr;
         Switch* m_switch = nullptr;
         bool m_hovered = false;
@@ -106,8 +115,8 @@ namespace Material
      * A scrolling column of rounded-28 outlined section cards.
      *
      * Sections are created on demand by addRow(): the first row naming a
-     * section builds its card, later rows append to it. Row keys are
-     * "<section>/<label>", which is what rowActivated() reports.
+     * section builds its card, later rows append to it. Explicit stable keys
+     * are reported by rowActivated(); omitted keys retain section/label lookup.
      */
     class SpecSheetPage : public QScrollArea
     {
@@ -125,7 +134,8 @@ namespace Material
                     const QString& label,
                     const QString& sub,
                     PillKind kind,
-                    const QString& controlText);
+                    const QString& controlText,
+                    const QString& stableKey = {});
 
         /**
          * The design's line under the page title. Empty restores the default,
@@ -219,7 +229,8 @@ namespace Material
                     const QString& label,
                     const QString& sub,
                     PillKind kind,
-                    const QString& controlText);
+                    const QString& controlText,
+                    const QString& stableKey = {});
 
         /** How many pages the sidebar carries, of either kind. */
         int pageCount() const;

@@ -91,6 +91,10 @@ namespace Material
 
         /** The search bar of the surface on screen, or nullptr for the editor. */
         SearchBar* activeSearchBar() const;
+        /** Stable surface + symbolic Config-key identity, independent of labels and enum ordinals. */
+        static QString configurationRowIdentity(const QString& pageId, Config::ConfigKey key);
+        /** Copy only unambiguous legacy aliases; preserve originals and existing stable overrides. */
+        static void migrateLegacyRowOverrides(SpecSheet* sheet);
 
     signals:
         /** The overview's interface font row was activated. */
@@ -183,6 +187,7 @@ namespace Material
                         Config::ConfigKey key);
         /** A row that runs @p command instead of editing a value. */
         void addCommand(const QString& pageId,
+                        const QString& commandId,
                         const QString& section,
                         const QString& symbol,
                         const QString& label,

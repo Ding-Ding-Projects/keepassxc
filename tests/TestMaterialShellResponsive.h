@@ -19,6 +19,10 @@ private slots:
     void fallbackSearchesAreIndependentAndRestoreFocus();
     void settingsPageScrollsFromContentAndContainsScrollbar();
     void settingsSwitchRowsToggleAndStayInStep();
+    void settingsIdentitiesIgnoreLabelsAndIcons();
+    void settingsCurrentValueSearchUpdatesAtomically();
+    void settingsLegacyOverridesMigrateWithoutConflation();
+    void settingsHubRefreshesUnshortenedValues();
 };
 
 #endif // KEEPASSXC_TESTMATERIALSHELLRESPONSIVE_H

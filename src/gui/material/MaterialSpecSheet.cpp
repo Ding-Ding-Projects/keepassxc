@@ -52,7 +52,7 @@ namespace Material
         constexpr int PageMaxWidth = 1120;
         constexpr int NoteMaxWidth = 820;
 
-        /** Dynamic property carrying the lower-cased text a row is searched by. */
+        /** Full live search text, preserving case for the actual regex dialect. */
         const char* const HaystackProperty = "materialHaystack";
 
         /** A 12px regular line; the type scale only offers 12px in medium weight. */
@@ -115,7 +115,9 @@ namespace Material
         setAccessibleName(m_label);
         // A stable, untranslated name so a capture route or a test can find
         // the row whatever language mode is active.
-        setObjectName(QStringLiteral("specRow_") + m_symbol);
+        setObjectName(QStringLiteral("specRow_") + m_key);
+        setProperty("materialLegacyRowId", QStringLiteral("specRow_") + m_symbol);
+        m_currentValue = controlText;
         // Keep the press here so the release is delivered to this row and not
         // swallowed by the section card underneath.
         setAttribute(Qt::WA_NoMousePropagation, true);
@@ -150,13 +152,15 @@ namespace Material
         }
         updateGeometry();
         update();
+        m_currentValue = text;
+        refreshSearchMetadata();
     }
 
     void SpecSheetRow::setSwitch(bool on)
     {
         if (!m_switch) {
             m_switch = new Switch(this);
-            m_switch->setObjectName(QStringLiteral("specSwitch_") + m_key);
+            m_switch->setObjectName(QStringLiteral("specSwitch_") + objectName().mid(QStringLiteral("specRow_").size()));
             m_switch->setAccessibleName(m_label);
             m_switch->setFocusPolicy(Qt::TabFocus);
             // The switch answers for the row: its click is the row's activation
@@ -186,9 +190,41 @@ namespace Material
         setMinimumHeight(m_provenance.isEmpty() ? RowHeight : 72);
         updateGeometry();
         update();
+        refreshSearchMetadata();
     }
 
     QString SpecSheetRow::provenance() const { return m_provenance; }
+
+    void SpecSheetRow::setCurrentState(PillKind kind, const QString& text, const QString& provenance, const QString& currentValue)
+    {
+        const QString previous = searchableText();
+        {
+            const QSignalBlocker blocker(this);
+            setPill(kind, text);
+            setProvenance(provenance);
+            m_currentValue = currentValue;
+            refreshSearchMetadata();
+        }
+        if (searchableText() != previous) emit searchMetadataChanged();
+    }
+
+    void SpecSheetRow::setSearchContext(const QString& section)
+    {
+        m_searchSection = section;
+        refreshSearchMetadata();
+    }
+
+    QString SpecSheetRow::currentValue() const { return m_currentValue; }
+    QString SpecSheetRow::searchableText() const { return property(HaystackProperty).toString(); }
+
+    void SpecSheetRow::refreshSearchMetadata()
+    {
+        const QString text = QStringLiteral("%1 %2 %3 %4 %5 %6")
+                                 .arg(m_searchSection, m_label, m_sub, m_pill->text(), m_currentValue, m_provenance);
+        if (searchableText() == text) return;
+        setProperty(HaystackProperty, text);
+        emit searchMetadataChanged();
+    }
 
     PillLabel* SpecSheetRow::pill() const
     {
@@ -400,7 +436,7 @@ namespace Material
             int visible = 0;
             for (auto* row : rows) {
                 const QString haystack = row->property(HaystackProperty).toString();
-                const bool match = needle.isEmpty() || (!regex && haystack.contains(needle))
+                const bool match = needle.isEmpty() || (!regex && haystack.contains(raw, Qt::CaseInsensitive))
                                    || (regex && valid && !runBounded(raw, optionsForFlags(m_search->regexFlags()), haystack).matches.isEmpty());
                 row->setVisible(match);
                 visible += match ? 1 : 0;
@@ -496,20 +532,25 @@ namespace Material
                                const QString& label,
                                const QString& sub,
                                PillKind kind,
-                               const QString& controlText)
+                               const QString& controlText,
+                               const QString& stableKey)
     {
         Card* card = ensureSection(section);
-        const QString key = section + QLatin1Char('/') + label;
+        const QString legacyKey = section + QLatin1Char('/') + label;
+        const QString key = stableKey.isEmpty() ? legacyKey : stableKey;
+        if (m_rows.contains(key)) return;
 
         auto* row = new SpecSheetRow(key, symbol, label, sub, kind, controlText, card);
-        row->setProperty(HaystackProperty,
-                         QStringLiteral("%1 %2 %3 %4").arg(section, label, sub, controlText).toLower());
+        if (stableKey.isEmpty()) row->setObjectName(QStringLiteral("specRow_%1/%2").arg(m_id, key));
+        row->setProperty("materialLegacySwitchId", QStringLiteral("specSwitch_") + legacyKey);
+        row->setSearchContext(section);
         card->contentLayout()->addWidget(row);
         watchWheelEvents(card);
 
         m_rows.insert(key, row);
         m_rowOrder.append(row);
         connect(row, &SpecSheetRow::activated, this, &SpecSheetPage::rowActivated);
+        connect(row, &SpecSheetRow::searchMetadataChanged, this, [this] { applyFilter(m_search->text()); });
     }
 
     void SpecSheetPage::setNote(const QString& note)
@@ -727,10 +768,11 @@ namespace Material
                            const QString& label,
                            const QString& sub,
                            PillKind kind,
-                           const QString& controlText)
+                           const QString& controlText,
+                           const QString& stableKey)
     {
         if (auto* target = page(pageId)) {
-            target->addRow(section, symbol, label, sub, kind, controlText);
+            target->addRow(section, symbol, label, sub, kind, controlText, stableKey);
         }
     }
 
