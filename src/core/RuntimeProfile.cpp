@@ -76,6 +76,15 @@ bool RuntimeProfile::initialize(const QStringList& arguments, QString* error)
     if (QDir(normalized).isRoot() || hasSymbolicAncestor(normalized)) {
         return fail(error, QStringLiteral("The verification profile must not be a filesystem root or symbolic link."));
     }
+    // Validate the actual settings files before any profile marker or settings
+    // operation. A safe directory does not make a linked child file safe.
+    for (const auto& relative : {"config/keepassxc.ini", "cache/keepassxc.ini"}) {
+        const QString path = QDir(normalized).filePath(QString::fromLatin1(relative));
+        const QFileInfo settings(path);
+        if (hasSymbolicAncestor(path) || (settings.exists() && !settings.isFile())) {
+            return fail(error, QStringLiteral("Verification settings files must be regular, unlinked files inside the profile."));
+        }
+    }
     if (!profileRoot.isEmpty()) {
         return normalized == profileRoot
                    ? true

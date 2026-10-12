@@ -26,6 +26,9 @@
 #endif
 #include <QTemporaryDir>
 #include <QTest>
+#ifdef Q_OS_WIN
+#include <windows.h>
+#endif
 
 class TestRuntimeProfile : public QObject
 {
@@ -34,6 +37,7 @@ private slots:
     void normalIdentity();
     void invalidDirectories();
     void isolatedRoots();
+    void linkedSettingsFiles();
 #ifdef KPXC_FEATURE_BROWSER
     void proxyInvalidProfile();
 #endif
@@ -216,6 +220,53 @@ void TestRuntimeProfile::isolatedRoots()
         QCOMPARE(child.exitCode(), 0);
         QVERIFY(output.open(QIODevice::ReadOnly));
         QCOMPARE(output.readAll(), identifier);
+    }
+}
+
+void TestRuntimeProfile::linkedSettingsFiles()
+{
+    QTemporaryDir temporary;
+    const QString sentinelPath = temporary.filePath(QStringLiteral("outside.ini"));
+    const QByteArray sentinelBytes("[General]\nUntouched=synthetic-outside-sentinel\n");
+    QFile sentinel(sentinelPath);
+    QVERIFY(sentinel.open(QIODevice::WriteOnly));
+    QCOMPARE(sentinel.write(sentinelBytes), qint64(sentinelBytes.size()));
+    sentinel.close();
+
+    for (const auto& relative : {QStringLiteral("config/keepassxc.ini"), QStringLiteral("cache/keepassxc.ini")}) {
+        const QString root = temporary.filePath(relative.startsWith(QStringLiteral("config"))
+                                                   ? QStringLiteral("config-profile") : QStringLiteral("cache-profile"));
+        const QString settingsPath = QDir(root).filePath(relative);
+        QVERIFY(QDir().mkpath(QFileInfo(settingsPath).absolutePath()));
+        QFile marker(QDir(root).filePath(QStringLiteral(".keepassxc-verification-profile")));
+        const QByteArray markerBytes("KeePassXC synthetic verification profile\n");
+        QVERIFY(marker.open(QIODevice::WriteOnly));
+        QCOMPARE(marker.write(markerBytes), qint64(markerBytes.size()));
+        marker.close();
+#ifdef Q_OS_WIN
+        const bool linked = CreateSymbolicLinkW(reinterpret_cast<const wchar_t*>(settingsPath.utf16()),
+                                               reinterpret_cast<const wchar_t*>(sentinelPath.utf16()),
+                                               SYMBOLIC_LINK_FLAG_ALLOW_UNPRIVILEGED_CREATE);
+        if (!linked) QSKIP("Native symbolic-file-link creation is unavailable on this Windows host.");
+#else
+        QVERIFY(QFile::link(sentinelPath, settingsPath));
+#endif
+        QString error;
+        QVERIFY(!RuntimeProfile::initialize({QStringLiteral("test"), QStringLiteral("--verification-profile"), root}, &error));
+        QVERIFY(error.contains(QStringLiteral("settings files")));
+        QVERIFY(!RuntimeProfile::isActive());
+        QVERIFY(sentinel.open(QIODevice::ReadOnly));
+        QCOMPARE(sentinel.readAll(), sentinelBytes);
+        sentinel.close();
+        QVERIFY(marker.open(QIODevice::ReadOnly));
+        QCOMPARE(marker.readAll(), markerBytes);
+        marker.close();
+        QVERIFY(QFile::remove(settingsPath));
+        // An existing directory at the exact INI path must also be rejected.
+        QVERIFY(QDir().mkpath(settingsPath));
+        QVERIFY(!RuntimeProfile::initialize({QStringLiteral("test"), QStringLiteral("--verification-profile"), root}, &error));
+        QVERIFY(error.contains(QStringLiteral("settings files")));
+        QVERIFY(!RuntimeProfile::isActive());
     }
 }
 
