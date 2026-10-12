@@ -95,9 +95,9 @@ QString FileDialog::getSaveFileName(QWidget* parent,
     if (!m_nextFileName.isEmpty()) {
         const QString result = m_nextFileName;
         m_nextFileName.clear();
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     } else {
-        const auto& workingDir = dir.isEmpty() ? getLastDir("default") : dir;
+        const auto workingDir = RuntimeProfile::isActive() ? RuntimeProfile::root() : (dir.isEmpty() ? getLastDir("default") : dir);
         const auto result = QDir::toNativeSeparators(
             QFileDialog::getSaveFileName(parent, caption, workingDir, filter, selectedFilter, options));
 
@@ -107,7 +107,7 @@ QString FileDialog::getSaveFileName(QWidget* parent,
             parent->activateWindow();
         }
 #endif
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     }
 }
 
@@ -119,9 +119,9 @@ QString FileDialog::getExistingDirectory(QWidget* parent,
     if (!m_nextDirName.isEmpty()) {
         const QString result = m_nextDirName;
         m_nextDirName.clear();
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     } else {
-        const auto& workingDir = dir.isEmpty() ? getLastDir("default") : dir;
+        const auto workingDir = RuntimeProfile::isActive() ? RuntimeProfile::root() : (dir.isEmpty() ? getLastDir("default") : dir);
         const auto result =
             QDir::toNativeSeparators(QFileDialog::getExistingDirectory(parent, caption, workingDir, options));
 
@@ -131,7 +131,7 @@ QString FileDialog::getExistingDirectory(QWidget* parent,
             parent->activateWindow();
         }
 #endif
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     }
 }
 

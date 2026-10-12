@@ -17,6 +17,7 @@
  */
 
 #include "NativeMessagingProxy.h"
+#include "core/RuntimeProfile.h"
 #include <QCoreApplication>
 
 #include <iostream>
@@ -72,6 +73,13 @@ BOOL WINAPI ConsoleHandler(DWORD dwType)
 
 int main(int argc, char* argv[])
 {
+    QStringList arguments;
+    for (int i = 0; i < argc; ++i) arguments.append(QString::fromLocal8Bit(argv[i]));
+    QString error;
+    if (!RuntimeProfile::initialize(arguments, &error)) {
+        std::cerr << error.toStdString() << std::endl;
+        return EXIT_FAILURE;
+    }
     QCoreApplication a(argc, argv);
 #ifndef Q_OS_WIN
     catchUnixSignals({SIGQUIT, SIGINT, SIGTERM, SIGHUP});

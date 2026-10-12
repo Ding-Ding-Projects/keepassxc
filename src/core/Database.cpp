@@ -269,6 +269,12 @@ bool Database::save(SaveAction action, const QString& backupFilePath, QString* e
  */
 bool Database::saveAs(const QString& filePath, SaveAction action, const QString& backupFilePath, QString* error)
 {
+    if (RuntimeProfile::isActive()
+        && (!RuntimeProfile::contains(filePath)
+            || (!backupFilePath.isEmpty() && !RuntimeProfile::contains(backupFilePath)))) {
+        if (error) *error = tr("Verification database and backup destinations must reside inside the verification profile.");
+        return false;
+    }
     // Disallow overlapping save operations
     if (isSaving()) {
         if (error) {
@@ -595,6 +601,8 @@ void Database::releaseData()
  */
 bool Database::backupDatabase(const QString& filePath, const QString& destinationFilePath)
 {
+    if (RuntimeProfile::isActive()
+        && (!RuntimeProfile::contains(filePath) || !RuntimeProfile::contains(destinationFilePath))) return false;
     // Ensure that the path to write to actually exists
     auto parentDirectory = QFileInfo(destinationFilePath).absoluteDir();
     if (!parentDirectory.exists()) {
@@ -619,6 +627,8 @@ bool Database::backupDatabase(const QString& filePath, const QString& destinatio
  */
 bool Database::restoreDatabase(const QString& filePath, const QString& fromBackupFilePath)
 {
+    if (RuntimeProfile::isActive()
+        && (!RuntimeProfile::contains(filePath) || !RuntimeProfile::contains(fromBackupFilePath))) return false;
     auto perms = QFile::permissions(filePath);
     // Only try to restore if the backup file actually exists
     if (QFile::exists(fromBackupFilePath)) {

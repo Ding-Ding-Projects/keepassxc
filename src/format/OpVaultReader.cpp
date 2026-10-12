@@ -16,6 +16,7 @@
  */
 
 #include "OpVaultReader.h"
+#include "core/RuntimeProfile.h"
 #include "OpData01.h"
 
 #include "core/Group.h"
@@ -38,6 +39,10 @@ OpVaultReader::~OpVaultReader() = default;
 
 QSharedPointer<Database> OpVaultReader::convert(QDir& opdataDir, const QString& password)
 {
+    if (RuntimeProfile::isActive() && !RuntimeProfile::contains(opdataDir.absolutePath())) {
+        m_error = tr("Verification vault imports must reside inside the verification profile.");
+        return {};
+    }
     if (!opdataDir.exists()) {
         m_error = tr("Directory .opvault must exist");
         return {};
@@ -266,6 +271,10 @@ bool OpVaultReader::processFolderJson(QJsonObject& foldersJson, Group* rootGroup
  */
 QJsonObject OpVaultReader::readAndAssertJsonFile(QFile& file, const QString& stripLeading, const QString& stripTrailing)
 {
+    if (RuntimeProfile::isActive() && !RuntimeProfile::contains(file.fileName())) {
+        m_error = tr("Verification vault import files must reside inside the verification profile.");
+        return {};
+    }
     QByteArray filePayload;
     const QFileInfo& fileInfo = QFileInfo(file);
     auto absFilePath = fileInfo.absoluteFilePath();

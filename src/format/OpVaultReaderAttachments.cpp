@@ -17,6 +17,7 @@
 
 #include "OpData01.h"
 #include "OpVaultReader.h"
+#include "core/RuntimeProfile.h"
 
 #include "core/Entry.h"
 
@@ -36,6 +37,10 @@ bool OpVaultReader::readAttachment(const QString& filePath,
                                    QJsonObject& metadata,
                                    QByteArray& payload)
 {
+    if (RuntimeProfile::isActive() && !RuntimeProfile::contains(filePath)) {
+        m_error = tr("Verification vault attachments must reside inside the verification profile.");
+        return false;
+    }
     QFile file(filePath);
     if (!file.open(QIODevice::ReadOnly)) {
         qCritical() << QString("Unable to open \"%s\" for reading").arg(file.fileName());
