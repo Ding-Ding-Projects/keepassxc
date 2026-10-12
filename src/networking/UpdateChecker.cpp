@@ -34,6 +34,7 @@
 #include <QFile>
 #include <QSaveFile>
 #include <QStandardPaths>
+#include "core/RuntimeProfile.h"
 #include <QStorageInfo>
 #include <QSet>
 #include <QXmlStreamReader>
@@ -84,6 +85,10 @@ UpdateChecker::~UpdateChecker()
 
 void UpdateChecker::checkForUpdates(bool manuallyRequested)
 {
+    if (RuntimeProfile::isActive()) {
+        setState(State::Disabled);
+        return;
+    }
     // A manifest query cannot safely replace an active package transfer or
     // updater process. Keep the active operation and its state authoritative.
     if (m_reply || m_downloadReply || m_applyProcess || !transitionAllowed(m_state, State::Checking)) {
@@ -110,6 +115,7 @@ void UpdateChecker::checkForUpdates(bool manuallyRequested)
 
 void UpdateChecker::beginManifestRequest(const QUrl& url, bool prereleaseIndex)
 {
+    if (RuntimeProfile::isActive()) return;
     m_fetchingPrereleaseIndex = prereleaseIndex;
     m_bytesReceived.clear();
     m_redirectRejected = false;
@@ -296,6 +302,10 @@ void UpdateChecker::fetchFinished()
 
 void UpdateChecker::downloadAvailableUpdate()
 {
+    if (RuntimeProfile::isActive()) {
+        setState(State::Disabled);
+        return;
+    }
     if (m_state != State::Available || m_downloadReply) {
         return;
     }
@@ -304,7 +314,7 @@ void UpdateChecker::downloadAvailableUpdate()
         setState(State::Failed, Failure::MalformedManifest);
         return;
     }
-    const QString updateDirectory = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+    const QString updateDirectory = RuntimeProfile::location(QStandardPaths::AppLocalDataLocation)
                                     + QStringLiteral("/updates");
     if (!QDir().mkpath(updateDirectory)) {
         setState(State::Failed, Failure::InsufficientStorage);
@@ -476,6 +486,10 @@ void UpdateChecker::failCheck(Failure failure)
 
 void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)
 {
+    if (RuntimeProfile::isActive()) {
+        setState(State::Disabled);
+        return;
+    }
     if (m_state != State::Verifying || m_applyProcess) {
         return;
     }
@@ -496,7 +510,7 @@ void UpdateChecker::applyVerifiedUpdate(const QString& packagePath)
         return;
     }
 
-    const QString feedPath = QStandardPaths::writableLocation(QStandardPaths::AppLocalDataLocation)
+    const QString feedPath = RuntimeProfile::location(QStandardPaths::AppLocalDataLocation)
                              + QStringLiteral("/updates/verified-feed-")
                              + QUuid::createUuid().toString(QUuid::WithoutBraces);
     QDir feed;
@@ -579,6 +593,7 @@ void UpdateChecker::deferUpdate()
 
 bool UpdateChecker::canRestartThroughSquirrel() const
 {
+    if (RuntimeProfile::isActive()) return false;
     if (m_state != State::ReadyToRestart && m_state != State::Deferred) {
         return false;
     }
@@ -590,6 +605,7 @@ bool UpdateChecker::canRestartThroughSquirrel() const
 
 bool UpdateChecker::launchUpdatedVersion()
 {
+    if (RuntimeProfile::isActive()) return false;
     if (!canRestartThroughSquirrel()) {
         setState(State::Failed, Failure::RestartFailed);
         return false;
@@ -618,6 +634,8 @@ bool UpdateChecker::restartCommand(const QString& applicationDirectory,
     arguments.clear();
     workingDirectory.clear();
 
+    if (RuntimeProfile::isActive()) return false;
+
     const QFileInfo applicationDirectoryInfo(QDir::cleanPath(applicationDirectory));
     static const QRegularExpression appDirectoryPattern(
         QStringLiteral("^app-\\d+\\.\\d+\\.\\d+(?:[-+][0-9A-Za-z.-]+)?$"));
@@ -643,6 +661,7 @@ bool UpdateChecker::launchRestartCommand(const QString& program,
                                          const QStringList& arguments,
                                          const QString& workingDirectory)
 {
+    if (RuntimeProfile::isActive()) return false;
     return m_restartLauncher ? m_restartLauncher(program, arguments, workingDirectory)
                              : QProcess::startDetached(program, arguments, workingDirectory);
 }
@@ -686,6 +705,7 @@ void UpdateChecker::setState(State state, Failure failure)
 
 bool UpdateChecker::transitionAllowed(State from, State to)
 {
+    if (to == State::Disabled && RuntimeProfile::isActive()) return true;
     if (to == State::Failed) return true;
     switch (from) {
     case State::Idle: case State::NoUpdate: case State::Failed: return to == State::Checking;

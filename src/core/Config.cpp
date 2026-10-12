@@ -18,6 +18,7 @@
 
 #include "Config.h"
 #include "Global.h"
+#include "RuntimeProfile.h"
 
 #include <QCoreApplication>
 #include <QDir>
@@ -205,9 +206,7 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::Browser_UpdateBinaryPath, {QS("Browser/UpdateBinaryPath"), Roaming, true}},
     {Config::Browser_AllowGetDatabaseEntriesRequest, {QS("Browser/AllowGetDatabaseEntriesRequest"), Roaming, false}},
     {Config::Browser_AllowExpiredCredentials, {QS("Browser/AllowExpiredCredentials"), Roaming, false}},
-    {Config::Browser_AlwaysAllowAccess, {QS("Browser/AlwaysAllowAccess"), Roaming, false}},
     {Config::Browser_AlwaysAllowUpdate, {QS("Browser/AlwaysAllowUpdate"), Roaming, false}},
-    {Config::Browser_HttpAuthPermission, {QS("Browser/HttpAuthPermission"), Roaming, false}},
     {Config::Browser_SearchInAllDatabases, {QS("Browser/SearchInAllDatabases"), Roaming, false}},
     {Config::Browser_SupportKphFields, {QS("Browser/SupportKphFields"), Roaming, true}},
     {Config::Browser_NoMigrationPrompt, {QS("Browser/NoMigrationPrompt"), Roaming, false}},
@@ -462,6 +461,15 @@ static const QHash<QString, Config::ConfigKey> deprecationMap = {
  */
 void Config::migrate()
 {
+    // These preferences no longer affect browser lookup. Drop them even for current-version configurations.
+    for (const auto& key : {QStringLiteral("Browser/AlwaysAllowAccess"),
+                            QStringLiteral("Browser/HttpAuthPermission")}) {
+        m_settings->remove(key);
+        if (m_localSettings) {
+            m_localSettings->remove(key);
+        }
+    }
+
     int previousVersion = m_settings->value("ConfigVersion").toInt();
     if (CONFIG_VERSION <= previousVersion) {
         return;
@@ -551,8 +559,13 @@ Config::Config(QObject* parent)
 
 Config::~Config() = default;
 
-void Config::init(const QString& configFileName, const QString& localConfigFileName)
+void Config::init(const QString& requestedConfigFileName, const QString& requestedLocalConfigFileName)
 {
+    // Every entry point must use the explicit verification profile, including
+    // callers that construct Config before command-line processing finishes.
+    const auto profileFiles = RuntimeProfile::isActive() ? defaultConfigFiles() : QPair<QString, QString>();
+    const auto configFileName = RuntimeProfile::isActive() ? profileFiles.first : requestedConfigFileName;
+    const auto localConfigFileName = RuntimeProfile::isActive() ? profileFiles.second : requestedLocalConfigFileName;
     // Upgrade from previous KeePassXC version which stores its config
     // in AppData/Local on Windows instead of AppData/Roaming.
     // Move file to correct location before continuing.
@@ -567,7 +580,7 @@ void Config::init(const QString& configFileName, const QString& localConfigFileN
     // Upgrade from previous KeePassXC version which stores its config
     // in ~/.cache on Linux instead of ~/.local/state.
     // Move file to correct location before continuing.
-    if (!QFile::exists(localConfigFileName)) {
+    if (!RuntimeProfile::isActive() && !QFile::exists(localConfigFileName)) {
         QString oldLocalConfigPath =
             QStandardPaths::writableLocation(QStandardPaths::GenericCacheLocation) + "/keepassxc";
         QString suffix;
@@ -596,6 +609,10 @@ void Config::init(const QString& configFileName, const QString& localConfigFileN
 
 QPair<QString, QString> Config::defaultConfigFiles()
 {
+    if (RuntimeProfile::isActive()) {
+        return {QDir(RuntimeProfile::location(QStandardPaths::ConfigLocation)).filePath(QStringLiteral("keepassxc.ini")),
+                QDir(RuntimeProfile::location(QStandardPaths::CacheLocation)).filePath(QStringLiteral("keepassxc.ini"))};
+    }
     // Check if we are running in portable mode, if so store the config files local to the app
     if (isPortable()) {
         return {portableConfigDir().append("/keepassxc.ini"), portableConfigDir().append("/keepassxc_local.ini")};

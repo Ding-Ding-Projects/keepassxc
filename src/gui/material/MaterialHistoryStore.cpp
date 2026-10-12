@@ -24,6 +24,7 @@
 #include <QProcess>
 #include <QRegularExpression>
 #include <QStandardPaths>
+#include "core/RuntimeProfile.h"
 #include <QSaveFile>
 #include <QSet>
 #include <QSignalBlocker>
@@ -327,7 +328,8 @@ namespace Material
 
     QString HistoryStore::historyDirectory() const
     {
-        const QString base = m_storageRoot.isEmpty() ? QStandardPaths::writableLocation(QStandardPaths::AppDataLocation) : m_storageRoot;
+        const QString base = RuntimeProfile::isActive() || m_storageRoot.isEmpty()
+                                 ? RuntimeProfile::location(QStandardPaths::AppDataLocation) : m_storageRoot;
         return base.isEmpty() ? QString() : QDir(base).filePath(QStringLiteral("history"));
     }
     QString HistoryStore::repositoryPath() const { return QDir(historyDirectory()).filePath(QStringLiteral("repository")); }

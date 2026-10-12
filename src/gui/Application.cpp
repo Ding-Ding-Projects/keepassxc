@@ -21,6 +21,7 @@
 
 #include "core/Bootstrap.h"
 #include "core/Tools.h"
+#include "core/RuntimeProfile.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
 #include "gui/material/MaterialIcons.h"
@@ -80,12 +81,13 @@ Application::Application(int& argc, char** argv)
     identifier += QStringLiteral("-DEBUG");
 #endif
 
+    identifier = RuntimeProfile::ipcIdentifier(identifier);
     QString lockName = identifier + QStringLiteral(".lock");
     m_socketName = identifier + QStringLiteral(".socket");
 
     // According to documentation we should use RuntimeLocation on *nixes, but even Qt doesn't respect
     // this and creates sockets in TempLocation, so let's be consistent.
-    m_lockFile = new QLockFile(QStandardPaths::writableLocation(QStandardPaths::TempLocation) + "/" + lockName);
+    m_lockFile = new QLockFile(RuntimeProfile::location(QStandardPaths::TempLocation) + "/" + lockName);
     m_lockFile->setStaleLockTime(0);
     m_lockFile->tryLock();
 
@@ -247,7 +249,8 @@ bool Application::event(QEvent* event)
 {
     // Handle Apple QFileOpenEvent from finder (double click on .kdbx file)
     if (event->type() == QEvent::FileOpen) {
-        emit openFile(static_cast<QFileOpenEvent*>(event)->file());
+        const QString file = static_cast<QFileOpenEvent*>(event)->file();
+        if (!RuntimeProfile::isActive() || RuntimeProfile::contains(file)) emit openFile(file);
         return true;
     }
 #ifdef Q_OS_MACOS
@@ -354,7 +357,8 @@ void Application::socketReadyRead()
         in >> fileNames;
         for (const QString& fileName : asConst(fileNames)) {
             const QFileInfo fInfo(fileName);
-            if (fInfo.isFile() && fInfo.suffix().toLower() == "kdbx") {
+            if (fInfo.isFile() && fInfo.suffix().toLower() == "kdbx"
+                && (!RuntimeProfile::isActive() || RuntimeProfile::contains(fileName))) {
                 emit openFile(fileName);
             }
         }

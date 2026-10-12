@@ -1502,7 +1502,7 @@ namespace Material
         const QString page = QStringLiteral("browser");
         m_sheet->addPage(page, QStringLiteral("extension"), tr("Browser Integration"));
         if (auto* built = m_sheet->page(page)) {
-            built->setNote(tr("Every Browser_* configuration key, as exposed by BrowserSettingsWidget."));
+            built->setNote(tr("Paired browsers receive matching credentials automatically. Website blocks, URL matching and database locks still apply."));
         }
 
         const QString integration = tr("Integration");
@@ -1566,22 +1566,10 @@ namespace Material
         const QString permissions = tr("Permissions");
         addToggle(page,
                   permissions,
-                  QStringLiteral("lock_open"),
-                  tr("Never ask before returning credentials"),
-                  tr("Skip the access prompt entirely."),
-                  Config::Browser_AlwaysAllowAccess);
-        addToggle(page,
-                  permissions,
                   QStringLiteral("edit"),
                   tr("Never ask before updating credentials"),
                   tr("Skip the update prompt entirely."),
                   Config::Browser_AlwaysAllowUpdate);
-        addToggle(page,
-                  permissions,
-                  QStringLiteral("web"),
-                  tr("Answer HTTP basic authentication"),
-                  tr("Fill the browser's own authentication dialog."),
-                  Config::Browser_HttpAuthPermission);
         addToggle(page,
                   permissions,
                   QStringLiteral("database"),

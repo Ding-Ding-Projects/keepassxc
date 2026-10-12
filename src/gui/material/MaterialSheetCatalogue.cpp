@@ -68,6 +68,7 @@ namespace Material
             };
             const Row settings_basic_s3[] = {
                 {"translate", "Language", "Restart program to activate", PillKind::Value, "System default"},
+                {"smart_button", "Toolbar button style", "Icon only · Text beside icon · Text under icon", PillKind::Value, "Text beside icon"},
                 {"open_with", "Movable toolbar", "", PillKind::Off, "Off"},
                 {"format_size", "Font size", "GUI_FontSizeOffset", PillKind::Value, "Default"},
                 {"view_agenda", "Show toolbar", "", PillKind::On, "On"},
@@ -166,14 +167,12 @@ namespace Material
                 {"database", "Search in all open databases", "", PillKind::Off, "Off"},
                 {"label", "Support KeePassHTTP KPH: attributes", "", PillKind::On, "On"},
                 {"cloud_download", "Allow the browser to request all database entries", "", PillKind::Off, "Off"},
-                {"check_circle", "Always allow access without asking", "", PillKind::Off, "Off"},
                 {"edit", "Always allow updating existing credentials", "", PillKind::Off, "Off"},
-                {"vpn_key", "HTTP Basic Auth permission", "Browser_HttpAuthPermission", PillKind::Off, "Off"},
                 {"passkey", "Allow passkeys on localhost", "", PillKind::Off, "Off"},
             };
             const Section settings_browser_sections[] = {
                 {"Connection", "", settings_browser_s0, 8},
-                {"Credential handling", "", settings_browser_s1, 11},
+                {"Credential handling", "", settings_browser_s1, 9},
             };
 
             const Row settings_sshagent_s0[] = {
@@ -240,7 +239,7 @@ namespace Material
                 {"settings", "Application Settings", "", PillKind::Mono, "Ctrl+,"},
                 {"help", "Keyboard Shortcuts guide", "", PillKind::Mono, "Ctrl+/"},
                 {"search", "Focus search", "", PillKind::Mono, "Ctrl+F"},
-                {"bolt", "All actions (this build)", "", PillKind::Mono, "Ctrl+Shift+F"},
+                {"bolt", "All actions (this build)", "", PillKind::Mono, "Ctrl+Shift+P"},
             };
             const Section settings_shortcuts_sections[] = {
                 {"Database", "", settings_shortcuts_s0, 10},

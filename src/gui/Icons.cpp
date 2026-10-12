@@ -29,6 +29,7 @@
 #include <QPainter>
 #include <QSaveFile>
 #include <QStandardPaths>
+#include "core/RuntimeProfile.h"
 #include <QWidget>
 
 #include <algorithm>
@@ -116,8 +117,8 @@ namespace
 
 QString Icons::applicationLogoCacheDirectory() const
 {
-    if (!m_testLogoCacheDirectory.isEmpty()) return m_testLogoCacheDirectory;
-    return QDir(QStandardPaths::writableLocation(QStandardPaths::AppDataLocation)).filePath(QStringLiteral("logos"));
+    if (!RuntimeProfile::isActive() && !m_testLogoCacheDirectory.isEmpty()) return m_testLogoCacheDirectory;
+    return QDir(RuntimeProfile::location(QStandardPaths::AppDataLocation)).filePath(QStringLiteral("logos"));
 }
 
 void Icons::setApplicationLogoCacheDirectoryForTests(const QString& path)
@@ -146,7 +147,7 @@ bool Icons::ensureApplicationLogoCache(QString* error) const
         if (error) *error = message;
         return false;
     };
-    const auto appData = QStandardPaths::writableLocation(QStandardPaths::AppDataLocation);
+    const auto appData = RuntimeProfile::location(QStandardPaths::AppDataLocation);
     if (appData.isEmpty() || (m_testLogoCacheDirectory.isEmpty() && isReparseOrLink(appData))) {
         return fail(QStringLiteral("The private logo cache location is unavailable or linked."));
     }

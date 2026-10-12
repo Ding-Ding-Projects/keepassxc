@@ -50,6 +50,9 @@ endfunction()
 
 set(TEST_LIBRARIES keepassxc_gui Qt6::Test)
 
+add_unit_test(NAME testruntimeprofile SOURCES TestRuntimeProfile.cpp
+        LIBS ${TEST_LIBRARIES})
+
 set(testsupport_SOURCES
         modeltest.cpp
         FailDevice.cpp

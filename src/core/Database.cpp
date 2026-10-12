@@ -17,6 +17,7 @@
  */
 
 #include "Database.h"
+#include "core/RuntimeProfile.h"
 
 #include "core/AsyncTask.h"
 #include "core/FileWatcher.h"
@@ -126,6 +127,10 @@ bool Database::open(QSharedPointer<const CompositeKey> key, QString* error)
  */
 bool Database::open(const QString& filePath, QSharedPointer<const CompositeKey> key, QString* error)
 {
+    if (RuntimeProfile::isActive() && !RuntimeProfile::contains(filePath)) {
+        if (error) *error = tr("Verification databases must reside inside the verification profile.");
+        return false;
+    }
     if (filePath.isEmpty()) {
         if (error) {
             *error = tr("No file path was provided.");

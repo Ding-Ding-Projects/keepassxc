@@ -23,6 +23,7 @@ set(core_SOURCES
         core/Bootstrap.cpp
         core/Clock.cpp
         core/Config.cpp
+        core/RuntimeProfile.cpp
         core/CustomData.cpp
         core/Database.cpp
         core/DatabaseStats.cpp

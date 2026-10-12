@@ -20,7 +20,6 @@
 #ifndef KEEPASSXC_BROWSERSERVICE_H
 #define KEEPASSXC_BROWSERSERVICE_H
 
-#include "BrowserAccessControlDialog.h"
 #include "config-keepassx.h"
 #include "core/Entry.h"
 #include "gui/PasswordGeneratorWidget.h"
@@ -53,7 +52,7 @@ struct EntryParameters
     QString hash;
     QString siteUrl;
     QString formUrl;
-    bool httpAuth;
+    bool httpAuth = false;
 };
 
 class DatabaseWidget;
@@ -137,6 +136,7 @@ public:
 
 signals:
     void requestUnlock();
+    void accessSettingsInvalid(const QString& message);
     void passwordGenerated(QLocalSocket* socket, const QString& password, const QString& nonce);
 
 public slots:
@@ -152,7 +152,7 @@ private:
     enum Access
     {
         Denied,
-        Unknown,
+        Invalid,
         Allowed
     };
 
@@ -171,14 +171,8 @@ private:
     QList<Entry*>
     searchEntries(const QString& siteUrl, const QString& formUrl, const StringPairList& keyList, bool passkey = false);
     QList<Entry*> sortEntries(QList<Entry*>& entries, const QString& siteUrl, const QString& formUrl);
-    QList<Entry*> confirmEntries(QList<Entry*>& entriesToConfirm,
-                                 const EntryParameters& entryParameters,
-                                 const QString& siteHost,
-                                 const QString& formUrl,
-                                 const bool httpAuth);
+    QList<Entry*> eligibleEntries(const QList<Entry*>& candidates, const EntryParameters& parameters);
     QJsonObject prepareEntry(const Entry* entry);
-    void allowEntry(Entry* entry, const QString& siteHost, const QString& formUrl, const QString& realm);
-    void denyEntry(Entry* entry, const QString& siteHost, const QString& formUrl, const QString& realm);
     QJsonArray getChildrenFromGroup(Group* group);
     Access checkAccess(const Entry* entry, const QString& siteHost, const QString& formHost, const QString& realm);
     Group* getDefaultEntryGroup(const QSharedPointer<Database>& selectedDb = {});

@@ -31,6 +31,10 @@ private slots:
     void initTestCase();
     void init();
 
+    void testAutomaticCredentialAccess();
+    void testCredentialAccessRestrictions();
+    void testMalformedAccessSettings();
+    void testMalformedAccessSettings_data();
     void testChangePublicKeys();
     void testEncryptMessage();
     void testDecryptMessage();

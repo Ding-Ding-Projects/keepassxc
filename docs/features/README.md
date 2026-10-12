@@ -10,5 +10,6 @@ One article per feature, grouped by category. The platform summaries in `invento
 | Records and history | [records/README.md](records/README.md) |
 | Navigation | [navigation/README.md](navigation/README.md) |
 | Build, install and update | [delivery/README.md](delivery/README.md) |
+| Browser and verification integrations | [integrations/README.md](integrations/README.md) |
 
 There is no HTTP API in this project, so no Postman collection applies.

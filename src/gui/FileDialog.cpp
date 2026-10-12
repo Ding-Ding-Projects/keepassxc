@@ -18,6 +18,7 @@
 #include "FileDialog.h"
 
 #include "core/Config.h"
+#include "core/RuntimeProfile.h"
 
 #include <QProcessEnvironment>
 
@@ -35,9 +36,9 @@ QString FileDialog::getOpenFileName(QWidget* parent,
     if (!m_nextFileName.isEmpty()) {
         const QString result = m_nextFileName;
         m_nextFileName.clear();
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     } else {
-        const auto& workingDir = dir.isEmpty() ? getLastDir("default") : dir;
+        const auto workingDir = RuntimeProfile::isActive() ? RuntimeProfile::root() : (dir.isEmpty() ? getLastDir("default") : dir);
         const auto result = QDir::toNativeSeparators(
             QFileDialog::getOpenFileName(parent, caption, workingDir, filter, selectedFilter, options));
 
@@ -47,7 +48,7 @@ QString FileDialog::getOpenFileName(QWidget* parent,
             parent->activateWindow();
         }
 #endif
-        return result;
+        return !RuntimeProfile::isActive() || RuntimeProfile::contains(result) ? result : QString();
     }
 }
 
@@ -61,13 +62,17 @@ QStringList FileDialog::getOpenFileNames(QWidget* parent,
     if (!m_nextFileNames.isEmpty()) {
         const QStringList results = m_nextFileNames;
         m_nextFileNames.clear();
+        if (RuntimeProfile::isActive()) {
+            for (const auto& result : results) if (!RuntimeProfile::contains(result)) return {};
+        }
         return results;
     } else {
-        const auto& workingDir = dir.isEmpty() ? getLastDir("default") : dir;
+        const auto workingDir = RuntimeProfile::isActive() ? RuntimeProfile::root() : (dir.isEmpty() ? getLastDir("default") : dir);
         auto results = QFileDialog::getOpenFileNames(parent, caption, workingDir, filter, selectedFilter, options);
 
         for (auto& path : results) {
             path = QDir::toNativeSeparators(path);
+            if (RuntimeProfile::isActive() && !RuntimeProfile::contains(path)) return {};
         }
 
 #ifdef Q_OS_MACOS
@@ -159,6 +164,7 @@ void FileDialog::saveLastDir(const QString& role, const QString& path, bool sens
 
 QString FileDialog::getLastDir(const QString& role, const QString& defaultDir)
 {
+    if (RuntimeProfile::isActive()) return RuntimeProfile::root();
     auto lastDirs = config()->get(Config::LastDir).toHash();
     auto fallbackDir = defaultDir;
 

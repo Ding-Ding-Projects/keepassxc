@@ -85,16 +85,6 @@ void BrowserSettings::setMatchUrlScheme(bool matchUrlScheme)
     config()->set(Config::Browser_MatchUrlScheme, matchUrlScheme);
 }
 
-bool BrowserSettings::alwaysAllowAccess()
-{
-    return config()->get(Config::Browser_AlwaysAllowAccess).toBool();
-}
-
-void BrowserSettings::setAlwaysAllowAccess(bool alwaysAllowAccess)
-{
-    config()->set(Config::Browser_AlwaysAllowAccess, alwaysAllowAccess);
-}
-
 bool BrowserSettings::alwaysAllowUpdate()
 {
     return config()->get(Config::Browser_AlwaysAllowUpdate).toBool();
@@ -103,16 +93,6 @@ bool BrowserSettings::alwaysAllowUpdate()
 void BrowserSettings::setAlwaysAllowUpdate(bool alwaysAllowUpdate)
 {
     config()->set(Config::Browser_AlwaysAllowUpdate, alwaysAllowUpdate);
-}
-
-bool BrowserSettings::httpAuthPermission()
-{
-    return config()->get(Config::Browser_HttpAuthPermission).toBool();
-}
-
-void BrowserSettings::setHttpAuthPermission(bool httpAuthPermission)
-{
-    config()->set(Config::Browser_HttpAuthPermission, httpAuthPermission);
 }
 
 bool BrowserSettings::searchInAllDatabases()

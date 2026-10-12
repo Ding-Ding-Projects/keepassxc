@@ -714,23 +714,9 @@
         "control": "Off"
        },
        {
-        "icon": "check_circle",
-        "label": "Always allow access without asking",
-        "sub": "",
-        "kind": "off",
-        "control": "Off"
-       },
-       {
         "icon": "edit",
         "label": "Always allow updating existing credentials",
         "sub": "",
-        "kind": "off",
-        "control": "Off"
-       },
-       {
-        "icon": "vpn_key",
-        "label": "HTTP Basic Auth permission",
-        "sub": "Browser_HttpAuthPermission",
         "kind": "off",
         "control": "Off"
        },

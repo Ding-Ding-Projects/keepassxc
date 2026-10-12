@@ -796,55 +796,7 @@
          </property>
         </widget>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="alwaysAllowAccessRow">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>12</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="alwaysAllowAccessLabel">
-           <property name="text">
-            <string extracomment="Credentials mean login data requested via browser extension">Never ask before accessing credentials</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="alwaysAllowAccessSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>24</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="Material::Switch" name="alwaysAllowAccess">
-           <property name="accessibleName">
-            <string extracomment="Credentials mean login data requested via browser extension">Never ask before accessing credentials</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
+
        <item>
         <layout class="QHBoxLayout" name="alwaysAllowUpdateRow">
          <property name="leftMargin">
@@ -894,55 +846,7 @@
          </item>
         </layout>
        </item>
-       <item>
-        <layout class="QHBoxLayout" name="httpAuthPermissionRow">
-         <property name="leftMargin">
-          <number>0</number>
-         </property>
-         <property name="topMargin">
-          <number>0</number>
-         </property>
-         <property name="rightMargin">
-          <number>0</number>
-         </property>
-         <property name="bottomMargin">
-          <number>0</number>
-         </property>
-         <property name="spacing">
-          <number>12</number>
-         </property>
-         <item>
-          <widget class="QLabel" name="httpAuthPermissionLabel">
-           <property name="text">
-            <string extracomment="An extra HTTP Basic Auth setting">Do not ask permission for HTTP Basic Auth</string>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <spacer name="httpAuthPermissionSpacer">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-           <property name="sizeHint" stdset="0">
-            <size>
-             <width>24</width>
-             <height>20</height>
-            </size>
-           </property>
-          </spacer>
-         </item>
-         <item>
-          <widget class="Material::Switch" name="httpAuthPermission">
-           <property name="accessibleName">
-            <string extracomment="An extra HTTP Basic Auth setting">Do not ask permission for HTTP Basic Auth</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </item>
+
        <item>
         <layout class="QHBoxLayout" name="supportKphFieldsRow">
          <property name="leftMargin">

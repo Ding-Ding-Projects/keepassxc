@@ -165,9 +165,7 @@ void BrowserSettingsWidget::loadSettings()
     // TODO: fix this
     m_ui->showNotification->hide();
 
-    m_ui->alwaysAllowAccess->setChecked(settings->alwaysAllowAccess());
     m_ui->alwaysAllowUpdate->setChecked(settings->alwaysAllowUpdate());
-    m_ui->httpAuthPermission->setChecked(settings->httpAuthPermission());
     m_ui->searchInAllDatabases->setChecked(settings->searchInAllDatabases());
     m_ui->supportKphFields->setChecked(settings->supportKphFields());
     m_ui->allowLocalhostWithPasskeys->setChecked(settings->allowLocalhostWithPasskeys());
@@ -261,9 +259,7 @@ void BrowserSettingsWidget::saveSettings()
     settings->setUpdateBinaryPath(m_ui->updateBinaryPath->isChecked());
     settings->setAllowGetDatabaseEntriesRequest(m_ui->allowGetDatabaseEntriesRequest->isChecked());
     settings->setAllowExpiredCredentials(m_ui->allowExpiredCredentials->isChecked());
-    settings->setAlwaysAllowAccess(m_ui->alwaysAllowAccess->isChecked());
     settings->setAlwaysAllowUpdate(m_ui->alwaysAllowUpdate->isChecked());
-    settings->setHttpAuthPermission(m_ui->httpAuthPermission->isChecked());
     settings->setSearchInAllDatabases(m_ui->searchInAllDatabases->isChecked());
     settings->setSupportKphFields(m_ui->supportKphFields->isChecked());
     settings->setAllowLocalhostWithPasskeys(m_ui->allowLocalhostWithPasskeys->isChecked());

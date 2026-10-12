@@ -15,6 +15,7 @@
 
 if(KPXC_FEATURE_BROWSER)
     set(proxy_SOURCES
+        ../core/RuntimeProfile.cpp
         ../browser/BrowserShared.cpp
         keepassxc-proxy.cpp
         NativeMessagingProxy.cpp)
