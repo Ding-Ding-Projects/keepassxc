@@ -1,5 +1,17 @@
 # Roadmap
 
+## October 11 complete delivery candidate
+
+- [x] Hold the release publisher, finalizer and documentation deployment before implementation pushes; read back all three as disabled.
+- [x] Reconcile the accepted requirement inventory to 90 features, 115 surfaces and 1,072 capabilities. The structural regression passes 95 checks. This does not establish product completion.
+- [ ] Verify the integrated browser-access dialog removal, including ordinary and HTTP-authentication requests, explicit blocks, malformed saved decisions, no request-time writes and no focus interruption.
+- [ ] Verify complete isolated runtime profiles, including actual proxy transport, configuration/cache links, synthetic database lifecycle and all input/output boundaries. Reviewed source through `4235276975cbf223a908bf7cf4fe2b7799bac8b9` is integrated; native checks remain pending.
+- [ ] Repair the raw-pointer merge-test expression and obsolete Qt deployment prefix found by root `build.bat /s`, then complete the root build and focused native checks.
+- [ ] Complete stable settings identities and live current-value search, followed by exact-element palette navigation, guidance and resizable overlays.
+- [ ] Complete every accepted capability and required interaction/capture tuple. Current evidence is 0/123,280 verified capability cells and 10,350 incomplete surface/feature groups.
+- [ ] Verify the accepted 10% startup-surprise behavior, retired opt-out migration and School-mode suppression. This supersedes the earlier one-percent/off-switch assessment retained below.
+- [ ] Publish exactly one accepted normal release and matching documentation deployment, verify installation/update and live delivery, then complete archive-backed safe cleanup.
+
 ## Preservation checkpoint, October 4, 2026
 
 - [x] Record the coordinator-reported 10% remaining allowance and preserve the navigation records. The wider goal remains incomplete; no cleanup is performed.

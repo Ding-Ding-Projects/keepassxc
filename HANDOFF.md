@@ -21,13 +21,26 @@ The focused inventory suite passed 95 checks with zero failures after the intend
 missing-requirement regressions and a corrected duplicate permission identifier.
 Product completeness remains incomplete; no current runtime cells are accepted.
 
-Browser access and complete verification-profile isolation are under implementation
-on separate task branches from `f5949912caf3ebfe7c9ca9430d2141b4ebd21810`.
-Native compilation, browser-protocol interaction, profile containment, current
-captures, full feature implementation, installation/update acceptance, final
-release and archive-backed cleanup remain pending. Do not treat source presence or
-schema validation as runtime proof. Personal vaults and unrelated services are out
-of scope. Historical records below retain their original provenance.
+Browser access source `ef02281d5c178af84e2a6967e64f4d0456ef74b2` and verification
+profile source through `4235276975cbf223a908bf7cf4fe2b7799bac8b9` are integrated in
+candidate `4cd5555c4bb7d113c981e2657e2ce789654f8894`. Independent review prompted
+corrections for obsolete settings catalogue entries, proxy initialization, save and
+import containment, and linked INI files. The follow-up linked-INI source review
+found no remaining defect within its initialization scope. This does not claim an
+operating-system sandbox or protection against hostile concurrent filesystem edits.
+
+The root `build.bat /s` reached compilation with the project-owned MSVC 14.44
+toolchain. It stopped on two diagnosed blockers: `TestMerge.cpp:540` invokes
+`.data()` on a raw `Group*`, and Qt deployment resolves runtime files through an
+obsolete installation prefix. A bounded build-repair branch is active. Native tests
+and installed acceptance remain unverified. Shared settings identity and live-value
+search repairs continue independently in the profile branch.
+
+Native browser-protocol interaction, profile containment checks, current captures,
+full feature implementation, installation/update acceptance, final release and
+archive-backed cleanup remain pending. Do not treat source presence or schema
+validation as runtime proof. Personal vaults and unrelated services are out of scope.
+Historical records below retain their original provenance.
 
 ## Preservation checkpoint, October 4, 2026
 
