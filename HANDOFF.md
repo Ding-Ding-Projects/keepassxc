@@ -1,5 +1,34 @@
 # Navigation delivery handoff
 
+## Complete feature delivery, October 11, 2026
+
+The current task removes browser credential-access confirmation for matching
+entries while preserving pairing, explicit site blocks, URL and realm rules,
+expiration and vault locking. It also implements the complete required-feature
+inventory before one final normal release. No intermediate publication is allowed.
+
+The release publisher, release finalizer and documentation publishing workflows
+were read back as `disabled_manually` before any implementation push. Preserve
+that hold until the accepted immutable candidate is ready; restore normal future
+publication only after final documentation pushes, without creating another
+release for this task.
+
+The registry now contains 90 feature families, 115 surfaces and 1,072 capabilities:
+123,280 capability cells and 10,350 surface/feature groups. Server management has
+four execution targets and nine independent native/documentation surfaces. Startup
+surprise obligations match the accepted ten-percent, retired-opt-out baseline.
+The focused inventory suite passed 95 checks with zero failures after the intended
+missing-requirement regressions and a corrected duplicate permission identifier.
+Product completeness remains incomplete; no current runtime cells are accepted.
+
+Browser access and complete verification-profile isolation are under implementation
+on separate task branches from `f5949912caf3ebfe7c9ca9430d2141b4ebd21810`.
+Native compilation, browser-protocol interaction, profile containment, current
+captures, full feature implementation, installation/update acceptance, final
+release and archive-backed cleanup remain pending. Do not treat source presence or
+schema validation as runtime proof. Personal vaults and unrelated services are out
+of scope. Historical records below retain their original provenance.
+
 ## Preservation checkpoint, October 4, 2026
 
 The coordinator reports 10% remaining allowance. This is a preservation-only

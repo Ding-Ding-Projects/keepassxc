@@ -502,7 +502,13 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/one-percent-per-launch-draw",
+      "id": "dim-sum-surprise/ten-percent-per-launch-draw",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/at-most-once-per-launch",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -521,6 +527,12 @@
     },
     {
       "id": "dim-sum-surprise/no-update-flow",
+      "feature": "dim-sum-surprise",
+      "section": "Dim sum",
+      "persistenceRequired": true
+    },
+    {
+      "id": "dim-sum-surprise/no-mid-task-flow",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -556,7 +568,7 @@
       "persistenceRequired": true
     },
     {
-      "id": "dim-sum-surprise/persisted-off-switch",
+      "id": "dim-sum-surprise/retired-optout-migration",
       "feature": "dim-sum-surprise",
       "section": "Dim sum",
       "persistenceRequired": true
@@ -5230,6 +5242,450 @@
       "persistenceRequired": true
     },
     {
+      "id": "minecraft-server-manager/complete-version-discovery",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/java",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/bedrock",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/historical-channels",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/future-catalog-refresh",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/all-pages",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/immutable-source-identity",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/catalog-age",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/offline-last-verified",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/unavailable-distribution-reasons",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/version-specific-runtime",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/version-specific-schema",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/version-specific-commands",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/local-process",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/local-container",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/ssh-process",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/ssh-container",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/target-identity",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/target-permissions",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/capacity",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/ports",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/paths",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/explicit-existing-server-adoption",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/guided-creation",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/flavour-install",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/flavour-switch",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/update",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/rollback",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/lifecycle-start",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/lifecycle-graceful-stop",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/lifecycle-restart",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/schedules",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/health",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/resource-monitoring",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/logs",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/disconnected-not-stopped",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/worlds",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/dimensions",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/world-import-export",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/backups",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/restore",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/backup-before-migration",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/compatibility-preview",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/players",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/operators",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/allowlists",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/bans",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/player-permissions",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/network-topology",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/resource-data-behavior-packs",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/game-rules",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/authoritative-extension-catalog",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/custom-package-selection",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/integrity-licence-disclosure",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/compatibility-unknown-explicit",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/dependency-resolution",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/transactional-extension-install",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/extension-update-enable-disable-remove",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/extension-rollback",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/versioned-rich-controls",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/real-consumers",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/typed-booleans",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/typed-enums",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/typed-numbers",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/structured-collections",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/nested-editors",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/unknown-settings-preserved",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/live-restart-disclosure",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/shared-guidance-validation",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/cancellation-resume",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/owned-target-teardown",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/secret-exclusion",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/website-runtime-boundary",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
+      "id": "minecraft-server-manager/per-version-target-extension-evidence",
+      "feature": "minecraft-server-manager",
+      "section": "Server management",
+      "persistenceRequired": true
+    },
+    {
       "id": "status-hub/project-registration",
       "feature": "status-hub",
       "section": "Live status",
@@ -5977,18 +6433,6 @@
       "id": "element-motion/no-sound-no-focus-side-effect",
       "feature": "element-motion",
       "section": "Appearance and motion",
-      "persistenceRequired": true
-    },
-    {
-      "id": "dim-sum-surprise/at-most-once-per-launch",
-      "feature": "dim-sum-surprise",
-      "section": "Dim sum",
-      "persistenceRequired": true
-    },
-    {
-      "id": "dim-sum-surprise/no-mid-task-flow",
-      "feature": "dim-sum-surprise",
-      "section": "Dim sum",
       "persistenceRequired": true
     }
   ],

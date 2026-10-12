@@ -1,17 +1,13 @@
-# Vault category search continuation
+# Browser access and complete feature delivery continuation
 
-Objective: implement one search per vault category in KeePassXC, then integrate and safely clean up merged task work.
+Implement the accepted browser-access dialog removal and all required feature workstreams. Baseline: f5949912caf3ebfe7c9ca9430d2141b4ebd21810. Automatically return eligible matching entries to paired browsers while preserving explicit blocks, realms, expiration, matching restrictions and vault locks. Do not mutate permissions on lookup.
 
-Current local main includes 34759e4b (search implementation), 53d208ad (review repairs), de93387e (documentation), e5835cc4 and 64496fe2 (immutable article binding and compact formatting). No native acceptance is claimed.
+Publish exactly one complete normal release after acceptance. The release publisher, release finalizer and documentation workflows were disabled and verified before the first implementation push. Keep the hold through intermediate preservation and final documentation pushes.
 
-Implemented: independent tag search retaining selected chips; bounded tag regex; entry metadata-only search excluding direct passwords, protected standard fields, custom values and placeholder resolution; status/UUID/attachment-name filter preservation; clear controls; category query/mode reset on context changes and lock; detail label-only matching; inline invalid-pattern messages retaining previous results.
+The expanded inventory names 90 features, 115 surfaces and 1,072 capabilities. Its 95 focused checks pass. Product acceptance remains 0/123,280 verified cells and 10,350 incomplete surface/feature groups. This is obligation accounting, not runtime proof. Nine server-management surfaces and all four execution targets are now explicit. Historical evidence is retained.
 
-Verification: two bounded source reviews; corrected the first review's status-filter regression. Root build.bat /s first attempt stopped before compilation for candidate repair; second stopped in RubyGems preparation with exit 14001. Ruby/gem later started successfully. Pinned Qt 6.8.3 provisioning and local documentation build remain running. Focused native tests, hidden-desktop interaction, all language/theme/scale tuples and genuine captures remain unverified.
+Browser implementation is preserved at ef02281d5c178af84e2a6967e64f4d0456ef74b2 on codex/browser-access-removal-20261011. Its source checks passed; compilation and native tests remain pending. Profile implementation continues on codex/verification-profile-20261011. The coordinator owns inventory, documentation, Config integration, builds and final integration. Coordinate shared CMake registration before merging.
 
-Lowlevel HTTP preflight returned WinError 10061; configured status call did not complete and was ended without desktop interaction. Continue supported transport recovery. Status Hub reporting has no established authenticated route and remains unverified.
+Next: independently review both changes; integrate Config profile routing; build through root build.bat; run focused native tests. Continue remaining feature workstreams and genuine hidden-desktop acceptance with synthetic vaults. Only publish the complete accepted candidate. Keep the issue/discussion, wiki, documentation and roadmap factual. Private announcement images stay ignored and must be separately preserved before worktree deletion.
 
-Privacy scan: new commit messages have no hits. Existing binary/translation matches require contextual exclusions. Historical commit-message findings remain unchanged; no history rewrite is authorized.
-
-Next: finish Qt provisioning; invoke exact root build.bat on a clean committed source; fix and rerun focused native regressions; verify synthetic-vault workflows and captures. Finish documentation deployment and wiki synchronization. Verify main on the remote. Before deletion, inventory all branches/worktrees/stashes, archive and prove ancestry and ownership. Existing unrelated historical branches remain retained unless individually proved safe. The user explicitly requested integration and cleanup, but unfinished work must stay preserved. No new manual release is in scope; existing push-triggered workflows may run.
-
-Goal remains active with a 15000000-token ceiling. Do not call source delivery full completion. Do not inspect personal vaults, expose secrets, rewrite history, or delete unmerged work.
+The goal remains active. No native, packaged, final-release or cleanup completion is claimed. Keep personal vaults, unrelated work and live services untouched. Before deletion, inventory branches/worktrees/stashes, preserve and push valid work, integrate completed work into main, verify remote main, archive and verify complete source/history, and prove ownership and ancestry for every candidate. Retain active, uncertain, unmerged and unpushed work.

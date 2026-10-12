@@ -1836,6 +1836,22 @@
       "status": "unverified",
       "evidenceState": "unverified",
       "note": "Explicitly registered obligation. No current built-artifact interaction or capture accepted."
+    },
+    {
+      "id": "minecraft-server-manager",
+      "surface": "app",
+      "title": "Server management",
+      "status": "missing",
+      "evidenceState": "unverified",
+      "note": "Explicitly inventoried requirement. No implementation or current runtime acceptance is claimed."
+    },
+    {
+      "id": "minecraft-server-manager",
+      "surface": "site",
+      "title": "Server management",
+      "status": "missing",
+      "evidenceState": "unverified",
+      "note": "Explicitly inventoried requirement. No implementation or current runtime acceptance is claimed."
     }
   ],
   "migratedFrom": 1,

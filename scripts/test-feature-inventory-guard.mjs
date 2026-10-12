@@ -33,7 +33,7 @@ check('complete registries have valid schema but incomplete product', () => {
 
 // Independent examples pin the required behaviors, not only registry length.
 const requiredCapabilities = [
-  'dim-sum-surprise/one-percent-per-launch-draw', 'dim-sum-surprise/persisted-off-switch',
+  'dim-sum-surprise/ten-percent-per-launch-draw', 'dim-sum-surprise/retired-optout-migration',
   'dim-sum-surprise/at-most-once-per-launch', 'dim-sum-surprise/no-mid-task-flow',
   'school-mode/live-propagation', 'school-mode/rename-everywhere',
   'narrator-voice-pickers/stable-identity', 'scheduled-settings/dst',
@@ -58,7 +58,24 @@ const requiredCapabilities = [
   'tab-searches/current-strip', 'tab-searches/each-group', 'tab-searches/group-names',
   'tab-searches/all-owned-windows', 'in-app-version-provenance/front-screen-before-navigation',
   'status-hub/verified-reply-route', 'element-motion/every-rendered-element',
+  'minecraft-server-manager/complete-version-discovery',
+  'minecraft-server-manager/local-process', 'minecraft-server-manager/local-container',
+  'minecraft-server-manager/ssh-process', 'minecraft-server-manager/ssh-container',
+  'minecraft-server-manager/versioned-rich-controls',
+  'minecraft-server-manager/transactional-extension-install',
+  'minecraft-server-manager/backup-before-migration',
+  'minecraft-server-manager/disconnected-not-stopped',
+  'minecraft-server-manager/explicit-existing-server-adoption',
+  'minecraft-server-manager/website-runtime-boundary',
 ];
+check('server workflows retain independent native and documentation surfaces', () => {
+  for (const id of ['app.servers.catalog', 'app.servers.create', 'app.servers.dashboard',
+    'app.servers.configuration', 'app.servers.extensions', 'app.servers.worlds',
+    'app.servers.players', 'app.servers.backups', 'site.servers']) {
+    assert(SURFACE_CONTRACTS.some(surface => surface.id === id), `missing server surface ${id}`);
+    assert(baseline.surfaces.rows.some(surface => surface.id === id), `missing server inventory ${id}`);
+  }
+});
 // Independently transcribed from concrete addPage/addSettingsPage registrations.
 // This list must not be generated from the production registry being tested.
 check('every registered settings and editor destination has its own obligation', () => {

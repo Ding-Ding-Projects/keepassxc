@@ -956,6 +956,87 @@
       "ownership": "native-product",
       "status": "source-present",
       "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.catalog",
+      "platform": "app",
+      "label": "Server editions, versions, flavours and target discovery",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.create",
+      "platform": "app",
+      "label": "Guided server creation and explicit adoption",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.dashboard",
+      "platform": "app",
+      "label": "Server lifecycle, health, logs and schedules",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.configuration",
+      "platform": "app",
+      "label": "Version-bound rich server configuration",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.extensions",
+      "platform": "app",
+      "label": "Plugin, mod and pack installation and recovery",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.worlds",
+      "platform": "app",
+      "label": "World import, export, migration and rollback",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.players",
+      "platform": "app",
+      "label": "Player identities and permission management",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "app.servers.backups",
+      "platform": "app",
+      "label": "Server backups, restore and retention",
+      "source": null,
+      "ownership": "native-product",
+      "status": "unverified",
+      "evidenceState": "unverified"
+    },
+    {
+      "id": "site.servers",
+      "platform": "site",
+      "label": "Server-manager documentation and platform boundaries",
+      "source": null,
+      "ownership": "visitor-site-state",
+      "status": "unverified",
+      "evidenceState": "unverified"
     }
   ]
 }

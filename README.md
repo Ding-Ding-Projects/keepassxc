@@ -14,6 +14,16 @@ no tracked or untracked changes. Diagnostics report bounded change counts withou
 A **Windows-only** fork of [KeePassXC](https://keepassxc.org) whose interface is being rebuilt in
 **Material Design 3**.
 
+## Complete feature delivery in progress
+
+Browser credential-access confirmation removal and complete required-feature
+acceptance are being developed together for one final release. Intermediate
+release and documentation publication are held. The expanded inventory names 90
+feature families and 115 surfaces; its 95 focused structural checks pass, but no
+current native interaction evidence is implied. See the
+[acceptance inventory](docs/features/delivery/interface-completion.md) and
+[handoff](HANDOFF.md) for the remaining work.
+
 ## October 3 startup integration state
 
 The documentation website has a narrow navigation repair: complete tab labels

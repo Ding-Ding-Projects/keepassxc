@@ -167,7 +167,7 @@
 - [ ] Give command palette results rich inline controls and exact-element teleport.
 - [x] Capture a quick clipping matrix with the application's own widget probe; repair its findings (Reports header, segmented control) and rerun.
 - [x] Run the full clipping matrix across six widths, three languages, two themes and four display scales, and repair every finding (three named records: widths 50 tuples, languages and themes 60 tuples at the expanded width, scales 30 tuples; 20 findings repaired; all three at 0 at `693367d1`).
-- [ ] Complete every required named-surface capability in the fail-closed feature inventory; `scripts/check-feature-inventory.mjs` currently reports 0/105,788 current capability cells verified. The earlier platform-only 0/172 summary is superseded by the expanded matrix above.
+- [ ] Complete every required named-surface capability in the fail-closed feature inventory; `scripts/check-feature-inventory.mjs` currently reports 0/123,280 current capability cells verified. Historical smaller matrices remain historical evidence, not current acceptance.
 - [x] Make the feature-inventory guard reject duplicate canonical rows and malformed row values instead of silently accepting or crashing on them.
 
 ## Installer and updater
@@ -196,3 +196,12 @@
 - [ ] Compile through root build.bat and pass focused native regressions.
 - [ ] Verify synthetic-vault interaction and language/theme/scale capture matrix.
 - [ ] Verify main delivery, documentation publication, and safe scoped cleanup.
+
+## Browser access and complete feature delivery
+
+- [ ] Remove credential-access confirmation while preserving explicit blocks, matching and locked-database behavior.
+- [ ] Prove complete isolated verification-profile paths and process identity.
+- [ ] Reconcile required capabilities and server workflow surfaces with executable removal regressions.
+- [ ] Complete and verify all native and website feature workstreams.
+- [ ] Publish exactly one accepted release and matching documentation deployment; intermediate publication is held.
+- [ ] Integrate completed work, verify remote main, archive recoverable state, and safely remove proven redundant task work.

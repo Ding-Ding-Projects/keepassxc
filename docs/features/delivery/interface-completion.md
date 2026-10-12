@@ -8,12 +8,12 @@ installed behavior, accessibility, or genuine current screenshots.
 ## Scope and source of requirements
 
 [`scripts/feature-inventory-contract.mjs`](../../../scripts/feature-inventory-contract.mjs)
-is the hand-maintained authority, independent of runtime discovery. It names 89
-features, 106 distinct surfaces, and 998 capability subcontracts. Removing a runtime
+is the hand-maintained authority, independent of runtime discovery. It names 90
+features, 115 distinct surfaces, and 1,072 capability subcontracts. Removing a runtime
 implementation cannot remove its obligation from this list. New controls, nested
 destinations and menu families must extend the list before acceptance.
 
-The required matrix has 105,788 surface/capability cells and 9,434 surface/feature
+The required matrix has 123,280 surface/capability cells and 10,350 surface/feature
 groups. These are **coverage obligations**, not counts of distinct defects or
 independent implementations. Shared code may implement a capability; each surface
 still needs applicable interaction and evidence. A reviewed capture may support
@@ -24,7 +24,7 @@ contains no accepted current cells. Absence means incomplete, never exempt.
 
 | Record | Purpose |
 | --- | --- |
-| [`inventory.json`](../inventory.json) | Version 2 platform-level summaries. All 172 original rows and their source/evidence links survive; six newly named platform rows bring the total to 178. Historical status is retained as `priorStatus`. The former implemented personal-wording row is partial until current evidence exists. |
+| [`inventory.json`](../inventory.json) | Version 2 platform-level summaries. All 172 original rows and their source/evidence links survive; subsequent explicit requirements bring the total to 180. Historical status is retained as `priorStatus`. Historical implementation assessments remain partial until current evidence exists. |
 | [`surface-inventory.json`](../surface-inventory.json) | Explicit native and website surface identities, ownership boundary, source hints and assessment state. `source-present` asserts only that a named file existed at the recorded assessment revision. |
 | [`capability-inventory.json`](../capability-inventory.json) | Every required capability, its section, its persistence obligation, and sparse per-surface proof records. |
 | [`feature-evidence.mjs`](../../../scripts/feature-evidence.mjs) | Bounded-path, revision, hash, interaction, privacy and completeness validation. |
@@ -80,21 +80,24 @@ the capability inventory rather than reduced to these category descriptions.
 | Data and documentation | Full exports with format/loss disclosure, complete ZIP/7z options, bulk scope/results/undo, encrypted local history, composed date/action/search filters, factual changelog and validated commit links, editor/VS Code handoff and bundled offline articles. |
 | Converter | Eight named categories; complete verified adapter catalog; bundled offline tools; PDF inspect/split/merge/extract/reorder/rotate/metadata and reopening verification; bounded isolation, atomic writes, unlimited paged durable queue, storage preflight and partial outcomes. |
 | Local models | Exhaustive official catalog/tags/pages and stale state, conservative evidence-backed fit, durable bounded pulls, full local chat, capability attachments, registered launch profiles, preflight, snapshot/restore/rollback, secret exclusion and offline recovery. |
+| Minecraft servers | Complete edition/version/flavour discovery; local process, local container, SSH process and SSH container targets; explicit adoption, lifecycle, worlds, players, backups, rich version-bound configuration, transactional plugins/mods/packs, rollback and separate source/runtime evidence. Static documentation never claims ownership of native resources. |
 | Remaining surface behavior | Guided forms, truthful defaults, rich controls, novice/expert shared values, presets, attention accommodations, local logo conversion, command palette, resizable decorated overlays, actual shortcuts, origin progress and contextual recovery. |
 | Delivery and evidence | Front-screen version/build time with timezone and seconds, Status Hub and truthful reply delivery, verified downloads, social graphics, complete vendored fonts, package/update provenance, line counts, current screenshots/recording and deterministic design parity. |
 
-The current explicit project instruction governs the startup surprise: a fresh 1%
-chance per launch, no more than one display per launch, and a persisted off switch
-that is honored absolutely. The earlier installed guidance specified 10% and no
-off switch; that conflict is resolved by the current user instruction's priority.
-The explicit capabilities are `one-percent-per-launch-draw` and
-`persisted-off-switch`, `at-most-once-per-launch` and `no-mid-task-flow`.
-Current `MaterialDimSum.cpp` still uses denominator 10 and ignores the retired
-off preference, so those runtime mismatches remain open. Acceptance must prove disabled/restarted suppression,
-first-run/error/update/mid-task exclusions, bundled local images with meaningful
-dish alt text, automatic dismissal, no focus theft, quiet settings and reduced
-motion. All behavioral evidence remains pending; this inventory lane changes no
-runtime frequency or control.
+The accepted completion baseline uses a fresh 10% startup-surprise draw, at most
+once per launch, with no opt-out. Retired off preferences must not reinstate an
+obsolete control. School mode suppresses the capability. The explicit capabilities
+are `ten-percent-per-launch-draw`, `retired-optout-migration`,
+`at-most-once-per-launch` and `no-mid-task-flow`. Acceptance still needs to prove
+first-run/error/update/mid-task exclusions, verified public-catalog photos with
+meaningful dish alt text, automatic dismissal, no focus theft, quiet settings and
+reduced motion. Source already using denominator 10 is not runtime acceptance.
+
+Server management has eight independent native workflow surfaces and a separate
+documentation surface. Discovery must retain unavailable historical distributions
+and distinguish unknown compatibility from verified support. Tests of representative
+versions never certify untested versions. The newly registered rows are explicitly
+unverified; no server implementation or native process ownership is claimed here.
 
 ## Evidence record and acceptance
 
