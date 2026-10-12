@@ -537,7 +537,7 @@ void TestMerge::testDeletionConflictTemplate(int mergeMode,
 
     delete sourceGroupDeletedInSourceBeforeEntryUpdatedInTarget;
     changeEntry(targetEntryDeletedInSourceAfterEntryUpdatedInTarget);
-    delete targetGroupDeletedInTargetBeforeEntryUpdatedInSource.data();
+    delete targetGroupDeletedInTargetBeforeEntryUpdatedInSource;
     changeEntry(sourceEntryDeletedInTargetAfterEntryUpdatedInSource);
 
     m_clock->advanceMinute(1);
