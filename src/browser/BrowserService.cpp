@@ -33,6 +33,7 @@
 #include "gui/UrlTools.h"
 #include "gui/MainWindow.h"
 #include "gui/MessageBox.h"
+#include "gui/material/MaterialNotifier.h"
 #include "gui/UrlTools.h"
 #include "gui/osutils/OSUtils.h"
 #include "gui/passkeys/PasskeyImporter.h"
@@ -386,68 +387,10 @@ BrowserService::findEntries(const EntryParameters& entryParameters, const String
         *entriesFound = false;
     }
 
-    const bool alwaysAllowAccess = browserSettings()->alwaysAllowAccess();
-    const bool ignoreHttpAuth = browserSettings()->httpAuthPermission();
-    const QString siteHost = QUrl(entryParameters.siteUrl).host();
-    const QString formHost = QUrl(entryParameters.formUrl).host();
-
-    // Check entries for authorization
-    QList<Entry*> entriesToConfirm;
-    QList<Entry*> allowedEntries;
-    for (auto* entry : searchEntries(entryParameters.siteUrl, entryParameters.formUrl, keyList)) {
-        auto entryCustomData = entry->customData();
-
-        if (!entryParameters.httpAuth
-            && ((entryCustomData->contains(BrowserService::OPTION_ONLY_HTTP_AUTH)
-                 && entryCustomData->value(BrowserService::OPTION_ONLY_HTTP_AUTH) == TRUE_STR)
-                || entry->group()->resolveCustomDataTriState(BrowserService::OPTION_ONLY_HTTP_AUTH) == Group::Enable)) {
-            continue;
-        }
-
-        if (entryParameters.httpAuth
-            && ((entryCustomData->contains(BrowserService::OPTION_NOT_HTTP_AUTH)
-                 && entryCustomData->value(BrowserService::OPTION_NOT_HTTP_AUTH) == TRUE_STR)
-                || entry->group()->resolveCustomDataTriState(BrowserService::OPTION_NOT_HTTP_AUTH) == Group::Enable)) {
-            continue;
-        }
-
-        // HTTP Basic Auth always needs a confirmation
-        if (!ignoreHttpAuth && entryParameters.httpAuth) {
-            entriesToConfirm.append(entry);
-            continue;
-        }
-
-        switch (checkAccess(entry, siteHost, formHost, entryParameters.realm)) {
-        case Denied:
-            continue;
-
-        case Unknown:
-            if (alwaysAllowAccess || (entryParameters.httpAuth && ignoreHttpAuth)) {
-                allowedEntries.append(entry);
-            } else {
-                entriesToConfirm.append(entry);
-            }
-            break;
-
-        case Allowed:
-            allowedEntries.append(entry);
-            break;
-        }
-    }
-
-    if (entriesToConfirm.isEmpty() && allowedEntries.isEmpty()) {
-        return {};
-    }
-
-    // Confirm entries
-    auto selectedEntriesToConfirm =
-        confirmEntries(entriesToConfirm, entryParameters, siteHost, formHost, entryParameters.httpAuth);
-    if (!selectedEntriesToConfirm.isEmpty()) {
-        allowedEntries.append(selectedEntriesToConfirm);
-    }
-
-    // Ensure that database is not locked when the popup was visible
-    if (!isDatabaseOpened()) {
+    // Requests never persist access decisions or open an approval dialog.
+    auto allowedEntries = eligibleEntries(searchEntries(entryParameters.siteUrl, entryParameters.formUrl, keyList),
+                                          entryParameters);
+    if (allowedEntries.isEmpty() || !isDatabaseOpened()) {
         return {};
     }
 
@@ -467,73 +410,33 @@ BrowserService::findEntries(const EntryParameters& entryParameters, const String
     return entries;
 }
 
-QList<Entry*> BrowserService::confirmEntries(QList<Entry*>& entriesToConfirm,
-                                             const EntryParameters& entryParameters,
-                                             const QString& siteHost,
-                                             const QString& formUrl,
-                                             const bool httpAuth)
+QList<Entry*> BrowserService::eligibleEntries(const QList<Entry*>& candidates, const EntryParameters& parameters)
 {
-    if (entriesToConfirm.isEmpty() || m_dialogActive) {
-        return {};
-    }
-
-    m_dialogActive = true;
-    updateWindowState();
-    BrowserAccessControlDialog accessControlDialog(m_currentDatabaseWidget);
-
-    connect(m_currentDatabaseWidget, SIGNAL(databaseLockRequested()), &accessControlDialog, SLOT(reject()));
-
-    connect(&accessControlDialog, &BrowserAccessControlDialog::disableAccess, [&](QTableWidgetItem* item) {
-        auto entry = entriesToConfirm[item->row()];
-        denyEntry(entry, siteHost, formUrl, entryParameters.realm);
-    });
-
-    accessControlDialog.setEntries(entriesToConfirm, entryParameters.siteUrl, httpAuth);
-
     QList<Entry*> allowedEntries;
-    auto ret = accessControlDialog.exec();
-    auto remember = accessControlDialog.remember();
-
-    // All are denied
-    if (ret == QDialog::Rejected && remember) {
-        for (auto& entry : entriesToConfirm) {
-            denyEntry(entry, siteHost, formUrl, entryParameters.realm);
+    const auto siteHost = QUrl(parameters.siteUrl).host();
+    const auto formHost = QUrl(parameters.formUrl).host();
+    for (auto* entry : candidates) {
+        const auto customData = entry->customData();
+        const auto excludedOption = parameters.httpAuth ? OPTION_NOT_HTTP_AUTH : OPTION_ONLY_HTTP_AUTH;
+        if ((customData->contains(excludedOption) && customData->value(excludedOption) == TRUE_STR)
+            || entry->group()->resolveCustomDataTriState(excludedOption) == Group::Enable) {
+            continue;
         }
-    }
-
-    // Some/all are accepted
-    if (ret == QDialog::Accepted) {
-        auto selectedEntries = accessControlDialog.getEntries(SelectionType::Selected);
-        for (auto& item : selectedEntries) {
-            auto entry = entriesToConfirm[item->row()];
+        const auto access = checkAccess(entry, siteHost, formHost, parameters.realm);
+        if (access == Invalid) {
+            const auto message = tr("Browser credential access settings are invalid. In Reports > Browser statistics, "
+                                    "select the affected entry and remove its browser settings to reset them. "
+                                    "Recreate any site blocks before retrying.");
+            emit accessSettingsInvalid(message);
+            if (m_currentDatabaseWidget) {
+                Material::Notify::warning(tr("Invalid browser access settings"), message);
+            }
+            return {};
+        }
+        if (access == Allowed) {
             allowedEntries.append(entry);
-
-            if (remember) {
-                allowEntry(entry, siteHost, formUrl, entryParameters.realm);
-            }
-        }
-
-        // Remembered non-selected entries must be denied
-        if (remember) {
-            auto nonSelectedEntries = accessControlDialog.getEntries(SelectionType::NonSelected);
-            for (auto& item : nonSelectedEntries) {
-                auto entry = entriesToConfirm[item->row()];
-                denyEntry(entry, siteHost, formUrl, entryParameters.realm);
-            }
         }
     }
-
-    // Handle disabled entries (returned Accept/Reject status does not matter)
-    auto disabledEntries = accessControlDialog.getEntries(SelectionType::Disabled);
-    for (auto& item : disabledEntries) {
-        auto entry = entriesToConfirm[item->row()];
-        denyEntry(entry, siteHost, formUrl, entryParameters.realm);
-    }
-
-    // Re-hide the application if it wasn't visible before
-    hideWindow();
-    m_dialogActive = false;
-
     return allowedEntries;
 }
 
@@ -1159,40 +1062,6 @@ QList<Entry*> BrowserService::sortEntries(QList<Entry*>& entries, const QString&
     return results;
 }
 
-void BrowserService::allowEntry(Entry* entry, const QString& siteHost, const QString& formUrl, const QString& realm)
-{
-    BrowserEntryConfig config;
-    config.load(entry);
-    config.allow(siteHost);
-
-    if (!formUrl.isEmpty() && siteHost != formUrl) {
-        config.allow(formUrl);
-    }
-
-    if (!realm.isEmpty()) {
-        config.setRealm(realm);
-    }
-
-    config.save(entry);
-}
-
-void BrowserService::denyEntry(Entry* entry, const QString& siteHost, const QString& formUrl, const QString& realm)
-{
-    BrowserEntryConfig config;
-    config.load(entry);
-    config.deny(siteHost);
-
-    if (!formUrl.isEmpty() && siteHost != formUrl) {
-        config.deny(formUrl);
-    }
-
-    if (!realm.isEmpty()) {
-        config.setRealm(realm);
-    }
-
-    config.save(entry);
-}
-
 QJsonObject BrowserService::prepareEntry(const Entry* entry)
 {
     QJsonObject res;
@@ -1243,18 +1112,16 @@ BrowserService::checkAccess(const Entry* entry, const QString& siteHost, const Q
 
     BrowserEntryConfig config;
     if (!config.load(entry)) {
-        return Unknown;
+        return entry->customData()->contains(KEEPASSXCBROWSER_NAME) ? Invalid : Allowed;
     }
-    if ((config.isAllowed(siteHost)) && (formHost.isEmpty() || config.isAllowed(formHost))) {
-        return Allowed;
-    }
-    if ((config.isDenied(siteHost)) || (!formHost.isEmpty() && config.isDenied(formHost))) {
+    // Explicit blocks and configured realms take precedence over historical allow lists.
+    if (config.isDenied(siteHost) || (!formHost.isEmpty() && config.isDenied(formHost))) {
         return Denied;
     }
-    if (!realm.isEmpty() && config.realm() != realm) {
+    if (!realm.isEmpty() && !config.realm().isEmpty() && config.realm() != realm) {
         return Denied;
     }
-    return Unknown;
+    return Allowed;
 }
 
 Group* BrowserService::getDefaultEntryGroup(const QSharedPointer<Database>& selectedDb)

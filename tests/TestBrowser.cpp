@@ -17,6 +17,7 @@
 
 #include "TestBrowser.h"
 
+#include "browser/BrowserEntryConfig.h"
 #include "browser/BrowserExtensionInstaller.h"
 #include "browser/BrowserMessageBuilder.h"
 #include "browser/BrowserSettings.h"
@@ -26,6 +27,7 @@
 
 #include <QJsonObject>
 #include <QTest>
+#include <QSignalSpy>
 
 #include <botan/sodium.h>
 
@@ -981,4 +983,124 @@ void TestBrowser::testFirefoxRequiresManualInstall()
              BrowserExtensionInstaller::Result::RequiresManualInstall);
     QCOMPARE(installer.installExtension(BrowserShared::TOR_BROWSER),
              BrowserExtensionInstaller::Result::RequiresManualInstall);
+}
+
+void TestBrowser::testAutomaticCredentialAccess()
+{
+    auto db = QSharedPointer<Database>::create();
+    QStringList urls = {"https://example.com/login", "https://unrelated.example/"};
+    const auto entries = createEntries(urls, db->rootGroup());
+    EntryParameters parameters;
+    parameters.siteUrl = "https://example.com/login";
+    parameters.formUrl = "https://example.com/session";
+    const auto originalData = entries[0]->customData()->keys();
+    const auto candidates = m_browserService->searchEntries(db, parameters.siteUrl, parameters.formUrl);
+    QCOMPARE(candidates.size(), 1);
+    for (const auto httpAuth : {false, true}) {
+        parameters.httpAuth = httpAuth;
+        for (int request = 0; request < 2; ++request) {
+            QCOMPARE(m_browserService->eligibleEntries(candidates, parameters), candidates);
+            QCOMPARE(entries[0]->customData()->keys(), originalData);
+            QVERIFY(!entries[0]->customData()->contains(BrowserService::KEEPASSXCBROWSER_NAME));
+        }
+    }
+    // Legacy allow lists do not restrict newly matching URLs or mutate on a request.
+    BrowserEntryConfig config;
+    config.allow("old.example");
+    config.save(entries[0]);
+    const auto stored = entries[0]->customData()->value(BrowserService::KEEPASSXCBROWSER_NAME);
+    QCOMPARE(m_browserService->eligibleEntries(candidates, parameters), candidates);
+    QCOMPARE(entries[0]->customData()->value(BrowserService::KEEPASSXCBROWSER_NAME), stored);
+}
+
+void TestBrowser::testCredentialAccessRestrictions()
+{
+    auto db = QSharedPointer<Database>::create();
+    QStringList urls = {"https://example.com/"};
+    const auto entries = createEntries(urls, db->rootGroup());
+    auto* entry = entries[0];
+    EntryParameters parameters;
+    parameters.siteUrl = "https://example.com/";
+    parameters.formUrl = "https://forms.example/";
+    for (const auto httpAuth : {false, true}) {
+        parameters.httpAuth = httpAuth;
+        for (const auto blockedHost : {QStringLiteral("example.com"), QStringLiteral("forms.example")}) {
+            entry->customData()->set(BrowserService::KEEPASSXCBROWSER_NAME,
+                                    QString("{\"Allow\":[\"example.com\",\"forms.example\"],\"Deny\":[\"%1\"]}")
+                                        .arg(blockedHost));
+            const auto stored = entry->customData()->value(BrowserService::KEEPASSXCBROWSER_NAME);
+            QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+            QCOMPARE(entry->customData()->value(BrowserService::KEEPASSXCBROWSER_NAME), stored);
+        }
+    }
+    BrowserEntryConfig config;
+    config.allow("example.com");
+    config.allow("forms.example");
+    config.setRealm("configured realm");
+    config.save(entry);
+    parameters.realm = "another realm";
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+    parameters.realm = "configured realm";
+    QCOMPARE(m_browserService->eligibleEntries(entries, parameters), entries);
+    parameters.realm.clear();
+    QCOMPARE(m_browserService->eligibleEntries(entries, parameters), entries);
+    entry->customData()->set(BrowserService::OPTION_NOT_HTTP_AUTH, "true");
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+    entry->customData()->remove(BrowserService::OPTION_NOT_HTTP_AUTH);
+    parameters.httpAuth = false;
+    entry->customData()->set(BrowserService::OPTION_ONLY_HTTP_AUTH, "true");
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+    entry->customData()->remove(BrowserService::OPTION_ONLY_HTTP_AUTH);
+    db->rootGroup()->customData()->set(BrowserService::OPTION_ONLY_HTTP_AUTH, "true");
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+    db->rootGroup()->customData()->remove(BrowserService::OPTION_ONLY_HTTP_AUTH);
+    config.setRealm(QString());
+    config.save(entry);
+    parameters.httpAuth = true;
+    parameters.realm = "new realm";
+    QCOMPARE(m_browserService->eligibleEntries(entries, parameters), entries);
+    db->rootGroup()->customData()->set(BrowserService::OPTION_NOT_HTTP_AUTH, "true");
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+    db->rootGroup()->customData()->remove(BrowserService::OPTION_NOT_HTTP_AUTH);
+    entry->setExpires(true);
+    entry->setExpiryTime(QDateTime::currentDateTimeUtc().addDays(-1));
+    browserSettings()->setAllowExpiredCredentials(false);
+    QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+}
+
+void TestBrowser::testMalformedAccessSettings_data()
+{
+    QTest::addColumn<QString>("stored");
+    QTest::newRow("empty-present") << QString();
+    QTest::newRow("broken-json") << QStringLiteral("{not json");
+    QTest::newRow("array-root") << QStringLiteral("[]");
+    QTest::newRow("null-root") << QStringLiteral("null");
+    QTest::newRow("wrong-allow-type") << QStringLiteral("{\"Allow\":true}");
+    QTest::newRow("wrong-deny-member") << QStringLiteral("{\"Deny\":[123]}");
+    QTest::newRow("wrong-realm-type") << QStringLiteral("{\"Realm\":[]}");
+}
+
+void TestBrowser::testMalformedAccessSettings()
+{
+    QFETCH(QString, stored);
+    auto db = QSharedPointer<Database>::create();
+    QStringList urls = {"https://example.com/", "https://example.com/"};
+    const auto entries = createEntries(urls, db->rootGroup());
+    entries[1]->customData()->set(BrowserService::KEEPASSXCBROWSER_NAME, stored);
+    EntryParameters parameters;
+    parameters.siteUrl = "https://example.com/";
+    QSignalSpy diagnostic(m_browserService, &BrowserService::accessSettingsInvalid);
+    for (const auto httpAuth : {false, true}) {
+        parameters.httpAuth = httpAuth;
+        QVERIFY(m_browserService->eligibleEntries(entries, parameters).isEmpty());
+        QCOMPARE(entries[1]->customData()->value(BrowserService::KEEPASSXCBROWSER_NAME), stored);
+    }
+    QCOMPARE(diagnostic.count(), 2);
+    const auto message = diagnostic[0][0].toString();
+    QVERIFY(message.contains("reset"));
+    QVERIFY(!message.contains("example.com"));
+    QVERIFY(!message.contains(entries[1]->uuidToHex()));
+    BrowserEntryConfig config;
+    QVERIFY(!config.load(entries[1]));
+    QVERIFY(!config.load(entries[0]));
 }

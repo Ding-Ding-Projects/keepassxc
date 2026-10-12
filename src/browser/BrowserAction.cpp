@@ -246,6 +246,7 @@ QJsonObject BrowserAction::handleGetLogins(const QJsonObject& json, const QStrin
     entryParameters.siteUrl = siteUrl;
     entryParameters.formUrl = formUrl;
     entryParameters.httpAuth = httpAuth;
+    entryParameters.realm = browserRequest.getString("realm");
 
     bool entriesFound = false;
     const auto entries = browserService()->findEntries(entryParameters, keyList, &entriesFound);

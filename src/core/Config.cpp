@@ -205,9 +205,7 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::Browser_UpdateBinaryPath, {QS("Browser/UpdateBinaryPath"), Roaming, true}},
     {Config::Browser_AllowGetDatabaseEntriesRequest, {QS("Browser/AllowGetDatabaseEntriesRequest"), Roaming, false}},
     {Config::Browser_AllowExpiredCredentials, {QS("Browser/AllowExpiredCredentials"), Roaming, false}},
-    {Config::Browser_AlwaysAllowAccess, {QS("Browser/AlwaysAllowAccess"), Roaming, false}},
     {Config::Browser_AlwaysAllowUpdate, {QS("Browser/AlwaysAllowUpdate"), Roaming, false}},
-    {Config::Browser_HttpAuthPermission, {QS("Browser/HttpAuthPermission"), Roaming, false}},
     {Config::Browser_SearchInAllDatabases, {QS("Browser/SearchInAllDatabases"), Roaming, false}},
     {Config::Browser_SupportKphFields, {QS("Browser/SupportKphFields"), Roaming, true}},
     {Config::Browser_NoMigrationPrompt, {QS("Browser/NoMigrationPrompt"), Roaming, false}},
@@ -462,6 +460,15 @@ static const QHash<QString, Config::ConfigKey> deprecationMap = {
  */
 void Config::migrate()
 {
+    // These preferences no longer affect browser lookup. Drop them even for current-version configurations.
+    for (const auto& key : {QStringLiteral("Browser/AlwaysAllowAccess"),
+                            QStringLiteral("Browser/HttpAuthPermission")}) {
+        m_settings->remove(key);
+        if (m_localSettings) {
+            m_localSettings->remove(key);
+        }
+    }
+
     int previousVersion = m_settings->value("ConfigVersion").toInt();
     if (CONFIG_VERSION <= previousVersion) {
         return;

@@ -16,6 +16,7 @@
  */
 
 #include "BrowserShared.h"
+#include "core/RuntimeProfile.h"
 
 #include "config-keepassx.h"
 
@@ -30,6 +31,9 @@ namespace BrowserShared
     // Get user's temporary directory. Bypasses $TMPDIR on macOS.
     QString getUserTemporaryDirectory()
     {
+        if (RuntimeProfile::isActive()) {
+            return RuntimeProfile::location(QStandardPaths::TempLocation);
+        }
 #if defined(Q_OS_MACOS)
         // In macOS QStandardPaths::TempLocation can be overridden with $TMPDIR. Use the location provided by the OS.
         // Otherwise the socket will be created to incorrect path, and connection with the browser extension breaks.
@@ -52,9 +56,9 @@ namespace BrowserShared
         const auto serverName = QStringLiteral("/org.keepassxc.KeePassXC.BrowserServer");
 #if defined(Q_OS_WIN)
         // Windows uses named pipes
-        return serverName + "_" + qgetenv("USERNAME");
+        return RuntimeProfile::ipcIdentifier(serverName + "_" + qgetenv("USERNAME"));
 #else // Q_OS_MACOS and others
-        return getUserTemporaryDirectory() + serverName;
+        return getUserTemporaryDirectory() + RuntimeProfile::ipcIdentifier(serverName);
 #endif
     }
 } // namespace BrowserShared

@@ -16,6 +16,7 @@
  */
 
 #include "BrowserExtensionInstaller.h"
+#include "core/RuntimeProfile.h"
 #include "BrowserSettings.h"
 #include "config-keepassx.h"
 
@@ -199,6 +200,10 @@ bool BrowserExtensionInstaller::isFirefoxBased(SupportedBrowsers browser)
  */
 bool BrowserExtensionInstaller::supportsAutomaticRegistration(SupportedBrowsers browser)
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
     // Firefox only installs add-ons through the browser itself or through the ExtensionSettings
     // enterprise policy. The policy file lives in the Firefox installation directory and writing it
     // requires administrator rights, so it is deliberately not used here.
@@ -315,6 +320,10 @@ QString BrowserExtensionInstaller::externalExtensionPath(SupportedBrowsers brows
  */
 bool BrowserExtensionInstaller::isExtensionRegistered(SupportedBrowsers browser) const
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
     if (!supportsAutomaticRegistration(browser)) {
         return false;
     }
@@ -338,6 +347,10 @@ bool BrowserExtensionInstaller::isExtensionRegistered(SupportedBrowsers browser)
  */
 BrowserExtensionInstaller::Result BrowserExtensionInstaller::installExtension(SupportedBrowsers browser)
 {
+    if (RuntimeProfile::isActive()) {
+        return Result::RequiresManualInstall;
+    }
+
     if (extensionId(browser).isEmpty()) {
         return Result::Failed;
     }
@@ -395,6 +408,10 @@ BrowserExtensionInstaller::Result BrowserExtensionInstaller::installExtension(Su
  */
 void BrowserExtensionInstaller::removeExtensionRegistration(SupportedBrowsers browser)
 {
+    if (RuntimeProfile::isActive()) {
+        return;
+    }
+
     if (!supportsAutomaticRegistration(browser)) {
         return;
     }

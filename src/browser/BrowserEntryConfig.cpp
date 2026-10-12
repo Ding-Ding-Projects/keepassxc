@@ -22,6 +22,7 @@
 #include "core/Global.h"
 #include "core/Tools.h"
 
+#include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QVariant>
@@ -87,20 +88,43 @@ void BrowserEntryConfig::setRealm(const QString& realm)
 
 bool BrowserEntryConfig::load(const Entry* entry)
 {
-    QString s = entry->customData()->value(KEEPASSXCBROWSER_NAME);
-    if (s.isEmpty()) {
+    m_allowedHosts.clear();
+    m_deniedHosts.clear();
+    m_realm.clear();
+    if (!entry->customData()->contains(KEEPASSXCBROWSER_NAME)) {
         return false;
     }
-
-    QJsonDocument doc = QJsonDocument::fromJson(s.toUtf8());
-    if (doc.isNull()) {
+    const auto doc = QJsonDocument::fromJson(entry->customData()->value(KEEPASSXCBROWSER_NAME).toUtf8());
+    if (!doc.isObject()) {
         return false;
     }
-
-    QVariantMap map = doc.object().toVariantMap();
-    for (QVariantMap::const_iterator iter = map.cbegin(); iter != map.cend(); ++iter) {
-        setProperty(iter.key().toLatin1(), iter.value());
+    const auto object = doc.object();
+    for (const auto& key : {QStringLiteral("Allow"), QStringLiteral("Deny")}) {
+        const auto value = object.value(key);
+        if (value.isUndefined()) {
+            continue;
+        }
+        if (!value.isArray()) {
+            return false;
+        }
+        QStringList hosts;
+        for (const auto& host : value.toArray()) {
+            if (!host.isString()) {
+                return false;
+            }
+            hosts.append(host.toString());
+        }
+        if (key == QStringLiteral("Allow")) {
+            setAllowedHosts(hosts);
+        } else {
+            setDeniedHosts(hosts);
+        }
     }
+    const auto realm = object.value(QStringLiteral("Realm"));
+    if (!realm.isUndefined() && !realm.isString()) {
+        return false;
+    }
+    setRealm(realm.toString());
     return true;
 }
 

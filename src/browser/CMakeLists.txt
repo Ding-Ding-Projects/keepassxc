@@ -17,7 +17,6 @@ if(KPXC_FEATURE_BROWSER)
     include_directories(${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
 
     set(browser_SOURCES
-            BrowserAccessControlDialog.cpp
             BrowserAction.cpp
             BrowserCbor.cpp
             BrowserEntryConfig.cpp

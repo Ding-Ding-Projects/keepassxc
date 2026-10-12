@@ -39,14 +39,10 @@ public:
     void setUnlockDatabase(bool unlockDatabase);
     bool matchUrlScheme();
     void setMatchUrlScheme(bool matchUrlScheme);
-    bool alwaysAllowAccess();
-    void setAlwaysAllowAccess(bool alwaysAllowAccess);
     bool alwaysAllowUpdate();
     void setAlwaysAllowUpdate(bool alwaysAllowUpdate);
     bool searchInAllDatabases();
     void setSearchInAllDatabases(bool searchInAllDatabases);
-    bool httpAuthPermission();
-    void setHttpAuthPermission(bool httpAuthPermission);
     bool supportKphFields();
     void setSupportKphFields(bool supportKphFields);
     bool noMigrationPrompt();

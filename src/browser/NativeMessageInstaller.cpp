@@ -16,6 +16,7 @@
  */
 
 #include "NativeMessageInstaller.h"
+#include "core/RuntimeProfile.h"
 #include "BrowserSettings.h"
 #include "config-keepassx.h"
 #include "core/Config.h"
@@ -84,6 +85,10 @@ namespace
  */
 bool NativeMessageInstaller::isBrowserEnabled(SupportedBrowsers browser)
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
 #ifdef Q_OS_WIN
     QSettings settings(getTargetPath(browser), QSettings::NativeFormat);
     const auto registeredPath = QDir::toNativeSeparators(settings.value(QStringLiteral("Default")).toString());
@@ -103,6 +108,10 @@ bool NativeMessageInstaller::isBrowserEnabled(SupportedBrowsers browser)
  */
 void NativeMessageInstaller::setBrowserEnabled(SupportedBrowsers browser, bool enabled)
 {
+    if (RuntimeProfile::isActive()) {
+        return;
+    }
+
     if (enabled) {
         const auto manifestPath = QDir::toNativeSeparators(getNativeMessagePath(browser));
         // Create and validate the manifest before advertising it to the browser.
@@ -147,6 +156,10 @@ void NativeMessageInstaller::setBrowserEnabled(SupportedBrowsers browser, bool e
  */
 void NativeMessageInstaller::updateBinaryPaths()
 {
+    if (RuntimeProfile::isActive()) {
+        return;
+    }
+
     for (int i = 0; i < SupportedBrowsers::MAX_SUPPORTED; ++i) {
         if (isBrowserEnabled(static_cast<SupportedBrowsers>(i))) {
             setBrowserEnabled(static_cast<SupportedBrowsers>(i), true);
@@ -156,6 +169,10 @@ void NativeMessageInstaller::updateBinaryPaths()
 
 bool NativeMessageInstaller::refreshInstallOwnedRegistrations()
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
     bool succeeded = true;
     QSet<QString> visitedRegistryPaths;
     for (int i = 0; i < SupportedBrowsers::MAX_SUPPORTED; ++i) {
@@ -185,6 +202,10 @@ bool NativeMessageInstaller::refreshInstallOwnedRegistrations()
 
 bool NativeMessageInstaller::removeInstallOwnedRegistrations()
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
     bool succeeded = true;
     QSet<QString> visitedRegistryPaths;
     for (int i = 0; i < SupportedBrowsers::MAX_SUPPORTED; ++i) {
@@ -371,6 +392,10 @@ QJsonObject NativeMessageInstaller::constructFile(SupportedBrowsers browser)
  */
 bool NativeMessageInstaller::createNativeMessageFile(SupportedBrowsers browser)
 {
+    if (RuntimeProfile::isActive()) {
+        return false;
+    }
+
     auto path = getNativeMessagePath(browser);
 
     // Make the parent directory path if necessary
