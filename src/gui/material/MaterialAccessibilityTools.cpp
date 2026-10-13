@@ -3,6 +3,7 @@
 #include "MaterialAccessibilityTools.h"
 #include "MaterialOverlay.h"
 #include "MaterialTheme.h"
+#include "MaterialVoice.h"
 #include "core/Config.h"
 #include "gui/Application.h"
 
@@ -51,20 +52,42 @@ namespace Material
             }
         };
 
-        QLabel* explanation(const QString& text, QWidget* parent)
+        QString copy(const char* key)
         {
-            auto* label = new QLabel(text, parent);
+            return Voice::say(QString::fromLatin1(key));
+        }
+
+        template <typename Control> Control* translated(Control* control, const char* key)
+        {
+            auto refresh = [control, key] { control->setText(copy(key)); };
+            refresh();
+            QObject::connect(Voice::notifier(), &Voice::Notifier::changed, control, refresh);
+            return control;
+        }
+
+        void accessibleName(QWidget* widget, const char* key)
+        {
+            auto refresh = [widget, key] { widget->setAccessibleName(copy(key)); };
+            refresh();
+            QObject::connect(Voice::notifier(), &Voice::Notifier::changed, widget, refresh);
+        }
+
+        QLabel* explanation(const char* key, QWidget* parent)
+        {
+            auto* label = translated(new QLabel(parent), key);
             label->setWordWrap(true);
             label->setTextFormat(Qt::PlainText);
             return label;
         }
 
-        QDialog* dialog(QWidget* parent, const QString& title)
+        QDialog* dialog(QWidget* parent, const char* title)
         {
             auto* result = new QDialog(parent);
             result->setAttribute(Qt::WA_DeleteOnClose);
             result->setProperty(Managed, true);
-            result->setWindowTitle(title);
+            auto refresh = [result, title] { result->setWindowTitle(copy(title)); };
+            refresh();
+            QObject::connect(Voice::notifier(), &Voice::Notifier::changed, result, refresh);
             result->setWindowModality(Qt::WindowModal);
             result->resize(480, 540);
             return result;
@@ -110,30 +133,36 @@ namespace Material
         if (event->type() == QEvent::Show) {
             attach(widget);
         } else if (event->type() == QEvent::Resize && widget->property(Managed).toBool()) {
-            auto* footer = widget->findChild<QWidget*>(QString::fromLatin1(Footer), Qt::FindDirectChildrenOnly);
-            if (footer) {
-                footer->setGeometry(0, qMax(0, widget->height() - FooterHeight), widget->width(), FooterHeight);
-            }
+            layoutFooter(widget);
+        } else if (event->type() == QEvent::LayoutRequest && widget->objectName() == QLatin1String(Footer)) {
+            QPointer<QWidget> surface = widget->parentWidget();
+            QTimer::singleShot(0, this, [this, surface] { if (surface) layoutFooter(surface); });
         }
         return false;
     }
 
     void AccessibilityTools::attach(QWidget* surface)
     {
-        if (surface->property(Managed).toBool()) {
-            return;
-        }
         if (auto* menu = qobject_cast<QMenu*>(surface)) {
-            menu->setProperty(Managed, true);
-            auto* action = menu->addAction(tr("Accessibility tools…"));
+            // aboutToShow handlers may clear and rebuild the menu on every open.
+            for (auto* existing : menu->actions()) {
+                if (existing->objectName() == QLatin1String("accessibilityMenuAction")) {
+                    return;
+                }
+            }
+            auto* action = translated(new QAction(menu), "accessibility.title");
+            menu->addAction(action);
             action->setObjectName(QStringLiteral("accessibilityMenuAction"));
             action->setVisible(config()->get(Config::GUI_AccessibilityButtonVisible).toBool());
             connect(action, &QAction::triggered, menu, [menu] { open(menu->parentWidget()); });
-            connect(config(), &Config::changed, menu, [action](Config::ConfigKey key) {
+            connect(config(), &Config::changed, action, [action](Config::ConfigKey key) {
                 if (key == Config::GUI_AccessibilityButtonVisible) {
                     action->setVisible(config()->get(key).toBool());
                 }
             });
+            return;
+        }
+        if (surface->property(Managed).toBool()) {
             return;
         }
         const bool overlay = qobject_cast<Overlay*>(surface);
@@ -144,44 +173,61 @@ namespace Material
         surface->setProperty(Managed, true);
         m_surfaces.append(surface);
         const auto margins = surface->contentsMargins();
-        surface->setContentsMargins(margins.left(), margins.top(), margins.right(), margins.bottom() + FooterHeight);
+        surface->setProperty("accessibilityBaseBottom", margins.bottom());
         auto* footer = new QWidget(surface);
         footer->setObjectName(QString::fromLatin1(Footer));
         footer->setAutoFillBackground(true);
         auto* layout = new QHBoxLayout(footer);
         layout->setContentsMargins(8, 4, 8, 4);
-        auto* tools = new QPushButton(tr("&Accessibility"), footer);
+        auto* tools = translated(new QPushButton(footer), "accessibility.entry");
         tools->setObjectName(QStringLiteral("accessibilityToolsButton"));
-        tools->setAccessibleName(tr("Accessibility tools"));
+        accessibleName(tools, "accessibility.title");
         tools->setMinimumHeight(44);
         connect(tools, &QPushButton::clicked, surface, [surface] { open(surface); });
         layout->addWidget(tools);
         layout->addStretch();
         // Always available, including while the vault is locked or the entry is hidden.
-        auto* settings = new QPushButton(tr("&Settings"), footer);
-        settings->setAccessibleName(tr("Settings: Accessibility"));
+        auto* settings = translated(new QPushButton(footer), "accessibility.settings");
+        accessibleName(settings, "accessibility.settingsTitle");
         settings->setObjectName(QStringLiteral("accessibilitySettingsButton"));
         settings->setMinimumHeight(44);
         connect(settings, &QPushButton::clicked, surface, [surface] { openSettings(surface); });
         layout->addWidget(settings);
         if (surface->isWindow()) {
-            auto* restoreAction = new QAction(tr("Settings: Accessibility: Show accessibility button"), surface);
+            auto* restoreAction = translated(new QAction(surface), "accessibility.restoreAction");
             restoreAction->setObjectName(QStringLiteral("showAccessibilityButtonAction"));
             connect(restoreAction, &QAction::triggered, surface, [] { restoreButton(); });
             surface->addAction(restoreAction);
-            auto* settingsAction = new QAction(tr("Settings: Accessibility"), surface);
+            auto* settingsAction = translated(new QAction(surface), "accessibility.settingsTitle");
             settingsAction->setObjectName(QStringLiteral("accessibilitySettingsAction"));
             connect(settingsAction, &QAction::triggered, surface, [surface] { openSettings(surface); });
             surface->addAction(settingsAction);
         }
-        footer->setGeometry(0, qMax(0, surface->height() - FooterHeight), surface->width(), FooterHeight);
         tools->setVisible(config()->get(Config::GUI_AccessibilityButtonVisible).toBool());
         footer->show();
-        if (!overlay) {
-            const QSize minimum = surface->minimumSize();
-            surface->setMinimumSize(qMax(minimum.width(), footer->minimumSizeHint().width()),
-                                    qMax(minimum.height() + FooterHeight, surface->minimumSizeHint().height()));
+        layoutFooter(surface);
+    }
+
+    void AccessibilityTools::layoutFooter(QWidget* surface)
+    {
+        auto* footer = surface->findChild<QWidget*>(QString::fromLatin1(Footer), Qt::FindDirectChildrenOnly);
+        if (!footer) {
+            return;
         }
+        const int height = qMax(FooterHeight, footer->minimumSizeHint().height());
+        const int previous = surface->property("accessibilityFooterHeight").toInt();
+        if (height != previous) {
+            surface->setProperty("accessibilityFooterHeight", height);
+            const auto margins = surface->contentsMargins();
+            surface->setContentsMargins(margins.left(), margins.top(), margins.right(),
+                                        surface->property("accessibilityBaseBottom").toInt() + height);
+            if (!qobject_cast<Overlay*>(surface)) {
+                surface->setMinimumSize(qMax(surface->minimumWidth(), footer->minimumSizeHint().width()),
+                                        qMax(surface->minimumHeight() + height - previous,
+                                             surface->minimumSizeHint().height()));
+            }
+        }
+        footer->setGeometry(0, qMax(0, surface->height() - height), surface->width(), height);
     }
 
     void AccessibilityTools::refresh()
@@ -229,18 +275,19 @@ namespace Material
 
     void AccessibilityTools::openSettings(QWidget* parent)
     {
-        auto* settings = dialog(parent, tr("Settings: Accessibility"));
+        auto* settings = dialog(parent, "accessibility.settingsTitle");
         settings->setObjectName(QStringLiteral("accessibilitySettings"));
         auto* layout = new QVBoxLayout(settings);
-        layout->addWidget(explanation(tr("Accessibility preferences are available without unlocking a database."), settings));
-        auto* restore = new QPushButton(tr("Show accessibility button"), settings);
+        layout->addWidget(explanation("accessibility.lockedHelp", settings));
+        auto* restore = translated(new QPushButton(settings), "accessibility.show");
         restore->setObjectName(QStringLiteral("showAccessibilityButton"));
         connect(restore, &QPushButton::clicked, settings, [] { restoreButton(); });
         layout->addWidget(restore);
-        auto* tools = new QPushButton(tr("Open accessibility tools"), settings);
+        auto* tools = translated(new QPushButton(settings), "accessibility.open");
         connect(tools, &QPushButton::clicked, settings, [settings] { open(settings); });
         layout->addWidget(tools);
         auto* close = new QDialogButtonBox(QDialogButtonBox::Close, settings);
+        translated(close->button(QDialogButtonBox::Close), "accessibility.close");
         connect(close, &QDialogButtonBox::rejected, settings, &QDialog::reject);
         layout->addWidget(close);
         settings->show();
@@ -249,17 +296,17 @@ namespace Material
 
     void AccessibilityTools::open(QWidget* parent)
     {
-        auto* panel = dialog(parent, tr("Accessibility tools"));
+        auto* panel = dialog(parent, "accessibility.title");
         panel->setObjectName(QStringLiteral("accessibilityTools"));
         auto* outer = new QVBoxLayout(panel);
         auto* scroll = new QScrollArea(panel);
         scroll->setWidgetResizable(true);
         auto* body = new QWidget(scroll);
         auto* layout = new QVBoxLayout(body);
-        auto* fontLabel = new QLabel(tr("Text size (85–140%)"), body);
+        auto* fontLabel = translated(new QLabel(body), "accessibility.textSize");
         auto* scale = new QSlider(Qt::Horizontal, body);
         scale->setObjectName(QStringLiteral("accessibilityTextSize"));
-        scale->setAccessibleName(tr("Text size percentage"));
+        accessibleName(scale, "accessibility.textSizeName");
         scale->setRange(85, 140);
         scale->setSingleStep(5);
         scale->setValue(qRound(config()->get(Config::GUI_FontScale).toDouble() * 100));
@@ -277,8 +324,8 @@ namespace Material
                 scale->setValue(qRound(config()->get(key).toDouble() * 100));
             }
         });
-        const auto addToggle = [body, layout](const QString& title, const QString& name, Config::ConfigKey key) {
-            auto* control = new QCheckBox(title, body);
+        const auto addToggle = [body, layout](const char* title, const QString& name, Config::ConfigKey key) {
+            auto* control = translated(new QCheckBox(body), title);
             control->setObjectName(name);
             control->setMinimumHeight(44);
             control->setChecked(config()->get(key).toBool());
@@ -291,31 +338,36 @@ namespace Material
             });
             layout->addWidget(control);
         };
-        addToggle(tr("High contrast"), QStringLiteral("accessibilityHighContrast"), Config::GUI_AccessibilityHighContrast);
-        addToggle(tr("Reduced motion"), QStringLiteral("accessibilityReducedMotion"), Config::GUI_ReducedMotion);
-        addToggle(tr("Stronger keyboard focus"), QStringLiteral("accessibilityStrongFocus"), Config::GUI_AccessibilityStrongFocus);
-        addToggle(tr("Larger interaction targets"), QStringLiteral("accessibilityLargeTargets"), Config::GUI_AccessibilityLargeTargets);
-        layout->addWidget(explanation(tr("Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button."), body));
-        auto* speech = explanation(tr("Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls."), body);
+        addToggle("accessibility.contrast", QStringLiteral("accessibilityHighContrast"), Config::GUI_AccessibilityHighContrast);
+        addToggle("accessibility.motion", QStringLiteral("accessibilityReducedMotion"), Config::GUI_ReducedMotion);
+        addToggle("accessibility.focus", QStringLiteral("accessibilityStrongFocus"), Config::GUI_AccessibilityStrongFocus);
+        addToggle("accessibility.targets", QStringLiteral("accessibilityLargeTargets"), Config::GUI_AccessibilityLargeTargets);
+        layout->addWidget(explanation("accessibility.keyboardHelp", body));
+        auto* speech = explanation("accessibility.speechUnavailable", body);
         speech->setObjectName(QStringLiteral("accessibilitySpeechUnavailable"));
         layout->addWidget(speech);
-        auto* resetButton = new QPushButton(tr("Reset accessibility preferences"), body);
+        auto* resetButton = translated(new QPushButton(body), "accessibility.reset");
         resetButton->setObjectName(QStringLiteral("accessibilityReset"));
         connect(resetButton, &QPushButton::clicked, panel, [] { reset(); });
         layout->addWidget(resetButton);
         auto* separator = new QFrame(body);
         separator->setFrameShape(QFrame::HLine);
         layout->addWidget(separator);
-        auto* hide = new QPushButton(tr("Hide accessibility button…"), body);
+        auto* hide = translated(new QPushButton(body), "accessibility.hide");
         hide->setObjectName(QStringLiteral("accessibilityHide"));
         connect(hide, &QPushButton::clicked, panel, [panel] {
-            auto* confirmation = new QMessageBox(QMessageBox::Question, tr("Hide accessibility button?"),
-                tr("Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows."),
+            auto* confirmation = new QMessageBox(QMessageBox::Question, copy("accessibility.hideTitle"),
+                copy("accessibility.hideHelp"),
                 QMessageBox::Cancel | QMessageBox::Yes, panel);
             confirmation->setProperty(Managed, true);
             confirmation->setObjectName(QStringLiteral("accessibilityHideConfirmation"));
             confirmation->setAttribute(Qt::WA_DeleteOnClose);
-            confirmation->button(QMessageBox::Yes)->setText(tr("Hide button"));
+            translated(confirmation->button(QMessageBox::Yes), "accessibility.confirmHide");
+            translated(confirmation->button(QMessageBox::Cancel), "accessibility.cancel");
+            connect(Voice::notifier(), &Voice::Notifier::changed, confirmation, [confirmation] {
+                confirmation->setWindowTitle(copy("accessibility.hideTitle"));
+                confirmation->setText(copy("accessibility.hideHelp"));
+            });
             confirmation->setDefaultButton(QMessageBox::Cancel);
             confirmation->setEscapeButton(QMessageBox::Cancel);
             connect(confirmation, &QDialog::finished, panel, [panel](int result) {
@@ -332,6 +384,7 @@ namespace Material
         scroll->setWidget(body);
         outer->addWidget(scroll);
         auto* close = new QDialogButtonBox(QDialogButtonBox::Close, panel);
+        translated(close->button(QDialogButtonBox::Close), "accessibility.close");
         connect(close, &QDialogButtonBox::rejected, panel, &QDialog::reject);
         outer->addWidget(close);
         panel->show();

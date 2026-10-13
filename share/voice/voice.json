@@ -7711,6 +7711,681 @@
                     "5": "任意二進位前綴。請選擇編碼操作；解碼需要標準文字。"
                 }
             }
+        },
+        "accessibility.title": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Accessibility tools"
+                ],
+                "levels": {
+                    "1": "Accessibility tools",
+                    "2": "Accessibility tools",
+                    "3": "Accessibility tools",
+                    "4": "Accessibility tools",
+                    "5": "Accessibility tools"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "無障礙工具"
+                ],
+                "levels": {
+                    "1": "無障礙工具",
+                    "2": "無障礙工具",
+                    "3": "無障礙工具",
+                    "4": "無障礙工具",
+                    "5": "無障礙工具"
+                }
+            }
+        },
+        "accessibility.entry": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Accessibility"
+                ],
+                "levels": {
+                    "1": "Accessibility",
+                    "2": "Accessibility",
+                    "3": "Accessibility",
+                    "4": "Accessibility",
+                    "5": "Accessibility"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "無障礙工具"
+                ],
+                "levels": {
+                    "1": "無障礙工具",
+                    "2": "無障礙工具",
+                    "3": "無障礙工具",
+                    "4": "無障礙工具",
+                    "5": "無障礙工具"
+                }
+            }
+        },
+        "accessibility.settings": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Settings"
+                ],
+                "levels": {
+                    "1": "Settings",
+                    "2": "Settings",
+                    "3": "Settings",
+                    "4": "Settings",
+                    "5": "Settings"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "設定"
+                ],
+                "levels": {
+                    "1": "設定",
+                    "2": "設定",
+                    "3": "設定",
+                    "4": "設定",
+                    "5": "設定"
+                }
+            }
+        },
+        "accessibility.settingsTitle": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Settings: Accessibility"
+                ],
+                "levels": {
+                    "1": "Settings: Accessibility",
+                    "2": "Settings: Accessibility",
+                    "3": "Settings: Accessibility",
+                    "4": "Settings: Accessibility",
+                    "5": "Settings: Accessibility"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "設定：無障礙工具"
+                ],
+                "levels": {
+                    "1": "設定：無障礙工具",
+                    "2": "設定：無障礙工具",
+                    "3": "設定：無障礙工具",
+                    "4": "設定：無障礙工具",
+                    "5": "設定：無障礙工具"
+                }
+            }
+        },
+        "accessibility.show": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Show accessibility button"
+                ],
+                "levels": {
+                    "1": "Show accessibility button",
+                    "2": "Show accessibility button",
+                    "3": "Show accessibility button",
+                    "4": "Show accessibility button",
+                    "5": "Show accessibility button"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "顯示無障礙工具按鈕"
+                ],
+                "levels": {
+                    "1": "顯示無障礙工具按鈕",
+                    "2": "顯示無障礙工具按鈕",
+                    "3": "顯示無障礙工具按鈕",
+                    "4": "顯示無障礙工具按鈕",
+                    "5": "顯示無障礙工具按鈕"
+                }
+            }
+        },
+        "accessibility.open": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Open accessibility tools"
+                ],
+                "levels": {
+                    "1": "Open accessibility tools",
+                    "2": "Open accessibility tools",
+                    "3": "Open accessibility tools",
+                    "4": "Open accessibility tools",
+                    "5": "Open accessibility tools"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "開啟無障礙工具"
+                ],
+                "levels": {
+                    "1": "開啟無障礙工具",
+                    "2": "開啟無障礙工具",
+                    "3": "開啟無障礙工具",
+                    "4": "開啟無障礙工具",
+                    "5": "開啟無障礙工具"
+                }
+            }
+        },
+        "accessibility.restoreAction": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Settings: Accessibility: Show accessibility button"
+                ],
+                "levels": {
+                    "1": "Settings: Accessibility: Show accessibility button",
+                    "2": "Settings: Accessibility: Show accessibility button",
+                    "3": "Settings: Accessibility: Show accessibility button",
+                    "4": "Settings: Accessibility: Show accessibility button",
+                    "5": "Settings: Accessibility: Show accessibility button"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "設定：無障礙工具：顯示無障礙工具按鈕"
+                ],
+                "levels": {
+                    "1": "設定：無障礙工具：顯示無障礙工具按鈕",
+                    "2": "設定：無障礙工具：顯示無障礙工具按鈕",
+                    "3": "設定：無障礙工具：顯示無障礙工具按鈕",
+                    "4": "設定：無障礙工具：顯示無障礙工具按鈕",
+                    "5": "設定：無障礙工具：顯示無障礙工具按鈕"
+                }
+            }
+        },
+        "accessibility.lockedHelp": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Accessibility preferences are available without unlocking a database."
+                ],
+                "levels": {
+                    "1": "Accessibility preferences are available without unlocking a database.",
+                    "2": "Accessibility preferences are available without unlocking a database.",
+                    "3": "Accessibility preferences are available without unlocking a database.",
+                    "4": "Accessibility preferences are available without unlocking a database.",
+                    "5": "Accessibility preferences are available without unlocking a database."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "無需解鎖資料庫，亦可更改無障礙偏好。"
+                ],
+                "levels": {
+                    "1": "無需解鎖資料庫，亦可更改無障礙偏好。",
+                    "2": "無需解鎖資料庫，亦可更改無障礙偏好。",
+                    "3": "無需解鎖資料庫，亦可更改無障礙偏好。",
+                    "4": "無需解鎖資料庫，亦可更改無障礙偏好。",
+                    "5": "無需解鎖資料庫，亦可更改無障礙偏好。"
+                }
+            }
+        },
+        "accessibility.textSize": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Text size (85–140%)"
+                ],
+                "levels": {
+                    "1": "Text size (85–140%)",
+                    "2": "Text size (85–140%)",
+                    "3": "Text size (85–140%)",
+                    "4": "Text size (85–140%)",
+                    "5": "Text size (85–140%)"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "文字大小（85–140%）"
+                ],
+                "levels": {
+                    "1": "文字大小（85–140%）",
+                    "2": "文字大小（85–140%）",
+                    "3": "文字大小（85–140%）",
+                    "4": "文字大小（85–140%）",
+                    "5": "文字大小（85–140%）"
+                }
+            }
+        },
+        "accessibility.textSizeName": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Text size percentage"
+                ],
+                "levels": {
+                    "1": "Text size percentage",
+                    "2": "Text size percentage",
+                    "3": "Text size percentage",
+                    "4": "Text size percentage",
+                    "5": "Text size percentage"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "文字大小百分比"
+                ],
+                "levels": {
+                    "1": "文字大小百分比",
+                    "2": "文字大小百分比",
+                    "3": "文字大小百分比",
+                    "4": "文字大小百分比",
+                    "5": "文字大小百分比"
+                }
+            }
+        },
+        "accessibility.contrast": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "High contrast"
+                ],
+                "levels": {
+                    "1": "High contrast",
+                    "2": "High contrast",
+                    "3": "High contrast",
+                    "4": "High contrast",
+                    "5": "High contrast"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "高對比"
+                ],
+                "levels": {
+                    "1": "高對比",
+                    "2": "高對比",
+                    "3": "高對比",
+                    "4": "高對比",
+                    "5": "高對比"
+                }
+            }
+        },
+        "accessibility.motion": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reduced motion"
+                ],
+                "levels": {
+                    "1": "Reduced motion",
+                    "2": "Reduced motion",
+                    "3": "Reduced motion",
+                    "4": "Reduced motion",
+                    "5": "Reduced motion"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "減少動態效果"
+                ],
+                "levels": {
+                    "1": "減少動態效果",
+                    "2": "減少動態效果",
+                    "3": "減少動態效果",
+                    "4": "減少動態效果",
+                    "5": "減少動態效果"
+                }
+            }
+        },
+        "accessibility.focus": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Stronger keyboard focus"
+                ],
+                "levels": {
+                    "1": "Stronger keyboard focus",
+                    "2": "Stronger keyboard focus",
+                    "3": "Stronger keyboard focus",
+                    "4": "Stronger keyboard focus",
+                    "5": "Stronger keyboard focus"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "加強鍵盤焦點顯示"
+                ],
+                "levels": {
+                    "1": "加強鍵盤焦點顯示",
+                    "2": "加強鍵盤焦點顯示",
+                    "3": "加強鍵盤焦點顯示",
+                    "4": "加強鍵盤焦點顯示",
+                    "5": "加強鍵盤焦點顯示"
+                }
+            }
+        },
+        "accessibility.targets": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Larger interaction targets"
+                ],
+                "levels": {
+                    "1": "Larger interaction targets",
+                    "2": "Larger interaction targets",
+                    "3": "Larger interaction targets",
+                    "4": "Larger interaction targets",
+                    "5": "Larger interaction targets"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "加大操作目標"
+                ],
+                "levels": {
+                    "1": "加大操作目標",
+                    "2": "加大操作目標",
+                    "3": "加大操作目標",
+                    "4": "加大操作目標",
+                    "5": "加大操作目標"
+                }
+            }
+        },
+        "accessibility.keyboardHelp": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button."
+                ],
+                "levels": {
+                    "1": "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button.",
+                    "2": "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button.",
+                    "3": "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button.",
+                    "4": "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button.",
+                    "5": "Keyboard navigation: Tab and Shift+Tab move between controls. Space activates a button or checkbox. Arrow keys adjust sliders. Escape closes this panel without hiding the accessibility button."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。"
+                ],
+                "levels": {
+                    "1": "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。",
+                    "2": "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。",
+                    "3": "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。",
+                    "4": "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。",
+                    "5": "鍵盤操作：Tab 同 Shift+Tab 可切換控制項。空白鍵啟動按鈕或核取方塊。方向鍵調整滑桿。Escape 關閉面板，但唔會隱藏無障礙工具按鈕。"
+                }
+            }
+        },
+        "accessibility.speechUnavailable": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls."
+                ],
+                "levels": {
+                    "1": "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls.",
+                    "2": "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls.",
+                    "3": "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls.",
+                    "4": "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls.",
+                    "5": "Read aloud is unavailable: this build has no speech engine. Start, pause, resume, stop, voice and rate controls are unavailable. No database values, concealed fields or clipboard text are sent to speech. On Windows, use Windows+Ctrl+Enter to start or stop Narrator. Native operating-system dialogs use the operating system's accessibility controls."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。"
+                ],
+                "levels": {
+                    "1": "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。",
+                    "2": "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。",
+                    "3": "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。",
+                    "4": "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。",
+                    "5": "未能提供朗讀：呢個版本未有語音引擎，因此未能使用開始、暫停、繼續、停止、聲線同語速控制。資料庫內容、隱藏欄位同剪貼簿文字都唔會傳送去朗讀。在 Windows 可按 Windows+Ctrl+Enter 開啟或停止朗讀程式。原生作業系統對話框使用作業系統本身嘅無障礙控制。"
+                }
+            }
+        },
+        "accessibility.reset": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Reset accessibility preferences"
+                ],
+                "levels": {
+                    "1": "Reset accessibility preferences",
+                    "2": "Reset accessibility preferences",
+                    "3": "Reset accessibility preferences",
+                    "4": "Reset accessibility preferences",
+                    "5": "Reset accessibility preferences"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "重設無障礙偏好"
+                ],
+                "levels": {
+                    "1": "重設無障礙偏好",
+                    "2": "重設無障礙偏好",
+                    "3": "重設無障礙偏好",
+                    "4": "重設無障礙偏好",
+                    "5": "重設無障礙偏好"
+                }
+            }
+        },
+        "accessibility.hide": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Hide accessibility button…"
+                ],
+                "levels": {
+                    "1": "Hide accessibility button…",
+                    "2": "Hide accessibility button…",
+                    "3": "Hide accessibility button…",
+                    "4": "Hide accessibility button…",
+                    "5": "Hide accessibility button…"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "隱藏無障礙工具按鈕…"
+                ],
+                "levels": {
+                    "1": "隱藏無障礙工具按鈕…",
+                    "2": "隱藏無障礙工具按鈕…",
+                    "3": "隱藏無障礙工具按鈕…",
+                    "4": "隱藏無障礙工具按鈕…",
+                    "5": "隱藏無障礙工具按鈕…"
+                }
+            }
+        },
+        "accessibility.hideTitle": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Hide accessibility button?"
+                ],
+                "levels": {
+                    "1": "Hide accessibility button?",
+                    "2": "Hide accessibility button?",
+                    "3": "Hide accessibility button?",
+                    "4": "Hide accessibility button?",
+                    "5": "Hide accessibility button?"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "隱藏無障礙工具按鈕？"
+                ],
+                "levels": {
+                    "1": "隱藏無障礙工具按鈕？",
+                    "2": "隱藏無障礙工具按鈕？",
+                    "3": "隱藏無障礙工具按鈕？",
+                    "4": "隱藏無障礙工具按鈕？",
+                    "5": "隱藏無障礙工具按鈕？"
+                }
+            }
+        },
+        "accessibility.hideHelp": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows."
+                ],
+                "levels": {
+                    "1": "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows.",
+                    "2": "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows.",
+                    "3": "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows.",
+                    "4": "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows.",
+                    "5": "Your accessibility preferences will stay active. Restore the button through Settings → Accessibility → Show accessibility button. Settings remains available at the bottom of each window, including locked windows."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。"
+                ],
+                "levels": {
+                    "1": "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。",
+                    "2": "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。",
+                    "3": "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。",
+                    "4": "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。",
+                    "5": "現有無障礙偏好會繼續生效。可經「設定 → 無障礙工具 → 顯示無障礙工具按鈕」恢復按鈕。每個視窗底部仍可開啟設定，鎖定時亦一樣。"
+                }
+            }
+        },
+        "accessibility.confirmHide": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Hide button"
+                ],
+                "levels": {
+                    "1": "Hide button",
+                    "2": "Hide button",
+                    "3": "Hide button",
+                    "4": "Hide button",
+                    "5": "Hide button"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "隱藏按鈕"
+                ],
+                "levels": {
+                    "1": "隱藏按鈕",
+                    "2": "隱藏按鈕",
+                    "3": "隱藏按鈕",
+                    "4": "隱藏按鈕",
+                    "5": "隱藏按鈕"
+                }
+            }
+        },
+        "accessibility.cancel": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Cancel"
+                ],
+                "levels": {
+                    "1": "Cancel",
+                    "2": "Cancel",
+                    "3": "Cancel",
+                    "4": "Cancel",
+                    "5": "Cancel"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "取消"
+                ],
+                "levels": {
+                    "1": "取消",
+                    "2": "取消",
+                    "3": "取消",
+                    "4": "取消",
+                    "5": "取消"
+                }
+            }
+        },
+        "accessibility.close": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Close"
+                ],
+                "levels": {
+                    "1": "Close",
+                    "2": "Close",
+                    "3": "Close",
+                    "4": "Close",
+                    "5": "Close"
+                }
+            },
+            "yue": {
+                "facts": [
+                    "關閉"
+                ],
+                "levels": {
+                    "1": "關閉",
+                    "2": "關閉",
+                    "3": "關閉",
+                    "4": "關閉",
+                    "5": "關閉"
+                }
+            }
+        },
+        "accessibility.settingsSummary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Text size, contrast, motion, focus, target size and keyboard help."
+                ],
+                "levels": {
+                    "1": "Text size, contrast, motion, focus, target size and keyboard help.",
+                    "2": "Text size, contrast, motion, focus, target size and keyboard help.",
+                    "3": "Text size, contrast, motion, focus, target size and keyboard help.",
+                    "4": "Text size, contrast, motion, focus, target size and keyboard help.",
+                    "5": "Text size, contrast, motion, focus, target size and keyboard help."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。"
+                ],
+                "levels": {
+                    "1": "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。",
+                    "2": "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。",
+                    "3": "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。",
+                    "4": "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。",
+                    "5": "文字大小、對比、動態效果、焦點、目標大小同鍵盤說明。"
+                }
+            }
+        },
+        "accessibility.restoreSummary": {
+            "category": "info",
+            "en": {
+                "facts": [
+                    "Restore visible accessibility tools in every Qt window."
+                ],
+                "levels": {
+                    "1": "Restore visible accessibility tools in every Qt window.",
+                    "2": "Restore visible accessibility tools in every Qt window.",
+                    "3": "Restore visible accessibility tools in every Qt window.",
+                    "4": "Restore visible accessibility tools in every Qt window.",
+                    "5": "Restore visible accessibility tools in every Qt window."
+                }
+            },
+            "yue": {
+                "facts": [
+                    "喺每個 Qt 視窗恢復顯示無障礙工具。"
+                ],
+                "levels": {
+                    "1": "喺每個 Qt 視窗恢復顯示無障礙工具。",
+                    "2": "喺每個 Qt 視窗恢復顯示無障礙工具。",
+                    "3": "喺每個 Qt 視窗恢復顯示無障礙工具。",
+                    "4": "喺每個 Qt 視窗恢復顯示無障礙工具。",
+                    "5": "喺每個 Qt 視窗恢復顯示無障礙工具。"
+                }
+            }
         }
     }
 }

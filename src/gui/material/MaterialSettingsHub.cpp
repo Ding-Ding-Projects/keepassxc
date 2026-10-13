@@ -342,6 +342,7 @@ namespace Material
         root->addWidget(new SchoolModeControl(SchoolMode::instance(), this));
         rebuildForSchoolMode();
         connect(SchoolMode::instance(), &SchoolMode::changed, this, &SettingsHub::rebuildForSchoolMode);
+        connect(Voice::notifier(), &Voice::Notifier::changed, this, &SettingsHub::rebuildForSchoolMode);
         connect(config(), &Config::changed, this, [this](Config::ConfigKey) {
             refreshAll();
             HistoryStore::instance()->recordSettingsEvent(tr("Changed an application setting"));
@@ -822,13 +823,14 @@ namespace Material
     void SettingsHub::buildAccessibilityPage()
     {
         const QString id = QStringLiteral("accessibility");
-        m_sheet->addPage(id, QStringLiteral("accessibility_new"), tr("Accessibility"));
-        addCommand(id, tr("Accessibility"), QStringLiteral("accessibility_new"),
-                   tr("Show accessibility button"), tr("Restore visible accessibility tools in every Qt window."),
-                   tr("Show"), [] { AccessibilityTools::restoreButton(); });
-        addCommand(id, tr("Accessibility"), QStringLiteral("tune"),
-                   tr("Open accessibility tools"), tr("Text size, contrast, motion, focus, target size and keyboard help."),
-                   tr("Open"), [this] { AccessibilityTools::open(this); });
+        const auto title = Voice::say(QStringLiteral("accessibility.entry"));
+        m_sheet->addPage(id, QStringLiteral("accessibility_new"), title);
+        addCommand(id, title, QStringLiteral("accessibility_new"),
+                   Voice::say(QStringLiteral("accessibility.show")), Voice::say(QStringLiteral("accessibility.restoreSummary")),
+                   Voice::say(QStringLiteral("accessibility.show")), [] { AccessibilityTools::restoreButton(); });
+        addCommand(id, title, QStringLiteral("tune"),
+                   Voice::say(QStringLiteral("accessibility.open")), Voice::say(QStringLiteral("accessibility.settingsSummary")),
+                   Voice::say(QStringLiteral("accessibility.open")), [this] { AccessibilityTools::open(this); });
     }
 
     void SettingsHub::buildGeneralPage()

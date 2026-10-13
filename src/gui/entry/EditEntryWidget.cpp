@@ -969,6 +969,9 @@ void EditEntryWidget::setupTotp()
 
 void EditEntryWidget::useExpiryPreset(QAction* action)
 {
+    if (!action || !action->data().canConvert<TimeDelta>()) {
+        return;
+    }
     m_mainUi->expireCheck->setChecked(true);
     auto delta = action->data().value<TimeDelta>();
     QDateTime now = Clock::currentDateTime();

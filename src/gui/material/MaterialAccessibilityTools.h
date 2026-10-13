@@ -31,6 +31,7 @@ namespace Material
     private:
         explicit AccessibilityTools(QApplication* application);
         void attach(QWidget* surface);
+        void layoutFooter(QWidget* surface);
         void refresh();
         void updateFocus(QWidget* widget);
         QList<QPointer<QWidget>> m_surfaces;

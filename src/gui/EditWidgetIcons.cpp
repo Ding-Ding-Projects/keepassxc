@@ -367,6 +367,9 @@ void EditWidgetIcons::updateRadioButtonCustomIcons()
 
 void EditWidgetIcons::confirmApplyIconTo(QAction* action)
 {
+    if (!action || !action->data().canConvert<ApplyIconToOptions>()) {
+        return;
+    }
     m_applyIconTo = action->data().value<ApplyIconToOptions>();
     m_ui->applyIconToPushButton->setText(action->text());
 }

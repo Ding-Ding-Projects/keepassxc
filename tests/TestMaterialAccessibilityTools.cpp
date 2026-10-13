@@ -4,12 +4,18 @@
 #include "gui/material/MaterialAccessibilityTools.h"
 #include "gui/material/MaterialOverlay.h"
 #include "gui/material/MaterialTheme.h"
+#include "gui/material/MaterialVoice.h"
+#include "gui/entry/EditEntryWidget.h"
+#include "gui/EditWidgetIcons.h"
+#include "crypto/Crypto.h"
 #include "util/TemporaryFile.h"
 #include <QApplication>
+#include <QAction>
 #include <QCheckBox>
 #include <QDialog>
 #include <QLabel>
 #include <QMessageBox>
+#include <QMenu>
 #include <QPushButton>
 #include <QSettings>
 #include <QSlider>
@@ -25,9 +31,82 @@ private slots:
     {
         m_local = TemporaryFile::createTempConfigFile();
         Config::createConfigFromFile(TemporaryFile::createTempConfigFile(), m_local);
+        QVERIFY(Crypto::init());
         Material::AccessibilityTools::install(qApp);
     }
-    void init() { Material::AccessibilityTools::reset(); }
+    void init()
+    {
+        Material::Voice::setLanguage(Material::Voice::Language::English);
+        Material::AccessibilityTools::reset();
+    }
+    void rebuiltMenusKeepExactlyOneLiveEntry()
+    {
+        QMenu menu;
+        menu.addAction(QStringLiteral("Original command"));
+        menu.show();
+        QPointer<QAction> first = menu.findChild<QAction*>(QStringLiteral("accessibilityMenuAction"));
+        QVERIFY(first);
+        menu.hide();
+        menu.clear();
+        QVERIFY(first.isNull());
+        menu.addAction(QStringLiteral("Rebuilt command"));
+        menu.show();
+        auto* current = menu.findChild<QAction*>(QStringLiteral("accessibilityMenuAction"));
+        QVERIFY(current);
+        QCOMPARE(menu.findChildren<QAction*>(QStringLiteral("accessibilityMenuAction")).size(), 1);
+        config()->set(Config::GUI_AccessibilityButtonVisible, false);
+        QVERIFY(!current->isVisible());
+        config()->set(Config::GUI_AccessibilityButtonVisible, true);
+        QVERIFY(current->isVisible());
+        menu.hide();
+        menu.show();
+        QCOMPARE(menu.findChildren<QAction*>(QStringLiteral("accessibilityMenuAction")).size(), 1);
+    }
+    void accessibilityActionsDoNotChangeEntrySettings()
+    {
+        EditEntryWidget editor;
+        auto* preset = editor.findChild<QPushButton*>(QStringLiteral("expirePresets"));
+        auto* expiry = editor.findChild<QCheckBox*>(QStringLiteral("expireCheck"));
+        QVERIFY(preset && preset->menu() && expiry);
+        expiry->setChecked(false);
+        preset->menu()->show();
+        auto* accessibility = preset->menu()->findChild<QAction*>(QStringLiteral("accessibilityMenuAction"));
+        QVERIFY(accessibility);
+        accessibility->trigger();
+        QVERIFY(!expiry->isChecked());
+
+        EditWidgetIcons icons;
+        auto* apply = icons.findChild<QPushButton*>(QStringLiteral("applyIconToPushButton"));
+        QVERIFY(apply && apply->menu());
+        const auto previous = apply->text();
+        apply->menu()->show();
+        accessibility = apply->menu()->findChild<QAction*>(QStringLiteral("accessibilityMenuAction"));
+        QVERIFY(accessibility);
+        accessibility->trigger();
+        QCOMPARE(apply->text(), previous);
+    }
+    void languagesUpdateExistingControlsAndGeometry()
+    {
+        QWidget shell;
+        shell.resize(640, 480);
+        shell.show();
+        auto* entry = shell.findChild<QPushButton*>(QStringLiteral("accessibilityToolsButton"));
+        QVERIFY(entry);
+        Material::AccessibilityTools::open(&shell);
+        auto* reset = shell.findChild<QPushButton*>(QStringLiteral("accessibilityReset"));
+        QVERIFY(reset);
+        for (auto language : {Material::Voice::Language::English, Material::Voice::Language::Cantonese,
+                              Material::Voice::Language::Bilingual}) {
+            Material::Voice::setLanguage(language);
+            QCOMPARE(entry->text(), Material::Voice::say(QStringLiteral("accessibility.entry")));
+            QCOMPARE(reset->text(), Material::Voice::say(QStringLiteral("accessibility.reset")));
+            QVERIFY(!entry->text().contains(QStringLiteral("accessibility.entry")));
+            QCoreApplication::processEvents();
+            auto* footer = shell.findChild<QWidget*>(QStringLiteral("accessibilityFooter"));
+            QVERIFY(footer->height() >= footer->minimumSizeHint().height());
+            QVERIFY(entry->height() >= entry->minimumSizeHint().height());
+        }
+    }
     void surfaceEntryAndReservedSpace()
     {
         QWidget shell;

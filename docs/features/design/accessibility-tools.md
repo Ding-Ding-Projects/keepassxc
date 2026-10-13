@@ -6,6 +6,13 @@ entry away from content pointer actions. Native operating-system dialogs are
 outside the Qt widget tree and use operating-system accessibility controls.
 On Windows, Windows+Ctrl+Enter starts or stops Narrator.
 
+Entries are recreated when a dynamic menu clears its actions, with connections
+owned by the action's lifetime. Entry-expiry and icon-application menu handlers
+accept only their expected typed action data, so opening accessibility tools does
+not change those editor settings. The shared voice catalogue supplies English,
+Cantonese and bilingual labels, including existing open controls. Footer space
+follows the current controls' minimum size hints.
+
 ## Controls and local persistence
 
 | Control | Consumer |
@@ -49,8 +56,14 @@ gap, not a claim of native read-aloud support.
 `TestMaterialAccessibilityTools` covers required controls, reserved content space,
 modal-overlay access, deliberate hide and cancellation, local visibility storage,
 preference retention, independent restoration, reset, close behavior and real
-contrast/row-size consumers. Compilation and execution are pending for this
-candidate. Negative mutation checks, screen-reader proof and the full language,
+contrast/row-size consumers, rebuilt-menu lifetime, unchanged editor settings and
+language changes. The first candidate, `1f2c2982038fe50d2e557e5b5321edf25197b40b`,
+passed `build.bat /s -WithGuiTests` at `2026-10-13T06:06:11.1286454Z`, with executable
+SHA-256 `9762867b9f8f000fbb6a838622c2c0d76472d599a78feb aed89a138e503ba416`.
+That candidate was not accepted or launched for interaction evidence because
+source review found the menu-lifetime and action-routing defects. The subsequent
+repair and localization changes require a new exact-source build and test run.
+Negative mutation checks, screen-reader proof and the full language,
 theme, minimum-size and display-scale matrix are also pending. No historical
 capture is acceptance evidence for these new controls.
 
