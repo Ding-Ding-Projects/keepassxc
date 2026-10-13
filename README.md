@@ -9,6 +9,10 @@ Run `build.bat` for the native application, `build-installer.bat` for verified `
 toolchain. Each accepts `/s` or `--silent`.
 
 Use `build.bat /s -WithGuiTests` to include the native GUI regression targets.
+
+The [October 13 window-chrome investigation](docs/features/design/window-chrome-verification-2026-10-13.md)
+records the current source-bound build and native observations. The reported
+intermittent title-strip/edge dragging remains unresolved; no repair is claimed.
 This builds those targets through the same source-bound root entrypoint; it does not
 launch them or establish native interaction acceptance. GUI tests remain excluded
 from the ordinary build unless this switch is supplied.

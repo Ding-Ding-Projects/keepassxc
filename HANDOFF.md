@@ -1,3 +1,19 @@
+# October 13 window-chrome investigation
+
+The scoped report is [window movement and resizing](docs/features/design/window-chrome-verification-2026-10-13.md).
+Source `2b2a683ba16d9a5dc116808100c2e8418f4fa681` passed the exact root
+`build.bat /s -WithGuiTests`; the staged executable hash was verified. Isolated
+native observations at 150% scale confirm caption/eight-edge hit tests and actual
+maximize, restore and Always on Top control responses. Physical dragging remains
+unverified. Application Control blocked the focused title-bar test with error
+4551 before any case executed. No chrome implementation repair was made.
+
+The diagnostic record is preserved on `feature/window-chrome-20261013`, based on
+the existing reader candidate. Preserve the older unfinished feature scope below.
+The next useful input is a repeatable affected gesture/state, followed by a
+supported isolated pointer-input route and focused native test execution. No
+release or installed-profile mutation is authorized by this diagnostic record.
+
 # October 11 preservation boundary
 
 The October 11 requirements refresh remains bound to instruction source df119a824c1a7e143f26b15e953e84cb92b13750. All 105 identities are mapped, covering 1,119 capabilities, 108 surfaces and 120,852 required cells. Accepted cells remain zero. Complete local Ollama support is missing. The eight-category converter has a bounded native binary-encoding foundation; the other seven categories remain disabled with explicit unmet requirements.

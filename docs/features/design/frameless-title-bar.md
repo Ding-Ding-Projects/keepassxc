@@ -26,6 +26,11 @@ None beyond the window: the bar reads the window title and nothing else.
 
 ## Verification
 
+The [October 13 native investigation](window-chrome-verification-2026-10-13.md)
+records a successful source-bound build, native hit-test and caption-button
+observations, and the remaining physical-drag and test-execution limitations.
+It does not establish that the reported intermittent drag/resize problem is fixed.
+
 `testmaterialtitlebar` covers the button requests, the 46 × 44 targets and their order, the caption hit-test excluding buttons, the maximise/restore glyph swap, the shell placing the bar above the rail, and a 320 px width keeping every button inside the bar. Parity row `shell-default` carries the client capture; `design/parity/evidence/shell-default/window-frame.png` is a whole-window capture from the off-screen desktop showing no desktop caption above the bar.
 
 ## Suggested articles

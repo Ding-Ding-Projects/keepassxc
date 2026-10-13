@@ -1,5 +1,14 @@
 # Roadmap
 
+## Window movement and resizing investigation, October 13
+
+- [x] Build source `2b2a683b` through `build.bat /s -WithGuiTests` and verify the staged executable hash.
+- [x] Observe native caption/eight-edge hit tests, maximize/restore buttons and Always on Top handling on the isolated current executable at 150% scale.
+- [ ] Reproduce and resolve intermittent physical title-strip/edge dragging. Background messages are not physical-drag acceptance.
+- [ ] Run the native title-bar test after its Application Control launch block is resolved through an authorized normal route. Zero cases executed.
+
+See [the bounded native evidence](docs/features/design/window-chrome-verification-2026-10-13.md). No implementation repair is claimed.
+
 ## Current contract reconciliation
 
 - [ ] Deliver the complete guided local Ollama suite, including exhaustive catalogue, hardware-fit evidence, batch pulls, local chat, offline recovery and safe profile rollback.
