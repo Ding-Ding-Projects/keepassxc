@@ -138,6 +138,7 @@ namespace Material
 
         void buildOverview();
         void buildGeneralPage();
+        void buildAccessibilityPage();
         void buildAutoTypePage();
         void buildGeneratorDefaultsPage();
         void buildShortcutsPage();

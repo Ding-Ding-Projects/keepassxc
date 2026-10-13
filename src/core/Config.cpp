@@ -132,6 +132,10 @@ static const QHash<Config::ConfigKey, ConfigDirective> configStrings = {
     {Config::GUI_ShowExpiredEntriesOnDatabaseUnlock, {QS("GUI/ShowExpiredEntriesOnDatabaseUnlock"), Roaming, true}},
     {Config::GUI_ShowExpiredEntriesOnDatabaseUnlockOffsetDays, {QS("GUI/ShowExpiredEntriesOnDatabaseUnlockOffsetDays"), Roaming, 3}},
     {Config::GUI_ReducedMotion, {QS("GUI/ReducedMotion"), Local, false}},
+    {Config::GUI_AccessibilityButtonVisible, {QS("GUI/AccessibilityButtonVisible"), Local, true}},
+    {Config::GUI_AccessibilityHighContrast, {QS("GUI/AccessibilityHighContrast"), Local, false}},
+    {Config::GUI_AccessibilityStrongFocus, {QS("GUI/AccessibilityStrongFocus"), Local, false}},
+    {Config::GUI_AccessibilityLargeTargets, {QS("GUI/AccessibilityLargeTargets"), Local, false}},
     {Config::GUI_LowStimulation, {QS("GUI/LowStimulation"), Local, false}},
     {Config::GUI_FontSizeOffset, {QS("GUI/FontSizeOffset"), Local, 0}},
     // Empty means "whatever the platform picked", which is the default the

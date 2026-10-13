@@ -231,6 +231,24 @@ namespace Material
         return m_colors.value(static_cast<int>(role));
     }
 
+    void ColorScheme::applyHighContrast()
+    {
+        const QColor background = isDark() ? Qt::black : Qt::white;
+        const QColor foreground = isDark() ? Qt::white : Qt::black;
+        for (Role role : {Role::Surface, Role::SurfaceContainerLowest, Role::SurfaceContainerLow,
+                          Role::SurfaceContainer, Role::SurfaceContainerHigh, Role::SurfaceContainerHighest,
+                          Role::PrimaryContainer, Role::SecondaryContainer}) {
+            m_colors.insert(static_cast<int>(role), background);
+        }
+        for (Role role : {Role::OnSurface, Role::OnSurfaceVariant, Role::Outline, Role::OutlineVariant,
+                          Role::OnPrimaryContainer, Role::OnSecondaryContainer, Role::Primary}) {
+            m_colors.insert(static_cast<int>(role), foreground);
+        }
+        m_colors.insert(static_cast<int>(Role::OnPrimary), background);
+        m_colors.insert(static_cast<int>(Role::InverseSurface), foreground);
+        m_colors.insert(static_cast<int>(Role::InverseOnSurface), background);
+    }
+
     QColor ColorScheme::overlay(Role role, qreal alpha) const
     {
         return blend(color(role), color(Role::Surface), alpha);
@@ -317,6 +335,9 @@ namespace Material
             mode = osUtils->isDarkMode() ? Mode::Dark : Mode::Light;
         }
         m_colors = ColorScheme(m_seed, mode);
+        if (config()->get(Config::GUI_AccessibilityHighContrast).toBool()) {
+            m_colors.applyHighContrast();
+        }
     }
 
     void Theme::setSeed(Seed seed)
@@ -373,6 +394,9 @@ namespace Material
 
     int Theme::rowHeight() const
     {
+        if (config()->get(Config::GUI_AccessibilityLargeTargets).toBool()) {
+            return 64;
+        }
         switch (m_density) {
         case Density::Compact:
             return 40;

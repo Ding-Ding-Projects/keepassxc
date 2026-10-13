@@ -1,5 +1,17 @@
 # Continuation prompt
 
+Current follow-up: review and verify the accessibility implementation on
+`feature/window-chrome-20261013`, preserving the earlier diagnostic commits.
+The candidate introduces shared Qt entry points, local preferences, high-contrast
+roles, stronger focus, larger standard targets, explicit unsupported speech,
+deliberate hide confirmation and independent Settings restoration. New focused
+tests are written but have not run. Run the exact root `build.bat /s -WithGuiTests`
+against the immutable candidate, then verify actual isolated interactions and
+captures. Keep native OS-dialog, specialized target-size, speech, screen-reader
+and full visual-matrix gaps explicit. Do not treat the earlier source-2b2a683b
+build or captures as evidence for this candidate. Parent coordination owns remote
+preservation, independent review and main integration. No release is authorized.
+
 Latest follow-up: the existing diagnostic image was assessed under the UI evidence promotion contract. It was not promoted. Its hash and 1800 by 1200 dimensions match, but the producer record lacks a versioned receipt and capture start/completion timestamps, a hashed privacy scan and an exact inventory row. Inspection shows a black lower strip and a synthetic profile identifier. The public-safe gap record is `docs/evidence/window-chrome/README.md` with `promotion-assessment.json`. No PNG was added, modified or published. No new build or runtime was launched. A future capture requires separate authorization and a complete genuine producer receipt; never reconstruct missing timestamps or relabel the actual route.
 
 Continue the bounded KeePassXC title-strip dragging and eight-direction resize investigation. Latest scope requires an isolated new worktree. The diagnostic branch is `feature/window-chrome-20261013`, based on `2b2a683ba16d9a5dc116808100c2e8418f4fa681`. No window-chrome code was changed because no causal product defect was reproduced. Parent coordination owns remote preservation and main integration.

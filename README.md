@@ -10,6 +10,11 @@ toolchain. Each accepts `/s` or `--silent`.
 
 Use `build.bat /s -WithGuiTests` to include the native GUI regression targets.
 
+The [accessibility-tools candidate](docs/features/design/accessibility-tools.md)
+adds shared Qt controls and deliberate hide/restoration behavior. Compilation,
+focused execution and current built-interface evidence are pending; native speech
+is explicitly unavailable. Historical images do not verify this candidate.
+
 The [October 13 window-chrome investigation](docs/features/design/window-chrome-verification-2026-10-13.md)
 records the current source-bound build and native observations. The reported
 intermittent title-strip/edge dragging remains unresolved; no repair is claimed.

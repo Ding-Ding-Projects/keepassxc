@@ -1,4 +1,12 @@
-# October 13 window-chrome investigation
+# October 13 accessibility candidate and window-chrome investigation
+
+The follow-up accessibility candidate adds shared Qt entry points and local
+preferences, deliberate hide confirmation, independent restoration while locked,
+searchable Settings rows and command-palette actions. Contrast, focus and target
+size have real consumers. Native speech is explicitly unavailable. Root build,
+focused test execution, interaction evidence and the full visual matrix are pending.
+See [accessibility tools](docs/features/design/accessibility-tools.md) for the exact
+capability and surface limits. No window-chrome defect repair is claimed.
 
 The subsequent [capture-promotion assessment](docs/evidence/window-chrome/README.md)
 did not promote the raw diagnostic image. Validation against the producing source

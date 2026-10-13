@@ -184,6 +184,7 @@ namespace Material
         ColorScheme(Seed seed, Mode mode);
 
         QColor color(Role role) const;
+        void applyHighContrast();
         /** Role colour blended over its surface at @p alpha (0..1). */
         QColor overlay(Role role, qreal alpha) const;
 

@@ -20,6 +20,7 @@
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
 #include "MaterialTheme.h"
+#include "core/Config.h"
 
 #include <QAbstractButton>
 #include <QAbstractItemView>
@@ -596,7 +597,8 @@ namespace Material
         switch (type) {
         case CT_PushButton:
             size.setWidth(qMax(size.width(), contentsSize.width() + 2 * ButtonHPadding));
-            size.setHeight(qMax(size.height(), Layout::ButtonHeight));
+            size.setHeight(qMax(size.height(), config()->get(Config::GUI_AccessibilityLargeTargets).toBool()
+                                                  ? 48 : Layout::ButtonHeight));
             break;
         case CT_MenuItem: {
             const auto* item = qstyleoption_cast<const QStyleOptionMenuItem*>(option);
@@ -616,6 +618,10 @@ namespace Material
             break;
         default:
             break;
+        }
+        if (config()->get(Config::GUI_AccessibilityLargeTargets).toBool()
+            && (type == CT_ComboBox || type == CT_LineEdit || type == CT_CheckBox || type == CT_RadioButton)) {
+            size.setHeight(qMax(size.height(), 48));
         }
         return size;
     }

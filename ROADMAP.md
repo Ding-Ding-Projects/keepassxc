@@ -1,5 +1,14 @@
 # Roadmap
 
+## Accessibility tools, October 13
+
+- [ ] Verify shared Qt entries, profile preferences, deliberate hide/cancel and independent locked-state restoration through the exact root build and focused tests.
+- [ ] Verify keyboard and screen-reader access, command-palette restoration, minimum geometry and supported language/theme/scale tuples on the real build.
+- [ ] Complete target-size coverage for specialized custom controls and contrast measurements for preserved status colors.
+- [ ] Provide supported native read-aloud. The current candidate explicitly reports that no speech engine is included.
+
+See [accessibility tools](docs/features/design/accessibility-tools.md). Implementation is preserved for review, with no runtime acceptance claim.
+
 ## Window movement and resizing investigation, October 13
 
 - [x] Build source `2b2a683b` through `build.bat /s -WithGuiTests` and verify the staged executable hash.

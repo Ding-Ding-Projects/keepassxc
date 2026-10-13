@@ -4,6 +4,7 @@ Material Design 3 appearance, design-reference parity and the surfaces that rend
 
 | Feature | Article |
 | --- | --- |
+| Accessibility tools (implementation candidate, verification pending) | [accessibility-tools.md](accessibility-tools.md) |
 | Clipping matrix | [clipping-matrix.md](clipping-matrix.md) |
 | Application logo customization | [app-logo-customization.md](app-logo-customization.md) |
 | Design-reference parity | [design-parity.md](design-parity.md) |

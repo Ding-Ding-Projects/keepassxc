@@ -16,6 +16,7 @@
  */
 
 #include "MaterialButtons.h"
+#include "core/Config.h"
 #include "MaterialMotion.h"
 #include "MaterialElevation.h"
 #include "MaterialIcons.h"
@@ -269,7 +270,8 @@ namespace Material
         const int glyph = m_symbol.isEmpty() ? 0 : m_symbolSize;
         const int label = text().isEmpty() ? 0 : metrics.horizontalAdvance(text());
         const int gap = (glyph > 0 && label > 0) ? contentGap() : 0;
-        const int height = qMax(Layout::ButtonHeight, metrics.height() + 12);
+        const int height = qMax(config()->get(Config::GUI_AccessibilityLargeTargets).toBool()
+                                   ? 48 : Layout::ButtonHeight, metrics.height() + 12);
         const int width = leadingPadding() + trailingPadding() + glyph + gap + label;
         return {qMax(width, height), height};
     }

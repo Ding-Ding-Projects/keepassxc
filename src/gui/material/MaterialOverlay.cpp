@@ -281,13 +281,14 @@ namespace Material
         width = qMin(width, qMax(MinSheetWidth, this->width() - 2 * EdgeMargin));
 
         // A top-anchored sheet only has the room below its anchor to grow into.
-        const int available = m_sheetTopMargin >= 0 ? this->height() - m_sheetTopMargin - EdgeMargin
-                                                   : this->height() - 2 * EdgeMargin;
+        const int contentHeight = contentsRect().height();
+        const int available = m_sheetTopMargin >= 0 ? contentHeight - m_sheetTopMargin - EdgeMargin
+                                                   : contentHeight - 2 * EdgeMargin;
 
         int height = m_sheet->hasHeightForWidth() ? m_sheet->heightForWidth(width) : hint.height();
         height = qMin(qMax(height, hint.height()), qMax(MinSheetHeight, available));
 
-        const int top = m_sheetTopMargin >= 0 ? m_sheetTopMargin : qRound((this->height() - height) / 2.0);
+        const int top = m_sheetTopMargin >= 0 ? m_sheetTopMargin : qRound((contentHeight - height) / 2.0);
         m_sheet->setGeometry(qRound((this->width() - width) / 2.0), top, width, height);
     }
 

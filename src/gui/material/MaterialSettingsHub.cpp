@@ -16,6 +16,7 @@
  */
 
 #include "MaterialSettingsHub.h"
+#include "MaterialAccessibilityTools.h"
 #include "MaterialSchoolMode.h"
 #include "MaterialControls.h"
 
@@ -365,6 +366,7 @@ namespace Material
         // The design's overline is the sheet's own label, not a generic one.
         m_sheet->addSidebarSection(tr("APPLICATION SETTINGS"));
         buildGeneralPage();
+        buildAccessibilityPage();
         buildAutoTypePage();
         buildSecurityPage();
         buildBrowserPage();
@@ -816,6 +818,18 @@ namespace Material
     }
 
     // ---------------------------------------------------------------- the pages
+
+    void SettingsHub::buildAccessibilityPage()
+    {
+        const QString id = QStringLiteral("accessibility");
+        m_sheet->addPage(id, QStringLiteral("accessibility_new"), tr("Accessibility"));
+        addCommand(id, tr("Accessibility"), QStringLiteral("accessibility_new"),
+                   tr("Show accessibility button"), tr("Restore visible accessibility tools in every Qt window."),
+                   tr("Show"), [] { AccessibilityTools::restoreButton(); });
+        addCommand(id, tr("Accessibility"), QStringLiteral("tune"),
+                   tr("Open accessibility tools"), tr("Text size, contrast, motion, focus, target size and keyboard help."),
+                   tr("Open"), [this] { AccessibilityTools::open(this); });
+    }
 
     void SettingsHub::buildGeneralPage()
     {

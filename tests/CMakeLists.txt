@@ -497,6 +497,10 @@ endif()
 
 add_unit_test(NAME testmaterialmotion SOURCES TestMaterialMotion.cpp
         LIBS ${TEST_LIBRARIES} testsupport)
+
+add_unit_test(NAME testmaterialaccessibilitytools SOURCES TestMaterialAccessibilityTools.cpp
+        LIBS ${TEST_LIBRARIES} testsupport)
+set_tests_properties(testmaterialaccessibilitytools PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
 set_tests_properties(testmaterialmotion PROPERTIES ENVIRONMENT "LANG=en_US.UTF-8;QT_QPA_PLATFORM=offscreen")
 if(WIN32)
     add_custom_command(TARGET testmaterialmotion POST_BUILD
