@@ -1,5 +1,12 @@
 # October 13 window-chrome investigation
 
+The subsequent [capture-promotion assessment](docs/evidence/window-chrome/README.md)
+did not promote the raw diagnostic image. Validation against the producing source
+rejects the unversioned capture record; capture timestamps, a hashed privacy scan
+and an exact inventory row are missing. Pixels contain a black lower strip and a
+synthetic profile identifier. No image bytes were changed or published, and no
+new build or runtime was launched. Preserve this gap for a future authorized run.
+
 The scoped report is [window movement and resizing](docs/features/design/window-chrome-verification-2026-10-13.md).
 Source `2b2a683ba16d9a5dc116808100c2e8418f4fa681` passed the exact root
 `build.bat /s -WithGuiTests`; the staged executable hash was verified. Isolated

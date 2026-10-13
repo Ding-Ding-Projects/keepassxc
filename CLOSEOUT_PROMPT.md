@@ -1,5 +1,7 @@
 # Continuation prompt
 
+Latest follow-up: the existing diagnostic image was assessed under the UI evidence promotion contract. It was not promoted. Its hash and 1800 by 1200 dimensions match, but the producer record lacks a versioned receipt and capture start/completion timestamps, a hashed privacy scan and an exact inventory row. Inspection shows a black lower strip and a synthetic profile identifier. The public-safe gap record is `docs/evidence/window-chrome/README.md` with `promotion-assessment.json`. No PNG was added, modified or published. No new build or runtime was launched. A future capture requires separate authorization and a complete genuine producer receipt; never reconstruct missing timestamps or relabel the actual route.
+
 Continue the bounded KeePassXC title-strip dragging and eight-direction resize investigation. Latest scope requires an isolated new worktree. The diagnostic branch is `feature/window-chrome-20261013`, based on `2b2a683ba16d9a5dc116808100c2e8418f4fa681`. No window-chrome code was changed because no causal product defect was reproduced. Parent coordination owns remote preservation and main integration.
 
 The exact existing reader-source entrypoint `build.bat /s -WithGuiTests` passed with exit 0 at `2026-10-13T04:02:53.6619988Z`. Source and stage receipt agree on `2b2a683ba16d9a5dc116808100c2e8418f4fa681`; executable SHA-256 is `f3f8fdc487e2ee43b9d5697ca7486f8b54ecde13a2f9d90b2769ae17da51b491`. Do not call the documentation branch's later commit the compiled source.

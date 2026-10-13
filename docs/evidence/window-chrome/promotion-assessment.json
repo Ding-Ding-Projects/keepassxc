@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "kind": "capture-promotion-assessment",
+  "status": "not-promoted",
+  "sourceCommit": "2b2a683ba16d9a5dc116808100c2e8418f4fa681",
+  "executableSha256": "f3f8fdc487e2ee43b9d5697ca7486f8b54ecde13a2f9d90b2769ae17da51b491",
+  "captureSha256": "0b7b4161aaa6e1b419d326ccb2959365e2c88987531ddabd73464ac5b0c8bc07",
+  "captureWidth": 1800,
+  "captureHeight": 1200,
+  "captureBytes": 85009,
+  "captureTimestamp": null,
+  "screen": "welcome",
+  "theme": "light",
+  "language": "English",
+  "logicalViewport": { "width": 1200, "height": 800, "scale": 1.5 },
+  "recordedRoute": "direct-cheap-runtime-binding",
+  "validatorExitCode": 1,
+  "validatorDiagnostic": "UI evidence rejected: version must be 1 or 2",
+  "missingEvidence": [
+    "Versioned promotion receipt",
+    "Producer-recorded capture start and completion timestamps",
+    "Validated receipt support for the actual route",
+    "Hashed privacy-scan receipt",
+    "Exact inventory row for this tuple"
+  ],
+  "visualLimitations": [
+    "Black strip along the lower boundary",
+    "Synthetic verification-profile identifier remains visible in the title"
+  ],
+  "rawImageModified": false,
+  "rawImagePublished": false,
+  "newRuntimeLaunched": false,
+  "newBuildRun": false,
+  "physicalDraggingAccepted": false
+}
