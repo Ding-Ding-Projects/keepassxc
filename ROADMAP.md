@@ -2,6 +2,8 @@
 
 ## October 22 installer and history repair
 
+- [ ] Verify the persistent default-on website-use confirmation suppression switch in both browser settings surfaces. Source, confirmation-choice and restart tests added; native and UI verification pending.
+
 - [ ] Verify lifecycle callbacks and shortcut creation for existing `KeePassXC` and `KeePassXC.Material` installation roots. Source and native regression added.
 - [ ] Verify shared history writes with local signing and hooks enabled. Command overrides and native regression added.
 - [ ] Match the user's recurring history notification to its exact message and verify the affected workflow. No vault contents were changed during inspection.

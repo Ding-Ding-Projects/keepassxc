@@ -1,5 +1,16 @@
 # Navigation delivery handoff
 
+## Optional browser-use confirmation, October 22, 2026
+
+Added a default-on "Never ask before using credentials on websites" switch in the
+Material settings hub and browser settings widget. It persists independently of
+the retired permission settings. Turning it off asks for each eligible request;
+cancel returns no credentials, and approval rechecks database state and eligibility.
+Pairing, explicit blocks, URL/realm matching, expiration and vault locks still apply.
+Added confirmation-choice and preference-restart native tests. Native execution
+and built UI evidence remain pending. The previously started local build was
+canceled during dependency compilation before this source change.
+
 ## Installer shortcuts and local history, October 22, 2026
 
 The installer lifecycle now accepts existing `KeePassXC` installation directories as well as

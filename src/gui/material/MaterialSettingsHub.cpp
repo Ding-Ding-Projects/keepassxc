@@ -1566,6 +1566,12 @@ namespace Material
         const QString permissions = tr("Permissions");
         addToggle(page,
                   permissions,
+                  QStringLiteral("verified_user"),
+                  tr("Never ask before using credentials on websites"),
+                  tr("Automatically return matching credentials to paired browsers. Explicit website blocks and database locks still apply."),
+                  Config::Browser_AutomaticallyAllowMatchingCredentials);
+        addToggle(page,
+                  permissions,
                   QStringLiteral("edit"),
                   tr("Never ask before updating credentials"),
                   tr("Skip the update prompt entirely."),

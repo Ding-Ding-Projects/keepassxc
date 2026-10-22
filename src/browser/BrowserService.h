@@ -172,6 +172,7 @@ private:
     searchEntries(const QString& siteUrl, const QString& formUrl, const StringPairList& keyList, bool passkey = false);
     QList<Entry*> sortEntries(QList<Entry*>& entries, const QString& siteUrl, const QString& formUrl);
     QList<Entry*> eligibleEntries(const QList<Entry*>& candidates, const EntryParameters& parameters);
+    bool confirmCredentialAccess(const QString& siteUrl);
     QJsonObject prepareEntry(const Entry* entry);
     QJsonArray getChildrenFromGroup(Group* group);
     Access checkAccess(const Entry* entry, const QString& siteHost, const QString& formHost, const QString& realm);

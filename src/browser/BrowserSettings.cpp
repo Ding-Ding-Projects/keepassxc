@@ -90,6 +90,16 @@ bool BrowserSettings::alwaysAllowUpdate()
     return config()->get(Config::Browser_AlwaysAllowUpdate).toBool();
 }
 
+bool BrowserSettings::automaticallyAllowMatchingCredentials()
+{
+    return config()->get(Config::Browser_AutomaticallyAllowMatchingCredentials).toBool();
+}
+
+void BrowserSettings::setAutomaticallyAllowMatchingCredentials(bool enabled)
+{
+    config()->set(Config::Browser_AutomaticallyAllowMatchingCredentials, enabled);
+}
+
 void BrowserSettings::setAlwaysAllowUpdate(bool alwaysAllowUpdate)
 {
     config()->set(Config::Browser_AlwaysAllowUpdate, alwaysAllowUpdate);

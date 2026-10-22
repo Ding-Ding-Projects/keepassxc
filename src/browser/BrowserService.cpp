@@ -51,6 +51,7 @@
 #include <QLocalSocket>
 #include <QLocale>
 #include <QProgressDialog>
+#include <QScopedValueRollback>
 #include <QStringView>
 #include <QUrl>
 
@@ -387,11 +388,30 @@ BrowserService::findEntries(const EntryParameters& entryParameters, const String
         *entriesFound = false;
     }
 
-    // Requests never persist access decisions or open an approval dialog.
+    if (m_dialogActive) {
+        return {};
+    }
+    // Requests never persist per-entry access decisions.
     auto allowedEntries = eligibleEntries(searchEntries(entryParameters.siteUrl, entryParameters.formUrl, keyList),
                                           entryParameters);
     if (allowedEntries.isEmpty() || !isDatabaseOpened()) {
         return {};
+    }
+
+    if (!browserSettings()->automaticallyAllowMatchingCredentials()) {
+        const auto requestingDatabase = getDatabase();
+        QScopedValueRollback<bool> dialogActive(m_dialogActive, true);
+        if (!confirmCredentialAccess(entryParameters.siteUrl)
+            || !isDatabaseOpened() || getDatabase() != requestingDatabase) {
+            return {};
+        }
+        // The dialog runs an event loop. Never reuse entries or permissions
+        // from before a possible database lock, edit or tab change.
+        allowedEntries = eligibleEntries(searchEntries(entryParameters.siteUrl, entryParameters.formUrl, keyList),
+                                         entryParameters);
+        if (allowedEntries.isEmpty() || !isDatabaseOpened()) {
+            return {};
+        }
     }
 
     // Sort results
@@ -408,6 +428,20 @@ BrowserService::findEntries(const EntryParameters& entryParameters, const String
     }
 
     return entries;
+}
+
+bool BrowserService::confirmCredentialAccess(const QString& siteUrl)
+{
+    if (browserSettings()->automaticallyAllowMatchingCredentials()) {
+        return true;
+    }
+    return MessageBox::question(
+               m_currentDatabaseWidget,
+               tr("Allow browser credential access?"),
+               tr("Allow the paired browser to use matching credentials on %1?")
+                   .arg(QUrl(siteUrl).host().toHtmlEscaped()),
+               MessageBox::Yes | MessageBox::No,
+               MessageBox::No) == MessageBox::Yes;
 }
 
 QList<Entry*> BrowserService::eligibleEntries(const QList<Entry*>& candidates, const EntryParameters& parameters)

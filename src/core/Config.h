@@ -177,6 +177,7 @@ public:
         Browser_AllowGetDatabaseEntriesRequest,
         Browser_AllowExpiredCredentials,
         Browser_AlwaysAllowUpdate,
+        Browser_AutomaticallyAllowMatchingCredentials,
         Browser_SearchInAllDatabases,
         Browser_SupportKphFields,
         Browser_NoMigrationPrompt,

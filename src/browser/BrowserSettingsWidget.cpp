@@ -166,6 +166,7 @@ void BrowserSettingsWidget::loadSettings()
     m_ui->showNotification->hide();
 
     m_ui->alwaysAllowUpdate->setChecked(settings->alwaysAllowUpdate());
+    m_ui->automaticallyAllowMatchingCredentials->setChecked(settings->automaticallyAllowMatchingCredentials());
     m_ui->searchInAllDatabases->setChecked(settings->searchInAllDatabases());
     m_ui->supportKphFields->setChecked(settings->supportKphFields());
     m_ui->allowLocalhostWithPasskeys->setChecked(settings->allowLocalhostWithPasskeys());
@@ -260,6 +261,7 @@ void BrowserSettingsWidget::saveSettings()
     settings->setAllowGetDatabaseEntriesRequest(m_ui->allowGetDatabaseEntriesRequest->isChecked());
     settings->setAllowExpiredCredentials(m_ui->allowExpiredCredentials->isChecked());
     settings->setAlwaysAllowUpdate(m_ui->alwaysAllowUpdate->isChecked());
+    settings->setAutomaticallyAllowMatchingCredentials(m_ui->automaticallyAllowMatchingCredentials->isChecked());
     settings->setSearchInAllDatabases(m_ui->searchInAllDatabases->isChecked());
     settings->setSupportKphFields(m_ui->supportKphFields->isChecked());
     settings->setAllowLocalhostWithPasskeys(m_ui->allowLocalhostWithPasskeys->isChecked());

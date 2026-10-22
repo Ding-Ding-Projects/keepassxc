@@ -27,6 +27,7 @@ private slots:
     void initTestCase();
 
     void testUpgrade();
+    void testBrowserCredentialConfirmationPersistence();
     void testURLDoubleClickMigration();
     void testRemovedToolbarStyleIsDiscarded();
 };

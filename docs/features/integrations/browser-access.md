@@ -1,7 +1,10 @@
 # Automatic browser credential access
 
 Paired browsers receive eligible matching entries without a separate desktop
-approval dialog. This applies to ordinary website forms and HTTP authentication.
+approval dialog by default. In Settings > Browser Integration > Permissions,
+the persistent "Never ask before using credentials on websites" switch fully
+disables that dialog. Turn the switch off to require confirmation for each request.
+This applies to ordinary website forms and HTTP authentication.
 Selecting an account in the extension remains an extension action. Pairing a new
 browser, unlocking a database, updating an entry and passkey consent retain their
 own workflows.
@@ -16,7 +19,10 @@ Credential lookup never records an approval or changes saved entry permissions.
 
 The obsolete ordinary-access and HTTP-authentication approval settings are removed.
 Their stored values are discarded during configuration migration and cannot bring
-the dialog back. Existing website block lists remain stored and editable.
+the dialog back. The new independent preference is stored as
+`Browser/AutomaticallyAllowMatchingCredentials` and defaults to true.
+Existing website block lists remain stored and editable. Confirmation does not
+change entry permissions, and eligibility is recalculated after the dialog closes.
 
 ## Invalid settings and recovery
 

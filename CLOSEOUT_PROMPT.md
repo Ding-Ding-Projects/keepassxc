@@ -1,15 +1,40 @@
-# Browser access and complete feature delivery continuation
+# KeePassXC shortcut, history and browser confirmation repairs
 
-Implement the accepted browser-access dialog removal and all required feature workstreams. Baseline: f5949912caf3ebfe7c9ca9430d2141b4ebd21810. Automatically return eligible matching entries to paired browsers while preserving explicit blocks, realms, expiration, matching restrictions and vault locks. Do not mutate permissions on lookup.
+## Source and requested scope
 
-Publish exactly one complete normal release after acceptance. The release publisher, release finalizer and documentation workflows were disabled and verified before the first implementation push. Keep the hold through intermediate preservation and final documentation pushes.
+Implement installer shortcut and local history repairs, plus a persistent option
+that fully suppresses website credential-use confirmation. Push to main. No subagents.
 
-The expanded inventory names 90 features, 115 surfaces and 1,072 capabilities. Its 95 focused checks pass. Product acceptance remains 0/123,280 verified cells and 10,350 incomplete surface/feature groups. This is obligation accounting, not runtime proof. Nine server-management surfaces and all four execution targets are now explicit. Historical evidence is retained.
+Source fix bd2cf151b08e7981f8b28528c7bebfcd5e4184a9 is already on main and independently
+verified with git ls-remote. It accepts both supported installation-root names and
+disables local signing/hooks for application-owned history commands.
 
-Browser source ef02281d5c178af84e2a6967e64f4d0456ef74b2 and profile source through 4235276975cbf223a908bf7cf4fe2b7799bac8b9 are integrated in candidate 4cd5555c4bb7d113c981e2657e2ce789654f8894. The profile branch tip 4235276975cbf223a908bf7cf4fe2b7799bac8b9 was pushed and read back. Independent reviews found and corrected stale settings/catalogue references, proxy startup, save/import containment and linked INI paths. Source review does not establish runtime isolation.
+The current addition provides a default-on "Never ask before using credentials on
+websites" switch in both settings surfaces. Turning it off asks for each eligible
+request. Rejection returns no credentials; approval rechecks the database and entry
+eligibility after the dialog. Pairing, blocks, matching, expiration and locking remain.
 
-Root build.bat /s reached compilation with the existing project-owned MSVC 14.44 toolchain. Compilation/deployment stopped on TestMerge.cpp:540 calling .data() on a raw Group pointer and Qt deployment using an obsolete installation prefix. A bounded repair continues in codex/browser-access-removal-20261011. Stable settings identities and live current-value search metadata are assigned to codex/verification-profile-20261011. Both branches are task-owned and must be preserved; avoid shared-file collisions.
+## Verification
 
-Next: review and integrate the build repair, invoke exact root build.bat again, then run focused browser/profile native tests and isolated runtime acceptance with synthetic vaults. Review and integrate shared settings foundations before dependent features. Continue all remaining feature workstreams. Only publish the complete accepted candidate. Keep issue 12, progress Discussion 22, wiki, documentation and roadmap factual. Private announcement images stay ignored and must be separately preserved before worktree deletion. Authenticated Status Hub ingestion is unavailable in the current environment; local status must not be described as remotely delivered.
+- git diff --check passed.
+- Qt uic accepted the browser settings form.
+- Independent real-Git fixture: missing signer exit 128; blocking hook exit 1;
+  signing/hooks overrides exit 0, with one independently verified commit.
+- Native lifecycle, history, browser confirmation and configuration restart tests added.
+- First build.bat attempt stopped on inconsistent automatically selected MSVC state.
+- A second build with installed MSVC 14.44 reached dependency compilation, then was
+  canceled before changing source for the additional browser preference. No native
+  test or build pass is claimed.
+- Full publication-language scanning stopped on pre-existing design.zip exceeding
+  its per-file limit. Changed prose was reviewed separately; full scan is incomplete.
 
-The goal remains active. No native, packaged, final-release or cleanup completion is claimed. Keep personal vaults, unrelated work and live services untouched. Before deletion, inventory branches/worktrees/stashes, preserve and push valid work, integrate completed work into main, verify remote main, archive and verify complete source/history, and prove ownership and ancestry for every candidate. Retain active, uncertain, unmerged and unpushed work.
+## Remaining verification
+
+Run the root build and native regression targets, inspect the new control in the
+built application, and exercise the paired-browser and installer shortcut workflows.
+The user's exact recurring history notification remains unavailable, so its resolution
+is unconfirmed. Existing installed version 2.8.32901 does not contain these new fixes.
+
+Preserve the existing release and documentation workflow hold. No release, deployment
+or installed update is claimed. Preserve earlier feature-delivery work and unrelated
+branches. Tracking and handoff: https://github.com/Ding-Ding-Projects/keepassxc/issues/23.

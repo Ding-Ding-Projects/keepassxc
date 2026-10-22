@@ -33,6 +33,23 @@ void TestConfig::initTestCase()
 }
 
 // upgrade config file with deprecated settings (all of which are set to non-default values)
+void TestConfig::testBrowserCredentialConfirmationPersistence()
+{
+    TemporaryFile file;
+    QVERIFY(file.open());
+    file.close();
+    Config::createConfigFromFile(file.fileName());
+    QVERIFY(config()->get(Config::Browser_AutomaticallyAllowMatchingCredentials).toBool());
+    config()->set(Config::Browser_AutomaticallyAllowMatchingCredentials, false);
+    config()->sync();
+    Config::createConfigFromFile(file.fileName());
+    QVERIFY(!config()->get(Config::Browser_AutomaticallyAllowMatchingCredentials).toBool());
+    config()->set(Config::Browser_AutomaticallyAllowMatchingCredentials, true);
+    config()->sync();
+    Config::createConfigFromFile(file.fileName());
+    QVERIFY(config()->get(Config::Browser_AutomaticallyAllowMatchingCredentials).toBool());
+}
+
 void TestConfig::testUpgrade()
 {
     TemporaryFile tempFile;

@@ -798,6 +798,29 @@
        </item>
 
        <item>
+        <layout class="QHBoxLayout" name="automaticallyAllowMatchingCredentialsRow">
+         <item>
+          <widget class="QLabel" name="automaticallyAllowMatchingCredentialsLabel">
+           <property name="text">
+            <string>Never ask before using credentials on websites</string>
+           </property>
+           <property name="wordWrap"><bool>true</bool></property>
+           <property name="buddy"><cstring>automaticallyAllowMatchingCredentials</cstring></property>
+          </widget>
+         </item>
+         <item>
+          <widget class="Material::Switch" name="automaticallyAllowMatchingCredentials">
+           <property name="accessibleName">
+            <string>Never ask before using credentials on websites</string>
+           </property>
+           <property name="toolTip">
+            <string>Automatically return matching credentials to paired browsers. Explicit website blocks and database locks still apply.</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="alwaysAllowUpdateRow">
          <property name="leftMargin">
           <number>0</number>

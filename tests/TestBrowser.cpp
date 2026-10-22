@@ -24,6 +24,7 @@
 #include "core/Group.h"
 #include "core/Tools.h"
 #include "crypto/Crypto.h"
+#include "gui/MessageBox.h"
 
 #include <QJsonObject>
 #include <QTest>
@@ -983,6 +984,24 @@ void TestBrowser::testFirefoxRequiresManualInstall()
              BrowserExtensionInstaller::Result::RequiresManualInstall);
     QCOMPARE(installer.installExtension(BrowserShared::TOR_BROWSER),
              BrowserExtensionInstaller::Result::RequiresManualInstall);
+}
+
+void TestBrowser::testCredentialConfirmationPreference()
+{
+    const auto previous = browserSettings()->automaticallyAllowMatchingCredentials();
+    browserSettings()->setAutomaticallyAllowMatchingCredentials(false);
+    MessageBox::setNextAnswer(MessageBox::No);
+    const bool rejected = !m_browserService->confirmCredentialAccess(QStringLiteral("https://example.com"));
+    MessageBox::setNextAnswer(MessageBox::Yes);
+    const bool approved = m_browserService->confirmCredentialAccess(QStringLiteral("https://example.com"));
+    browserSettings()->setAutomaticallyAllowMatchingCredentials(true);
+    MessageBox::setNextAnswer(MessageBox::No);
+    const bool automatic = m_browserService->confirmCredentialAccess(QStringLiteral("https://example.com"));
+    MessageBox::setNextAnswer(MessageBox::NoButton);
+    browserSettings()->setAutomaticallyAllowMatchingCredentials(previous);
+    QVERIFY(rejected);
+    QVERIFY(approved);
+    QVERIFY(automatic);
 }
 
 void TestBrowser::testAutomaticCredentialAccess()

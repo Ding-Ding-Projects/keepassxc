@@ -32,6 +32,7 @@ private slots:
     void init();
 
     void testAutomaticCredentialAccess();
+    void testCredentialConfirmationPreference();
     void testCredentialAccessRestrictions();
     void testMalformedAccessSettings();
     void testMalformedAccessSettings_data();

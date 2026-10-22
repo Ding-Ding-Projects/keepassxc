@@ -41,6 +41,8 @@ public:
     void setMatchUrlScheme(bool matchUrlScheme);
     bool alwaysAllowUpdate();
     void setAlwaysAllowUpdate(bool alwaysAllowUpdate);
+    bool automaticallyAllowMatchingCredentials();
+    void setAutomaticallyAllowMatchingCredentials(bool enabled);
     bool searchInAllDatabases();
     void setSearchInAllDatabases(bool searchInAllDatabases);
     bool supportKphFields();
