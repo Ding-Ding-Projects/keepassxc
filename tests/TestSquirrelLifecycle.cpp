@@ -19,9 +19,11 @@ namespace
         return result;
     }
 
-    QString createLayout(QTemporaryDir& directory, const QString& version = QStringLiteral("2.8.1"))
+    QString createLayout(QTemporaryDir& directory,
+                         const QString& version = QStringLiteral("2.8.1"),
+                         const QString& packageDirectory = QStringLiteral("KeePassXC.Material"))
     {
-        const QString root = directory.filePath(QStringLiteral("KeePassXC.Material"));
+        const QString root = directory.filePath(packageDirectory);
         const QString app = QDir(root).filePath(QStringLiteral("app-%1").arg(version));
         if (!QDir().mkpath(app)) {
             return {};
@@ -133,6 +135,11 @@ void TestSquirrelLifecycle::layoutValidation()
                  + QStringLiteral("\" \"%1\""));
 
     QVERIFY(!SquirrelLifecycle::validateLayout(directory.filePath(QStringLiteral("portable"))).has_value());
+    QTemporaryDir existingInstall;
+    QVERIFY(existingInstall.isValid());
+    const QString existingApp = createLayout(existingInstall, QStringLiteral("2.8.1"), QStringLiteral("KeePassXC"));
+    QVERIFY(!existingApp.isEmpty());
+    QVERIFY(SquirrelLifecycle::validateLayout(existingApp).has_value());
     const QString spoofRoot = directory.filePath(QStringLiteral("Other.Package/app-2.8.1"));
     QVERIFY(QDir().mkpath(spoofRoot));
     QFile spoofUpdater(directory.filePath(QStringLiteral("Other.Package/Update.exe")));

@@ -151,7 +151,8 @@ namespace SquirrelLifecycle
             return std::nullopt;
         }
         const QDir root = appInfo.dir();
-        if (root.dirName() != QStringLiteral("KeePassXC.Material")) {
+        if (root.dirName() != QStringLiteral("KeePassXC.Material")
+            && root.dirName() != QStringLiteral("KeePassXC")) {
             return std::nullopt;
         }
         const QFileInfo updater(root.filePath(QStringLiteral("Update.exe")));

@@ -10,6 +10,11 @@ Feature id: `squirrel-installer` · Category: Build, install and update
 
 Version comes from `OVERRIDE_VERSION`; only the main GUI and its generated stub are Squirrel-aware.
 
+Lifecycle callbacks support both the `KeePassXC.Material` package directory and existing
+`KeePassXC` installations. Both layouts require a real versioned application directory,
+application executable and adjacent updater. Unrelated package roots and linked paths remain
+rejected. Install and update callbacks request shortcut creation through the adjacent updater.
+
 ## Failure modes
 
 Setup may trigger Unknown Publisher or SmartScreen warnings because code signing is permanently disabled.

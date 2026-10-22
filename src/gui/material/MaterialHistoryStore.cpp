@@ -67,6 +67,11 @@ namespace Material
             environment.insert(QStringLiteral("GIT_COMMITTER_EMAIL"), QStringLiteral("history@localhost"));
             process.setProcessEnvironment(environment);
             QStringList args;
+            // History is application-owned storage. Local repository settings must
+            // never invoke user hooks or require an interactive signing key.
+            args << QStringLiteral("-c") << QStringLiteral("commit.gpgsign=false")
+                 << QStringLiteral("-c") << QStringLiteral("tag.gpgsign=false")
+                 << QStringLiteral("-c") << QStringLiteral("core.hooksPath=%1").arg(QProcess::nullDevice());
 #ifdef Q_OS_WIN
             args << QStringLiteral("-c") << QStringLiteral("core.longpaths=true");
 #endif

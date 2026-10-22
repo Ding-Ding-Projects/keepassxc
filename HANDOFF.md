@@ -1,5 +1,15 @@
 # Navigation delivery handoff
 
+## Installer shortcuts and local history, October 22, 2026
+
+The installer lifecycle now accepts existing `KeePassXC` installation directories as well as
+`KeePassXC.Material`, retaining version, executable, updater and linked-path validation.
+History subprocesses override local signing and hook settings on every command, including the
+shared index. Added native regressions cover both installation layouts and an existing history
+index with signing and hooks configured. Native build and runtime verification are pending.
+The user's recurring history notification has not yet been matched to an exact message.
+Keep the pre-existing release and documentation workflow hold intact.
+
 ## Complete feature delivery, October 11, 2026
 
 The current task removes browser credential-access confirmation for matching

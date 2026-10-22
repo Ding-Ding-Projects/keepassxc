@@ -304,6 +304,41 @@ void TestMaterialHistory::recordsReadyDatabaseSnapshots()
     QCOMPARE(database->metadata()->name(), QStringLiteral("Still editable after snapshot"));
 }
 
+void TestMaterialHistory::gitStoreIgnoresLocalSigningAndHooks()
+{
+    QTemporaryDir root;
+    QVERIFY(root.isValid());
+    const QString executable = QStandardPaths::findExecutable(QStringLiteral("git"));
+    QVERIFY(!executable.isEmpty());
+    HistoryStore store(root.path(), executable);
+    QVERIFY(store.recordSettingsEvent(QStringLiteral("Initial settings")));
+    const QString repository = QDir(root.path()).filePath(QStringLiteral("repository"));
+    const auto configure = [&](const QString& key, const QString& value) {
+        QProcess process;
+        process.start(executable, {QStringLiteral("-C"), repository, QStringLiteral("config"), key, value});
+        return process.waitForFinished(10000) && process.exitCode() == 0;
+    };
+    QVERIFY(configure(QStringLiteral("commit.gpgsign"), QStringLiteral("true")));
+    QVERIFY(configure(QStringLiteral("gpg.program"), root.filePath(QStringLiteral("missing-signer"))));
+    const QString hooks = root.filePath(QStringLiteral("blocking-hooks"));
+    QVERIFY(QDir().mkpath(hooks));
+    QFile hook(QDir(hooks).filePath(QStringLiteral("pre-commit")));
+    QVERIFY(hook.open(QIODevice::WriteOnly));
+    QVERIFY(hook.write("#!/bin/sh\nexit 1\n") > 0);
+    hook.close();
+    QVERIFY(hook.setPermissions(QFileDevice::ReadOwner | QFileDevice::WriteOwner | QFileDevice::ExeOwner));
+    QVERIFY(configure(QStringLiteral("core.hooksPath"), hooks));
+    QVERIFY(store.recordSettingsEvent(QStringLiteral("Settings with local signing and hooks")));
+    HistoryStore restarted(root.path(), executable);
+    QCOMPARE(restarted.revisions().size(), 2);
+    QProcess count;
+    count.start(executable, {QStringLiteral("-C"), repository, QStringLiteral("rev-list"),
+                             QStringLiteral("--count"), QStringLiteral("HEAD")});
+    QVERIFY(count.waitForFinished(10000));
+    QCOMPARE(count.exitCode(), 0);
+    QCOMPARE(count.readAllStandardOutput().trimmed(), QByteArrayLiteral("2"));
+}
+
 void TestMaterialHistory::gitStoreTransactionAndRestart()
 {
     QTemporaryDir root;

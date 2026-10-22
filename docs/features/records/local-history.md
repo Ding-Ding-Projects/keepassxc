@@ -14,6 +14,12 @@ Database identity stays stable across filesystem moves. Save As creates a fresh 
 
 Retention and pruning controls live in Settings › History; the store path is stable per database.
 
+Application-owned history commands disable commit/tag signing and hooks for each invocation,
+including an existing shared index. Local repository settings cannot prompt for signing keys or
+run user hooks during a database operation. The overrides do not change the user's Git settings.
+`TestMaterialHistory::gitStoreIgnoresLocalSigningAndHooks` covers an existing index configured
+with signing enabled, a missing signer and a failing pre-commit hook, with independent Git readback.
+
 ## Failure modes
 
 Embedded bundles are limited to 256 MiB packed data, 1 GiB of expanded object data, 1,000,000 Git objects, 100,000 history ancestors, and 256 nested tree levels. When a limit or history-storage failure prevents bundle preparation, the database save continues with the prior embedded history and a non-blocking notification explains that the newest revision was not embedded. Malformed, oversized, foreign, hash-mismatched and locally stale bundles are rejected before import. Local application history remains available when the KDBX file is opened; a valid embedded bundle can restore it when the file moves to another device.

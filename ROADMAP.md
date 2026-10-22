@@ -1,5 +1,11 @@
 # Roadmap
 
+## October 22 installer and history repair
+
+- [ ] Verify lifecycle callbacks and shortcut creation for existing `KeePassXC` and `KeePassXC.Material` installation roots. Source and native regression added.
+- [ ] Verify shared history writes with local signing and hooks enabled. Command overrides and native regression added.
+- [ ] Match the user's recurring history notification to its exact message and verify the affected workflow. No vault contents were changed during inspection.
+
 ## October 11 complete delivery candidate
 
 - [x] Hold the release publisher, finalizer and documentation deployment before implementation pushes; read back all three as disabled.
