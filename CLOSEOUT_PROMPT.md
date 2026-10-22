@@ -30,6 +30,13 @@ eligibility after the dialog. Pairing, blocks, matching, expiration and locking 
 
 ## Remaining verification
 
+Final source delivery is on main through 5341b3b02c87b87cff456a9512e424397de6b5db.
+The fresh build attempt used build-browser-consent20261022 and was stopped during
+Botan compilation without a KeePassXC build verdict. Its processes were confirmed
+absent afterward. Reusing the earlier canceled build-shortcut-history directory
+was rejected because it has no completed CMake ownership record. Both directories
+are retained. No native test pass, installer or installed update is claimed.
+
 Run the root build and native regression targets, inspect the new control in the
 built application, and exercise the paired-browser and installer shortcut workflows.
 The user's exact recurring history notification remains unavailable, so its resolution

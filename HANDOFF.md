@@ -1,5 +1,19 @@
 # Navigation delivery handoff
 
+## Final source delivery status, October 22, 2026
+
+Both repairs and the browser preference are pushed to main through
+`5341b3b02c87b87cff456a9512e424397de6b5db`. Qt uic accepted the changed browser form;
+diff whitespace validation passed. An independent real-Git fixture confirmed the
+signing/hook failure modes and successful overridden write. Native regression
+execution remains unverified: after the MSVC initialization failure and unfinished
+directory rejection, a fresh root build reached Botan compilation and was stopped
+without a KeePassXC build verdict. Build processes were confirmed absent afterward.
+Retain both generated build directories. No installer, release, deployment or
+installed update was produced. The release and documentation workflow hold remains.
+See issue #23 for the verification handoff. The exact user history notification
+still needs to be identified before claiming its resolution.
+
 ## Optional browser-use confirmation, October 22, 2026
 
 Added a default-on "Never ask before using credentials on websites" switch in the
