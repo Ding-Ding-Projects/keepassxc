@@ -471,6 +471,10 @@ if(KPXC_FEATURE_BROWSER)
     add_unit_test(NAME testbrowser SOURCES TestBrowser.cpp
         LIBS browser ${TEST_LIBRARIES})
 
+    add_unit_test(NAME testbrowserintegration SOURCES TestBrowserIntegration.cpp TestBrowserIntegration.h
+        LIBS browser ${TEST_LIBRARIES})
+    set_property(TEST testbrowserintegration APPEND PROPERTY ENVIRONMENT "QT_QPA_PLATFORM=offscreen")
+
     add_unit_test(NAME testpasskeys SOURCES TestPasskeys.cpp
         LIBS browser ${TEST_LIBRARIES})
 endif()
